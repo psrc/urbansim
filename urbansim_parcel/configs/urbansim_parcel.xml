@@ -129,14 +129,14 @@
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <argument name="refinement_dataset_name" parser_action="quote_string" type="string">refinement            </argument>
+            <argument name="refinement_dataset_name" parser_action="quote_string" type="string" model_dependency_type="dataset">refinement            </argument>
             <argument name="refinement_storage" type="string">base_cache_storage            </argument>
-            <argument name="refinement_table_name" parser_action="quote_string" type="string">refinements            </argument>
+            <argument name="refinement_table_name" parser_action="quote_string" type="string" model_dependency_type="table">refinements            </argument>
             <output hidden="True" name="output" type="string">refinement</output>
           </prepare_for_run>
           <run type="dictionary">
             <name hidden="True" name="name" type="string">run</name>
-            <argument name="refinement_dataset" type="string">refinement            </argument>
+            <argument name="refinement_dataset" type="string" model_dependency_type="dataset">refinement            </argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool            </argument>
           </run>
         </structure>
@@ -152,14 +152,14 @@
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <argument name="refinement_dataset_name" parser_action="quote_string" type="string">building_renovation_and_conversion</argument>
+            <argument name="refinement_dataset_name" parser_action="quote_string" type="string" model_dependency_type="dataset">building_renovation_and_conversion</argument>
             <argument name="refinement_storage" type="string">base_cache_storage</argument>
-            <argument name="refinement_table_name" parser_action="quote_string" type="string">building_renovation_and_conversion</argument>
+            <argument name="refinement_table_name" parser_action="quote_string" type="string" model_dependency_type="table">building_renovation_and_conversion</argument>
             <output hidden="True" name="output" type="string">building_renovation_and_conversion</output>
           </prepare_for_run>
           <run type="dictionary">
             <name hidden="True" name="name" type="string">run</name>
-            <argument name="refinement_dataset" type="string">building_renovation_and_conversion</argument>
+            <argument name="refinement_dataset" type="string" model_dependency_type="dataset">building_renovation_and_conversion</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </run>
         </structure>
@@ -172,40 +172,40 @@
           </import>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">RealEstatePriceModel</name>
-            <argument name="submodel_string" parser_action="quote_string" type="string">land_use_type_id</argument>
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</argument>
-            <argument name="filter_attribute" parser_action="quote_string" type="string">numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">land_use_type_id</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</argument>
+            <argument name="filter_attribute" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="estimate_config" type="string">Resources({'save_predicted_values_and_errors': False})</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">real_estate_price_model_specification</argument>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">real_estate_price_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">real_estate_price_model_coefficients</argument>
             <output hidden="True" name="output" type="string">(specification, coefficients)</output>
           </prepare_for_run>
           <run type="dictionary">
             <argument hidden="True" name="specification" type="string">specification</argument>
             <argument hidden="True" name="coefficients" type="string">coefficients</argument>
-            <argument name="dataset" type="string">parcel</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">parcel</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
             <argument name="run_config" type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':3, 'outlier_is_greater_than': 7})</argument>
           </run>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
-            <argument name="filter_variable" parser_action="quote_string" type="string">numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)</argument>
-            <argument name="dataset" type="string">parcel</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">real_estate_price_model_specification</argument>
+            <argument name="filter_variable" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">parcel</argument>
             <argument name="threshold" type="integer">0</argument>
             <output hidden="True" name="output" type="string">(specification, index)</output>
           </prepare_for_estimate>
           <estimate type="dictionary">
             <argument hidden="True" name="specification" type="string">specification</argument>
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</argument>
-            <argument name="dataset" type="string">parcel</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">parcel</argument>
             <argument hidden="True" name="index" type="string">index</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
@@ -231,9 +231,9 @@
             <argument name="storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="control_totals" type="string">control_totals</argument>
+            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
             <argument name="job_building_types" type="string">job_building_type</argument>
-            <argument name="job_set" type="string">job</argument>
+            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="year" type="string">year</argument>
           </run>
         </structure>
@@ -254,13 +254,13 @@
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">erm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_jobs</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_relocation_rates_for_jobs</argument>
             <argument name="what" parser_action="quote_string" type="string">jobs</argument>
           </prepare_for_run>
           <run type="dictionary">
             <output hidden="True" name="output" type="string">erm_index</output>
             <argument hidden="True" name="resources" type="string">erm_resources</argument>
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
           </run>
         </structure>
       </model>
@@ -268,7 +268,7 @@
         <dependencies type="list">['employment_relocation_model']</dependencies>
         <structure type="dictionary">
           <estimate type="dictionary">
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument hidden="True" name="agents_index" type="string">index</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
@@ -276,7 +276,7 @@
             <output hidden="True" name="output" type="string">(coefficients, _)</output>
           </estimate>
           <group_by_attribute type="tuple">
-            <argument name="grouping_table" type="string">job_building_type</argument>
+            <argument name="grouping_table" type="string" model_dependency_type="table">job_building_type</argument>
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
           <import hidden="True" name="import" type="dictionary">
@@ -289,16 +289,16 @@
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="location_set" type="string">building</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
             <argument name="sample_size_locations" type="integer">30</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">vacant_SSS_job_space</argument>
-            <argument name="estimation_weight_string" parser_action="quote_string" type="string">vacant_SSS_job_space</argument>
-            <argument name="filter" parser_action="quote_string" type="string">building.non_residential_sqft</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable">vacant_SSS_job_space</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string" model_dependency_type="variable">vacant_SSS_job_space</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">building.non_residential_sqft</argument>
             <argument name="estimation_size_agents" type="float">1.</argument>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument name="number_of_units_string" parser_action="quote_string" type="string">total_SSS_job_space</argument>
+            <argument name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable">total_SSS_job_space</argument>
             <argument name="run_config" type="dictionary">
-              <key convert_blank_to_none="True" name="agent_units_string" type="string"/>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string" model_dependency_type="variable"/>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
@@ -306,25 +306,25 @@
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
             <output hidden="True" name="output" type="string">(specification, index)</output>
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">jobs_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="portion_to_unplace" type="float">0</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">employment_location_choice_model_specification</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_specification</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</argument>
           </prepare_for_estimate>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">(specification, coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">employment_location_choice_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">employment_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument hidden="True" name="agents_index" type="string">erm_index</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">coefficients</argument>
@@ -344,14 +344,14 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">DistributeUnplacedJobsModel</name>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.building.is_governmental</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.is_governmental</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
           <run type="dictionary">
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="location_set" type="string">building</argument>
-            <argument name="agents_filter" parser_action="quote_string" type="string">urbansim.job.is_in_employment_sector_group_scalable_sectors</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim.job.is_in_employment_sector_group_scalable_sectors</argument>
           </run>
         </structure>
       </model>
@@ -364,14 +364,14 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">DistributeUnplacedJobsModel</name>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.building.is_governmental</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.is_governmental</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
           <run type="dictionary">
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="location_set" type="string">building</argument>
-            <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_or(job.sector_id==1, job.sector_id==9)</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_or(job.sector_id==1, job.sector_id==9)</argument>
           </run>
         </structure>
       </model>      
@@ -384,14 +384,14 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">ScalingJobsModel</name>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.building.is_governmental</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.is_governmental</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
           <run type="dictionary">
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument hidden="True" name="agents_index" type="string">erm_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="location_set" type="string">building</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
           </run>
         </structure>
       </model>
@@ -410,13 +410,13 @@
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_households</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_relocation_rates_for_households</argument>
             <argument name="what" parser_action="quote_string" type="string">households</argument>
             <output hidden="True" name="output" type="string">hrm_resources</output>
           </prepare_for_run>
           <run type="dictionary">
             <output hidden="True" name="output" type="string">hrm_index</output>
-            <argument name="agent_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
             <argument hidden="True" name="resources" type="string">hrm_resources</argument>
           </run>
         </structure>
@@ -431,7 +431,7 @@
             <name hidden="True" name="name" type="string">ProcessPipelineEvents</name>
           </init>
           <run type="dictionary">
-            <argument name="building_dataset" type="string">building</argument>
+            <argument name="building_dataset" type="string" model_dependency_type="dataset">building</argument>
             <argument hidden="True" name="year" type="string">year</argument>
             <argument hidden="True" name="storage" type="string">base_cache_storage</argument>
             <output hidden="True" name="output" type="string">scheduled_development_events</output>
@@ -446,20 +446,20 @@
           </import>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">DevelopmentProjectProposalRegressionModel</name>
-            <argument name="submodel_string" parser_action="quote_string" type="string">land_use_type_id=development_project_proposal.disaggregate(development_template.land_use_type_id)</argument>
-            <argument name="filter_attribute" parser_action="quote_string" type="string">urbansim_parcel.development_project_proposal.is_size_fit</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">land_use_type_id=development_project_proposal.disaggregate(development_template.land_use_type_id)</argument>
+            <argument name="filter_attribute" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.development_project_proposal.is_size_fit</argument>
             <argument name="outcome_attribute_name" parser_action="quote_string" type="string">ln_unit_price_expected</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <argument name="parcel_filter_for_new_development" parser_action="quote_string" type="string">has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0</argument>
-            <argument name="parcel_filter_for_redevelopment" parser_action="quote_string" type="string">low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) &lt; 0.1</argument>
-            <argument name="template_filter" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
+            <argument name="parcel_filter_for_new_development" parser_action="quote_string" type="string" model_dependency_type="variable">has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0</argument>
+            <argument name="parcel_filter_for_redevelopment" parser_action="quote_string" type="string" model_dependency_type="variable">low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) &lt; 0.1</argument>
+            <argument name="template_filter" convert_blank_to_none="True" parser_action="quote_string" type="string" model_dependency_type="variable"></argument>
             <argument hidden="True" name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">real_estate_price_model_specification</argument>
             <argument hidden="True" name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">real_estate_price_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">real_estate_price_model_coefficients</argument>
             <argument hidden="True" name="spec_replace_module_variable_pair" type="string">('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <output hidden="True" name="output" type="string">(development_project_proposal, specification, coefficients)</output>
@@ -467,7 +467,7 @@
           <run type="dictionary">
             <argument hidden="True" name="specification" type="string">specification</argument>
             <argument hidden="True" name="coefficients" type="string">coefficients</argument>
-            <argument name="dataset" type="string">development_project_proposal</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">development_project_proposal</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
             <output hidden="True" name="output" type="string">development_project_proposal</output>
           </run>
@@ -482,9 +482,9 @@
           </import>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">DevelopmentProjectProposalSamplingModel</name>
-            <argument name="proposal_set" type="string">development_project_proposal</argument>
-            <argument name="weight_string" parser_action="quote_string" type="string">exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)</argument>
-            <argument convert_blank_to_none="True" name="filter_attribute" type="string"/>
+            <argument name="proposal_set" type="string" model_dependency_type="dataset">development_project_proposal</argument>
+            <argument name="weight_string" parser_action="quote_string" type="string" model_dependency_type="variable">exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)</argument>
+            <argument convert_blank_to_none="True" name="filter_attribute" type="string" model_dependency_type="variable"/>
           </init>
           <run type="dictionary">
             <argument name="n" type="integer">500</argument>
@@ -503,8 +503,8 @@
             <name hidden="True" name="name" type="string">BuildingConstructionModel</name>
           </init>
           <run type="dictionary">
-            <argument name="development_proposal_set" type="string">development_project_proposal</argument>
-            <argument name="building_dataset" type="string">building</argument>
+            <argument name="development_proposal_set" type="string" model_dependency_type="dataset">development_project_proposal</argument>
+            <argument name="building_dataset" type="string" model_dependency_type="dataset">building</argument>
             <argument hidden="True" name="buildings_to_be_demolished" type="string">demolished_buildings</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </run>
@@ -531,44 +531,46 @@
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_wesml_mnl_estimation</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="location_set" type="string">building</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
             <argument name="sample_size_locations" type="integer">30</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">vacant_residential_units</argument>
-            <argument name="estimation_weight_string" parser_action="quote_string" type="string">residential_units</argument>
-            <argument name="number_of_units_string" parser_action="quote_string" type="string">residential_units</argument>
-            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable">vacant_residential_units</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string" model_dependency_type="variable">residential_units</argument>
+            <argument name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable">residential_units</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable">number_of_households</argument>
             <argument name="location_id_string" parser_action="quote_string" type="string">building_id</argument>
-            <argument name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim.household.income_category</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
-            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 7})</argument>
-            <argument name="estimate_config" type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</argument>
+            <argument name="estimate_config" type="dictionary">
+        <key name="wesml_sampling_correction_variable" type="quote_string" model_dependency_type="variable">psrc_parcel.building.wesml_sampling_correction_variable</key>
+      </argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
           </init>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
             <output hidden="True" name="output" type="string">(_specification, _index)</output>
-            <argument name="agent_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">households_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="index_to_unplace" type="string">None</argument>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">.1</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">household_location_choice_model_specification</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
           </prepare_for_estimate>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">(_specification, _coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">household_location_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">household_location_choice_model_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="agent_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
             <argument hidden="True" name="agents_index" type="string">hrm_index</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument hidden="True" name="coefficients" type="string">_coefficients</argument>
@@ -596,8 +598,8 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="characteristics" type="string">characteristics</argument>
-            <argument name="household_set" type="string">household</argument>            
-            <argument name="person_set" type="string">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>            
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
             <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
             <argument name="year" type="string">year</argument>
           </run>
@@ -611,22 +613,22 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">WorkAtHomeChoiceModel</name>
-            <argument name="choice_set" type="string">job</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_home_based_job</argument>
+            <argument name="choice_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_home_based_job</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
             <output name="output" type="string">(specification, coefficients, _index)</output>
-            <argument name="agent_set" type="string">person</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">work_at_home_choice_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">work_at_home_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">work_at_home_choice_model_specification</argument>
-            <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_worker_without_job</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">work_at_home_choice_model_specification</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_worker_without_job</argument>
             <argument name="data_objects" type="string">datasets</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="agent_set" type="string">person</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="agents_index" type="string">_index</argument>
             <argument name="choose_job_only_in_residence_zone" type="string">False</argument>
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
@@ -636,18 +638,18 @@
           </run>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
-            <argument name="agent_set" type="string">person</argument>
-            <argument name="household_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
             <argument name="join_datasets" type="string">True</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_worker</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_worker</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">persons_for_estimation</argument>
-            <argument name="households_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons_for_estimation</argument>
+            <argument name="households_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">households_for_estimation</argument>
             <output hidden="True" name="output" type="string">(specification, agents_index)</output>
           </prepare_for_estimate>
           <estimate type="dictionary">
-            <argument name="agent_set" type="string">person</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="agents_index" type="string">agents_index</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
@@ -665,44 +667,44 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">WorkplaceChoiceModel</name>
-            <argument name="location_set" type="string">job</argument>
+            <argument name="location_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Non-home-based Workplace Choice Model for residents</argument>
           <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
           <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
           <argument name="submodel_string" type="string">None</argument>
-          <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
+          <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
           <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
             <argument name="run_config" type="dictionary">
             <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
             <key name="sample_size_locations" type="integer">30</key>
-            <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+            <key name="weights_for_estimation_string" type="string" model_dependency_type="variable">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
             <key name="compute_capacity_flag" type="string">True</key>
-            <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+            <key name="capacity_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</key>
             <key name="lottery_max_iterations" type="integer">10</key>
-            <key name="number_of_units_string" type="string">(job.building_type==2).astype(int32)</key>
-            <key name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
+            <key name="number_of_units_string" type="string" model_dependency_type="variable">(job.building_type==2).astype(int32)</key>
+            <key name="number_of_agents_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
         </argument>
           <argument name="estimate_config" type="dictionary">
           <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
           <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
           <key name="sample_size_locations" type="integer">30</key>
-          <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+          <key name="weights_for_estimation_string" type="string" model_dependency_type="variable">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
           <key name="compute_capacity_flag" type="string">True</key>
-          <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+          <key name="capacity_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</key>
           </argument>
         </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
             <output name="output" type="string">(specification, coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">workplace_choice_model_for_resident_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">workplace_choice_model_for_resident_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">workplace_choice_model_for_resident_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">workplace_choice_model_for_resident_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="agent_set" type="string">person</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="agents_index" type="string">None</argument>
-            <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_non_home_based_worker_without_job</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_non_home_based_worker_without_job</argument>
             <argument name="coefficients" type="string">coefficients</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
@@ -710,18 +712,18 @@
           </run>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
-            <argument name="agent_set" type="string">person</argument>
-            <argument name="household_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
             <argument name="join_datasets" type="string">True</argument>
-            <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_non_home_based_worker_with_job</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_non_home_based_worker_with_job</argument>
             <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">persons_for_estimation</argument>
-            <argument name="households_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons_for_estimation</argument>
+            <argument name="households_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">households_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <output hidden="True" name="output" type="string">(specification, agents_index)</output>
           </prepare_for_estimate>
           <estimate type="dictionary">
-            <argument name="agent_set" type="string">person</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="agents_index" type="string">agents_index</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
@@ -740,11 +742,11 @@
             <name name="name" type="string">JoinAttributeModificationModel</name>
           </init>
           <run type="dictionary">
-            <argument name="dataset" type="string">person</argument>
-            <argument name="secondary_dataset" type="string">household</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="secondary_dataset" type="string" model_dependency_type="dataset">household</argument>
             <argument name="attribute_to_be_modified" parser_action="quote_string" type="string">job_id</argument>
             <argument name="value" type="integer">-1</argument>
-            <argument name="filter" type="string">'household.building_id != urbansim.household.building_id_lag1'</argument>
+            <argument name="filter" type="quote_string" model_dependency_type="variable">household.building_id != urbansim.household.building_id_lag1</argument>
           </run>
         </structure>
       </model>
@@ -758,11 +760,11 @@
             <name name="name" type="string">JoinAttributeModificationModel</name>
           </init>
           <run type="dictionary">
-            <argument name="dataset" type="string">person</argument>
-            <argument name="secondary_dataset" type="string">job</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="secondary_dataset" type="string" model_dependency_type="dataset">job</argument>
             <argument name="attribute_to_be_modified" parser_action="quote_string" type="string">job_id</argument>
             <argument name="value" type="integer">-1</argument>
-            <argument name="filter" type="string">'job.building_id != urbansim.job.building_id_lag1'</argument>
+            <argument name="filter" type="quote_string" model_dependency_type="variable">job.building_id != urbansim.job.building_id_lag1</argument>
           </run>
         </structure>
       </model>      
@@ -776,8 +778,8 @@
             <name name="name" type="string">PersonDatasetConsistencyKeeperModel</name>
           </init>
           <run type="dictionary">
-            <argument name="job_set" type="string">job</argument>
-            <argument name="person_set" type="string">person</argument>
+            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="expand_person_set" type="string">False</argument>
           </run>
         </structure>

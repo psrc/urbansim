@@ -575,7 +575,7 @@
           </init>
           <run type="dictionary">
             <argument name="year" type="string" hidden="True">year</argument>
-            <argument name="condition" field_identifier="Convergence condition (expression)" parser_action="quote_string" type="string" convert_blank_to_none="True"/>
+            <argument name="condition" field_identifier="Convergence condition (expression)" parser_action="quote_string" type="string" convert_blank_to_none="True" model_dependency_type="variable"/>
             <argument name="max_iter" type="integer" convert_blank_to_none="True" field_identifier="Maximum number of iterations">10</argument>
           </run>
         </structure>
