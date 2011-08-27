@@ -89,6 +89,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             maximum_runs = 1
         unplaced = arange(agents_index.size)
         id_name = self.choice_set.get_id_name()[0]
+        demand_string = self.run_config.get("demand_string")
+        supply_string = self.run_config.get("supply_string")
         for run in range(maximum_runs):
             unplaced_size_before_model = unplaced.size
             choices = LocationChoiceModel.run(self, specification, coefficients, agent_set,
@@ -97,10 +99,19 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                 all_choices=choices
             else:
                 all_choices[unplaced]=choices
+                ## delete demand_string and supply string for later iterations to 
+                ## avoid these variables being distorted by assigning overfilled agents
+                if demand_string: del self.run_config["demand_string"]
+                if supply_string: del self.run_config["supply_string"]
+                
             unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index, config=run_config)
             if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size) or (unplaced.size == (unplaced_size_before_model - self.observations_mapping['mapped_index'].size)):
                 break
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
+            
+        if demand_string: self.run_config["demand_string"] = demand_string
+        if supply_string: self.run_config["supply_string"] = supply_string
+        
         return all_choices
 
     def get_movers_from_overfilled_locations(self, agent_set, agents_index, config=None):

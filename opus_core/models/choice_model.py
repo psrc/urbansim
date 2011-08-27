@@ -45,7 +45,9 @@ class ChoiceModel(ChunkModel):
                         choice_attribute_name="choice_id",
                         interaction_pkg="opus_core",
                         run_config=None, estimate_config=None, debuglevel=0,
-                        dataset_pool=None):
+                        dataset_pool=None,
+                        **kwargs
+                ):
         """
         Arguments:
             choice_set - Dataset or array/list of choices.
@@ -102,6 +104,7 @@ class ChoiceModel(ChunkModel):
         self.sampler_size=sampler_size
         
         self.submodel_string = submodel_string # which attribute determines submodels
+        self.availability = kwargs.get('availability', None)
         self.run_config = run_config
         if self.run_config == None:
             self.run_config = Resources()
@@ -214,6 +217,10 @@ class ChoiceModel(ChunkModel):
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
         self.run_config.merge({"index":index})
+        if hasattr(self, "availability") and self.availability is not None:
+            availability = self.model_interaction.interaction_dataset.compute_variables(self.availability)
+            self.run_config['availability'] = self.model_interaction.interaction_dataset['availability']
+
 
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         
@@ -382,6 +389,9 @@ class ChoiceModel(ChunkModel):
         index = self.model_interaction.get_choice_index()
         self.coefficients = create_coefficient_from_specification(specification)
         self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])
+        if hasattr(self, "availability") and self.availability is not None:
+            availability = self.model_interaction.interaction_dataset.compute_variables(self.availability)
+            self.estimate_config['availability'] = self.model_interaction.interaction_dataset['availability']
         #run estimation
         result = self.estimate_step()
         return (self.coefficients, result)

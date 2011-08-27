@@ -34,7 +34,11 @@ class mnl_probabilities(Probabilities):
                 this_max = utilities[i,:].max()
                 utilities[i,:]=utilities[i,:]-this_max
 
-        exponentiated_utility = exp(utilities)
+        availability = resources.get('availability', None)
+        if availability is None:
+            exponentiated_utility = exp(utilities)
+        else:
+            exponentiated_utility = exp(utilities) * (availability).astype('b')
         sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
         return exponentiated_utility/reshape(sum_exponentiated_utility,(utilities.shape[0], 1))
 
