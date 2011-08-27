@@ -29,7 +29,8 @@ class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
             submodel_string = None, location_id_string = None,
             demand_string = None, # if not None, the aggregate demand for locations will be stored in this attribute
             run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None,
-            variable_package="urbansim"):
+            variable_package="urbansim",
+            **kwargs):
         run_config = merge_resources_if_not_None(run_config, [ 
                     ("sample_proportion_locations", sample_proportion_locations), 
                     ("sample_size_locations", sample_size_locations), 
@@ -60,4 +61,5 @@ class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
                                         run_config=run_config, 
                                         estimate_config=estimate_config, 
                                         debuglevel=debuglevel, dataset_pool=dataset_pool,
-                                        variable_package=variable_package)
+                                        variable_package=variable_package,
+                                        **kwargs)
