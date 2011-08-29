@@ -62,7 +62,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
 
         table_name = "travel_data"
         data_dict = self._read_macro_output_file(tm_output_full_name)
-        data_dict = self._seq_taz_to_zone_conversion(zone_set, data_dict)
+        #data_dict = self._seq_taz_to_zone_conversion(zone_set, data_dict)
 
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
@@ -111,11 +111,14 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                 value = items[col_index]
                 if value == '':  #missing value
                     value = MISSING_VALUE
-                try: #if it's a number, convert it to a float
-                    return_dict[headers[col_index]].append(float(value))
-                except ValueError: #otherwise, leave it as a string
-                    return_dict[headers[col_index]].append(value)
-            
+                try: 
+				    v = int(value) #integer
+                except ValueError:  #not an integer
+				    try:
+					    v = float(value) #float
+				    except ValueError:
+					    v = value  #string
+                return_dict[headers[col_index]].append(v)
         text_file.close()
         
         for item, value in return_dict.iteritems():
