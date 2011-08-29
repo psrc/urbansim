@@ -112,12 +112,12 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                 if value == '':  #missing value
                     value = MISSING_VALUE
                 try: 
-				    v = int(value) #integer
+                    v = int(value) #integer
                 except ValueError:  #not an integer
-				    try:
-					    v = float(value) #float
-				    except ValueError:
-					    v = value  #string
+                    try:
+                        v = float(value) #float
+                    except ValueError:
+                        v = value  #string
                 return_dict[headers[col_index]].append(v)
         text_file.close()
         
