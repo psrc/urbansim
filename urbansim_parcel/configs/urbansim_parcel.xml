@@ -22,7 +22,7 @@
       <variable name="parcel.lnsqft" source="expression" type="variable_definition" use="model variable">(ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</variable>
       <variable name="parcel.lnsqftunit" source="expression" type="variable_definition" use="model variable">(ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</variable>
       <variable name="parcel.lnlotsqft" source="expression" type="variable_definition" use="model variable">(ln(parcel.parcel_sqft)).astype(float32)</variable>
-      <variable name="parcel.lnunits" source="expression" type="variable_definition" use="model variable">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</variable>
+      <variable name="parcel.lnunits" source="expression" type="variable_definition" use="model variable">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</variable>      
       <variable name="parcel.lnlotsqftunit" source="expression" type="variable_definition" use="model variable">(ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</variable>
       <variable name="parcel.far" source="expression" type="variable_definition" use="model variable">(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</variable>
       <variable name="parcel.ln_invfar" source="expression" type="variable_definition" use="model variable">(ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</variable>
@@ -543,7 +543,7 @@
             <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 7})</argument>
             <argument name="estimate_config" type="dictionary">
-        <key name="wesml_sampling_correction_variable" type="quote_string" model_dependency_type="variable">psrc_parcel.building.wesml_sampling_correction_variable</key>
+        <key name="wesml_sampling_correction_variable" type="string" parser_action="quote_string" model_dependency_type="variable">psrc_parcel.building.wesml_sampling_correction_variable</key>
       </argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
           </init>
@@ -746,7 +746,7 @@
             <argument name="secondary_dataset" type="string" model_dependency_type="dataset">household</argument>
             <argument name="attribute_to_be_modified" parser_action="quote_string" type="string">job_id</argument>
             <argument name="value" type="integer">-1</argument>
-            <argument name="filter" type="quote_string" model_dependency_type="variable">household.building_id != urbansim.household.building_id_lag1</argument>
+            <argument name="filter" type="string" parser_action="quote_string" model_dependency_type="variable">household.building_id != urbansim.household.building_id_lag1</argument>
           </run>
         </structure>
       </model>
@@ -764,7 +764,7 @@
             <argument name="secondary_dataset" type="string" model_dependency_type="dataset">job</argument>
             <argument name="attribute_to_be_modified" parser_action="quote_string" type="string">job_id</argument>
             <argument name="value" type="integer">-1</argument>
-            <argument name="filter" type="quote_string" model_dependency_type="variable">job.building_id != urbansim.job.building_id_lag1</argument>
+            <argument name="filter" type="string" parser_action="quote_string" model_dependency_type="variable">job.building_id != urbansim.job.building_id_lag1</argument>
           </run>
         </structure>
       </model>      
