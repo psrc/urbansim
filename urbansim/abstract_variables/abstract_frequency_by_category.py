@@ -80,7 +80,7 @@ def get_category_and_frequency(agent_set, agent_category_definition,
     unique_choice_category_id = unique(choice_category_id)
 
     if agent_filter_attribute is not None and len(agent_filter_attribute) > 0:
-        agent_filter = agent_set.get_attribute(agent_filter_attribute)
+        agent_filter = agent_set.compute_variables(agent_filter_attribute, dataset_pool=dataset_pool)
     else:
         agent_filter = ones(agent_set.size(), dtype='bool')
 

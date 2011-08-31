@@ -67,6 +67,7 @@ aliases = [
        "total_value_per_sqft = safe_array_divide(parcel.land_value + urbansim_parcel.parcel.improvement_value, parcel.parcel_sqft)",
        "number_of_jobs = parcel.aggregate(urbansim_parcel.building.number_of_jobs)",
        "employment = parcel.aggregate(urbansim_parcel.building.number_of_jobs)",
+       "employment_retail = parcel.aggregate(urbansim.job.is_in_employment_sector_group_retail, intermediates=[building])",
        "number_of_households = parcel.aggregate(urbansim_parcel.building.number_of_households)",
        "population = parcel.aggregate(urbansim_parcel.building.population)",
        "travel_time_to_cbd = parcel.disaggregate(urbansim.gridcell.travel_time_to_cbd)",
