@@ -27,6 +27,32 @@ class RegionWideReport():
             self.worksheet.write(row_counter,self.column_counter,year)
             row_counter += 1
         self.column_counter += 1
+
+    def get_percent_DUs_built(self):
+        # get percent of DU capacity built
+        self.worksheet.write(0,self.column_counter,'pct_DUs_built')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing percent of DUs built for year %s' % year
+            r = self.connection.execute('select SUM(residential_units)/SUM(residential_units_capacity) from %s_%s_buildings' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_percent_nonres_sqft_built(self):
+        # get percent of nonres sqft capacity built
+        self.worksheet.write(0,self.column_counter,'pct_nonres_sqft_built')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing percent of nonres sqft built for year %s' % year
+            r = self.connection.execute('select SUM(non_residential_sqft)/SUM(non_residential_sqft_capacity) from %s_%s_buildings' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
         
     def get_total_DUs_in_active_developments_by_year(self):
         # get total DUs in active developments by year
@@ -163,7 +189,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where gender = 1' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -173,7 +199,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where gender = 2' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -466,6 +492,24 @@ class RegionWideReport():
                 self.worksheet.write(row_counter,self.column_counter,row[1])
                 row_counter += 1
         r.close()
+        self.column_counter += 1
+
+    def get_total_unplaced_development_projects_by_year(self):
+        # Get unplaced development projects by year
+        self.worksheet.write(0,self.column_counter,'unplaced_projects')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing unplaced development projects for year %s' % year
+            if year == self.base_year:
+                # there is no developmentProjects dataset for the base year
+                self.worksheet.write(row_counter,self.column_counter,0)
+                row_counter += 1
+            else:
+                r = self.connection.execute('select count(*) from %s_%s_developmentProjects where building_id < 1' % (self.run_name,year))
+                for row in r:
+                    self.worksheet.write(row_counter,self.column_counter,row[0])
+                    row_counter += 1
+                r.close()
         self.column_counter += 1
 
     def get_total_unplaced_households_by_year(self):
@@ -1448,7 +1492,9 @@ def main():
                         , 'get_total_households_by_year'
                         , 'get_total_jobs_by_year'
                         , 'get_total_DUs_by_year'
+                        , 'get_percent_DUs_built'
                         , 'get_total_nonres_sqft_by_year'
+                        , 'get_percent_nonres_sqft_built'
                         , 'get_total_DUs_SF_by_year'
                         , 'get_total_DUs_MF_by_year'
                         , 'get_total_households_by_year_and_income_category'
@@ -1471,6 +1517,7 @@ def main():
                         , 'get_total_nonres_sqft_by_type_and_year'
                         , 'get_total_DUs_in_active_developments_by_year'
                         , 'get_total_nonres_sqft_in_active_developments_by_year'
+                        , 'get_total_unplaced_development_projects_by_year'
                         ]
         
         # Add subarea query choices if subarea was specified
