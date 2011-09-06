@@ -41,9 +41,12 @@ class FertilityModel(AgentRelocationModel):
         person_set.add_elements(data=new_born, require_all_attributes=False, change_ids_if_not_unique=True) 
         
         ##TODO: for each household that experiences a birth, increase household.persons and household.children by 1
-        ##A better way is to make household.persons and household.children computed variables, instead of primary ones
-        persons = household_set.compute_variables('_persons = household.number_of_agents(person)')
-        children = household_set.compute_variables('_childrens = household.aggregate(person.age<18)')
-        household_set.modify_attribute('persons', persons)
-        household_set.modify_attribute('children', children)
+        ##A better way is to use household.persons and household.children as computed variables, instead of primary ones
+        if 'persons' in household_set.get_primary_attribute_names():
+            persons = household_set.compute_variables('_persons = household.number_of_agents(person)')
+            household_set.modify_attribute('persons', persons)
+
+        if 'children' in household_set.get_primary_attribute_names():
+            children = household_set.compute_variables('_childrens = household.aggregate(person.age<18)')
+            household_set.modify_attribute('children', children)
        
