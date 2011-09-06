@@ -20,7 +20,7 @@ class FertilityModel(AgentRelocationModel):
 
         max_person_id = person_set[person_id_name].max() + 1
         new_person_id = arange(max_person_id, max_person_id+index.size)
-		
+        
         new_born = {}
         new_born[person_id_name] = new_person_id
         new_born[hh_id_name] = person_set[hh_id_name][index]
