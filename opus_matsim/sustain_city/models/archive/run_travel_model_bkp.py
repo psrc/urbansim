@@ -50,7 +50,7 @@ class RunTravelModel(AbstractTravelModel):
         
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        self.setUp( config )
+        self.__setUp( config )
         
         # get travel model parameter from the opus dictionary
         travel_model_configuration = config['travel_model_configuration']      # contains matsim4urbansim and matsim_config parameter
@@ -106,7 +106,7 @@ class RunTravelModel(AbstractTravelModel):
         
         logger.end_block()
         
-    def setUp(self, config):
+    def __setUp(self, config):
         """ set matism config path
         """
         self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")

@@ -7,6 +7,7 @@ from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
 from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_matsim.models.org.constants import matsim4opus
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -27,18 +28,20 @@ class RunTravelModel(AbstractTravelModel):
 
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        #try: # tnicolai :for debugging
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
+        try: # tnicolai :for debugging
+            import pydevd
+            pydevd.settrace()
+        except: pass
         
-        self.setUp( config )
+        config_obj = MATSimConfigObject(config, year)
+        self.matsim_config_full = config_obj.marschall()
         
-        config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
-        config_obj.marschall()
-        
+        # check for test parameter
+        tmc = config['travel_model_configuration']
+        if tmc['matsim4urbansim'].get('test_parameter') != None:
+            self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
         # change to directory opus_matsim
-        os.chdir(os.path.join(os.environ['OPUS_HOME'], 'opus_matsim'))
+        os.chdir(os.path.join(os.environ['OPUS_HOME'], matsim4opus))
         
         # reserve memory for java
         xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
@@ -71,20 +74,6 @@ class RunTravelModel(AbstractTravelModel):
             raise StandardError(error_msg)        
         
         logger.end_block()
-        
-    def setUp(self, config):
-        """ create MATSim config data
-        """
-        self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
-        if not os.path.exists(self.matsim_config_destination):
-            try: os.mkdir(self.matsim_config_destination)
-            except: pass
-        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
-        self.matsim_config_full = os.path.join( self.matsim_config_destination, self.matsim_config_name  )
-        
-        tmc = config['travel_model_configuration']
-        if tmc['matsim4urbansim'].get('test_parameter') != None:
-            self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
 
 # called from opus via main!
 if __name__ == "__main__":

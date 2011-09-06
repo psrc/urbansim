@@ -10,6 +10,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 import os
+from opus_matsim.models.org.constants import matsim4opus, temp
 
 
 
@@ -25,8 +26,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
 
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
         
-        # tnicolai :for debugging
-        #try:
+        #try: # tnicolai :for debugging
         #    import pydevd
         #    pydevd.settrace()
         #except: pass
@@ -40,12 +40,12 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
-        output_root = os.path.join( os.environ['OPUS_HOME'],"opus_matsim" ) 
+        output_root = os.path.join( os.environ['OPUS_HOME'], matsim4opus ) 
         if not os.path.exists( output_root ):
             try: os.mkdir( output_root )
             except: pass
         
-        self.output_directory = os.path.join( output_root, "tmp" )
+        self.output_directory = os.path.join( output_root, temp )
         if not os.path.exists( self.output_directory ):
             try: os.mkdir(self.output_directory)
             except: pass
@@ -103,6 +103,9 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                     'parcel.x_coord_sp',
                     'parcel.y_coord_sp',
                     'parcel.zone_id',
+                    # tnicolai: Gewicht fuer parcels, um zone centroid in MATSim genauer zu bestimmen
+                    # Zone mit 1Parcel Wald und 10Parcels Wohnungen -> Schwerpunkt bei den Wohnungen
+                    # Zone mit 1Parcel Wohnblock und 20Parcels Einfamilienhauesern -> Schwerpunkt bei Wohnblock 
                     ],
                 dataset_name = 'parcel',
                 storage_location = self.output_directory,

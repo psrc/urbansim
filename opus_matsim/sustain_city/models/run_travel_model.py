@@ -26,7 +26,7 @@ class RunTravelModel(AbstractTravelModel):
 
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        self.setUp( config )
+        self.__setUp( config )
         
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
         config_obj.marschall()
@@ -50,7 +50,7 @@ class RunTravelModel(AbstractTravelModel):
         
         logger.end_block()
         
-    def setUp(self, config):
+    def __setUp(self, config):
         """ create MATSim config data
         """
         self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")

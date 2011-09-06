@@ -18,7 +18,7 @@ class RunMATSimPsrcTest(RunTravelModel):
 
         # execute the MATSim config generation
         self.start_time = time.time()
-        self.setUp( config )    # setup location
+        self.__setUp( config )    # setup location
         
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
         config_obj.marschall()  # generation process

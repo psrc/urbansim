@@ -15,7 +15,7 @@ class MATSimConfigObject(object):
         
         # store main parameters
         self.config_dictionary = config
-        self.destination_location = destination
+        self.config_destination_location = destination
         
         # get sub dictionaries from travel model configuration
         travel_model_configuration, matsim4urbansim_part, common_matsim_part = self.__get_travel_model_sub_dictionaries()
@@ -48,7 +48,7 @@ class MATSimConfigObject(object):
         """
 
         # create/maschal matsim config file
-        logger.log_status("Creating Matsim config file in " + self.destination_location)
+        logger.log_status("Creating Matsim config file in " + self.config_destination_location)
         
         # xml root element
         root = pyxb_matsim_config_parser.matsim_configType.Factory()
@@ -98,9 +98,9 @@ class MATSimConfigObject(object):
         
         logger.log_status( 'Generated MATSim configuration file:' )
         logger.log_status( prettydom )
-        logger.log_status( 'Writing (marschalling) this matsim config xml to {0}'.format( self.destination_location ) )
+        logger.log_status( 'Writing (marschalling) this matsim config xml to {0}'.format( self.config_destination_location ) )
         
-        file_object = open(self.destination_location, 'w')
+        file_object = open(self.config_destination_location, 'w')
         #dom.writexml(file_object, encoding="UTF-8") # no pretty format :-(
         file_object.write(prettydom) # maybe the better way to save matsim config xml ?
         file_object.flush()

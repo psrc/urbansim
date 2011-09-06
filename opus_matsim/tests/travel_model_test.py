@@ -17,10 +17,10 @@ import os, tempfile
 
 class TravelModelTest(opus_unittest.OpusTestCase):
     
-    def setUp(self):
-        print "entering setUp"
+    def __setUp(self):
+        print "entering __setUp"
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        print "leaving setUp"
+        print "leaving __setUp"
 
     def tearDown(self):
         print "entering tearDown"

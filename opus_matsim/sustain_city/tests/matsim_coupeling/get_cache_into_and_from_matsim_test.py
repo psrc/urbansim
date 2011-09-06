@@ -20,8 +20,8 @@ class IOCacheMATSimTestRun(object): #opus_unittest.OpusTestCase):
     ''' Tests the UrbanSim export and import functionality for the travel model.
     '''
 
-    def setUp(self):
-        print "entering setUp"
+    def __setUp(self):
+        print "entering __setUp"
         
         logger.log_status('Testing UrbanSim export and import functionality for MATSim...')
 
@@ -48,7 +48,7 @@ class IOCacheMATSimTestRun(object): #opus_unittest.OpusTestCase):
         # set destination for MATSim config file
         self.matsim_config_full = os.path.join( self.destination, "test_matsim_config.xml" )
         
-        print "leaving setUp"
+        print "leaving __setUp"
 
 
     def tearDown(self):

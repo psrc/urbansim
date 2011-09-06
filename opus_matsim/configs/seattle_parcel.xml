@@ -10,22 +10,17 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">True</selectable>
+        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">False</selectable>
         <selectable name="opus_matsim.models.run_travel_model" type="selectable">True</selectable>
-        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">True</selectable>
+        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">False</selectable>
       </models>
       <matsim4urbansim type="dictionary">
         <sampling_rate type="float">0.01</sampling_rate>
-        <temp_directory type="string">/opus_matsim/tmp/</temp_directory>
       </matsim4urbansim>
       <matsim_config type="dictionary">
         <common type="dictionary">
-          <matsim_network_file type="file">/opus_matsim/data/psrc/network/psrc.xml.gz</matsim_network_file>
-          <input_plans_file type="file">/opus_matsim/data/psrc/plans/seattle-1pct_plans.xml.gz</input_plans_file>
-          <first_iteration type="integer">0</first_iteration>
+          <matsim_network_file type="file">matsim4opus/data/psrc/network/psrc.xml.gz</matsim_network_file>
           <last_iteration type="integer">1</last_iteration>
-          <activityType_0 type="string">home</activityType_0>
-          <activityType_1 type="string">work</activityType_1>
         </common>
       </matsim_config>
       <years_to_run key_name="year" type="category_with_special_keys">

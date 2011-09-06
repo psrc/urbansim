@@ -14,15 +14,15 @@ class PyXBBindingClassGeneration(opus_unittest.OpusTestCase):
         The PyXB binding class is needed to create the MATSim configuration via a xsd.
     '''
     
-    def setUp(self):
-        print "entering setUp"
+    def __setUp(self):
+        print "entering __setUp"
         logger.log_status('Testing automatic generation of the PyXB binding class.')
         logger.log_status('The PyXB binding class is needed to create the MATSim configuration via a xsd.')
         # point to test xsd
         self.xsd_file = os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'pyxb_data', 'test_xsd.xsd')
         # destination folder for generated pyxb binding class
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        print "leaving setUp"
+        print "leaving __setUp"
 
     def tearDown(self):
         print "entering tearDown"

@@ -6,43 +6,70 @@ import os
 from opus_core.logger import logger
 from lxml import etree
 from opus_matsim.models.pyxb_xml_parser import pyxb_matsim_config_parser
+from opus_matsim.models.org.constants import matsim4opus, matsim_config,\
+    matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration
 
 class MATSimConfigObject(object):
     
-    def __init__(self, config, year, destination):
-        """Constructor
+    def __init__(self, config, year):
+        """ Constructor
         """
-        
-        # store main parameters
+
         self.config_dictionary = config
-        self.destination_location = destination
+        self.sub_config_exists = False
+        self.config_destination_location = None
         
         # get sub dictionaries from travel model configuration
         travel_model_configuration, matsim4urbansim_part, common_matsim_part = self.__get_travel_model_sub_dictionaries()
         
         # network parameter
-        if common_matsim_part['matsim_network_file'] == None:
+        try:    # checks if sub config for matsim network exists
+            self.sub_config_exists = (common_matsim_part['matsim_network_file'] != None)
+        except: pass
+        if self.sub_config_exists:
+            self.check_abolute_path( common_matsim_part['matsim_network_file'] )
+            self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'] )
+        else:
             raise StandardError('No network given in the  "travel_model_configuration" of your current configuration file. A network is required in order to run MATSim. ')
-        self.network_file = os.path.join( os.environ['OPUS_HOME'], self.trim( common_matsim_part['matsim_network_file']) )
+        self.sub_config_exists = False
+        
         # input plans file parameter
         self.input_plans_file = ""
-        try:           
-            if common_matsim_part['input_plans_file'] != None:
-                self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], self.trim( common_matsim_part['input_plans_file']) )
-                logger.log_note('Input plans file found (MATSim warm start enabled).')
-        except: logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
+        try:    # checks if sub config for matsim input plans file exists
+            self.sub_config_exists = (common_matsim_part['input_plans_file'] != None)
+        except: pass
+        if self.sub_config_exists:
+            self.check_abolute_path( common_matsim_part['input_plans_file'] )     
+            self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['input_plans_file'] )
+            logger.log_note('Input plans file found (MATSim warm start enabled).')
+        else: 
+            logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
+        
         # controler parameter
-        self.first_iteration = common_matsim_part['first_iteration']
+        self.first_iteration = first_iteration
         self.last_iteration = common_matsim_part['last_iteration']
+        
         # planCalcScoreType
-        self.activityType_0 = common_matsim_part['activityType_0']
-        self.activityType_1 = common_matsim_part['activityType_1']
+        self.activityType_0 = activity_type_0
+        self.activityType_1 = activity_type_1
+        
         # urbansim parameter
         self.year = year
         self.samplingRate = matsim4urbansim_part['sampling_rate']
-        self.temp_directory = matsim4urbansim_part['temp_directory']
-        self.isTestRun = False
+
         self.opus_home = os.environ['OPUS_HOME']
+        self.opus_data_path = os.environ['OPUS_DATA_PATH']
+        
+        self.matsim4opus_path = os.path.join( self.opus_home, matsim4opus )
+        self.ceckAndCreateFolder(self.matsim4opus_path)
+        self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config)
+        self.ceckAndCreateFolder(self.matsim_config_path)
+        self.matsim_output_path = os.path.join( self.matsim4opus_path, matsim_output)
+        self.ceckAndCreateFolder(self.matsim_output_path)
+        self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp)
+        self.ceckAndCreateFolder(self.matsim_temp_path)
+
+        self.isTestRun = False
         
         self.firstRun = "FALSE"
         try: # determine for MATSim if this is the fist run
@@ -50,22 +77,31 @@ class MATSimConfigObject(object):
                 self.firstRun = "TRUE"
         except: pass
         
-    def trim(self, path):
-        """ removes the first backslash if there is one
+        self.config_destination_location = self.__set_config_destination( self.config_dictionary )
+        
+    def __set_config_destination(self, config):
+        """ set destination for MATSim config
         """
+        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
+        return os.path.join( self.matsim_config_path, self.matsim_config_name  )
         
+    def check_abolute_path(self, path):
+        """ raises an exception if an absolute path is given
+        """
         if(path.startswith('/')):
-            return path[1:]
-        
-        return path
-        
+            raise StandardError('Absolute path names are not supported by now! Check: ' + path)
+    
+    def ceckAndCreateFolder(self, path):
+        if not os.path.exists(path):
+            try: os.mkdir(path)
+            except: pass
     
     def marschall(self):
         """ create a matsim config with the parameter from the travel model configuration with PyxB
         """
 
         # create/maschal matsim config file
-        logger.log_status("Creating Matsim config file in " + self.destination_location)
+        logger.log_status("Creating Matsim config file in " + self.config_destination_location)
         
         # xml root element
         root = pyxb_matsim_config_parser.matsim_configType.Factory()
@@ -94,9 +130,13 @@ class MATSimConfigObject(object):
         
         urbansim_elem.samplingRate = self.samplingRate
         urbansim_elem.year = self.year
-        urbansim_elem.tempDirectory = self.temp_directory
+        urbansim_elem.opusHome = self.opus_home
+        urbansim_elem.opusDataPath = self.opus_data_path
+        urbansim_elem.matsim4opus = self.matsim4opus_path
+        urbansim_elem.matsim4opusConfig = self.matsim_config_path
+        urbansim_elem.matsim4opusOutput = self.matsim_output_path
+        urbansim_elem.matsim4opusTemp = self.matsim_temp_path
         urbansim_elem.isTestRun = self.isTestRun
-        urbansim_elem.opusHOME = self.opus_home
         
         # assemble single elements with dedicated section elements
         config_elem.network = network_elem
@@ -119,9 +159,9 @@ class MATSimConfigObject(object):
         
         logger.log_status( 'Generated MATSim configuration file:' )
         logger.log_status( prettydom )
-        logger.log_status( 'Writing (marschalling) this matsim config xml to {0}'.format( self.destination_location ) )
+        logger.log_status( 'Writing (marschalling) this matsim config xml to {0}'.format( self.config_destination_location ) )
         
-        file_object = open(self.destination_location, 'w')
+        file_object = open(self.config_destination_location, 'w')
         #dom.writexml(file_object, encoding="UTF-8") # no pretty format :-(
         file_object.write(prettydom) # maybe the better way to save matsim config xml ?
         file_object.flush()
@@ -129,6 +169,8 @@ class MATSimConfigObject(object):
             file_object.close()
             
         logger.log_status( "Finished Marschalling" )
+        
+        return self.config_destination_location
         
         
     def __get_travel_model_sub_dictionaries(self):
