@@ -28,7 +28,7 @@ class FertilityModel(AgentRelocationModel):
         #new_born['person_no'] = person_set.compute_variables("person.disaggregate(household.persons) + 1")[index]
         if 'person_no' in person_set.get_known_attribute_names():
             ## this requires person_no to exist, which may not always be the case
-            new_born['person_no'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.person_no, function=max)) + 1")[index]
+            new_born['person_no'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.person_no, function=maximum)) + 1")[index]
         new_born['race'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.head_of_hh*person.race))")[index]
         new_born['age'] = zeros(index.size, dtype="int32")
         new_born['gender'] = randint(1, 3, size=index.size)  ##TODO: better way to assign sex?
