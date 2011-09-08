@@ -62,11 +62,11 @@ class MATSimConfigObject(object):
         
         self.matsim4opus_path = os.path.join( self.opus_home, matsim4opus )
         self.ceckAndCreateFolder(self.matsim4opus_path)
-        self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config)
+        self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config )
         self.ceckAndCreateFolder(self.matsim_config_path)
-        self.matsim_output_path = os.path.join( self.matsim4opus_path, matsim_output)
+        self.matsim_output_path = os.path.join( self.matsim4opus_path, matsim_output )
         self.ceckAndCreateFolder(self.matsim_output_path)
-        self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp)
+        self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp )
         self.ceckAndCreateFolder(self.matsim_temp_path)
 
         self.isTestRun = False

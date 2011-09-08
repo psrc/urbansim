@@ -10,7 +10,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 import os
-from opus_matsim.models.org.constants import matsim4opus, temp
+from opus_matsim.models.org.constants import matsim4opus, matsim_temp
 
 
 
@@ -45,7 +45,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
             try: os.mkdir( output_root )
             except: pass
         
-        self.output_directory = os.path.join( output_root, temp )
+        self.output_directory = os.path.join( output_root, matsim_temp )
         if not os.path.exists( self.output_directory ):
             try: os.mkdir(self.output_directory)
             except: pass
