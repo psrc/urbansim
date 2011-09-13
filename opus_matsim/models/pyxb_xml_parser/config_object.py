@@ -89,7 +89,7 @@ class MATSimConfigObject(object):
         """ raises an exception if an absolute path is given
         """
         if(path.startswith('/')):
-            raise StandardError('Absolute path names are not supported by now! Check: ' + path)
+            raise StandardError('Absolute path names are not supported by now! Check: %s' %path)
     
     def ceckAndCreateFolder(self, path):
         if not os.path.exists(path):
