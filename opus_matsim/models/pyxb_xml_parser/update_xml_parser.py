@@ -8,10 +8,10 @@ import datetime
 import shutil
 import tempfile
 import sys
-import opus_matsim.lib
 from opus_core.logger import logger
 import opus_matsim.models.pyxb_xml_parser as pyxb_path
 from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
+import opus_matsim.lib
 
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
