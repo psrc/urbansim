@@ -43,11 +43,10 @@ class StartRunOptionGroup(object):
         
     run_manager.setup_new_run(cache_directory = config['cache_directory'],configuration = config)
     
-    #try: #tnicolai
+    #try: #tnicolai: for debugging
     #    import pydevd
     #    pydevd.settrace()
     #except: pass
-    
 
     run_manager.run_run(config, run_as_multiprocess = True )
     

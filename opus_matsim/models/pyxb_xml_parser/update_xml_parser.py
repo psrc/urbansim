@@ -41,7 +41,6 @@ class UpdateBindingClass(object):
         self.output_pyxb_package_file = self.output_pyxb_package_name + '.py'
         
         # path to the PyXB executables
-        # pyxb_gen = os.path.join( os.getenv('OPUS_HOME'), matsim4opus, 'bin', 'pyxbgen')
         pyxb_gen = os.path.join( opus_matsim.lib.__path__[0] , 'pyxbgen')
         # checking if PyXB is available
         if not os.path.exists( pyxb_gen ):
