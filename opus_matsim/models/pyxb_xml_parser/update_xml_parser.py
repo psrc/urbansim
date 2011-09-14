@@ -8,10 +8,10 @@ import datetime
 import shutil
 import tempfile
 import sys
+import opus_matsim.lib
 from opus_core.logger import logger
 import opus_matsim.models.pyxb_xml_parser as pyxb_path
 from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
-from opus_matsim.models.org.constants import matsim4opus
 
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
@@ -41,7 +41,8 @@ class UpdateBindingClass(object):
         self.output_pyxb_package_file = self.output_pyxb_package_name + '.py'
         
         # path to the PyXB executables
-        pyxb_gen = os.path.join( os.getenv('OPUS_HOME'), matsim4opus, 'bin', 'pyxbgen')
+        # pyxb_gen = os.path.join( os.getenv('OPUS_HOME'), matsim4opus, 'bin', 'pyxbgen')
+        pyxb_gen = os.path.join( opus_matsim.lib.__path__[0] , 'pyxbgen')
         # checking if PyXB is available
         if not os.path.exists( pyxb_gen ):
             raise StandardError('PyXB seems not to be installed on this machine.\nPlease download and install PyXB first. It is available on http://sourceforge.net/projects/pyxb/ (Accessed July 2010).')
