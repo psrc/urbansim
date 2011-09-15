@@ -12,6 +12,8 @@ from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrow
 from opus_gui.results_manager.controllers.xml_configuration.xml_controller_results import XmlController_Results
 from opus_gui.results_manager.results_manager_functions import get_run_manager, sync_available_runs
 from opus_core.misc import get_host_name
+from opus_core.logger import logger
+
 
 class ResultsManager(AbstractManager):
 
@@ -54,13 +56,11 @@ class ResultsManager(AbstractManager):
                          % '\n'.join(removed_runs))
         if added_msg or removed_msg:
             ## The idea is to leave the run information to services db & cache, and
-            ## we don't need to save the newly added runs, nce we set the temporaray
+            ## we don't need to save the newly added runs, once we set the temporary
             # self.project.dirty = True
             text = 'The list of simulation runs has been automatically updated.'
-            detailed_text = '%s\n\n%s' % (added_msg or '', removed_msg or '')
-            MessageBox.information(mainwindow = self.base_widget,
-                                   text = text,
-                                   detailed_text = detailed_text)
+            detailed_text = '%s\n%s' % (added_msg or '', removed_msg or '')
+            logger.log_status(text+'\n'+detailed_text)
             
     def _sync_base_year_data(self, run_manager=None):
         """
