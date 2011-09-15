@@ -63,8 +63,9 @@ class building_form(Variable):
             res = cons - x
             return res
 
-        #def fprime_ieqcons(x, *args):
-        #    return array([[1.0], [1.0]])
+        def fprime_ieqcons(x, *args):
+            return array([[-1.0, 0], 
+                          [0, -1.0]])
 
         ##Sequential Least-square fitting with constraints (fmin_slsqp)
         x0 = array([pp['parcel_area'], pp['parcel_area']])
@@ -73,8 +74,7 @@ class building_form(Variable):
                        args=(-1.0,),
                        f_ieqcons=ieqcons, 
                        #fprime_ieqcons=fprime_ieqcons,
-                       #eqcons=[lambda d: d[0]-d[1]],
-                       #ieqcons=[lambda x,args: x[0]-max_footprint, ], 
+                       #ieqcons=[lambda x, args: max_footprint-x[0] ], 
                        #ieqcons=[lambda x, args: max_footprint-x[0],
                        #         lambda x, args: max_buildable_area-x[1]
                        #        ],
