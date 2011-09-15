@@ -7,6 +7,7 @@ from opus_gui.results_manager.views.ui_get_run_info import Ui_dlgGetRunInfo
 from opus_gui.results_manager.results_manager_functions import get_years_for_simulation_run
 from opus_gui.main.controllers.instance_handlers import get_manager_instance
 from opus_gui.results_manager.results_manager_functions import get_years_range_for_simulation_run
+import PyQt4.QtCore
 
 class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
     def __init__(self, run_node, parent_widget = None):
@@ -39,16 +40,9 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
         self.lblCache_directory.setText(cache_directory)
         self.lblRunId.setText(run_id)
         
-    def on_tb_select_cachedir_released(self):
-        pass
-        
-
-    def on_buttonBox_accepted(self):
-        cur_cache_dir = str(self.lblCache_directory.text()).strip()
-        if self.original_cache_dir != cur_cache_dir:
-            # user has changed the cache directory
-            self.changed_chache_dir = cur_cache_dir
-        self.accept()
+    @PyQt4.QtCore.pyqtSlot()
+    def on_tb_select_cachedir_clicked(self):
+        PyQt4.QtGui.QDesktopServices.openUrl(PyQt4.QtCore.QUrl('file:///%s' % self.lblCache_directory.text()))
 
     def on_buttonBox_rejected(self):
         self.reject()

@@ -127,7 +127,7 @@ class Ui_dlgGetRunInfo(object):
         self.horizontalLayout_7.addWidget(self.frame)
         self.verticalLayout.addLayout(self.horizontalLayout_7)
         self.buttonBox = QtGui.QDialogButtonBox(dlgGetRunInfo)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Close)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
