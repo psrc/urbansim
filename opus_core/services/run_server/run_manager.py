@@ -502,7 +502,8 @@ class RunManager(AbstractService):
 ############## RUN REMOVAL ####################
 
     def clean_runs(self):
-        for run_id, run_name, run_description, processor_name, resources in self.get_run_info(resources = True):
+        # TODO: refactor this into a call of self.get_runs() and remove get_run_info
+        for run_id, _, _, processor_name, resources in self.get_run_info(resources = True):
             if processor_name == get_host_name() and not os.path.exists(resources['cache_directory']):
                 self.delete_everything_for_this_run(run_id, cache_directory = resources['cache_directory'])
 
