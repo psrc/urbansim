@@ -64,7 +64,7 @@ def delete_simulation_run(project, run_name):
         get_manager_instance('results_manager').delete_run(run_node)
 
 def add_simulation_run(project, cache_directory, scenario_name, run_name,
-                       start_year, end_year, run_id):
+                       start_year, end_year, run_id, status):
     '''
     Creates a simulation run node and adds it to the project
     @param project (OpusProject): currently loaded project
@@ -74,6 +74,7 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     @param start_year (int): start year of run
     @param end_year (int): end year of run
     @param run_id (int): ID number for the run
+    @param success (String): True, False or running
     
     This function isn't able to update run_nodes existing in <simulation_runs>
     '''
@@ -95,11 +96,10 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     SubElement(run_node, 'cache_directory', str_atr).text = cache_directory
     SubElement(run_node, 'start_year', int_atr).text = str(start_year)
     SubElement(run_node, 'end_year', int_atr).text = str(end_year)
+    SubElement(run_node, 'status', int_atr).text = str(status)
 
     # Grab the results manager instance for the GUI and insert the new node
     get_manager_instance('results_manager').add_run(run_node)
-    project.dirty = True
-    update_mainwindow_savestate()
 
 def sync_available_runs(project, scenario_name = '?'):
     '''
@@ -124,20 +124,22 @@ def sync_available_runs(project, scenario_name = '?'):
 #        existing_cache_directories.add(cache_directory)
 
     run_manager = get_run_manager()
-    runs = run_manager.get_run_info(resources = True, status = 'done')
     runs = run_manager.get_runs(return_columns='*',
-                                return_rs=True, status='done')
+                                return_rs=True)
 
     # add all runs with unique directories are list on the project
     added_runs = []
 
     def add_runs():
+        was_dirty = project.dirty
+        
         for run in runs:
             run_id = run['run_id']
             run_name = run['run_name']
             scenario_name = run['scenario_name'] if 'scenario_name' in run else 'unknown'
             if run_name == 'base_year_data':
                 scenario_name = run_name
+            status = run['status']
             cache_directory = os.path.normpath(run['cache_directory'])
             run_resources = run_manager.get_resources_for_run_id_from_history(run_id)
             available_years = run_manager.get_years_run(cache_directory)
@@ -158,10 +160,12 @@ def sync_available_runs(project, scenario_name = '?'):
                                run_name = run_name,
                                start_year = start_year,
                                end_year = end_year,
-                               run_id = run_id)
-
+                               run_id = run_id,
+                               status = status)
             existing_cache_directories.add(cache_directory)
             added_runs.append(cache_directory)
+        
+        project.dirty = was_dirty
 
     try:
         add_runs()

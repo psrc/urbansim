@@ -13,7 +13,7 @@ from opus_gui.results_manager.results_manager_functions import get_batch_configu
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
-from opus_gui.results_manager.results_manager_functions import get_run_manager, add_simulation_run, delete_simulation_run
+from opus_gui.results_manager.results_manager_functions import get_run_manager, add_simulation_run, delete_simulation_run, sync_available_runs
 
 class RunModelThread(QThread):
     def __init__(self, mainwindow, modelguielement, batch_name = None, run_name = None):
@@ -67,7 +67,7 @@ class RunModelThread(QThread):
         print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
 
-    def startedCallback(self, run_id, run_name, scenario_name, run_resources):
+    def startedCallback(self, run_id, run_name, scenario_name, run_resources, status):
         cache_directory = os.path.normpath(run_resources['cache_directory'])
 
         start_year, end_year = run_resources['years']
@@ -79,7 +79,8 @@ class RunModelThread(QThread):
                            run_name = run_name,
                            start_year = baseyear,
                            end_year = end_year,
-                           run_id = run_id)
+                           run_id = run_id,
+                           status = status)
         
     def finishedCallback(self, success, run_name):
         if success:
@@ -92,9 +93,8 @@ class RunModelThread(QThread):
                     self.runIndicatorBatch()
         else:
             print "Error returned from Model"
-            delete_simulation_run(self.project,
-                                  run_name = run_name)
-               
+
+        sync_available_runs(self.project)
         self.modelguielement.model.run_manager.close()
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
@@ -262,7 +262,8 @@ class OpusModel(object):
             self.startedCallback(run_id = run_id, 
                                  run_name = run_name, 
                                  scenario_name = self.scenariotorun, 
-                                 run_resources = config)
+                                 run_resources = config,
+                                 status = 'running')
             run_manager.run_run(config, run_name=run_name, 
                                 scenario_name=self.scenariotorun)
             self.running = False
