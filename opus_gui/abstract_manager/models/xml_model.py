@@ -507,6 +507,7 @@ class XmlModel(QAbstractItemModel):
         if view:
             this_item_expanded = view.isExpanded(self.index(row, 0, self.parent(index)))
             above_item_expanded = view.isExpanded(self.index(row-1, 0, self.parent(index)))
+        parent_item.node.insert(row - 1, parent_item.child_items[row].node) #as the node already was in the tree, it just moves it to the new position
         this_item = parent_item.child_items.pop(row)
         above_item = parent_item.child_items.pop(row - 1)
         parent_item.child_items.insert(row - 1, this_item)
@@ -534,6 +535,7 @@ class XmlModel(QAbstractItemModel):
         if view:
             this_item_expanded = view.isExpanded(self.index(row, 0, self.parent(index)))
             below_item_expanded = view.isExpanded(self.index(row+1, 0, self.parent(index)))
+        parent_item.node.insert(row + 1, parent_item.child_items[row].node) #as the node already was in the tree, it just moves it to the new position
         this_item = parent_item.child_items.pop(row)
         below_item = parent_item.child_items.pop(row)
         parent_item.child_items.insert(row, below_item)
