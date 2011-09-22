@@ -103,7 +103,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                 if os.path.exists(file):
                     logger.log_status('Removing %s ...'%file)
                     os.remove(file)
-        logger.log_status('Finished cearing.')
+        logger.log_status('Finished clearing.')
         
     
     def get_workplace_accessibility_into_cache(self, year):
