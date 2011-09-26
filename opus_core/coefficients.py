@@ -214,11 +214,12 @@ class Coefficients(object):
 
     def compare_and_try_raise_coeflengthexception(self, value, compvalue, name):
         if value != compvalue:
-            try:
-                raise CoefLengthException(name)
-            except CoefLengthException, msg:
-                logger.log_status(msg)
-                sys.exit(1)
+            #try:
+            import pdb; pdb.set_trace()
+            raise CoefLengthException(name)
+            #except CoefLengthException, msg:
+            #    logger.log_status(msg)
+            #    sys.exit(1)
 
 
     def check_consistency(self):
@@ -526,7 +527,10 @@ class Coefficients(object):
 
 class CoefLengthException(Exception):
     def __init__(self, name):
-        self.args = "Something is wrong with the size of the coefficient object " + name + "!"
+        self.value = "Something is wrong with the size of the coefficient object " + name + "!"
+
+    def __str__(self):
+        return repr(self.value)
 
 #Functions
 def create_coefficient_from_specification(specification, constant=1.0):

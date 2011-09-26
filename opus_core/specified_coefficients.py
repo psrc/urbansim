@@ -251,11 +251,11 @@ class SpecifiedCoefficients(object):
 
     def compare_and_try_raise_coeflengthexception(self, value, compvalue, name):
         if value != compvalue:
-            try:
-                raise CoefLengthException(name)
-            except CoefLengthException, msg:
-                logger.log_status(msg)
-                sys.exit(1)
+            #try:
+            raise CoefLengthException(name)
+            #except CoefLengthException, msg:
+            #    logger.log_status(msg)
+            #    sys.exit(1)
 
     def check_3d_array(self, value, name):
         self.compare_and_try_raise_coeflengthexception(value.shape[0],self.neqs,name)
@@ -655,4 +655,6 @@ def update_constants(const, neqs):
 
 class CoefLengthException(Exception):
     def __init__(self, name):
-        self.args = "Something is wrong with the size of the specified coefficient object " + name + "!"
+        self.value = "Something is wrong with the size of the specified coefficient object " + name + "!"
+    def __str__(self):
+        return repr(self.value)

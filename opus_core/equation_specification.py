@@ -235,11 +235,11 @@ class EquationSpecification(object):
 
     def compare_and_try_raise_speclengthexception(self, value, compvalue, name):
         if value != compvalue:
-            try:
-                raise SpecLengthException(name)
-            except SpecLengthException, msg:
-                logger.log_status(msg)
-                sys.exit(1)
+            #try:
+            raise SpecLengthException(name)
+            #except SpecLengthException, msg:
+            #    logger.log_status(msg)
+            #    sys.exit(1)
 
 
     def check_consistency(self):
@@ -404,7 +404,10 @@ class EquationSpecification(object):
 #Functions
 class SpecLengthException(Exception):
     def __init__(self, name):
-        self.args = "Something is wrong with the size of the specification object " + name + "!"
+        self.value = "Something is wrong with the size of the specification object: %s." % name
+    
+    def __str__(self):
+        return repr(self.value)
         
 def get_specification_attributes_from_dictionary(specification_dict):
     """ Creates a specification object from a dictionary specification_dict. Keys of the dictionary are submodels. If there
