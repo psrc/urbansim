@@ -391,7 +391,10 @@ class ChoiceModel(ChunkModel):
         self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])
         if hasattr(self, "availability") and self.availability is not None:
             availability = self.model_interaction.interaction_dataset.compute_variables(self.availability)
-            self.estimate_config['availability'] = self.model_interaction.interaction_dataset['availability']
+            short_name = VariableName(self.availability).get_alias()
+            if short_name != 'availability':                
+                self.model_interaction.interaction_dataset.compute_variables('availability=%s' % short_name)
+            #self.estimate_config['availability'] = self.model_interaction.interaction_dataset['availability']
         #run estimation
         result = self.estimate_step()
         return (self.coefficients, result)
@@ -452,6 +455,9 @@ class ChoiceModel(ChunkModel):
                 self.estimate_config.merge({"fixed_values": self.model_interaction.get_coefficient_fixed_values(submodel)})
                 self.estimate_config.merge({"submodel": submodel})
                 self.estimate_config.merge({"_model_":self})
+                ids = self.model_interaction.interaction_dataset
+                if "availability" in ids.get_known_attribute_names():
+                    self.estimate_config['availability'] = ids['availability'][self.observations_mapping[submodel],:]
                 result[submodel] = self.estimate_submodel(self.get_all_data(submodel), submodel)
                 if "estimators" in result[submodel].keys():
                     coef[submodel].set_beta_alt(result[submodel]["estimators"])
