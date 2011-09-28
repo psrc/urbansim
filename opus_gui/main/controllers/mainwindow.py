@@ -107,6 +107,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actSaveProject.setShortcut('Ctrl+S')
         self.actSaveProjectAs.setShortcut('Ctrl+Shift+S')
         self.actCloseProject.setShortcut('Ctrl+W')
+        self.actExit.setShortcut('Ctrl+Q')
         self.actVariableLibrary.setShortcut('Ctrl+V')
         self.actLaunchResultBrowser.setShortcut('Ctrl+R')
         self.actDatabaseSettings.setShortcut('Ctrl+D')
