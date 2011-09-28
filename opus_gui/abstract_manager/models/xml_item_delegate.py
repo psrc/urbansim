@@ -115,5 +115,6 @@ class XmlItemDelegate(QItemDelegate):
         ''' PyQt API Method -- See the PyQt documentation for a description '''
         if type(editor) == QComboBox:
             editor.setGeometry(option.rect)
+            editor.showPopup()
         else:
             QItemDelegate.updateEditorGeometry(self, editor, option, index)
