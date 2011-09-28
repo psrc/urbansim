@@ -446,6 +446,7 @@ class XmlModel(QAbstractItemModel):
 
         if self.project is None: # no inheritance simple insert into tree
             parent_node.insert(row, node)
+            inserted_node = node
         else:
             # when dealing with a project and inheritance we have two cases --
             # either insertRow is inserting a node that already exists in the project
