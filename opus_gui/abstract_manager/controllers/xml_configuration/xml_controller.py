@@ -133,6 +133,11 @@ class XmlController(object):
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
 
+
+    def set_project_dirty(self):
+        self.project.dirty = True
+
+
     def remove_selected_node(self):
         ''' Removes the selected item from the model. '''
         if not self.has_selected_item():
@@ -140,7 +145,7 @@ class XmlController(object):
         index = self.selected_index()
         self.model.removeRow(index.row(), self.model.parent(index))
         self.view.clearSelection()
-        self.project.dirty = True
+        self.set_project_dirty()
 
     # CK: this is a helper function for the clone_node method, but maybe its general enough to be
     # promoted to a higher abstraction layer?
@@ -185,7 +190,7 @@ class XmlController(object):
             # Select the new clone if it was inserted
             if index_of_clone is not None:
                 self.view.setCurrentIndex(index_of_clone)
-            self.project.dirty = True
+            self.set_project_dirty()
 
     def rename_selected_node(self):
         ''' Opens a dialog box for changing the node name. '''
@@ -197,7 +202,7 @@ class XmlController(object):
         dialog = RenameDialog(node.get('name'), taken_names, self.view)
         if dialog.exec_() == dialog.Accepted:
             node.set('name', dialog.accepted_name)
-            self.project.dirty = True
+            self.set_project_dirty()
 
     def make_selected_editable(self):
         '''
