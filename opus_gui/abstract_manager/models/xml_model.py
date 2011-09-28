@@ -74,6 +74,7 @@ class XmlModel(QAbstractItemModel):
 
     def rebuild_tree(self):
         ''' Rebuilds the tree from the underlying XML structure '''
+        self.emit(SIGNAL('layoutAboutToBeChanged()'))
         self._root_item.rebuild()
         self.emit(SIGNAL('layoutChanged()'))
 
