@@ -43,22 +43,20 @@ class XmlItemDelegate(QItemDelegate):
             # Combobox for multiple choices
             editor = default_editor
 
-# CK delete the following comment if the xml schema is complete and does'nt contain any 'choices'
-
-#            if node.get('choices') is not None:
-#                editor = QComboBox(parent_view)
-#                choices = [s.strip() for s in node.get('choices').split('|')]
-#                for item in choices:
-#                    editor.addItem(item)
-#                # Select the current choice
-#                choice = node.text.strip() if node.text else ''
-#                if choice in choices:
-#                    editor.setCurrentIndex(choices.index(choice))
 
             # Create and prepare an editor for the node
 
             # Select database connection
-            if node.get('type') == 'db_connection_hook':
+            if node.get('choices') is not None:
+                editor = QComboBox(parent_view)
+                choices = [s.strip() for s in node.get('choices').split('|')]
+                for item in choices:
+                    editor.addItem(item)
+                # Select the current choice
+                choice = node.text.strip() if node.text else ''
+                if choice in choices:
+                    editor.setCurrentIndex(choices.index(choice))
+            elif node.get('type') == 'db_connection_hook':
                 editor = QComboBox(parent_view)
                 # Get connection names from database_server_connections.xml
                 choices = get_db_connection_names()
