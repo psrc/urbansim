@@ -4,12 +4,9 @@
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
-class DatabaseConfigXMLController(XmlController):
+class XmlController_DatabaseConfig(XmlController):
     def __init__(self, manager):
-        XmlController.__init__(manager)
-
-    def process_custom_menu(self, position):
-        pass
+        XmlController.__init__(self, manager)
 
 # TODO: Adding / removing databases ?
 

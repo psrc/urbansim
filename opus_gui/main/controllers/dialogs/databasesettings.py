@@ -5,17 +5,17 @@
 import os
 from lxml.etree import ElementTree
 
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt4.QtGui import QDialog
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.abstract_manager.models.xml_model import XmlModel
-from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
-from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.util import common_dialogs
+from opus_gui.main.controllers.xml_configuration.database_config_xml_controller import XmlController_DatabaseConfig
 
 from opus_gui.main.views.ui_databasesettingsedit import Ui_DatabaseSettingsEditGui
 
 class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
+    project = None
+    
     def __init__(self, parent_widget):
         QDialog.__init__(self, parent_widget)
         self.setupUi(self)
@@ -23,22 +23,13 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         self._config_filename = os.path.join(settings_directory, 'database_server_configurations.xml')
         try:
-            root = ElementTree(file=self._config_filename).getroot()
-            view = XmlView(self)
-            model = XmlModel(root)
-            delegate = XmlItemDelegate(view)
-            view.setModel(model)
+            self.xml_root = ElementTree(file=self._config_filename).getroot()
+            self.base_widget = self.variableBox
+            self.xml_controller = XmlController_DatabaseConfig(self)
             # Turns out that Qt Garbage collects the model (and delegate) if we don't explicitly
             # bind it to a Python object in addition to using the PyQt .setModel() method.
-            view._model = model
-            view._delegate = delegate
-            view.setItemDelegate(delegate)
-            view.openDefaultItems()
 
-            self.gridlayout.addWidget(view)
-
-            self.tree_view = view
-            self.xml_root = root
+            self.tree_view = self.xml_controller.view
             return
 
         except IOError, ex:
