@@ -50,6 +50,11 @@ class DatabaseServerConfiguration(object):
     """A DatabaseServerConfiguration provides the connection information 
     for a sql database server."""
 
+    PROTOCOL_TAG = 'protocol'
+    HOST_NAME_TAG = 'host_name'
+    USER_NAME_TAG = 'user_name'
+    PASSWORD_TAG = 'password'
+    
     def __init__(self, 
                  protocol = None, 
                  host_name = None, 
@@ -73,10 +78,10 @@ class DatabaseServerConfiguration(object):
             database_configuration = ElementTree(file = database_server_configuration_file_path).getroot().find(db_node)
             if database_configuration is None:
                 raise Exception('Could not find an entry in %s for %s. Cannot load database.'%(database_server_configuration_file_path, db_node))
-            self.protocol = database_configuration.find('protocol').text
-            self.host_name = database_configuration.find('host_name').text
-            self.user_name = database_configuration.find('user_name').text
-            self.password = database_configuration.find('password').text
+            self.protocol = database_configuration.find(self.PROTOCOL_TAG).text
+            self.host_name = database_configuration.find(self.HOST_NAME_TAG).text
+            self.user_name = database_configuration.find(self.USER_NAME_TAG).text
+            self.password = database_configuration.find(self.PASSWORD_TAG).text
     
         else:
             if protocol is None:
