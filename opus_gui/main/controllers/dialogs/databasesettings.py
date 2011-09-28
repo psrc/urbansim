@@ -51,7 +51,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
 
     def on_buttonBox_accepted(self):
         try:
-            ElementTree(self.xml_root).write(self._config_filename)
+            ElementTree(self.xml_root).write(self._config_filename, pretty_print=True, with_tail=False)
         except IOError, ex:
             MessageBox.error(self,
                           text = 'A disk error occured when saving the ' +
@@ -73,7 +73,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
             if user_answer == common_dialogs.YES:
                 self.on_buttonBox_accepted()
             elif user_answer == common_dialogs.NO:
-                self.close()
+                pass
             else:
                 return # Cancel
         self.close()
