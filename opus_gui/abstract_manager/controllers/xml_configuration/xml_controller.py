@@ -135,7 +135,8 @@ class XmlController(object):
 
 
     def set_project_dirty(self):
-        self.project.dirty = True
+        if self.project:
+            self.project.dirty = True
 
 
     def remove_selected_node(self):
@@ -246,7 +247,7 @@ class XmlController(object):
         # named nodes that are not inherited can be renamed
         if node.get('name') is not None and not node.get('inherited'):
             added_actions.append(self.act_rename_node)
-        if self.project.is_shadowing(node):
+        if self.project and self.project.is_shadowing(node):
             added_actions.append(self.act_revert)
         elif node.get('type') in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
             added_actions.append(self.act_remove_selected)
