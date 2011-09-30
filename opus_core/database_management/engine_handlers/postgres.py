@@ -5,6 +5,8 @@
 from opus_core.database_management.engine_handlers.abstract_engine import AbstractDatabaseEngineManager
 from sqlalchemy import types as sqltypes
 import os
+from sqlalchemy.exc import ProgrammingError
+from opus_core.logger import logger
 
 try: 
     from sqlalchemy.databases import postgres
@@ -112,7 +114,10 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         base_db = self._get_default_database()
         if not self._has_real_database(server = server, 
                                        database_name = base_db):
-            self._create_real_database(server, db_name = base_db)
+            try:
+                self._create_real_database(server, db_name = base_db)
+            except ProgrammingError, e:
+                logger.log_warning('Failed to create default database %s:\n%s' % (base_db, str(e)))
             
     def get_tables_in_database(self, metadata):
         tables = AbstractDatabaseEngineManager.get_tables_in_database(self, metadata)
