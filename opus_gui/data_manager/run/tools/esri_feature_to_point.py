@@ -4,10 +4,10 @@
 
 import os, sys
 import imp
-f, filename, description = imp.find_module('arcgisscripting', ['c:/Python25/Lib/site-packages'])
-arcgisscripting = imp.load_module('arcgisscripting', f, filename, description)
 
 def opusRun(progressCB,logCB,params):
+    f, filename, description = imp.find_module('arcgisscripting', ['c:/Python25/Lib/site-packages'])
+    arcgisscripting = imp.load_module('arcgisscripting', f, filename, description)
 
     gp = arcgisscripting.create()
 
