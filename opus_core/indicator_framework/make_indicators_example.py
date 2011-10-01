@@ -157,26 +157,27 @@ ArcGeotiffMap
 
 #An example script:
 
-project_name = 'eugene_gridcell'
-run_name1 = 'run_6473.2008_05_11_22_27'
-run_name2 = 'run_6478.2008_05_12_19_04'
+def main():
+    project_name = 'eugene_gridcell'
+    run_name1 = 'run_6473.2008_05_11_22_27'
+    run_name2 = 'run_6478.2008_05_12_19_04'
 
-source_data = SourceData(
-   cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name1),    # r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
-#   comparison_cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name2),
-   years = [1980, 1981],
-   dataset_pool_configuration = DatasetPoolConfiguration(
-         package_order=['eugene','urbansim','opus_core'],
-         ),                  
-)
+    source_data = SourceData(
+       cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name1),    # r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
+    #   comparison_cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name2),
+       years = [1980, 1981],
+       dataset_pool_configuration = DatasetPoolConfiguration(
+             package_order=['eugene','urbansim','opus_core'],
+             ),                  
+    )
 
-indicators = [
-   Map( 
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.population',
-       years = [1980], 
-       ),  
+    indicators = [
+       Map( 
+           source_data = source_data,
+           dataset_name = 'zone',
+           attribute = 'urbansim.zone.population',
+           years = [1980], 
+           ),  
    
 #   Chart(
 #       source_data = source_data,
@@ -247,12 +248,12 @@ indicators = [
 #   ),
    ]
 
-
-
-if __name__ == '__main__':
     from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = indicators,
         display_error_box = False, 
-        show_results = True)    
+        show_results = True)
+    
+if __name__ == '__main__':
+    main()
