@@ -36,6 +36,9 @@ def _get_default_opus_home():
     raise Exception('OPUS_HOME environment variable must be set.') 
 
 def _get_default_opus_data_path():
+    # The path to the opus_data directory is found in the environment variable
+    # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
+    # variable OPUS_HOME followed by 'data'
     return get_opus_home_path('data') 
 
 OPUS_HOME = _safe_getenv('OPUS_HOME', _get_default_opus_home)
