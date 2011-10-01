@@ -11,6 +11,7 @@ from opus_core.database_management.configurations.scenario_database_configuratio
 from urbansim_zone.configs.controller_config import UrbansimZoneConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
+from opus_core import paths
 
 class Baseline(UrbansimZoneConfiguration):
     """Eugene's baseline configuration for runs on zonal level.
@@ -40,12 +41,12 @@ class Baseline(UrbansimZoneConfiguration):
                 'distribute_unplaced_jobs_model',
                 ],
             'scenario_database_configuration': ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone'),
-            'cache_directory': os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/base_year_data'),
+            'cache_directory': paths.get_opus_home_path('data/eugene_zone/base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/runs'),
+                cache_directory_root = paths.get_opus_home_path('data/eugene_zone/runs'),
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/base_year_data')
+                    existing_cache_to_copy = paths.get_opus_home_path('data/eugene_zone/base_year_data')
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
