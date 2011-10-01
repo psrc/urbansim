@@ -6,10 +6,10 @@ import os
 import shutil
 import datetime
 import time
+from opus_core import paths
 
 #loads system variables                                                                                  
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 class Log_manager :

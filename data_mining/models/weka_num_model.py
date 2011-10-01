@@ -7,10 +7,10 @@ import time
 
 from weka_utilities import test_file_creation, feature_selection, Test_result
 from data_mining.PrintOutput import PrintOutput
+from opus_core import paths
 
 #loads system variables                                                                                  
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 class Num_model :

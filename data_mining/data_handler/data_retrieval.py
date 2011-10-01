@@ -4,11 +4,10 @@ from sqlalchemy import *
 import numpy
 import math, time, copy, random, os, sys, subprocess
 from data_mining.PrintOutput import PrintOutput
+from opus_core import paths
 
 #loads system variables                                                                                  
-import os
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 class Query_manager :

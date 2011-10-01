@@ -15,10 +15,10 @@ from output.generic_output import Output_manager
 from output.log_output import Log_manager
 from models.weka_num_model import Num_model
 from models.weka_cat_model import Cat_model
+from opus_core import paths
 
 #loads system variables
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 #Checking if pygame has been installed

@@ -10,10 +10,10 @@ from data_handler.data_retrieval import Query_manager
 from data_handler.data_preparation import Data_profiler
 from output.generic_output import Output_manager
 from models.ldof_model import LDOF_model
+from opus_core import paths
 
 #loads system variables
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 #Runs all the tests

@@ -1,10 +1,11 @@
 import os, sys
+from opus_core import paths
 
 #FOR PLATFORM                                                                                                                          
 #If windows set to backslash  
 WIN = True
 try :
-    sys.getwindowsversion()
+    sys.getwindowsversion() #@UndefinedVariable
 except AttributeError :
     WIN = False
 
@@ -14,8 +15,7 @@ if not WIN :
 
     
 #loads system variables
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining")
+path = paths.get_opus_home_path("src", "data_mining")
 
 #System variables
 

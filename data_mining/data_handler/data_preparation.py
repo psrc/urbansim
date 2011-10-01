@@ -9,10 +9,11 @@ from sqlalchemy import *
 import numpy
 from data_mining.PrintOutput import PrintOutput
 
+from opus_core import paths
+
 
 #loads system variables                                                                                  
-path = os.environ.get('OPUS_HOME')
-path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
 execfile(path) 
 
 #Keeps track of information about the current data
