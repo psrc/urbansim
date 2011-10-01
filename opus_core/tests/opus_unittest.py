@@ -4,7 +4,7 @@
 
 # Import all from unittest so that opus_unittest acts just like unittest,
 # except for the differences below.
-from unittest import *   # Do not delete this line.
+from unittest import *   # Do not delete this line. @UnusedWildImport
 
 from numpy import ndarray
 
