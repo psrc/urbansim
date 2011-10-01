@@ -4,6 +4,7 @@
 
 import os
 from xml.etree.cElementTree import ElementTree
+from opus_core import paths
 
 def _get_installed_database_engines():
     engines = []
@@ -66,7 +67,7 @@ class DatabaseServerConfiguration(object):
                  sqlite_db_path = None):
         
         if database_server_configuration_file_path is None:
-            database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')
+            database_server_configuration_file_path = paths.get_opus_home_path('settings', 'database_server_configurations.xml')
 
         if (protocol is None or test) and host_name is None and user_name is None and password is None:
             if not os.path.exists(database_server_configuration_file_path):

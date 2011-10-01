@@ -10,6 +10,7 @@ import os
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
+from opus_core import paths
 def add_runs_to_services_db_from_disk(projects = None):
         
     server_config = ServicesDatabaseConfiguration()
@@ -18,12 +19,7 @@ def add_runs_to_services_db_from_disk(projects = None):
         
 
         
-        # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
-        # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
-        # variable OPUS_HOME followed by 'data'
-        datapath = os.environ.get('OPUS_DATA_PATH')
-        if datapath is None:
-            datapath = os.path.join(os.environ.get('OPUS_HOME'), 'data')
+        datapath = paths.OPUS_DATA_PATH
         
             
         for project_name in os.listdir(datapath):

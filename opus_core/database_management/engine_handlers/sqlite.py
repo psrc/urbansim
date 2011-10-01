@@ -5,12 +5,13 @@
 from opus_core.database_management.engine_handlers.abstract_engine import AbstractDatabaseEngineManager
 import os, fnmatch
 from opus_core.logger import logger
+from opus_core import paths
 
 class SqliteServerManager(AbstractDatabaseEngineManager):
     
     def __init__(self, sqlite_db_path = None):
         if sqlite_db_path is None:
-            self.server_path = os.path.join(os.environ['OPUS_HOME'], 'local_databases')
+            self.server_path = paths.get_opus_home_path('local_databases')
         else:
             self.server_path = sqlite_db_path
             

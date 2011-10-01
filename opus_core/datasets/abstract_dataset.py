@@ -10,7 +10,7 @@ from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, a
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
 from numpy import compress, transpose, logical_and, ma, isscalar, asarray
 #from scipy import ndimage  ## use opus_core.ndimage instead
-from opus_core import ndimage
+from opus_core import ndimage, paths
 from numpy.random import randint
 from numpy import ma
 
@@ -1335,9 +1335,7 @@ class AbstractDataset(object):
         #    same order as the master .dbf file and write the arrays out to a .dbf shapefile.
         from opus_core.store.dbf_storage import dbf_storage
         
-        data_path = os.environ.get('OPUS_DATA_PATH')
-        if data_path is None:
-            data_path = os.path.join(os.environ.get('OPUS_HOME'), 'data')
+        data_path = paths.OPUS_DATA_PATH
         
         if not project_name: project_name = os.environ['OPUSPROJECTNAME'] # OPUSPROJECTNAME is only defined when this function is called by the GUI
         shapefile_dir = os.path.join(data_path, project_name, 'shapefiles') 

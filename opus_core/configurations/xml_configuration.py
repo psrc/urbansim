@@ -414,11 +414,8 @@ class XMLConfiguration(object):
         """return the path to the opus_data directory.  This is found in the environment variable
         OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the
         environment variable OPUS_HOME followed by 'data' """
-        path = os.environ.get('OPUS_DATA_PATH')
-        if path is None:
-            return os.path.join(os.environ.get('OPUS_HOME'), 'data')
-        else:
-            return path
+        from opus_core import paths
+        return paths.OPUS_DATA_PATH
 
     def _initialize(self, elementtree, is_parent):
         self.tree = elementtree

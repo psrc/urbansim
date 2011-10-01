@@ -15,6 +15,7 @@ from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import Lor
 from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 import os
+from opus_core import paths
 
 '''-------------------------
    ------  SourceData ------
@@ -163,7 +164,7 @@ def main():
     run_name2 = 'run_6478.2008_05_12_19_04'
 
     source_data = SourceData(
-       cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name1),    # r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
+       cache_directory = paths.get_opus_data_path_path(project_name,'runs',run_name1),    # r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
     #   comparison_cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name2),
        years = [1980, 1981],
        dataset_pool_configuration = DatasetPoolConfiguration(
