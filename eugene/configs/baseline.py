@@ -10,6 +10,7 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
+from opus_core import paths
 
 
 class Baseline(AbstractUrbansimConfiguration):
@@ -45,10 +46,10 @@ class Baseline(AbstractUrbansimConfiguration):
                 ],
             'scenario_database_configuration': ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_gridcell/runs'),
+                cache_directory_root = paths.get_opus_home_path('data/eugene_gridcell/runs'),
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_gridcell/base_year_data'),
+                    existing_cache_to_copy = paths.get_opus_home_path('data/eugene_gridcell/base_year_data'),
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
