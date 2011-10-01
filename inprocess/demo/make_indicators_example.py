@@ -65,11 +65,10 @@ indicators = {
 # over which the indicators are computed
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
+from opus_core import paths
 
 source_data = SourceData(
-   cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],
-                                  'eugene',
-                                  'eugene_1980_baseyear_cache'),
+   cache_directory = paths.get_opus_data_path('eugene', 'eugene_1980_baseyear_cache'),
    years = [1980],
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['eugene','urbansim','opus_core'],
