@@ -30,17 +30,25 @@ class SubareaEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
         self.choice_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
 
         valid_region = where(regions[agents_index] > 0)[0]
+        filter0 = self.filter #keep a copy of the original self.filter
         if valid_region.size > 0:
             unique_regions = unique(regions[agents_index][valid_region])
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[agents_index[valid_region]] = True
             for area in unique_regions:
                 new_index = where(logical_and(cond_array, regions == area))[0]
-                self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.subarea_id_name, area)
+                #append subarea_id filter to the original filter string if it is set
+                subarea_filter = "(%s.%s==%s)" % (self.choice_set.get_dataset_name(), self.subarea_id_name, area)
+                if filter0:
+                    self.filter = filter0 + "*" + subarea_filter
+                else:
+                    self.filter = subarea_filter
+
                 logger.log_status("ELCM for area %s" % area)
                 EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=new_index, **kwargs)
         no_region = where(regions[agents_index] <= 0)[0]
+        self.filter = filter0
         if no_region.size > 0: # run the ELCM for jobs that don't have assigned region
             self.filter = None
             logger.log_status("ELCM for jobs with no area assigned")

@@ -37,22 +37,28 @@ class SubareaDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCho
                                                                   dataset_pool=self.dataset_pool)
         
         valid_subarea = where(subareas[agents_index] > 0)[0]
+        filter0 = self.filter #keep a copy of the original self.filter
         # this loop iterates through unique subareas
         if valid_subarea.size > 0:
             unique_subareas = unique(subareas[agents_index][valid_subarea])
             cond_array = zeros(agent_set.size(), dtype="bool8")
-            cond_array[agents_index[valid_subarea]] = True
+            cond_array[agents_index[valid_subarea]] = True            
             for subarea in unique_subareas:
                 new_index = where(logical_and(cond_array, subareas == subarea))[0]
-                self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.subarea_id_name, subarea)
+                #append subarea_id filter to the original filter string if it is set
+                subarea_filter = "(%s.%s==%s)" % (self.choice_set.get_dataset_name(), self.subarea_id_name, subarea)
+                if filter0:
+                    self.filter = filter0 + "*" + subarea_filter
+                else:
+                    self.filter = subarea_filter
                 logger.log_status("DPLCM for subarea %s" % subarea)
                 DevelopmentProjectLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                           agents_index=new_index, **kwargs)
+        self.filter = filter0
         no_subarea = where(subareas[agents_index] <= 0)[0]
-
+        
         # this loop handles agents w/out a subarea
-        if no_subarea.size > 0:
-            self.filter = None
+        if no_subarea.size > 0:            
             logger.log_status("DPLCM for agents with no subarea assigned")
             choices = DevelopmentProjectLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                                 agents_index=agents_index[no_subarea], **kwargs)
