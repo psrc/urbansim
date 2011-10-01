@@ -19,6 +19,7 @@ from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization i
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.results_manager.run.get_mapnik_options import MapOptions
+from opus_core import paths
 
 
 class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatchIndicatorVisualization):
@@ -407,7 +408,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))
 
     def on_pbn_set_storage_location_released(self):
-        start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
+        start_dir = paths.OPUS_PROJECT_CONFIGS_PATH
 
         configDialog = QFileDialog()
         filter_str = QString("*.gdb")

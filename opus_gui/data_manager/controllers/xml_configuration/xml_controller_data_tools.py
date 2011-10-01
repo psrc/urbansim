@@ -17,6 +17,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.data_manager.controllers.dialogs.executetoolset import ExecuteToolSetGui
 from opus_gui.data_manager.controllers.dialogs.addparam import addParamGui
 from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import RenameDialog
+from opus_core import paths
 
 
 class XmlController_DataTools(XmlController):
@@ -292,7 +293,7 @@ class XmlController_DataTools(XmlController):
 
         # Ask the users where they want to save the file
         start_dir = ''
-        opus_home = os.environ.get('OPUS_HOME')
+        opus_home = paths.OPUS_HOME
         if opus_home:
             start_dir_test = os.path.join(opus_home, 'project_configs')
             if start_dir_test:
@@ -324,7 +325,7 @@ class XmlController_DataTools(XmlController):
         # print "importXMLFromFile"
         # First, prompt the user for the filename to read in
         start_dir = ''
-        opus_home = os.environ.get('OPUS_HOME')
+        opus_home = paths.OPUS_HOME
         if opus_home:
             start_dir_test = os.path.join(opus_home, 'project_configs')
             if start_dir_test:

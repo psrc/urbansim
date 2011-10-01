@@ -1,6 +1,7 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
+from opus_core import paths
 
 def go():
     from opus_gui.results_manager.run.indicator_framework.representations.indicator import Indicator
@@ -20,7 +21,7 @@ def go():
     years = [1980, 1980]
     
     source_data = SourceData(
-       cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,run_name1),
+       cache_directory = paths.get_opus_data_path_path(project_name,run_name1),
        #comparison_cache_directory = '',
        years = years,
        dataset_pool_configuration = DatasetPoolConfiguration(

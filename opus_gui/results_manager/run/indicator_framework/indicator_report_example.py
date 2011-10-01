@@ -4,9 +4,10 @@
 
 import os
 from indicator_report import IndicatorReport, ReportSpec
+from opus_core import paths
 
 def main():
-    REPORTDIR = os.path.join(os.environ['OPUS_DATA_PATH'],'reports')
+    REPORTDIR = paths.get_opus_data_path_path('reports')
     REPORTNAME = 'testindicatorreport'
     
     # form is project config, batch name, vis name, data source name, year
@@ -44,7 +45,7 @@ def main():
     rs.writefooter()
     
     print "Finished generating indicator report"
-    
+        
 if __name__ == '__main__':
     main()
     

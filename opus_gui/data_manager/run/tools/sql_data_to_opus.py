@@ -10,6 +10,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
+from opus_core import paths
 
 def opusRun(progressCB,logCB,params):
 
@@ -18,8 +19,7 @@ def opusRun(progressCB,logCB,params):
         params_dict[str(key)] = str(val)
 
     opus_data_directory = params_dict['opus_data_directory']
-    if not os.path.isabs(opus_data_directory):
-        opus_data_directory = os.path.join(os.environ['OPUS_HOME'], opus_data_directory)
+    opus_data_directory = paths.prepend_opus_home_if_relative(opus_data_directory)
     opus_data_year = params_dict['opus_data_year']
     database_name = params_dict['database_name']
     table_name = params_dict['table_name']

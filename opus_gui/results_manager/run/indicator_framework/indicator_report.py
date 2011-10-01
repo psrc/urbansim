@@ -7,9 +7,10 @@ import os, csv
 from opus_gui.main.opus_project import OpusProject
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 from opus_gui.results_manager.results_manager_functions import get_batch_configuration
+from opus_core import paths
 
-OPUSHOME = os.environ['OPUS_HOME']
-PROJECTCONFIGBASE = os.path.join(OPUSHOME,'project_configs')
+OPUSHOME = paths.OPUS_HOME
+PROJECTCONFIGBASE = paths.OPUS_PROJECT_CONFIGS_PATH
 
 class IndicatorReport:
     def __init__(self, indicators):

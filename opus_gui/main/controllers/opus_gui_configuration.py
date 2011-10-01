@@ -9,6 +9,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QSplashScreen, QPixmap
 
 from opus_core.misc import directory_path_from_opus_path
+from opus_core import paths
 
 class OpusGuiConfiguration(object):
     def __init__(self):
@@ -33,7 +34,7 @@ class OpusGuiConfiguration(object):
         # Open the GUI configuration file
         if filename is None:
             # Try the users default configuration file
-            usr_conf_dir = os.path.join(os.environ['OPUS_HOME'], 'settings')
+            usr_conf_dir = paths.OPUS_SETTINGS_PATH 
             if not os.path.exists(usr_conf_dir):
                 os.mkdir(usr_conf_dir)
             filename = os.path.join(usr_conf_dir, 'gui_config.xml')

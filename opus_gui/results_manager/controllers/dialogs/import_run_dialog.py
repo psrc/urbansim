@@ -17,6 +17,7 @@ from opus_gui.results_manager.views.ui_import_run_dialog import Ui_dlgImportRun
 from opus_gui.results_manager.results_manager_functions import sync_available_runs
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.util.exception_formatter import formatExceptionInfo
+from opus_core import paths
 
 class ImportRunDialog(QDialog, Ui_dlgImportRun):
     def __init__(self, resultManagerBase, parent_widget = None):
@@ -43,7 +44,7 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
         self.close()
 
     def on_pbn_set_run_directory_released(self):
-        start_dir = os.path.join(os.environ['OPUS_HOME'], 'runs', os.environ['OPUSPROJECTNAME'])
+        start_dir = paths.get_opus_home_path('runs', os.environ['OPUSPROJECTNAME'])
 
         fd = QFileDialog.getExistingDirectory(self,
                     QString("Please select a run directory..."), #, *.sde, *.mdb)..."),

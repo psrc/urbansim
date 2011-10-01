@@ -33,6 +33,7 @@ from opus_gui.util import common_dialogs
 from opus_gui.main.controllers.dialogs.load_project_template_dialog import LoadProjectTemplateDialog
 from opus_gui.main.controllers.dialogs.new_project_dialog import NewProjectDynamicDialog
 from opus_gui.general_manager.controllers.variable_library import VariableLibrary
+from opus_core import paths
 
 class OpusGui(QMainWindow, Ui_MainWindow):
     '''
@@ -59,7 +60,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.project = OpusProject()
 
         # Read database connection names
-        settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
+        settings_directory = paths.OPUS_SETTINGS_PATH
         db_con_file = os.path.join(settings_directory, 'database_server_configurations.xml')
         db_config_node = ElementTree(file=db_con_file).getroot()
         self.db_connection_names = [node.tag for node in db_config_node if
@@ -262,8 +263,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Ask for filename if one was not provided
         if project_filename is None:
             start_dir = ''
-            project_configs = os.path.join((os.environ.get('OPUS_HOME') or '.'),
-                                           'project_configs')
+            project_configs = paths.OPUS_PROJECT_CONFIGS_PATH
             if os.path.exists(project_configs):
                 start_dir = project_configs
 
@@ -358,7 +358,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         ''' Save the project configuration under a different name '''
         try:
             # get the location for the new config file on disk
-            start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
+            start_dir = paths.OPUS_PROJECT_CONFIGS_PATH
             configDialog = QFileDialog()
             filter_str = QString("*.xml")
             fd = configDialog.getSaveFileName(self,QString("Save As..."),
