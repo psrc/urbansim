@@ -11,12 +11,13 @@ from urbansim.configurations.employment_relocation_model_configuration_creator i
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 import os
+from opus_core import paths
 
 class Baseline(UrbansimParcelConfiguration):
     multiple_runs = False
 
     def __init__(self):
-        opus_home = os.environ['OPUS_HOME']
+        self.opus_home = paths.OPUS_HOME
         config = UrbansimParcelConfiguration()
         config_changes = {
             'project_name':'seattle_parcel',
