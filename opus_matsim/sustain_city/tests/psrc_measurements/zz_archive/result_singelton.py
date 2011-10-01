@@ -5,6 +5,7 @@
 import os
 from opus_core.logger import logger
 import opus_matsim.sustain_city.tests.psrc_measurements as psrc_path
+from opus_core import paths
 
 class PsrcResults(object):
 
@@ -77,7 +78,7 @@ class PsrcResults(object):
         
         logger.log_status('Dumping logfile...')
         
-        destination = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp', 'psrc_log.txt')
+        destination = paths.get_opus_home_path('opus_matsim', 'tmp', 'psrc_log.txt')
         
         file_object = open( destination , 'w')
         

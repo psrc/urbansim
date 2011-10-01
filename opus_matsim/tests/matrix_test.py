@@ -9,6 +9,7 @@ from opus_core.store.csv_storage import csv_storage
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 import numpy
 from opus_core.logger import logger
+from opus_core import paths
 
 class MatrixTest(opus_unittest.OpusTestCase):
     """ Testing import of MATSim travel data into UrbanSim
@@ -72,7 +73,7 @@ class MatrixTest(opus_unittest.OpusTestCase):
         ''' Dumping travel_list for debugging reasons...
         '''
         
-        dest = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
+        dest = paths.get_opus_home_path( 'opus_matsim', 'tmp')
         if not os.path.exists(dest):
             os.makedirs(dest)
                 

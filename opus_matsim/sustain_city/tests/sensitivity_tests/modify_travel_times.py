@@ -13,6 +13,7 @@ import opus_matsim.sustain_city.tests as test_dir
 from opus_core.store.csv_storage import csv_storage
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 import numpy
+from opus_core import paths
 
 class ModifyTravelTimes(AbstractTravelModel):
     '''Runs a dummy travel model for testing reasons manipulating travel times.
@@ -31,7 +32,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         self.base_year = self.travel_model_configuration['base_year']
         
         # set output directory for travel data
-        self.travel_data_dir = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
+        self.travel_data_dir = paths.get_opus_home_path('opus_matsim', 'tmp')
 
         # for debugging
         #try: #tnicolai
@@ -103,7 +104,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         logger.log_status("The travel time border of other zones is set to %f" % travel_time_border)
         logger.log_status("Offset to travel time border is %f" % offset)
         
-        travel_data = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
+        travel_data = paths.get_opus_home_path('opus_matsim', 'tmp', 'travel_data.csv')
         if not self.travel_data_exsists(travel_data):
             raise StandardError('Travel data not found! %s' % travel_data)
             

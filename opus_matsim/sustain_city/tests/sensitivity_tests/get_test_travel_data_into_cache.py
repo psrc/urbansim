@@ -11,6 +11,7 @@ from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.csv_storage import csv_storage
 from opus_core.store.attribute_cache import AttributeCache
 import opus_matsim.sustain_city.tests as test_dir
+from opus_core import paths
 
 class GetTestTravelDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -42,7 +43,7 @@ class GetTestTravelDataIntoCache(GetTravelModelDataIntoCache):
 
         ###### modifyed travel time travel data
         logger.log_status('Integrating modifyed travel times in year %i for next simulation year.')
-        input_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
+        input_directory = paths.get_opus_home_path('opus_matsim', 'tmp')
         logger.log_status("input_directory: " + input_directory )
         # location of the modified travel time travel_data
         in_storage = csv_storage(storage_location = input_directory)

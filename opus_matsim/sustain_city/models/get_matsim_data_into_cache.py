@@ -10,6 +10,7 @@ from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.csv_storage import csv_storage
 from opus_core.store.attribute_cache import AttributeCache
+from opus_core import paths
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -24,7 +25,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 #        print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
-        self.input_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
+        self.input_directory = paths.get_opus_home_path( "opus_matsim", "tmp" )
         logger.log_status("input_directory: " + self.input_directory )
 
         in_storage = csv_storage(storage_location = self.input_directory)

@@ -8,6 +8,7 @@ from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
 from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
 from opus_matsim.models.org.constants import matsim4opus
+from opus_core import paths
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.

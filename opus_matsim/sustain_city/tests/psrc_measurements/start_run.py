@@ -7,6 +7,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.logger import logger
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 import os, time
+from opus_core import paths
 
 class StartRunOptionGroup(object):
     """ Helper class to start model from an xml config file. 
@@ -48,7 +49,7 @@ class StartRunOptionGroup(object):
         
         logger.log_status('Creating logfile...')
         
-        destination = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp', 'psrc_log.txt')
+        destination = paths.get_opus_home_path('opus_matsim', 'tmp', 'psrc_log.txt')
         
         file_object = open( destination , 'w')
         

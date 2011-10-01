@@ -8,6 +8,7 @@ from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import opus_matsim.sustain_city.tests.psrc_sensitivity_tests as test_path
+from opus_core import paths
 
 
 class CopyDummyTravelData(AbstractTravelModel):
@@ -50,15 +51,15 @@ class CopyDummyTravelData(AbstractTravelModel):
         #test_dir_path = test_path.__path__[0]
 
         # set source location
-        travel_data_source = os.path.join( os.environ['OPUS_DATA_PATH'], 'psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'travel_data.csv' )
+        travel_data_source = paths.get_opus_data_path_path('psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'travel_data.csv' )
         if not self.travel_data_exsists( travel_data_source ):
             raise StandardError( 'Dummy MATSim travel data not fould! %s' % travel_data_source )
-        workplace_accessibility_source = os.path.join( os.environ['OPUS_DATA_PATH'], 'psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'zones.csv' )
+        workplace_accessibility_source = paths.get_opus_data_path_path('psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'zones.csv' )
         if not self.travel_data_exsists( workplace_accessibility_source ):
             raise StandardError( 'Dummy MATSim travel data not fould! %s' % workplace_accessibility_source )
             
         # set destination location
-        destination_dir = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
+        destination_dir = paths.get_opus_home_path( "opus_matsim", "tmp" )
         if not os.path.exists(destination_dir):
             try: os.mkdir(destination_dir)
             except: pass

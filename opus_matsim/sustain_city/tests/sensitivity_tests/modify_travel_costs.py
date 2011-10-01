@@ -9,6 +9,7 @@ from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 from opus_matsim.sustain_city.tests.sensitivity_tests.get_indices import GetIndices
 import opus_matsim.sustain_city.tests as test_path
+from opus_core import paths
 
 
 class ModifyTravelCosts(AbstractTravelModel):
@@ -60,7 +61,7 @@ class ModifyTravelCosts(AbstractTravelModel):
             sys.exit()
             
         # set destination location
-        destination_dir = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
+        destination_dir = paths.get_opus_home_path("opus_matsim", "tmp")
         if not os.path.exists(destination_dir):
             try: os.mkdir(destination_dir)
             except: pass
@@ -93,7 +94,7 @@ class ModifyTravelCosts(AbstractTravelModel):
         logger.log_status("Preferential zone with travel cost = 3.47 is set to: %s" % preferential_zone)
         logger.log_status("The travel costs of other zones is set to %s" % high_travel_cost)
         
-        travel_data = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
+        travel_data = paths.get_opus_home_path('opus_matsim', 'tmp', 'travel_data.csv')
         if not self.travel_data_exsists(travel_data):
             raise StandardError('Travel data not found! %s' % travel_data)
             

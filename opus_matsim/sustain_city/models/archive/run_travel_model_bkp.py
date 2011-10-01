@@ -8,6 +8,7 @@ from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os
 from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from lxml import etree
+from opus_core import paths
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -63,7 +64,7 @@ class RunTravelModel(AbstractTravelModel):
         # network parameter
         if matsim_common['matsim_network_file'] == None:
             raise StandardError('Network location for MATSim not set in "travel_model_configuration" of your current configuration file')
-        self.network_file = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", matsim_common['matsim_network_file'])
+        self.network_file = paths.get_opus_home_path("opus_matsim", matsim_common['matsim_network_file'])
         # controler parameter
         self.first_iteration = matsim_common['first_iteration']
         self.last_iteration = matsim_common['last_iteration']
@@ -75,7 +76,7 @@ class RunTravelModel(AbstractTravelModel):
         self.samplingRate = matsim4urbansim_config['sampling_rate']
         self.temp_directory = matsim4urbansim_config['temp_directory']
         self.isTestRun = False
-        self.opus_home = os.environ['OPUS_HOME']
+        self.opus_home = paths.OPUS_HOME
         
         self.firstRun = "FALSE"
         try: # determine for MATSim if this is the fist run
@@ -88,7 +89,7 @@ class RunTravelModel(AbstractTravelModel):
         self.marschalling_matsim_config_pyxB()
         
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-                'opus_home': os.environ['OPUS_HOME'],
+                'opus_home': paths.OPUS_HOME,
                 'vmargs': "-Xmx2000m",
                 'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim",
@@ -109,7 +110,7 @@ class RunTravelModel(AbstractTravelModel):
     def __setUp(self, config):
         """ set matism config path
         """
-        self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
+        self.matsim_config_destination = paths.get_opus_home_path("opus_matsim", "matsim_config")
         if not os.path.exists(self.matsim_config_destination):
             try: os.mkdir(self.matsim_config_destination)
             except: pass

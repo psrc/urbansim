@@ -11,6 +11,7 @@ from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 import os
 from opus_matsim.models.org.constants import matsim4opus, matsim_temp
+from opus_core import paths
 
 
 
@@ -40,7 +41,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
-        output_root = os.path.join( os.environ['OPUS_HOME'], matsim4opus ) 
+        output_root = paths.get_opus_home_path("opus_matsim") 
         if not os.path.exists( output_root ):
             try: os.mkdir( output_root )
             except: pass

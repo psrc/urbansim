@@ -7,6 +7,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
+from opus_core import paths
 
 class RunDummyTravelModel(AbstractTravelModel):
     """Run a dummy travel model.  This is used in the test, where this is run in lieu of the Java code.
@@ -28,19 +29,18 @@ class RunDummyTravelModel(AbstractTravelModel):
         if travel_model_configuration[year]['matsim_config_filename']:
             matsim_config_filename = travel_model_configuration[year]['matsim_config_filename']
         
-        
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s --year %(year)i --samplingRate %(sampling_rate)f""" % {
-                'opus_home': os.environ['OPUS_HOME'],
+                'opus_home': paths.OPUS_HOME,
                 'vmargs': "-Xmx2000m",
                 'classpath': "classes:jar/MATSim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim",
-                'matsim_config_file': os.environ['OPUS_HOME'] + '/' + matsim_config_filename, 
+                'matsim_config_file': paths.get_opus_home_path(matsim_config_filename), 
                 'sampling_rate': config['travel_model_configuration']['sampling_rate'],
                 'year': year } 
         
         logger.log_status('would normally run command %s' % cmd )
         
-        out_file_name = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
+        out_file_name = paths.get_opus_home_path( "opus_matsim", "tmp", "travel_data.csv" )
         file = open(out_file_name, 'w')
 
         file.write("from_zone_id:i4,to_zone_id:i4,single_vehicle_to_work_travel_cost:f4\n")

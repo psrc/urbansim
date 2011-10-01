@@ -6,6 +6,7 @@ import os
 from opus_core.logger import logger
 from lxml import etree
 from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser
+from opus_core import paths
 
 class MATSimConfigObject(object):
     
@@ -23,7 +24,7 @@ class MATSimConfigObject(object):
         # network parameter
         if common_matsim_part['matsim_network_file'] == None:
             raise StandardError('Network location for MATSim not set in "travel_model_configuration" of your current configuration file')
-        self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'])
+        self.network_file = paths.get_opus_home_path(common_matsim_part['matsim_network_file'])
         # controler parameter
         self.first_iteration = common_matsim_part['first_iteration']
         self.last_iteration = common_matsim_part['last_iteration']
@@ -35,7 +36,7 @@ class MATSimConfigObject(object):
         self.samplingRate = matsim4urbansim_part['sampling_rate']
         self.temp_directory = matsim4urbansim_part['temp_directory']
         self.isTestRun = False
-        self.opus_home = os.environ['OPUS_HOME']
+        self.opus_home = paths.OPUS_HOME
         
         self.firstRun = "FALSE"
         try: # determine for MATSim if this is the fist run

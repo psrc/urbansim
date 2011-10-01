@@ -7,6 +7,7 @@ from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os
 from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_core import paths
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -40,7 +41,7 @@ class RunTravelModel(AbstractTravelModel):
         
         # tnicolai: original call
         #cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-        #        'opus_home': os.environ['OPUS_HOME'],
+        #        'opus_home': paths.OPUS_HOME,
         #        'vmargs': "-Xmx2000m",
         #        'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
         #        'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
@@ -49,7 +50,7 @@ class RunTravelModel(AbstractTravelModel):
         
         # tnicolai : test for matsim jar execution ...
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
-                'opus_home': os.environ['OPUS_HOME'],
+                'opus_home': paths.OPUS_HOME,
                 'vmargs': "-Xmx8000m", # set to 8GB on math cluster and 2GB on Notebook
                 'classpath': "jar/matsim4urbansim.jar",
                 'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
@@ -71,7 +72,7 @@ class RunTravelModel(AbstractTravelModel):
     def __setUp(self, config):
         """ create MATSim config data
         """
-        self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
+        self.matsim_config_destination = paths.get_opus_home_path("opus_matsim", "matsim_config")
         if not os.path.exists(self.matsim_config_destination):
             try: os.mkdir(self.matsim_config_destination)
             except: pass

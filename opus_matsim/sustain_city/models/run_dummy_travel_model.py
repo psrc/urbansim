@@ -4,6 +4,7 @@
 
 import os, sys
 from opus_core.logger import logger
+from opus_core import paths
 
 class RunDummyTravelModel():
     """Run a dummy travel model.  This is used in the test, where this is run in lieu of the Java code.
@@ -25,7 +26,7 @@ class RunDummyTravelModel():
 #        in_file_name = os.path.join( module_path, "data", "travel_data_manipulated.csv" )
 #        logger.log_note("open file : %s" % in_file_name)
 #        file_in = open(in_file_name, 'r')
-        out_file_name = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
+        out_file_name = paths.get_opus_home_path( "opus_matsim", "tmp", "travel_data.csv" )
         logger.log_note("open file : %s" % out_file_name)
         file_out = open(out_file_name, 'w')
         

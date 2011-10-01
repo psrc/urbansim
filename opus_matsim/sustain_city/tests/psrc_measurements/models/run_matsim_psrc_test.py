@@ -7,6 +7,7 @@ from opus_matsim.sustain_city.models.run_travel_model import RunTravelModel
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_core import paths
 
 class RunMATSimPsrcTest(RunTravelModel):
 
@@ -41,7 +42,7 @@ class RunMATSimPsrcTest(RunTravelModel):
         # 3) duration to write all outputs
         # all measurements are stored in the same logfile
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-                'opus_home': os.environ['OPUS_HOME'],
+                'opus_home': paths.OPUS_HOME,
                 'vmargs': "-Xmx2500m",
                 'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
                 'javaclass': "playground.tnicolai.urbansim.MATSim4UrbanSimMeasurement",

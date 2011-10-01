@@ -12,6 +12,7 @@ from urbansim.datasets.travel_data_dataset import TravelDataDataset
 import numpy
 from opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.export_base_year_travel_data import ExportTravelData
 from opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.get_indices import GetIndices
+from opus_core import paths
 
 class ModifyTravelTimes(AbstractTravelModel):
     '''Runs a dummy travel model for testing reasons manipulating travel times.
@@ -31,7 +32,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         self.first_year = 2001 # TODO make configurable (bayeyear + 1)
         
         # set output directory for travel data
-        self.travel_data_dir = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
+        self.travel_data_dir = paths.get_opus_home_path( "opus_matsim", "tmp" )
 
         # for debugging
         #try: #tnicolai
@@ -84,7 +85,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         logger.log_status("Travel time = %s" %min_travel_time)
         logger.log_status("Travel cost = %s" %min_travel_cost)
         
-        travel_data = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp', "travel_data.csv" )
+        travel_data = paths.get_opus_home_path( "opus_matsim", "tmp", "travel_data.csv" )
         if not self.travel_data_exsists(travel_data):
             raise StandardError('Travel data not found! %s' % travel_data)
             

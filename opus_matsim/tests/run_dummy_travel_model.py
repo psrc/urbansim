@@ -7,6 +7,7 @@ from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_core import paths
 
 class RunDummyTravelModel(AbstractTravelModel):
     """Run a dummy travel model.  This is used in the test, where this is run in lieu of the Java code.

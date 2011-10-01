@@ -8,6 +8,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.export_storage import ExportStorage
 from opus_core.store.csv_storage import csv_storage 
 import opus_matsim.sustain_city.tests as test_path
+from opus_core import paths
 
 class ExportTravelData(object):
     ''' Export travel data from UrbanSim cache into OPUS_HOME
@@ -34,7 +35,7 @@ class ExportTravelData(object):
         self.year = year
         if self.year == None:
             self.year = config['base_year']
-            base_year_data_path = os.path.join( os.environ['OPUS_DATA_PATH'], 'seattle_parcel', 'base_year_data')
+            base_year_data_path = paths.get_opus_data_path_path('seattle_parcel', 'base_year_data')
             attribute_cache = AttributeCache(cache_directory=base_year_data_path)
             self.input_storage = attribute_cache.get_flt_storage_for_year(self.year)
         else:
@@ -45,7 +46,7 @@ class ExportTravelData(object):
         output_directory = output_dir
         if output_directory == None:
             # set deafult
-            output_directory = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
+            output_directory = paths.get_opus_home_path('opus_matsim', 'tmp')
         if not os.path.exists( output_directory ):
             try: os.mkdir( output_directory )
             except: pass

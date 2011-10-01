@@ -8,6 +8,7 @@ import numpy
 from numpy import *
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.csv_storage import csv_storage
+from opus_core import paths
 
 class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
     """ This test validates the generated xml MATSim configuration while using pyxb's own validation process.
@@ -29,7 +30,7 @@ class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
     def test_run(self):
         print "Entering test run"
         
-        path = os.path.join(os.environ['OPUS_HOME'], 'opus_matsim/tmp')
+        path = paths.get_opus_home_path('opus_matsim', 'tmp')
         # check if travel data exsits
         travel_data = os.path.join( path, "travel_data.csv" )
         if not os.path.exists(travel_data):
