@@ -11,6 +11,7 @@ from urbansim.configurations.household_relocation_model_configuration_creator im
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core import paths
 
 class Baseline(UrbansimParcelConfiguration):
     multiple_runs = False
@@ -18,10 +19,7 @@ class Baseline(UrbansimParcelConfiguration):
     
     def __init__(self):
         config = UrbansimParcelConfiguration()
-        if os.environ.has_key('OPUS_DATA_PATH'):
-            data_path_prefix = os.path.join(os.environ['OPUS_DATA_PATH'], 'psrc_parcel')
-        else:
-            data_path_prefix = os.path.join(os.environ['OPUS_HOME'], 'data/psrc_parcel')
+        data_path_prefix = paths.get_opus_data_path_path('psrc_parcel')
             
         config_changes = {
             'project_name':'psrc_parcel',

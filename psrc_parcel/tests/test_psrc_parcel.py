@@ -12,6 +12,7 @@ from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from urbansim.estimation.estimation_runner import EstimationRunner
+from opus_core import paths
 
 class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     """ this integration test runs san_antonio_baseline_test in project_configs/psrc_parcel_test.xml
@@ -22,11 +23,8 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
         or be created through downloading and unzipping etc
         
         """
-        self.opus_home = os.environ["OPUS_HOME"]
-        if os.environ.has_key('OPUS_DATA_PATH'):
-            self.data_path = os.path.join(os.environ['OPUS_DATA_PATH'], 'psrc_parcel')
-        else:
-            self.data_path = os.path.join(self.opus_home, 'data', 'psrc_parcel')
+        self.opus_home = paths.OPUS_HOME
+        self.data_path = paths.get_opus_data_path_path('psrc_parcel')
         
         self.xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'psrc_parcel_test.xml'))
         
