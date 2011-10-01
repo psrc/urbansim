@@ -9,8 +9,11 @@ from PyQt4.QtGui import QVBoxLayout
 
 # QGIS bindings for mapping functions
 # CK: avoid star imports
-from qgis.core import *
-from qgis.gui import *
+try:
+    from qgis.core import *
+    from qgis.gui import *
+except:
+    pass
 
 # General system includes
 import sys,string
