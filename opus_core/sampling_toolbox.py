@@ -220,10 +220,15 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
     rows, columns = sample_size
     source_array_size = source_array.size
 
-    if source_array_size <= columns:
+    if source_array_size <= columns and not replace:
         logger.log_warning("There are less or equal indices (%s) in source_array than the sample_size (%s). Sample %s." %
               (source_array_size, columns, source_array_size))
-        return ones((rows,1)) * source_array[newaxis,:]
+
+        if return_index:
+            return ones((rows,1), dtype='i') * arange(source_array_size)[newaxis,:]
+        else:
+            return ones((rows,1), dtype='i') * source_array[newaxis,:]
+            
 
     if prob_array is None:
         prob_array = ones(source_array_size)

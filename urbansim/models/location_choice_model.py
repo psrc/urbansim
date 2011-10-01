@@ -268,7 +268,7 @@ class LocationChoiceModel(ChoiceModel):
                                                   nchunks=nchunks, chunksize=chunksize)
                 
                 if len(submodels)>1:
-                    index2[self.observations_mapping[submodel],:] = interaction_dataset.index2                        
+                    index2[self.observations_mapping[submodel],:] = interaction_dataset.index2
                     for name in interaction_dataset.get_known_attribute_names():
                         attr_val = interaction_dataset.get_attribute(name)
                         if not attributes.has_key(name):

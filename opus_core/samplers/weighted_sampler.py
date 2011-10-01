@@ -118,7 +118,7 @@ class weighted_sampler(Sampler):
                 replace = True
             sampled_index = prob2dsample( index2, sample_size=(index1.size, J),
                                         prob_array=prob, exclude_index=chosen_choice_index_to_index2,
-                                        replace=replace, return_index=True )
+                                        replace=replace, return_index=True ).astype('int32')
             #return index2[sampled_index]
 
         if rank_of_weight == 2:
