@@ -5,7 +5,7 @@
 import os
 from lxml.etree import SubElement
 
-from PyQt4.QtCore import QString,QFileInfo
+from PyQt4.QtCore import QString,QFileInfo, pyqtSlot
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
@@ -351,7 +351,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             col_vals.append(str(item.text()))
         return col_vals
 
-    def on_mapnikOptions_released(self):
+    @pyqtSlot()
+    def on_mapnikOptions_clicked(self):
         options = MapOptions(self, options_dict=self.mapnik_options)
         options.show()
 
@@ -407,6 +408,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.lblOption1.setText(QString('Path:'))
             self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))
 
+    @pyqtSlot()
     def on_pbn_set_storage_location_released(self):
         start_dir = paths.OPUS_PROJECT_CONFIGS_PATH
 
@@ -421,7 +423,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             fileNameBaseName = fileNameInfo.completeBaseName()
             self.leOption1.setText(fileName)
 
-    def on_pbnAddIndicator_released(self):
+    @pyqtSlot()
+    def on_pbnAddIndicator_clicked(self):
         row = self.twAvailableIndicators.currentRow()
         from_table_widget = self.twAvailableIndicators
         to_table_widget = self.twIndicatorsToVisualize
@@ -437,7 +440,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         from_table_widget.removeRow(row)
 
-    def on_pbnRemoveIndicator_released(self):
+    @pyqtSlot()
+    def on_pbnRemoveIndicator_clicked(self):
         row = self.twIndicatorsToVisualize.currentRow()
 
         cur_item = self.twIndicatorsToVisualize.item(row, 0)

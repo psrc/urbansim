@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtCore import QObject, SIGNAL, pyqtSlot
 from PyQt4.QtGui import QDialog
 
 # UI specific includes
@@ -32,7 +32,8 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         load_on_start = self.gui_config.load_latest_on_start
         self.prevProjPrefCheckBox.setChecked(load_on_start)
 
-    def on_applyButton_released(self):
+    @pyqtSlot()
+    def on_applyButton_clicked(self):
         # Apply the changes
         fonts = self.gui_config.fonts
         fonts['menu'] = self.menuFontSizeSpinBox.value()
@@ -46,9 +47,11 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
 
         self.gui_config.save()
 
-    def on_okButton_released(self):
-        self.on_applyButton_released()
+    @pyqtSlot()
+    def on_okButton_clicked(self):
+        self.on_applyButton_clicked()
         self.close()
 
-    def on_cancelButton_released(self):
+    @pyqtSlot()
+    def on_cancelButton_clicked(self):
         self.close()

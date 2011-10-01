@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
 from opus_gui.data_manager.views.ui_addparam import Ui_AddParamGui
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
@@ -27,10 +27,12 @@ class addParamGui(QDialog, Ui_AddParamGui):
             self.toolhelpEdit.clear()
             self.toolhelpEdit.insertPlainText(help)
 
-    def on_cancelAddParam_released(self):
+    @pyqtSlot()
+    def on_cancelAddParam_clicked(self):
         self.reject()
 
-    def on_addParam_released(self):
+    @pyqtSlot()
+    def on_addParam_clicked(self):
         if(len(self.nameEdit.text()) == 0):
             self.nameEdit.setText('must specify name')
             self.nameEdit.selectAll()

@@ -8,7 +8,7 @@ from lxml import etree
 
 from PyQt4.QtGui import QDialog, QApplication, QFileDialog
 from PyQt4.QtGui import QTextEdit, QVBoxLayout, QPushButton
-from PyQt4.QtCore import SIGNAL, SLOT, Qt
+from PyQt4.QtCore import SIGNAL, SLOT, Qt, pyqtSlot
 
 from opus_core.tools.converter import Converter
 from opus_gui.util.converter_gui.ui_converter_gui import Ui_ConverterGui
@@ -19,8 +19,8 @@ class ConverterGui(QDialog, Ui_ConverterGui):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.frame_log.setVisible(False)
-        self.connect(self.pb_get_filename, SIGNAL('released()'), self._get_filename)
-        self.connect(self.pb_get_filename_out, SIGNAL('released()'), self._get_filename)
+        self.connect(self.pb_get_filename, SIGNAL("clicked()"), self._get_filename)
+        self.connect(self.pb_get_filename_out, SIGNAL("clicked()"), self._get_filename)
         self.le_filename.setText('')
         self.converter = None
         self.stack_steps.setCurrentIndex(0)
@@ -80,11 +80,13 @@ class ConverterGui(QDialog, Ui_ConverterGui):
             msg = '<qt>%s</qt>' %first_msg
         text_widget.setText(msg)
 
-    def on_pb_log_released(self):
+    @pyqtSlot()
+    def on_pb_log_clicked(self):
         self.frame_log.setVisible(self.pb_log.isChecked())
         self.frame_page2.setVisible(not self.pb_log.isChecked())
 
-    def on_pb_next_released(self):
+    @pyqtSlot()
+    def on_pb_next_clicked(self):
         # Try to convert the given file. If it was (partly or completely) successful, proceed to the
         # next page. Otherwise stay on the first page to let the user investigate the error.
         self.setCursor(Qt.WaitCursor)
@@ -140,12 +142,14 @@ class ConverterGui(QDialog, Ui_ConverterGui):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
-    def on_pb_back_released(self):
+    @pyqtSlot()
+    def on_pb_back_clicked(self):
         # re-select a filename
         self._display_info(self.first_page_msg)
         self.stack_steps.setCurrentIndex(0)
 
-    def on_pb_show_warnings_released(self):
+    @pyqtSlot()
+    def on_pb_show_warnings_clicked(self):
         # show a dialog box with only the warnings from the conversion
         win = QDialog(self)
         win.resize(self.size() * 0.85)
@@ -154,13 +158,14 @@ class ConverterGui(QDialog, Ui_ConverterGui):
         txt.setLineWrapMode(txt.NoWrap)
         txt.document().setPlainText('\n'.join(self.converter.warnings))
         pb = QPushButton('Close')
-        self.connect(pb, SIGNAL('released()'), win.accept)
+        self.connect(pb, SIGNAL("clicked()"), win.accept)
         layout.addWidget(txt)
         layout.addWidget(pb)
         win.setLayout(layout)
         win.exec_()
 
-    def on_pb_save_released(self):
+    @pyqtSlot()
+    def on_pb_save_clicked(self):
         try:
             filename = str(self.le_filename_out.text())
             dummy, just_filename = os.path.split(filename)

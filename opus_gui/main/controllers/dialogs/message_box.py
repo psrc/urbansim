@@ -36,7 +36,7 @@ The interface is very similar to QMessageBox. Here are some sample uses:
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QString
+from PyQt4.QtCore import QString, pyqtSlot
 from PyQt4.QtGui import QDialog
 # UI specific includes
 from opus_gui.util.icon_library import IconLibrary
@@ -65,12 +65,14 @@ class MessageBox(QDialog, Ui_MessageBox):
             self.pbnShowDetails.hide()
         self.details_showing = True
         self.detail_expansion_size = self.frame_details.height() + self.layout().spacing()
-        self.on_pbnShowDetails_released()
+        self.on_pbnShowDetails_clicked()
 
-    def on_btnOk_released(self):
+    @pyqtSlot()
+    def on_btnOk_clicked(self):
         self.close()
 
-    def on_pbnShowDetails_released(self):
+    @pyqtSlot()
+    def on_pbnShowDetails_clicked(self):
         if self.details_showing:
             self.detail_expansion_size = self.frame_details.height() + self.layout().spacing()
             self.details_showing = False

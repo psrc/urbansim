@@ -8,7 +8,7 @@ import copy
 from lxml.etree import Element, SubElement
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QFrame, QComboBox
 
 from opus_gui.data_manager.views.ui_configuretool import Ui_ConfigureToolGui
@@ -49,7 +49,8 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         self.typeSelection = None
         self.setWindowTitle(QString("Add and configure tool..."))
 
-    def on_createConfig_released(self):
+    @pyqtSlot()
+    def on_createConfig_clicked(self):
         toolname = str(self.test_line[0].text())
         if(len(toolname) < 1):
             self.test_line[0].setText('must specify configuration name')
@@ -75,7 +76,8 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         self.callback(newNode)
         self.close()
 
-    def on_cancelConfig_released(self):
+    @pyqtSlot()
+    def on_cancelConfig_clicked(self):
         #print "cancel pressed"
         self.close()
 

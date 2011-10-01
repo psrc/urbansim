@@ -232,9 +232,9 @@ if __name__ == '__main__':
         node = p.find('variables/variable', name='add me')
         m.add_selection_for_variable_node(node)
 
-    pb.connect(pb, QtCore.SIGNAL('released()'), update_text)
+    pb.connect(pb, QtCore.SIGNAL("clicked()"), update_text)
     pb2 = QtGui.QPushButton('add')
-    pb2.connect(pb2, QtCore.SIGNAL('released()'), add_variable)
+    pb2.connect(pb2, QtCore.SIGNAL("clicked()"), add_variable)
 
     l.addWidget(pb)
     l.addWidget(pb2)

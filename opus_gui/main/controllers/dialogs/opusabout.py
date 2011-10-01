@@ -5,7 +5,7 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, QUrl
+from PyQt4.QtCore import QString, QUrl, pyqtSlot
 from PyQt4.QtGui import QDialog, QDesktopServices
 # UI specific includes
 from opus_gui.main.views.ui_opusabout import Ui_UrbansimAbout
@@ -16,18 +16,22 @@ class UrbansimAboutGui(QDialog, Ui_UrbansimAbout):
         self.setupUi(self)
         self.mainwindow = mainwindow
 
-    def on_webPushButton_released(self):
+    @pyqtSlot()
+    def on_webPushButton_clicked(self):
         #print "webPushButton pressed"
         QDesktopServices.openUrl(QUrl(QString("http://www.urbansim.org/")))
 
-    def on_docPushButton_released(self):
+    @pyqtSlot()
+    def on_docPushButton_clicked(self):
         #print "docPushButton pressed"
         QDesktopServices.openUrl(QUrl(QString("http://www.urbansim.org/docs/opus-userguide/")))
 
-    def on_licensePushButton_released(self):
+    @pyqtSlot()
+    def on_licensePushButton_clicked(self):
         #print "licensePushButton pressed"
         QDesktopServices.openUrl(QUrl(QString("http://www.gnu.org/copyleft/gpl.html")))
 
-    def on_buttonCancel_released(self):
+    @pyqtSlot()
+    def on_buttonCancel_clicked(self):
         #print "cancelPushButton pressed"
         self.close()

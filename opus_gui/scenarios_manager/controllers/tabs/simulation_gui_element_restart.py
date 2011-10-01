@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer
+from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer, pyqtSlot
 from PyQt4.QtGui import QWidget, QIcon, QDialog
 from opus_gui.scenarios_manager.views.ui_input_restart_years_dialog import Ui_dlgInputRestartYears
 from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import SimulationGuiElement
@@ -30,7 +30,8 @@ class SimulationGuiElementRestart(SimulationGuiElement):
         self.run_name = run_name
         self.scenario_name = scenario_name    
     
-    def on_pbnStartModel_released(self):
+    @pyqtSlot()
+    def on_pbnStartModel_clicked(self):
         self.diagnostic_go_button.setEnabled(True)
 
         if self.running and not self.paused:

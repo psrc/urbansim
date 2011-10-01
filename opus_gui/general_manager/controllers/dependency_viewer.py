@@ -4,6 +4,7 @@
 
 import os
 from PyQt4 import QtGui, Qt, QtCore
+from PyQt4.QtCore import pyqtSlot
 from opus_gui.general_manager.views.ui_dependency_viewer import Ui_DependencyViewer
 
 class DependencyViewer(QtGui.QDialog, Ui_DependencyViewer):
@@ -31,6 +32,7 @@ class DependencyViewer(QtGui.QDialog, Ui_DependencyViewer):
         self.resize(min(rect.width(), pix.width() + 35), min(rect.height(), pix.height() + 80))
         self.update()
 
-    def on_closeWindow_released(self):
+    @pyqtSlot()
+    def on_closeWindow_clicked(self):
         self.close()
         os.remove(self.image_file)

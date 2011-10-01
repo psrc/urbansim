@@ -4,7 +4,7 @@
 
 from time import localtime, strftime
 
-from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer
+from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer, pyqtSlot
 from PyQt4.QtGui import QWidget, QIcon, QDialog
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
@@ -133,7 +133,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
         self.setup_diagnostic_indicators()
         self.indicatorResultsTab.removeTab(0)
-        QObject.connect(self.diagnostic_go_button,SIGNAL("released()"),self.on_indicatorBox)
+        QObject.connect(self.diagnostic_go_button,SIGNAL("clicked()"),self.on_indicatorBox)
         QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)
 
     def setup_diagnostic_indicators(self):
@@ -235,9 +235,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
 
     def removeElement(self):
-        return self.on_pbnRemoveModel_released()
+        return self.on_pbnRemoveModel_clicked()
 
-    def on_pbnRemoveModel_released(self):
+    @pyqtSlot()
+    def on_pbnRemoveModel_clicked(self):
         #    if(self.running == True):
         success = True
         if self.runThread:
@@ -250,7 +251,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self.paused = False
         return success
 
-    def on_pbnStartModel_released(self):
+    @pyqtSlot()
+    def on_pbnStartModel_clicked(self):
         duplicate = False
         self.diagnostic_go_button.setEnabled(True)
 
@@ -397,7 +399,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     # GUI elements that show progress go here.  Note that they have to be set
     # up first in the constructor of this class, then optionally initialized in
-    # on_pbnStartModel_released(), then calculated and updated here, and finally
+    # on_pbnStartModel_clicked(), then calculated and updated here, and finally
     # when the simulation is done running, finalized values are optionally
     # defined in runFinishedFromThread (because status.txt doesn't refresh at
     # end of the simulation.

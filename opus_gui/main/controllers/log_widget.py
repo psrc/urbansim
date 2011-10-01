@@ -5,6 +5,7 @@
 import tempfile, sys
 
 from PyQt4 import QtGui
+from PyQt4.QtCore import pyqtSlot
 from opus_gui.main.views.ui_log_widget import Ui_LogWidget
 
 class _MultiWriter(object):
@@ -28,9 +29,10 @@ class LogWidget(QtGui.QDialog, Ui_LogWidget):
         self.temp_file = None
 
     def do_refresh(self):
-        self.on_pb_refresh_released()
+        self.on_pb_refresh_clicked()
 
-    def on_pb_refresh_released(self):
+    @pyqtSlot()
+    def on_pb_refresh_clicked(self):
         if not self.temp_file:
             return
         # Do the same thing as the mac osx terminal does; keep the scrolling to the bottom

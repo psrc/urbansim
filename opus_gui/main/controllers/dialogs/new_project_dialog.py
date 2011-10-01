@@ -4,7 +4,7 @@
 
 import sys
 
-from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtCore import SIGNAL, Qt, pyqtSlot
 
 from PyQt4 import QtGui
 
@@ -220,7 +220,8 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
 # ====================
 
 
-    def on_tb_browse_folder_released(self):
+    @pyqtSlot()
+    def on_tb_browse_folder_clicked(self):
         ''' User clicked the "browse" for save file name '''
         project_filename = QtGui.QFileDialog.getSaveFileName(self)
         if len(str(project_filename)) == 0:

@@ -7,7 +7,7 @@
 # PyQt4 includes for python bindings to QT
 import os
 
-from PyQt4.QtCore import QString
+from PyQt4.QtCore import QString, pyqtSlot
 from PyQt4.QtGui import QDialog, QFileDialog
 
 from opus_core.logger import logger
@@ -43,6 +43,7 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
     def on_buttonBox_rejected(self):
         self.close()
 
+    @pyqtSlot()
     def on_pbn_set_run_directory_released(self):
         start_dir = paths.get_opus_home_path('runs', os.environ['OPUSPROJECTNAME'])
 

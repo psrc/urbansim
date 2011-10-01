@@ -1,7 +1,7 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
-from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, QVariant, QString, QTimer
+from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, QVariant, QString, QTimer, pyqtSlot
 from PyQt4.QtGui import QWidget, QIcon, QMessageBox
 
 from opus_gui.models_manager.run.run_estimation import RunEstimationThread
@@ -37,10 +37,11 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         self.runProgressBar.reset()
 
     def removeElement(self):
-        self.on_pbnRemoveModel_released()
+        self.on_pbnRemoveModel_clicked()
         return True
 
-    def on_pbnRemoveModel_released(self):
+    @pyqtSlot()
+    def on_pbnRemoveModel_clicked(self):
         if self.runThread:
             self.runThread.cancel()
         if self.timer:
@@ -48,7 +49,8 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         self.running = False
         self.paused = False
 
-    def on_pbnStartModel_released(self):
+    @pyqtSlot()
+    def on_pbnStartModel_clicked(self):
 
         if self.running == True and self.paused == False:
             # Take care of pausing a run

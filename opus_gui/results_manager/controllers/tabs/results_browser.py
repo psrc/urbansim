@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QObject, SIGNAL, Qt
+from PyQt4.QtCore import QObject, SIGNAL, Qt, pyqtSlot
 from PyQt4.QtGui import QTabWidget, QWidget, QTableWidgetItem, QSizePolicy
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
@@ -72,7 +72,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         self.generating_results = False
         if self.cb_auto_gen.isChecked():
-            self.on_pb_generate_results_released()
+            self.on_pb_generate_results_clicked()
         # self.pb_export_results.setEnabled(False)
         self.tabwidget_visualizations.removeTab(0)
         self.tabIcon = IconLibrary.icon('table')
@@ -129,7 +129,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.indicator_table.setCurrentCell(current_row,0)
         self.on_indicator_table_itemSelectionChanged()
 
-    def on_cb_auto_gen_released(self):
+    @pyqtSlot()
+    def on_cb_auto_gen_clicked(self):
         self.pb_generate_results.setEnabled(self.cb_auto_gen.checkState() != Qt.Checked)
 
     def _setup_simulation_data(self):
@@ -181,7 +182,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             self.setup = False
 
         if not setup and self.cb_auto_gen.isChecked():
-            self.on_pb_generate_results_released()
+            self.on_pb_generate_results_clicked()
         else:
             self.pb_generate_results.setEnabled(True)
             self.pb_generate_results.setText('Generate Results')
@@ -198,7 +199,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self._update_current_label()
 
         if not self.setup and self.cb_auto_gen.isChecked():
-            self.on_pb_generate_results_released()
+            self.on_pb_generate_results_clicked()
         else:
             self.pb_generate_results.setEnabled(True)
             self.pb_generate_results.setText('Generate Results')
@@ -219,12 +220,13 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self._update_current_label()
 
         if not self.setup and self.cb_auto_gen.isChecked():
-            self.on_pb_generate_results_released()
+            self.on_pb_generate_results_clicked()
         else:
             self.pb_generate_results.setEnabled(True)
             self.pb_generate_results.setText('Generate Results')
 
-    def on_pb_generate_results_released(self):
+    @pyqtSlot()
+    def on_pb_generate_results_clicked(self):
         run_name = self.current_run
         indicator_name = self.current_indicator
         indicator_dataset = self.current_indicator_dataset

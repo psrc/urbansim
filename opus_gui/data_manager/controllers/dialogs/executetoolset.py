@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
 from opus_gui.data_manager.views.ui_executetoolset import Ui_ExecuteToolSetGui
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 
@@ -16,11 +16,13 @@ class ExecuteToolSetGui(QDialog, Ui_ExecuteToolSetGui):
         self.config_to_filename = config_to_filename
         self.setWindowTitle('Executing set of %d nodes' % len(self.tool_config_nodes))
 
-    def on_cancelExec_released(self):
+    @pyqtSlot()
+    def on_cancelExec_clicked(self):
         #print "cancelPushButton pressed"
         self.close()
 
-    def on_execToolSet_released(self):
+    @pyqtSlot()
+    def on_execToolSet_clicked(self):
         self.execToolSet.setEnabled(False)
         self.textEdit_2.clear()
         self.progressBar_2.setValue(0)

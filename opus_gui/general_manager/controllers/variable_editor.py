@@ -32,8 +32,8 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.callback = None
         def check_data(): self.check_variable(check = 'data')
         def check_syntax(): self.check_variable(check = 'syntax')
-        self.connect(self.btnCheckData, SIGNAL('released()'), check_data)
-        self.connect(self.btnCheckSyntax, SIGNAL('released()'), check_syntax)
+        self.connect(self.btnCheckData, SIGNAL("clicked()"), check_data)
+        self.connect(self.btnCheckSyntax, SIGNAL("clicked()"), check_syntax)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self.reject)
 
         self.frame_name_warning.setVisible(False)
@@ -50,7 +50,7 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.connect(self.rbUseModel, SIGNAL('clicked()'), self._update_variable_info)
         self.connect(self.cboVarType, SIGNAL('currentIndexChanged(int)'),
                      lambda x: self._update_variable_info())
-        self.connect(self.pb_change, SIGNAL('released()'), self._toggle_settings)
+        self.connect(self.pb_change, SIGNAL("clicked()"), self._toggle_settings)
 
     def init_for_variable(self, variable, validator, existing_variables):
         ''' Prepare the editor to edit a variable.

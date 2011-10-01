@@ -8,6 +8,7 @@ import copy
 from lxml.etree import SubElement
 
 from PyQt4 import QtGui, QtCore
+from PyQt4.Qt import pyqtSlot
 
 from opus_gui.util.convenience import create_qt_action
 from opus_core.configurations.xml_configuration import get_variable_name
@@ -77,8 +78,8 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
         f_create_nest = lambda x = 'nest': self.tree_structure_editor.create_structure_node(x)
         f_create_equation = lambda x = 'equation': self.tree_structure_editor.create_structure_node(x)
-        self.connect(self.pb_create_nest, S('released()'), f_create_nest)
-        self.connect(self.pb_create_equation, S('released()'), f_create_equation)
+        self.connect(self.pb_create_nest, S('clicked()'), f_create_nest)
+        self.connect(self.pb_create_equation, S('clicked()'), f_create_equation)
 
         self.connect(self.buttonBox, S('rejected()'), self.reject)
         self.connect(self.buttonBox, S('accepted()'), self.validate_submodel_and_accept)
@@ -496,10 +497,12 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         # that has a variable list (i.e a <equation>)
         self._set_variable_list_node(current.node.find('variable_list') if current else None)
 
-    def on_pb_help_on_released(self):
+    @pyqtSlot()
+    def on_pb_help_on_clicked(self):
         QtGui.QWhatsThis.enterWhatsThisMode()
 
-#    def on_pb_add_variable_released(self):
+#    @pyqtSlot()
+#    def on_pb_add_variable_clicked(self):
 #
 #        # Christoffer: adding variables is done using a temporary functionality (popup menu).
 #        # I'll think of something nicer later, but at this point we can't really afford the
@@ -511,25 +514,30 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 #        menu = self._create_add_variable_menu()
 #        menu.exec_(QtGui.QCursor.pos())
 
-    def on_pb_show_picker_released(self):
+    @pyqtSlot()
+    def on_pb_show_picker_clicked(self):
         self._update_available_variables()
         self._set_picker_visible(self.pb_show_picker.isChecked())
 
 
-    def on_pb_add_variable_released(self):
+    @pyqtSlot()
+    def on_pb_add_variable_clicked(self):
         selected_items = self.lst_available_variables.selectedItems()
         for item in selected_items:
             self.add_variable(item.node)
         self._update_available_variables()
 
-    def on_pb_remove_variable_released(self):
+    @pyqtSlot()
+    def on_pb_remove_variable_clicked(self):
         self._remove_selected_variables()
 
-    def on_cb_show_advanced_parameters_released(self):
+    @pyqtSlot()
+    def on_cb_show_advanced_parameters_clicked(self):
         self._show_advanced_parameters()
         self.selector_table_model.emit(QtCore.SIGNAL('layoutChanged()'))
 
-    def on_pb_delete_struct_released(self):
+    @pyqtSlot()
+    def on_pb_delete_struct_clicked(self):
         # delete the selected structure element
         # if the element is a non-empty nest, move all the child nodes to the root
         if self.tree_structure_editor.selectedItems():

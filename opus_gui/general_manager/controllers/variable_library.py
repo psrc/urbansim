@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from PyQt4.QtGui import QDialog, QMenu, QCursor, QFont
-from PyQt4.QtCore import Qt, SIGNAL
+from PyQt4.QtCore import Qt, SIGNAL, pyqtSlot
 
 from opus_gui.general_manager.views.ui_variable_library import Ui_VariableLibrary
 from opus_gui.general_manager.views.variables_table_view import VariablesTableView
@@ -73,11 +73,11 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             self.accept()
         def cancel_validation():
             self.cancel_validation_flag['value'] = True
-        self.connect(self.pb_apply_and_close, SIGNAL('released()'), apply_and_close)
-        self.connect(self.pb_apply, SIGNAL('released()'), self._apply_variable_changes)
-        self.connect(self.pb_create_new, SIGNAL('released()'), self._add_variable)
-        self.connect(self.pb_problems, SIGNAL('released()'), self._show_problem_variables)
-        self.connect(self.pb_cancel_validation, SIGNAL('released()'), cancel_validation)
+        self.connect(self.pb_apply_and_close, SIGNAL("clicked()"), apply_and_close)
+        self.connect(self.pb_apply, SIGNAL("clicked()"), self._apply_variable_changes)
+        self.connect(self.pb_create_new, SIGNAL("clicked()"), self._add_variable)
+        self.connect(self.pb_problems, SIGNAL("clicked()"), self._show_problem_variables)
+        self.connect(self.pb_cancel_validation, SIGNAL("clicked()"), cancel_validation)
 
         signal = SIGNAL('customContextMenuRequested(const QPoint &)')
         self.connect(self.variables_table, signal, self._show_right_click_menu)
@@ -366,7 +366,8 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
 
 # AUTO WIDGET EVENT HANDLERS
 
-    def on_pb_close_released(self):
+    @pyqtSlot()
+    def on_pb_close_clicked(self):
         ''' event handler for when user clicks the close button '''
         if self.model.dirty:
             question = 'Do you want to apply your changes before closing?'
@@ -381,7 +382,8 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         else:
             self.close()
 
-    def on_pb_validate_selected_released(self):
+    @pyqtSlot()
+    def on_pb_validate_selected_clicked(self):
         ''' User clicked the validate selected button '''
         # Get all the selected variables
         selected_rows = set()

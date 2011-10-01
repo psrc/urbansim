@@ -4,7 +4,7 @@
 
 from lxml.etree import Element, SubElement
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
@@ -84,7 +84,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
         self.setWindowTitle(self.tool_name.replace('_', ' '))
 
-    def on_execTool_released(self):
+    @pyqtSlot()
+    def on_execTool_clicked(self):
         self.execTool.setEnabled(False)
         self.textEdit.clear()
         self.progressBar.setValue(0)
@@ -128,7 +129,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                         self.toolLogPingFromThread)
         run_tool_thread.start()
 
-    def on_cancelExec_released(self):
+    @pyqtSlot()
+    def on_cancelExec_clicked(self):
         self.close()
 
     def fillInToolTypeArrayFromToolFile(self):
@@ -210,8 +212,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 pbnSelect.setText(QString("Select..."))
                 pbnSelectDelegate = FileDialogSignal(typeName=paramName,param=test_line)
                 QObject.connect(pbnSelectDelegate.o, SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),
-                                self.on_pbnSelect_released)
-                QObject.connect(pbnSelect, SIGNAL("released()"), pbnSelectDelegate.relayButtonSignal)
+                                self.on_pbnSelect_clicked)
+                QObject.connect(pbnSelect, SIGNAL("clicked()"), pbnSelectDelegate.relayButtonSignal)
                 self.test_line_delegates.append(pbnSelectDelegate)
                 self.test_line_buttons.append(pbnSelect)
                 hlayout.addWidget(pbnSelect)
@@ -228,8 +230,9 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             help = 'could not find opusHelp function in tool module'
             self.toolhelpEdit.insertPlainText(help)
 
-    def on_pbnSelect_released(self,typeName,line):
-        #print "on_pbnSelect_released recieved"
+    @pyqtSlot()
+    def on_pbnSelect_clicked(self,typeName,line):
+        #print "on_pbnSelect_clicked recieved"
         editor_file = QFileDialog()
         filter_str = QString("*.*")
         editor_file.setFilter(filter_str)

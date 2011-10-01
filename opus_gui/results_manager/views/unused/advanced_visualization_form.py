@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex, QFileInfo
+                         Qt, QTimer, QModelIndex, QFileInfo, pyqtSlot
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
@@ -57,8 +57,8 @@ class AdvancedVisualizationForm(QWidget):
         self.pbn_go.setObjectName('pbn_go')
         self.pbn_go.setText(QString('Go!'))
         
-        QObject.connect(self.pbn_go, SIGNAL('released()'),
-                        self.on_pbn_go_released)
+        QObject.connect(self.pbn_go, SIGNAL("clicked()"),
+                        self.on_pbn_go_clicked)
         self.widgetLayout.addWidget(self.pbn_go)
         
         self.pbn_set_esri_storage_location = QPushButton(self.optionsGroupBox)
@@ -66,8 +66,8 @@ class AdvancedVisualizationForm(QWidget):
         self.pbn_set_esri_storage_location.setText(QString('...'))
         self.pbn_set_esri_storage_location.hide()
         
-        QObject.connect(self.pbn_set_esri_storage_location, SIGNAL('released()'),
-                        self.on_pbn_set_esri_storage_location_released)
+        QObject.connect(self.pbn_set_esri_storage_location, SIGNAL("clicked()"),
+                        self.on_pbn_set_esri_storage_location_clicked)
         
     def _setup_tabs(self):
         # Add a tab widget and layer in a tree view and log panel
@@ -102,8 +102,8 @@ class AdvancedVisualizationForm(QWidget):
         self.pbn_add.setObjectName('pbn_add')
         self.pbn_add.setText(QString('+'))
         
-        QObject.connect(self.pbn_add, SIGNAL('released()'),
-                        self.on_pbn_add_released)
+        QObject.connect(self.pbn_add, SIGNAL("clicked()"),
+                        self.on_pbn_add_clicked)
         self.gridlayout.addWidget(self.pbn_add, 0, 14, 1, 1)
 
         self.lw_indicators = QListWidget(self.resultsGroupBox)
@@ -114,8 +114,8 @@ class AdvancedVisualizationForm(QWidget):
         self.pbn_remove.setObjectName('pbn_remove')
         self.pbn_remove.setText(QString('-'))
         
-        QObject.connect(self.pbn_remove, SIGNAL('released()'),
-                        self.on_pbn_remove_released)
+        QObject.connect(self.pbn_remove, SIGNAL("clicked()"),
+                        self.on_pbn_remove_clicked)
         self.gridlayout.addWidget(self.pbn_remove, 1, 14, 1, 1)
 
 
@@ -189,11 +189,13 @@ class AdvancedVisualizationForm(QWidget):
         for dataset in available_types:
             self.co_result_type.addItem(QString(dataset))
                     
-    def on_pbnRemoveModel_released(self):
+    @pyqtSlot()
+    def on_pbnRemoveModel_clicked(self):
         self.result_manager.removeTab(self)
         self.result_manager.updateGuiElements()
         
-    def on_pbn_add_released(self):
+    @pyqtSlot()
+    def on_pbn_add_clicked(self):
         cur_selected = self.co_results.currentText()        
         for i in range(self.lw_indicators.count()):
             if self.lw_indicators.item(i).text() == cur_selected:
@@ -201,7 +203,8 @@ class AdvancedVisualizationForm(QWidget):
         
         self.lw_indicators.addItem(cur_selected)
         
-    def on_pbn_remove_released(self):
+    @pyqtSlot()
+    def on_pbn_remove_clicked(self):
         selected_idxs = self.lw_indicators.selectedIndexes()
         for idx in selected_idxs:
             self.lw_indicators.takeItem(idx.row())
@@ -247,8 +250,9 @@ class AdvancedVisualizationForm(QWidget):
             self.gridlayout3.addWidget(self.pbn_set_esri_storage_location,0,7,1,1)   
             self.optionsGroupBox.show()   
             
-    def on_pbn_set_esri_storage_location_released(self):
-        print 'pbn_set_esri_storage_location released'
+    @pyqtSlot()
+    def on_pbn_set_esri_storage_location_clicked(self):
+        print 'pbn_set_esri_storage_location clicked'
         from opus_core.misc import directory_path_from_opus_path
         start_dir = directory_path_from_opus_path('opus_gui.projects')
 
@@ -263,7 +267,8 @@ class AdvancedVisualizationForm(QWidget):
             self.le_esri_storage_location.setText(fileName)
             
                 
-    def on_pbn_go_released(self):
+    @pyqtSlot()
+    def on_pbn_go_clicked(self):
         # Fire up a new thread and run the model
         print 'Go button pressed'
 

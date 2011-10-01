@@ -39,8 +39,8 @@ class DocumentationTab(QWidget):
         self.pbnRemoveDoc = QPushButton(self.tab)
         self.pbnRemoveDoc.setObjectName("pbnRemoveDoc")
         self.pbnRemoveDoc.setText(QString("Remove Documentation"))
-        QObject.connect(self.pbnRemoveDoc, SIGNAL("released()"),
-                        self.released)
+        QObject.connect(self.pbnRemoveDoc, SIGNAL("clicked()"),
+                        self.clicked)
         self.widgetLayout.addWidget(self.pbnRemoveDoc)
 
         self.docStuff = DocumentationBase(self.mainwindow,filePath)
@@ -50,7 +50,7 @@ class DocumentationTab(QWidget):
         self.mainwindow.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
         self.mainwindow.tabWidget.setCurrentIndex(0)
 
-    def released(self):
+    def clicked(self):
         print "Remove Documentation Pressed..."
         self.mainwindow.tabWidget.removeTab(self.mainwindow.tabWidget.indexOf(self.tab))
         self.tab.hide()

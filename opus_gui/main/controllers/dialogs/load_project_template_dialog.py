@@ -2,16 +2,11 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, Qt
-
+from PyQt4.QtCore import SIGNAL, Qt, pyqtSlot
 from PyQt4 import QtGui
-
 from PyQt4.QtGui import QDialog
-
 from opus_gui.main.opus_project import OpusProject
-
 from opus_gui.main.built_in_project_templates import get_builtin_project_templates
- 
 from opus_gui.main.views.dialogs.ui_load_project_template_dialog import Ui_LoadProjectTemplateDialog
 
 
@@ -119,7 +114,8 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
         # check the use builtin radio button when the user selects a builtin
         self.rb_use_builtin.setChecked(True)
     
-    def on_tb_custom_browse_released(self):
+    @pyqtSlot()
+    def on_tb_custom_browse_clicked(self):
         # let the user browse for a custom template project to load
         self.rb_use_custom.setChecked(True)
         filename = QtGui.QFileDialog.getOpenFileName(self, 'Something', '', "OPUS Project (*.xml)")
