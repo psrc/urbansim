@@ -11,17 +11,15 @@ from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
+from opus_core import paths
 
 class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     """ this integration test checks and downloads a zipped cache from semcog ftp,
         unzip, and run washtenaw_parcel for 3 years
     """
     def setUp(self):
-        self.opus_home = os.environ["OPUS_HOME"]
-        if os.environ.has_key('OPUS_DATA_PATH'):
-            self.data_path = os.path.join(os.environ['OPUS_DATA_PATH'], 'washtenaw_parcel')
-        else:
-            self.data_path = os.path.join(self.opus_home, 'data', 'washtenaw_parcel')
+        self.opus_home = paths.OPUS_HOME
+        self.data_path = paths.get_opus_data_path_path('washtenaw_parcel')
     
     def tearDown(self):
         runs_path = os.path.join(self.data_path, 'runs')
