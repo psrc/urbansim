@@ -3,7 +3,8 @@
 # See opus_core/LICENSE
 
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 import numpy
 import synthesizer.adjusting_pums_joint_distribution
 import synthesizer.drawing_households

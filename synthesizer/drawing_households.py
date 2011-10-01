@@ -1,6 +1,7 @@
 # Running IPF on Person and Household data
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 import pylab
 import time
 import os

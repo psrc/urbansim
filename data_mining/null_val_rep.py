@@ -5,7 +5,8 @@ import sys
 import os
 import subprocess
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 from sqlalchemy import *
 
 from data_handler.data_retrieval import Query_manager

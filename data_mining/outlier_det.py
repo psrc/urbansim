@@ -2,7 +2,8 @@ from xml.dom import minidom
 import copy
 import time, sys, os
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 from sqlalchemy import *
 
 from data_handler.data_retrieval import Query_manager

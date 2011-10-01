@@ -1,7 +1,8 @@
 # This file contains a MySQL class that helps manipulate data. The instance of
 # the class also stores the results of the query as a list.
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 from  numpy import asarray as arr
 
 class database:

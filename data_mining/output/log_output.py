@@ -1,4 +1,5 @@
-import MySQLdb
+try: import MySQLdb
+except: pass
 from sqlalchemy import *
 
 import os

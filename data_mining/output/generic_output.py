@@ -1,6 +1,7 @@
 import copy
 
-import MySQLdb
+try: import MySQLdb
+except: pass
 from sqlalchemy import *
 
 NUM_INSERTS = 1000

@@ -1,7 +1,8 @@
 # Running IPF on Person and Household data
 
 import time
-import MySQLdb
+try: import MySQLdb
+except: pass
 import operator
 import os
 from math import exp

@@ -2,7 +2,8 @@
 # the class also stores the results of the query as a list.
 
 import time
-import MySQLdb
+try: import MySQLdb
+except: pass
 import os
 from re import match
 from numpy import asarray as arr
