@@ -6,12 +6,8 @@ from opus_core.logger import logger
 from sqlalchemy.schema import MetaData
 from sqlalchemy import create_engine
 
-from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
-from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
-from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
-from opus_core.database_management.engine_handlers.sqlite import SqliteServerManager
-
 import os
+from opus_core.database_management.engine_handlers.engine_factory import DatabaseEngineManagerFactory
 
 
 class DatabaseServer(object):
@@ -25,19 +21,7 @@ class DatabaseServer(object):
         """
         self.config = database_server_configuration
         
-        self.protocol = database_server_configuration.protocol
-        self.host_name = database_server_configuration.host_name
-        self.user_name = database_server_configuration.user_name
-        self.password = database_server_configuration.password
-        
-        if self.protocol == 'postgres':
-            self.protocol_manager = PostgresServerManager()
-        elif self.protocol == 'mysql':
-            self.protocol_manager = MySQLServerManager()
-        elif self.protocol == 'sqlite':
-            self.protocol_manager = SqliteServerManager(self.config.sqlite_db_path)
-        elif self.protocol == 'mssql':
-            self.protocol_manager = MSSQLServerManager()
+        self.protocol_manager = DatabaseEngineManagerFactory.get_engine(database_server_configuration)
             
         self.open(creating_base_database)
         self.show_output = False

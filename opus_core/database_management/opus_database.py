@@ -4,19 +4,13 @@
 
 import sys, gc
 
-from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
-from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
-from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
-from opus_core.database_management.engine_handlers.sqlite import SqliteServerManager
-
-
-
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
                              Numeric, Float, \
                              VARCHAR, String, CLOB, Text,\
                              Boolean, DateTime
 from sqlalchemy import create_engine
+from opus_core.database_management.engine_handlers.engine_factory import DatabaseEngineManagerFactory
 
 class OpusDatabase(object):
     """Represents a connection a database, administered through sqlalchemy."""
@@ -26,20 +20,9 @@ class OpusDatabase(object):
         """ Connects to this database. """
         self.show_output = show_output
         
-        self.protocol = database_server_configuration.protocol
-        self.host_name = database_server_configuration.host_name
-        self.user_name = database_server_configuration.user_name
-        self.password = database_server_configuration.password
+        self.config = database_server_configuration
         
-        if self.protocol == 'postgres':
-            database_name = database_name.lower()
-            self.protocol_manager = PostgresServerManager()
-        elif self.protocol == 'mysql':
-            self.protocol_manager = MySQLServerManager()
-        elif self.protocol == 'sqlite':
-            self.protocol_manager = SqliteServerManager(database_server_configuration.sqlite_db_path)
-        elif self.protocol == 'mssql':
-            self.protocol_manager = MSSQLServerManager()
+        self.protocol_manager = DatabaseEngineManagerFactory.get_engine(database_server_configuration)
             
         self.database_name = database_name
         self.database_server_config = database_server_configuration
@@ -47,6 +30,11 @@ class OpusDatabase(object):
         self.open()
         self.show_output = False
 
+    protocol = property(lambda self: self.config.protocol)
+    host_name = property(lambda self: self.config.host_name)
+    user_name = property(lambda self: self.config.user_name)
+    password = property(lambda self: self.config.password)
+    
     def get_connection_string(self, scrub = False):
         return self.protocol_manager.get_connection_string(server_config = self.database_server_config,
                                                            database_name = self.database_name,
