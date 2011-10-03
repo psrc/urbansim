@@ -4,8 +4,8 @@
 
 from urbansim.models.agent_relocation_model import AgentRelocationModel
 from opus_core.logger import logger
-from numpy import where, array
-from numpy.random import random
+from numpy import where, array, zeros, cumsum, searchsorted
+from numpy.random import random,  uniform
 
 class MortalityModel(AgentRelocationModel):
     """
@@ -18,28 +18,28 @@ class MortalityModel(AgentRelocationModel):
         index = AgentRelocationModel.run(self, person_set, resources=resources)
 
         #avoid orphaning children before we handle them in an adoption model
-        person_set.add_attribute('mortality_flag', data=zeros(person_set.size(), dtype='b'))
+        person_set.add_attribute(name='mortality_flag', data=zeros(person_set.size(), dtype='b'))
         person_set['mortality_flag'][index] = True
 
         #identify such households
         adult_mortality = household_set.compute_variables("full_adult_mortality=household.aggregate(person.mortality_flag) == household.aggregate(person.age>17)")
         children_remain = household_set.compute_variables("children_remain=household.aggregate(numpy.logical_not(person.mortality_flag) * person.age <= 17) > 0 ")
         hh_at_risk = household_set.compute_variables("at_risk = household.full_adult_mortality * household.children_remain")
-        if any(household["orphan_at_risk"]):
+        if any(household_set["at_risk"]):
             #sample 1 adult per household to keep for households with children at risk 
-            p_at_risk = where( household.compute_variables("person.disaggregate(household.at_risk)") )[0]
+            p_at_risk = where( person_set.compute_variables("person.disaggregate(household.at_risk)"))[0]
             adult_mortality = person_set.compute_variables("adult_mortality = (person.mortality_flag * (person.age>17)).astype('f')")
-            prob_to_keep = person.compute_variables("safe_array_divide(person.adult_mortality, person.disaggregate(household.aggregate(person.adult_mortality)))")
+            prob_to_keep = person_set.compute_variables("safe_array_divide(person.adult_mortality, person.disaggregate(household.aggregate(person.adult_mortality)))")
 
             for idx_hh in where(hh_at_risk)[0]:
-                hh_id = household['household_id'][idx_hh]
-                ps_of_this_hh = where( person['household_id'] == hh_id )[0]
-                r = random(0, 1); cumprob = cumsum(prob_to_keep[p_of_this_hh])
-                idx_adlult_to_keep = searchsorted(cumprob, r)
-                person_set['mortality_flag'][p_of_this_hh[idx_adult_to_keep]] = False
+                hh_id = household_set['household_id'][idx_hh]
+                ps_of_this_hh = where( person_set['household_id'] == hh_id )[0]
+                r = uniform(0, 1); cumprob = cumsum(prob_to_keep[ps_of_this_hh])
+                idx_adult_to_keep = searchsorted(cumprob, r)
+                person_set['mortality_flag'][ps_of_this_hh[idx_adult_to_keep]] = False
 
         idx = where( person_set['mortality_flag'] )[0]
-        person_set.delete_attribute('mortality_flag')
+        person_set.delete_one_attribute('mortality_flag')
 
         logger.log_status("Removing %s records from %s dataset" % (idx.size, person_set.get_dataset_name()) )
         person_set.remove_elements(idx)
