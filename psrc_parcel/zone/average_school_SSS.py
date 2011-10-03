@@ -43,11 +43,16 @@ class Tests(opus_unittest.OpusTestCase):
                 "school":{
                     "school_id":array([1, 2, 3, 4, 5, 6, 7, 8]),
                     "total_score": array([200, 300, 0, 50, -1, 0, 10, 60]),
-                    "zone_id": array([1,1,1,2,2,4,3,3])
+                    "zone_id": array([1,1,1,2,2,4,3,3]),
+                    "faz_id": array([1,1,1,1,1,2,2,2])
                     },
                 "zone":{
                      "zone_id":array([1,2,3,4]),
-                 }             
+                     "faz_id": array([1,1,2,2])
+                 },
+                 "faz":{
+                    "faz_id" : array([1,2]) 
+                    }           
                  
            }
         )
