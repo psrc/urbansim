@@ -3,9 +3,11 @@
 # See opus_core/LICENSE
 
 import os
+import re
 from lxml.etree import ElementTree
 
 from PyQt4.QtGui import QDialog
+from PyQt4 import QtGui, QtCore
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.util import common_dialogs
@@ -22,6 +24,27 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         QDialog.__init__(self, parent_widget)
         self.setupUi(self)
         
+        desc = '\n'.join(('%(PROTOCOL_TAG)s: Database protocol. Double-click and hold to see the available options.',
+                          '%(HOST_NAME_TAG)s: Host name (and database name for Postgres).',
+                          '    * Postgres: Use the format "host_name/database_name" (without quotes).',
+                          '          - Leave host_name empty to connect to localhost.',
+                          '          - Leave database_name empty (but retain the slash) to connect',
+                          '            to the default database for the database user.',
+                          '    * Other protocols: Enter the host name only.',
+                          '%(USER_NAME_TAG)s: Database user name',
+                          '%(PASSWORD_TAG)s: Database password',
+                          '',
+                          'To add a new database configuration, please edit',
+                          '%(conf_file_path)s'
+                          )
+                         )
+        desc = QtGui.QApplication.translate("DatabaseSettingsEditGui", desc, None, QtGui.QApplication.UnicodeUTF8)
+        desc = unicode(desc) % dict([(n, eval('DatabaseServerConfiguration.%s'%n)) for n in dir(DatabaseServerConfiguration) if re.match('.*_TAG$', n)] +
+                                    [('conf_file_path', DatabaseServerConfiguration.get_default_configuration_file_path())])
+        desc = QtCore.QString(desc)
+        
+        self.description.setText(desc)
+
         self._config_filename = DatabaseServerConfiguration.get_default_configuration_file_path()
 
         try:

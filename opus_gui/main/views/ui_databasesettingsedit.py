@@ -20,6 +20,9 @@ class Ui_DatabaseSettingsEditGui(object):
         self.gridlayout = QtGui.QGridLayout(self.variableBox)
         self.gridlayout.setObjectName("gridlayout")
         self.vboxlayout.addWidget(self.variableBox)
+        self.description = QtGui.QLabel(DatabaseSettingsEditGui)
+        self.description.setObjectName("description")
+        self.vboxlayout.addWidget(self.description)
         self.buttonBox = QtGui.QDialogButtonBox(DatabaseSettingsEditGui)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
@@ -31,4 +34,3 @@ class Ui_DatabaseSettingsEditGui(object):
     def retranslateUi(self, DatabaseSettingsEditGui):
         DatabaseSettingsEditGui.setWindowTitle(QtGui.QApplication.translate("DatabaseSettingsEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("DatabaseSettingsEditGui", "Database Settings", None, QtGui.QApplication.UnicodeUTF8))
-
