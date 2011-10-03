@@ -56,6 +56,8 @@ class DatabaseServerConfiguration(object):
     USER_NAME_TAG = 'user_name'
     PASSWORD_TAG = 'password'
     
+    DEFAULT_FILE_NAME = 'database_server_configurations.xml'
+    
     def __init__(self, 
                  protocol = None, 
                  host_name = None, 
@@ -111,7 +113,11 @@ class DatabaseServerConfiguration(object):
             self.password = os.environ['SQLPASSWORD']
 
         self.sqlite_db_path = sqlite_db_path
-                
+
+    @classmethod
+    def get_default_configuration_file_path(cls):
+        return paths.get_opus_home_path('settings', cls.DEFAULT_FILE_NAME)
+
     def __repr__(self):
         return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
 

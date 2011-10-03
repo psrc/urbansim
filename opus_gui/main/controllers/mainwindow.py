@@ -33,6 +33,7 @@ from opus_gui.util import common_dialogs
 from opus_gui.main.controllers.dialogs.load_project_template_dialog import LoadProjectTemplateDialog
 from opus_gui.main.controllers.dialogs.new_project_dialog import NewProjectDynamicDialog
 from opus_gui.general_manager.controllers.variable_library import VariableLibrary
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core import paths
 
 class OpusGui(QMainWindow, Ui_MainWindow):
@@ -60,8 +61,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.project = OpusProject()
 
         # Read database connection names
-        settings_directory = paths.OPUS_SETTINGS_PATH
-        db_con_file = os.path.join(settings_directory, 'database_server_configurations.xml')
+        db_con_file = DatabaseServerConfiguration.get_default_configuration_file_path()
         db_config_node = ElementTree(file=db_con_file).getroot()
         self.db_connection_names = [node.tag for node in db_config_node if
                                      node.tag != Comment and node.get('hidden') != "True" and node.tag != 'xml_version']

@@ -12,6 +12,7 @@ from opus_gui.util import common_dialogs
 from opus_gui.main.controllers.xml_configuration.database_config_xml_controller import XmlController_DatabaseConfig
 
 from opus_gui.main.views.ui_databasesettingsedit import Ui_DatabaseSettingsEditGui
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core import paths
 
 class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
@@ -20,9 +21,9 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
     def __init__(self, parent_widget):
         QDialog.__init__(self, parent_widget)
         self.setupUi(self)
+        
+        self._config_filename = DatabaseServerConfiguration.get_default_configuration_file_path()
 
-        settings_directory = paths.OPUS_SETTINGS_PATH
-        self._config_filename = os.path.join(settings_directory, 'database_server_configurations.xml')
         try:
             self.xml_root = ElementTree(file=self._config_filename).getroot()
             self.base_widget = self.variableBox
