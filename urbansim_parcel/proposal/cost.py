@@ -76,7 +76,7 @@ class Tests(opus_unittest.OpusTestCase):
                 "proposal_component_id": array([1,  2,  3,  4, 5, 6, 7, 8]),
                 "proposal_id":           array([1,  1,  1,  1, 1, 1, 1, 1]),
            "building_type_id":           array([2,  3,  5,  9, 0, 0, 0, 0]), 
-	                                       #MXD Townhome
+                                           #MXD Townhome
                                                #Townhome
                                                #MXD Midrise 55
                                                #Midrise 55
@@ -90,10 +90,10 @@ class Tests(opus_unittest.OpusTestCase):
              "commercial_floors":         array([0,   0,     1,   0,    1,    0,1,     0]),
             "residential_floors":         array([0,   1,     3,   4,    4,    5,6,     7]),
             
-	           #"sqft":               array([0,  0,  105, 15]) * 1000,
-	          #"price_per_unit":      array([400,0,  0,  0]) * 1000,
-		  #"rent_per_unit":       array([0,  15, 0,  0]) * 1000,
-		  #"lease_per_sqft":      array([0,  0,  21, 0]),
+               #"sqft":               array([0,  0,  105, 15]) * 1000,
+              #"price_per_unit":      array([400,0,  0,  0]) * 1000,
+          #"rent_per_unit":       array([0,  15, 0,  0]) * 1000,
+          #"lease_per_sqft":      array([0,  0,  21, 0]),
                   #"parking_ratio":       array([4/3.0,4/3.0,500,500]),
                   #"common_area":         array([.2, .2, .15, .15]),
              },

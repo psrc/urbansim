@@ -18,7 +18,7 @@ class revenue(Variable):
     
     def dependencies(self):
         return ["total_units = proposal_component.disaggregate(proposal.total_units)",
-		"affordable_units = proposal_component.total_units * proposal_component.disaggregate(proposal.affordable_ratio)",
+        "affordable_units = proposal_component.total_units * proposal_component.disaggregate(proposal.affordable_ratio)",
                 "sales_units = proposal_component.total_units - proposal_component.affordable_units",
                 "rentable_sqft = proposal_component.sqft * ( 1 - proposal_component.common_area)",
                 "sales_revenue = proposal_component.sales_units * proposal_component.price_per_unit",
@@ -53,11 +53,11 @@ class Tests(opus_unittest.OpusTestCase):
                 "proposal_component_id": array([1,  2,  3,  4]),
                 "proposal_id":           array([1,  1,  1,  1]),
            "building_type_id":           array([2,  3,  5,  9]), 
-	                                       #mf, mf-affordable, retail, cultural
-	           "sqft":               array([0,  0,  105, 15]) * 1000,
-	          "price_per_unit":      array([400,0,  0,  0]) * 1000,
-		  "rent_per_unit":       array([0,  15, 0,  0]) * 1000,
-		  "lease_per_sqft":      array([0,  0,  21, 0]),
+                                           #mf, mf-affordable, retail, cultural
+               "sqft":               array([0,  0,  105, 15]) * 1000,
+              "price_per_unit":      array([400,0,  0,  0]) * 1000,
+          "rent_per_unit":       array([0,  15, 0,  0]) * 1000,
+          "lease_per_sqft":      array([0,  0,  21, 0]),
                   "parking_ratio":       array([4/3.0,4/3.0,500,500]),
                   "common_area":         array([.2, .2, .15, .15]),
              },
