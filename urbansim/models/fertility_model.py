@@ -55,7 +55,7 @@ class FertilityModel(AgentRelocationModel):
             household_set.modify_attribute('children', children)
         
         ##preventing households that experience multiple births in the same year from having newborns with duplicate person_no
-        ##right now, this is a work in progress because households with 3 or more births in a single year will still have duplicate person_no
+        ##right now, this is a work in progress because households with 3 or more births in a single year (very rare) will still have duplicate person_no
         if 'person_no' in person_set.get_known_attribute_names():
             num_max_person_no = household_set.compute_variables('_num_max_person_no = household.aggregate(person.person_no == person.disaggregate(household.aggregate(person.person_no, function=maximum)))')
             max_person_id = person_set.compute_variables('_max_person_id = person.person_id == person.disaggregate(household.aggregate(person.person_id, function=maximum))')
