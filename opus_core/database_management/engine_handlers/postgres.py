@@ -7,6 +7,7 @@ from sqlalchemy import types as sqltypes
 import os
 from sqlalchemy.exc import ProgrammingError
 from opus_core.logger import logger
+import re
 
 try: 
     from sqlalchemy.databases import postgres
@@ -44,29 +45,46 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         AbstractDatabaseEngineManager.__init__(self, server_config)
         self.uses_schemas = False
         
-    def _get_default_database(self):
-        if 'OPUSPROJECTNAME' not in os.environ:
+    def _get_default_database(self, force_database_name = None):
+        if force_database_name is not None:
+            return force_database_name
+        
+        _, database_name = self._split_host_name()
+
+        if database_name is not None:
+            if database_name == '':
+                base_database = self.server_config.user_name
+            else:
+                base_database = database_name
+        elif 'OPUSPROJECTNAME' not in os.environ:
             base_database = 'misc'
         else:
             base_database = os.environ['OPUSPROJECTNAME']
         return base_database
     
+    def _split_host_name(self):
+        if self.server_config.host_name is None:
+            return '', None
+        m = re.match(r'^([^/]+)(?:|/([^/]+))$', self.server_config.host_name)
+        return m.group(1), m.group(2)
+
     def get_connection_string(self, database_name = None, get_base_db = False, scrub = False):
         server_config = self.server_config
         if scrub:
             password = '**********'
         else:
             password = server_config.password
-            
+        
+        host_name, _ = self._split_host_name()
         if get_base_db:
-            database_name = 'postgres'
-        elif not database_name:
-            database_name = self._get_default_database()
+            database_name = self._get_default_database('postgres')
+        else:
+            database_name = self._get_default_database(database_name)
         
         connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
                                              server_config.user_name, 
                                              password, 
-                                             server_config.host_name if server_config.host_name is not None else '', 
+                                             host_name,
                                              database_name) 
         return connect_string            
     
