@@ -4,8 +4,8 @@
 
 from urbansim.models.agent_relocation_model import AgentRelocationModel
 from opus_core.logger import logger
-from numpy import where, array, zeros, cumsum, searchsorted
-from numpy.random import random,  uniform
+from numpy import where, array, zeros, cumsum, searchsorted, logical_and
+from numpy.random import random, uniform
 
 class MortalityModel(AgentRelocationModel):
     """
@@ -22,21 +22,31 @@ class MortalityModel(AgentRelocationModel):
         person_set['mortality_flag'][index] = True
 
         #identify such households
-        adult_mortality = household_set.compute_variables("full_adult_mortality=household.aggregate(person.mortality_flag) == household.aggregate(person.age>17)")
-        children_remain = household_set.compute_variables("children_remain=household.aggregate(numpy.logical_not(person.mortality_flag) * person.age <= 17) > 0 ")
-        hh_at_risk = household_set.compute_variables("at_risk = household.full_adult_mortality * household.children_remain")
-        if any(household_set["at_risk"]):
+        person_set.compute_variables('is_adult = person.age > 17')
+        household_set.compute_variables('adults = household.aggregate(person.is_adult)')
+        person_set.compute_variables("adult_death = person.mortality_flag * person.is_adult")
+        household_set.compute_variables("adult_deaths = household.aggregate(person.adult_death)")
+        full_adult_mortality = household_set.compute_variables("death_of_all_adults = numpy.logical_and(household.adult_deaths>=1, " + 
+                                                                                                       "household.adult_deaths == household.adults)")
+        children_at_risk = household_set.compute_variables("children_at_risk=household.aggregate(numpy.logical_not(person.mortality_flag) * (person.age <= 17)) > 0 ")
+        hh_at_risk = household_set.compute_variables("at_risk = household.death_of_all_adults * household.children_at_risk")
+        idx_hh_at_risk = where(hh_at_risk)[0]
+        if idx_hh_at_risk.size > 0:
             #sample 1 adult per household to keep for households with children at risk 
-            p_at_risk = where( person_set.compute_variables("person.disaggregate(household.at_risk)"))[0]
-            adult_mortality = person_set.compute_variables("adult_mortality = (person.mortality_flag * (person.age>17)).astype('f')")
-            prob_to_keep = person_set.compute_variables("safe_array_divide(person.adult_mortality, person.disaggregate(household.aggregate(person.adult_mortality)))")
+            prob_to_keep = person_set.compute_variables("safe_array_divide((person.adult_death).astype('f'), " + 
+                                                                           "person.disaggregate(household.adult_deaths))")
 
-            for idx_hh in where(hh_at_risk)[0]:
+            for idx_hh in idx_hh_at_risk:
                 hh_id = household_set['household_id'][idx_hh]
-                ps_of_this_hh = where( person_set['household_id'] == hh_id )[0]
-                r = uniform(0, 1); cumprob = cumsum(prob_to_keep[ps_of_this_hh])
-                idx_adult_to_keep = searchsorted(cumprob, r)
-                person_set['mortality_flag'][ps_of_this_hh[idx_adult_to_keep]] = False
+                ps_of_this_hh = where( logical_and(person_set['household_id'] == hh_id,
+                                                   person_set['adult_death']
+                                                   ))[0]
+                if ps_of_this_hh.size == 1:
+                    person_set['mortality_flag'][ps_of_this_hh] = False
+                else:
+                    r = uniform(0,1); cumprob = cumsum(prob_to_keep[ps_of_this_hh])
+                    idx_adult_to_keep = searchsorted(cumprob, r)
+                    person_set['mortality_flag'][ps_of_this_hh[idx_adult_to_keep]] = False
 
         idx = where( person_set['mortality_flag'] )[0]
         person_set.delete_one_attribute('mortality_flag')
@@ -86,62 +96,62 @@ class MortalityModel(AgentRelocationModel):
                 person_set.modify_attribute('marriage_status', array(index_widow.size*[3]), index_widow)
 
 
-from opus_core.tests import opus_unittest
-from opus_core.misc import ismember
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.resources import Resources
-from numpy import array, logical_and, int32, int8, ma, all, allclose
-from scipy import histogram
-from opus_core.datasets.dataset import Dataset
-from urbansim.datasets.household_dataset import HouseholdDataset
-from urbansim.datasets.person_dataset import PersonDataset
-from opus_core.storage_factory import StorageFactory
-from itertools.chain import from_iterable
-
-class Tests(opus_unittest.OpusTestCase):
-
-    def setUp(self):
-        households_data = {
-            "household_id":arange(33)+1,
-            "age_of_head" array(),
-            "persons": array(6*[2] + 2*[3] + 3*[1] + 4*[6] + 2*[1] + 5*[4] +
-                                3*[1]+ 8*[5], dtype=int8),
-            }
-        
-        total_persons = households_data['persons'].sum()
-        persons_data = {
-            "person_id":arange(total_persons)+1,
-            "household_id": array( list(from_iterable([[i] * p for i,p in zip(households_data['household_id'], households_data['persons'])])) ),
-            "member_id": array( list(from_iterable([range(1,p+1) for p in households_data['persons']])) ),
-            "age": array( list(from_iterable([a]+list(randint(0, a, size=p-1)) for a,p in zip(households_data['age_of_head'], households_data['persons'])])) ),
-            "job_id": zeros(total_persons)
-            }
-
-        storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(table_name='hh_set', table_data=households_data)
-        self.hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
-        storage.write_table(table_name='person_set', table_data=persons_data)
-        self.persons_set = PersonDataset(in_storage=storage, in_table_name='person_set')
-
-    def test_mortality_model_avoids_orhpans(elf):
-
-        mortality_rates = {
-            "year": array([2000, 2000, 2001, 2001]),
-            "age_min": array([ 50,  0,  50,  0]),
-            "age_max": array([100, 49, 100, 49]),
-            "mortality_rate": arange(0.5, 0.5, .8, .8),
-            }
-
-        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
-                           datasets_dict={'household':self.hh_set,
-                                          'person':self.person_set
-                                         })
-        storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(table_name='mortality_rate', table_data=mortality_rates)
-        model = MortalityModel()
-        model.prepare_for_run(rate_dataset_name='mortality_rate', rate_storage=storage)
-        model.run(self.person_set, 
-                  self.hh_set,
-                  resources=dataset_pool
-                  )
-        
+#from opus_core.tests import opus_unittest
+#from opus_core.misc import ismember
+#from opus_core.datasets.dataset_pool import DatasetPool
+#from opus_core.resources import Resources
+#from numpy import array, logical_and, int32, int8, ma, all, allclose
+#from scipy import histogram
+#from opus_core.datasets.dataset import Dataset
+#from urbansim.datasets.household_dataset import HouseholdDataset
+#from opus_core.datasets.dataset import Dataset
+#from opus_core.storage_factory import StorageFactory
+#from itertools.chain import from_iterable
+#
+#class Tests(opus_unittest.OpusTestCase):
+#
+#    def setUp(self):
+#        households_data = {
+#            "household_id":arange(33)+1,
+#            "age_of_head": array([]),
+#            "persons": array(6*[2] + 2*[3] + 3*[1] + 4*[6] + 2*[1] + 5*[4] +
+#                                3*[1]+ 8*[5], dtype=int8),
+#            }
+#        
+#        total_persons = households_data['persons'].sum()
+#        persons_data = {
+#            "person_id":arange(total_persons)+1,
+#            "household_id": array( list(from_iterable([[i] * p for i,p in zip(households_data['household_id'], households_data['persons'])])) ),
+#            "member_id": array( list(from_iterable([range(1,p+1) for p in households_data['persons']])) ),
+#            "age": array( list(from_iterable([a]+list(randint(0, a, size=p-1)) for a,p in zip(households_data['age_of_head'], households_data['persons']))) ),
+#            "job_id": zeros(total_persons)
+#            }
+#
+#        storage = StorageFactory().get_storage('dict_storage')
+#        storage.write_table(table_name='hh_set', table_data=households_data)
+#        self.hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+#        storage.write_table(table_name='person_set', table_data=persons_data)
+#        self.persons_set = Dataset(in_storage=storage, in_table_name='person_set', dataset_name='person')
+#
+#    def test_mortality_model_avoids_orhpans(elf):
+#
+#        mortality_rates = {
+#            "year": array([2000, 2000, 2001, 2001]),
+#            "age_min": array([ 50,  0,  50,  0]),
+#            "age_max": array([100, 49, 100, 49]),
+#            "mortality_rate": arange(0.5, 0.5, .8, .8),
+#            }
+#
+#        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+#                           datasets_dict={'household':self.hh_set,
+#                                          'person':self.person_set
+#                                         })
+#        storage = StorageFactory().get_storage('dict_storage')
+#        storage.write_table(table_name='mortality_rate', table_data=mortality_rates)
+#        model = MortalityModel()
+#        model.prepare_for_run(rate_dataset_name='mortality_rate', rate_storage=storage)
+#        model.run(self.person_set, 
+#                  self.hh_set,
+#                  resources=dataset_pool
+#                  )
+#        
