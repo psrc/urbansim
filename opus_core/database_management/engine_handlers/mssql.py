@@ -6,6 +6,8 @@ from opus_core.database_management.engine_handlers.abstract_engine import Abstra
 import os
 
 class MSSQLServerManager(AbstractDatabaseEngineManager):
+    def __init__(self, server_config):
+        AbstractDatabaseEngineManager.__init__(self, server_config)
     
     def _get_default_database(self):
         if 'MSSQLDEFAULTDB' not in os.environ:

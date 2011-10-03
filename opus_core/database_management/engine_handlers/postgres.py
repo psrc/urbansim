@@ -40,7 +40,8 @@ except:
 
 class PostgresServerManager(AbstractDatabaseEngineManager):
     
-    def __init__(self):
+    def __init__(self, server_config):
+        AbstractDatabaseEngineManager.__init__(self, server_config)
         self.uses_schemas = False
         
     def _get_default_database(self):

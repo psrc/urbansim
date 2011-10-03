@@ -9,7 +9,9 @@ from opus_core import paths
 
 class SqliteServerManager(AbstractDatabaseEngineManager):
     
-    def __init__(self, sqlite_db_path = None):
+    def __init__(self, server_config):
+        AbstractDatabaseEngineManager.__init__(self, server_config)
+        sqlite_db_path = server_config.sqlite_db_path
         if sqlite_db_path is None:
             self.server_path = paths.get_opus_home_path('local_databases')
         else:
@@ -21,8 +23,6 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
             self.os = os.uname[0]
         except:
             self.os = 'Windows'
-            
-        AbstractDatabaseEngineManager.__init__(self)
         
         
     def _get_default_database(self):
