@@ -43,8 +43,7 @@ class DatabaseServer(object):
         ) 
         
     def get_connection_string(self, get_base_db = False, scrub = False):
-        return self.protocol_manager.get_connection_string(server_config = self.config,
-                                                           get_base_db = get_base_db,
+        return self.protocol_manager.get_connection_string(get_base_db = get_base_db,
                                                            scrub = scrub)
 
     def log_sql(self, sql_query):

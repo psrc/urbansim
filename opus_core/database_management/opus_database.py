@@ -34,8 +34,7 @@ class OpusDatabase(object):
     password = property(lambda self: self.database_server_config.password)
     
     def get_connection_string(self, scrub = False):
-        return self.protocol_manager.get_connection_string(server_config = self.database_server_config,
-                                                           database_name = self.database_name,
+        return self.protocol_manager.get_connection_string(database_name = self.database_name,
                                                            scrub = scrub)
     
     def open(self):

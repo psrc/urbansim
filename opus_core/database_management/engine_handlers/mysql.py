@@ -8,7 +8,8 @@ class MySQLServerManager(AbstractDatabaseEngineManager):
     def __init__(self, server_config):
         AbstractDatabaseEngineManager.__init__(self, server_config)
     
-    def get_connection_string(self, server_config, database_name = None, get_base_db = False, scrub = False):
+    def get_connection_string(self, database_name = None, get_base_db = False, scrub = False):
+        server_config = self.server_config
         if scrub:
             password = '**********'
         else:
