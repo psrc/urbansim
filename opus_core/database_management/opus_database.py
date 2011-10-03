@@ -20,8 +20,6 @@ class OpusDatabase(object):
         """ Connects to this database. """
         self.show_output = show_output
         
-        self.config = database_server_configuration
-        
         self.protocol_manager = DatabaseEngineManagerFactory.get_engine(database_server_configuration)
             
         self.database_name = database_name
@@ -30,10 +28,10 @@ class OpusDatabase(object):
         self.open()
         self.show_output = False
 
-    protocol = property(lambda self: self.config.protocol)
-    host_name = property(lambda self: self.config.host_name)
-    user_name = property(lambda self: self.config.user_name)
-    password = property(lambda self: self.config.password)
+    protocol = property(lambda self: self.database_server_config.protocol)
+    host_name = property(lambda self: self.database_server_config.host_name)
+    user_name = property(lambda self: self.database_server_config.user_name)
+    password = property(lambda self: self.database_server_config.password)
     
     def get_connection_string(self, scrub = False):
         return self.protocol_manager.get_connection_string(server_config = self.database_server_config,
