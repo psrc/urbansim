@@ -65,7 +65,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
                                              server_config.user_name, 
                                              password, 
-                                             server_config.host_name, 
+                                             server_config.host_name if server_config.host_name is not None else '', 
                                              database_name) 
         return connect_string            
     
