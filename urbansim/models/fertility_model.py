@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.models.agent_relocation_model import AgentRelocationModel
-from numpy import zeros, arange
+from numpy import zeros, arange, where
 from numpy.random import randint
 from opus_core.logger import logger
 
@@ -29,9 +29,13 @@ class FertilityModel(AgentRelocationModel):
         if 'person_no' in person_set.get_known_attribute_names():
             ## this requires person_no to exist, which may not always be the case
             new_born['person_no'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.person_no, function=maximum)) + 1")[index]
-        new_born['race'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.head_of_hh*person.race))")[index]
+        #assign new-born the race of the mother
+        new_born['race'] = person_set['race'][index]
         new_born['age'] = zeros(index.size, dtype="int32")
-        new_born['gender'] = randint(1, 3, size=index.size)  ##TODO: better way to assign sex?
+        if 'gender' in person_set.get_known_attribute_names():
+            new_born['gender'] = randint(1, 3, size=index.size)
+        if 'sex' in person_set.get_known_attribute_names():
+            new_born['sex'] = randint(1, 3, size=index.size)  ##TODO: better way to assign sex?
         ##TODO: give better default values
         #new_born['education']
         #new_born['job_id']
@@ -49,4 +53,17 @@ class FertilityModel(AgentRelocationModel):
         if 'children' in household_set.get_primary_attribute_names():
             children = household_set.compute_variables('_childrens = household.aggregate(person.age<18)')
             household_set.modify_attribute('children', children)
+        
+        ##preventing households that experience multiple births in the same year from having newborns with duplicate person_no
+        ##right now, this is a work in progress because households with 3 or more births in a single year will still have duplicate person_no
+        if 'person_no' in person_set.get_known_attribute_names():
+            num_max_person_no = household_set.compute_variables('_num_max_person_no = household.aggregate(person.person_no == person.disaggregate(household.aggregate(person.person_no, function=maximum)))')
+            max_person_id = person_set.compute_variables('_max_person_id = person.person_id == person.disaggregate(household.aggregate(person.person_id, function=maximum))')
+            person_no_to_change = person_set.compute_variables('_to_change = person._max_person_id * person.disaggregate(household._num_max_person_no>1)')
+            index_to_change = where(person_no_to_change==1)[0]
+            if index_to_change.size > 0:
+                person_set.modify_attribute('person_no', person_set.get_attribute('person_no')[index_to_change] + 1, index_to_change)
+            
+            
+            
        
