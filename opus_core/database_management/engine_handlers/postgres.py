@@ -43,10 +43,8 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
     def __init__(self):
         self.uses_schemas = False
         
-    def _get_default_database(self, get_existing_db = False):
-        if get_existing_db:
-            base_database = 'postgres'
-        elif 'OPUSPROJECTNAME' not in os.environ:
+    def _get_default_database(self):
+        if 'OPUSPROJECTNAME' not in os.environ:
             base_database = 'misc'
         else:
             base_database = os.environ['OPUSPROJECTNAME']
@@ -59,7 +57,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
             password = server_config.password
             
         if get_base_db:
-            database_name = self._get_default_database(get_existing_db = True)
+            database_name = 'postgres'
         elif not database_name:
             database_name = self._get_default_database()
         
