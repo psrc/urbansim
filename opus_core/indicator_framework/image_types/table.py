@@ -34,13 +34,14 @@ class Table(AbstractIndicator):
 
         self.output_type = output_type
         kwargs = {}
-        if self.output_type == 'sql':
-            kwargs['protocol'] = storage_location.protocol
-            kwargs['username'] = storage_location.user_name
-            kwargs['password'] = storage_location.password
-            kwargs['hostname'] = storage_location.host_name
-            kwargs['database_name'] = storage_location.database_name
-        elif self.output_type == 'esri':
+        #if self.output_type == 'sql':
+        #    kwargs['protocol'] = storage_location.protocol
+        #    kwargs['username'] = storage_location.user_name
+        #    kwargs['password'] = storage_location.password
+        #    kwargs['hostname'] = storage_location.host_name
+        #    kwargs['database_name'] = storage_location.database_name
+        #elif self.output_type == 'esri':
+        if self.output_type == 'esri':
             kwargs['storage_location'] = storage_location
         else:
             kwargs['storage_location'] = self.get_storage_location()
