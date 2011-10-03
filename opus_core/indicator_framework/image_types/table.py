@@ -29,8 +29,8 @@ class Table(AbstractIndicator):
             raise "Table output_type must be either dbf, csv, tab, sql, or esri"
 
         AbstractIndicator.__init__(self, source_data, dataset_name, [attribute],
-                                   years, operation, name,
-                                   storage_location, can_write_to_db = True)
+                                   years=years, operation=operation, name=name,
+                                   storage_location=storage_location, can_write_to_db = True)
 
         self.output_type = output_type
         kwargs = {}
