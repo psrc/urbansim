@@ -81,6 +81,7 @@ class BuildingConstructionModel(Model):
         parcel_is_lut_vacant = parcels.compute_variables(["urbansim_parcel.parcel.is_land_use_type_vacant"], 
                                   dataset_pool=dataset_pool)
         parcel_lut = parcels.get_attribute("land_use_type_id")
+        parcel_lut_before = parcel_lut.copy()
         component_land_use_types = proposal_component_set.compute_variables([
               'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
                       dataset_pool=dataset_pool)
@@ -195,7 +196,9 @@ class BuildingConstructionModel(Model):
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
         logger.log_status("Number of new buildings by template ids:")
         logger.log_status(number_of_new_buildings_by_template_id)
-
+        parcels["land_use_type_id"] = parcel_lut
+        logger.log_status("%s parcels have modified land_use_type_id." % (parcel_lut_before <> parcel_lut).sum())
+        
         # recompute the cummulative development amount
         if velocity_function_set is not None:
             # determine, if everything has been built or if it should be considered next year
@@ -230,6 +233,8 @@ class BuildingConstructionModel(Model):
             return
         
         id_index_in_buildings = building_dataset.get_id_index(buildings_to_be_demolished)
+        parcels = dataset_pool.get_dataset('parcel')
+        idx_pcl = parcels.get_id_index(unique(building_dataset['parcel_id'][id_index_in_buildings]))
         # remove occupants from buildings to be demolished
         JAMM = JoinAttributeModificationModel()
         for agent_name in ['household', 'job']:            
@@ -238,6 +243,13 @@ class BuildingConstructionModel(Model):
             
         building_dataset.remove_elements(id_index_in_buildings)
         logger.log_status("%s buildings demolished." % buildings_to_be_demolished.size)
+        
+        # set land_use_type 'vacant' to parcels with demolished buildings
+        land_types = dataset_pool.get_dataset('land_use_type')
+        code = land_types.get_id_attribute()[land_types["land_use_name"] == 'vacant'][0]
+        nvac = (parcels['land_use_type_id'][idx_pcl] == code).sum()
+        parcels['land_use_type_id'][idx_pcl] = code
+        logger.log_status("%s parcels set to vacant." % (idx_pcl.size - nvac))
 
                 
 from opus_core.tests import opus_unittest
@@ -267,12 +279,24 @@ class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
         }
         building_data = {
             'building_id': arange(200)+1,
+            'parcel_id': arange(200)+1
+            }        
+        parcel_data = {
+            'parcel_id': arange(200)+1,
+            'land_use_type_id': array(150*[1]+50*[2]),      
+            }
+        
+        lut_data = {
+            'land_use_type_id': array([1,2]),
+            'land_use_name': array(['non_vacant', 'vacant'])        
             }
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name = 'households', table_data = household_data)
         storage.write_table(table_name = 'buildings', table_data = building_data)
         storage.write_table(table_name = 'jobs', table_data = job_data)
         storage.write_table(table_name = 'persons', table_data = person_data)
+        storage.write_table(table_name = 'parcels', table_data = parcel_data)
+        storage.write_table(table_name = 'land_use_types', table_data = lut_data)
         dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim'])
         
         
@@ -289,8 +313,9 @@ class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
                                   array([-1, 145, -1, -1, 179])), True)
         self.assertEqual(dataset_pool.get_dataset('building').size()==197, True)
         self.assertEqual(all(dataset_pool.get_dataset('person').get_attribute('job_id') == 
-                             array([-1,-1,-1,2,2,-1,-1,5,-1,-1,-1,-1,-1,-1,-1])), True) 
-                             
+                             array([-1,-1,-1,2,2,-1,-1,5,-1,-1,-1,-1,-1,-1,-1])), True)
+        self.assertEqual(dataset_pool.get_dataset('parcel')['land_use_type_id'][9], 2)
+        self.assertEqual(dataset_pool.get_dataset('parcel')['land_use_type_id'][2], 2)            
         
 if __name__=="__main__":
     opus_unittest.main()
