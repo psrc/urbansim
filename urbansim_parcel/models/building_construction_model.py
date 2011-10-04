@@ -246,10 +246,12 @@ class BuildingConstructionModel(Model):
         
         # set land_use_type 'vacant' to parcels with demolished buildings
         land_types = dataset_pool.get_dataset('land_use_type')
-        code = land_types.get_id_attribute()[land_types["land_use_name"] == 'vacant'][0]
-        nvac = (parcels['land_use_type_id'][idx_pcl] == code).sum()
-        parcels['land_use_type_id'][idx_pcl] = code
-        logger.log_status("%s parcels set to vacant." % (idx_pcl.size - nvac))
+        vac_idx = land_types["land_use_name"] == 'vacant'
+        if vac_idx.sum() > 0:
+            code = land_types.get_id_attribute()[vac_idx][0]
+            nvac = (parcels['land_use_type_id'][idx_pcl] == code).sum()
+            parcels['land_use_type_id'][idx_pcl] = code
+            logger.log_status("%s parcels set to vacant." % (idx_pcl.size - nvac))
 
                 
 from opus_core.tests import opus_unittest
