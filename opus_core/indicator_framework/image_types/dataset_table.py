@@ -8,7 +8,7 @@ from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.opus_database import OpusDatabase
 
 class DatasetTable(AbstractIndicator):
 
@@ -17,8 +17,8 @@ class DatasetTable(AbstractIndicator):
                  exclude_condition = None, output_type = 'tab',
                  storage_location = None):
 
-        if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
-            raise "If DatasetTable output_type is 'sql', a Database object must be passed as storage_location."
+        if output_type == 'sql' and not isinstance(storage_location, OpusDatabase):
+            raise "If DatasetTable output_type is 'sql', a OpusDatabase object must be passed as storage_location."
         elif output_type in ['dbf', 'csv', 'tab', 'esri'] and \
                storage_location is not None and \
                not isinstance(storage_location,str):
@@ -37,13 +37,7 @@ class DatasetTable(AbstractIndicator):
                 
         self.output_type = output_type
         kwargs = {}
-        if self.output_type == 'sql':
-            kwargs['protocol'] = storage_location.protocol
-            kwargs['username'] = storage_location.user_name
-            kwargs['password'] = storage_location.password
-            kwargs['hostname'] = storage_location.host_name
-            kwargs['database_name'] = storage_location.database_name
-        elif self.output_type == 'esri':
+        if self.output_type == 'esri':
             kwargs['storage_location'] = storage_location
         else:
             kwargs['storage_location'] = self.get_storage_location()
