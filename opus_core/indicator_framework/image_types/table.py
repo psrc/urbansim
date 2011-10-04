@@ -19,9 +19,10 @@ class Table(AbstractIndicator):
                  output_type = 'csv',
                  storage_location = None):
 
-        if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
-            raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
-        elif output_type in ['dbf', 'csv', 'tab', 'esri'] and \
+        #if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
+        #    raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
+        #elif output_type in ['dbf', 'csv', 'tab', 'esri'] and \     
+        if output_type in ['dbf', 'csv', 'tab', 'esri'] and \
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
