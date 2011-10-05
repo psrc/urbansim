@@ -33,9 +33,9 @@ class RunDummyTravelModel(AbstractTravelModel):
         #    pydevd.settrace()
         #except: pass
         
-        self.__setUp( config )
+        self.setUp( config )
         
-        config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
+        config_obj = MATSimConfigObject(config, year) #self.matsim_config_full
         config_obj.marschall()        
         
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
@@ -48,14 +48,14 @@ class RunDummyTravelModel(AbstractTravelModel):
         
         logger.log_status('would normally run command %s' % cmd )
         
-        in_file_name = os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'travel_data.csv' )
-        out_file_name = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp', 'travel_data.csv' )
+        in_file_name = os.path.join( opus_matsim.__path__[0], 'tests', 'testdata', 'travel_data.csv' )
+        out_file_name = os.path.join( paths.get_opus_home_path(), 'opus_matsim', 'tmp', 'travel_data.csv' )
         
         print "Copying dummy travel data ..."
         shutil.copyfile(in_file_name, out_file_name)
         print "... done."
                 
-    def __setUp(self, config):
+    def setUp(self, config):
         """ create MATSim config data
         """
         self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")

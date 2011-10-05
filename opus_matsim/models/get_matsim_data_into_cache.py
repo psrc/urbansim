@@ -13,6 +13,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from urbansim.datasets.zone_dataset import ZoneDataset
 from opus_core.storage_factory import StorageFactory
 from opus_matsim.models.org.constants import matsim4opus, matsim_temp
+from opus_core import paths
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -20,7 +21,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """
     
     def init(self, year, config):
-        self.input_directory = os.path.join( os.environ['OPUS_HOME'], matsim4opus, matsim_temp )
+        self.input_directory = os.path.join( paths.get_opus_home_path(matsim4opus), matsim_temp )
         logger.log_status("input_directory: " + self.input_directory )
         self.in_storage = csv_storage(storage_location = self.input_directory)
         self.cache_storage = AttributeCache().get_flt_storage_for_year(year)
@@ -61,10 +62,10 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         # print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
-        #try: # tnicolai :for debugging
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
+        try: # tnicolai :for debugging
+            import pydevd
+            pydevd.settrace()
+        except: pass
         
         self.init(year, config);
         

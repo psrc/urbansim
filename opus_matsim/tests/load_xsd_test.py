@@ -1,6 +1,7 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington and Kai Nagel
 # See opus_core/LICENSE
+
 from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 import urllib2
@@ -41,11 +42,15 @@ class XSDLoadTest(opus_unittest.OpusTestCase):
         outfile.write( xsd )
         outfile.flush()
         outfile.close()
-
+        
         self.assertTrue( os.path.exists(self.xsd_destination) )
         
         logger.log_status('leaving test_run')
 
 if __name__ == "__main__":
     opus_unittest.main()
+#    test = XSDLoadTest()
+#    test.setUp()
+#    test.test_run()
+#    test.tearDown()
     

@@ -2,7 +2,6 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington and Kai Nagel
 # See opus_core/LICENSE
 
-from opus_core.logger import logger
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
@@ -19,7 +18,7 @@ import tempfile
 
 class Tests(opus_unittest.OpusTestCase):
     
-    def __setUp(self):
+    def setUp(self):
         print "entering __setUp"
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         print "leaving __setUp"

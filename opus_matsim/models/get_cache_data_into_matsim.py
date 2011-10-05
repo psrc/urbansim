@@ -41,7 +41,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
-        output_root = paths.get_opus_home_path("opus_matsim") 
+        output_root = paths.get_opus_home_path( matsim4opus ) 
         if not os.path.exists( output_root ):
             try: os.mkdir( output_root )
             except: pass

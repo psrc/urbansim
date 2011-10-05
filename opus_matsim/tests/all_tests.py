@@ -5,4 +5,4 @@
 from opus_core.tests.utils.package_tester import PackageTester
 
 if __name__ == '__main__':
-    PackageTester().run_all_tests_for_package('opus_matsim')
+    PackageTester().run_all_tests_for_package('opus_matsim.tests')

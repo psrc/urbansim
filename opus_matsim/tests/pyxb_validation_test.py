@@ -11,7 +11,7 @@ class PyxbValidation(opus_unittest.OpusTestCase):
     """ This test validates the generated xml MATSim configuration while using pyxb's own validation process.
     """
     
-    def __setUp(self):
+    def setUp(self):
         print "entering __setUp"
         self.config_location = os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'pyxb_data')
         print "leaving __setUp"
