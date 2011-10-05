@@ -28,44 +28,51 @@ class is_income_DDD(Variable):
         
 
 from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
-from numpy import ma
+from opus_core.tests.utils.variable_tester import VariableTester
 
-class MockConstant(object):
-    def get_income_range_for_type(self, income_type):
-        if income_type == 3: return (45000, 75000)
-        raise StandardError("Income type should have been 3")
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household.is_income_3"
-
-    def test_my_inputs( self ):
-        storage = StorageFactory().get_storage('dict_storage')        
         
-        storage.write_table(
-            table_name='households',
-            table_data={
-                'household_id': array([1, 2, 3, 4]),
-                'income': array([45000, 50000, 75000, 100000]),
+    def test_internal_categories( self ):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                'household': {
+                    'household_id': array([1, 2, 3, 4]),
+                    'income': array([45000, 50000, 75000, 100000]),
+                    },
+                'urbansim_constant': {
+                       'id': array([1])               
+                    }
             }
-        )
-        
-        
-        dataset_pool = DatasetPool(package_order=['urbansim'],
-                                   storage=storage)
-        dataset_pool._add_dataset('urbansim_constant', MockConstant())
-
-        household = dataset_pool.get_dataset('household')
-        household.compute_variables(self.variable_name, 
-                                    dataset_pool=dataset_pool)
-        values = household.get_attribute(self.variable_name)
-        
+        )    
         should_be = array( [1, 1, 0, 0] )
+        instance_name = "urbansim.household.is_income_3"
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
         
-        self.assert_(ma.allequal(values, should_be,), 
-                     msg="Error in " + self.variable_name)
+    def test_external_categories( self ):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                'household': {
+                    'household_id': array([1, 2, 3, 4]),
+                    'income': array([45, 50, 75, 10]),
+                    },
+                'urbansim_constant': {
+                       'income_category_1_min': array([0]),
+                       'income_category_1_max': array([30]),      
+                       'income_category_2_min': array([31]),
+                       'income_category_2_max': array([60]),           
+                    }
+            }
+        )    
+        tester.test_is_equal_for_family_variable(self, array( [1, 1, 0, 0] ), "urbansim.household.is_income_2")
+        tester.test_is_equal_for_family_variable(self, array( [0, 0, 0, 1] ), "urbansim.household.is_income_1")
+        tester.test_is_equal_for_family_variable(self, array( [0, 0, 0, 0] ), "urbansim.household.is_income_3") # internal category
+
 
 if __name__=='__main__':
     opus_unittest.main()
