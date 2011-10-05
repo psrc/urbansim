@@ -7,6 +7,32 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="marriage_eligibility_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>mag_zone.models.marriage_eligibility_model</class_module>
+            <class_name>MarriageEligibilityModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.marriage_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">MarriageEligibilityModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_marriage_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">marriage_eligibility_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
       <model name="household_transition_model_with_growth_threshold" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
