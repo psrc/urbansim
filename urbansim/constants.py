@@ -56,7 +56,14 @@ class Constants(dict):
     def get_income_range_for_type(self, income_type):
         """For the given type, return a range of incomes
         corresponding to the min and max incomes for this range.
-        The min income in inclusive and the max income is exclusive. """
+        The min income is inclusive and the max income is exclusive. 
+        Either user-specific ranges are taken defined in constants called
+        'income_category_{income_type}_min' and 'income_category_{income_type}_max',
+        or internal ranges are returned, if the user-specific ones are not set.
+        """
+        all_consts = self.keys()
+        if "income_category_%s_min" % income_type in all_consts and "income_category_%s_max" % income_type in all_consts:
+            return (self["income_category_%s_min" % income_type], self["income_category_%s_max" % income_type])
         if income_type == 1: return (0, 25000)
         if income_type == 2: return (25000, 45000)
         if income_type == 3: return (45000, 75000)
