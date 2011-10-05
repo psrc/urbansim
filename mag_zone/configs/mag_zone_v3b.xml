@@ -65,6 +65,7 @@
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" type="string">10000</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+			<argument name="sync_dataset" type="string">person</argument>
           </run>
         </structure>
       </model>
@@ -113,6 +114,7 @@
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <argument name="coefficients" type="string">coefficients</argument>
+			<argument name="maximum_runs" type="integer">10</argument>
           </run>
           <init type="dictionary">
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
@@ -120,9 +122,9 @@
             <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==1)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)*(building.active_development_id&gt;0)</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==1)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)*(building.active_development_id&lt;1)</argument>
             <argument name="run_config" type="dictionary">
-              <key name="lottery_max_iterations" type="integer">3</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units_capacity</key>
@@ -185,6 +187,7 @@
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <argument name="coefficients" type="string">coefficients</argument>
+			<argument name="maximum_runs" type="integer">10</argument>
           </run>
           <init type="dictionary">
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
@@ -192,9 +195,9 @@
             <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==0)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)*(building.active_development_id&gt;0)</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==0)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)*(building.active_development_id&lt;1)</argument>
             <argument name="run_config" type="dictionary">
-              <key name="lottery_max_iterations" type="integer">3</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
               <key name="capacity_string" type="string">urbansim_zone.building.developable_non_residential_sqft_capacity</key>
               <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
@@ -413,31 +416,6 @@
           </prepare_for_estimate>
         </structure>
       </model>
-      <model name="household_transition_model_with_persons" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary">
-            <class_module>urbansim_parcel.models.household_transition_model</class_module>
-            <class_name>HouseholdTransitionModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string">HouseholdTransitionModel</name>
-            <argument name="location_id_name" type="string">'building_id'</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-          </init>
-          <prepare_for_run type="dictionary">
-            <output name="output" type="string">(control_totals, characteristics)</output>
-            <name name="name" type="string">prepare_for_run</name>
-            <argument name="storage" type="string">base_cache_storage</argument>
-          </prepare_for_run>
-          <run type="dictionary">
-            <argument name="characteristics" type="string">characteristics</argument>
-            <argument name="household_set" type="string">household</argument>
-            <argument name="person_set" type="string">person</argument>
-            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
-            <argument name="year" type="string">year</argument>
-          </run>
-        </structure>
-      </model>
       <model name="real_estate_price_model" type="model">
         <structure type="dictionary">
           <run type="dictionary">
@@ -535,9 +513,6 @@
         <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
         <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
         <selectable name="household_transition_model" type="selectable">True</selectable>
-        <!--
-        <selectable name="household_transition_model_with_growth_threshold" type="selectable">True</selectable>
-        -->      
         <selectable name="employment_transition_model" type="selectable">False</selectable>
         <selectable name="household_relocation_model" type="selectable">False</selectable>
         <selectable name="household_location_choice_model" type="selectable">False</selectable>
@@ -552,6 +527,7 @@
         <firstyear type="integer">2010</firstyear>
         <lastyear type="integer">2010</lastyear>
       </years_to_run>
+	  <write_datasets_to_cache_at_end_of_year type="string">False</write_datasets_to_cache_at_end_of_year>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v3b/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
@@ -631,12 +607,12 @@
           <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="job" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          <selectable name="building_type" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
-          <selectable name="travel_data" type="selectable">True</selectable>
+          <selectable name="travel_data" type="selectable">False</selectable>
           <selectable name="target_vacancy" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>
-          <selectable name="home_based_status" type="selectable">True</selectable>
+          <selectable name="home_based_status" type="selectable">False</selectable>
         </datasets_to_preload>
       </advanced>
     </scenario>

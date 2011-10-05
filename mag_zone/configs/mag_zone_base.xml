@@ -268,7 +268,7 @@
       <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['mag_zone','urbansim_zone','urbansim','opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['zone','building','household','person','job','raz2011','razi03','mpa2011','mpai03','county','taz2011','tazi03','blockgroup_2010','blockgroup_2000','travel_data','active_development','household_x_building','development_project','alldata','development_event_history','target_vacancy','building_type','building_sqft_per_job']</available_datasets>
+    <available_datasets type="list">['zone','building','household','person','job','raz2011','razi03','mpa','mpa2011','mpai03','county','taz2011','tazi03','blockgroup_2010','blockgroup_2000','travel_data','active_development','household_x_building','development_project','alldata','development_event_history','target_vacancy','building_type','building_sqft_per_job']</available_datasets>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">  
@@ -282,7 +282,7 @@
             <name name="name" type="string">ActiveDevelopmentsModel</name>
           </init>
           <run type="dictionary">
-          	<argument name="percent_active_development" type="integer">80</argument>
+          	<argument name="percent_active_development" type="integer">20</argument>
           </run>
         </structure>
         <specification type="dictionary"/>
