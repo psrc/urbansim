@@ -65,7 +65,9 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
     def _split_host_name(self):
         if self.server_config.host_name is None:
             return '', None
-        m = re.match(r'^([^/]+)(?:|/([^/]+))$', self.server_config.host_name)
+        m = re.match(r'^([^/]+)(?:|/([^/]*))$', self.server_config.host_name)
+        if m is None:
+            return self.server_config.host_name
         return m.group(1), m.group(2)
 
     def get_connection_string(self, database_name = None, get_base_db = False, scrub = False):
