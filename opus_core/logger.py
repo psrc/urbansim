@@ -10,6 +10,7 @@ import traceback
 
 from gc import collect
 from opus_core.singleton import Singleton
+from opus_core.misc import indent_text
 
 
 # Current code only supports memory logging on Windows with pywin32 Python package.
@@ -92,9 +93,7 @@ class _Logger(Singleton):
         """
         Writes this string with the appropriate level of indentation.
         """
-        indent = ' ' * 4 * self._current_level
-        # Indent every line of the message s by the same amount.
-        msg = '\n'.join(map(lambda line: indent + line, s.split('\n')))
+        msg = indent_text(s, 4 * self._current_level) 
         if not self._has_indent:
             self._writeln()
         self._has_indent = True
