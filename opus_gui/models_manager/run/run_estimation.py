@@ -132,6 +132,7 @@ class OpusEstimation(object):
         if statusfile is not None:
             os.remove(statusfile)
         del self.er
+        self.er = None
         gc.collect()
         self.finishedCallback(succeeded)
 
