@@ -16,7 +16,7 @@ from numpy import ma
 
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.misc import all_in_list, is_masked_array
-from opus_core.strings import create_list_string
+from opus_core.strings import create_list_string, indent_text
 from opus_core.misc import do_id_mapping_dict_from_array, do_id_mapping_array_from_array
 from opus_core.misc import DebugPrinter, corr
 from opus_core.variables.variable_factory import VariableFactory
@@ -29,6 +29,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
+from opus_gui.util.exception_formatter import formatPlainTextExceptionInfo
 
 class DataElement(object):
     """Represents one individual of the Dataset object. It is created by the method
@@ -665,23 +666,30 @@ class AbstractDataset(object):
             package_order = dataset_pool.get_package_order()
             
         result = None
+        errors = []
+        def _format_error(full_variable_name):
+            return formatPlainTextExceptionInfo("When trying to compute variable '%s':"  
+                                                % full_variable_name)
+            
         if len(package_order) == 0:
             full_variable_name = "%s.%s" % (self.get_dataset_name(), variable_name)
             try:
                 result = self.compute_variables([full_variable_name], dataset_pool=dataset_pool)
             except:
-                pass
+                errors += [_format_error(full_variable_name)]
         for package in package_order:
             full_variable_name = "%s.%s.%s" % (package, self.get_dataset_name(), variable_name)
             try:
                 result = self.compute_variables([full_variable_name], dataset_pool=dataset_pool)
                 break
             except:
-                pass
+                errors += [_format_error(full_variable_name)]
         if result is None:
-            self._raise_error(StandardError, 
-                              "Computing variable %s failed for packages: %s. " % (variable_name, 
-                                                                                             "', '".join(package_order)))
+            errors = indent_text(''.join(errors))
+            desc = create_list_string(("Computing variable '%s' in dataset pool '%s' failed for packages: '%s'."
+                                       % (variable_name, dataset_pool, "', '".join(package_order)),
+                                       errors))
+            self._raise_error(StandardError, desc)
         return result
     
     ##################################################################################
@@ -2148,7 +2156,7 @@ class AbstractDataset(object):
                              variable_name.get_expression()))
 
     def _raise_error(self, error, msg):
-        raise error("In dataset '%s': %s'" % (self.get_dataset_name(), msg))
+        raise error("In dataset '%s': %s" % (self.get_dataset_name(), msg))
     
     def createTable(self, fileh, where, name=None, description=None, *args, **kwargs):
         """
