@@ -128,10 +128,12 @@ class Tests(opus_unittest.OpusTestCase):
         same, vars = match(SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE, TEST_PATTERN_FULLY_QUALIFIED_VARIABLE)
         self.assertEqual(same, False, msg="bad match")
 
-    # Parse an expression and match it.  This checks that this version of Python is producing parse trees like
-    # those that the patterns were constructed from.  Not a complete check, but does some checking for changes
-    # between versions of Python.
     def test_full_expression(self):
+        """
+        Parse an expression and match it.  This checks that this version of Python is producing parse trees like
+        those that the patterns were constructed from.  Not a complete check, but does some checking for changes
+        between versions of Python.
+        """
         full_expr = "urbansim.gridcell.population"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
@@ -144,5 +146,60 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
         self.assertEqual(vars2['shortname'], 'population', msg="bad value in dictionary")
        
+    def test_full_expression_with_comment(self):
+        """
+        Parse an expression and match it.  In addition to test_full_expression,
+        this checks if comments are supported for a variable.  This test used to fail
+        for Python 2.7.
+        """
+        full_expr = "urbansim.gridcell.population #comment\n"
+        t = parser.ast2tuple(parser.suite(full_expr))
+        same1, vars1 = match(FULL_TREE_EXPRESSION, t)
+        print
+        print FULL_TREE_EXPRESSION
+        print t
+        self.assert_(same1, msg="pattern did not match")
+        expr_tree = vars1['expr']
+        same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
+        self.assert_(same2, msg="pattern did not match")
+        self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
+        self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
+        self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
+        self.assertEqual(vars2['shortname'], 'population', msg="bad value in dictionary")
+        
+    def test_full_assignment(self):
+        """
+        Parse an assignment and match it.  Similar to test_full_expression.
+        """
+        full_expr = "myvar = urbansim.gridcell.population"
+        t = parser.ast2tuple(parser.suite(full_expr))
+        same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
+        self.assert_(same1, msg="pattern did not match")
+        expr_tree = vars1['expr']
+        same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
+        self.assert_(same2, msg="pattern did not match")
+        self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
+        self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
+        self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
+        self.assertEqual(vars2['shortname'], 'population', msg="bad value in dictionary")
+        
+    def test_full_assignment_with_comment(self):
+        """
+        Parse an assignment and match it.  In addition to test_full_assignment,
+        this checks if comments are supported for a variable.  This test used to fail
+        for Python 2.7.
+        """
+        full_expr = "myvar = urbansim.gridcell.population # comment\n"
+        t = parser.ast2tuple(parser.suite(full_expr))
+        same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
+        self.assert_(same1, msg="pattern did not match")
+        expr_tree = vars1['expr']
+        same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
+        self.assert_(same2, msg="pattern did not match")
+        self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
+        self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
+        self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
+        self.assertEqual(vars2['shortname'], 'population', msg="bad value in dictionary")
+
 if __name__=='__main__':
     opus_unittest.main()
