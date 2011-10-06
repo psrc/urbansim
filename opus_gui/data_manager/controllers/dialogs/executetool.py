@@ -86,12 +86,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         
         self.execTool.setFocus()
 
-    @pyqtSlot()
-    def on_execTool_clicked(self):
-        self.execTool.setEnabled(False)
-        self.textEdit.clear()
-        self.progressBar.setValue(0)
-
+    def get_params(self):
         # self.test_text contains the parameter name  (stored as a QLabel instance)
         # self.test_line contains the editor (QLineEdit or QComboBox) for the parameter value
         # self.test_text_type contains the value for the type attribute (QLineEdit)
@@ -107,6 +102,15 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             type_value = str(type_value)
 
             params[param_name] = param_value
+        return params
+
+    @pyqtSlot()
+    def on_execTool_clicked(self):
+        self.execTool.setEnabled(False)
+        self.textEdit.clear()
+        self.progressBar.setValue(0)
+
+        params = self.get_params()
 
         tool_hook = self.tool_name
         # look in all groups for the tool_name -- NOTE this requires the tool
