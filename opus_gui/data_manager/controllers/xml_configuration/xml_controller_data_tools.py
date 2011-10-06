@@ -217,7 +217,8 @@ class XmlController_DataTools(XmlController):
                                 tool_node = tool_node,
                                 tool_config = None,
                                 tool_library_node = tool_lib_node, 
-                                params=params)
+                                params=params,
+                                model=self.model)
         window.setModal(True)
         window.show()
 
@@ -248,7 +249,8 @@ class XmlController_DataTools(XmlController):
                                 tool_node = hooked_tool_node,
                                 tool_config = node,
                                 tool_library_node = tool_lib_node,
-                                params=params)
+                                params=params,
+                                model=self.model)
         window.setModal(True)
         window.show()
 

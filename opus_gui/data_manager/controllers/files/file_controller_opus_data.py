@@ -312,7 +312,8 @@ class FileController_OpusData(FileController):
                                     tool_node = tool_node,
                                     tool_config = None,
                                     tool_library_node = self.tool_library_node, 
-                                    params=params)
+                                    params = params,
+                                    model = self.model)
             window.show()
         return
 

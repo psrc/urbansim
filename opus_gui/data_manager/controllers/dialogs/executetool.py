@@ -37,7 +37,7 @@ class FileDialogSignal(QWidget):
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
-    def __init__(self, parent_widget, tool_node, tool_config, tool_library_node, params = {}):
+    def __init__(self, parent_widget, tool_node, tool_config, tool_library_node, model, params = {}):
         ''' optional params:
                 tool_path - path to tools, element of data_manager'''
         window_flags = (Qt.WindowTitleHint |
@@ -52,6 +52,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.tool_library_node = tool_library_node
 
         self.vars = {}
+        self.model = model
 
         self.optional_params = params
 
