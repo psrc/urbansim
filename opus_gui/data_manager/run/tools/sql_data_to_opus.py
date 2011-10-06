@@ -11,6 +11,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core import paths
+from opus_core.misc import create_list_string
 
 def opusRun(progressCB,logCB,params):
 
@@ -39,10 +40,13 @@ def opusRun(progressCB,logCB,params):
                          in_storage=AttributeCache())
 
     if table_name == 'ALL':
-        logCB('caching all tables...\n')
         lst = input_storage.get_table_names()
     else:
         lst = re.split(' +', table_name.strip())
+        
+    lst_out = create_list_string(lst, ', ')
+
+    logCB('caching tables:\n%s\n' % lst_out)
         
     for i in lst:
         logCB("Exporting table '%s' to year %s of cache located at %s...\n" %
@@ -52,6 +56,8 @@ def opusRun(progressCB,logCB,params):
             in_storage = input_storage,
             out_storage = output_storage,
         )
+
+    logCB('successfully cached tables:\n%s\n' % lst_out)
 
 def opusHelp():
     help = 'This tool will get a table from a SQL database and export it to the OPUS cache format.\n' \
