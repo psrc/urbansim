@@ -5,6 +5,6 @@
 from opus_core.opus_package import OpusPackage
 
 class package(OpusPackage):
-    name = None
-    required_opus_packages = ["opus_core", "urbansim"]
-    version = "1.0.beta2"
+    name = "zurich_parcel"
+    required_opus_packages = ["opus_core", "urbansim", "urbansim_parcel"]
+    version = "0.1"
