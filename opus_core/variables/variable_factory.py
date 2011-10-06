@@ -77,7 +77,7 @@ class VariableFactory(object):
                 lag_attribute_name, lag_offset = lag_variable_parser.parse_lag_variable_short_name(short_name)
                 true_short_name = "VVV_lagLLL"
                 substrings = (package_name, lag_attribute_name, lag_offset, dataset_name, index_name)
-                directory_path = 'opus_core.variables'
+                opus_path = 'opus_core.variables'
                 
             else:      
                 if package_name is None:
@@ -85,12 +85,15 @@ class VariableFactory(object):
                                       "and variable is not in expression library not a lag variable)." 
                                       % (dataset_name, short_name))
                 
-                directory_path = '%s.%s' % (package_name,dataset_name)
+                opus_path = '%s.%s' % (package_name,dataset_name)
                     
                 true_short_name, substrings = VariableFamilyNameTranslator().\
-                        get_translated_variable_name_and_substring_arguments(directory_path, short_name)
+                        get_translated_variable_name_and_substring_arguments(opus_path, short_name)
                 
-            module = '%s.%s' % (directory_path, true_short_name)
+            module = '%s.%s' % (opus_path, true_short_name)
+            
+            # Note that simply checking for the .py module file would not
+            # be safe here, as objects could be instantiated in __init__.py files.
             try:
                 ev = "from %s import %s as variable_subclass" % (module, true_short_name)
                 debug.print_debug("Evaluating '" + ev + "'.",12)
@@ -107,7 +110,7 @@ class VariableFactory(object):
                                       "'%s':",
                                       "",
                                       "%s",
-                                     )) % (true_short_name, directory_path, time,
+                                     )) % (true_short_name, opus_path, time,
                                            true_short_name,
                                            module,
                                            traceback.format_exc())
