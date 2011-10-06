@@ -5,8 +5,10 @@
 from opus_core.variables.variable_family_name_translator import VariableFamilyNameTranslator
 from opus_core.variables.variable_name import VariableName
 from opus_core.misc import DebugPrinter
+from opus_core.strings import indent_text
 from opus_core.logger import logger
 from opus_core.variables.lag_variable_parser import LagVariableParser
+from opus_gui.util.exception_formatter import formatPlainTextExceptionInfo
 
 class VariableFactory(object):
     """Class for creating an instance of class Variable from a string that specifies the variable name.
@@ -103,17 +105,15 @@ class VariableFactory(object):
                 if not quiet:
                     from opus_core.simulation_state import SimulationState
                     time = SimulationState().get_current_time()
-                    import traceback
                     desc = '\n'.join(("Opus variable '%s' does not exist for dataset '%s' in year %s. "
                                       "The following error occured when finally trying to import "
                                       "the variable '%s' from the Python module "
                                       "'%s':",
-                                      "",
                                       "%s",
                                      )) % (true_short_name, opus_path, time,
                                            true_short_name,
                                            module,
-                                           traceback.format_exc())
+                                           indent_text(formatPlainTextExceptionInfo('')))
                     raise NameError(desc)
                 return None
         
