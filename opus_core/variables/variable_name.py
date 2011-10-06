@@ -54,7 +54,7 @@ class VariableName(object):
             self._dataset_name = None
             self._interaction_set_names = dataset_names
         else:
-            raise ValueError, "couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(datasetnames)
+            raise ValueError, "couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(dataset_names)
         self._short_name = short_name
         self._alias = alias
         if autogen_class is not None:
