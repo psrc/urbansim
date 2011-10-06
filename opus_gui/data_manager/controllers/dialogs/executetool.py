@@ -83,6 +83,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         else: self.presentToolConfigGUI()
 
         self.setWindowTitle(self.tool_name.replace('_', ' '))
+        
+        self.execTool.setFocus()
 
     @pyqtSlot()
     def on_execTool_clicked(self):
