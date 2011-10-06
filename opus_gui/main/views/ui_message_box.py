@@ -53,7 +53,7 @@ class Ui_MessageBox(object):
         self.horizontalLayout_2.addWidget(self.lblImage)
         self.layoutErrorMessage.addWidget(self.frame)
         self.lblText = QtGui.QLabel(MessageBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblText.sizePolicy().hasHeightForWidth())
@@ -97,7 +97,7 @@ class Ui_MessageBox(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblDetailText.sizePolicy().hasHeightForWidth())
         self.lblDetailText.setSizePolicy(sizePolicy)
-        self.lblDetailText.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.lblDetailText.setLineWrapMode(QtGui.QTextEdit.WidgetWidth)
         self.lblDetailText.setReadOnly(True)
         self.lblDetailText.setObjectName("lblDetailText")
         self.verticalLayout_2.addWidget(self.lblDetailText)
@@ -109,5 +109,5 @@ class Ui_MessageBox(object):
     def retranslateUi(self, MessageBox):
         MessageBox.setWindowTitle(QtGui.QApplication.translate("MessageBox", "Opus Message", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnShowDetails.setText(QtGui.QApplication.translate("MessageBox", "Show Details...", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnOk.setText(QtGui.QApplication.translate("MessageBox", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnOk.setText(QtGui.QApplication.translate("MessageBox", "OK", None, QtGui.QApplication.UnicodeUTF8))
 
