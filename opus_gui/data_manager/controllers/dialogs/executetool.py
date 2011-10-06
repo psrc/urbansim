@@ -11,6 +11,7 @@ from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
 from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 from opus_gui.data_manager.data_manager_functions import get_tool_node_by_name, get_tool_library_node
+from PyQt4 import QtGui
 
 class FileDialogSignal(QWidget):
     ''' NO DOCUMENTATION '''
@@ -289,7 +290,9 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
     def toolLogPingFromThread(self,log):
         #print "toolLogPingFromThread - %s" % (log)
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
         self.textEdit.insertPlainText(log)
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
 
     def toolProgressPingFromThread(self,progress):
         #print "toolProgressPingFromThread - %s" % (progress)

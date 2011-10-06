@@ -43,6 +43,7 @@ class Ui_ExecuteToolGui(object):
 
         self.textEdit = QtGui.QTextEdit(self.executionBox)
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.setReadOnly(True)
         self.vboxlayout2.addWidget(self.textEdit)
         self.vboxlayout1.addWidget(self.executionBox)
         self.tabWidget.addTab(self.tab_3,"")
@@ -55,6 +56,7 @@ class Ui_ExecuteToolGui(object):
 
         self.toolhelpEdit = QtGui.QTextEdit(self.tab_4)
         self.toolhelpEdit.setObjectName("toolhelpEdit")
+        self.toolhelpEdit.setReadOnly(True)
         self.vboxlayout3.addWidget(self.toolhelpEdit)
         self.tabWidget.addTab(self.tab_4,"")
         self.vboxlayout.addWidget(self.tabWidget)
