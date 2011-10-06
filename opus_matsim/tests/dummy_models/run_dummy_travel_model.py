@@ -2,11 +2,11 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-import os, sys, opus_matsim, shutil
+import os, sys, opus_matsim
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
-from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
+#from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
 from opus_core import paths
 
 class RunDummyTravelModel(AbstractTravelModel):
@@ -35,11 +35,11 @@ class RunDummyTravelModel(AbstractTravelModel):
         
         self.setUp( config )
         
-        config_obj = MATSimConfigObject(config, year) #self.matsim_config_full
-        config_obj.marschall()        
+        # config_obj = MATSimConfigObject(config, year) #self.matsim_config_full
+        # config_obj.marschall()        
         
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
-                'opus_home': os.environ['OPUS_HOME'],
+                'opus_home': paths.get_opus_home_path(),
                 'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
                 'classpath': "jar/matsim4urbansim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
@@ -48,12 +48,8 @@ class RunDummyTravelModel(AbstractTravelModel):
         
         logger.log_status('would normally run command %s' % cmd )
         
-        in_file_name = os.path.join( opus_matsim.__path__[0], 'tests', 'testdata', 'travel_data.csv' )
-        out_file_name = os.path.join( paths.get_opus_home_path(), 'opus_matsim', 'tmp', 'travel_data.csv' )
-        
-        print "Copying dummy travel data ..."
-        shutil.copyfile(in_file_name, out_file_name)
-        print "... done."
+        travel_data_location = os.path.join( opus_matsim.__path__[0], 'tests', 'testdata', 'travel_data.csv' )
+        print 'MATSim travel_data.csv stored at %s' %travel_data_location
                 
     def setUp(self, config):
         """ create MATSim config data

@@ -34,8 +34,8 @@
         <travel_model_configuration type="dictionary">
       <models type="selectable_list">
         <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">True</selectable>
-        <selectable name="opus_matsim.tests.run_dummy_travel_model" type="selectable">True</selectable>
-        <!--<selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">True</selectable>-->
+        <selectable name="opus_matsim.tests.dummy_models.run_dummy_travel_model" type="selectable">True</selectable>
+        <selectable name="opus_matsim.tests.dummy_models.get_matsim_data_into_cache_dummy" type="selectable">True</selectable>
       </models>
       <matsim4urbansim type="dictionary">
         <sampling_rate type="float">0.01</sampling_rate>
