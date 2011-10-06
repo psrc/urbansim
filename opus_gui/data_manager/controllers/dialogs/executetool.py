@@ -4,8 +4,8 @@
 
 from lxml.etree import Element, SubElement
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot, QVariant
+from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox, QCheckBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
@@ -107,6 +107,17 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             params[param_name] = param_value
         return params
 
+    @pyqtSlot()
+    def on_saveBack_clicked(self):
+        params = self.get_params()
+        param_nodes = self.tool_node.find('params')
+        if param_nodes.get('inherited') != None:
+            self.model.project.make_local(param_nodes)
+        for param_node in param_nodes.iterchildren():
+            item = self.model.item_for_node(param_node)
+            index = self.model.index_for_item(item)
+            self.model.setData(index.sibling(index.row(),1), QVariant(params[param_node.get('name')]), Qt.EditRole)
+        
     @pyqtSlot()
     def on_execTool_clicked(self):
         self.execTool.setEnabled(False)

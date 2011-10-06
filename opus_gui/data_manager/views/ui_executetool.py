@@ -68,14 +68,18 @@ class Ui_ExecuteToolGui(object):
 
         spacerItem = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
         self.gridlayout.addItem(spacerItem,0,0,1,1)
+        
+        self.saveBack = QtGui.QPushButton(self.widget)
+        self.saveBack.setObjectName("saveBack")
+        self.gridlayout.addWidget(self.saveBack,0,1,1,1)
 
         self.execTool = QtGui.QPushButton(self.widget)
         self.execTool.setObjectName("execTool")
-        self.gridlayout.addWidget(self.execTool,0,1,1,1)
+        self.gridlayout.addWidget(self.execTool,0,2,1,1)
 
         self.cancelExec = QtGui.QPushButton(self.widget)
         self.cancelExec.setObjectName("cancelExec")
-        self.gridlayout.addWidget(self.cancelExec,0,2,1,1)
+        self.gridlayout.addWidget(self.cancelExec,0,3,1,1)
         self.vboxlayout.addWidget(self.widget)
 
         self.retranslateUi(ExecuteToolGui)
@@ -88,6 +92,7 @@ class Ui_ExecuteToolGui(object):
         self.executionBox.setTitle(QtGui.QApplication.translate("ExecuteToolGui", "Log/Status", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("ExecuteToolGui", "Tool Setup", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("ExecuteToolGui", "Tool Help", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveBack.setText(QtGui.QApplication.translate("ExecuteToolGui", "Save Configuration", None, QtGui.QApplication.UnicodeUTF8))
         self.execTool.setText(QtGui.QApplication.translate("ExecuteToolGui", "Execute Tool", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelExec.setText(QtGui.QApplication.translate("ExecuteToolGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
