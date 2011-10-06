@@ -11,7 +11,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core import paths
-from opus_core.misc import create_list_string
+from opus_core.strings import create_list_string
 
 def opusRun(progressCB,logCB,params):
 

@@ -10,7 +10,7 @@ import traceback
 
 from gc import collect
 from opus_core.singleton import Singleton
-from opus_core.misc import indent_text
+from opus_core.strings import indent_text
 
 
 # Current code only supports memory logging on Windows with pywin32 Python package.

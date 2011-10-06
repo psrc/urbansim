@@ -13,21 +13,6 @@ import tempfile
 
 from numpy import ma, array, ndarray
 from inspect import getmembers, ismethod
-
-# define very basic operations before importing anything from opus_core
-
-def create_list_string(list_, sep='\n'):
-    """Returns a string of the list elements separated by sep."""
-    # a very efficient function
-    return sep.join(list_)
-
-def indent_text(text, depth=4):
-    """
-    Indent every line of the text by the same amount of spaces.
-    """
-    indent = ' ' * depth
-    return create_list_string(map(lambda line: indent + line, text.split('\n')))
-
 from opus_core.logger import logger
 from opus_core.ndimage import sum
 
@@ -1143,14 +1128,6 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEquals(get_distinct_list([]), [])
         self.assertEquals(get_distinct_list(['zxq', 'zxq', 5.4, 9, ['3', 'a'], 5.4, 5.4, ['3', 'a']]), ['zxq', 5.4, 9, ['3', 'a']] )
         
-    def test_indent_text(self):
-        self.assertEquals(indent_text('a\nb\n', 2), '  a\n  b\n  ')
-        self.assertEquals(indent_text('a\nb\n'), '    a\n    b\n    ')
-             
-    def test_create_list_string(self):
-        self.assertEquals(create_list_string(['aa', 'b', '', ' dd'], 'SEP'), 'aaSEPbSEPSEP dd')
-        self.assertEquals(create_list_string(['aa', 'b', '', ' dd']), 'aa\nb\n\n dd')
-             
     def test_flatten_list(self):
         nestedList = [3, 4.0, 'five']
         testList = [nestedList]
