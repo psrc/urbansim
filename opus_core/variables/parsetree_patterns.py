@@ -25,7 +25,7 @@ FULL_TREE_EXPRESSION =  \
       (symbol.simple_stmt,
        (symbol.small_stmt,
         (symbol.expr_stmt, ['expr'])),
-       (token.NEWLINE, ''))),
+       (token.NEWLINE, ['comment']))),
      ) + endtoken
 
 # This pattern matches a tree consisting of a single assignment statement alias=expr
@@ -51,7 +51,7 @@ FULL_TREE_ASSIGNMENT =  \
                       (symbol.power,
                        (symbol.atom, (token.NAME, ['alias'])))))))))))))))),
             (token.EQUAL, '='), ['expr'])),
-       (token.NEWLINE, ''))),
+       (token.NEWLINE, ['comment']))),
      ) + endtoken
 
 # ************************************************************************************
