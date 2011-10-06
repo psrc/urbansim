@@ -96,12 +96,22 @@ class VariableFactory(object):
                 debug.print_debug("Evaluating '" + ev + "'.",12)
                 exec(ev)
                 debug.print_debug("Successful.", 12)
-            except ImportError:
+            except ImportError, e:
                 if not quiet:
                     from opus_core.simulation_state import SimulationState
                     time = SimulationState().get_current_time()
-                    raise NameError("Opus variable '%s' does not exist for dataset '%s' in year %s" % 
-                                    (true_short_name, directory_path, time))
+                    import traceback
+                    desc = '\n'.join(("Opus variable '%s' does not exist for dataset '%s' in year %s. "
+                                      "The following error occured when finally trying to import "
+                                      "the variable '%s' from the Python module "
+                                      "'%s':",
+                                      "",
+                                      "%s",
+                                     )) % (true_short_name, directory_path, time,
+                                           true_short_name,
+                                           module,
+                                           traceback.format_exc())
+                    raise NameError(desc)
                 return None
         
         try:

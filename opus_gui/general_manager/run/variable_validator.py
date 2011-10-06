@@ -79,8 +79,9 @@ class VariableValidator(object):
                 continue
             successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name, expression = expr, source = source)
             if not successful:
+                error_escaped = str(error).replace('\n', '<br>')
                 errors.append("Expression <b>%s</b> could not be run on <br>dataset <i>%s</i> on the baseyear data.<br>Details:<br>%s"%(
-                                var_name, dataset_name, str(error) ))
+                                var_name, dataset_name, error_escaped ))
         return len(errors) == 0, errors
 
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
