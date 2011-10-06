@@ -3,15 +3,12 @@
 # See opus_core/LICENSE 
 
 from opus_core.logger import logger
+import traceback
 
 def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plainText=False):
-    import traceback
-
 #    cla, exc, trbk = sys.exc_info()
     
 #    excTb = traceback.format_tb(trbk, maxTBlevel)
-    fExc = traceback.format_exc(limit=maxTBlevel)
-    
 #    excName = cla.__name__
 #    try:
 #        excArgs = exc.__dict__["args"]
@@ -20,12 +17,28 @@ def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plain
             
 #    errorinfo = (excName, excArgs, excTb)
 
-    logger.log_error(traceback.format_exc())
-    fExc_plain = fExc
-    fExc = fExc.replace('\t','   ').replace('\n','<br>').replace(' ', '&nbsp;')
-    errorinfo = ('''<qt>%s</qt>
-                 '''%(fExc))    
+    format_message_and_error = lambda m, e: ('%s\n%s' % (m, e))  
+
+    logger.log_error(format_message_and_error(custom_message, traceback.format_exc()))
+
+    fExc = format_message_and_error(custom_message, traceback.format_exc(limit=maxTBlevel))
+    
     if plainText:
-        return fExc_plain
+        return fExc
     else:
+        fExc = fExc.replace('\t','   ').replace('\n','<br>').replace(' ', '&nbsp;')
+        errorinfo = ('''<qt>%s</qt>
+                     '''%(fExc))
         return errorinfo
+
+def formatPlainTextExceptionInfo(*args, **kwargs):
+    return formatExceptionInfo(*args, plainText=True, **kwargs)
+
+from opus_core.tests import opus_unittest
+class ExceptionFormatterTests(opus_unittest.OpusTestCase):
+    def test_formatPlainTextExceptionInfoRaisesErrorIfPlaintextIsGiven(self):
+        self.assertRaises(Exception, formatPlainTextExceptionInfo, 'Message', 3, True)
+        self.assertRaises(Exception, formatPlainTextExceptionInfo, 'Message', maxTBlevel=3, plainText=True)
+        formatPlainTextExceptionInfo('Message', 3)
+        formatPlainTextExceptionInfo('Message', maxTBlevel=3)
+
