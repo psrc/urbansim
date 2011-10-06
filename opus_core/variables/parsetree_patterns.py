@@ -13,7 +13,7 @@ import symbol, token, sys
 # ************************************************************************************
 python_version = sys.version_info[:2]
 
-if python_version == (2, 7):
+if python_version >= (2, 7):
     endtoken = (token.NEWLINE, ''), (token.ENDMARKER, '')
 else:
     endtoken = ((token.ENDMARKER, ''), )
