@@ -6,6 +6,23 @@
 # except for the differences below.
 from unittest import *   # Do not delete this line. @UnusedWildImport
 
+# If FunctionTestCase remains defined here, unit tests fail to complete if running from within Eclipse.
+# Reason: The base class FunctionTestCase does not constitute a valid test. Perhaps this is a bug in unittest?
+# The given workaround removes the faulty behavior.
+_FunctionTestCase = FunctionTestCase
+del FunctionTestCase
+class FunctionTestCase(_FunctionTestCase):
+    _parent = _FunctionTestCase
+    def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
+        if isinstance(testFunc, str):
+            testFunc = lambda: None
+        self._parent.__init__(self, testFunc, setUp, tearDown, description)
+        
+del _FunctionTestCase
+
+        
+        
+
 from numpy import ndarray
 
 from opus_core.singleton import Singleton
