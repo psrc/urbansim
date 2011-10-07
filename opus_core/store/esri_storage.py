@@ -8,7 +8,6 @@ from numpy import empty, append, ma, array
 from string import count, lower as lwr
 from random import randint
 import types, os
-from unittest.case import SkipTest
 
 has_arcgis = False
 try:
@@ -463,210 +462,208 @@ class esri_storage(Storage):
         return short_name
 
 
-from opus_core.tests import opus_unittest
-
-class TestStorage(opus_unittest.OpusTestCase):
-
-    def setUp(self):
-        if not has_arcgis:
-            raise SkipTest('arcgisscripting could not be imported, skipping test')
-        
-        # Get the opus core directory
-        opus_core_directory = __import__('opus_core').__path__[0]
-        # Set up paths to different data sources
-        # TODO: figure out how to do this with SDE Geodatabases
-        self.test_data_location_files = os.path.join(opus_core_directory, 'store', 'data', 'esri')
-        self.test_data_location_file_geodb = os.path.join(opus_core_directory, 'store', 'data', 'esri', 'test_fgdb.gdb')
-        self.test_data_location_personal_geodb = os.path.join(opus_core_directory, 'store', 'data', 'esri', 'test_pgdb.mdb')
-        # Create different storage objects
-        self.file_path_storage_object = esri_storage(self.test_data_location_files)
-        self.file_geodb_storage_object = esri_storage(self.test_data_location_file_geodb)
-        self.personal_geodb_storage_object = esri_storage(self.test_data_location_personal_geodb)
-
-    def tearDown(self):
-        # Delete schema.ini created by the ESRI geoprocessor:
-        full_path_to_schema_ini = os.path.join(self.test_data_location_files, 'schema.ini')
-        if os.path.exists(full_path_to_schema_ini):
-            os.remove(full_path_to_schema_ini)
-        # Delete other tables created by write tests below:
-        # .dbf write test cleanup
-        full_path_to_test_dbf_table = os.path.join(self.test_data_location_files, 'test_dbf_table.dbf')
-        if os.path.exists(full_path_to_test_dbf_table):
-            self.file_path_storage_object.gp.Delete(full_path_to_test_dbf_table)
-        # file geodb write test cleanup
-        full_path_to_test_filegdb_table = os.path.join(self.test_data_location_file_geodb, 'test_filegeodb_table')
-        if self.file_geodb_storage_object.table_exists(full_path_to_test_filegdb_table):
-            self.file_geodb_storage_object.gp.Delete(full_path_to_test_filegdb_table)
-        # personal geodb write test cleanup
-        full_path_to_test_personalgeodb_table = os.path.join(self.test_data_location_personal_geodb, 'test_personalgeodb_table')
-        if self.personal_geodb_storage_object.table_exists(full_path_to_test_personalgeodb_table):
-            self.personal_geodb_storage_object.gp.Delete(full_path_to_test_personalgeodb_table)
-
-    def test_load_test_csv_tbl(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_csv_table = esri_storage_object.load_table('test_csv_tbl.csv')
-        test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_csv_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_tab_tbl(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_tab_table = esri_storage_object.load_table('test_tab_tbl.tab')
-        test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_tab_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_tbl_dbl_quoted_values(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_dbl_quoted_values = esri_storage_object.load_table('test_tbl_dbl_quoted_text_values.txt')
-        test_data_table = {'fld2': array(['val2', 'val5'], dtype='|S4'),
-                           'fld3': array(['val3', 'val6'], dtype='|S4'),
-                           'fld1': array(['val1', 'val4'], dtype='|S4')}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_dbl_quoted_values[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_tbl_single_quoted_text_values(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_single_quoted_values = esri_storage_object.load_table('test_tbl_single_quoted_text_values.txt')
-        test_data_table = {'fld2': array(["'val2'", "'val5'"], dtype='|S6'),
-                           'fld3': array(["'val3'", "'val6'"], dtype='|S6'),
-                           'fld1': array(["'val1'", "'val4'"], dtype='|S6')}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_single_quoted_values[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_txt_tbl(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_txt_table = esri_storage_object.load_table('test_txt_tbl.txt')
-        test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_txt_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_dbf_tbl(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_dbf_table = esri_storage_object.load_table('test_dbf_tbl.dbf')
-        test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_dbf_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_shapefile(self):
-        esri_storage_object = self.file_path_storage_object
-        loaded_shapefile_table = esri_storage_object.load_table('test_shapefile.shp')
-        test_data_table = esri_storage_object.load_table('test_shapefile.shp')
-        #test_data_table = {'date_fld': array(['1/1/2001 12:00:00 AM', '2/2/2002 12:00:00 AM', '3/3/2003 12:00:00 AM'], dtype='|S20'),
-        #                   'int': array([1000000, 2000000, 3000000]),
-        #                   'small_int': array([1, 2, 3]),
-        #                   'single_fld': array([ 1.11110997,  2.22221994,  3.33332992]),
-        #                   'string_fld': array(['string 1', 'string 2', 'string 3'], dtype='|S8'),
-        #                   'double_fld': array([ 1.11111111,  2.22222222,  2.22222222])}
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_shapefile_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_get_table_names_from_file_path(self):
-        esri_storage_object = self.file_path_storage_object
-        table_names_in_path = ['test_csv_tbl.csv', 'test_tab_tbl.tab',
-                               'test_tbl_dbl_quoted_text_values.txt',
-                               'test_tbl_single_quoted_text_values.txt',
-                               'test_txt_tbl.txt', 'test_dbf_tbl.dbf',
-                               'test_shapefile.shp']
-        test_table_names_in_path = esri_storage_object.get_table_names()
-        self.assertEqual(test_table_names_in_path, table_names_in_path)
-
-    def test_get_table_names_from_file_geodb(self):
-        esri_storage_object = self.file_geodb_storage_object
-        table_names_in_file_geodb = ['test_table', 'test_feature_class']
-        test_table_names_in_file_geodb = esri_storage_object.get_table_names()
-        self.assertEqual(table_names_in_file_geodb, test_table_names_in_file_geodb)
-
-    def test_get_table_names_from_personal_geodb(self):
-        esri_storage_object = self.personal_geodb_storage_object
-        table_names_in_personal_geodb = ['test_table', 'test_feature_class']
-        test_table_names_in_personal_geodb = esri_storage_object.get_table_names()
-        self.assertEqual(table_names_in_personal_geodb, test_table_names_in_personal_geodb)
-
-    def test_load_test_feature_class_from_file_geodb(self):
-        esri_storage_object = self.file_geodb_storage_object
-        loaded_feature_class = esri_storage_object.load_table('test_feature_class')
-        test_data_table = esri_storage_object.load_table('test_feature_class')
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_feature_class[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_table_from_file_geodb(self):
-        esri_storage_object = self.file_geodb_storage_object
-        loaded_data_table = esri_storage_object.load_table('test_table')
-        test_data_table = esri_storage_object.load_table('test_table')
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_data_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_feature_class_from_personal_geodb(self):
-        esri_storage_object = self.personal_geodb_storage_object
-        loaded_feature_class = esri_storage_object.load_table('test_feature_class')
-        test_data_table = esri_storage_object.load_table('test_feature_class')
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_feature_class[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_load_test_table_from_personal_geodb(self):
-        esri_storage_object = self.personal_geodb_storage_object
-        loaded_data_table = esri_storage_object.load_table('test_table')
-        test_data_table = esri_storage_object.load_table('test_table')
-        for i in test_data_table:
-            passed = False
-            if ma.allequal(test_data_table[i], loaded_data_table[i]):
-                passed = True
-            self.assertEqual(passed, True)
-
-    def test_write_table_to_file_path(self):
-        esri_storage_object = self.file_path_storage_object
-        table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        table_name = 'test_dbf_table.dbf'
-        esri_storage_object.write_table(table_name, table_data)
-        table_exists = esri_storage_object.table_exists(table_name)
-        self.assertEqual(table_exists, True)
-
-    def test_write_table_to_file_geodb(self):
-        esri_storage_object = self.file_geodb_storage_object
-        table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        table_name = 'test_filegeodb_table'
-        esri_storage_object.write_table(table_name, table_data)
-        table_exists = esri_storage_object.table_exists(table_name)
-        self.assertEqual(table_exists, True)
-
-    def test_write_table_to_personal_geodb(self):
-        esri_storage_object = self.personal_geodb_storage_object
-        table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
-        table_name = 'test_personalgeodb_table'
-        esri_storage_object.write_table(table_name, table_data)
-        table_exists = esri_storage_object.table_exists(table_name)
-        self.assertEqual(table_exists, True)
+if has_arcgis:
+    from opus_core.tests import opus_unittest
+    
+    class TestStorage(opus_unittest.OpusTestCase):
+    
+        def setUp(self):
+            # Get the opus core directory
+            opus_core_directory = __import__('opus_core').__path__[0]
+            # Set up paths to different data sources
+            # TODO: figure out how to do this with SDE Geodatabases
+            self.test_data_location_files = os.path.join(opus_core_directory, 'store', 'data', 'esri')
+            self.test_data_location_file_geodb = os.path.join(opus_core_directory, 'store', 'data', 'esri', 'test_fgdb.gdb')
+            self.test_data_location_personal_geodb = os.path.join(opus_core_directory, 'store', 'data', 'esri', 'test_pgdb.mdb')
+            # Create different storage objects
+            self.file_path_storage_object = esri_storage(self.test_data_location_files)
+            self.file_geodb_storage_object = esri_storage(self.test_data_location_file_geodb)
+            self.personal_geodb_storage_object = esri_storage(self.test_data_location_personal_geodb)
+    
+        def tearDown(self):
+            # Delete schema.ini created by the ESRI geoprocessor:
+            full_path_to_schema_ini = os.path.join(self.test_data_location_files, 'schema.ini')
+            if os.path.exists(full_path_to_schema_ini):
+                os.remove(full_path_to_schema_ini)
+            # Delete other tables created by write tests below:
+            # .dbf write test cleanup
+            full_path_to_test_dbf_table = os.path.join(self.test_data_location_files, 'test_dbf_table.dbf')
+            if os.path.exists(full_path_to_test_dbf_table):
+                self.file_path_storage_object.gp.Delete(full_path_to_test_dbf_table)
+            # file geodb write test cleanup
+            full_path_to_test_filegdb_table = os.path.join(self.test_data_location_file_geodb, 'test_filegeodb_table')
+            if self.file_geodb_storage_object.table_exists(full_path_to_test_filegdb_table):
+                self.file_geodb_storage_object.gp.Delete(full_path_to_test_filegdb_table)
+            # personal geodb write test cleanup
+            full_path_to_test_personalgeodb_table = os.path.join(self.test_data_location_personal_geodb, 'test_personalgeodb_table')
+            if self.personal_geodb_storage_object.table_exists(full_path_to_test_personalgeodb_table):
+                self.personal_geodb_storage_object.gp.Delete(full_path_to_test_personalgeodb_table)
+    
+        def test_load_test_csv_tbl(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_csv_table = esri_storage_object.load_table('test_csv_tbl.csv')
+            test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_csv_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_tab_tbl(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_tab_table = esri_storage_object.load_table('test_tab_tbl.tab')
+            test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_tab_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_tbl_dbl_quoted_values(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_dbl_quoted_values = esri_storage_object.load_table('test_tbl_dbl_quoted_text_values.txt')
+            test_data_table = {'fld2': array(['val2', 'val5'], dtype='|S4'),
+                               'fld3': array(['val3', 'val6'], dtype='|S4'),
+                               'fld1': array(['val1', 'val4'], dtype='|S4')}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_dbl_quoted_values[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_tbl_single_quoted_text_values(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_single_quoted_values = esri_storage_object.load_table('test_tbl_single_quoted_text_values.txt')
+            test_data_table = {'fld2': array(["'val2'", "'val5'"], dtype='|S6'),
+                               'fld3': array(["'val3'", "'val6'"], dtype='|S6'),
+                               'fld1': array(["'val1'", "'val4'"], dtype='|S6')}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_single_quoted_values[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_txt_tbl(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_txt_table = esri_storage_object.load_table('test_txt_tbl.txt')
+            test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_txt_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_dbf_tbl(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_dbf_table = esri_storage_object.load_table('test_dbf_tbl.dbf')
+            test_data_table = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_dbf_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_shapefile(self):
+            esri_storage_object = self.file_path_storage_object
+            loaded_shapefile_table = esri_storage_object.load_table('test_shapefile.shp')
+            test_data_table = esri_storage_object.load_table('test_shapefile.shp')
+            #test_data_table = {'date_fld': array(['1/1/2001 12:00:00 AM', '2/2/2002 12:00:00 AM', '3/3/2003 12:00:00 AM'], dtype='|S20'),
+            #                   'int': array([1000000, 2000000, 3000000]),
+            #                   'small_int': array([1, 2, 3]),
+            #                   'single_fld': array([ 1.11110997,  2.22221994,  3.33332992]),
+            #                   'string_fld': array(['string 1', 'string 2', 'string 3'], dtype='|S8'),
+            #                   'double_fld': array([ 1.11111111,  2.22222222,  2.22222222])}
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_shapefile_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_get_table_names_from_file_path(self):
+            esri_storage_object = self.file_path_storage_object
+            table_names_in_path = ['test_csv_tbl.csv', 'test_tab_tbl.tab',
+                                   'test_tbl_dbl_quoted_text_values.txt',
+                                   'test_tbl_single_quoted_text_values.txt',
+                                   'test_txt_tbl.txt', 'test_dbf_tbl.dbf',
+                                   'test_shapefile.shp']
+            test_table_names_in_path = esri_storage_object.get_table_names()
+            self.assertEqual(test_table_names_in_path, table_names_in_path)
+    
+        def test_get_table_names_from_file_geodb(self):
+            esri_storage_object = self.file_geodb_storage_object
+            table_names_in_file_geodb = ['test_table', 'test_feature_class']
+            test_table_names_in_file_geodb = esri_storage_object.get_table_names()
+            self.assertEqual(table_names_in_file_geodb, test_table_names_in_file_geodb)
+    
+        def test_get_table_names_from_personal_geodb(self):
+            esri_storage_object = self.personal_geodb_storage_object
+            table_names_in_personal_geodb = ['test_table', 'test_feature_class']
+            test_table_names_in_personal_geodb = esri_storage_object.get_table_names()
+            self.assertEqual(table_names_in_personal_geodb, test_table_names_in_personal_geodb)
+    
+        def test_load_test_feature_class_from_file_geodb(self):
+            esri_storage_object = self.file_geodb_storage_object
+            loaded_feature_class = esri_storage_object.load_table('test_feature_class')
+            test_data_table = esri_storage_object.load_table('test_feature_class')
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_feature_class[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_table_from_file_geodb(self):
+            esri_storage_object = self.file_geodb_storage_object
+            loaded_data_table = esri_storage_object.load_table('test_table')
+            test_data_table = esri_storage_object.load_table('test_table')
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_data_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_feature_class_from_personal_geodb(self):
+            esri_storage_object = self.personal_geodb_storage_object
+            loaded_feature_class = esri_storage_object.load_table('test_feature_class')
+            test_data_table = esri_storage_object.load_table('test_feature_class')
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_feature_class[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_load_test_table_from_personal_geodb(self):
+            esri_storage_object = self.personal_geodb_storage_object
+            loaded_data_table = esri_storage_object.load_table('test_table')
+            test_data_table = esri_storage_object.load_table('test_table')
+            for i in test_data_table:
+                passed = False
+                if ma.allequal(test_data_table[i], loaded_data_table[i]):
+                    passed = True
+                self.assertEqual(passed, True)
+    
+        def test_write_table_to_file_path(self):
+            esri_storage_object = self.file_path_storage_object
+            table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            table_name = 'test_dbf_table.dbf'
+            esri_storage_object.write_table(table_name, table_data)
+            table_exists = esri_storage_object.table_exists(table_name)
+            self.assertEqual(table_exists, True)
+    
+        def test_write_table_to_file_geodb(self):
+            esri_storage_object = self.file_geodb_storage_object
+            table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            table_name = 'test_filegeodb_table'
+            esri_storage_object.write_table(table_name, table_data)
+            table_exists = esri_storage_object.table_exists(table_name)
+            self.assertEqual(table_exists, True)
+    
+        def test_write_table_to_personal_geodb(self):
+            esri_storage_object = self.personal_geodb_storage_object
+            table_data = {'fld2': array([2, 5]), 'fld3': array([3, 6]), 'fld1': array([1, 4])}
+            table_name = 'test_personalgeodb_table'
+            esri_storage_object.write_table(table_name, table_data)
+            table_exists = esri_storage_object.table_exists(table_name)
+            self.assertEqual(table_exists, True)
 
 if __name__ == '__main__':
     opus_unittest.main()
