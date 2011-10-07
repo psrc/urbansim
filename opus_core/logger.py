@@ -296,12 +296,12 @@ class _Logger(Singleton):
             self._writeln(message)
 
     def log_error(self, message=''):
-        message = "ERROR: " + message
+        message = "ERROR: " + str(message)
         self._writeln(message)
         self._number_errors += 1
 
     def log_note(self, message=''):
-        message = "NOTE: " + message
+        message = "NOTE: " + str(message)
         self._writeln(message)
         self._number_notes += 1
         
@@ -316,7 +316,7 @@ class _Logger(Singleton):
         
     def log_warning(self, message='', tags=[], verbosity_level=1):
         if self._should_log(tags, verbosity_level):
-            message = "WARNING: " + message
+            message = "WARNING: " + str(message)
             self._writeln(message)
         self._number_warnings += 1
 
