@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
+
 #===============================================================================
 # Script packages American Community Survey release and dumps into database and 
 # creates ARCGIS layer files for each sequence (1 thru 114). Needs the following
