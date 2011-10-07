@@ -178,6 +178,9 @@ class LocationChoiceModel(ChoiceModel):
             logger.log_status("Nothing to be done.")
             return (None, None)
 
+        logger.log_note('Using dataset pool: %s' % 
+                        self.dataset_pool.get_package_order() if self.dataset_pool is not None else self.dataset_pool)
+
         if estimate_config == None:
             estimate_config = Resources()
         self.estimate_config = estimate_config.merge_with_defaults(self.estimate_config)
