@@ -17,4 +17,6 @@ aliases = [
        "residential_units = parcel.aggregate(building.residential_units)",
        "remaining_non_residential_sqft_capacity = parcel.non_residential_sqft_capacity - parcel.aggregate(building.non_residential_sqft)",
        "remaining_residential_units_capacity = parcel.residential_units_capacity - parcel.aggregate(building.residential_units)",
+       
+       "households_per_parcel = parcel.number_of_agents(household)"
            ]
