@@ -5,7 +5,7 @@
 from opus_core.logger import logger
 import traceback
 
-def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plainText=False):
+def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plainText=False, log=True):
 #    cla, exc, trbk = sys.exc_info()
     
 #    excTb = traceback.format_tb(trbk, maxTBlevel)
@@ -19,7 +19,8 @@ def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plain
 
     format_message_and_error = lambda m, e: ('%s\n%s' % (m, e))  
 
-    logger.log_error(format_message_and_error(custom_message, traceback.format_exc()))
+    if log:
+        logger.log_error(format_message_and_error(custom_message, traceback.format_exc()))
 
     fExc = format_message_and_error(custom_message, traceback.format_exc(limit=maxTBlevel))
     
@@ -34,11 +35,16 @@ def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5, plain
 def formatPlainTextExceptionInfo(*args, **kwargs):
     return formatExceptionInfo(*args, plainText=True, **kwargs)
 
+def formatPlainTextExceptionInfoWithoutLog(*args, **kwargs):
+    return formatPlainTextExceptionInfo(*args, log=False, **kwargs)
+
 from opus_core.tests import opus_unittest
 class ExceptionFormatterTests(opus_unittest.OpusTestCase):
     def test_formatPlainTextExceptionInfoRaisesErrorIfPlaintextIsGiven(self):
         self.assertRaises(Exception, formatPlainTextExceptionInfo, 'Message', 3, True)
         self.assertRaises(Exception, formatPlainTextExceptionInfo, 'Message', maxTBlevel=3, plainText=True)
+        self.assertRaises(Exception, formatPlainTextExceptionInfoWithoutLog, 'Message', log=True)
         formatPlainTextExceptionInfo('Message', 3)
         formatPlainTextExceptionInfo('Message', maxTBlevel=3)
+        formatPlainTextExceptionInfoWithoutLog('Message')
 

@@ -8,7 +8,7 @@ from opus_core.misc import DebugPrinter
 from opus_core.strings import indent_text
 from opus_core.logger import logger
 from opus_core.variables.lag_variable_parser import LagVariableParser
-from opus_gui.util.exception_formatter import formatPlainTextExceptionInfo
+from opus_gui.util.exception_formatter import formatPlainTextExceptionInfoWithoutLog
 
 class VariableFactory(object):
     """Class for creating an instance of class Variable from a string that specifies the variable name.
@@ -113,7 +113,7 @@ class VariableFactory(object):
                                      )) % (true_short_name, opus_path, time,
                                            true_short_name,
                                            module,
-                                           indent_text(formatPlainTextExceptionInfo('')))
+                                           indent_text(formatPlainTextExceptionInfoWithoutLog('')))
                     raise NameError(desc)
                 return None
         

@@ -29,7 +29,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
-from opus_gui.util.exception_formatter import formatPlainTextExceptionInfo
+from opus_gui.util.exception_formatter import formatPlainTextExceptionInfoWithoutLog
 
 class DataElement(object):
     """Represents one individual of the Dataset object. It is created by the method
@@ -668,8 +668,8 @@ class AbstractDataset(object):
         result = None
         errors = []
         def _format_error(full_variable_name):
-            return formatPlainTextExceptionInfo("When trying to compute variable '%s':"  
-                                                % full_variable_name)
+            return formatPlainTextExceptionInfoWithoutLog("When trying to compute variable '%s':"  
+                                                          % full_variable_name)
             
         if len(package_order) == 0:
             full_variable_name = "%s.%s" % (self.get_dataset_name(), variable_name)
