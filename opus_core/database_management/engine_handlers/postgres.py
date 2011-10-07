@@ -142,4 +142,10 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
     def get_tables_in_database(self, metadata):
         tables = AbstractDatabaseEngineManager.get_tables_in_database(self, metadata)
         tables = [t[t.find('.')+1:] for t in tables]
-        return tables    
+        return tables
+    
+    @classmethod
+    def format_db_name(cls, database_name):
+        if database_name is None or database_name == '':
+            return 'public'
+        return database_name.lower()

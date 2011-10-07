@@ -22,7 +22,7 @@ class OpusDatabase(object):
         
         self.protocol_manager = DatabaseEngineManagerFactory.get_engine(database_server_configuration)
             
-        self.database_name = database_name
+        self.database_name = self.protocol_manager.format_db_name(database_name)
         self.database_server_config = database_server_configuration
         
         self.open()

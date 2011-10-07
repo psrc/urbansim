@@ -25,3 +25,7 @@ class AbstractDatabaseEngineManager(object):
     
     def get_tables_in_database(self, metadata):
         return metadata.tables.keys()
+    
+    @classmethod
+    def format_db_name(cls, database_name):
+        return database_name
