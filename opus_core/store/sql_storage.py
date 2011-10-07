@@ -306,11 +306,10 @@ else:
             for db, server, storage in self.dbs:
                 if db.protocol != 'sqlite':
                     if db.protocol == 'postgres':
-                        expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
+                        expected_url = '%s://%s:%s@%s'%(db.protocol,
                                    db.user_name, 
                                    db.password, 
-                                   db.host_name, 
-                                   os.environ.get('OPUSPROJECTNAME','misc'))
+                                   db.host_name if db.host_name is not None else '')
                     else:
                         expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
                                    db.user_name, 
@@ -322,7 +321,7 @@ else:
                     actual_url = urllib.unquote(actual_url)
                     urls_are_equal = expected_url==actual_url
                     # Careful!  Don't put the URLs in the assertion, so if there is a failure they don't get printed in the CruiseControl log
-                    self.assert_(urls_are_equal, "expected and actual URLs not equal")
+                    self.assert_(urls_are_equal, "expected and actual URLs not equal for protocol %s" % db.protocol)
 
        
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):

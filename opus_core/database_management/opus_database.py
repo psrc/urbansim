@@ -372,7 +372,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
             'col7':"SHORT"                    
         }
         expected_schema = copy.copy(test_table_schema)  
-        expected_schema.update({'col2':'DOUBLE', 'col6':'VARCHAR', 'col7':'INTEGER'})      
+        expected_schema.update({'col2':'DOUBLE', 'col6':'VARCHAR', 'col7':'INTEGER'})
         
         test_table = 'test_table'
         

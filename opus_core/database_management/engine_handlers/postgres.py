@@ -43,7 +43,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
     
     def __init__(self, server_config):
         AbstractDatabaseEngineManager.__init__(self, server_config)
-        self.uses_schemas = False
+        self.uses_schemas = True
         
     def _get_default_database(self, force_database_name = None):
         if force_database_name is not None:
@@ -78,7 +78,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         if get_base_db:
             database_name = self._get_default_database('postgres')
         else:
-            database_name = self._get_default_database(database_name)
+            database_name = self._get_default_database()
         
         connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
                                              server_config.user_name, 
@@ -87,24 +87,12 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
                                              database_name) 
         return connect_string            
     
-    def _create_real_database(self, server, db_name):
-        from psycopg2 import extensions
-        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
-        qry = 'CREATE DATABASE %s;'%db_name.lower()     
-        server.execute(qry)
-        
     def create_database(self, server, database_name):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
         qry = 'CREATE SCHEMA %s;'%database_name.lower()     
         server.execute(qry)
         
-    def _drop_real_database(self, server, database_name):
-        from psycopg2 import extensions
-        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
-        qry = 'DROP DATABASE %s;'%database_name.lower()     
-        server.execute(qry)
-
     def drop_database(self, server, database_name):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
@@ -126,15 +114,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         return database_name.lower() in dbs 
     
     def create_default_database_if_absent(self, server_config):
-        from opus_core.database_management.database_server import DatabaseServer
-        server = DatabaseServer(server_config, creating_base_database = True)
-        base_db = self._get_default_database()
-        if not self._has_real_database(server = server, 
-                                       database_name = base_db):
-            try:
-                self._create_real_database(server, db_name = base_db)
-            except ProgrammingError, e:
-                logger.log_warning('Failed to create default database %s:\n%s' % (base_db, str(e)))
+        pass
             
     def get_tables_in_database(self, metadata):
         tables = AbstractDatabaseEngineManager.get_tables_in_database(self, metadata)
@@ -146,3 +126,19 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         if database_name is None or database_name == '':
             return 'public'
         return database_name.lower()
+
+    """
+    def _create_real_database(self, server, db_name):
+        from psycopg2 import extensions
+        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
+        qry = 'CREATE DATABASE %s;'%db_name.lower()     
+        server.execute(qry)
+        
+    def _drop_real_database(self, server, database_name):
+        from psycopg2 import extensions
+        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
+        qry = 'DROP DATABASE %s;'%database_name.lower()     
+        server.execute(qry)
+    """
+
+    
