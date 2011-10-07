@@ -9,7 +9,7 @@ class jobs_of_sector_DDD_within_DDD_of_parcel(abstract_variable_within_radius_DD
     _return_type = "int32"
 
     def __init__(self, sector_id, radius):
-        self.quantity = "_njobs_of_sector_%s = parcel.aggregate(job.sector_id==%s)" % (sector_id, sector_id)
+        self.quantity = "_njobs_of_sector_%s = parcel.aggregate(job.sector_id==%s, intermediates=[building])" % (sector_id, sector_id)
         abstract_variable_within_radius_DDD_of_parcel.__init__(self, radius)
 
     def post_check(self, values, dataset_pool):
