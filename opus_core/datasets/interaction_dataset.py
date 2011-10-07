@@ -593,7 +593,7 @@ class InteractionDataset(Dataset):
         if vname.get_dataset_name() is None:
             vname.set_dataset_name(self.get_dataset_name())
         else:
-            self._check_dataset_name(vname.get_dataset_name())
+            self._check_dataset_name(vname)
             
         return vname
     
@@ -623,10 +623,12 @@ class InteractionDataset(Dataset):
                           dataset_name=table_name, in_table_name=table_name)
         return dataset
     
-    def _check_dataset_name(self, name):
+    def _check_dataset_name(self, vname):
         """check that name is the name of this dataset or one of its components"""
-        if name!=self.get_dataset_name() and name!=self.get_dataset(1).get_dataset_name() and name!=self.get_dataset(2).get_dataset_name():
-            raise ValueError, 'different dataset names for variable and dataset or a component'
+        name = vname.get_dataset_name()
+        dataset_names = set([self.get_dataset_name()] + list(self.get_dataset(i).get_dataset_name() for i in [1,2]))
+        if name not in dataset_names:
+            raise ValueError, "When checking dataset name of '%s': different dataset names for variable and dataset or a component: '%s' <> '%s'" % (vname.get_expression(), name, dataset_names)
 
 from numpy import ma
 from opus_core.tests import opus_unittest

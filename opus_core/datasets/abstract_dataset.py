@@ -1859,7 +1859,7 @@ class AbstractDataset(object):
         if vname.get_dataset_name() is None:
             vname.set_dataset_name(self.get_dataset_name())
         else:
-            self._check_dataset_name(vname.get_dataset_name())
+            self._check_dataset_name(vname)
         # check that the alias of the variable name isn't a duplicate of an alias for a different name
         alias = vname.get_alias()
         short = vname.get_short_name()
@@ -1875,10 +1875,12 @@ class AbstractDataset(object):
                 raise ValueError, "alias %s is also a primary attribute" % alias
         return vname
 
-    def _check_dataset_name(self, name):
+    def _check_dataset_name(self, vname):
         """check that name is the name of this dataset (overridden in InteractionDataset)"""
-        if name!=self.get_dataset_name():
-            raise ValueError, 'different dataset names for variable and dataset'
+        name = vname.get_dataset_name()
+        dataset_name = self.get_dataset_name() 
+        if name != dataset_name:
+            raise ValueError, "When checking dataset name of '%s': different dataset names for variable and dataset: '%s' <> '%s'" % (vname.get_expression(), name, dataset_name)
 
     def _add_id_attribute(self, data, name):
         self.add_attribute(data=data.astype(int32), name=name, metadata=AttributeType.PRIMARY)
