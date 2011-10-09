@@ -65,32 +65,46 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
             data[:,i] = this_column
             
         header = column_name
-        self._update_travel_model_data_file(tm_config, data, header, input_file, datatable, joinfield, delimiter)
+        self._update_travel_model_data_file(config=tm_config, 
+                                            data=data, 
+                                            header=header, 
+                                            filepath=input_file, 
+                                            datatable=datatable, 
+                                            joinfield=joinfield, 
+                                            delimiter=delimiter,
+                                            year=year,
+                                            zone_set=zone_set
+                                           )
         
     def prepare_for_run(self, config, year):
-        set_project_ini_file(config, year)
+        if config.has_key('project_ini'):
+            set_project_ini_file(config, year)
         
-    def _update_travel_model_data_file(self, tm_config, data, header, input_file, datatable, joinfield, delimiter):
-        self._delete_dcc_file( os.path.splitext(input_file)[0] + '.dcc' )
-        self._write_to_txt_file(data, header, input_file, delimiter)
+    def _update_travel_model_data_file(self, config, 
+                                       data, 
+                                       header, 
+                                       filepath, 
+                                       datatable, #name of travel model TAZ Data Table
+                                       joinfield, 
+                                       delimiter='\t',
+                                      *args, **kwargs):
+        self._delete_dcc_file( os.path.splitext(filepath)[0] + '.dcc' )
+        self._write_to_txt_file(data, header, filepath, delimiter)
 
-        transcad_file_location = run_get_file_location_macro(tm_config)
+        transcad_file_location = run_get_file_location_macro(config)
         datatable = transcad_file_location[datatable] #replace internal matrix name with absolute file name
 
-        macro_args = [["InputFile", input_file],
+        macro_args = [["InputFile", filepath],
                       ["DataTable", datatable],
                       ["JoinField", joinfield]
                   ]
         
-        #for macroname in tm_config['macro']['get_cache_data_into_transcad'].keys():
-            #ui_db_file = tm_config['macro']['get_cache_data_into_transcad'][macroname]
-            #ui_db_file = os.path.join(tm_config['directory'], ui_db_file)
-        macroname, ui_db_file = tm_config['macro']['get_cache_data_into_transcad'], tm_config['ui_file']
+        macroname, ui_db_file = config['macro']['get_cache_data_into_transcad'], config['ui_file']
         run_transcad_macro(macroname, ui_db_file, macro_args)
         
-    def _write_to_txt_file(self, data, header, input_file, delimiter='\t'):
+    def _write_to_txt_file(self, data, header, filepath, delimiter='\t'):
         logger.start_block("Writing to transcad input file")
-        newfile = open(input_file, 'w')
+        newfile = open(filepath, 'w')
         newfile.write(delimiter.join(header) + "\n")
         rows, cols = data.shape
         for n in range(rows):

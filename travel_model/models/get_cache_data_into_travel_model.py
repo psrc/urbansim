@@ -33,7 +33,10 @@ class GetCacheDataIntoTravelModel(AbstractTravelModel):
                                                             #additional_arguments={'in_storage': attribute_cache})
         zone_set = dataset_pool.get_dataset('zone')
         self.prepare_for_run(config['travel_model_configuration'], year)
-        self.create_travel_model_input_file(config, year, zone_set, dataset_pool,
+        self.create_travel_model_input_file(config=config, 
+                                            year=year, 
+                                            zone_set=zone_set, 
+                                            datasets=dataset_pool,
                                             *args, **kwargs)
 
     def prepare_for_run(self, *args, **kwargs):
