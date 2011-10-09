@@ -42,11 +42,11 @@ class MarriageEligibilityModel(AgentRelocationModel):
                 #Create the new household IDs and assign them to the mate choosers (the mate they choose will take on this same household ID)
                 new_hh_id = arange(max_hh_id, max_hh_id+index_eligible_females.size)
                 person_set.modify_attribute('household_id', new_hh_id, index=index_eligible_females)
-                self.mate_match(index_eligible_females, index_eligible_males, person_set, max_hh_id)
+                self.mate_match(index_eligible_females, index_eligible_males, person_set)
             else:
                 new_hh_id = arange(max_hh_id, max_hh_id+index_eligible_males.size)
                 person_set.modify_attribute('household_id', new_hh_id, index=index_eligible_males)
-                self.mate_match(index_eligible_males, index_eligible_females, person_set, max_hh_id)
+                self.mate_match(index_eligible_males, index_eligible_females, person_set)
                         
         person_set.delete_one_attribute('marriage_eligible')
         #Remove records from household_set that have no persons left
@@ -56,7 +56,7 @@ class MarriageEligibilityModel(AgentRelocationModel):
             logger.log_status("Removing %s records without %s from %s dataset" % (index_hh0persons.size, person_ds_name, hh_ds_name) )
             household_set.remove_elements(index_hh0persons)
 
-    def mate_match(self, choosers, available_mates, person_set, max_hh_id):
+    def mate_match(self, choosers, available_mates, person_set):
         available_mates_age = array([(person_set['age'][available_mates]),]*choosers.size)
         choosers_age = array([(person_set['age'][choosers]),]*available_mates.size).transpose()
         available_mates_edu = array([(person_set['education'][available_mates]),]*choosers.size) #TODO: calc education in terms of years instead of level
