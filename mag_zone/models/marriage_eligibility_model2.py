@@ -42,12 +42,12 @@ class MarriageEligibilityModel(AgentRelocationModel):
                 #Create the new household IDs and assign them to the mate choosers (the mate they choose will take on this same household ID)
                 new_hh_id = arange(max_hh_id, max_hh_id+index_eligible_females.size)
                 person_set.modify_attribute('household_id', new_hh_id, index=index_eligible_females)
-                self.mate_match(index_eligible_females, index_eligible_males, person_set, max_hh_id, gender_that_chooses)
+                self.mate_match(index_eligible_females, index_eligible_males, person_set, gender_that_chooses)
             else:
                 gender_that_chooses = 'male'
                 new_hh_id = arange(max_hh_id, max_hh_id+index_eligible_males.size)
                 person_set.modify_attribute('household_id', new_hh_id, index=index_eligible_males)
-                self.mate_match(index_eligible_males, index_eligible_females, person_set, max_hh_id, gender_that_chooses)
+                self.mate_match(index_eligible_males, index_eligible_females, person_set, gender_that_chooses)
                         
         person_set.delete_one_attribute('marriage_eligible')
         person_set.delete_one_attribute('unmatched')        
@@ -58,7 +58,7 @@ class MarriageEligibilityModel(AgentRelocationModel):
             logger.log_status("Removing %s records without %s from %s dataset" % (index_hh0persons.size, person_ds_name, hh_ds_name) )
             household_set.remove_elements(index_hh0persons)
 
-    def mate_match(self, choosers, available_mates, person_set, max_hh_id, gender_that_chooses):
+    def mate_match(self, choosers, available_mates, person_set, gender_that_chooses):
         available_mates_age = person_set['age'][available_mates]
         available_mates_edu = person_set['education'][available_mates]#TODO: calc education in terms of years instead of level
         for chooser in choosers:
@@ -94,6 +94,6 @@ class MarriageEligibilityModel(AgentRelocationModel):
                     choosers = where(logical_and(person_set['marriage_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==1))[0]
                     available_mates = where(logical_and(person_set['marriage_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==2))[0]
 
-            self.mate_match(choosers, available_mates, person_set, max_hh_id, gender_that_chooses)
+            self.mate_match(choosers, available_mates, person_set, gender_that_chooses)
         else:
             logger.log_status("Mate matching complete.")
