@@ -34,16 +34,8 @@ class MATSimConfigObject(object):
         self.sub_config_exists = False
         
         # input plans file parameter
-        self.input_plans_file = ""
-        try:    # checks if sub config for matsim input plans file exists
-            self.sub_config_exists = (common_matsim_part['input_plans_file'] != None)
-        except: pass
-        if self.sub_config_exists:
-            self.check_abolute_path( common_matsim_part['input_plans_file'] )     
-            self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['input_plans_file'] )
-            logger.log_note('Input plans file found (MATSim warm start enabled).')
-        else: 
-            logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
+        self.input_plans_file = self.__get_plans_file(common_matsim_part, 'input_plans_file')
+        self.hotstart_plans_file = self.__get_plans_file(common_matsim_part, 'hotstart_plans_file')
         
         # controler parameter
         self.first_iteration = first_iteration
@@ -79,6 +71,18 @@ class MATSimConfigObject(object):
         
         self.config_destination_location = self.__set_config_destination( self.config_dictionary )
         
+    def __get_plans_file(self, common_matsim_part, entry):
+        try:    # checks if sub config for matsim input plans file exists
+            self.sub_config_exists = ( common_matsim_part[entry] != None)
+        except: return ""
+        if self.sub_config_exists:
+            self.check_abolute_path( common_matsim_part[entry]  )    
+            logger.log_note('Input plans file found (MATSim warm start enabled).') 
+            return os.path.join( os.environ['OPUS_HOME'], common_matsim_part[entry]  )
+        else: 
+            logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
+            return ""
+        
     def __set_config_destination(self, config):
         """ set destination for MATSim config
         """
@@ -113,6 +117,7 @@ class MATSimConfigObject(object):
         # different element sections for network, controler, planCalcScore, ect.
         network_elem = pyxb_matsim_config_parser.networkType.Factory()
         input_plans_file_elem = pyxb_matsim_config_parser.inputPlansFileType.Factory()
+        hotstart_plans_file_elem = pyxb_matsim_config_parser.inputPlansFileType.Factory()
         controler_elem = pyxb_matsim_config_parser.controlerType.Factory()
         plan_calc_score_elem = pyxb_matsim_config_parser.planCalcScoreType.Factory()
         urbansim_elem = pyxb_matsim_config_parser.urbansimParameterType.Factory()
@@ -121,6 +126,7 @@ class MATSimConfigObject(object):
         network_elem.inputFile = self.network_file
         
         input_plans_file_elem = self.input_plans_file
+        hotstart_plans_file_elem = self.hotstart_plans_file
         
         controler_elem.firstIteration = self.first_iteration
         controler_elem.lastIteration = self.last_iteration
@@ -141,6 +147,7 @@ class MATSimConfigObject(object):
         # assemble single elements with dedicated section elements
         config_elem.network = network_elem
         config_elem.inputPlansFile = input_plans_file_elem
+        config_elem.hotStartPlansFile = hotstart_plans_file_elem
         config_elem.controler = controler_elem
         config_elem.planCalcScore = plan_calc_score_elem
         

@@ -42,7 +42,7 @@ class RunTravelModel(AbstractTravelModel):
         if tmc['matsim4urbansim'].get('test_parameter') != None:
             self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
         # change to directory opus_matsim
-        os.chdir(os.path.join(os.environ['OPUS_HOME'], matsim4opus))
+        os.chdir( paths.get_opus_home_path(matsim4opus) )
         
         # reserve memory for java
         xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
