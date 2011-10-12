@@ -13,6 +13,7 @@ aliases = [
    "total_investment = (urbansim_parcel.development_project_proposal.acquisition_cost + urbansim_parcel.development_project_proposal.demolition_cost + urbansim_parcel.development_project_proposal.construction_cost).astype(float32)",
    "profit = urbansim_parcel.development_project_proposal.total_revenue - urbansim_parcel.development_project_proposal.total_investment",
    "building_sqft = (development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft)).astype(float32)",
+   "building_sqft_non_residential = (development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft*urbansim_parcel.development_project_proposal_component.is_non_residential)).astype(float32)",
    "number_of_components = (development_project_proposal.number_of_agents(development_project_proposal_component)).astype(int32)",
    "demolition_cost = development_project_proposal.disaggregate(urbansim_parcel.parcel.demolition_cost) * development_project_proposal.is_redevelopment",
    "faz_id = development_project_proposal.disaggregate(zone.faz_id, intermediates=[zone])",
