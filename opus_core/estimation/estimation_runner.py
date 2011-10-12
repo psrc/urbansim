@@ -31,6 +31,7 @@ class EstimationRunner(Estimator):
         self.xml_configuration = xml_configuration
         self.model_group = model_group
         self.estimated_model = model
+        self.explored_model = model
 
         if configuration is None:
             if self.xml_configuration is None:

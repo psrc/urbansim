@@ -15,6 +15,8 @@ from numpy import zeros, take, ones
 from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
+from opus_core.specified_coefficients import SpecifiedCoefficientsFor1Submodel
+from opus_core.plot_functions import plot_barchart
 
 class ModelExplorer(object):
     def __init__(self, model, year, scenario_name=None, model_group=None, configuration=None, xml_configuration=None, 
@@ -110,6 +112,11 @@ class ModelExplorer(object):
         """Calls method get_coefficient_names of the Model object which should return
            coefficient names for the given submodel. Can be used only on in models that are estimable."""
         return self.get_model().get_coefficient_names(submodel)
+    
+    def get_coefficients(self, submodel=-2):
+        """Return an object of class SpecifiedCoefficientsFor1Submodel giving the model coefficients. 
+        Can be used only on in models that are estimable."""
+        return SpecifiedCoefficientsFor1Submodel(self.get_model().get_specified_coefficients(), submodel)
 
     def get_data_as_dataset(self, submodel=-2, **kwargs):
         """Calls method get_data_as_dataset of the Model object which should return
@@ -327,3 +334,28 @@ class ModelExplorer(object):
         choice_set.plot_map(name, filter=dummy_attribute_name)
         choice_set.delete_one_attribute(dummy_attribute_name)
                    
+    def plot_coefficients(self, submodel=-2, exclude_constant=True, eqidx=0):
+        """ Plot a barchart of coefficient values. This can be used in a regression model, 
+        when coefficients are standardized 
+        (i.e. using the estimation module opus_core.estimate_linear_regression_standardized).
+        """
+        coef = self.get_coefficients(submodel)
+        values = coef.get_coefficient_values()
+        names = coef.get_coefficient_names()
+        sd = coef.get_standard_errors()
+        idx=ones(names.shape[1], dtype="bool")
+        if exclude_constant:
+            pos = coef.get_constants_positions()
+            if pos.size > 0:               
+                idx[pos]=0
+        plot_barchart(values[eqidx, idx], labels = names[eqidx, idx], errors=sd[eqidx, idx])
+        
+    def create_latex_tables(self, directory):
+        from opus_core.latex_table_creator import LatexTableCreator
+        LTC = LatexTableCreator()
+        LTC.create_latex_table_for_coefficients_for_model(
+            self.get_model().get_specified_coefficients().coefficients, self.explored_model, directory)
+        LTC.create_latex_table_for_specifications_for_model(
+            self.get_model().get_specified_coefficients().specification, self.explored_model, directory)
+
+        
