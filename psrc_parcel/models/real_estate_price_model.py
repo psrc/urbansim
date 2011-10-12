@@ -11,9 +11,9 @@ class RealEstatePriceModel(USRealEstatePriceModel):
     """Like REPM in urbansim, but the run method contains a post-processing step that computes a given variable
         and stores it as a primary attribute.
     """
-    def run(self, add_attribute, *args, **kwargs):
-        result = USRealEstatePriceModel.run(self, *args, **kwargs)
-        self.postprocess(args['dataset'], add_attribute)
+    def run(self, add_attribute, specification, coefficients, dataset, **kwargs):
+        result = USRealEstatePriceModel.run(self, specification, coefficients, dataset, **kwargs)
+        self.postprocess(dataset, add_attribute)
         return result
     
     def postprocess(self, dataset, attribute=None):
