@@ -212,13 +212,13 @@ class RegressionModel(ChunkModel):
             return (None, None)
 
         coefficients = create_coefficient_from_specification(specification)
-        specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
-        submodels = specified_coefficients.get_submodels()
+        self.specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
+        submodels = self.specified_coefficients.get_submodels()
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, dataset, estimation_idx,
                                       dataset_pool=self.dataset_pool, resources = compute_resources,
                                       submodel_size_max=self.estimate_config.get('submodel_size_max', None))
-        variables = specified_coefficients.get_full_variable_names_without_constants()
+        variables = self.specified_coefficients.get_full_variable_names_without_constants()
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
         dataset.compute_variables(variables, dataset_pool=self.dataset_pool, resources = compute_resources)
@@ -231,7 +231,7 @@ class RegressionModel(ChunkModel):
         regression_resources.merge({"debug":self.debug})
         outcome_variable_name = VariableName(outcome_attribute)
         for submodel in submodels:
-            coef[submodel] = SpecifiedCoefficientsFor1Submodel(specified_coefficients,submodel)
+            coef[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients,submodel)
             self.increment_current_status_piece()
             logger.log_status("Estimate regression for submodel " +str(submodel),
                                tags=["estimate"], verbosity_level=2)
