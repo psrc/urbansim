@@ -46,14 +46,18 @@ def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g')
     title(main)
     Axis = axis()
 
-def plot_barchart(values, main='', labels=None):
-    """Plot a bar chart and put labels (list) on the x-axis"""
-    from matplotlib.pylab import text
+def plot_barchart(values, main='', labels=None, errors=None):
+    """Plot a bar chart and put labels (list) on the x-axis.
+    If 'errors' are given, show an error bar for each value.
+    """
+    from matplotlib.pylab import text, errorbar
     create_barchart(values, main=main)
     if labels is not None:
         for ilabel in range(1, len(labels)+1):
             text(ilabel-0.5,-0.5,s=labels[ilabel-1],horizontalalignment='center',verticalalignment='top',
                  rotation='vertical')
+    if errors is not None:
+        errorbar(arange(values.size)+0.5, values, errors, fmt='o')
     show_plots()
 
 def create_matplot(matrix, xlabels=None, ylabels=None, main=''):
