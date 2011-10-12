@@ -207,6 +207,8 @@
             <selectable name="demolition_cost_per_sqft" type="selectable">True</selectable>
             <selectable name="development_constraints" type="selectable">True</selectable>
             <selectable name="development_template_components" type="selectable">True</selectable>
+            <selectable name="development_project_proposals" type="selectable">True</selectable>
+            <selectable name="development_project_proposal_components" type="selectable">True</selectable>
             <selectable name="development_templates" type="selectable">True</selectable>
             <selectable name="districts" type="selectable">True</selectable>
             <selectable name="education" type="selectable">True</selectable>
@@ -257,7 +259,7 @@
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
           </tables_to_cache_nchunks>
-        </argument>
+      </argument>
       </creating_baseyear_cache_configuration>
       <advanced type="category">
         <dataset_pool_configuration type="class">
