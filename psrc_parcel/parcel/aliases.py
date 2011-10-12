@@ -25,8 +25,10 @@ aliases = [
        "number_of_poor_households = parcel.aggregate(psrc_parcel.household.is_poor, intermediates=[building])",
        "number_of_wealthy_households = parcel.aggregate(psrc_parcel.household.is_wealthy, intermediates=[building])",
        "percent_poverty_wwd = safe_array_divide(psrc_parcel.parcel.psrc_parcel_package_number_of_poor_households_wwd, psrc_parcel.parcel.urbansim_parcel_package_number_of_households_wwd)",
-       "percent_wealth_wwd = safe_array_divide(psrc_parcel.parcel.psrc_parcel_package_number_of_wealthy_households_wwd, psrc_parcel.parcel.urbansim_parcel_package_number_of_households_wwd)"
-
+       "percent_wealth_wwd = safe_array_divide(psrc_parcel.parcel.psrc_parcel_package_number_of_wealthy_households_wwd, psrc_parcel.parcel.urbansim_parcel_package_number_of_households_wwd)",
+       "developable_capacity = clip_to_zero(psrc_parcel.parcel.max_developable_capacity-urbansim_parcel.parcel.building_sqft)",
+       "building_density_wwd = psrc_parcel.parcel.urbansim_parcel_package_building_sqft_wwd / psrc_parcel.parcel.psrc_parcel_package_parcel_sqft_wwd",
+       "avg_zonal_parcel_sqft = parcel.disaggregate(zone.aggregate(parcel.parcel_sqft)/zone.number_of_agents(parcel))"
            ]
 
 
