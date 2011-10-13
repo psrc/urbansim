@@ -7,6 +7,8 @@ from urbansim.abstract_variables.abstract_travel_time_variable import abstract_t
 class workerDDD_travel_time_hbw_am_drive_alone_from_home_to_work(abstract_travel_time_variable):
     """travel_time_hbw_am_drive_alone_from_home_to_work"""
 
+    default_value = 240
+
     def __init__(self, number):
         self.agent_zone_id = "psrc.household.worker%s_work_place_zone_id" % number
         self.location_zone_id = "urbansim.parcel.zone_id"
