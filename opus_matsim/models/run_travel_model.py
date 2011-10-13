@@ -56,11 +56,14 @@ class RunTravelModel(AbstractTravelModel):
         #        'classpath': "jar/matsim4urbansim.jar",
         #        'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
         #        'matsim_config_file': self.matsim_config_full,
-        #        'test_parameter': self.test_parameter }         
+        #        'test_parameter': self.test_parameter }
+        
+        # tnicolai: adapt cmd to nighlty build matsim structure such as : 
+        #           java -Xmx2000m -cp matsim.jar:matsim4urbansim.jar:matsim4urbansim-0.4.0-SNAPSHOT-r16916/libs/toronto-0.4.0-SNAPSHOT.jar org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim /Users/thomas/Development/opus_home/matsim4opus/matsim_config/seattle_parcel_matsim_config.xml          
         cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim", #"playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim", #"playground.run.Matsim4Urbansim"
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
@@ -71,7 +74,7 @@ class RunTravelModel(AbstractTravelModel):
             error_msg = "MATSim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
             logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the opus_matsim root,")
-            logger.log_error("  which is one level 'down' from OPUS_HOME.")
+            logger.log_error("which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         
         logger.end_block()
