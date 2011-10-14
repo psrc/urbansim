@@ -5,8 +5,9 @@
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
-import os
-from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
+import os, sys
+from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_matsim.models.org.constants import matsim4opus
 from opus_core import paths
 
 class RunTravelModel(AbstractTravelModel):
@@ -17,49 +18,66 @@ class RunTravelModel(AbstractTravelModel):
         """
         self.matsim_config_destination = None  # path to generated matsim config xml
         self.matsim_config_name = None  # matsim config xml name
-        self.matsim_config_full = None  # concatination of matsim config path and name
+        self.matsim_config_full = None  # concatenation of matsim config path and name
+        self.test_parameter = ""        # optional parameter for testing and debugging purposes
 
     def run(self, config, year):
         """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
-        is correctly set and the matsim tarfile was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
+        is correctly set and the matsim tar-file was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
         be problems with the java version.
         """
 
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        self.__setUp( config )
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
-        config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
-        config_obj.marschall()
+        config_obj = MATSimConfigObject(config, year)
+        self.matsim_config_full = config_obj.marschall()
         
-        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-                'opus_home': paths.OPUS_HOME,
-                'vmargs': "-Xmx2000m",
-                'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
-                'javaclass': "playground.run.Matsim4Urbansim",
-                'matsim_config_file': self.matsim_config_full } 
+        # check for test parameter
+        tmc = config['travel_model_configuration']
+        if tmc['matsim4urbansim'].get('test_parameter') != None:
+            self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
+        # change to directory opus_matsim
+        os.chdir( paths.get_opus_home_path(matsim4opus) )
+        
+        # reserve memory for java
+        xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
+        if sys.platform.lower() == 'win32': # Windows can't reserve more 1500m
+            xmx = '-Xmx1500m'
+        
+        # calling travel model with cmd command
+        #cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+        #        'opus_home': os.environ['OPUS_HOME'],
+        #        'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
+        #        'classpath': "jar/matsim4urbansim.jar",
+        #        'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+        #        'matsim_config_file': self.matsim_config_full,
+        #        'test_parameter': self.test_parameter }
+        
+        # tnicolai: adapt cmd to nighlty build matsim structure such as : 
+        #           java -Xmx2000m -cp matsim.jar:matsim4urbansim.jar:matsim4urbansim-0.4.0-SNAPSHOT-r16916/libs/toronto-0.4.0-SNAPSHOT.jar org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim /Users/thomas/Development/opus_home/matsim4opus/matsim_config/seattle_parcel_matsim_config.xml          
+        cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+                'vmargs': xmx, 
+                'classpath': "jar/matsim4urbansim.jar",
+                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim", #"playground.run.Matsim4Urbansim"
+                'matsim_config_file': self.matsim_config_full,
+                'test_parameter': self.test_parameter } 
         
         logger.log_status('Running command %s' % cmd ) 
         
         cmd_result = os.system(cmd)
         if cmd_result != 0:
-            error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
+            error_msg = "MATSim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
-            logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the opus_matsim root,")
-            logger.log_error("  which is one level 'down' from OPUS_HOME.")
+            logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the matsim4opus root,")
+            logger.log_error("which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         
         logger.end_block()
-        
-    def __setUp(self, config):
-        """ create MATSim config data
-        """
-        self.matsim_config_destination = paths.get_opus_home_path("opus_matsim", "matsim_config")
-        if not os.path.exists(self.matsim_config_destination):
-            try: os.mkdir(self.matsim_config_destination)
-            except: pass
-        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
-        self.matsim_config_full = os.path.join( self.matsim_config_destination, self.matsim_config_name  )
 
 # called from opus via main!
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 import os
+from opus_matsim.models.org.constants import matsim4opus, matsim_temp
 from opus_core import paths
 
 
@@ -20,24 +21,18 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
     """
 
     def create_travel_model_input_file(self, config, year, *args, **kwargs):
-        """"""
+        """Constructs and writes a persons and jobs table. 
+        Both are associated with a parcels table (also constructed here) storing locations (x and y coordinates) of each person and job .
+        """
 
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
-
-#        # When this is called for the first time, the 'matsim_flag' is not there.  Will be constructed here:  
-#        if not 'matsim_flag' in persons.get_known_attribute_names():
-#            persons = SessionConfiguration().get_dataset_from_pool('person')
-#            persons_size = persons.size()
-#            sampling_rate = config['travel_model_configuration']['sampling_rate']
-#            matsim_flag = zeros(persons_size, dtype='int32')
-#            sampled_person_index = sample_noreplace( arange(persons_size), 
-#                                                     int(sampling_rate * persons_size), 
-#                                                     return_indices=True )
-#            matsim_flag[sampled_person_index] = 1
-#            persons.add_attribute(matsim_flag, 'matsim_flag', metadata=AttributeType.PRIMARY)
-#            persons.flush_attribute('matsim_flag')
         
-        # I guess this is access to the full urbansim cache data.
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
+        # I guess this is access to the full UrbanSim cache data.
         source_data = SourceData(
             cache_directory = config['cache_directory'],
             years = [year],
@@ -46,20 +41,38 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
-        output_root = paths.get_opus_home_path( "opus_matsim" ) 
+        output_root = paths.get_opus_home_path( matsim4opus ) 
         if not os.path.exists( output_root ):
             try: os.mkdir( output_root )
             except: pass
         
-        self.output_directory = os.path.join( output_root, "tmp" )
+        self.output_directory = paths.get_opus_home_path( matsim4opus, matsim_temp )
         if not os.path.exists( self.output_directory ):
             try: os.mkdir(self.output_directory)
             except: pass
+                
+        ### Jobs ###############################
         
-        #try: #tnicolai
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
+        self.dataset_table_jobs = DatasetTable(
+                attributes = [
+                    'parcel_id_work = job.disaggregate(parcel.parcel_id, intermediates=[building])',
+                    'zone_id_work = job.disaggregate(zone.zone_id, intermediates=[parcel,building])'
+                    ],
+                dataset_name = 'job',
+                # exclude_condition = 'person.matsim_flag==0',
+                storage_location = self.output_directory,
+                source_data = source_data,
+                output_type = 'tab',
+                name = 'exported_indicators',
+                )
+        
+        export_indicators_jobs = [ self.dataset_table_jobs ]
+        
+        # executing the export jobs
+        IndicatorFactory().create_indicators(
+             indicators = export_indicators_jobs,
+             display_error_box = False, 
+             show_results = False)
         
         ### PERSONS ###############################
         
@@ -91,6 +104,9 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                     'parcel.x_coord_sp',
                     'parcel.y_coord_sp',
                     'parcel.zone_id',
+                    # tnicolai: Gewicht fuer parcels, um zone centroid in MATSim genauer zu bestimmen
+                    # Zone mit 1Parcel Wald und 10Parcels Wohnungen -> Schwerpunkt bei den Wohnungen
+                    # Zone mit 1Parcel Wohnblock und 20Parcels Einfamilienhauesern -> Schwerpunkt bei Wohnblock 
                     ],
                 dataset_name = 'parcel',
                 storage_location = self.output_directory,
