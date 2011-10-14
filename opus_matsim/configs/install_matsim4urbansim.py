@@ -6,6 +6,7 @@ import urllib2, os, sys
 from opus_core.logger import logger
 from HTMLParser import HTMLParser
 from opus_matsim.models.utils.extract_zip_file import ExtractZipFile
+from opus_matsim.models.org.constants import matsim4opus
 from opus_core import paths
 
 class InstallMATSim4UrbanSim(object):
@@ -20,7 +21,7 @@ class InstallMATSim4UrbanSim(object):
             logger.log_error('Aborting MATSim4UrbanSim installation!')
             exit()
         
-        self.target_path = paths.get_opus_home_path( 'TESTmatsim4urbansim', 'jar')
+        self.target_path = paths.get_opus_home_path( matsim4opus + 'TEST', 'jar')
         self.source_url = 'http://matsim.org/files/builds/'
         self.html_finder = FindLinks()
         
