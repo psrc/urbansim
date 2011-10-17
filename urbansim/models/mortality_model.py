@@ -16,6 +16,7 @@ class MortalityModel(AgentRelocationModel):
         person_ds_name = person_set.get_dataset_name()
         hh_ds_name = household_set.get_dataset_name()
         index = AgentRelocationModel.run(self, person_set, resources=resources)
+        logger.log_status("%s deaths occurred (before accounting for adults saved to prevent orphans)" % (index.size) )
 
         #avoid orphaning children before we handle them in an adoption model
         person_set.add_attribute(name='mortality_flag', data=zeros(person_set.size(), dtype='b'))
@@ -52,6 +53,7 @@ class MortalityModel(AgentRelocationModel):
         person_set.delete_one_attribute('mortality_flag')
 
         logger.log_status("Removing %s records from %s dataset" % (idx.size, person_set.get_dataset_name()) )
+        logger.log_status("%s deaths occurred after saving some adults to prevent orphans" % (idx.size) )
         person_set.remove_elements(idx)
         
         ##remove records from household_set that have no persons left
