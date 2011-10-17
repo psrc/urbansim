@@ -7,17 +7,17 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
-      <model name="marriage_eligibility_model" type="model">
+      <model name="marriage_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.marriage_eligibility_model</class_module>
-            <class_name>MarriageEligibilityModel</class_name>
+            <class_module>mag_zone.models.marriage_model</class_module>
+            <class_name>MarriageModel</class_name>
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.marriage_probabilities</argument>
             <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
-            <name name="name" type="string">MarriageEligibilityModel</name>
+            <name name="name" type="string">MarriageModel</name>
           </init>
           <prepare_for_run type="dictionary">
             <output name="output" type="string">mem_resources</output>
@@ -26,7 +26,85 @@
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <output name="output" type="string">marriage_eligibility_index</output>
+            <output name="output" type="string">marriage_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="cohabitation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>mag_zone.models.cohabitation_model</class_module>
+            <class_name>CohabitationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.cohabitation_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">CohabitationModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_cohabitation_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">cohabitation_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="divorce_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>mag_zone.models.divorce_model</class_module>
+            <class_name>DivorceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.divorce_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">DivorceModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_divorce_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">divorce_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="breakup_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>mag_zone.models.breakup_model</class_module>
+            <class_name>BreakupModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.breakup_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">BreakupModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_breakup_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">breakup_index</output>
             <argument name="resources" type="string">mem_resources</argument>
             <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
