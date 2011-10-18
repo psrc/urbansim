@@ -79,7 +79,6 @@ class MarriageModel(AgentRelocationModel):
             household_set.modify_attribute('age_of_head', age_of_head)
         ##How to update the household table's building_id attribute?  Assign building IDs the same way we're assigning household id's? (moves in with female, in most circumstances)
         ##TODO:  person_no in new household needs to be dealt with.  Order by age?
-        ##TODO:  need to change the max_marriage_status in the rate table to 7 (if we want to keep cohabitaters as marriage_status = 7)
 
     def mate_match(self, choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter):
         shuffle(choosers)
