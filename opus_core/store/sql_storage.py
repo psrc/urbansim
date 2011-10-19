@@ -12,6 +12,7 @@ from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
+import re
 
 class sql_storage(Storage):
     def __init__(self,  
@@ -306,10 +307,17 @@ else:
             for db, server, storage in self.dbs:
                 if db.protocol != 'sqlite':
                     if db.protocol == 'postgres':
+                        host_and_db = ''
+                        if db.host_name is None:
+                            pass
+                        elif re.match('.*/.*', db.host_name):
+                            host_and_db = db.host_name
+                        else:
+                            host_and_db = '%s/misc' % db.host_name
                         expected_url = '%s://%s:%s@%s'%(db.protocol,
                                    db.user_name, 
                                    db.password, 
-                                   db.host_name if db.host_name is not None else '')
+                                   host_and_db)
                     else:
                         expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
                                    db.user_name, 
