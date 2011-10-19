@@ -65,6 +65,7 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.existing_variables = existing_variables or []
 
         self.leVarName.setText(variable['name'])
+        self.le_var_def.document().setPlainText(variable['definition'])
         index = self.cboVarType.findText(variable['source'])
         if index < 0: # variable source was not in the combo box
             text = 'Failed to edit variable %s' % variable['name']
@@ -72,6 +73,9 @@ class VariableEditor(QDialog, Ui_VariableEditor):
                        'Please select a new type and update/save the variable.' %
                        (variable['name'], variable['dataset'], variable['source']))
             MessageBox.warning(self, text, details)
+            
+        # This triggers _update_variable_from_fields and hence requires
+        # name and definition to be set already
         self.cboVarType.setCurrentIndex(index)
 
         if variable['use'] == 'model variable':
@@ -80,7 +84,6 @@ class VariableEditor(QDialog, Ui_VariableEditor):
             self.rbUseIndicator.setChecked(True)
         else:
             self.rbUseBoth.setChecked(True)
-        self.le_var_def.document().setPlainText(variable['definition'])
         self.leVarName.selectAll()
         self.leVarName.setFocus()
 
