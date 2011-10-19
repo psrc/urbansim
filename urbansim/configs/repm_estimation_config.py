@@ -14,7 +14,7 @@ class REPMEstimationConfig(EstimationBaseConfig):
     def update_config(self):
         self.merge(get_changes_for_repm_estimation(self))
 
-def get_changes_for_hlcm_estimation(config=None):
+def get_changes_for_repm_estimation(config=None):
     estimation_configuration = {}
     estimation_configuration["models"] = [
                   {"real_estate_price_model": ["estimate"]}
