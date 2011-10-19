@@ -45,6 +45,7 @@ class DivorceModel(AgentRelocationModel):
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
         new_hh_id = arange(max_hh_id, max_hh_id+index_man1_divorce.size)
         person_set.modify_attribute('household_id', new_hh_id, index=index_man1_divorce)
+        household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
         person_set.modify_attribute('marriage_status', array(index_man1_divorce.size*[4]), index_man1_divorce)
 
         #Identify men that will be divorced when there is more than 1 married man in the household
@@ -52,6 +53,7 @@ class DivorceModel(AgentRelocationModel):
         person_set.add_attribute(name='not_divorced', data=ones(person_set.size(), dtype='b'))
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
         new_hh_id = arange(max_hh_id, max_hh_id+must_pick_man_to_divorce.size)
+        household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
         new_hh_id_counter = 0
         self.pick_man_to_divorce(must_pick_man_to_divorce, married_man, num_married_men_in_hh, person_set, new_hh_id, new_hh_id_counter)
 

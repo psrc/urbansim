@@ -41,7 +41,7 @@ class CohabitationModel(AgentRelocationModel):
         #Create max # of new household IDs that may be needed (not all will be used because of re-use of existing household_ids)
         new_hh_id = arange(max_hh_id, max_hh_id+index_eligible_females.size)
         new_hh_id_counter = 0
-        self.mate_match(index_eligible_females, index_eligible_males, person_set, household_set, new_hh_id, new_hh_id_counter)
+        self.mate_match(index_eligible_females, index_eligible_males, person_set, household_set, new_hh_id, new_hh_id_counter, hh_id_name, max_hh_id)
                         
         person_set.delete_one_attribute('single_parent')
         person_set.delete_one_attribute('one_person_hh') 
@@ -77,10 +77,9 @@ class CohabitationModel(AgentRelocationModel):
         if 'age_of_head' in household_set.get_primary_attribute_names():
             age_of_head = household_set.compute_variables('_age_of_head = household.aggregate(person.head_of_hh * person.age)')
             household_set.modify_attribute('age_of_head', age_of_head)
-        ##How to update the household table's building_id attribute?  Assign building IDs the same way we're assigning household id's? (moves in with female, in most circumstances)
         ##TODO:  person_no in new household needs to be dealt with.  Order by age?
 
-    def mate_match(self, choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter):
+    def mate_match(self, choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter, hh_id_name, max_hh_id):
         shuffle(choosers)
         available_mates_age = person_set['age'][available_mates]
         available_mates_edu = person_set['education'][available_mates]#TODO: calc education in terms of years instead of level
@@ -137,6 +136,8 @@ class CohabitationModel(AgentRelocationModel):
                 available_mates = where(logical_and(person_set['cohabitation_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==1))[0]
                 choosers = where(logical_and(person_set['cohabitation_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==2))[0]
 
-            self.mate_match(choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter)
+            self.mate_match(choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter, hh_id_name, max_hh_id)
         else:
+            new_hh_id = arange(max_hh_id, max_hh_id+new_hh_id_counter+1)
+            household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
             logger.log_status("Mate matching complete.")

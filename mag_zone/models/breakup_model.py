@@ -45,6 +45,7 @@ class BreakupModel(AgentRelocationModel):
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
         new_hh_id = arange(max_hh_id, max_hh_id+index_man1_breakup.size)
         person_set.modify_attribute('household_id', new_hh_id, index=index_man1_breakup)
+        household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
         person_set.modify_attribute('marriage_status', array(index_man1_breakup.size*[6]), index_man1_breakup)
 
         #Identify men that will be broken up with when there is more than 1 cohabitating man in the household
@@ -52,6 +53,7 @@ class BreakupModel(AgentRelocationModel):
         person_set.add_attribute(name='not_brokenup', data=ones(person_set.size(), dtype='b'))
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
         new_hh_id = arange(max_hh_id, max_hh_id+must_pick_man_to_breakup.size)
+        household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
         new_hh_id_counter = 0
         self.pick_man_to_breakup(must_pick_man_to_breakup, cohabitating_man, num_cohabitating_men_in_hh, person_set, new_hh_id, new_hh_id_counter)
 
