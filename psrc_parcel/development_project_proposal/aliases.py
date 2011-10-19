@@ -45,4 +45,5 @@ aliases = [
                     "psrc_parcel.development_project_proposal.minimum_1DU_per_legal_rural_lot_yield",
                     "psrc_parcel.development_project_proposal.minimum_1DU_per_legal_urban_lot_yield",
              ),
+             "developable_capacity = clip_to_zero(development_project_proposal.disaggregate(psrc_parcel.parcel.max_developable_capacity)-urbansim_parcel.development_project_proposal.building_sqft)",
            ]
