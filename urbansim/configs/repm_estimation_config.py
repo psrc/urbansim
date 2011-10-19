@@ -27,11 +27,7 @@ def get_changes_for_repm_estimation(config=None):
         }
     return estimation_configuration
 
-def main():
-    run_configuration = config.copy()
-    
-    estimation_configuration = get_changes_for_repm_estimation()
-    run_configuration.merge(estimation_configuration)
+run_configuration = config.copy()
 
-if __name__ == '__main__':
-    main()
+estimation_configuration = get_changes_for_repm_estimation()
+run_configuration.merge(estimation_configuration)
