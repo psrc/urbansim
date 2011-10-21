@@ -52,7 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
                     'building_type_id': array([2, 1, 2, 4, 3, 3])
                     }
                 )
-        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
+        dataset_pool = DatasetPool(package_order=['zurich_parcel', 'urbansim'], storage=storage)
         buildings = dataset_pool.get_dataset('building')
         
         values = buildings.compute_variables(self.variable_name, dataset_pool=dataset_pool)
