@@ -21,7 +21,7 @@ class InstallMATSim4UrbanSim(object):
             logger.log_error('Aborting MATSim4UrbanSim installation!')
             exit()
         
-        self.target_path = paths.get_opus_home_path( matsim4opus + 'TEST', 'jar')
+        self.target_path = paths.get_opus_home_path( matsim4opus, 'jar')
         self.source_url = 'http://matsim.org/files/builds/'
         self.html_finder = FindLinks()
         
@@ -166,7 +166,13 @@ class FindLinks(HTMLParser):
 
 # python starts from here
 if __name__ == "__main__":
+    logger.log_status('-----------------------------------------')
     logger.log_status('Starting MATSim4UrbanSim installation ...')
+    logger.log_status('-----------------------------------------')
+    
     install = InstallMATSim4UrbanSim()
     install.install()
+    
+    logger.log_status('--------------------------------------')
     logger.log_status('... MATSim4UrbanSim installation done!')
+    logger.log_status('--------------------------------------')

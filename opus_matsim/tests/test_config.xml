@@ -45,10 +45,7 @@
         <common type="dictionary">
           <matsim_network_file type="file">data/psrc/network/psrc.xml.gz</matsim_network_file>
           <input_plans_file type="file"></input_plans_file>
-          <first_iteration type="integer">0</first_iteration>
           <last_iteration type="integer">1</last_iteration>
-          <activityType_0 type="string">home</activityType_0>
-          <activityType_1 type="string">work</activityType_1>
         </common>
       </matsim_config>
       <years_to_run key_name="year" type="category_with_special_keys">

@@ -8,6 +8,7 @@ from lxml import etree
 from opus_matsim.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from opus_matsim.models.org.constants import matsim4opus, matsim_config,\
     matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration
+from opus_core import paths
 
 class MATSimConfigObject(object):
     
@@ -28,7 +29,7 @@ class MATSimConfigObject(object):
         except: pass
         if self.sub_config_exists:
             self.check_abolute_path( common_matsim_part['matsim_network_file'] )
-            self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'] )
+            self.network_file = paths.get_opus_home_path( common_matsim_part['matsim_network_file'] )
         else:
             raise StandardError('No network given in the  "travel_model_configuration" of your current configuration file. A network is required in order to run MATSim. ')
         self.sub_config_exists = False
@@ -49,10 +50,10 @@ class MATSimConfigObject(object):
         self.year = year
         self.samplingRate = matsim4urbansim_part['sampling_rate']
 
-        self.opus_home = os.environ['OPUS_HOME']
-        self.opus_data_path = os.environ['OPUS_DATA_PATH']
+        self.opus_home = paths.get_opus_home_path()
+        self.opus_data_path = paths.get_opus_data_path_path()
         
-        self.matsim4opus_path = os.path.join( self.opus_home, matsim4opus )
+        self.matsim4opus_path = paths.get_opus_home_path( matsim4opus )
         self.ceckAndCreateFolder(self.matsim4opus_path)
         self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config )
         self.ceckAndCreateFolder(self.matsim_config_path)
@@ -78,7 +79,7 @@ class MATSimConfigObject(object):
         if self.sub_config_exists:
             self.check_abolute_path( common_matsim_part[entry]  )    
             logger.log_note('Input plans file found (MATSim warm start enabled).') 
-            return os.path.join( os.environ['OPUS_HOME'], common_matsim_part[entry]  )
+            return paths.get_opus_home_path( common_matsim_part[entry]  )
         else: 
             logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
             return ""
