@@ -7,7 +7,8 @@ from opus_core.logger import logger
 from lxml import etree
 from opus_matsim.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from opus_matsim.models.org.constants import matsim4opus, matsim_config,\
-    matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration
+    matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration,\
+    backup_run_data, test_parameter
 from opus_core import paths
 
 class MATSimConfigObject(object):
@@ -61,8 +62,16 @@ class MATSimConfigObject(object):
         self.ceckAndCreateFolder(self.matsim_output_path)
         self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp )
         self.ceckAndCreateFolder(self.matsim_temp_path)
-
+        
         self.isTestRun = False
+        self.test_parameter = ""
+        try:
+            self.test_parameter = common_matsim_part[ test_parameter ]
+        except: pass
+        self.backup_run_data = False
+        try:
+            self.backup_run_data = common_matsim_part[ backup_run_data ]
+        except: pass
         
         self.firstRun = "FALSE"
         try: # determine for MATSim if this is the fist run
@@ -144,6 +153,8 @@ class MATSimConfigObject(object):
         urbansim_elem.matsim4opusOutput = self.matsim_output_path
         urbansim_elem.matsim4opusTemp = self.matsim_temp_path
         urbansim_elem.isTestRun = self.isTestRun
+        urbansim_elem.testParameter = self.test_parameter
+        urbansim_elem.backupRunData = self.backup_run_data
         
         # assemble single elements with dedicated section elements
         config_elem.network = network_elem

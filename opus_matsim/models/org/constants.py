@@ -20,5 +20,9 @@ matsim_temp = 'tmp'
 activity_type_0 = 'home'
 activity_type_1 = 'work'
 
+# config item names
+test_parameter = 'test_parameter'
+backup_run_data = 'backup_run_data'
+
 # MATSim first iteration
 first_iteration = 0
