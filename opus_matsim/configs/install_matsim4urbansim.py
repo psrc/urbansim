@@ -99,14 +99,16 @@ class InstallMATSim4UrbanSim(object):
         
     def __create_symbolic_link(self, source_file, link_name):
         symbolic_link = os.path.join( self.target_path, link_name )
-        if sys.platform.lower() == 'win32':
+        if sys.platform.lower() == 'win32': # Windows
             try:
                 logger.log_status('Creating shortcut %s to (%s) ...' %(symbolic_link, source_file) )
                 from win32com.client import Dispatch
                 shell = Dispatch('WScript.Shell')
                 shortcut = shell.CreateShortCut( symbolic_link )
-            except: logger.log_error('')
-        else:
+                shortcut.Targetpath = source_file
+                shortcut.save() 
+            except: logger.log_error('Error while creating a shortcut to %s!' % source_file)
+        else: # Mac, Linux
             if os.path.exists( symbolic_link ):
                 os.remove( symbolic_link )
             logger.log_status('Creating symbolic link %s to (%s) ...' %(symbolic_link, source_file) )
