@@ -322,7 +322,15 @@ class VariablesTableModel(QAbstractTableModel):
         # sort the list of variables by the given column
         # (use self.keys for mapping keys -> columns)
         sort_key = self.keys[column_num]
-        def cmp_(x, y, k = sort_key): return cmp(x[k], y[k]) # sort by key
+        if column_num == 0:
+            def cmp_(x, y):
+                # sort by key
+                return cmp(x[sort_key], y[sort_key])
+        else:
+            name_key = self.keys[0]
+            def cmp_(x, y):
+                # sort by key, then by name
+                return cmp((x[sort_key], x[name_key]), (y[sort_key], y[name_key]))
         self.variables.sort(cmp_, reverse = order == Qt.DescendingOrder)
         self.emit(SIGNAL("layoutChanged()"))
 
