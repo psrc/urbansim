@@ -200,15 +200,15 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
 
     def _apply_variable_changes(self):
         ''' apply the changes the user made to the expression library '''
-        # Case  XML (before)     Editor (after)   Change     Action
-        # ----------------------------------------------------------
-        #  A    <none>           local            created    create
-        #  B    local            inherited        reverted   delete
-        #  C    local            <none>           deleted    delete
+        # Case  Model vars (before)   Editor (after)   Change     Action
+        # --------------------------------------------------------------
+        #  A    <none>                local            created    create
+        #  B    local                 inherited        reverted   delete
+        #  C    local                 <none>           deleted    delete
 
-        # TODO: also check into the possibility that an inherited variable can have it's name
-        # changed (in this case don't overwrite the orginal variable's name. Instead create a new
-        # variable with the new name.
+        # TODO: also check into the possibility that an inherited variable can have its name
+        # changed (in this case don't overwrite the original variable's name. Instead create a new
+        # variable with the new name.)
 
         dirty_variables = [var for var in self.model.variables if var['dirty']]
         # case A
