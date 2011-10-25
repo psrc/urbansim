@@ -44,26 +44,25 @@ class RunTravelModel(AbstractTravelModel):
         # change to directory opus_matsim
         os.chdir( paths.get_opus_home_path(matsim4opus) )
         
-        # reserve memory for java
-        xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
-        if sys.platform.lower() == 'win32': # Windows can't reserve more 1500m
-            xmx = '-Xmx1500m'
-        
+        # int cmd
+        cmd = ""
         # calling travel model with cmd command
-        #cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
-        #        'opus_home': os.environ['OPUS_HOME'],
-        #        'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
-        #        'classpath': "jar/matsim4urbansim.jar",
-        #        'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
-        #        'matsim_config_file': self.matsim_config_full,
-        #        'test_parameter': self.test_parameter }
-        
-        # tnicolai: adapt cmd to nighlty build matsim structure such as : 
-        #           java -Xmx2000m -cp matsim.jar:matsim4urbansim.jar:matsim4urbansim-0.4.0-SNAPSHOT-r16916/libs/toronto-0.4.0-SNAPSHOT.jar org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim /Users/thomas/Development/opus_home/matsim4opus/matsim_config/seattle_parcel_matsim_config.xml          
-        cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+        if sys.platform.lower() == 'win32': 
+            # reserve memory for java
+            xmx = '-Xmx1500m'# Windows can't reserve more 1500m
+            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4Urbansim", #"playground.run.Matsim4Urbansim"
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbansimZurichTest", #"playground.run.Matsim4Urbansim"
+                'matsim_config_file': self.matsim_config_full,
+                'test_parameter': self.test_parameter } 
+        else:
+            # reserve memory for java
+            xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
+            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+                'vmargs': xmx, 
+                'classpath': "jar/matsim4urbansim.jar",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbansimZurichTest", #"playground.run.Matsim4Urbansim"
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
