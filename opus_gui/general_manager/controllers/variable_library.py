@@ -200,33 +200,24 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
 
     def _apply_variable_changes(self):
         ''' apply the changes the user made to the expression library '''
-        # Case  Model vars (before)   Editor (after)   Change     Action
-        # --------------------------------------------------------------
-        #  A    <none>                local            created    create
-        #  B    local                 inherited        reverted   delete
-        #  C    local                 <none>           deleted    delete
-
         # TODO: also check into the possibility that an inherited variable can have its name
         # changed (in this case don't overwrite the original variable's name. Instead create a new
         # variable with the new name.)
 
-        dirty_variables = [var for var in self.model.variables if var['dirty']]
-        # case A
+        dirty_variables = [var for var in self.model.all_variables if var['dirty']]
+
+        # partition dirty variables into create, delete and update sets
         create_set = [var for var in dirty_variables if var['originalnode'] is None]
-        delete_set = []
-        for xml_node in self.original_nodes:
-            if xml_node.get('inherited') is not None: # only care about local or shadowing nodes
-                continue
-            for variable in self.model.variables:
-                if variable['originalnode'] is xml_node: # original is represented in variable list
-                    if variable['inherited']:
-                        delete_set.append(xml_node) # Case B
-                    break # stop looking
-            else: # did not find node
-                delete_set.append(xml_node) # case C
+        delete_set = [var for var in dirty_variables if var['delete'] and var['originalnode'] is not None]
         # the rest of the variables should just be updated
         update_set = [var for var in dirty_variables if
                       not var['originalnode'] in delete_set and var not in create_set]
+        
+        # verify if we have a partition
+        assert(set([str(var) for var in create_set]) | set([str(var) for var in delete_set]) | set([str(var) for var in update_set]) 
+               == set([str(var) for var in dirty_variables]))
+        assert(set([str(var) for var in create_set]) & set([str(var) for var in delete_set]) & set([str(var) for var in update_set]) 
+               == set())
 
         # Apply the changes to each set of nodes
         expression_lib = self.project.find('general/expression_library')
@@ -248,9 +239,9 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
                 del original_node.attrib['dataset']
             original_node.text = node.text
 
-        for node in delete_set:
+        for variable in delete_set:
             # print 'DELETE SET %s' % (node)
-            self.project.delete_node(node)
+            self.project.delete_node(variable['originalnode'])
         self.initialize()
         something_changed = bool(update_set or create_set or delete_set)
         update_mainwindow_savestate(something_changed)

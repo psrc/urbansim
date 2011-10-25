@@ -167,8 +167,7 @@ class VariablesTableModel(QAbstractTableModel):
         '''
         QAbstractTableModel.__init__(self, parent_widget)
         self.project = project
-        self.all_variables = variables
-        self.variables = self.all_variables or []
+        self.all_variables = variables or []
         self.headers = ["Name", "Dataset", "Use", "Type", "Definition"]
         # mapping of columns -> keys (index of the key is the index of the column)
         self.keys = ('name', 'dataset', 'use', 'source', 'definition')
@@ -178,15 +177,21 @@ class VariablesTableModel(QAbstractTableModel):
         self.dirty = False
         self.palette = qApp.palette() # for system-coherent selection colors
         self.filtered_variable_set = None
-        self.emit(SIGNAL('layoutChanged()'))
+        
+        self.set_dataset_filter(None) # emits layoutChanged() through sort()
 
     def set_dataset_filter(self, dataset_name):
         if dataset_name is None:
-            self.variables = self.all_variables
+            def _allow_dataset(variable):
+                return True
         else:
-            self.variables = [variable for variable in self.all_variables if
-                              variable['dataset'] == dataset_name]
-        self.emit(SIGNAL('layoutChanged()'))
+            def _allow_dataset(variable):
+                return variable['dataset'] == dataset_name
+            
+        self.variables = [variable for variable in self.all_variables if
+                          _allow_dataset(variable) and
+                          not variable['delete']]
+        self.re_sort()
 
     def flags(self, index):
         ''' PyQt4 API Method '''
@@ -282,7 +287,7 @@ class VariablesTableModel(QAbstractTableModel):
         is not unique)
         '''
         returnval = QAbstractTableModel.insertRow(self, row, parent)
-        self.variables.append(variable)
+        self.all_variables.append(variable)
         variable['dirty'] = True
         self.dirty = True
         idx_start = self.createIndex(row, 0)
@@ -296,7 +301,10 @@ class VariablesTableModel(QAbstractTableModel):
         ''' PyQt4 API Method '''
         returnval = QAbstractTableModel.removeRow(self, row, parent)
         self.beginRemoveRows(parent, row, row)
-        self.variables.pop(row)
+        var_to_delete = self.variables.pop(row)
+        var_to_delete['delete'] = True
+        var_to_delete['dirty'] = True
+        assert(var_to_delete in [var for var in self.all_variables if var['delete']])
         self.endRemoveRows()
         self.dirty = True
         self.emit(SIGNAL('model_changed'))
