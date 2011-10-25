@@ -172,7 +172,7 @@ class VariablesTableModel(QAbstractTableModel):
         # mapping of columns -> keys (index of the key is the index of the column)
         self.keys = ('name', 'dataset', 'use', 'source', 'definition')
         self.parent_widget = parent_widget
-        self.sorted_by_column = 1
+        self.sorted_by_column = 0
         self.sorting_order = Qt.AscendingOrder
         self.dirty = False
         self.palette = qApp.palette() # for system-coherent selection colors

@@ -22,5 +22,6 @@ class VariablesTableView(QTableView):
         # Visual settings
         self.setSortingEnabled(True)
         self.horizontalHeader().setStretchLastSection(True)
+        self.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
         self.verticalHeader().hide()
         self.setWordWrap(False)
