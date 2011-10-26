@@ -288,7 +288,7 @@ class VariablesTableModel(QAbstractTableModel):
         '''
         returnval = QAbstractTableModel.insertRow(self, row, parent)
         self.all_variables.append(variable)
-        variable['dirty'] = True
+        self.variables.append(variable)
         self.dirty = True
         idx_start = self.createIndex(row, 0)
         idx_end = self.createIndex(row, self.columnCount() - 1)
