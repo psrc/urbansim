@@ -347,19 +347,24 @@ class EquationSpecification(object):
         return unique(self.get_equations()[idx])
 
     def get_table_summary(self, submodel_default=-2, equation_default=-2):
-        first_row = ['Submodel', 'Equation', 'Coefficient Name', 'Variable']
         submodels = self.get_submodels()
         variables = self.get_long_variable_names()
         coefficient_names = self.get_coefficient_names()
         equations = self.get_equations()
         if equations.size == 0:
-            equations = equation_default * ones(variables.size, dtype="int32")
+            #equations = equation_default * ones(variables.size, dtype="int32")
+            first_row = ['Submodel', 'Coefficient Name', 'Variable']
+        else:
+            first_row = ['Submodel', 'Equation', 'Coefficient Name', 'Variable']
         if submodels.size == 0:
             submodels = submodel_default * ones(variables.size, dtype="int32")
 
         table = [first_row]
         for i in range(variables.size):
-            table += [[submodels[i], equations[i], coefficient_names[i], variables[i]]]
+            if equations.size == 0:
+                table += [[submodels[i], coefficient_names[i], variables[i]]]
+            else:
+                table += [[submodels[i], equations[i], coefficient_names[i], variables[i]]]
 
         return table
 
