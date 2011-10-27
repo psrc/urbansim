@@ -121,11 +121,11 @@
     </travel_model_configuration>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <save_estimation_results type="boolean">False</save_estimation_results>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
       <estimation_database_configuration type="class">
         <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
-        <argument name="database_name" type="string">seattle_2000_parcel_baseyear_data</argument>
+        <argument name="database_name" type="string">psrc_parcel_estimation</argument>
       </estimation_database_configuration>
       <dataset_pool_configuration type="class">
         <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
