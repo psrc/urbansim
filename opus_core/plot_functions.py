@@ -31,9 +31,9 @@ def plot_scatter(x, y, x_label=None, y_label=None, main = "", **kwargs):
     title(main)
     show_plots()
     
-def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g'):
+def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g', labels=None):
     """Create a bar chart of values."""
-    from matplotlib.pylab import bar, xticks, title, axis
+    from matplotlib.pylab import bar, xticks, title, axis, text
     if mini is None:
         mini = 0
     if maxi is None:
@@ -42,7 +42,14 @@ def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g')
         bins = values.size
     width_par = 1.*(maxi-mini)/bins
     bar(arange(mini, maxi, step = 1.*(maxi-mini)/bins), values, width=width_par, color='g')
-    xticks(arange(mini, maxi, step = (maxi-mini)/bins).tolist())
+    if labels is None:
+        xticks(arange(mini, maxi, step = (maxi-mini)/bins).tolist())
+    else:
+        xticks([],[])
+        ymin = values.min() - (values.max()-values.min())/10.0
+        for ilabel in range(len(labels)):
+            text(ilabel+0.3,ymin,s=labels[ilabel], 
+               horizontalalignment='center', verticalalignment='bottom',rotation='vertical')
     title(main)
     Axis = axis()
 
@@ -50,12 +57,8 @@ def plot_barchart(values, main='', labels=None, errors=None):
     """Plot a bar chart and put labels (list) on the x-axis.
     If 'errors' are given, show an error bar for each value.
     """
-    from matplotlib.pylab import text, errorbar
-    create_barchart(values, main=main)
-    if labels is not None:
-        for ilabel in range(1, len(labels)+1):
-            text(ilabel-0.5,-0.5,s=labels[ilabel-1],horizontalalignment='center',verticalalignment='top',
-                 rotation='vertical')
+    from matplotlib.pylab import errorbar
+    create_barchart(values, main=main, labels=labels)
     if errors is not None:
         errorbar(arange(values.size)+0.5, values, errors, fmt='o')
     show_plots()
