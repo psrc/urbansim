@@ -261,7 +261,7 @@ class RegressionModel(ChunkModel):
                         coef[submodel].set_other_info(info,
                               estimated_coef[submodel]["other_info"][info])
         coefficients.fill_coefficients(coef)
-        
+        self.specified_coefficients.coefficients = coefficients
         self.save_predicted_values_and_errors(specification, coefficients, dataset, outcome_variable_name, index=index, data_objects=data_objects)
             
         return (coefficients, estimated_coef)
