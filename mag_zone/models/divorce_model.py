@@ -51,8 +51,8 @@ class DivorceModel(AgentRelocationModel):
         #Identify men that will be divorced when there is more than 1 married man in the household
         must_pick_man_to_divorce = where(logical_and(woman_getting_divorce > 0, num_married_men_in_hh > 1))[0]
         person_set.add_attribute(name='not_divorced', data=ones(person_set.size(), dtype='b'))
-        max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
-        new_hh_id = arange(max_hh_id, max_hh_id+must_pick_man_to_divorce.size)
+        max_hh_id2 = household_set.get_attribute(hh_id_name).max() + 1
+        new_hh_id = arange(max_hh_id2, max_hh_id2+must_pick_man_to_divorce.size)
         household_set.add_elements({hh_id_name:new_hh_id}, require_all_attributes=False)
         new_hh_id_counter = 0
         self.pick_man_to_divorce(must_pick_man_to_divorce, married_man, num_married_men_in_hh, person_set, new_hh_id, new_hh_id_counter)
@@ -87,7 +87,16 @@ class DivorceModel(AgentRelocationModel):
         if 'age_of_head' in household_set.get_primary_attribute_names():
             age_of_head = household_set.compute_variables('_age_of_head = household.aggregate(person.head_of_hh * person.age)')
             household_set.modify_attribute('age_of_head', age_of_head)
-        ##How to update the household table's building_id attribute?  Assign building IDs the same way we're assigning household id's? (moves in with female, in most circumstances)
+        ##Initialize income of households with newly-assigned household_ids (should be only 1-person male households).  Income is calculated based on worker status, education level, age.  Coefficients estimated from regression on 1-person male households in base-year data.
+        if 'income' in household_set.get_primary_attribute_names():
+            new_household_ids = household_set.compute_variables('(household.household_id > %s)' % (max_hh_id))
+            initialize_income = where(new_household_ids == 1)[0]
+            if initialize_income.size > 0:
+                household_set.modify_attribute('income', household_set.compute_variables('(((household.workers)*24000) + ((household.aggregate(person.education, function=mean))*5590) +  ((household.aggregate(person.age, function=mean))*583) - 51957)')[initialize_income], initialize_income)
+            negative_income = household_set.compute_variables('household.income < 0')
+            index_neg_inc = where(negative_income==1)[0]
+            if index_neg_inc.size > 0:
+                household_set.modify_attribute('income', zeros(index_neg_inc.size, dtype="int32"), index_neg_inc)
         ##TODO:  person_no in new household needs to be dealt with.  Order by age?
 
     def pick_man_to_divorce(self, must_pick_man_to_divorce, married_man, num_married_men_in_hh, person_set, new_hh_id, new_hh_id_counter):

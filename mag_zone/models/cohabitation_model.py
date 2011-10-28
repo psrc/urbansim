@@ -77,6 +77,16 @@ class CohabitationModel(AgentRelocationModel):
         if 'age_of_head' in household_set.get_primary_attribute_names():
             age_of_head = household_set.compute_variables('_age_of_head = household.aggregate(person.head_of_hh * person.age)')
             household_set.modify_attribute('age_of_head', age_of_head)
+        ##Initialize income of households with newly-assigned household_ids (should be only 2-person households).  Income is calculated based on # workers, avg education, average age.  Coefficients estimated from regression on 2-person households in base-year data.
+        if 'income' in household_set.get_primary_attribute_names():
+            new_household_ids = household_set.compute_variables('(household.household_id > %s)' % (max_hh_id))
+            initialize_income = where(new_household_ids == 1)[0]
+            if initialize_income.size > 0:
+                household_set.modify_attribute('income', household_set.compute_variables('(((household.workers)*13518) + ((household.aggregate(person.education, function=mean))*9537) +  ((household.aggregate(person.age, function=mean))*473) - 47594)')[initialize_income], initialize_income)
+            negative_income = household_set.compute_variables('household.income < 0')
+            index_neg_inc = where(negative_income==1)[0]
+            if index_neg_inc.size > 0:
+                household_set.modify_attribute('income', zeros(index_neg_inc.size, dtype="int32"), index_neg_inc)
         ##TODO:  person_no in new household needs to be dealt with.  Order by age?
 
     def mate_match(self, choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter, hh_id_name, max_hh_id):
