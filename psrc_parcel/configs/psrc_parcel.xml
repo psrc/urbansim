@@ -243,6 +243,7 @@
             <selectable name="real_estate_price_model_coefficients" type="selectable">True</selectable>
             <selectable name="real_estate_price_model_specification" type="selectable">True</selectable>
             <selectable name="relationship" type="selectable">True</selectable>
+            <selectable name="schools" type="selectable">True</selectable>
             <selectable name="school_districts" type="selectable">True</selectable>
             <selectable name="sex" type="selectable">True</selectable>
             <selectable name="student" type="selectable">True</selectable>
