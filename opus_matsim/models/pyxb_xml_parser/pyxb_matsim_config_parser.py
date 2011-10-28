@@ -5,7 +5,7 @@
 # ./pyxb_matsim_config_parser.py
 # PyXB bindings for NamespaceModule
 # NSM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2011-10-28 11:54:54.281013 by PyXB version 1.1.2
+# Generated 2011-10-28 14:26:56.319469 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -15,7 +15,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e2acee9c-014a-11e1-a335-001b63930ac1')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:1ff3edeb-0160-11e1-860e-001b63930ac1')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -190,30 +190,6 @@ class controlerType (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'controlerType', controlerType)
 
 
-# Complex type inputPlansFileType with content type ELEMENT_ONLY
-class inputPlansFileType (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'inputPlansFileType')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element inputFile uses Python identifier inputFile
-    __inputFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'inputFile'), 'inputFile', '__AbsentNamespace0_inputPlansFileType_inputFile', False)
-
-    
-    inputFile = property(__inputFile.value, __inputFile.set, None, None)
-
-
-    _ElementMap = {
-        __inputFile.name() : __inputFile
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'inputPlansFileType', inputPlansFileType)
-
-
 # Complex type urbansimParameterType with content type ELEMENT_ONLY
 class urbansimParameterType (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -318,6 +294,30 @@ class urbansimParameterType (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'urbansimParameterType', urbansimParameterType)
 
 
+# Complex type inputPlansFileType with content type ELEMENT_ONLY
+class inputPlansFileType (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'inputPlansFileType')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element inputFile uses Python identifier inputFile
+    __inputFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'inputFile'), 'inputFile', '__AbsentNamespace0_inputPlansFileType_inputFile', False)
+
+    
+    inputFile = property(__inputFile.value, __inputFile.set, None, None)
+
+
+    _ElementMap = {
+        __inputFile.name() : __inputFile
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'inputPlansFileType', inputPlansFileType)
+
+
 # Complex type configType with content type ELEMENT_ONLY
 class configType (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -347,26 +347,26 @@ class configType (pyxb.binding.basis.complexTypeDefinition):
     inputPlansFile = property(__inputPlansFile.value, __inputPlansFile.set, None, None)
 
     
-    # Element hotStartPlansFile uses Python identifier hotStartPlansFile
-    __hotStartPlansFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'hotStartPlansFile'), 'hotStartPlansFile', '__AbsentNamespace0_configType_hotStartPlansFile', False)
-
-    
-    hotStartPlansFile = property(__hotStartPlansFile.value, __hotStartPlansFile.set, None, None)
-
-    
     # Element controler uses Python identifier controler
     __controler = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'controler'), 'controler', '__AbsentNamespace0_configType_controler', False)
 
     
     controler = property(__controler.value, __controler.set, None, None)
 
+    
+    # Element hotStartPlansFile uses Python identifier hotStartPlansFile
+    __hotStartPlansFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'hotStartPlansFile'), 'hotStartPlansFile', '__AbsentNamespace0_configType_hotStartPlansFile', False)
+
+    
+    hotStartPlansFile = property(__hotStartPlansFile.value, __hotStartPlansFile.set, None, None)
+
 
     _ElementMap = {
         __planCalcScore.name() : __planCalcScore,
         __network.name() : __network,
         __inputPlansFile.name() : __inputPlansFile,
-        __hotStartPlansFile.name() : __hotStartPlansFile,
-        __controler.name() : __controler
+        __controler.name() : __controler,
+        __hotStartPlansFile.name() : __hotStartPlansFile
     }
     _AttributeMap = {
         
@@ -428,14 +428,6 @@ controlerType._ContentModel = pyxb.binding.content.ParticleModel(controlerType._
 
 
 
-inputPlansFileType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputFile'), pyxb.binding.datatypes.token, scope=inputPlansFileType))
-inputPlansFileType._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(inputPlansFileType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputFile')), min_occurs=1, max_occurs=1)
-    )
-inputPlansFileType._ContentModel = pyxb.binding.content.ParticleModel(inputPlansFileType._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'opusDataPath'), pyxb.binding.datatypes.token, scope=urbansimParameterType))
 
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'year'), pyxb.binding.datatypes.nonNegativeInteger, scope=urbansimParameterType))
@@ -474,15 +466,23 @@ urbansimParameterType._ContentModel = pyxb.binding.content.ParticleModel(urbansi
 
 
 
+inputPlansFileType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputFile'), pyxb.binding.datatypes.token, scope=inputPlansFileType))
+inputPlansFileType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(inputPlansFileType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputFile')), min_occurs=1, max_occurs=1)
+    )
+inputPlansFileType._ContentModel = pyxb.binding.content.ParticleModel(inputPlansFileType._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
 configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'planCalcScore'), planCalcScoreType, scope=configType))
 
 configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'network'), networkType, scope=configType))
 
 configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputPlansFile'), inputPlansFileType, scope=configType))
 
-configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'hotStartPlansFile'), inputPlansFileType, scope=configType))
-
 configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'controler'), controlerType, scope=configType))
+
+configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'hotStartPlansFile'), inputPlansFileType, scope=configType))
 configType._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'network')), min_occurs=1L, max_occurs=1L),
     pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputPlansFile')), min_occurs=1L, max_occurs=1L),

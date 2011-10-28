@@ -12,6 +12,7 @@ from opus_core.logger import logger
 import opus_matsim.models.pyxb_xml_parser as pyxb_path
 from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
 import opus_matsim.lib
+from opus_matsim.models.org.constants import matsim4urbansim_v1_xsd_url, matsim4urbansim_v1_xsd_name
 
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
@@ -159,12 +160,10 @@ class UpdateBindingClass(object):
         # set temporary output dir for xsd file
         self.temp_dir = tempfile.mkdtemp(prefix='xsd_tmp')
 
-        xsd_reposit = os.path.join(self.temp_dir, 'MATSim4UrbanSimConfigSchema.xsd')
-        # set source url for xsd
-        url = 'http://matsim.org/files/dtd/MATSim4UrbanSimConfigSchema.xsd'
+        xsd_reposit = os.path.join(self.temp_dir, matsim4urbansim_v1_xsd_name)
         
         # load and store xsd
-        xsd_loader = LoadXSD(url, xsd_reposit)
+        xsd_loader = LoadXSD(matsim4urbansim_v1_xsd_url, xsd_reposit)
         xsd_loader.load_and_store()
         
         # return xsd location
