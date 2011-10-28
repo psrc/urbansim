@@ -56,7 +56,7 @@ class UpdateBindingClass(object):
         logger.log_status('XSD reposit: %s' % xsd_location)
         logger.log_status('New pyxb xml binding class: %s' % self.output_pyxb_package_file)
         
-        # checking if a previous binding class exsists
+        # checking if a previous binding class exists
         # get current directory
         binding_class = os.path.join(binding_class_destination, self.output_pyxb_package_file)
         if os.path.exists(binding_class):
@@ -71,7 +71,7 @@ class UpdateBindingClass(object):
                 subfolder = os.path.join(archive_folder, datetime)
                 os.mkdir(subfolder)
                 destination = os.path.join(subfolder, self.output_pyxb_package_file)
-                # moving prevoius binding class into archive
+                # moving previous binding class into archive
                 logger.log_status("Moving previous binding class into archive: %s" %destination)
                 shutil.move(binding_class, destination)
             else: 
@@ -83,7 +83,7 @@ class UpdateBindingClass(object):
         #
         # 1) Start a terminal and switch to the place where the xsd is stored. Here its "xsds".
         #
-        # 2) Enter the following commandline:
+        # 2) Enter the following command line:
         # /Users/thomas/bin/pyxbgen \
         # > -u Products.xsd -m pro1
         #
