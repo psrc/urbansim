@@ -200,7 +200,6 @@ class ModelSystem(object):
                     datasets_to_preload = resources.get('datasets_to_preload',{})
                 for dataset_name in datasets_to_preload:
                     SessionConfiguration().get_dataset_from_pool(dataset_name)
-
                 models_configuration = resources['models_configuration']
                 dataset_pool = SessionConfiguration().get_dataset_pool()
                 datasets = {}
@@ -253,7 +252,16 @@ class ModelSystem(object):
                                 model_configuration = models_configuration[member_model_name]
                                 if "controller" in model_configuration.keys():
                                     controller_config = model_configuration["controller"]
-
+                        datasets_to_preload_for_this_model = controller_config.get('_model_structure_dependencies_',{}).get('dataset',[])
+                        for dataset_name in datasets_to_preload_for_this_model:
+                            try:
+                                if not dataset_pool.has_dataset(dataset_name):
+                                    ds = dataset_pool.get_dataset(dataset_name)
+                                    self.vardict[dataset_name] = ds
+                                    datasets[dataset_name] = ds
+                                    exec '%s=ds' % dataset_name
+                            except:
+                                logger.log_warning('Failed to load dataset %s.' % dataset_name)
                         # import part
                         if "import" in controller_config.keys():
                             import_config = controller_config["import"]

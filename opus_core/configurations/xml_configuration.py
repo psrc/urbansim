@@ -628,6 +628,7 @@ class XMLConfiguration(object):
         which is different from the XML structure:
             (model_manager/models/{model_config}
         So we need to move the information around a little.
+        It also add dependencies derived from the model structure.
         '''
         # get all model configurations (from model/structure), indexed by name
         controller_configs = {}
@@ -635,9 +636,12 @@ class XMLConfiguration(object):
             model_name = model_node.get('name')
             model_config = self._convert_model_to_dict(model_node)
             controller_configs[model_name] = {'controller': model_config}
+            model_dependencies = self.model_dependencies(model_name)
+            if model_dependencies:
+                controller_configs[model_name]['controller']['_model_structure_dependencies_'] = model_dependencies
         # the modeling system can get confused if there's an empty controller config present
         if controller_configs:
-            config['models_configuration'] = controller_configs
+            config['models_configuration'] = controller_configs          
 
     def _node_to_config(self, node):
         config = {}
