@@ -4,7 +4,7 @@
 
 from numpy import array, where, resize, logical_and, zeros, arange
 from opus_core.model import Model
-from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.logger import logger
 
 class AgentEventModel(Model):
@@ -13,11 +13,13 @@ class AgentEventModel(Model):
     """
     model_name = "Agent Event Model"
           
-    def run(self, location_set, agent_event_set, agent_set, current_year, dataset_pool=None):
+    def run(self, location_set, agent_event_set, agent_set, current_year, disaggregate_to=None, dataset_pool=None):
         """ The agent_event_set is expected to have attributes:
                 grid_id, scheduled_year, total_number, is_percentage, change_type, (optionally other agent characteristics)
             'grid_id' is not a mandatory name, but it must match to the id name of the location_set.
-            Thus, the model works on any geography level.
+            Thus, the model works on any geography level. If it's a aggregated geography and there is a need to 
+            disaggregate the agents into lower geography, set the dataset to be disaggregated to in the 
+            'disaggregate_to' argument (e.g. location_set=zone, disaggregate_to=building).
             'is_percentage' (bool) determines if the 'total_number' is a percentage of existing agents (True) or 
             an absolute number (False) - it is relevant only when deleting agents.
             'change_type' can have values 'D' (delete), 'A' (add) and determines the type
@@ -98,24 +100,40 @@ class AgentEventModel(Model):
                                            index = unplace_index)
                     logger.log_status('%s agents deleted from location %s' % (number_of_agents, location_id))
             elif change_type == 'A':
-                if number_of_agents > 0:
-                    data = {agent_set.get_id_name()[0]: arange(1, number_of_agents+1, 1) + agent_set.get_id_attribute().max()}
+                if number_of_agents <= 0:
+                    continue
+                data = {agent_set.get_id_name()[0]: arange(1, number_of_agents+1, 1) + agent_set.get_id_attribute().max()}
+                if disaggregate_to is not None:
+                    if location_id_name not in disaggregate_to.get_known_attribute_names():
+                        disaggregate_to.compute_one_variable_with_unknown_package(location_id_name, self.dataset_pool)
+                    disaggr_idx = where(disaggregate_to[location_id_name] == location_id)[0]
+                    if disaggr_idx.size <= 0:
+                        logger.log_warning('No %s locations found for %s=%s. %s agents not created.' % (
+                                disaggregate_to.get_dataset_name(), location_id_name, location_id, number_of_agents))
+                        continue
+                    # sample disaggregated locations
+                    disaggr_sidx = sample_replace(disaggr_idx, number_of_agents)
+                    data[disaggregate_to.get_id_name()[0]] = disaggregate_to.get_id_attribute()[disaggr_sidx]
+                else:
                     data[location_id_name] = array([location_id] * number_of_agents)
                 
-                    for characteristics in other_characteristics:
-                        characteristics_value = agent_event_set[characteristics][idx_of_events_this_year][ilocation_id]
-                        data[characteristics] = array([characteristics_value] * number_of_agents)
+                for characteristics in other_characteristics:
+                    characteristics_value = agent_event_set[characteristics][idx_of_events_this_year][ilocation_id]
+                    data[characteristics] = array([characteristics_value] * number_of_agents)
                 
-                    agent_set.add_elements(data, require_all_attributes=False)
-                    logger.log_status('%s agents added to location %s' % (number_of_agents, location_id))
+                agent_set.add_elements(data, require_all_attributes=False)
+                if location_id_name not in agent_set.get_known_attribute_names():
+                    # re-compute agents locations, because the add_elements method deleted all computed attributes
+                    agent_set.compute_one_variable_with_unknown_package(location_id_name, self.dataset_pool)
+                logger.log_status('%s agents added to location %s' % (number_of_agents, location_id))
                     
                             
 from opus_core.tests import opus_unittest
 from numpy import ma, arange
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
-from washtenaw.datasets.jobs_event_dataset import JobsEventDataset
-from washtenaw.datasets.households_event_dataset import HouseholdsEventDataset
+from psrc_parcel.datasets.jobs_event_dataset import JobsEventDataset
+from psrc_parcel.datasets.households_event_dataset import HouseholdsEventDataset
         
 class AgentEventsTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -150,6 +168,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                "jobs_event_id": arange(1,5),
                 "scheduled_year": array([2000, 2000, 2001, 2001]),
                 "grid_id": array([10, 5, 3, 5]),
                 "total_number": array([20, 5, 0, 3])
@@ -162,6 +181,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                "jobs_event_id": arange(1,5),
                 "scheduled_year": array([2000, 2000, 2001, 2001]),
                 "grid_id": array([10, 5, 3, 5]),
                 "total_number": array([20, 5, 0, 3]),
@@ -176,6 +196,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                "households_event_id": arange(1,7),
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
                 "grid_id": array([1, 5, 3, 5, 2, 1]),
                 "total_number": array([6, 5, 25, 0, 0, 50]),
@@ -189,6 +210,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                "households_event_id": arange(1,7),
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
                 "grid_id": array([1, 5, 3, 5, 2, 1]),
                 "total_number": array([6, 5, 25, 0, 0, 50]),
@@ -203,6 +225,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                 "jobs_event_id": arange(1,7),
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
                 "grid_id":          array([1,    5,    3,   5,     2,    1]),
                 "total_number": array([2,    5,  70,  2,    100,    1]),
@@ -217,6 +240,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         
         storage.write_table(table_name='events', 
                table_data = {
+                "jobs_event_id": arange(1,7),
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
                 "grid_id":          array([1,    5,    3,   5,     2,    1]),
                 "total_number": array([2,    5,  70,  2,    100,    1]),
@@ -228,75 +252,75 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         return JobsEventDataset(in_storage=storage, in_table_name='events')
     
     def test_deletion_of_jobs(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_simple_job_deletion_event_set()
         jobs = dataset_pool.get_dataset("job")
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove 5 jobs from gridcell 5 and all jobs from gridcell 10
         self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,5,10,10,10,10,0]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove another 3 jobs from gridcell 5
         self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,2,10,10,10,10,0])))
 
     def test_addition_of_jobs(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_simple_job_addition_event_set()
         jobs = dataset_pool.get_dataset("job")
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should add 5 jobs to gridcell 5 and 20 jobs to gridcell 10
         self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,15,10,10,10,10,30]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should add another 3 jobs to gridcell 5
         self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,18,10,10,10,10,30])))
         
     def test_deletion_of_households(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_household_deletion_event_set()
         households = dataset_pool.get_dataset("household")
-        AgentEventModel().run(gridcell_set, event_set, households, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, households, 2000, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove 6 households from gridcell 1
         self.assert_(ma.allclose(number_of_households, array( [4,0,30,0,0,0,0,0,0,0]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove 50% from gridcell 1 (2) and 25 households from gridcell 3
         self.assert_(ma.allclose(number_of_households, array( [2,0,5,0,0,0,0,0,0,0])))
 
     def test_addition_of_households(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_household_addition_event_set()
         households = dataset_pool.get_dataset("household")
-        AgentEventModel().run(gridcell_set, event_set, households, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, households, 2000, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should add 6 households to gridcell 1, 
         self.assert_(ma.allclose(number_of_households, array( [16,0,30,0,5,0,0,0,0,0]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should add 50% from gridcell 1 (8) and 25 households to gridcell 3
         self.assert_(ma.allclose(number_of_households, array( [24,0,55,0,5,0,0,0,0,0])))
         
     def test_deletion_of_jobs_with_one_characteristics(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_job_deletion_event_set_with_characteristics()
         jobs = dataset_pool.get_dataset("job")
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
                                                                     dataset_pool=dataset_pool)
         number_of_jobs_of_sector_2 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_2", 
@@ -310,7 +334,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
         self.assert_(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
                                                                     dataset_pool=dataset_pool)
         number_of_jobs_of_sector_2 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_2", 
@@ -326,11 +350,11 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         # sector 4 does not change
 
     def test_addition_of_jobs_with_one_characteristics(self):
-        dataset_pool = DatasetPool(storage=self.storage, package_order=["washtenaw","urbansim", "opus_core"])
+        dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
         gridcell_set = dataset_pool.get_dataset('gridcell')
         event_set = self._create_job_addition_event_set_with_characteristics()
         jobs = dataset_pool.get_dataset("job")
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
                                                                     dataset_pool=dataset_pool)
         number_of_jobs_of_sector_2 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_2", 
@@ -345,7 +369,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
         self.assert_(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
 
-        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool)
+        AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
                                                                     dataset_pool=dataset_pool)
         number_of_jobs_of_sector_2 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_2", 
