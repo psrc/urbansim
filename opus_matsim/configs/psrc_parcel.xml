@@ -19,7 +19,7 @@
       </matsim4urbansim>
       <matsim_config type="dictionary">
         <common type="dictionary">
-          <matsim_network_file type="file">data/psrc_parcel/base_year_data/psrc.xml.gz</matsim_network_file>
+          <matsim_network_file type="file">data/psrc_parcel/base_year_data_orig/2000/matsim/network/psrc.xml.gz</matsim_network_file>
           <last_iteration type="integer">1</last_iteration>
         </common>
       </matsim_config>
