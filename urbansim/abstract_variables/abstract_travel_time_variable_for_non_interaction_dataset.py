@@ -35,7 +35,7 @@ class abstract_travel_time_variable_for_non_interaction_dataset(Variable):
         if missing_pairs_index[0].size > 0:
             results[missing_pairs_index] = self.default_value
             logger.log_warning("zone pairs at index %s are not in travel data; value set to %s." % ( str(missing_pairs_index), self.default_value) )
-        
+
         return results
 
 ##unittest in child class
