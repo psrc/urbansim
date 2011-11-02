@@ -15,7 +15,7 @@ class LaTeX(object):
             num_of_columns = 1
         return num_of_columns
         
-    def create_rows(self, table, num_of_columns, default=''):
+    def create_rows(self, table, num_of_columns, default='', add_math_env=False):
         """
         Return a string containing one line per row of this table, 
         with each column separated by a '&' from the next column.
@@ -30,6 +30,9 @@ class LaTeX(object):
                     else:
                         s += '& %s ' % row[col]
                 s += '\\\\\n'
+        if add_math_env:
+            s = re.sub('>', '$>$', s)
+            s = re.sub('<', '$<$', s)
         return s
 
     def save_specification_table_to_tex_file(self, table, output_file, default='', label=None, caption=None):
@@ -66,7 +69,7 @@ class LaTeX(object):
         f.write(header)
         
         body = '% body\n'
-        body += self.create_rows(table[1:], num_of_columns, default)
+        body += self.create_rows(table[1:], num_of_columns, default, add_math_env=True)
         body += '\hline\n'
         f.write(body)
         

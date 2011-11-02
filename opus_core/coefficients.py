@@ -333,14 +333,17 @@ class Coefficients(object):
         tex_file.write(r"\begin{longtable}{")
         s = ncol*'r'
         tex_file.write(s+"}  \n")
-        tex_file.write(string.replace(header, "_", "\_"))
-        tex_file.write("\n")
         if caption is not None:
             tex_file.write('\\caption{%s}\n' % caption)
         if label is not None:
             tex_file.write('\\label{%s}\n' % label)
         if caption is not None:
             tex_file.write('\\\\\n')
+        tex_file.write(r'\hline')
+        tex_file.write("\n")
+        tex_file.write(string.replace(header, "_", "\_"))
+        tex_file.write("\n")
+
         for row in range(self.size()):
             if self.get_nsubmodels() > 1:
                 tex_file.write("%s & " % str(self.get_submodels()[row]))
@@ -360,46 +363,52 @@ class Coefficients(object):
                 # if the number is 0, big enough to not need sci notation, or a number like .001,
                 # then just write out in x.xxxx format
                 split_value = string.split("%s"%value,".")
-                if  (0 == value) or (abs(value) >= .1) or (len(split_value)>1 and len(split_value[1]) < 5):
+                if  (0 == value) or (abs(value) >= .01) or (len(split_value)>1 and len(split_value[1]) < 5):
                     tex_file.write("& $ %.4f $" % value)
                 # otherwise, write out in sci notation
                 else:
-                    tex_file.write("& $ %.4e $" % value)
+                    tex_file.write("& $ %.1e $" % value)
             tex_file.write('\\\\ \n')
-        tex_file.write(r'\hline \\')
+        tex_file.write(r'\hline')
+        tex_file.write('\n')
         tex_file.write(r"\end{longtable}")
+        tex_file.write('\n')
         tex_file.write('\\end{center}\n')
         tex_file.write('\n')
         if self.other_info.keys():
             # Table with additional info
-            ncol = max(1,self.get_nsubmodels())+1
+            ncol = len(self.other_info[self.other_info.keys()[0]].keys())
             tex_file.write('\n')
-            tex_file.write('~\\\\ \n')
+            #tex_file.write('~\\\\ \n')
             tex_file.write(r"\begin{longtable}{")
-            s = ncol*'r'
+            s = 'r|'+ncol*'r'
             tex_file.write(s+"}  \n")
-            if self.get_nsubmodels() > 1:
-                header = "Info "
-                for i in range(self.get_nsubmodels()):
-                    header=header+" & " + str(i)
-                header = header + r'\\ \hline'
-                tex_file.write(header)
-                tex_file.write('\n')
+            tex_file.write(r'\hline')
+            tex_file.write('\n')
+            header = r"Submodel "
             for info in self.other_info[self.other_info.keys()[0]].keys():
                 if info in other_headers.keys():
                     info_header = other_headers[info]
                 else:
                     info_header = info
                 info_header = string.replace(info_header, "_", "\_")
-                tex_file.write(info_header)
-                for submodel in unique(self.get_submodels()):
+                header=header + r" &  " + info_header
+            header = header + r'\\ \hline'
+            tex_file.write(header)
+            for submodel in unique(self.get_submodels()):
+                tex_file.write('\n')
+                tex_file.write('%s' % submodel)
+                for info in self.other_info[self.other_info.keys()[0]].keys():
                     value = self.other_info[submodel][info]
-                    if  (0 == value) or (abs(value) >= .1) or len(string.split("%s"%value,".")[1]) < 5:
+                    if(len(string.split("%s"%value,".")) == 1 or float(string.split("%s"%value,".")[1]) == 0):
+                        tex_file.write("& $ %i $" % value)
+                    elif  (0 == value) or (abs(value) >= .01) or len(string.split("%s"%value,".")[1]) < 5:
                         tex_file.write("& $ %.4f $" % value)
                     else:
-                        tex_file.write("& $ %.4e $" % value)
-                tex_file.write(r"\\")
-                tex_file.write('\n')
+                        tex_file.write("& $ %.1e $" % value)
+                tex_file.write(r"\\ ")
+
+            tex_file.write(r"\hline")
             tex_file.write(r"\end{longtable}")
             tex_file.write('\n')
 
