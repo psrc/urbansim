@@ -541,9 +541,11 @@
             <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim.household.income_category</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
             <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</argument>
-            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 7})</argument>
+            <argument name="run_config" type="dictionary">
+            	<key name="lottery_max_iterations" type="integer">7</key>
+            </argument>
             <argument name="estimate_config" type="dictionary">
-        <key name="wesml_sampling_correction_variable" type="string" parser_action="quote_string" model_dependency_type="variable">psrc_parcel.building.wesml_sampling_correction_variable</key>
+        <key name="wesml_sampling_correction_variable" type="string" model_dependency_type="variable">psrc_parcel.building.wesml_sampling_correction_variable</key>
       </argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
           </init>
