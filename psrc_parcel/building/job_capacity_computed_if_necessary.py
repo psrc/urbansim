@@ -16,8 +16,8 @@ class job_capacity_computed_if_necessary(Variable):
     def dependencies(self):
         return ["urbansim_parcel.building.non_residential_sqft",
                 "urbansim_parcel.building.building_sqft_per_job",
-                "building.job_capacity", 
-                "building.year_built",
+                #"building.job_capacity", 
+                #"building.year_built",
                 ]
 
     def compute(self,  dataset_pool):
@@ -25,8 +25,11 @@ class job_capacity_computed_if_necessary(Variable):
         non_residential_sqft = buildings.get_attribute("non_residential_sqft")
         building_sqft_per_job = buildings.get_attribute("building_sqft_per_job")
         job_spaces = safe_array_divide(buildings['non_residential_sqft'], buildings['building_sqft_per_job'])
-        base_year = SimulationState().get_start_time()
-        job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
+        ## only do this when job_capacity and year_built are primary attributes of buildings
+        known_names = buildings.get_known_attribute_names()
+        if 'job_capacity' in known_names and 'year_built' in known_names:
+            base_year = SimulationState().get_start_time()
+            job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
         return job_spaces
 
     def post_check(self,  values, dataset_pool=None):
