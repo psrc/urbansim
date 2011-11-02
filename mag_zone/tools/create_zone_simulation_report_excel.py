@@ -183,6 +183,665 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+    def get_total_male_population_distribution_by_age_and_year(self):
+        # get male population in age brackets <5, 5-9, 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-49, 50-54,
+        # 55-59, 60-64, 65-69, 70-74, 75-79, 80-84, 85-89, 90-94, 95-99, 100+
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_under_5')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population under age 5 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_5_9')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 5-9 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_10_14')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 10-14 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_15_19')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 15-19 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 20 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_20_24')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 20-24 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_25_29')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 25-29 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_30_34')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 30-34 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_35_39')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 35-39 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_40_44')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 40-44 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_45_49')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 45-49 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_50_54')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 50-54 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_55_59')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 55-59 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_60_64')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 60-64 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 65 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_65_69')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 65-69 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_70_74')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 70-74 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_75_79')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 75-79 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_80_84')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 80-84 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_85_89')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 85-89 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and age < 90 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_90_94')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 90-94 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 89 and age < 95 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_95_99')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 95-99 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 94 and age < 100 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_100up')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 100+ for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 99 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1        
+
+    def get_total_female_population_distribution_by_age_and_year(self):
+        # get female population in age brackets <5, 5-9, 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-49, 50-54,
+        # 55-59, 60-64, 65-69, 70-74, 75-79, 80-84, 85-89, 90-94, 95-99, 100+
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_under_5')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population under age 5 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_5_9')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 5-9 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_10_14')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 10-14 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_15_19')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 15-19 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 20 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_20_24')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 20-24 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_25_29')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 25-29 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_30_34')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 30-34 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_35_39')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 35-39 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_40_44')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 40-44 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_45_49')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 45-49 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_50_54')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 50-54 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_55_59')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 55-59 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_60_64')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 60-64 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 65 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_65_69')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 65-69 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_70_74')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 70-74 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_75_79')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 75-79 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_80_84')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 80-84 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_85_89')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 85-89 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and age < 90 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_90_94')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 90-94 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 89 and age < 95 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_95_99')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 95-99 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 94 and age < 100 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_100up')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 100+ for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 99 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_total_households_by_number_of_children(self):
+        # Get the number of households by the number of children in the household
+        # categories: 0,1,2,3,4,5,6,7+
+        for year in self.years:
+            print 'Computing temporary tables for households by number of children for year %s' % year
+            query = '''
+                    select household_id
+                    into #distinct_hhlds%s
+                    from %s_%s_households
+                    ''' % (year,self.run_name,year)
+            r = self.connection.execute(query)
+            r.close()
+            query = '''
+                    select
+                        household_id,
+                        count(*) num_children
+                    into #hh_num_children%s
+                    from %s_%s_persons
+                    where age < 18
+                    group by household_id
+                    ''' % (year,self.run_name,year)
+            r = self.connection.execute(query)
+            r.close()
+            query = '''
+                    select
+                        h.household_id,
+                        case
+                            when c.num_children is null then 0
+                            when c.num_children >=7 then 7
+                            else c.num_children
+                        end num_children
+                    into #hh_with_num_children%s
+                    from #distinct_hhlds%s h
+                    left join #hh_num_children%s c
+                    on c.household_id = h.household_id
+                    ''' % (year,year,year)
+            r = self.connection.execute(query)
+            r.close()
+        self.worksheet.write(0,self.column_counter,'hh_0_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 0 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 0' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_1_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 1 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 1' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_2_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 2 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 2' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_3_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 3 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 3' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_4_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 4 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 4' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_5_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 5 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 5' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_6_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 6 children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 6' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_7up_children')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 7+ children for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_with_num_children%s where num_children = 7' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_persons_per_household_by_year(self):
+        # Compute persons per household
+        for year in self.years:
+            print 'Computing temporary tables for persons per household for year %s' % year
+            query = '''
+                    select
+                        household_id,
+                        count(*) num_ppl
+                    into #hh_num_ppl%s
+                    from %s_%s_persons
+                    group by household_id
+                    ''' % (year,self.run_name,year)
+            r = self.connection.execute(query)
+            r.close()
+        self.worksheet.write(0,self.column_counter,'persons_per_hh')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing persons per household for year %s' % year
+            r = self.connection.execute('select round(avg(cast(num_ppl as float)),3) from #hh_num_ppl%s' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_total_households_by_household_size(self):
+        # Get the number of households by the household size
+        # categories: 1,2,3,4,5,6,7+
+        for year in self.years:
+            print 'Computing temporary tables for households by household size for year %s' % year
+            query = '''
+                    select
+                        household_id,
+                        count(*) num_ppl
+                    into #hh_num_ppl%s
+                    from %s_%s_persons
+                    group by household_id
+                    ''' % (year,self.run_name,year)
+            r = self.connection.execute(query)
+            r.close()
+        self.worksheet.write(0,self.column_counter,'hh_size_1')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 1 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 1' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_2')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 2 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 2' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_3')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 3 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 3' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_4')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 4 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 4' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_5')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 5 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 5' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_6')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 6 for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 6' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter,'hh_size_7up')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with household size 7+ for year %s' % year
+            r = self.connection.execute('select count(*) from #hh_num_ppl%s where num_ppl = 7' % (year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+
     def get_total_population_by_sex_and_year(self):
         # Get total population by sex and year
         self.worksheet.write(0,self.column_counter,'total_male_pop')
@@ -752,6 +1411,70 @@ def get_total_households_by_year_and_subarea(subarea, years, workbook, run_name,
                         left join #numhh_%s u
                         on r.%s_id = u.%s_id
                         order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_persons_per_household_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get persons per household by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('pphh_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing persons per household by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select
+                        p.household_id,
+                        count(*) num_people,
+                        z.%s_id
+                    into #hh_num_people_%s
+                    from %s_%s_persons p
+                    left join %s_%s_households h
+                    on p.household_id = h.household_id
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    group by p.household_id, z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, run_name, year, subarea)
+        r = connection.execute(query)
+        r.close()
+        query = '''select
+                    %s_id,
+                    round(avg(cast(num_people as float)),3) pphh
+                    into #pphh_%s%s
+                    from #hh_num_people_%s
+                    group by %s_id
+                    order by %s_id
+                ''' % (subarea, subarea, year, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    when h.pphh IS null then 0
+                                    else h.pphh
+                            END
+                        from #distinct_%s u
+                        left join #pphh_%s%s h
+                        on h.%s_id = u.%s_id
+                        order by u.%s_id''' % (subarea, subarea, year, subarea, subarea, subarea))
         for row in r:
             worksheet.write(row_counter,column_counter,row[0])
             row_counter += 1
@@ -1490,6 +2213,9 @@ def main():
         report_list = \
                         [ 'get_total_population_by_year'
                         , 'get_total_households_by_year'
+                        , 'get_total_households_by_number_of_children'
+                        , 'get_total_households_by_household_size'
+                        , 'get_persons_per_household_by_year'
                         , 'get_total_jobs_by_year'
                         , 'get_total_DUs_by_year'
                         , 'get_percent_DUs_built'
@@ -1511,6 +2237,8 @@ def main():
                         , 'get_total_population_in_SFR_by_year'
                         , 'get_total_population_in_MFR_by_year'
                         , 'get_total_population_age_distribution_by_year'
+                        , 'get_total_male_population_distribution_by_age_and_year'
+                        , 'get_total_female_population_distribution_by_age_and_year'
                         , 'get_total_population_by_sex_and_year'
                         , 'get_mean_household_income_by_year'
                         , 'get_median_household_income_by_year (CAUTION:VERY SLOW!)'
@@ -1536,6 +2264,7 @@ def main():
                         , 'get_total_population_in_MFR_by_year_and_subarea'
                         , 'get_mean_household_income_by_year_and_subarea'
                         , 'get_median_household_income_by_year_and_subarea (CAUTION:VERY SLOW!)'
+                        , 'get_persons_per_household_by_year_and_subarea'
                         ]
                                )
         report_list.sort()

@@ -5,6 +5,15 @@
     <description type="string">MAG Zone Base Project</description>
     <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="household.avg_edu_adults" type="variable_definition">safe_array_divide((household.aggregate((person.age&gt;17)*(person.education))),(household.aggregate(person.age&gt;17)))</variable>
+      <variable use="both" source="expression" name="household.married_family" type="variable_definition">(household.aggregate(person.marriage_status == 1))&gt;1</variable>
+      <variable use="both" source="primary attribute" name="household.lag_income" type="variable_definition">household.income</variable>
+      <variable use="both" source="primary attribute" name="household.age_of_head" type="variable_definition">household.aggregate(person.age * person.head_of_hh)</variable>
+      <variable use="both" source="primary attribute" name="household.hh_lag_income" type="variable_definition">household.lag_income</variable>
+      <variable use="both" source="expression" name="household.hh_oldhead" type="variable_definition">household.age_of_head &gt; 64</variable>
+      <variable use="both" source="primary attribute" name="household.hh_persons" type="variable_definition">household.persons</variable>
+      <variable use="both" source="primary attribute" name="household.hh_children" type="variable_definition">household.children</variable>
+      <variable use="both" source="primary attribute" name="household.hh_workers" type="variable_definition">mag_zone.household.workers</variable>
       <variable use="both" source="Python class" name="building.occupied_rmf_units_col" type="variable_definition">mag_zone.building.occupied_rmf_units_col</variable>
       <variable use="both" source="Python class" name="building.occupied_rsf_units_col" type="variable_definition">mag_zone.building.occupied_rsf_units_col</variable>
       <variable use="both" source="Python class" name="building.total_rmf_units_col" type="variable_definition">mag_zone.building.total_rmf_units_col</variable>

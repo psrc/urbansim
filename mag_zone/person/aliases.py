@@ -16,11 +16,8 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-    'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
-    'raz_id = household.disaggregate(building.disaggregate(zone.raz_id))',
-    'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
-    'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
-    'age_of_head = household.aggregate(person.age * person.head_of_hh)',
-    'workers = household.aggregate(mag_zone.person.is_employed)',
-    'income = household.aggregate(person.income)'
+    'is_employed = numpy.in1d(person.work_status, (1,2,4,5))',
            ]
+
+# from psrc_parcel.person.aliases:
+#           "edu_college = numpy.in1d(person.edu, (3,6,7))",
