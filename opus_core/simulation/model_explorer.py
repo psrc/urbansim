@@ -11,7 +11,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.model_coordinators.model_system import ModelSystem
 from opus_core.choice_model import ChoiceModel
-from numpy import zeros, take, ones
+from numpy import zeros, take, ones, where
 from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
@@ -100,7 +100,10 @@ class ModelExplorer(object):
         """Return a Dataset object of the given name."""
         ds = self.model_system.run_year_namespace.get(dataset_name, None)
         if ds is None:
-            ds = self.model_system.run_year_namespace["datasets"][dataset_name]
+            if dataset_name not in self.model_system.run_year_namespace["datasets"].keys():
+                ds = self.get_dataset_pool().get_dataset('dataset_name')
+            else:
+                ds = self.model_system.run_year_namespace["datasets"][dataset_name]
         return ds
         
     def get_data(self, coefficient, submodel=-2):
@@ -314,25 +317,86 @@ class ModelExplorer(object):
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
         ds.correlation_image(attrs, useR=useR, **kwargs)
         
-    def plot_choice_set(self):
-        """Plot map of the sampled choice set."""
+    def plot_choice_set(self, agents_index=None, aggregate_to=None, matplotlib=True, **kwargs):
+        """Plot map of the sampled choice set. 
+        agents_index can be given to restrict the set of agents to which the choice set belongs to. 
+        aggregate_to is a name of a dataset which the choice set should be aggregated to.
+        If matplotlib is False, mapnik is used (and required). 
+        Additional arguments are passed to plot_map or plot_map_matplotlib.
+        E.g. (choice set are buildings, aggregated to zones, for the first agent)
+        er.plot_choice_set(aggregate_to='zone', matplotlib=False, project_name='psrc_parcel', 
+                            file='choice_set0.png', agents_index=0)
+        """
         choice_set = self.get_choice_set()
-        result = zeros(choice_set.size(), dtype='int16')
-        result[unique(self.get_choice_set_index().ravel())] = 1
+        if agents_index is None:
+            flatten_choice_index = self.get_choice_set_index().ravel()
+        else:
+            flatten_choice_index = self.get_choice_set_index()[agents_index,:].ravel()
+        if aggregate_to is not None:
+            ds_aggr = self.get_dataset(aggregate_to)
+            result = ds_aggr.sum_over_ids(choice_set[ds_aggr.get_id_name()[0]][flatten_choice_index], 
+                                               ones(flatten_choice_index.size))
+            ds = ds_aggr
+        else:
+            result = choice_set.sum_over_ids(choice_set.get_id_attribute()[flatten_choice_index], 
+                                             ones(flatten_choice_index.size))
+            ds = choice_set
         dummy_attribute_name = '__sampled_choice_set__'
-        choice_set.add_attribute(name=dummy_attribute_name, data=result)
-        choice_set.plot_map(dummy_attribute_name, background=-1)
-        choice_set.delete_one_attribute(dummy_attribute_name)
+        ds.add_attribute(name=dummy_attribute_name, data=result)
+        if matplotlib:
+            coord_syst = None
+            if ds.get_coordinate_system() is None and hasattr(ds, 'compute_coordinate_system'):
+                coord_syst = ds.compute_coordinate_system(dataset_pool=self.get_dataset_pool())
+            ds.plot_map_matplotlib(dummy_attribute_name, background=-1, coordinate_system=coord_syst, **kwargs)
+        else:
+            ds.plot_map(dummy_attribute_name, background=-1, **kwargs)
+        ds.delete_one_attribute(dummy_attribute_name)
         
-    def plot_choice_set_attribute(self, name):
-        """Plot map of the given attribute for the sampled choice set."""
+    def plot_choice_set_attribute(self, name, agents_index=None, aggregate_to=None, function='sum', 
+                                  matplotlib=True, **kwargs):
+        """Plot map of the given attribute for the sampled choice set.
+        agents_index can be given to restrict the set of agents to which the choice set belongs to. 
+        aggregate_to is a name of a dataset which the choice set should be aggregated to.
+        function defines the aggregating function (e.g. sum, mean, median, etc.)
+        If matplotlib is False, mapnik is used (and required). 
+        Additional arguments are passed to plot_map or plot_map_matplotlib.
+        E.g. er.plot_choice_set_attribute('residential_units', aggregate_to='zone', matplotlib=False, 
+                                    project_name='psrc_parcel', file='choice_resunits.png')
+        """
         choice_set = self.get_choice_set()
+        if agents_index is None:
+            flatten_choice_index = self.get_choice_set_index().ravel()
+        else:
+            flatten_choice_index = self.get_choice_set_index()[agents_index,:].ravel()
         filter_var = ones(choice_set.size(), dtype='int16')
-        filter_var[unique(self.get_choice_set_index().ravel())] = 0
-        dummy_attribute_name = '__sampled_choice_set_filter__'
-        choice_set.add_attribute(name=dummy_attribute_name, data=filter_var)
-        choice_set.plot_map(name, filter=dummy_attribute_name)
-        choice_set.delete_one_attribute(dummy_attribute_name)
+        filter_var[unique(flatten_choice_index)] = 0
+        filter_idx = where(filter_var)[0]
+        if aggregate_to is not None:
+            ds_aggr = self.get_dataset(aggregate_to)
+            result = ds_aggr.aggregate_over_ids(choice_set[ds_aggr.get_id_name()[0]][flatten_choice_index], 
+                                                     what=choice_set[name][flatten_choice_index], function=function)
+            filter = ds_aggr.sum_over_ids(choice_set[ds_aggr.get_id_name()[0]][filter_idx], 
+                                                     ones(filter_idx.size))
+            filter = filter > 0
+            ds = ds_aggr
+        else:
+            result = choice_set.aggregate_over_ids(choice_set.get_id_attribute()[flatten_choice_index], 
+                                                   what=choice_set[name][flatten_choice_index], function=function)
+            filter = filter_var
+            ds = choice_set
+        dummy_attribute_name = '__sampled_choice_set_attribute__'
+        ds.add_attribute(name=dummy_attribute_name, data=result)
+        dummy_filter_name = '__sampled_choice_set_filter__'
+        ds.add_attribute(name=dummy_filter_name, data=filter)
+        if matplotlib:
+            coord_syst = None
+            if ds.get_coordinate_system() is None and hasattr(ds, 'compute_coordinate_system'):
+                coord_syst = ds.compute_coordinate_system(dataset_pool=self.get_dataset_pool())
+            ds.plot_map_matplotlib(dummy_attribute_name, filter=dummy_filter_name, coordinate_system=coord_syst, **kwargs)
+        else:
+            ds.plot_map(dummy_attribute_name, filter=dummy_filter_name, **kwargs)
+        ds.delete_one_attribute(dummy_attribute_name)
+        ds.delete_one_attribute(dummy_filter_name)
                    
     def plot_coefficients(self, submodel=-2, exclude_constant=True, eqidx=0):
         """ Plot a barchart of coefficient values. This can be used in a regression model, 

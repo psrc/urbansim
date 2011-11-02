@@ -892,7 +892,7 @@ class AbstractDataset(object):
         return self.add_elements(data, require_all_attributes, change_ids_if_not_unique)
     
     def aggregate_dataset_over_ids(self, dataset, function='sum', attribute_name=None, constant=None):
-        """Aggregate atttribute (given by 'attribute_name') of the given 'dataset' over
+        """Aggregate attribute (given by 'attribute_name') of the given 'dataset' over
         self by applying the given function. The dataset is expected to have an attribute of the same
         name as the unique identifier of self. If attribute_name is not given, the
         argument 'constant' must be given, which is either a scalar or a numpy array. if it
