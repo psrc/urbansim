@@ -52,7 +52,7 @@ class RunTravelModel(AbstractTravelModel):
             xmx = '-Xmx1500m'# Windows can't reserve more 1500m
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/matsim.jar;jar/matsim4urbansim.jar",
+                'classpath': "jar/matsim.jar;jar/contrib/matsim4urbansim.jar",
                 'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim", #"playground.run.Matsim4Urbansim"
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
@@ -61,7 +61,7 @@ class RunTravelModel(AbstractTravelModel):
             xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/matsim.jar:jar/matsim4urbansim.jar",
+                'classpath': "jar/matsim.jar:jar/contrib/matsim4urbansim.jar",
                 'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim", #"playground.run.Matsim4Urbansim"
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 

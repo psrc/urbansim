@@ -81,38 +81,71 @@ class InstallMATSim4UrbanSim(object):
         logger.log_status('Loading MATSim.jar ...')
         self.__write_on_disc( matsim_jar_target, content.read() )
         logger.log_status('... MATSim.jar download done!')
-        # create symbolic link or shortcut
-        self.__create_symbolic_link( matsim_jar_target, 'matsim.jar' )
+        self.__rename(matsim_jar_target, os.path.join( self.target_path, 'matsim.jar' ))
+        # create symbolic link or shortcut (this is not used since java can't handle windows shortcuts)
+        #self.__create_symbolic_link( matsim_jar_target, 'matsim.jar' )
+        
         # downloading matsim lib
         logger.log_status('Loading MATSim libraries ...')
         content = urllib2.urlopen( self.matsim_lib_url )
-        matsim_lib_target = os.path.join( self.temp_dir, self.html_finder.getMATSimLib() )
+        matsim_lib_target_tmp = os.path.join( self.temp_dir, self.html_finder.getMATSimLib() )
         # saving download
-        self.__write_on_disc( matsim_lib_target, content.read() )
+        self.__write_on_disc( matsim_lib_target_tmp, content.read() )
         logger.log_status('... MATSim libraries download done!')
         # extract (lib) zip file
-        unzip = ExtractZipFile( matsim_lib_target, self.target_path )
+        unzip = ExtractZipFile( matsim_lib_target_tmp, self.target_path )
         unzip.extract()
         
         # downloading contrib jar
         logger.log_status('Loading MATSim4UrbanSim contribution/extension ...')
         content = urllib2.urlopen( self.matsim_contrib_url )
-        matsim_contrib_target = os.path.join( self.temp_dir, self.html_finder.getMATSimContrib() )
+        # target location to store downloaded tmp zip file
+        matsim_contrib_target_tmp = os.path.join( self.temp_dir, self.html_finder.getMATSimContrib() )
+        # target location for symbolic link/shortcut
+        matsim_contrib_target_final =  os.path.join( self.target_path, self.html_finder.getMATSimContrib().replace('.zip', '') )
+
         # saving download
-        self.__write_on_disc( matsim_contrib_target, content.read() )
+        self.__write_on_disc( matsim_contrib_target_tmp, content.read() )
         logger.log_status('... MATSim4UrbanSim download done!')
         # extract contrib zip file
-        unzip = ExtractZipFile( matsim_contrib_target, self.target_path )
+        unzip = ExtractZipFile( matsim_contrib_target_tmp, self.target_path )
         unzip.extract()
 
-        # creating symbolic link
-        contrib_dir = matsim_contrib_target.replace('.zip', '')
+        matsim_contrib_new_target =matsim_contrib_target_final.split('matsim4urbansim_')[0] + 'contrib'
+        # rename directory
+        self.__rename(matsim_contrib_target_final, matsim_contrib_new_target)
         contrib_jar = self.html_finder.getMATSimContrib().rsplit('-r')[0] + '.jar'
-        source_file = os.path.join( contrib_dir, contrib_jar )
-        self.__create_symbolic_link(source_file, 'matsim4urbansim.jar')       
+        # rename jar file within renamed directory
+        self.__rename(os.path.join( matsim_contrib_new_target, contrib_jar ), os.path.join( matsim_contrib_new_target, 'matsim4urbansim.jar' ))
         
+        # creating symbolic link (this is not used since java can't handle windows shortcuts)
+        #contrib_dir = matsim_contrib_target.replace('.zip', '')
+        #contrib_jar = self.html_finder.getMATSimContrib().rsplit('-r')[0] + '.jar'
+        #source_file = os.path.join( contrib_dir, contrib_jar )
+        #self.__create_symbolic_link(source_file, 'matsim4urbansim.jar')       
+
+    def __rename(self, source, target):
+        ''' this renames files or directories
+            This is used instead of setting symbolic links or shortcuts since
+            java can't handle windows shortcuts ...
+        '''
+        if os.path.exists( target ):
+            if os.path.isfile( target ):
+                os.remove( target )
+            if os.path.isdir( target ):
+                rmtree( target, True )
+        os.rename(source, target)
+            
     def __create_symbolic_link(self, source_file, link_name):
+        ''' this creates a symbolic link / shortcut to a given source_file
+            unfortunately java can't handle shortcuts this is why this method 
+            is not used anymore
+            files are renamed instead
+        '''
         symbolic_link = os.path.join( self.target_path, link_name )
+        
+        if self.is_windows_os: # Windows
+            symbolic_link = symbolic_link + '.lnk'
         try: # removing symbolic link / short cut
             os.unlink( symbolic_link )
         except: pass
@@ -125,7 +158,10 @@ class InstallMATSim4UrbanSim(object):
                 shortcut = shell.CreateShortCut( symbolic_link )
                 shortcut.Targetpath = source_file
                 shortcut.save() 
-            except: logger.log_error('Error while creating a shortcut to %s!' % source_file)
+            except: 
+                logger.log_error('Error while creating a shortcut to %s!' % source_file)
+                logger.log_error('Installation not successful. Try manual installation as described in opus_matsim_user_guide.pdf in opus_matsim/docs')
+                exit()
         else: # Mac, Linux
             logger.log_status('Creating symbolic link %s to (%s) ...' %(symbolic_link, source_file) )
             os.symlink( source_file , symbolic_link )
