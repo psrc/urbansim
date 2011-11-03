@@ -3,6 +3,8 @@
 # See opus_core/LICENSE
 
 import urllib2, os, sys
+import tempfile
+from shutil import rmtree
 from opus_core.logger import logger
 from HTMLParser import HTMLParser
 from opus_matsim.models.utils.extract_zip_file import ExtractZipFile
@@ -22,6 +24,7 @@ class InstallMATSim4UrbanSim(object):
             logger.log_error('Aborting MATSim4UrbanSim installation!')
             exit()
         
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         self.target_path = paths.get_opus_home_path( matsim4opus, 'jar')
         self.source_url = 'http://matsim.org/files/builds/'
         self.html_finder = FindLinks()
@@ -32,6 +35,7 @@ class InstallMATSim4UrbanSim(object):
         self.__determine_os()
         self.__check_and_get_matsim_url()
         self.__load_and_store()
+        self.__cleanup()
         
     def __determine_os(self):
         self.is_windows_os = sys.platform.lower() == 'win32'
@@ -55,6 +59,12 @@ class InstallMATSim4UrbanSim(object):
         self.matsim_contrib_url = self.source_url + self.html_finder.getMATSimContrib() # contrib url
         
         logger.log_status('Availability check done!')
+        
+    def __cleanup(self):
+        logger.log_status('Cleaning up installation ...')
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir, True) # if second argument == True ignores errors (no exception raised)
+        logger.log_status('... done!')
     
     def __load_and_store(self):
         
@@ -76,30 +86,25 @@ class InstallMATSim4UrbanSim(object):
         # downloading matsim lib
         logger.log_status('Loading MATSim libraries ...')
         content = urllib2.urlopen( self.matsim_lib_url )
-        matsim_lib_target = os.path.join( self.target_path, self.html_finder.getMATSimLib() )
+        matsim_lib_target = os.path.join( self.temp_dir, self.html_finder.getMATSimLib() )
         # saving download
         self.__write_on_disc( matsim_lib_target, content.read() )
         logger.log_status('... MATSim libraries download done!')
         # extract (lib) zip file
         unzip = ExtractZipFile( matsim_lib_target, self.target_path )
         unzip.extract()
-        # deleting (lib) zip file 
-        logger.log_status('Removing MATSim libraries zip file ...')
-        os.remove( matsim_lib_target )
         
         # downloading contrib jar
         logger.log_status('Loading MATSim4UrbanSim contribution/extension ...')
         content = urllib2.urlopen( self.matsim_contrib_url )
-        matsim_contrib_target = os.path.join( self.target_path, self.html_finder.getMATSimContrib() )
+        matsim_contrib_target = os.path.join( self.temp_dir, self.html_finder.getMATSimContrib() )
         # saving download
         self.__write_on_disc( matsim_contrib_target, content.read() )
         logger.log_status('... MATSim4UrbanSim download done!')
         # extract contrib zip file
         unzip = ExtractZipFile( matsim_contrib_target, self.target_path )
         unzip.extract()
-        # deleting (lib) zip file 
-        logger.log_status('Removing MATSim4UrbanSim zip file ...')
-        os.remove( matsim_contrib_target )
+
         # creating symbolic link
         contrib_dir = matsim_contrib_target.replace('.zip', '')
         contrib_jar = self.html_finder.getMATSimContrib().rsplit('-r')[0] + '.jar'
@@ -108,6 +113,10 @@ class InstallMATSim4UrbanSim(object):
         
     def __create_symbolic_link(self, source_file, link_name):
         symbolic_link = os.path.join( self.target_path, link_name )
+        try: # removing symbolic link / short cut
+            os.unlink( symbolic_link )
+        except: pass
+            
         if self.is_windows_os: # Windows
             try:
                 logger.log_status('Creating shortcut %s to (%s) ...' %(symbolic_link, source_file) )
@@ -118,8 +127,6 @@ class InstallMATSim4UrbanSim(object):
                 shortcut.save() 
             except: logger.log_error('Error while creating a shortcut to %s!' % source_file)
         else: # Mac, Linux
-            if os.path.exists( symbolic_link ):
-                os.remove( symbolic_link )
             logger.log_status('Creating symbolic link %s to (%s) ...' %(symbolic_link, source_file) )
             os.symlink( source_file , symbolic_link )
         
