@@ -16,6 +16,7 @@ class InstallMATSim4UrbanSim(object):
         Constructor
         '''
         logger.log_status('Start init ...')
+
         if paths.get_opus_home_path == None or paths.get_opus_home_path() == "":
             logger.log_error('OSPUS_HOME variable not found. Please define OPUS_HOME in your environment variables.')
             logger.log_error('Aborting MATSim4UrbanSim installation!')
@@ -28,8 +29,16 @@ class InstallMATSim4UrbanSim(object):
         logger.log_status('... init done!')
     
     def install(self):
+        self.__determine_os()
         self.__check_and_get_matsim_url()
         self.__load_and_store()
+        
+    def __determine_os(self):
+        self.is_windows_os = sys.platform.lower() == 'win32'
+        if(self.is_windows_os):
+            logger.log_status('Detected Windows operating system ...')
+        else:
+            logger.log_status('Detected Unix based operating system ...')
         
     def __check_and_get_matsim_url(self):
         logger.log_status('Checking availability of necessary MATSim files (nightly builds): %s' %self.source_url)
@@ -99,7 +108,7 @@ class InstallMATSim4UrbanSim(object):
         
     def __create_symbolic_link(self, source_file, link_name):
         symbolic_link = os.path.join( self.target_path, link_name )
-        if sys.platform.lower() == 'win32': # Windows
+        if self.is_windows_os: # Windows
             try:
                 logger.log_status('Creating shortcut %s to (%s) ...' %(symbolic_link, source_file) )
                 from win32com.client import Dispatch
@@ -117,6 +126,9 @@ class InstallMATSim4UrbanSim(object):
     def __write_on_disc(self, target, data):
         logger.log_status('Writing to %s ...' %target)
         outfile = open( target, 'w')
+        # wb for writing binery files in windows
+        if self.is_windows_os:
+            outfile = open( target, 'wb') 
         outfile.write( data )
         outfile.flush()
         outfile.close()
