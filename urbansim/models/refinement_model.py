@@ -34,6 +34,13 @@ class RefinementModel(Model):
     model_name = "Refinement Model"
     model_short_name = "RM"
 
+    def __init__(self, model_name=None, model_short_name=None, *args, **kwargs):
+        if model_name:
+            self.model_name = model_name
+        if model_short_name:
+            self.model_short_name = model_short_name
+        Model.__init__(self, *args, **kwargs)
+
     def run(self, refinement_dataset=None, current_year=None, 
             action_order=['subtract', 'add', 'target', 'set_value', 'delete'],
             dataset_pool=None):
@@ -155,6 +162,37 @@ class RefinementModel(Model):
             dataset.modify_attribute(attribute_name, values, index=index)
             
     ## methods handling "action" in refinement_dataset
+    def _clone(self, agents_pool, amount, 
+                  agent_dataset, location_dataset, 
+                  this_refinement,
+                  dataset_pool ):
+        """ clone certain amount of agent satisfying condition specified by agent_expression and location_expression
+        and add them to agents_pool.  Useful to add certain agents to location where there is no such agent exist previously.
+        """
+        
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              this_refinement.agent_expression, 
+                                              this_refinement.location_expression,
+                                              dataset_pool)
+        if fit_index.size == 0:
+            logger.log_error("Refinement requests to clone %i agents,  but there are no agents satisfying %s." \
+                                % (amount,  ' and '.join( [this_refinement.agent_expression, 
+                                                           this_refinement.location_expression] ).strip(' and '),
+                                                         ))
+            return
+       
+        
+        clone_index = sample_replace( fit_index, amount )
+            
+        agents_pool += clone_index.tolist()
+           
+        agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
+                                       -1 * ones( clone_index.size, dtype='int32' ),
+                                       index = clone_index
+                                       )
+        self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=clone_index)
+
+
     def _subtract(self, agents_pool, amount, 
                   agent_dataset, location_dataset, 
                   this_refinement,
