@@ -10,6 +10,7 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable import get_dependency_datasets
+from opus_core.variables.functions import ln
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
 from numpy import array, repeat, ndarray, reshape
@@ -61,6 +62,9 @@ class InteractionDataset(Dataset):
         self.variable_factory = VariableFactory()
         self._aliases = {} # for compatibility with Dataset
 
+    def _ensure_id_attribute_is_loaded(self):
+        pass
+    
     def get_attribute(self, name):
         """ Return an array of the (by the argument name) given attribute. """
         if not isinstance(name, VariableName):
@@ -104,6 +108,18 @@ class InteractionDataset(Dataset):
             return self.get_dataset(dataset_number).get_id_attribute()[index]
         return self.get_dataset(dataset_number).get_id_attribute()
 
+    def add_primary_attribute(self, data, name):
+        """ Add values given in argument 'data' to the dataset as an attribute 'name'. 
+        'data' should be an array of the same size as the dataset.
+        If this attribute already exists, its values are overwritten.
+        The attribute is marked as a primary attribute.
+        """
+        if not isinstance(data, ndarray):
+            data=array(data)
+        if data.shape[0] <> self.size()[0][0] or data.shape[1] <> self.size()[0][1]:
+            logger.log_warning("In add_primary_attribute: Mismatch in sizes of the argument 'data' and the InteractionDataset object.")
+        self.add_attribute(data, name, metadata=AttributeType.PRIMARY)
+        
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
         """ Compute variable given by the argument 'name' only if this variable
         has not been computed before.
@@ -630,6 +646,22 @@ class InteractionDataset(Dataset):
         if name not in dataset_names:
             raise ValueError, "When checking dataset name of '%s': different dataset names for variable and dataset or a component: '%s' <> '%s'" % (vname.get_expression(), name, dataset_names)
 
+    def add_mnl_bias_correction_term(self, probability, sampled_index, bias_attribute_name='__mnl_bias_correction_term'):
+        """Compute and add an MNL bias correction term introduced by sampling. 
+        'probability' is a probability array of the whole choice set. 
+        'sampled_index' is an index of elements within the 'probability' array determining the sampled set of alternatives.
+        The computed term is added to the interaction set as an additional attribute,
+        using the name given in 'bias_attribute_name'.
+        This method is mainly to be used by Samplers classes.
+        """
+        lnprob = ln(probability)
+        ln1minusprob = ln(1-probability)
+        bias_term = ln1minusprob.sum() - \
+                    take(ln1minusprob, sampled_index).sum(axis=1).reshape((self.get_reduced_n(),1)) + \
+                    take(lnprob, sampled_index).sum(axis=1).reshape((self.get_reduced_n(),1)) - \
+                    take(lnprob, sampled_index)       
+        self.add_attribute(bias_term, bias_attribute_name)
+        
 from numpy import ma
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory

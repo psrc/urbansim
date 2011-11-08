@@ -136,6 +136,7 @@ class weighted_sampler(Sampler):
                                                      exclude_index=chosen_choice_index_to_index2[i],
                                                      return_index=True )
         sampling_prob = take(prob, sampled_index)
+        sampled_index_within_prob = sampled_index.copy()
         sampled_index = index2[sampled_index]
         is_chosen_choice = zeros(sampled_index.shape, dtype="bool")
         #chosen_choice = -1 * ones(chosen_choice_index.size, dtype="int32")
@@ -153,6 +154,11 @@ class weighted_sampler(Sampler):
         interaction_dataset = self.create_interaction_dataset(dataset1, dataset2, index1, sampled_index)
         interaction_dataset.add_attribute(sampling_prob, '__sampling_probability')
         interaction_dataset.add_attribute(is_chosen_choice, 'chosen_choice')
+        
+        if local_resources.get("include_mnl_bias_correction_term",  False):
+            if include_chosen_choice:
+                sampled_index_within_prob = column_stack((chosen_choice_index_to_index2[:,newaxis],sampled_index_within_prob))
+            interaction_dataset.add_mnl_bias_correction_term(prob, sampled_index_within_prob)
         
         ## to get the older returns
         #sampled_index = interaction_dataset.get_2d_index()
