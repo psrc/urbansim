@@ -253,6 +253,7 @@ class Estimator(ModelExplorer):
         logger.log_status("Observed_id\tSuccess_rate\t%s" % \
                           _convert_array_to_tab_delimited_string(unique_summary_id) )
         i = 0
+        total_correct = 0
         success_rate = zeros( unique_summary_id.size, dtype="float32" )
         for observed_id in unique_summary_id:
             predicted_id = predicted_summary_id[chosen_summary_id==observed_id]
@@ -260,6 +261,7 @@ class Estimator(ModelExplorer):
             if prediction_matrix[i].sum() > 0:
                 if prediction_matrix[i].sum() > 0:
                     success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
+                    total_correct = total_correct + prediction_matrix[i, i]
                 else:
                     success_rate[i] = 0
             logger.log_status("%s\t\t%5.4f\t\t%s" % (observed_id, success_rate[i], 
@@ -274,6 +276,7 @@ class Estimator(ModelExplorer):
                 success_rate2[j]=0
         logger.log_status("%s\t\t%s\t\t%s" % (' ', ' ', 
                                                  _convert_array_to_tab_delimited_string( success_rate2 ) ))
+        logger.log_status("\nTotal success rate: %5.4f" % (total_correct/float(prediction_matrix.sum())))
         logger.disable_file_logging(filename=log_to_file)
 
     def save_results(self, out_storage=None, model_name=None):
