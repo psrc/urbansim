@@ -33,19 +33,26 @@ class SSS_in_SSS_within_DDD_of_parcel(Variable):
                 ]
 
     def compute(self, dataset_pool):
+        logger.start_block(name="compute variable %s" % self.fullname, verbose=False)
+        
         logger.start_block(name="initialize datasets for %s" % self.fullname, verbose=False)
         parcels = self.get_dataset()
         arr = self.get_dataset().sum_dataset_over_ids(dataset_pool.get_dataset(self.wherein), attribute_name=self.what)
         coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         logger.end_block()
+        
         logger.start_block(name="build KDTree for %s" % self.fullname, verbose=False)
         kd_tree = KDTree(coords, 100)
         logger.end_block()
+        
         logger.start_block(name="compute for %s" % self.fullname)
         results = kd_tree.query_ball_tree(kd_tree, self.radius)
         logger.end_block()
+        
         logger.start_block(name="sum results for %s" % self.fullname, verbose=False)
         return_values = array(map(lambda l: arr[l].sum(), results))
+        logger.end_block()
+        
         logger.end_block()
         return return_values
 
