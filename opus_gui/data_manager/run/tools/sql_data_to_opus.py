@@ -25,6 +25,7 @@ def opusRun(progressCB,logCB,params):
     database_name = params_dict['database_name']
     table_name = params_dict['table_name']
     database_server_connection = params_dict['database_server_connection']
+    overwrite = (params_dict['overwrite'].lower() == 'true')
     
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
     server = DatabaseServer(database_server_configuration = dbs_config)
@@ -55,6 +56,7 @@ def opusRun(progressCB,logCB,params):
             dataset_name = i,
             in_storage = input_storage,
             out_storage = output_storage,
+            overwrite = overwrite,
         )
 
     logCB('successfully cached tables:\n%s\n' % lst_out)
@@ -65,5 +67,7 @@ def opusHelp():
            'opus_data_directory: path to the OPUS data directory (full path, e.g., c:\\opus\\data\\seattle_parcel\\base_year_data, or relative to OPUS_HOME)\n' \
            'opus_data_year: the year to which the data should be exported (2000)\n' \
            'database_name: the name of the database (or PostgreSQL schema) that contains the table\n' \
-           'table_name: the name of the tables to be exported, separated by spaces. ALL imports all tables\n'
+           'table_name: the name of the tables to be exported, separated by spaces. ALL imports all tables\n' \
+           'overwrite: overwrite table if it already exists in the DB\n' \
+           
     return help
