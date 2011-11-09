@@ -200,6 +200,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 palette.setColor(QPalette.WindowText,Qt.red)
                 test_text.setPalette(palette)
             test_text.setText(paramName)
+            test_text.setMaximumSize(test_text.sizeHint())
             test_text_type = QLabel(widgetTemp)
             self.test_text_type.append(test_text_type)
             test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
