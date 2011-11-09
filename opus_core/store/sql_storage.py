@@ -12,6 +12,7 @@ from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
+from opus_core.database_management.engine_handlers.postgres import PGGeometry
 import re
 
 class sql_storage(Storage):
@@ -68,6 +69,9 @@ class sql_storage(Storage):
                 col_name = column.name
             
             if col_name in final_cols:
+                if isinstance(column.type, PGGeometry):
+                    logger.log_warning('column %s ignored: Column_type not supported by Python' %col_name)
+                    continue
                 col_type = self._get_numpy_dtype_from_sql_alchemy_type(column.type)
                 col_data[col_name] = (column, col_type)
                 table_data[col_name] = []
