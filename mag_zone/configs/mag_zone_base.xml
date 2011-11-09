@@ -14,6 +14,20 @@
       <variable use="both" source="primary attribute" name="household.hh_persons" type="variable_definition">household.persons</variable>
       <variable use="both" source="primary attribute" name="household.hh_children" type="variable_definition">household.children</variable>
       <variable use="both" source="primary attribute" name="household.hh_workers" type="variable_definition">mag_zone.household.workers</variable>
+      <variable use="both" source="expression" name="household.workeligible_id" type="variable_definition"> 1*((household.aggregate(person.age&gt;15))==1)+2*((household.aggregate(person.age&gt;15))==2)+3*((household.aggregate(person.age&gt;15))&gt;=3)</variable>
+      <variable use="both" source="expression" name="household.avg_edu_workeligible" type="variable_definition">safe_array_divide((household.aggregate((person.age&gt;15)*(person.education))),(household.aggregate(person.age&gt;15)))</variable>
+      <variable use="both" source="expression" name="household.avg_age_workeligible" type="variable_definition">safe_array_divide((household.aggregate((person.age&gt;15)*(person.age))),(household.aggregate(person.age&gt;15)))</variable>
+      <variable use="both" source="expression" name="household.workeligible" type="variable_definition">household.aggregate(person.age&gt;15)</variable>
+      <variable use="both" source="expression" name="household.enrollment_of_head" type="variable_definition">household.aggregate( (person.student_status &gt; 1) * (person.head_of_hh ==1) )</variable>
+      <variable use="both" source="primary attribute" name="household.age_of_head" type="variable_definition">household.age_of_head</variable>
+      <variable use="both" source="expression" name="household.oldhead" type="variable_definition">household.age_of_head &gt; 64</variable>
+      <variable use="both" source="primary attribute" name="household.persons" type="variable_definition">household.persons</variable>
+      <variable use="both" source="primary attribute" name="household.children" type="variable_definition">household.children</variable>
+      <variable use="both" source="primary attribute" name="household.workers" type="variable_definition">household.workers</variable>
+      <variable use="both" source="expression" name="household.avgage_workeligible_u24" type="variable_definition">(safe_array_divide((household.aggregate((person.age&gt;15)*(person.age))),(household.aggregate(person.age&gt;15))))&lt;24</variable>
+      <variable use="both" source="expression" name="household.one_eligible_worker" type="variable_definition">(household.aggregate(person.age&gt;15))==1</variable>
+      <variable use="both" source="expression" name="household.two_eligible_workers" type="variable_definition">(household.aggregate(person.age&gt;15))==2</variable>
+      <variable use="both" source="expression" name="household.threeplus_eligible_workers" type="variable_definition">(household.aggregate(person.age&gt;15))&gt;=3</variable>
       <variable use="both" source="Python class" name="building.occupied_rmf_units_col" type="variable_definition">mag_zone.building.occupied_rmf_units_col</variable>
       <variable use="both" source="Python class" name="building.occupied_rsf_units_col" type="variable_definition">mag_zone.building.occupied_rsf_units_col</variable>
       <variable use="both" source="Python class" name="building.total_rmf_units_col" type="variable_definition">mag_zone.building.total_rmf_units_col</variable>
