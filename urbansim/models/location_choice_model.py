@@ -260,7 +260,7 @@ class LocationChoiceModel(ChoiceModel):
             ###TODO: it may be possible to merge this loop with sample_alternatives_by_chunk or put it in a common function
             for group in groups:
                 if groups_equal_submodels:
-                    where_group = self.observations_mapping[submodel]         
+                    where_group = self.observations_mapping[group]         
                 else:
                     where_group = where(group_values == group)[0]
                 if where_group.size==0:
