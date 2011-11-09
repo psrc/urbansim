@@ -219,6 +219,14 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 test_line.setObjectName(QString("test_line").append(QString(i)))
                 index = test_line.findText(param[2], Qt.MatchExactly)
                 test_line.setCurrentIndex(index)
+            elif param[1] == 'boolean':
+                test_line = QCheckBox(widgetTemp)
+                self.test_line.append(test_line)
+                checked = (param[2].lower() == 'true')
+                test_line.setChecked(checked)
+                test_line.setEnabled(True)
+                test_line.setMaximumSize(QSize(test_line.sizeHint()))
+                test_line.setObjectName(QString("test_line").append(QString(i)))
             else:
                 test_line = QLineEdit(widgetTemp)
                 self.test_line.append(test_line)
