@@ -24,12 +24,19 @@ class ExportStorage(object):
                 
         logger.end_block()
         
-    def export_dataset(self, dataset_name, in_storage, out_storage):
+    def export_dataset(self, dataset_name, in_storage, out_storage, overwrite=True):
+        if not overwrite and dataset_name in out_storage.get_table_names():
+            logger.log_note('Dataset %s ignored because it already exists in OPUS' % dataset_name)
+            return
         logger.start_block('Exporting dataset %s' % dataset_name)
         try:
             values_from_storage = in_storage.load_table(dataset_name)
-            
+            length = len(values_from_storage.values()[0])
+            if  length == 0:
+                logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
+                return
             out_storage.write_table(dataset_name, values_from_storage)
+            logger.log_note("Exported %s records for dataset %s" % (length, dataset_name))
         finally:
             logger.end_block()
         
