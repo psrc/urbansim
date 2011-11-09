@@ -75,8 +75,13 @@ class BreakupModel(AgentRelocationModel):
         ##For MAG, each person's work_status is coded according to the ESR variable in the 2000 PUMS. 1: employed, at work. 2: employed with a job but not at work. 4: armed forces, at work.  5: armed forces, with a job but not at work
         ##Note that the WIF variable in the 2000 PUMS (which is the source for the household table's workers attribute), only applies to workers in families and the variable is top-coded so that families with 3+ workers get a value 3.
         if 'workers' in household_set.get_primary_attribute_names():
-            workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
-            household_set.modify_attribute('workers', workers)
+            #workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
+            #household_set.modify_attribute('workers', workers)
+            #init new household_ids with workers = -1.  To be initialized by the household workers initialization model.
+            new_household_ids = household_set.compute_variables('(household.household_id > %s)' % (max_hh_id))
+            initialize_workers = where(new_household_ids == 1)[0]
+            if initialize_workers.size > 0:
+                household_set.modify_attribute('workers', array(initialize_workers.size*[-1]), initialize_workers)
         ##Assign "head of the household" status to the person with the lowest person_id (who will often, but not always, be the oldest).
         ##In the base-year data, the lowest person_id in each household is always the household head.
         ##Since the fertility model assigns person_id's in order of birth, people who are born later in the simulation will have higher person_ids.
