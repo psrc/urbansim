@@ -76,9 +76,10 @@ class MortalityModel(AgentRelocationModel):
         ##Update the household table's workers attribute to account for worker deaths
         ##For MAG, each person's work_status is coded according to the ESR variable in the 2000 PUMS. 1: employed, at work. 2: employed with a job but not at work. 4: armed forces, at work.  5: armed forces, with a job but not at work
         ##Note that the WIF variable in the 2000 PUMS (which is the source for the household table's workers attribute), only applies to workers in families and the variable is top-coded so that families with 3+ workers get a value 3.
-        if 'workers' in household_set.get_primary_attribute_names():
-            workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
-            household_set.modify_attribute('workers', workers)
+        # if 'workers' in household_set.get_primary_attribute_names():
+            # workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
+            # household_set.modify_attribute('workers', workers)
+
         ##If the head of the household dies, assign "head of the household" status to the person with the next lowest person_id (who will often, but not always, be the next oldest).
         ##In the base-year data, the lowest person_id in each household is always the household head.
         ##Since the fertility model assigns person_id's in order of birth, people who are born later in the simulation will have higher person_ids.
