@@ -738,7 +738,7 @@ class RegionWideReport():
                     select
                         household_id,
                         count(*) num_ppl
-                    into #hh_num_ppl%s
+                    into #hh_num_pp%s
                     from %s_%s_persons
                     group by household_id
                     ''' % (year,self.run_name,year)
@@ -748,7 +748,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing persons per household for year %s' % year
-            r = self.connection.execute('select round(avg(cast(num_ppl as float)),3) from #hh_num_ppl%s' % (year))
+            r = self.connection.execute('select round(avg(cast(num_ppl as float)),3) from #hh_num_pp%s' % (year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -841,6 +841,71 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+    def get_total_households_by_number_of_workers(self):
+        # Get total households by number of workers
+        self.worksheet.write(0,self.column_counter,'hh_0_workers')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 0 workers for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where workers < 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_1_worker')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 1 worker for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where workers = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_2_workers')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 2 workers for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where workers = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_3_workers')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 3 workers for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where workers = 3' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_4up_workers')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 4+ workers for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where workers > 3' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+
+    def get_total_workers_in_households(self):
+        # Get total workers in households
+        self.worksheet.write(0,self.column_counter,'workers_in_hh')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total workers in households for year %s' % year
+            r = self.connection.execute('select sum(workers) from %s_%s_households' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
 
     def get_total_population_by_sex_and_year(self):
         # Get total population by sex and year
@@ -1066,7 +1131,10 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total population for year %s' % year
-            r = self.connection.execute('select sum(persons) from %s_%s_households' % (self.run_name, year))
+            try:
+                r = self.connection.execute('select sum(persons) from %s_%s_households' % (self.run_name, year))
+            except:
+                r = self.connection.execute('select count(*) from %s_%s_persons' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1
@@ -2215,6 +2283,8 @@ def main():
                         , 'get_total_households_by_year'
                         , 'get_total_households_by_number_of_children'
                         , 'get_total_households_by_household_size'
+                        , 'get_total_households_by_number_of_workers'
+                        , 'get_total_workers_in_households'
                         , 'get_persons_per_household_by_year'
                         , 'get_total_jobs_by_year'
                         , 'get_total_DUs_by_year'

@@ -22,5 +22,6 @@ aliases = [
     'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
     'age_of_head = household.aggregate(person.age * person.head_of_hh)',
     'workers = household.aggregate(mag_zone.person.is_employed)',
-    'income = household.aggregate(person.income)'
+    'income = household.aggregate(person.income)',
+    'children = household.aggregate(mag_zone.person.is_child)'
            ]

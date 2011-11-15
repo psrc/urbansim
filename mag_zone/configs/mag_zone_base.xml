@@ -12,14 +12,12 @@
       <variable use="both" source="primary attribute" name="household.hh_lag_income" type="variable_definition">household.lag_income</variable>
       <variable use="both" source="expression" name="household.hh_oldhead" type="variable_definition">household.age_of_head &gt; 64</variable>
       <variable use="both" source="primary attribute" name="household.hh_persons" type="variable_definition">household.persons</variable>
-      <variable use="both" source="primary attribute" name="household.hh_children" type="variable_definition">household.children</variable>
       <variable use="both" source="primary attribute" name="household.hh_workers" type="variable_definition">mag_zone.household.workers</variable>
       <variable use="both" source="expression" name="household.workeligible_id" type="variable_definition"> 1*((household.aggregate(person.age&gt;15))==1)+2*((household.aggregate(person.age&gt;15))==2)+3*((household.aggregate(person.age&gt;15))&gt;=3)</variable>
       <variable use="both" source="expression" name="household.avg_edu_workeligible" type="variable_definition">safe_array_divide((household.aggregate((person.age&gt;15)*(person.education))),(household.aggregate(person.age&gt;15)))</variable>
       <variable use="both" source="expression" name="household.avg_age_workeligible" type="variable_definition">safe_array_divide((household.aggregate((person.age&gt;15)*(person.age))),(household.aggregate(person.age&gt;15)))</variable>
       <variable use="both" source="expression" name="household.workeligible" type="variable_definition">household.aggregate(person.age&gt;15)</variable>
       <variable use="both" source="expression" name="household.enrollment_of_head" type="variable_definition">household.aggregate( (person.student_status &gt; 1) * (person.head_of_hh ==1) )</variable>
-      <variable use="both" source="primary attribute" name="household.age_of_head" type="variable_definition">household.age_of_head</variable>
       <variable use="both" source="expression" name="household.oldhead" type="variable_definition">household.age_of_head &gt; 64</variable>
       <variable use="both" source="primary attribute" name="household.persons" type="variable_definition">household.persons</variable>
       <variable use="both" source="primary attribute" name="household.children" type="variable_definition">household.children</variable>

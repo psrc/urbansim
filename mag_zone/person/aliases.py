@@ -17,7 +17,5 @@
 
 aliases = [
     'is_employed = numpy.in1d(person.work_status, (1,2,4,5))',
+    'is_child = person.age<18',
            ]
-
-# from psrc_parcel.person.aliases:
-#           "edu_college = numpy.in1d(person.edu, (3,6,7))",
