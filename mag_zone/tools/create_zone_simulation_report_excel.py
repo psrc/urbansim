@@ -80,6 +80,33 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+    def get_mean_age_of_population_by_year(self):
+        # get the average age of the population by year
+        self.worksheet.write(0,self.column_counter,'mean_pop_age')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing mean age of population for year %s' % year
+            r = self.connection.execute('select ROUND(AVG(CAST(age AS float)),1) from %s_%s_persons' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+        self.column_counter += 1
+
+    def get_median_age_of_population_by_year(self):
+        # get the median age of the population by year
+        self.worksheet.write(0,self.column_counter,'median_pop_age')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing median age of population for year %s' % year
+            r = self.connection.execute('SELECT age from %s_%s_persons' % (self.run_name, year))
+            age_list = r.fetchall()
+            age_array = array(age_list)
+            median_age = round(median(age_array),2)
+            self.worksheet.write(row_counter, self.column_counter, median_age)
+            row_counter += 1
+            r.close()
+        self.column_counter += 1
+
     def get_total_population_age_distribution_by_year(self):
         # get population in age brackets <5, 5-9, 10-15, 16-18, 19-24, 25-34, 35-44, 45-54, 55-64, 65+
         self.worksheet.write(0,self.column_counter, 'pop_age_under_5')
@@ -730,31 +757,6 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_persons_per_household_by_year(self):
-        # Compute persons per household
-        for year in self.years:
-            print 'Computing temporary tables for persons per household for year %s' % year
-            query = '''
-                    select
-                        household_id,
-                        count(*) num_ppl
-                    into #hh_num_pp%s
-                    from %s_%s_persons
-                    group by household_id
-                    ''' % (year,self.run_name,year)
-            r = self.connection.execute(query)
-            r.close()
-        self.worksheet.write(0,self.column_counter,'persons_per_hh')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing persons per household for year %s' % year
-            r = self.connection.execute('select round(avg(cast(num_ppl as float)),3) from #hh_num_pp%s' % (year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
-
     def get_total_households_by_household_size(self):
         # Get the number of households by the household size
         # categories: 1,2,3,4,5,6,7+
@@ -1026,6 +1028,19 @@ class RegionWideReport():
         for year in self.years:
             print 'Computing mean household income for year %s' % year
             r = self.connection.execute('SELECT ROUND(AVG(CAST(income as FLOAT)),2) from %s_%s_households' % (self.run_name, year))
+            for row in r:
+                self.worksheet.write(row_counter, self.column_counter, row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_mean_persons_per_household_by_year(self):
+        self.worksheet.write(0,self.column_counter,'mean_pp_per_hh')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing mean persons per household for year %s' % year
+            r = self.connection.execute('select household_id, count(*) num_pphh into #pp_hh%s from %s_%s_persons group by household_id' % (year, self.run_name, year))
+            r = self.connection.execute('SELECT ROUND(AVG(CAST(num_pphh as FLOAT)),2) from #pp_hh%s' % (year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1
@@ -1346,6 +1361,87 @@ class RegionWideReport():
                 row_counter += 1
             column_counter += 1
         self.column_counter += len(sectors)
+
+    def get_total_population_by_race_and_year(self):
+        # Get total population by race and year
+        # Get races
+        r = self.connection.execute('select distinct(race) from %s_%s_persons order by race' % (self.run_name, self.base_year))
+        races = []
+        for row in r:
+            races.append(row[0])
+        r.close()
+        # Get totals
+        column_counter = self.column_counter
+        for race in races:
+            row_counter = 1
+            self.worksheet.write(0,column_counter,'pop_race%s' % race)
+            for year in self.years:
+                print 'Computing total population for year %s and race %s' % (year, race)
+                query = 'select count(*) from %s_%s_persons where race = %s' % (self.run_name, year, race)
+                r = self.connection.execute(query)
+                for row in r:
+                    self.worksheet.write(row_counter,column_counter,row[0])
+                r.close()
+                row_counter += 1
+            column_counter += 1
+        self.column_counter += len(races)
+
+    def get_mean_persons_per_household_by_race_of_hh_head_and_year(self):
+        # Get mean persons per by race and year
+        # Get races
+        r = self.connection.execute('select distinct(race) from %s_%s_persons order by race' % (self.run_name, self.base_year))
+        races = []
+        for row in r:
+            races.append(row[0])
+        r.close()
+        # Get totals
+        column_counter = self.column_counter
+        temp_tables_years = []
+        for race in races:
+            row_counter = 1
+            self.worksheet.write(0,column_counter,'pphh_race%s' % race)
+            for year in self.years:
+                print 'Computing mean persons per household for year %s and race %s' % (year, race)
+                if year not in temp_tables_years:
+                    r = self.connection.execute('select household_id, count(*) as num_pp_in_hh into tmp_p_hh%s from %s_%s_persons group by household_id' % (year, self.run_name, year))
+                    r.close()
+                    r = self.connection.execute('select household_id, race into tmp_head_race%s from %s_%s_persons where head_of_hh = 1' % (year, self.run_name, year))
+                    r.close()
+                    r = self.connection.execute('select p.*, h.race into tmp_pp_hh_race%s from tmp_p_hh%s p join tmp_head_race%s h on p.household_id = h.household_id' % (year, year, year))
+                    r.close()
+                    temp_tables_years.append(year)
+                query = 'select ROUND(AVG(CAST(num_pp_in_hh AS FLOAT)),2) from tmp_pp_hh_race%s where race = %s' % (year, race)
+                r = self.connection.execute(query)
+                for row in r:
+                    self.worksheet.write(row_counter,column_counter,row[0])
+                r.close()
+                row_counter += 1
+            column_counter += 1
+        self.column_counter += len(races)
+
+    def get_mean_age_by_race_and_year(self):
+        # Get mean age by race and year
+        # Get races
+        r = self.connection.execute('select distinct(race) from %s_%s_persons order by race' % (self.run_name, self.base_year))
+        races = []
+        for row in r:
+            races.append(row[0])
+        r.close()
+        # Get totals
+        column_counter = self.column_counter
+        for race in races:
+            row_counter = 1
+            self.worksheet.write(0,column_counter,'mean_age_race%s' % race)
+            for year in self.years:
+                print 'Computing mean age for year %s and race %s' % (year, race)
+                query = 'select ROUND(AVG(CAST(age as FLOAT)),1) from %s_%s_persons where race = %s' % (self.run_name, year, race)
+                r = self.connection.execute(query)
+                for row in r:
+                    self.worksheet.write(row_counter,column_counter,row[0])
+                r.close()
+                row_counter += 1
+            column_counter += 1
+        self.column_counter += len(races)
 
     def get_total_job_spaces_by_year(self):
         # Get total job spaces by year
@@ -2285,7 +2381,6 @@ def main():
                         , 'get_total_households_by_household_size'
                         , 'get_total_households_by_number_of_workers'
                         , 'get_total_workers_in_households'
-                        , 'get_persons_per_household_by_year'
                         , 'get_total_jobs_by_year'
                         , 'get_total_DUs_by_year'
                         , 'get_percent_DUs_built'
@@ -2311,11 +2406,17 @@ def main():
                         , 'get_total_female_population_distribution_by_age_and_year'
                         , 'get_total_population_by_sex_and_year'
                         , 'get_mean_household_income_by_year'
+                        , 'get_mean_age_of_population_by_year'
                         , 'get_median_household_income_by_year (CAUTION:VERY SLOW!)'
+                        , 'get_median_age_of_population_by_year (CAUTION:VERY SLOW!)'
                         , 'get_total_nonres_sqft_by_type_and_year'
                         , 'get_total_DUs_in_active_developments_by_year'
                         , 'get_total_nonres_sqft_in_active_developments_by_year'
                         , 'get_total_unplaced_development_projects_by_year'
+                        , 'get_total_population_by_race_and_year'
+                        , 'get_mean_age_by_race_and_year'
+                        , 'get_mean_persons_per_household_by_year'
+                        , 'get_mean_persons_per_household_by_race_of_hh_head_and_year'
                         ]
         
         # Add subarea query choices if subarea was specified
@@ -2411,6 +2512,13 @@ if __name__ == "__main__":
 # add a drop table if exists function
 # some of these queries were designed to be run w/ a full simulation uploaded to SQL (every year) instead of
 #      a partial run (e.g. 2005,2010,2015).  Generalization of the code to handle these cases would be good
+
+# queries TODO:
+# - avg age by subarea
+# - 
+# - 
+# - hh by hh size by subarea
+# - pp per hh by subarea
 
 
 
