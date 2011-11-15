@@ -7,8 +7,9 @@ from numpy import zeros, maximum
 
 class max_developable_capacity(Variable):
     """ Maximum capacity over all generic land use types and over far and units_per_acre 
-        allowed by development constraints. The units-to-sqft conversion is approximated by taking
-        the median density over residential templates, which is 5.96 units_per_acre.
+        allowed by development constraints. 
+        The median of building sqft per unit (1553) is used.
+        Obsolete: The units-to-sqft conversion is approximated by taking the median density over residential templates, which is 5.96 units_per_acre.
     """
 
     def dependencies(self):
@@ -24,7 +25,8 @@ class max_developable_capacity(Variable):
             if  glu == 'index':
                 continue
             result = maximum(result, parcels.development_constraints[glu]['far'][:, 1]*parcels['parcel_sqft'])  #max constraint
-            res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] * 5.96 * 1/43560.0# median of units_per_acre over templates times acre-to-sqft converter
+            #res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] * 5.96 * 1/43560.0# median of units_per_acre over templates times acre-to-sqft converter
+            res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'] * 1553 # median of building sqft per unit
             result = maximum(result, res_constraints)
         return result
 
