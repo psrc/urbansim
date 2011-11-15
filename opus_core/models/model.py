@@ -13,6 +13,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.status_for_gui import StatusForGui
 from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.variables.variable_name import VariableName
 
 class Model(ModelComponent):
     """The base class for all Opus models.
@@ -106,11 +107,14 @@ class Model(ModelComponent):
                 agent_set.compute_variables(submodel_string, dataset_pool=dataset_pool, resources=resources)
             except:
                 pass
-            if (nsubmodels == 1) and ((submodel_string is None) or (submodel_string not in agent_set.get_known_attribute_names())):
+            submodel_alias = None
+            if submodel_string is not None:
+                submodel_alias = VariableName(submodel_string).get_alias()
+            if (nsubmodels == 1) and ((submodel_string is None) or (submodel_alias not in agent_set.get_known_attribute_names())):
                 self.observations_mapping[submodels[0]] = arange(agents_index.size)
             else:
                 for submodel in submodels: #mapping agents to submodels
-                    w = where(agent_set.get_attribute_by_index(submodel_string,
+                    w = where(agent_set.get_attribute_by_index(submodel_alias,
                                                                agents_index) == submodel)[0]
                     if submodel_size_max is not None and submodel_size_max < w.size:
                         # sub-sample from submodel
