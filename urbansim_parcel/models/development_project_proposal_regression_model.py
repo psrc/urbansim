@@ -96,6 +96,11 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         specification, coefficients, dummy = RegressionModel.prepare_for_run(self, **kwargs)
         try:
             existing_proposal_set_parent = dataset_pool.get_dataset('development_project_proposal')
+            if 'units_proposed' not in existing_proposal_set_parent.get_known_attribute_names():
+                ## compute 'units_proposed' and add it as a primary attribute (as it may be missing when loaded from the base_year_data)
+                units_proposed = existing_proposal_set_parent.compute_variables(proposed_units_variable, dataset_pool)
+                existing_proposal_set_parent.add_attribute(units_proposed, "units_proposed", AttributeType.PRIMARY)
+            
             #load proposals whose status_id are not of id_tentative or id_not_available
             available_idx = where(logical_and(existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_tentative,
                                               existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_not_available))[0]
