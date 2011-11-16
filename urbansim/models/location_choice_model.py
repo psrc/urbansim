@@ -295,7 +295,7 @@ class LocationChoiceModel(ChoiceModel):
                                                   config=config,
                                                   nchunks=nchunks, chunksize=chunksize)
                 
-                if len(groups)>1:
+                if len(groups)>1 or (agents_index.size > agents_index_in_group.size):
                     index2[where_group,:] = interaction_dataset.index2
                     for name in interaction_dataset.get_known_attribute_names():
                         attr_val = interaction_dataset.get_attribute(name)
@@ -306,7 +306,7 @@ class LocationChoiceModel(ChoiceModel):
             if interaction_dataset is None:
                 raise ValueError, "There is no agent for groups %s. " % (groups) + \
                                   "This may be due to mismatch between agent_filter and submodels included in specification."
-            if len(groups)>1:  ## if there are more than 1 group, merge the data by submodel and recreate interaction_dataset
+            if len(groups)>1 or (agents_index.size > agents_index_in_group.size):  ## if there are more than 1 group, merge the data by submodel and recreate interaction_dataset
                 interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
                                                                                     interaction_dataset.dataset2, 
                                                                                     index1=agents_index, 
