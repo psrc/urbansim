@@ -25,6 +25,7 @@ aliases = [
    'residence_district_id = household.disaggregate(zone.district_id,intermediates=[parcel, building])',
    'residence_faz_id = household.disaggregate(zone.faz_id,intermediates=[parcel, building])',
    'residence_large_area_id = household.disaggregate(faz.large_area_id,intermediates=[zone, parcel, building])',
+   'residence_type = household.disaggregate(building.building_type_id)',
    "cars_category=0*(household.cars==0)+1*(household.cars==1)+2*(household.cars==2)+3*(household.cars>=3)",
    "income_imputed = household.income*(household.income > 0) + household.disaggregate(urbansim_parcel.zone.average_household_income)*(household.income <= 0)"
            ]
