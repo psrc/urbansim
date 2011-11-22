@@ -46,6 +46,7 @@ class _Logger(Singleton):
         self._output_width = 80
         self._file_stack = None   
         self._file_stream = None
+        self._show_exact_time = False
         self._warning_file_stack = None
         self._is_logging_memory = False
         self._last_end_block_result = None
@@ -280,6 +281,12 @@ class _Logger(Singleton):
         """Turn off memory logging for logger 'block's."""
         self._is_logging_memory = False
         
+    def enable_exact_time(self):
+        self._show_exact_time = True
+        
+    def disable_exact_time(self):
+        self._show_exact_time = False
+        
     def log_status(self, *what_to_log, **kwargs):
         """Log the status to the logging pipe(s). 
         The semantics for this function is like that of print
@@ -366,14 +373,16 @@ class _Logger(Singleton):
         days = (int (seconds /(24*3600))) % 365
         hours = (int (seconds / 3600)) % 24
         minutes = (int (seconds / 60)) % 60
-        seconds = round((seconds % 60 ) * 10) / 10
-        s = str(seconds) + " sec"
+        seconds_rounded = round((seconds % 60), 1)
+        s = str(seconds_rounded) + " sec"
         if minutes: 
             s = str(minutes) + " min, " + s
         if hours: 
             s = str(hours) + " hrs, " + s
         if days: 
-            s = str(days) + " days, " + s
+            s = str(days) + " days, " + s 
+        if self._show_exact_time:
+            s += (" (%.3f sec)" % seconds)
         return s
         
     @staticmethod
