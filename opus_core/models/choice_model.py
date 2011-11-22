@@ -479,6 +479,7 @@ class ChoiceModel(ChunkModel):
                                                 self.estimate_config.get("use_biogeme_data_format",False))
 
             self.coefficients.fill_coefficients(coef)
+            self.model_interaction.set_coefficients(self.coefficients)
             self.estimate_config["coefficient_names"]=None
             self.estimate_config["variable_names"]=None
         return result
@@ -799,6 +800,9 @@ class ChoiceModel(ChunkModel):
     def _get_status_piece_description(self):
         return "%s %s" % (ChunkModel._get_status_piece_description(self), self.get_status_for_gui().get_current_piece_description())
 
+    def get_attribute_for_submodel(self, name, config):
+        values = self.model_interaction.interaction_dataset.compute_variables(name, dataset_pool=self.dataset_pool)
+        return values[self.observations_mapping[config['submodel']],:]
        
 class ModelInteraction:
     """ This class handles all the work that involves the interaction dataset of the Choice model."""
@@ -933,6 +937,9 @@ class ModelInteraction:
     def get_specified_coefficients(self):
         return self.specified_coefficients
     
+    def set_coefficients(self, coefficients):
+        self.specified_coefficients.coefficients = coefficients
+        
     def get_submodels(self):
         return self.specified_coefficients.get_submodels()
 
