@@ -89,9 +89,27 @@ class sql_storage(Storage):
             for col_name, (column, col_type) in col_data.items():
                 table_data[col_name].append(row[column])
                     
+        problem_rows = set()
+        problem_columns = []
+        for key, column in table_data.items():
+            for i in range(len(column)):
+                if column[i] == None:
+                    problem_rows.add(i)
+                    problem_columns.append(key)
+
+        len_pr = len(problem_rows)
+        len_all = len(table_data[table_data.keys()[0]])
+        good_rows = sorted(set(range(len_all)) - problem_rows)
+        if len_pr > 0:
+            logger.log_warning('%s of %s rows ignored in %s (%s%% successful) '
+                               'due to NULL values in columns %s' 
+                               % (len_pr, len_all, table_name, 1-len_pr/len_all, problem_columns))
+        else:
+            logger.log_note('All rows imported successfully')
+                    
         for col_name, (column, col_type) in col_data.items():
             try:
-                table_data[col_name] = array(table_data[col_name], dtype=col_type)
+                table_data[col_name] = array(array(table_data[col_name])[good_rows], dtype=col_type)
             except:
                 logger.log_error("Error occurred when exporting column %s; it may be caused by NULL values." % col_name)
                 raise
