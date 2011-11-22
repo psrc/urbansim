@@ -13,14 +13,13 @@ from opus_core.singleton import Singleton
 from opus_core.strings import indent_text
 
 
-# Current code only supports memory logging on Windows with pywin32 Python package.
+# Current code supports portable memory logging with psutil Python package.
 _can_get_memory_usage = False
-#if sys.platform == 'win32':
-#    try:
-#        from opus_core.winprocess import WinProcess
-#        _can_get_memory_usage = True
-#    except ImportError:
-#        pass
+try:
+    import psutil
+    _can_get_memory_usage = True
+except ImportError:
+    pass
 
 class _Logger(Singleton):
     """
@@ -182,7 +181,7 @@ class _Logger(Singleton):
         All logger messages until the next call to end_block() will
         be indented to show that they are contained in this block.
         """
-        start_memory = 0#self._start_log_memory()
+        start_memory = self._start_log_memory()
         if self._should_log(tags, verbosity_level):    
             if (verbose):
                 self._start_block_msg = name + ": started on " + time.ctime()
@@ -210,14 +209,14 @@ class _Logger(Singleton):
         """
         name, start_time, start_memory, tags, verbosity_level = self._block_stack.pop()
         end_time = time.time()
-        end_memory = (0,0)#self._end_log_memory()
+        end_memory = self._end_log_memory()
         elapsed_time = end_time - start_time
         if self._should_log(tags, verbosity_level):
             elapsed_time_as_string = self._convert_seconds_to_human_readable_string(elapsed_time)
             msg = elapsed_time_as_string
-#            if self._is_logging_memory:
-#                msg += ", total %s KB, up %s KB" % (end_memory,
-#                                                   (end_memory - start_memory))
+            if self._is_logging_memory:
+                msg += ", total %s, up %s" % (self._convert_memory_to_human_readable_string(end_memory),
+                                              self._convert_memory_to_human_readable_string(end_memory - start_memory))
             self._current_level -= 1
             if not self._has_indent:
                 self._has_indent = True
@@ -227,12 +226,10 @@ class _Logger(Singleton):
                     self._writeln(self._uniform_width(name + ": completed", msg))
                 else:
                     self._writeln(name)
-#        if self._is_logging_memory:
-#            self._last_end_block_result = {"elapsed_time":elapsed_time, 
-#                                           "start_memory":start_memory, 
-#                                           "end_memory":end_memory}
-#        else:
         self._last_end_block_result = {"elapsed_time":elapsed_time}
+        if self._is_logging_memory:
+            self._last_end_block_result.update({"start_memory": start_memory,
+                                                "end_memory": end_memory})
         return self._last_end_block_result
 
     
@@ -262,19 +259,19 @@ class _Logger(Singleton):
             collect()
             end_mem = self.memory_info()
             return end_mem
-        return 0, 0
+        return 0
         
     def memory_info(self):
-        meminfo = WinProcess().current_process_memory_info()
-        if meminfo != None and type(meminfo) == type((1,2)) and len(meminfo) >= 2:
+        p = psutil.Process(os.getpid())
+        meminfo = p.get_memory_info() #returns (resident set size, virtual memory size)
+        if meminfo != None and len(meminfo) == 2:
             return meminfo[1]
         return 0
     
     def enable_memory_logging(self):
         """Log memory usage for each logger 'block', if memory logging is supported
         on this computer."""
-        #self._is_logging_memory = _can_get_memory_usage
-        self._is_logging_memory = False
+        self._is_logging_memory = _can_get_memory_usage
         
     def can_get_memory_usage(self):
         return _can_get_memory_usage
@@ -379,6 +376,13 @@ class _Logger(Singleton):
             s = str(days) + " days, " + s
         return s
         
+    @staticmethod
+    def _convert_memory_to_human_readable_string(memory):
+        memory_kb = memory / 1024
+        memory_mb = memory_kb / 1024.0
+        memory_mb_rounded = round(memory_mb, 1)
+        return '%s MB' % memory_mb_rounded
+        
     def _uniform_width(self, lhs, rhs):
         num_dots = max(3,
                        (self._output_width - len(lhs) - len(rhs) - self._current_level*4))
@@ -449,7 +453,7 @@ class LoggerTests(opus_unittest.OpusTestCase):
         time.sleep(1)
         logger.end_block()
         
-    def skip_test_memory_logging(self):
+    def test_memory_logging(self):
         logger.start_block('A')
         logger.enable_memory_logging()
         logger.start_block('B')
