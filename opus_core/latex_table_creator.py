@@ -20,7 +20,7 @@ class LatexTableCreator(object):
         latex.save_specification_table_to_tex_file(spec_table, os.path.join(dir, hyphenated_model_name + '-specification.tex'),
                                                    label=label, caption=caption                                      )
     
-    def create_latex_table_for_coefficients_for_model(self, coefficients, model_name, dir):
+    def create_latex_table_for_coefficients_for_model(self, coefficients, model_name, dir, other_info_keys = None):
         """Write this model's coefficients to a LaTeX table in directory dir.
         Table is named as <model_name>_coefficients.tex.
         """
@@ -31,4 +31,4 @@ class LatexTableCreator(object):
         label = 'table:%s-coefficients' % hyphenated_model_name
         caption = '%s Coefficients' % model_name.replace('_', ' ').title()
         coefficients.make_tex_table(os.path.join(dir, hyphenated_model_name + '-coefficients'),
-                                    label=label, caption=caption)
+                                    other_info_keys=other_info_keys, label=label, caption=caption)

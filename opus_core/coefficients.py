@@ -300,7 +300,7 @@ class Coefficients(object):
     def make_tex_table(self, table_name, path='.', header_submodel='Submodel',
                        header_coef_name='Coefficient Name',
                        header_value='Estimate', header_se='Standard Error', other_headers={},
-                       label=None, caption=None):
+                       other_info_keys = None, label=None, caption=None):
         """Create a TeX file with two tables: coefficient table and a table with additional
         information about the coefficients.
         'table_name' is the file name without '.tex'. 'path' specifies directory for the file.
@@ -377,7 +377,9 @@ class Coefficients(object):
         tex_file.write('\n')
         if self.other_info.keys():
             # Table with additional info
-            ncol = len(self.other_info[self.other_info.keys()[0]].keys())
+            if other_info_keys is None:
+                other_info_keys = self.other_info[self.other_info.keys()[0]].keys()
+            ncol = len(other_info_keys)
             tex_file.write('\n')
             #tex_file.write('~\\\\ \n')
             tex_file.write(r"\begin{longtable}{")
@@ -386,7 +388,7 @@ class Coefficients(object):
             tex_file.write(r'\hline')
             tex_file.write('\n')
             header = r"Submodel "
-            for info in self.other_info[self.other_info.keys()[0]].keys():
+            for info in other_info_keys:
                 if info in other_headers.keys():
                     info_header = other_headers[info]
                 else:
@@ -398,7 +400,7 @@ class Coefficients(object):
             for submodel in unique(self.get_submodels()):
                 tex_file.write('\n')
                 tex_file.write('%s' % submodel)
-                for info in self.other_info[self.other_info.keys()[0]].keys():
+                for info in other_info_keys:
                     value = self.other_info[submodel][info]
                     if(len(string.split("%s"%value,".")) == 1 or float(string.split("%s"%value,".")[1]) == 0):
                         tex_file.write("& $ %i $" % value)

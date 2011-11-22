@@ -414,11 +414,12 @@ class ModelExplorer(object):
                 idx[pos]=0
         plot_barchart(values[eqidx, idx], labels = names[eqidx, idx], errors=sd[eqidx, idx])
         
-    def create_latex_tables(self, directory):
+    def create_latex_tables(self, directory, other_info_keys=None):
         from opus_core.latex_table_creator import LatexTableCreator
         LTC = LatexTableCreator()
         LTC.create_latex_table_for_coefficients_for_model(
-            self.get_model().get_specified_coefficients().coefficients, self.explored_model, directory)
+            self.get_model().get_specified_coefficients().coefficients, self.explored_model, directory, 
+                                other_info_keys=other_info_keys)
         LTC.create_latex_table_for_specifications_for_model(
             self.get_model().get_specified_coefficients().specification, self.explored_model, directory)
 
