@@ -193,7 +193,7 @@ class _Logger(Singleton):
             self._has_indent = False
             
         start_time = time.time()  
-        self._block_stack.append((name, start_time, start_memory, tags, verbosity_level))       
+        self._block_stack.append((name, start_time, start_memory, tags, verbosity_level, self._show_exact_time, self._is_logging_memory))
         
     def end_block(self, verbose=True):
         """
@@ -208,7 +208,7 @@ class _Logger(Singleton):
         
         If verbose=True, print a "completed" message, too.
         """
-        name, start_time, start_memory, tags, verbosity_level = self._block_stack.pop()
+        name, start_time, start_memory, tags, verbosity_level, self._show_exact_time, self._is_logging_memory = self._block_stack.pop()
         end_time = time.time()
         end_memory = self._end_log_memory()
         elapsed_time = end_time - start_time
@@ -459,8 +459,13 @@ class LoggerTests(opus_unittest.OpusTestCase):
         
     def test_timing(self):
         logger.start_block('Timing test')
+        logger.enable_exact_time()
+        self.assert_(logger._show_exact_time)
+        logger.start_block('Timing test with exact time')
         time.sleep(1)
         logger.end_block()
+        logger.end_block()
+        self.assert_(not logger._show_exact_time)
         
     def test_memory_logging(self):
         logger.start_block('A')
