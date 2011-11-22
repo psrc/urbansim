@@ -20,10 +20,12 @@ class EstimationProcedure(ModelComponent):
     def estimate_dcm(self, data):
         assert StandardError, "Method not implemented. It is a responsibility of the child class."
         
+    def _get_dcm_likelihood(self, p, depm):
+        return (depm*log(p)).sum()
+    
     def dcm_loglikelihood(self, data, b, depm):
         self.upc_sequence.compute_utilities(data, b, self.resources)
         p = self.upc_sequence.compute_probabilities(self.resources)
         #assure that we can get log from p (replace 0 by minimum  value for 0)
         p[where(p==0)] = self.minimum_probability
-        ll = (depm*log(p)).sum()
-        return ll
+        return self._get_dcm_likelihood(p, depm)

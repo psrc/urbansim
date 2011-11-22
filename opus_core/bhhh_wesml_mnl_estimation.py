@@ -24,11 +24,8 @@ class bhhh_wesml_mnl_estimation(bhhh_mnl_estimation):
         "wesml_sampling_correction_variable" entry.
         """
         model = resources.get("_model_")
-        self.wesml_weights = model.choice_set.compute_variables([resources.get("wesml_sampling_correction_variable")], 
-                                           dataset_pool=model.dataset_pool)
-        self.wesml_weights = self.wesml_weights[resources.get("index")]
-        weighted_data = data*reshape(self.wesml_weights, (data.shape[0], data.shape[1], 1))
-        return bhhh_mnl_estimation.run(self, weighted_data, upc_sequence, resources)
+        self.wesml_weights = model.get_attribute_for_submodel(resources.get("wesml_sampling_correction_variable"), resources)
+        return bhhh_mnl_estimation.run(self, data, upc_sequence, resources)
 
     def mnl_gradient(self, data, b, depm, index_of_not_fixed_values):
         """Like mnl_gradient in bhhh, but it keeps the value of the derivative before summing, in order to 
@@ -50,3 +47,5 @@ class bhhh_wesml_mnl_estimation(bhhh_mnl_estimation):
         weighted_hessian = dot(transpose(weighted_derivative), self.non_weighted_derivative.sum(axis=1))
         return dot(dot(hessian,weighted_hessian),hessian)
         
+    def _get_dcm_likelihood(self, p, depm):
+        return (depm*self.wesml_weights*log(p)).sum()
