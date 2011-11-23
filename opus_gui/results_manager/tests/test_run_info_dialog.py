@@ -18,13 +18,3 @@ class TestGetRunInfo(OpusGUITestCase):
                            w.lblCache_directory.text: '/sample/path' }
         for func, value in expected_values.items():
             self.assertEqual(str(func()), value)
-
-    def test_changed_dir(self):
-        run_node = etree.fromstring(self.get_data_from_test_files('sample_run.xml', __file__))
-        w = GetRunInfo(run_node)
-        w.on_buttonBox_accepted()
-        self.assert_(w.changed_chache_dir is None)
-        new_cache_dir = 'this is not the same as the original'
-        w.lblCache_directory.setText(new_cache_dir)
-        w.on_buttonBox_accepted()
-        self.assert_(w.changed_chache_dir == new_cache_dir)

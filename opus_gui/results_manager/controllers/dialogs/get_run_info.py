@@ -17,15 +17,20 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
         self.changed_cache_dir = None
         
         run_name = run_node.get('name')
-        #this is to work around that results_manager_functions.add_simulation_run function
-        #isn't able to update existing runs, for example, in case a run being restarted
-        project = get_manager_instance('results_manager').project
-        start_year, end_year = get_years_range_for_simulation_run(project, 
-                                                                  run_node=self.run_node)
-        
-        #fill in existing values...
-        #start_year = run_node.find('start_year').text
-        #end_year = run_node.find('end_year').text
+
+        # We don't have a results manager in the unit tests
+        results_manager = get_manager_instance('results_manager')
+        if results_manager is not None:
+            #this is to work around that results_manager_functions.add_simulation_run function
+            #isn't able to update existing runs, for example, in case a run being restarted
+            project = results_manager.project
+            start_year, end_year = get_years_range_for_simulation_run(project, 
+                                                                      run_node=self.run_node)
+        else:
+            # fallback, fill in existing values...
+            start_year = run_node.find('start_year').text
+            end_year = run_node.find('end_year').text
+            
         scenario_name = run_node.find('scenario_name').text
         cache_directory = run_node.find('cache_directory').text
         self.original_cache_dir = cache_directory.strip()
