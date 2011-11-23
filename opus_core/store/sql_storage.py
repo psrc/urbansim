@@ -14,6 +14,7 @@ from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
 from opus_core.database_management.engine_handlers.postgres import PGGeometry
 import re
+import itertools
 
 class sql_storage(Storage):
     def __init__(self,  
@@ -99,17 +100,29 @@ class sql_storage(Storage):
 
         len_pr = len(problem_rows)
         len_all = len(table_data[table_data.keys()[0]])
-        good_rows = sorted(set(range(len_all)) - problem_rows)
         if len_pr > 0:
             logger.log_warning('%s of %s rows ignored in %s (%s%% successful) '
                                'due to NULL values in columns %s' 
                                % (len_pr, len_all, table_name, 1-len_pr/len_all, problem_columns))
+            row_selector = [(i not in problem_rows) for i in range(len_all)]
         else:
             logger.log_note('All rows imported successfully')
+            row_selector = None
+            
+        # row_selector is an array of Booleans that denotes for each row
+        # if it can be loaded
                     
         for col_name, (column, col_type) in col_data.items():
             try:
-                table_data[col_name] = array(array(table_data[col_name])[good_rows], dtype=col_type)
+                clean_column_data = table_data[col_name]
+                if row_selector is not None:
+                    # select only those rows that can be loaded (as determined before)
+                    clean_column_data = itertools.compress(clean_column_data,
+                                                           row_selector)
+                    
+                clean_column_data = list(clean_column_data)
+                    
+                table_data[col_name] = array(clean_column_data, dtype=col_type)
             except:
                 logger.log_error("Error occurred when exporting column %s; it may be caused by NULL values." % col_name)
                 raise
@@ -637,6 +650,39 @@ else:
                         'd': array([4], dtype='i'),
                         'e': array([5.5], dtype='f'),
                         'f': array(['6'], dtype='S'),
+                        }
+                    
+                    actual_data = storage.load_table('bar')
+                    
+                    self.assertDictsEqual(expected_data, actual_data)
+                except:
+                    db.drop_table('bar')
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
+
+        def test_load_table_ignores_rows_with_null_values(self):
+            for db, server, storage in self.dbs:
+                try:
+
+                    schema = {
+                        'd': 'INTEGER',
+                        'e': 'FLOAT',
+                        'f': 'TEXT',
+                    }
+                    db.create_table_from_schema(table_name = 'bar', table_schema = schema)
+                            
+                    tbl = db.get_table('bar')        
+                    i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+                    db.execute(i)
+                    i = tbl.insert(values = {'d':7, 'e':8.75, 'f':None})
+                    db.execute(i)
+                    i = tbl.insert(values = {'d':1, 'e':2.25, 'f':"3"})
+                    db.execute(i)
+                          
+                    expected_data = {
+                        'd': array([4, 1], dtype='i'),
+                        'e': array([5.5, 2.25], dtype='f'),
+                        'f': array(['6', '3'], dtype='S'),
                         }
                     
                     actual_data = storage.load_table('bar')
