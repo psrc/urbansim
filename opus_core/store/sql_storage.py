@@ -14,7 +14,6 @@ from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
 from opus_core.database_management.engine_handlers.postgres import PGGeometry
 import re
-import itertools
 
 class sql_storage(Storage):
     def __init__(self,  
@@ -104,21 +103,16 @@ class sql_storage(Storage):
             logger.log_warning('%s of %s rows ignored in %s (%s%% successful) '
                                'due to NULL values in columns %s' 
                                % (len_pr, len_all, table_name, 1-len_pr/len_all, problem_columns))
-            row_selector = [(i not in problem_rows) for i in range(len_all)]
         else:
             logger.log_note('All rows imported successfully')
-            row_selector = None
             
-        # row_selector is an array of Booleans that denotes for each row
-        # if it can be loaded
-                    
         for col_name, (column, col_type) in col_data.items():
             try:
                 clean_column_data = table_data[col_name]
-                if row_selector is not None:
+                if len_pr > 0:
                     # select only those rows that can be loaded (as determined before)
-                    clean_column_data = itertools.compress(clean_column_data,
-                                                           row_selector)
+                    clean_column_data = [x for (r, x) in enumerate(clean_column_data)
+                                         if r not in problem_rows]
                     
                 clean_column_data = list(clean_column_data)
                     
