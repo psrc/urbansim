@@ -256,11 +256,11 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         try:
             exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.module_name)
             exec exec_stmt
-            help = QString(opusHelp())
-            self.toolhelpEdit.insertPlainText(help)
-        except Exception, e:
-            help = 'could not find opusHelp function in tool module'
-            self.toolhelpEdit.insertPlainText(help)
+            help_ = QString(opusHelp()) #@UndefinedVariable
+        except Exception:
+            help_ = 'could not find opusHelp function in tool module'
+        finally:
+            self.toolhelpEdit.insertPlainText(help_)
 
     @pyqtSlot()
     def on_pbnSelect_clicked(self,typeName,line):
