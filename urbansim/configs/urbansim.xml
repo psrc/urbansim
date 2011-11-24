@@ -698,6 +698,7 @@
             <param name="table_name" param_type="string" required="True">ALL</param>
             <param name="opus_data_directory" param_type="dir_path" required="True"/>
             <param name="opus_data_year" param_type="string" required="True"/>
+            <param name="overwrite" param_type="boolean" required="True">False</param>
           </params>
         </tool>
         <tool name="esri_data_to_opus_tool">
