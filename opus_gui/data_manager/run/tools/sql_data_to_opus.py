@@ -25,7 +25,7 @@ def opusRun(progressCB,logCB,params):
     database_name = params_dict['database_name']
     table_name = params_dict['table_name']
     database_server_connection = params_dict['database_server_connection']
-    overwrite = (params_dict['overwrite'].lower() == 'true')
+    overwrite = params_dict['overwrite']
     
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
     server = DatabaseServer(database_server_configuration = dbs_config)

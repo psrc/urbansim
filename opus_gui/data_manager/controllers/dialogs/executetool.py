@@ -99,7 +99,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             if type(self.test_line[i]) == QComboBox:
                 param_value = str(self.test_line[i].currentText())
             elif type(self.test_line[i]) == QCheckBox:
-                param_value = str(self.test_line[i].isChecked())
+                param_value = self.test_line[i].isChecked()
             else:
                 param_value = str(self.test_line[i].text())
             type_value = self.test_text_type[i].text().remove(QRegExp("[\(\)]"))
