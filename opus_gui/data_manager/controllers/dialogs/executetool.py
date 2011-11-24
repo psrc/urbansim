@@ -112,12 +112,14 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def on_saveBack_clicked(self):
         params = self.get_params()
         param_nodes = self.tool_node.find('params')
-        if param_nodes.get('inherited') != None:
-            self.model.project.make_local(param_nodes)
         for param_node in param_nodes.iterchildren():
-            item = self.model.item_for_node(param_node)
-            index = self.model.index_for_item(item)
-            self.model.setData(index.sibling(index.row(),1), QVariant(params[param_node.get('name')]), Qt.EditRole)
+            old_text = self.model._get_node_text(param_node)
+            new_text = str(params[param_node.get('name')])
+            if old_text != new_text:
+                item = self.model.item_for_node(param_node)
+                index = self.model.index_for_item(item)
+                self.model.project.make_local(param_node)
+                self.model.setData(index.sibling(index.row(),1), QVariant(new_text), Qt.EditRole)
         
     @pyqtSlot()
     def on_execTool_clicked(self):
