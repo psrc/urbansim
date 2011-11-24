@@ -90,19 +90,24 @@ class sql_storage(Storage):
                 table_data[col_name].append(row[column])
                     
         problem_rows = set()
-        problem_columns = []
+        problem_columns = set()
         for key, column in table_data.items():
             for i in range(len(column)):
                 if column[i] == None:
                     problem_rows.add(i)
-                    problem_columns.append(key)
+                    problem_columns.add(key)
 
         len_pr = len(problem_rows)
         len_all = len(table_data[table_data.keys()[0]])
         if len_pr > 0:
+            rate_failed = float(len_pr) / len_all
+            rate_succeeded = 1.0 - rate_failed
+            percentage_succeeded = round(100.0 * rate_succeeded, 2)
             logger.log_warning('%s of %s rows ignored in %s (%s%% successful) '
-                               'due to NULL values in columns %s' 
-                               % (len_pr, len_all, table_name, 1-len_pr/len_all, problem_columns))
+                               'due to NULL values in column(s) "%s"' 
+                               % (len_pr, len_all, table_name,
+                                   percentage_succeeded,
+                                   '", "'.join(sorted(list(problem_columns)))))
         else:
             logger.log_note('All rows imported successfully')
             
