@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 
-from opus_core.model import Model
+from opus_core.models.model import Model
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.logger import logger
 from numpy import where, ones, zeros, logical_and, clip, round_

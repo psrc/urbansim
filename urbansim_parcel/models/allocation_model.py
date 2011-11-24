@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.allocation_model import AllocationModel as AM
+from opus_core.models.allocation_model import AllocationModel as AM
 from opus_core.store.excel_document import ExcelDocument
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_factory import DatasetFactory

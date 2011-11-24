@@ -8,10 +8,10 @@ from numpy import where,reshape
 from numpy import concatenate,logical_and, ones, any, arange, repeat
 from numpy import array, ma
 from opus_core.ndimage import standard_deviation
-from numpy.mlab import mean,median,min
+from numpy import mean,median,min
 from opus_core.variables.variable import ln
 from opus_core.bhhh_mnl_estimation import bhhh_mnl_estimation
-from opus_core.upc_factory import UPCFactory
+from opus_core.upc.upc_factory import UPCFactory
 from opus_core.estimation_procedure import EstimationProcedure
 
 class constrain_estimation_bhhh(EstimationProcedure):
