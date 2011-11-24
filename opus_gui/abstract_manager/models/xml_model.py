@@ -191,7 +191,10 @@ class XmlModel(QAbstractItemModel):
                     inheritance = 'Inherited value from file: %s' % node.get('inherited')
                 elif self.project.is_shadowing(node):
                     prototype_node = self.project.get_prototype_node(node)
-                    inheritance = 'Original value defined in file: %s' % prototype_node.get('inherited')
+                    shadowing_value = self._get_node_text(prototype_node)
+                    if shadowing_value:
+                        inheritance += 'Shadowing value: %s\n' % shadowing_value
+                    inheritance += 'Original value defined in file: %s' % prototype_node.get('inherited')
                 else:
                     inheritance = 'Value is defined in this file.'
                 text = 'Name: %s\n%s%s' % (self._get_node_name(node), value, inheritance)
