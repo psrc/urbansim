@@ -2,6 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+'''
 from repm_estimation_config import repm_configuration as repm_gridcell_config
 from estimation_zone_config import run_configuration as config
 from opus_core.configuration import Configuration
@@ -41,3 +42,4 @@ class repm_configuration(repm_gridcell_config):
                'vacant_land_and_building_type':{},                                    
             }
         return run_configuration
+'''
