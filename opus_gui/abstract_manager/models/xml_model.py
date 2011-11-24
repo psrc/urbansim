@@ -145,9 +145,11 @@ class XmlModel(QAbstractItemModel):
             return node.text.strip()
         return ""
 
-    def _get_item_children_text(self, item):
-        l = list(self._get_node_name(child.node) for child in item.child_items)
-        return ', '.join(l)
+    def _get_item_children_text_list(self, item, max_children=20):
+        l = list(self._get_node_name(child.node) for child in item.child_items[:max_children])
+        if len(item.child_items) > max_children:
+            l += ['...']
+        return l
 
     def data(self, index, role):
         ''' PyQt API Method -- See the PyQt documentation for a description '''
@@ -179,9 +181,10 @@ class XmlModel(QAbstractItemModel):
                 if value:
                     value = 'Value: %s\n' % value
                 else:
-                    value = self._get_item_children_text(item)
-                    if value:
-                        value = 'Children: %s\n' % value
+                    value_list = self._get_item_children_text_list(item, 5)
+                    if value_list:
+                        value = '\n    '.join([''] + value_list)
+                        value = 'Children:%s\n' % value
                 
                 inheritance = ''
                 if node.get('inherited'):
