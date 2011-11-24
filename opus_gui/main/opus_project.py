@@ -345,9 +345,7 @@ class OpusProject(object):
             return None
         if node.get('inherited') is not None:
             return node
-        if self.is_shadowing(node):
-            return copy.deepcopy(self._shadowing_nodes[node])
-        return None
+        return self.get_shadowing_node(node)
 
     def data_path(self):
         '''
