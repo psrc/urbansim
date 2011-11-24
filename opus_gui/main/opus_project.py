@@ -318,12 +318,20 @@ class OpusProject(object):
         '''
         return self.xml_config is not None
 
+    def get_shadowing_node(self, node):
+        ''' Return the inherited node that is shadowed by a node, or None if the node
+            is not shadowing an inherited value
+        @param node (Element) node to check
+        @return True if the node is shadowing an inherited value, otherwise False
+        '''
+        return self._shadowing_nodes.get(node, None)
+
     def is_shadowing(self, node):
         ''' Check if a node is shadowing an inherited value
         @param node (Element) node to check
         @return True if the node is shadowing an inherited value, otherwise False
         '''
-        return node in self._shadowing_nodes
+        return True if self.get_shadowing_node(node) is not None else False
 
     def get_prototype_node(self, node):
         '''
