@@ -32,6 +32,8 @@ class ModelExplorer(object):
             config = Configuration(configuration)
             
         self.scenario_models = config['models']
+        if config.get('models_in_year', None) is not None and config['models_in_year'].get(year, None) is not None:
+            del config['models_in_year'][year]
         if model is not None:
             dependent_models = config['models_configuration'][model]['controller'].get('dependencies', [])
             config['models'] = dependent_models
