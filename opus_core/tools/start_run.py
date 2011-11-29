@@ -29,7 +29,7 @@ class StartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--years-to-cache", dest="years_to_cache", default=None, 
                                 help="List of years of data to take from the directory-to-cache (default is all years).")                   
         self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False, 
-                                help="Determines if multiple processes may be used.")
+                                action="store_true", help="Determines if multiple processes may be used.")
         self.parser.add_option("-p", "--profile", dest="profile_filename", default=None, 
                                 help="Turn on code profiling. Output data are in python hotshot format.")
         
