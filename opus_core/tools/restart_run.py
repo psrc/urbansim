@@ -23,7 +23,8 @@ class RestartRunOptionGroup(GenericOptionGroup):
                                 help="Skip removing year caches for this and future years.")
         self.parser.add_option("--end-year", dest="end_year", default=None, 
                                 help="end_year of the run to be restarted.")
-        self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False, 
+        self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False,
+                               action="store_true",  
                                 help="Determines if multiple processes may be used.")
                                 
 if __name__ == "__main__":
