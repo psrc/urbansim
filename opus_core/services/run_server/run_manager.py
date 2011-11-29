@@ -201,7 +201,6 @@ class RunManager(AbstractService):
 
             base_year = run_resources['base_year']
 
-            model_system.run_multiprocess(run_resources)
             if 'run_in_same_process' in run_resources and run_resources['run_in_same_process']:
                 model_system.run_in_same_process(run_resources)
             elif run_as_multiprocess:
