@@ -143,7 +143,7 @@ class RunManager(AbstractService):
                     end_year=None,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
-                    skip_cache_cleanup=False):
+                    skip_cache_cleanup=False, run_as_multiprocess=True, run_in_background=False):
         """Restart the specified run."""
 
         if project_name:
@@ -168,8 +168,8 @@ class RunManager(AbstractService):
             if os.path.isdir(run_resources['cache_directory']) and not os.path.exists(run_resources['cache_directory']):
                 raise StandardError("cache directory doesn't exist: '%s'" % run_resources['cache_directory'])
 
-            model_system = run_resources.get('model_system', None)
-            if model_system is None:
+            model_system_class_path = run_resources.get('model_system', None)
+            if model_system_class_path is None:
                 raise TypeError, ("The configuration must specify model_system, the"
                     " full Opus path to the model system to be used.")
 
@@ -191,7 +191,7 @@ class RunManager(AbstractService):
             run_resources["skip_urbansim"] = skip_urbansim
             self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0], run_name = run_name)
 
-            exec('from %s import ModelSystem' % model_system)
+            exec('from %s import ModelSystem' % model_system_class_path)
 
             # add years run
             model_system = ModelSystem()
@@ -202,6 +202,14 @@ class RunManager(AbstractService):
             base_year = run_resources['base_year']
 
             model_system.run_multiprocess(run_resources)
+            if 'run_in_same_process' in run_resources and run_resources['run_in_same_process']:
+                model_system.run_in_same_process(run_resources)
+            elif run_as_multiprocess:
+                model_system.run_multiprocess(run_resources)
+            else:
+                model_system.run_in_one_process(run_resources, 
+                                                run_in_background=run_in_background, 
+                                                class_path=model_system_class_path)
         except:
             self.add_row_to_history(run_id, run_resources, "failed", run_name = run_name)
             raise

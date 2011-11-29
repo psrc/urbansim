@@ -23,6 +23,8 @@ class RestartRunOptionGroup(GenericOptionGroup):
                                 help="Skip removing year caches for this and future years.")
         self.parser.add_option("--end-year", dest="end_year", default=None, 
                                 help="end_year of the run to be restarted.")
+        self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False, 
+                                help="Determines if multiple processes may be used.")
                                 
 if __name__ == "__main__":
     option_group = RestartRunOptionGroup()
@@ -30,7 +32,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     run_manager = RunManager(option_group.get_services_database_configuration(options))
-
+    run_as_multiprocess = not options.run_as_single_process
+    
     if len(args) < 2:
         parser.print_help()
     else:
@@ -42,5 +45,7 @@ if __name__ == "__main__":
                                 end_year=end_year,
                                 skip_urbansim=options.skip_urbansim,
                                 create_baseyear_cache_if_not_exists=options.create_baseyear_cache_if_not_exists,
-                                skip_cache_cleanup=options.skip_cache_cleanup)
+                                skip_cache_cleanup=options.skip_cache_cleanup,
+                                run_as_multiprocess=run_as_multiprocess
+                                )
                                   
