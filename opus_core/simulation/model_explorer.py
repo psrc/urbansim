@@ -103,7 +103,7 @@ class ModelExplorer(object):
         ds = self.model_system.run_year_namespace.get(dataset_name, None)
         if ds is None:
             if dataset_name not in self.model_system.run_year_namespace["datasets"].keys():
-                ds = self.get_dataset_pool().get_dataset('dataset_name')
+                ds = self.get_dataset_pool().get_dataset(dataset_name)
             else:
                 ds = self.model_system.run_year_namespace["datasets"][dataset_name]
         return ds
