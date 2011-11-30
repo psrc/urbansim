@@ -3,8 +3,8 @@
 # See project SustainCity
 
 aliases = [        
-           'is_untaken_non_home_based_job = numpy.logical_and(job.number_of_agents(person)==0)' #variation of urbansim_parcel
-
+           "is_untaken_non_home_based_job = numpy.logical_and(job.number_of_agents(person)==0)", #variation of urbansim_parcel
+           "building_type = job.disaggregate(building.building_type_id)"
    #copy of urbansim_parcel       
   # "zone_id = job.disaggregate(urbansim_parcel.building.zone_id)",
   # "parcel_id = job.disaggregate(building.parcel_id)",
