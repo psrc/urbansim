@@ -4,7 +4,7 @@
 
 import os
 
-from lxml.etree import ElementTree
+from lxml.etree import ElementTree, SubElement
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QSplashScreen, QPixmap
 
@@ -22,6 +22,8 @@ class OpusGuiConfiguration(object):
                       'general': 10}
         self.load_latest_on_start = False
         self.latest_project_filename = ''
+        self.load_latest_tab_on_start = True
+        self.latest_tab_index = ''
 
     def load(self, filename = None, create_if_missing = True):
         '''
@@ -108,6 +110,12 @@ class OpusGuiConfiguration(object):
         node = root.find('project_history/open_latest_project_on_start')
         if node is not None:
             self.load_latest_on_start = (node.text == "True")
+        node = root.find('project_history/previous_tab')
+        if node is not None:
+            self.latest_tab_index = node.text
+        node = root.find('project_history/open_latest_tab_on_start')
+        if node is not None:
+            self.load_latest_tab_on_start = (node.text == "True")
 
     def save(self):
         ''' Save the GUI configuration file to disk'''
@@ -128,10 +136,18 @@ class OpusGuiConfiguration(object):
         proj_hist_node = self.xml_node.find('project_history')
         open_latest_node = proj_hist_node.find('open_latest_project_on_start')
         prevproj_node = proj_hist_node.find('previous_project')
+        open_latest_tab_node = proj_hist_node.find('open_latest_tab_on_start')
+        if open_latest_tab_node is None:
+            open_latest_tab_node = SubElement(proj_hist_node, 'open_latest_tab_on_start')
+        prevtab_node = proj_hist_node.find('previous_tab')
+        if prevtab_node is None:
+            prevtab_node = SubElement(proj_hist_node, 'previous_tab')
 
         # Ensure that the value is 'True' or 'False'
         open_latest_node.text = self.load_latest_on_start and 'True' or 'False'
         prevproj_node.text = self.latest_project_filename
+        open_latest_tab_node.text = self.load_latest_tab_on_start and 'True' or 'False'
+        prevtab_node.text = self.latest_tab_index
 
         # Write config to disk
         self.xml_node.write(self.xml_filename)

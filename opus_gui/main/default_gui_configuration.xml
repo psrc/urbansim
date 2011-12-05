@@ -13,5 +13,7 @@
           <project_history>
                   <open_latest_project_on_start>False</open_latest_project_on_start>
                   <previous_project> </previous_project>
+                  <open_latest_tab_on_start>False</open_latest_tab_on_start>
+                  <previous_tab/>
           </project_history>
 </gui_configuration>

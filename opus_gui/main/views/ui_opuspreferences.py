@@ -111,7 +111,12 @@ class Ui_PreferencesDialog(object):
 
         self.prevProjPrefCheckBox = QtGui.QCheckBox(self.prevProjPrefGroupBox)
         self.prevProjPrefCheckBox.setObjectName("prevProjPrefCheckBox")
+        self.prevProjPrefCheckBox.setChecked(True)
         self.gridlayout1.addWidget(self.prevProjPrefCheckBox,0,0,1,1)
+        
+        self.prevProjPrefTabCheckBox = QtGui.QCheckBox(self.prevProjPrefGroupBox)
+        self.prevProjPrefTabCheckBox.setObjectName("prevProjPrefTabCheckBox")
+        self.gridlayout1.addWidget(self.prevProjPrefTabCheckBox,1,0,1,1)
         self.vboxlayout.addWidget(self.prevProjPrefGroupBox)
 
         self.hboxlayout = QtGui.QHBoxLayout()
@@ -164,6 +169,7 @@ class Ui_PreferencesDialog(object):
         self.label.setText(QtGui.QApplication.translate("PreferencesDialog", "General Text Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.prevProjPrefGroupBox.setTitle(QtGui.QApplication.translate("PreferencesDialog", "Previous Project Preferences", None, QtGui.QApplication.UnicodeUTF8))
         self.prevProjPrefCheckBox.setText(QtGui.QApplication.translate("PreferencesDialog", "Open previous project on startup", None, QtGui.QApplication.UnicodeUTF8))
+        self.prevProjPrefTabCheckBox.setText(QtGui.QApplication.translate("PreferencesDialog", "Activate previous tab on startup", None, QtGui.QApplication.UnicodeUTF8))
         self.applyButton.setText(QtGui.QApplication.translate("PreferencesDialog", "Apply", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("PreferencesDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("PreferencesDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

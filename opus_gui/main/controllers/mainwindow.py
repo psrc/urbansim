@@ -91,7 +91,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Load the latest project file if that flag is set in GUI configuration
         if self.gui_config.load_latest_on_start:
             self.openProject(self.gui_config.latest_project_filename or '')
-
+            if self.gui_config.load_latest_tab_on_start:
+                try:
+                    self.toolBox.setCurrentIndex(int(self.gui_config.latest_tab_index))
+                except:
+                    pass
         ###T: removing these until they serve a purpose
         self.menuUtilities.removeAction(self.actPythonView)
         #self.menuUtilities.removeAction(self.actionLog_View)
@@ -432,6 +436,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             return
 
         # Save application geometry and gui configuration on shut down
+        self.gui_config.latest_tab_index = str(self.toolBox.currentIndex())
         self.gui_config.save()
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))

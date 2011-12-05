@@ -29,8 +29,20 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.generalTextFontSizeSpinBox.setValue(fonts['general'])
 
     def _initRadioButtions(self):
+        # This is to assure that stateChanged is fired if necessary,
+        # i.e. if the initial state of the check box is "unchecked".
+        # In this case, the "latest tab" check box has to be disabled,
+        # which is handled by the stateChanged handler.
+        assert(self.prevProjPrefCheckBox.isChecked())
+        
         load_on_start = self.gui_config.load_latest_on_start
         self.prevProjPrefCheckBox.setChecked(load_on_start)
+        tab_on_start = self.gui_config.load_latest_tab_on_start
+        self.prevProjPrefTabCheckBox.setChecked(tab_on_start)
+
+    @pyqtSlot(int)
+    def on_prevProjPrefCheckBox_stateChanged(self, newState):
+        self.prevProjPrefTabCheckBox.setEnabled(newState != 0)
 
     @pyqtSlot()
     def on_applyButton_clicked(self):
@@ -42,6 +54,8 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
 
         self.gui_config.load_latest_on_start = \
             self.prevProjPrefCheckBox.isChecked()
+        self.gui_config.load_latest_tab_on_start = \
+            self.prevProjPrefTabCheckBox.isChecked()
 
         self.opus_gui_window.updateFontSize()
 
