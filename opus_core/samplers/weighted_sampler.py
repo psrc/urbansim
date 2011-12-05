@@ -74,14 +74,23 @@ class weighted_sampler(Sampler):
             if weight in choice.get_known_attribute_names():
                 weight=choice.get_attribute(weight)
                 rank_of_weight = 1 
-            elif VariableName(weight).get_dataset_name() == choice.get_dataset_name():
-                weight=choice.compute_variables(weight, dataset_pool=dataset_pool)
-                rank_of_weight = 1
             else:
-                ## weights can be an interaction variable
-                interaction_dataset = InteractionDataset(local_resources)
-                weight=interaction_dataset.compute_variables(weight, dataset_pool=dataset_pool)
-                rank_of_weight = 2
+                varname = VariableName(weight)
+                if varname.get_dataset_name() == choice.get_dataset_name():
+                    weight=choice.compute_variables(weight, dataset_pool=dataset_pool)
+                    rank_of_weight = 1
+                elif varname.get_interaction_set_names() is not None:
+                    ## weights can be an interaction variable
+                    interaction_dataset = InteractionDataset(local_resources)
+                    weight=interaction_dataset.compute_variables(weight, dataset_pool=dataset_pool)
+                    rank_of_weight = 2
+                    assert(len(weight.shape) >= rank_of_weight)
+                else:
+                    err_msg = ("weight is neither a known attribute name "
+                               "nor a simple variable from the choice dataset "
+                               "nor an interaction variable: '%s'" % weight)
+                    logger.log_error(err_msg)
+                    raise ValueError, err_msg
         elif isinstance(weight, ndarray):
             rank_of_weight = weight.ndim
         elif not weight:  ## weight is None or empty string
