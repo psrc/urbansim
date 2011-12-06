@@ -21,8 +21,8 @@ class sampling_by_residence_large_area_DDD(Variable):
         vacant_this_area = (ds["vacant_residential_units"][this_area_index]>0).sum()
         result = zeros(ds.size()).astype('float32')
         if vacant-vacant_this_area > 0:
-            result[:] = 35.0/(vacant-vacant_this_area)
+            result[:] = 60.0/(vacant-vacant_this_area)
         if vacant_this_area > 0:
-            result[this_area_index] = 65.0/vacant_this_area
+            result[this_area_index] = 40.0/vacant_this_area
         return result
         
