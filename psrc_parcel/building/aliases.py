@@ -30,23 +30,22 @@ observed_shares = {
 19:0.6470,
 }
 
+share_pattern = "%s * (urbansim.building.building_type_id == %s)"
+observed_share_var = []
+sampled_share_var = []
+for k, v in observed_shares.iteritems():
+	observed_share_var.append( share_pattern % (v, k) )
+        assert k in sampled_shares
+	sampled_share_var.append( share_pattern % (sampled_shares[k], k) )
 
-
-
+observed_share_var = "observed_share=" + '+'.join(observed_share_var)
+sampled_share_var = "sampled_share=" + '+'.join(sampled_share_var)
       
-observed_share_var = "observed_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (observed_shares[observed_shares.keys()[0]],
-                                                                                                     observed_shares.keys()[0])
-sampled_share_var = "sampled_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[sampled_shares.keys()[0]],
-                                                                                                     sampled_shares.keys()[0])
-for bt in observed_shares.keys()[1:len(observed_shares.keys())]:
-    observed_share_var = observed_share_var + " + %s * (urbansim.building.building_type_id == %s)" % (observed_shares[bt], bt)
-    sampled_share_var = sampled_share_var + " + %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[bt], bt)
-                   
 aliases = [
            "dummy_id=building.building_type_id * 100 + building.disaggregate(faz.large_area_id, intermediates=[zone, parcel])",
        observed_share_var,
        sampled_share_var,
-       "wesml_sampling_correction_variable = safe_array_divide(psrc_parcel.building.observed_building_type_share, psrc_parcel.building.sampled_building_type_share)",
+       "wesml_sampling_correction_variable = safe_array_divide(psrc_parcel.building.observed_share, psrc_parcel.building.sampled_share)",
        "district_id = building.disaggregate(zone.district_id, intermediates=[parcel])",
        "city_id = building.disaggregate(parcel.city_id)",
       "number_of_home_based_jobs = building.aggregate(job.home_based_status==1)",
