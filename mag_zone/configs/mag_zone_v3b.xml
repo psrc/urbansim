@@ -233,6 +233,7 @@
             <argument name="coefficients" type="string">coefficients</argument>
             <argument name="dataset" type="string">household</argument>
             <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':12}</argument>
             <argument name="data_objects" type="string">datasets</argument>
           </run>
           <prepare_for_run type="dictionary">
@@ -282,6 +283,48 @@
             </variable_list>
           </submodel>
         </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="zeroworker_income_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.zeroworker_income_model</class_module>
+            <class_name type="string">ZeroworkerIncomeModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ZeroworkerIncomeModel</name>
+            <argument name="regression_procedure" parser_action="quote_string" type="string">opus_core.linear_regression</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
+            <argument convert_blank_to_none="True" name="run_config" type="string"/>
+            <argument convert_blank_to_none="True" name="estimate_config" type="string"/>
+            <argument name="debuglevel" type="integer">0</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="dataset" type="string">household</argument>
+            <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':12}</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument convert_blank_to_none="True" name="dataset" type="string"/>
+            <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">zeroworker_income_model_specification</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">zeroworker_income_model_coefficients</argument>
+            <argument name="cache_storage" type="string">base_cache_storage</argument>
+            <argument name="sample_coefficients" type="boolean">False</argument>
+            <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+            <argument name="multiplicator" type="integer">1</argument>
+            <output name="output" type="string">(specification, coefficients, rm_index)</output>
+          </prepare_for_run>
+        </structure>
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
@@ -457,6 +500,55 @@
           </prepare_for_run>
           <run type="dictionary">
             <output name="output" type="string">breakup_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="child_leaving_home_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.child_leaving_home_model</class_module>
+            <class_name>ChildLeavingHomeModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">urbansim.child_leaving_home_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">ChildLeavingHomeModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_child_leaving_home_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">child_leaving_home_index</output>
+            <argument name="resources" type="string">mem_resources</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="roommate_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>mag_zone.models.roommate_model</class_module>
+            <class_name>RoommateModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">RoommateModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mem_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
             <argument name="resources" type="string">mem_resources</argument>
             <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
             <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
@@ -952,18 +1044,20 @@
         <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
         </selectable>
         <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
-        <selectable return_value="aging_model" type="selectable" name="aging_model_1">False</selectable>
-        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">False</selectable>
-        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">False</selectable>
+        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
+        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
+        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
         <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
-        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">False</selectable>
-        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">False</selectable>
-        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">False</selectable>
-        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">False</selectable>
-        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">False</selectable>
-        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">False</selectable>
-        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">False</selectable>
-        <selectable return_value="income_regression_model2" type="selectable" name="income_regression_model2_1">False</selectable>
+        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
+        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
+        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
+        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
+        <selectable return_value="child_leaving_home_model" type="selectable" name="breakup_model_1">True</selectable>
+        <selectable return_value="roommate_model" type="selectable" name="breakup_model_1">True</selectable>
+        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
+        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
+        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
+        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
       </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
       <base_year type="integer">2009</base_year>
