@@ -26,6 +26,26 @@
       <variable use="both" source="expression" name="household.one_eligible_worker" type="variable_definition">(household.aggregate(person.age&gt;15))==1</variable>
       <variable use="both" source="expression" name="household.two_eligible_workers" type="variable_definition">(household.aggregate(person.age&gt;15))==2</variable>
       <variable use="both" source="expression" name="household.threeplus_eligible_workers" type="variable_definition">(household.aggregate(person.age&gt;15))&gt;=3</variable>
+      <variable use="both" source="expression" name="household.inc0" type="variable_definition">(household.income &lt; 15039)</variable>
+      <variable use="both" source="expression" name="household.inc1" type="variable_definition">(household.income &gt;= 15039)*(household.income &lt; 25607)</variable>
+      <variable use="both" source="expression" name="household.inc2" type="variable_definition">(household.income &gt;= 25607)*(household.income &lt; 36411)</variable>
+      <variable use="both" source="expression" name="household.inc3" type="variable_definition">(household.income &gt;= 36411)*(household.income &lt; 48132)</variable>
+      <variable use="both" source="expression" name="household.inc4" type="variable_definition">(household.income &gt;= 48132)*(household.income &lt; 61612)</variable>
+      <variable use="both" source="expression" name="household.inc5" type="variable_definition">(household.income &gt;= 61612)*(household.income &lt; 77060)</variable>
+      <variable use="both" source="expression" name="household.inc6" type="variable_definition">(household.income &gt;= 77060)*(household.income &lt; 96034)</variable>
+      <variable use="both" source="expression" name="household.inc7" type="variable_definition">(household.income &gt;= 96034)*(household.income &lt; 122521)</variable>
+      <variable use="both" source="expression" name="household.inc8" type="variable_definition">(household.income &gt;= 122521)*(household.income &lt; 170272)</variable>
+      <variable use="both" source="expression" name="household.inc9" type="variable_definition">(household.income &gt;= 170272)</variable>
+      <variable use="both" source="expression" name="household.slope0" type="variable_definition">(household.income &lt; 15039)*(household.income)</variable>
+      <variable use="both" source="expression" name="household.slope1" type="variable_definition">(household.income &gt;= 15039)*(household.income &lt; 25607)*(household.income - 15039)</variable>
+      <variable use="both" source="expression" name="household.slope2" type="variable_definition">(household.income &gt;= 25607)*(household.income &lt; 36411)*(household.income - 25607)</variable>
+      <variable use="both" source="expression" name="household.slope3" type="variable_definition">(household.income &gt;= 36411)*(household.income &lt; 48132)*(household.income - 36411)</variable>
+      <variable use="both" source="expression" name="household.slope4" type="variable_definition">(household.income &gt;= 48132)*(household.income &lt; 61612)*(household.income - 48132)</variable>
+      <variable use="both" source="expression" name="household.slope5" type="variable_definition">(household.income &gt;= 61612)*(household.income &lt; 77060)*(household.income - 61612)</variable>
+      <variable use="both" source="expression" name="household.slope6" type="variable_definition">(household.income &gt;= 77060)*(household.income &lt; 96034)*(household.income - 77060)</variable>
+      <variable use="both" source="expression" name="household.slope7" type="variable_definition">(household.income &gt;= 96034)*(household.income &lt; 122521)*(household.income - 96034)</variable>
+      <variable use="both" source="expression" name="household.slope8" type="variable_definition">(household.income &gt;= 122521)*(household.income &lt; 170272)*(household.income - 122521)</variable>
+      <variable use="both" source="expression" name="household.slope9" type="variable_definition">(household.income &gt;= 170272)*(household.income - 170272)</variable>
       <variable use="both" source="Python class" name="building.occupied_rmf_units_col" type="variable_definition">mag_zone.building.occupied_rmf_units_col</variable>
       <variable use="both" source="Python class" name="building.occupied_rsf_units_col" type="variable_definition">mag_zone.building.occupied_rsf_units_col</variable>
       <variable use="both" source="Python class" name="building.total_rmf_units_col" type="variable_definition">mag_zone.building.total_rmf_units_col</variable>
