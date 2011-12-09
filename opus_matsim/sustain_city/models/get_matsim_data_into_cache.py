@@ -70,7 +70,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         self.init(year, config);
         
         # tnicolai: experimental -> import workplace accessibility from matsim
-        #self.get_workplace_accessibility_into_cache(year)
+        #self.get_zone_based_accessibility_into_cache(year)
         
         # import travel data from matsim
         travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )
@@ -107,7 +107,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         logger.log_status('Finished clearing.')
         
     
-    def get_workplace_accessibility_into_cache(self, year):
+    def get_zone_based_accessibility_into_cache(self, year):
         """ Copies workplace accessibility results from matsim into 
             urbansim cache
         """

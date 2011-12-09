@@ -35,7 +35,8 @@ class StartRunOptionGroup(object):
         logger.log_error("Missing name of executable scenario")
     
     config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
-    #config = XMLConfiguration( 'opus_matsim/sustain_city/configs/accra_zone_test.xml' ).get_run_configuration( 'accra_baseline' )
+    # tnicolai: debug
+    #config = XMLConfiguration( '/Users/thomas/Development/opus_home/matsim4opus/urbansim_config/seattle_parcel.xml' ).get_run_configuration( 'Seattle_baseline' )
         
     insert_auto_generated_cache_directory_if_needed(config)
      

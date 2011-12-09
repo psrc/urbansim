@@ -58,7 +58,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         """ Reads the output from the travel model and imports the fresh computed travel data attributes into the cache. 
         """
         logger.log_status('Starting GetMatsimDataIntoCache.get_travel_data...')
-        # print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, Urbansim does not truly merge them"
+        # print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, UrbanSim does not truly merge them"
         # print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
@@ -69,8 +69,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         self.init(year, config);
         
-        # tnicolai: experimental -> import workplace accessibility from matsim
-        #self.get_workplace_accessibility_into_cache(year)
+        # tnicolai: experimental -> import workplace accessibility from matsim into zone data set
+        self.get_zone_based_accessibility_into_cache(year)
         
         # import travel data from matsim
         travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )
@@ -95,7 +95,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     def clear_cache_travel_data(self, year):
         """ deleting unneeded travel data columns in cache
         """
-        logger.log_status('Cearing travel data cache ...')
+        logger.log_status('Clearing travel data cache ...')
         cache_dir = AttributeCache().get_storage_location()
         dir = os.path.join(cache_dir, str(year), self.travel_data_table_name)
         if os.path.exists(dir):
@@ -107,11 +107,11 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         logger.log_status('Finished clearing.')
         
     
-    def get_workplace_accessibility_into_cache(self, year):
-        """ Copies workplace accessibility results from matsim into 
-            urbansim cache
+    def get_zone_based_accessibility_into_cache(self, year):
+        """ imports matsim zone-based workplace accessibility results 
+            into urbansim cache
         """
-        logger.log_status('Importing workplace accessibility indicators from matsim ...')
+        logger.log_status('Importing zone-based workplace accessibility data from matsim into urbansim zones data set ...')
         
         zone_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.zone_table_name)
         
@@ -119,14 +119,14 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         existing_zone_data_set.join(zone_data_set, zone_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
         
-        logger.log_status('Writing travel data to cache ...')
+        logger.log_status('Writing zone-based workplace accessibility to cache ...')
         flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
         out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
         existing_zone_data_set.write_dataset(attributes=existing_zone_data_set.get_known_attribute_names(),
                                              out_storage=out_storage,
                                               out_table_name=self.zone_table_name)
         
-        logger.log_status('Finished importing workplace accessibility indicators.')
+        logger.log_status('Finished importing zone-based workplace accessibility.')
 
 
 # called from opus via main!      
