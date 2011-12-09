@@ -72,20 +72,13 @@ class MortalityModel(AgentRelocationModel):
         if 'children' in household_set.get_primary_attribute_names():
             children = household_set.compute_variables('_children = household.aggregate(person.age<18)')
             household_set.modify_attribute('children', children)
-
-        ##Update the household table's workers attribute to account for worker deaths
-        ##For MAG, each person's work_status is coded according to the ESR variable in the 2000 PUMS. 1: employed, at work. 2: employed with a job but not at work. 4: armed forces, at work.  5: armed forces, with a job but not at work
-        ##Note that the WIF variable in the 2000 PUMS (which is the source for the household table's workers attribute), only applies to workers in families and the variable is top-coded so that families with 3+ workers get a value 3.
-        # if 'workers' in household_set.get_primary_attribute_names():
-            # workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
-            # household_set.modify_attribute('workers', workers)
-
-        ##If the head of the household dies, assign "head of the household" status to the person with the next lowest person_id (who will often, but not always, be the next oldest).
-        ##In the base-year data, the lowest person_id in each household is always the household head.
-        ##Since the fertility model assigns person_id's in order of birth, people who are born later in the simulation will have higher person_ids.
+        ##Assign "head of the household" status
         if 'head_of_hh' in person_set.get_primary_attribute_names():
-            head_of_hh = person_set.compute_variables('_head_of_hh = (person.person_id == person.disaggregate(household.aggregate(person.person_id, function=minimum)))*1')
+            person_set.add_attribute(name='head_score', data=person_set.compute_variables('(person.age)*1.0 + 3.0*(person.education) + exp(-sqrt(sqrt(sqrt(.5*(person.person_id)))))'))
+            highest_score = person_set.compute_variables('_high_score = (person.disaggregate(household.aggregate(person.head_score, function=maximum)))*1')
+            head_of_hh = person_set.compute_variables('_head_of_hh = (person.head_score == _high_score)*1')
             person_set.modify_attribute('head_of_hh', head_of_hh)
+            person_set.delete_one_attribute('head_score')   
         ##Update the age_of_head attribute in the household table to reflect the age of new heads of the household and to reflect the aging of existing heads of household.
         if 'age_of_head' in household_set.get_primary_attribute_names():
             age_of_head = household_set.compute_variables('_age_of_head = household.aggregate(person.head_of_hh * person.age)')
