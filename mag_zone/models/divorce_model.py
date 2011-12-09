@@ -63,6 +63,11 @@ class DivorceModel(AgentRelocationModel):
 
         person_set.delete_one_attribute('divorce_seeking')
         person_set.delete_one_attribute('not_divorced') 
+        #Remove records from household_set that have no persons left
+        persons = household_set.compute_variables("%s.number_of_agents(%s)" % (hh_ds_name, person_ds_name), resources=resources)
+        index_hh0persons = where(persons==0)[0]
+        if index_hh0persons.size > 0:
+            logger.log_status("Removing %s records without %s from %s dataset" % (index_hh0persons.size, person_ds_name, hh_ds_name) )
         ##Update the household table's persons attribute
         if 'persons' in household_set.get_primary_attribute_names():
             persons = household_set.compute_variables('_persons = household.number_of_agents(person)')
@@ -72,37 +77,29 @@ class DivorceModel(AgentRelocationModel):
             children = household_set.compute_variables('_children = household.aggregate(person.age<18)')
             household_set.modify_attribute('children', children)
         ##Update the household table's workers attribute
-        ##For MAG, each person's work_status is coded according to the ESR variable in the 2000 PUMS. 1: employed, at work. 2: employed with a job but not at work. 4: armed forces, at work.  5: armed forces, with a job but not at work
-        ##Note that the WIF variable in the 2000 PUMS (which is the source for the household table's workers attribute), only applies to workers in families and the variable is top-coded so that families with 3+ workers get a value 3.
         if 'workers' in household_set.get_primary_attribute_names():
-            #workers = household_set.compute_variables('_workers = household.aggregate(person.work_status == 1) + household.aggregate(person.work_status == 2) +  household.aggregate(person.work_status == 4) + household.aggregate(person.work_status == 5)')
-            #household_set.modify_attribute('workers', workers)
             #init new household_ids with workers = -1.  To be initialized by the household workers initialization model.
             new_household_ids = household_set.compute_variables('(household.household_id > %s)' % (max_hh_id))
             initialize_workers = where(new_household_ids == 1)[0]
             if initialize_workers.size > 0:
                 household_set.modify_attribute('workers', array(initialize_workers.size*[-1]), initialize_workers)
-        ##Assign "head of the household" status to the person with the lowest person_id (who will often, but not always, be the oldest).
-        ##In the base-year data, the lowest person_id in each household is always the household head.
-        ##Since the fertility model assigns person_id's in order of birth, people who are born later in the simulation will have higher person_ids.
+        ##Assign "head of the household" status
         if 'head_of_hh' in person_set.get_primary_attribute_names():
-            head_of_hh = person_set.compute_variables('_head_of_hh = (person.person_id == person.disaggregate(household.aggregate(person.person_id, function=minimum)))*1')
+            person_set.add_attribute(name='head_score', data=person_set.compute_variables('(person.age)*1.0 + 3.0*(person.education) + exp(-sqrt(sqrt(sqrt(.5*(person.person_id)))))'))
+            highest_score = person_set.compute_variables('_high_score = (person.disaggregate(household.aggregate(person.head_score, function=maximum)))*1')
+            head_of_hh = person_set.compute_variables('_head_of_hh = (person.head_score == _high_score)*1')
             person_set.modify_attribute('head_of_hh', head_of_hh)
+            person_set.delete_one_attribute('head_score')    
         ##Update the age_of_head attribute in the household table to reflect the age of new heads of the household
         if 'age_of_head' in household_set.get_primary_attribute_names():
             age_of_head = household_set.compute_variables('_age_of_head = household.aggregate(person.head_of_hh * person.age)')
             household_set.modify_attribute('age_of_head', age_of_head)
-        ##Initialize income of households with newly-assigned household_ids (should be only 1-person male households).  Income is calculated based on worker status, education level, age.  Coefficients estimated from regression on 1-person male households in base-year data.
+        ##Initialize income of households with newly-assigned household_ids (should be only 1-person male households) as -1
         if 'income' in household_set.get_primary_attribute_names():
             new_household_ids = household_set.compute_variables('(household.household_id > %s)' % (max_hh_id))
             initialize_income = where(new_household_ids == 1)[0]
             if initialize_income.size > 0:
-                household_set.modify_attribute('income', household_set.compute_variables('(((household.workers)*24000) + ((household.aggregate(person.education, function=mean))*5590) +  ((household.aggregate(person.age, function=mean))*583) - 51957)')[initialize_income], initialize_income)
-            negative_income = household_set.compute_variables('household.income < 0')
-            index_neg_inc = where(negative_income==1)[0]
-            if index_neg_inc.size > 0:
-                household_set.modify_attribute('income', zeros(index_neg_inc.size, dtype="int32"), index_neg_inc)
-        ##TODO:  person_no in new household needs to be dealt with.  Order by age?
+                household_set.modify_attribute('income', array(initialize_income.size*[-1]), initialize_income)
 
     def pick_man_to_divorce(self, must_pick_man_to_divorce, married_man, num_married_men_in_hh, person_set, new_hh_id, new_hh_id_counter):
         for woman in must_pick_man_to_divorce:
