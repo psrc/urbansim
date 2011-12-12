@@ -126,7 +126,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         Since the stochastic test will fail every once in a while, run the whole
         test up to number_of_tries times, until either it succeeds or it fails too many times.
         """
-        for i in range(number_of_tries):
+        for j in range(number_of_tries):
             K = mean.size
             x = zeros((number_of_iterations, K), dtype=float32)
             for i in range(number_of_iterations):
@@ -140,7 +140,23 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
                 return
         # test failed more than number_of_tries times
         self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
-        
+      
+    def chi_square_test_onesided(self, function, expected_values, number_of_iterations, significance_level=0.01, number_of_tries=5):
+        """For each test, run a two-sided Chi^2 test"""
+        for j in range(number_of_tries):
+            K = expected_values.size
+            x = zeros((number_of_iterations, K), dtype=float32)
+            for i in range(number_of_iterations):
+                x[i,:]= function()
+            stat = (((x - expected_values)**2.0)/expected_values).sum()
+            prob = chisqprob(stat, K*number_of_iterations)
+            logger.log_status("Stochastic Test: Chi^2 test statistic = " + str(stat) + ", df=",
+                               str(K*number_of_iterations),", p=" + str(prob))
+            if (prob >= significance_level/2.0):
+                # test succeeded -- jump out of the method
+                return
+        # test failed more than number_of_tries times
+        self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
  
 class TestStochasticTestCase(opus_unittest.OpusTestCase):
     def setUp(self):

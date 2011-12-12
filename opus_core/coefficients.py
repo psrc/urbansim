@@ -550,8 +550,10 @@ def create_coefficient_from_specification(specification, constant=1.0):
     return Coefficients(names=names, values=values, submodels=specification.get_submodels())
 
 from opus_core.tests import opus_unittest
-from numpy import ma
-class CoefficientsTests(opus_unittest.OpusTestCase):
+from numpy import ma, ones, where
+from opus_core.tests.stochastic_test_case import StochasticTestCase
+
+class CoefficientsTests(StochasticTestCase):
     def test_make_tex_table(self):
         coef = Coefficients(names=array(["coef1", "coef2"]), values = array([0.5, 0.00001]),
                              standard_errors=array([0.02, 0.0000001]),
@@ -562,7 +564,7 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
             coef.make_tex_table(tmp_file_prefix)
         finally:
             os.remove('%s.tex' % tmp_file_prefix)
-
+        
     def test_sample_normal_coefficients(self):
         """Coefficients are sampled from N(x, sd=2*se), where x is the coefficient value and se is coefficient standard error."""
         coef_values = array([0.5, -0.00001], dtype="float32")
@@ -572,43 +574,31 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
                              standard_errors = se,
                              other_measures={"t_stat":array([2.5, 4.99999])})
 
-
-        new_coef = coef.sample_values(distribution='normal', multiplicator=multiplicator)
-        values = new_coef.get_values()
-        should_be = coef_values
-        std = multiplicator*se
-
-        for i in range(values.size):
-            self.assertEqual(ma.allclose(new_coef.get_values()[i], should_be[i], atol=3*std[i]), True)
-        # check data type
+        def run():
+            new_coef = coef.sample_values(distribution='normal', multiplicator=multiplicator)
+            return new_coef.get_values()
+        
+        self.chi_square_test_with_known_mean(run, coef_values, 4*se*se, 10, significance_level=0.05)
+        values = run()
         self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+        
+
         
     def test_sample_uniform_coefficients(self):
         """Coefficients are sampled from U(x-0.5, x+0.5), where x is the coefficient value."""
         
-        from opus_core.third_party.pstat import chisqprob
         coef_values = array([0.5, -0.00001], dtype="float32")
         coef = Coefficients(names=array(["coef1", "coef2"]), values = coef_values)
-
-        # for each coefficient run a one-sided Chi^2 test
-        expected_values = coef_values
-        TS = zeros(coef_values.size)
-        df = 9
-        significance_level = 0.05
-        for j in range(df+1):
+        def run():
             new_coef = coef.sample_values(distribution='uniform')
-            values = new_coef.get_values()
-            TS += ((values - expected_values)**2)/expected_values
-            
-        for i in range(values.size):
-            prob = chisqprob(TS[i], df)
-            if (prob < significance_level/2.0):
-                self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
- 
+            return new_coef.get_values()
+        self.chi_square_test_onesided(run, coef_values, 10, significance_level=0.05, number_of_tries=3)
+        values = run()
         # check data type
         self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
 
-    def test_sample_uniform_0_1_coefficients(self):
+         
+    def test_sample_uniform_a_b_coefficients(self):
         """ All coefficients are sampled from U(5,10). """
         
         from opus_core.third_party.pstat import chisqprob
@@ -617,19 +607,15 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
 
         # for each coefficient run a one-sided Chi^2 test
         expected_values = array([7.5, 7.5])
-        TS = zeros(coef_values.size)
-        df = 9
-        significance_level = 0.05
-        for j in range(df+1):
+        
+        def run():
             new_coef = coef.sample_values(distribution='uniform', center_around_value=False, a=5, b=10)
-            values = new_coef.get_values()
-            TS += ((values - expected_values)**2)/expected_values
+            return new_coef.get_values()
+        self.chi_square_test_onesided(run, expected_values, 10, significance_level=0.05, number_of_tries=3)
+        values = run()
+        # check data type
+        self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
             
-        for i in range(values.size):
-            prob = chisqprob(TS[i], df)
-            if (prob < significance_level/2.0):
-                self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
-                
     def test_sample_coefficients_mixed_distr(self):
         """ 2 coefficients are sampled from different distributions, one stays the same. """
         
@@ -647,23 +633,30 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
                         }
         # for coefficient 1 and 3 run a one-sided Chi^2 test
         expected_values = coef_values
-        TSU = 0
-        TSN = 0
         df = 9
         significance_level = 0.05
-        for j in range(df+1):
-            new_coef = coef.sample_values(distribution_dictionary=sampling_dict)
-            values = new_coef.get_values()
-            TSU += ((values[0] - expected_values[0])**2)/expected_values[0]
-            TSN += ((values[2] - expected_values[2])/(se[2]*10))**2
-            self.assertEqual(ma.allclose(new_coef.get_values()[1], expected_values[1]), True)
+        for k in range(3): # try this multiple times
+            TSU = 0
+            TSN = 0
+            success = ones(2, dtype='bool8')
+            for j in range(df+1):
+                new_coef = coef.sample_values(distribution_dictionary=sampling_dict)
+                values = new_coef.get_values()
+                TSU += ((values[0] - expected_values[0])**2)/expected_values[0]
+                TSN += ((values[2] - expected_values[2])/(se[2]*10))**2
+                self.assertEqual(ma.allclose(new_coef.get_values()[1], expected_values[1]), True)
             
-        prob = chisqprob(TSU, df)
-        if (prob < significance_level/2.0):
-            self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
-        prob = chisqprob(TSN, df)
-        if (prob < significance_level/2.0):
-            self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
-                
+            probU = chisqprob(TSU, df)
+            if (probU < significance_level/2.0):
+                success[0] = False          
+            probN = chisqprob(TSN, df)
+            if (probN < significance_level/2.0):
+                success[1] = False 
+            if success.sum() == 2:
+                return
+        if not success[0]:
+            self.fail(msg="prob=%f is not in [%f,%f] (uniformly distr. coefficient)" % (probU, significance_level/2.0, 1-significance_level/2.0))
+        else:
+            self.fail(msg="prob=%f is not in [%f,%f] (normally distr. coefficient)" % (probN, significance_level/2.0, 1-significance_level/2.0))        
 if __name__=="__main__":
     opus_unittest.main()
