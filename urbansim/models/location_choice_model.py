@@ -296,12 +296,13 @@ class LocationChoiceModel(ChoiceModel):
                                                   nchunks=nchunks, chunksize=chunksize)
                 
                 if len(groups)>1 or (agents_index.size > agents_index_in_group.size):
-                    index2[where_group,:] = interaction_dataset.index2
-                    for name in interaction_dataset.get_known_attribute_names():
-                        attr_val = interaction_dataset.get_attribute(name)
-                        if not attributes.has_key(name):
-                            attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
-                        attributes[name][where_group,:] = attr_val
+                    if interaction_dataset.get_reduced_m() > 0:
+                        index2[where_group,:] = interaction_dataset.index2
+                        for name in interaction_dataset.get_known_attribute_names():
+                            attr_val = interaction_dataset.get_attribute(name)
+                            if not attributes.has_key(name):
+                                attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
+                            attributes[name][where_group,:] = attr_val
 
             if interaction_dataset is None:
                 raise ValueError, "There is no agent for groups %s. " % (groups) + \
