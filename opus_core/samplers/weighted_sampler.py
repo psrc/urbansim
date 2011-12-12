@@ -122,12 +122,17 @@ class weighted_sampler(Sampler):
         
         if rank_of_weight == 1: # if weight_array is 1d, then each agent shares the same weight for choices
             replace = with_replacement           # sampling with no replacement 
-            if nonzerocounts(weight) < J:
+            non_zero_counts = nonzerocounts(weight)
+            if non_zero_counts < J:
                 logger.log_warning("weight array dosen't have enough non-zero counts, use sample with replacement")
                 replace = True
-            sampled_index = prob2dsample( index2, sample_size=(index1.size, J),
+            if non_zero_counts > 0:
+                sampled_index = prob2dsample( index2, sample_size=(index1.size, J),
                                         prob_array=prob, exclude_index=chosen_choice_index_to_index2,
                                         replace=replace, return_index=True ).astype('int32')
+            else:
+                # all alternatives have a zero weight
+                sampled_index = zeros((index1.size, 0), dtype="int32")
             #return index2[sampled_index]
 
         if rank_of_weight == 2:
