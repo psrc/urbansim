@@ -80,7 +80,6 @@ class InstallMATSim4UrbanSim(object):
         # saving download
         logger.log_status('Loading MATSim.jar ...')
         self.__write_on_disc( matsim_jar_target, content.read() )
-        logger.log_status('... MATSim.jar download done!')
         self.__rename(matsim_jar_target, os.path.join( self.target_path, 'matsim.jar' ))
         # create symbolic link or shortcut (this is not used since java can't handle windows shortcuts)
         #self.__create_symbolic_link( matsim_jar_target, 'matsim.jar' )
@@ -91,7 +90,6 @@ class InstallMATSim4UrbanSim(object):
         matsim_lib_target_tmp = os.path.join( self.temp_dir, self.html_finder.getMATSimLib() )
         # saving download
         self.__write_on_disc( matsim_lib_target_tmp, content.read() )
-        logger.log_status('... MATSim libraries download done!')
         # extract (lib) zip file
         unzip = ExtractZipFile( matsim_lib_target_tmp, self.target_path )
         unzip.extract()
@@ -106,12 +104,11 @@ class InstallMATSim4UrbanSim(object):
 
         # saving download
         self.__write_on_disc( matsim_contrib_target_tmp, content.read() )
-        logger.log_status('... MATSim4UrbanSim download done!')
         # extract contrib zip file
         unzip = ExtractZipFile( matsim_contrib_target_tmp, self.target_path )
         unzip.extract()
 
-        matsim_contrib_new_target =matsim_contrib_target_final.split('matsim4urbansim_')[0] + 'contrib'
+        matsim_contrib_new_target =matsim_contrib_target_final.split('matsim4urbansim')[0] + 'contrib'
         # rename directory
         self.__rename(matsim_contrib_target_final, matsim_contrib_new_target)
         contrib_jar = self.html_finder.getMATSimContrib().rsplit('-r')[0] + '.jar'
