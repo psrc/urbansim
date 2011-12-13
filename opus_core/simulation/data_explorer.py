@@ -12,7 +12,7 @@ class DataExplorer(object):
         self.cache_directory=cache_directory
         self.storage = StorageFactory().get_storage(storage_type, 
                         storage_location = self.cache_directory)
-        self.dataset_pool = DatasetPool(package_order=package_order, storage=self.storage)
+        self.set_dataset_pool(package_order)
         
     def get_dataset(self, dataset_name, **kwargs):
         """Return a Dataset object of the given name."""
@@ -20,6 +20,9 @@ class DataExplorer(object):
     
     def get_dataset_pool(self):
         return self.dataset_pool
+    
+    def set_dataset_pool(self, package_order=['opus_core']):
+        self.dataset_pool = DatasetPool(package_order=package_order, storage=self.storage)
     
     def compute_expression(self, attribute_name):
         """Compute any expression and return its values."""
