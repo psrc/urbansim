@@ -294,7 +294,8 @@ class LocationChoiceModel(ChoiceModel):
                                                   weights=group_sampling_weights,
                                                   config=config,
                                                   nchunks=nchunks, chunksize=chunksize)
-                
+                if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
+                    raise StandardError, "There are no locations available for the given sampling weights for group %s." % group
                 if len(groups)>1 or (agents_index.size > agents_index_in_group.size):
                     if interaction_dataset.get_reduced_m() > 0:
                         index2[where_group,:] = interaction_dataset.index2
@@ -335,6 +336,8 @@ class LocationChoiceModel(ChoiceModel):
                                                                     weights=sampling_weights,
                                                                     config=config,
                                                                     nchunks=nchunks, chunksize=chunksize)
+            if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
+                raise StandardError, "There are no locations available for the given sampling weights."
             self.update_choice_set_size(interaction_dataset.get_reduced_m())
             
 

@@ -400,8 +400,8 @@ class ChoiceModel(ChunkModel):
         return (self.coefficients, result)
 
     def create_interaction_datasets(self, agent_set, agents_index, config, **kwargs):
-        """create interaction dataset agent_x_choice without sampling of alternatives
-        config can be used to pass extra parameters to the sampler
+        """Create interaction dataset agent_x_choice.
+        config can be used to pass extra parameters to the sampler.
         """
  
         if self.sampler_class is None:
@@ -422,6 +422,8 @@ class ChoiceModel(ChunkModel):
                                                                         weights=sampling_weights,
                                                                         config=config,
                                                                         nchunks=nchunks, chunksize=chunksize)
+                if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
+                    raise StandardError, "There are no choices available for the given sampling weights."
                 self.update_choice_set_size(interaction_dataset.get_reduced_m())
                 self.model_interaction.interaction_dataset = interaction_dataset
              
