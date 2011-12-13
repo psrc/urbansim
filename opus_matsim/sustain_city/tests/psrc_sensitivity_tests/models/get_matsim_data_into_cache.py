@@ -95,8 +95,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         """ deleting unneeded travel data columns in cache
         """
         logger.log_status('Cearing travel data cache ...')
-        cache_dir = AttributeCache().get_storage_location()
-        dir = os.path.join(cache_dir, str(year), self.travel_data_table_name)
+        cache_directory = AttributeCache().get_storage_location()
+        dir = os.path.join(cache_directory, str(year), self.travel_data_table_name)
         if os.path.exists(dir):
             for file in self.delete_travel_data_columns:
                 file = os.path.join(dir, file+'.lf4')

@@ -15,9 +15,9 @@ project_name = 'psrc_parcel'
 years_arr = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
 # cupum scenarios 2030 re-estimated
-#cache_dir = r'/net/ils/nicolai3/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_53' # highway limited cap.
-cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_52' # highway
-#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_47' # ferry
+#cache_directory = r'/net/ils/nicolai3/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_53' # highway limited cap.
+cache_directory = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_52' # highway
+#cache_directory = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_4.2011_05_13_13_47' # ferry
 
 types = ['tab']
 
@@ -341,8 +341,8 @@ from opus_gui.results_manager.run.indicator_framework.maker.source_data import S
 print "creating result template ..."
 
 result_template = SourceData(
-   cache_directory = cache_dir,
-   comparison_cache_directory = cache_dir,
+   cache_directory = cache_directory,
+   comparison_cache_directory = cache_directory,
    years = years_arr,
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['urbansim_parcel', 'urbansim', 'psrc', 'opus_core'],

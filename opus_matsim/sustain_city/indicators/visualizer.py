@@ -9,14 +9,14 @@
 import os
 from opus_gui.results_manager.run.indicator_framework.representations.indicator import Indicator
 
-project_name = pn = 'zurich_parcel' #'seattle_parcel'
+project_name = pn = 'seattle_parcel'
 # setting project name to environment. this is needed for the visualizer
 os.environ['OPUSPROJECTNAME'] = pn
 
-years_arr = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010]
+years_arr = [2000]
 
 # cupum scenarios 2030 re-estimated
-cache_dir = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/runs/run_4.test_no_action_10pct_30it_2000-2010' #'/Users/sustaincity/Development/opus_home/data/seattle_parcel/base_year_data' # highway limited cap.
+cache_directory = r'/Users/sustaincity/Development/opus_home/data/seattle_parcel/base_year_data' # highway limited cap.
 
 types = ['mapnik_map']
 
@@ -26,16 +26,7 @@ indicators = {
     
     'population':Indicator(
         dataset_name = 'zone',
-        attribute = 'urbansim_parcel.zone.population_per_acre' ),
-              
-    
-
-
-    ### koennen aussortiert werden:
-    
-    'residential_sqft_per_unit2':Indicator(
-       dataset_name = 'zone',
-       attribute = 'zone.aggregate(safe_array_divide(urbansim_parcel.building.building_sqft * urbansim_parcel.building.is_residential,building.residential_units), intermediates=[parcel])'),
+        attribute = 'urbansim_parcel.zone.population' )
     
     #'building_sqft_per_unit':Indicator( 
     #   dataset_name = 'zone',
@@ -72,8 +63,8 @@ from opus_gui.results_manager.run.indicator_framework.maker.source_data import S
 print "creating result template ..."
 
 result_template = SourceData(
-   cache_directory = cache_dir,
-   comparison_cache_directory = cache_dir,
+   cache_directory = cache_directory,
+   comparison_cache_directory = cache_directory,
    years = years_arr,
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['urbansim_parcel', 'urbansim', 'psrc', 'opus_core'],
@@ -109,18 +100,12 @@ visualizer = VisualizationFactory()
 visualizations = []
 
 # View an indicator as a Map
+maps = ['population']
 visualizations += visualizer.visualize(
-    indicators_to_visualize = ['population'], #override default indicators to visualize (all)
+    indicators_to_visualize = maps, #override default indicators to visualize (all)
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
     name = 'population'
-    )
-
-visualizations += visualizer.visualize(
-    indicators_to_visualize = ['residential_sqft_per_unit2'],
-    computed_indicators = computed_indicators,
-    visualization_type = 'mapnik_map',
-    name = 'residential_sqft_per_unit2',
     )
 
 print 'Finished with creating indicators'
