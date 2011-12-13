@@ -26,23 +26,48 @@ indicators = {
     
     'population':Indicator(
         dataset_name = 'zone',
-        attribute = 'urbansim_parcel.zone.population_per_acre' ),
+        attribute = 'urbansim_parcel.zone.population' ),
               
     # No further division into single family or multi family residential!  (Wohngebaeude)
     'residential_units':Indicator(
         dataset_name = 'zone',
-        attribute = 'zone.aggregate(building.residential_units * (building.building_type_id==1))' ),
+        attribute = 'zone.aggregate(urbansim_parcel.parcel.residential_units)' ),
     'residential_unit_price':Indicator(
         dataset_name = 'zone',
         attribute = 'zone.aggregate(building.average_value_per_unit * building.residential_units * (building.building_type_id==1))' ),          
      
      # Verwaltung
-     'amin_sqft':Indicator(
+    'amin_sqft':Indicator(
         dataset_name = 'zone',
         attribute = 'zone.aggregate(building.non_residential_sqft * (building.building_type_id==0))' ),
     'amin_sqft':Indicator(
         dataset_name = 'zone',
         attribute = 'zone.aggregate(building.non_residential_sqft * (building.building_type_id==0))' ),
+    
+    # misc
+    'number_of_jobs':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.number_of_jobs' ),
+    'number_of_households':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.number_of_households' ),
+    'average_income':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.average_income' ),
+              
+    # travel time dependent indicators
+    'employment_within_10_minutes_travel_time_hbw_am_drive_alone':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone' ),
+    'employment_within_30_minutes_travel_time_hbw_am_drive_alone':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone' ),
+    'travel_time_to_611':Indicator( # in zone 611 is the main station 
+       dataset_name = 'zone',
+       attribute = 'psrc.zone.travel_time_hbw_am_drive_alone_to_611'),
+    'travel_time_accessibility':Indicator( # in zone 611 is the main station 
+       dataset_name = 'zone',
+       attribute = 'zone.travel_time_accessibility'),
            
 }
 print "... done."
