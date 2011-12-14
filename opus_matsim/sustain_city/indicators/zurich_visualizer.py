@@ -13,7 +13,7 @@ project_name = pn = 'zurich_parcel'
 # setting project name to environment. this is needed for the visualizer
 os.environ['OPUSPROJECTNAME'] = pn
 
-years_arr = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010]
+years_arr = [2000,2002,2004,2006,2008,2010]
 # zurich scenario from 2000 to 2010
 cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/runs/run_3.test_no_action_1pct_30it_2000-2010_warm-hot-start'
 
@@ -29,9 +29,12 @@ indicators = {
     'residential_units':Indicator(
         dataset_name = 'zone',
         attribute = 'zone.aggregate(urbansim_parcel.parcel.residential_units)' ),
-    #'residential_unit_price':Indicator(
-    #    dataset_name = 'zone',
-    #    attribute = 'zone.aggregate(urbansim_zone.building.average_value_per_unit * building.residential_units)' ),          
+    'residential_unit_price':Indicator(
+        dataset_name = 'zone',
+        attribute = 'zone.aggregate(urbansim_zone.building.average_value_per_unit * building.residential_units)' ),
+    'price_per_residential_unit':Indicator(
+        dataset_name = 'zone',
+        attribute = 'zone.aggregate(urbansim_parcel.parcel.price_per_residential_unit)' ),         
      
      # Verwaltung
     'amin_sqft':Indicator(
@@ -45,9 +48,10 @@ indicators = {
     'number_of_households':Indicator(
         dataset_name = 'zone',
         attribute = 'urbansim_parcel.zone.number_of_households' ),
-    #'average_income':Indicator(
-    #    dataset_name = 'zone',
-    #    attribute = 'urbansim_parcel.zone.average_household_income' ),
+    'average_household_income':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.average_household_income' ),
+            
               
     # travel time dependent indicators
     'employment_within_10_minutes_travel_time_hbw_am_drive_alone':Indicator(
@@ -62,6 +66,11 @@ indicators = {
     'travel_time_accessibility':Indicator( # in zone 611 is the main station 
        dataset_name = 'zone',
        attribute = 'zone.travel_time_accessibility'),
+              
+    # land variables
+    'improvement_value':Indicator(
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(urbansim_parcel.parcel.improvement_value)'),
            
 }
 print "... done."
@@ -127,12 +136,19 @@ visualizations += visualizer.visualize(
     #name = 'residential_units'
     )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['residential_unit_price'], 
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'residential_unit_price'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['residential_unit_price'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'residential_unit_price'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['price_per_residential_unit'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'price_per_residential_unit'
+    )
 
 visualizations += visualizer.visualize(
     indicators_to_visualize = ['amin_sqft'], 
@@ -155,12 +171,12 @@ visualizations += visualizer.visualize(
     #name = 'number_of_households'
     )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['average_income'],
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'average_income'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['average_household_income'],
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'average_income'
+    )
 
 visualizations += visualizer.visualize(
     indicators_to_visualize = ['employment_within_10_minutes_travel_time_hbw_am_drive_alone'], 
@@ -190,6 +206,13 @@ visualizations += visualizer.visualize(
     #name = 'travel_time_accessibility'
     )
 
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['improvement_value'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'number_of_households'
+    )
+
 ### these are tables
 
 visualizations += visualizer.visualize(
@@ -206,6 +229,22 @@ visualizations += visualizer.visualize(
     visualization_type = 'table',
     output_type = 'csv',
     #name = 'residential_units'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['residential_unit_price'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'residential_unit_price'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['price_per_residential_unit'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'price_per_residential_unit'
     )
 
 visualizations += visualizer.visualize(
@@ -230,6 +269,14 @@ visualizations += visualizer.visualize(
     visualization_type = 'table',
     output_type = 'csv',
     #name = 'number_of_households'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['average_household_income'],
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'average_income'
     )
 
 visualizations += visualizer.visualize(
@@ -262,6 +309,14 @@ visualizations += visualizer.visualize(
     visualization_type = 'table',
     output_type = 'csv',
     #name = 'travel_time_accessibility'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['improvement_value'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'improvement_value'
     )
 
 print 'Finished with creating indicators'
