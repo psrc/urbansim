@@ -46,4 +46,9 @@ aliases = [
                     "psrc_parcel.development_project_proposal.minimum_1DU_per_legal_urban_lot_yield",
              ),
              "developable_capacity = clip_to_zero(development_project_proposal.disaggregate(psrc_parcel.parcel.max_developable_capacity)-urbansim_parcel.development_project_proposal.building_sqft)",
+             "acquisition_cost = clip_to_zero(development_project_proposal.disaggregate(parcel.total_value_per_sqft*parcel.parcel_sqft) - development_project_proposal.disaggregate(urbansim_parcel.parcel.improvement_value) * (development_project_proposal.is_redevelopment == 0))",
+             "total_investment = (psrc_parcel.development_project_proposal.acquisition_cost + urbansim_parcel.development_project_proposal.demolition_cost + urbansim_parcel.development_project_proposal.construction_cost).astype(float32)",
+             "total_revenue = development_project_proposal.total_parcel_value_per_sqft * urbansim_parcel.development_project_proposal.parcel_sqft",
+             "profit = psrc_parcel.development_project_proposal.total_revenue - psrc_parcel.development_project_proposal.total_investment",
+             "expected_rate_of_return_on_investment = safe_array_divide(psrc_parcel.development_project_proposal.profit, psrc_parcel.development_project_proposal.total_investment)"
            ]
