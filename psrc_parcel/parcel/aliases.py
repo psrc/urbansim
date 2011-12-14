@@ -29,7 +29,8 @@ aliases = [
        "developable_capacity = clip_to_zero(psrc_parcel.parcel.max_developable_capacity-urbansim_parcel.parcel.building_sqft)",
        "building_density_wwd = psrc_parcel.parcel.urbansim_parcel_package_building_sqft_wwd / psrc_parcel.parcel.psrc_parcel_package_parcel_sqft_wwd",
        "avg_zonal_parcel_sqft = parcel.disaggregate(zone.aggregate(parcel.parcel_sqft)/zone.number_of_agents(parcel))",
-       "is_lut_19_25_26 = (parcel.land_use_type_id == 19) + (parcel.land_use_type_id == 25) + (parcel.land_use_type_id == 26)"
+       "is_lut_19_25_26 = (parcel.land_use_type_id == 19) + (parcel.land_use_type_id == 25) + (parcel.land_use_type_id == 26)",
+       "existing_units = (urbansim_parcel.parcel.building_sqft > 0)*urbansim_parcel.parcel.building_sqft + (urbansim_parcel.parcel.building_sqft <= 0)*parcel.parcel_sqft"
            ]
 
 
