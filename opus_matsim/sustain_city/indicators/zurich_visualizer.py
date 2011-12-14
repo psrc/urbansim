@@ -17,16 +17,14 @@ years_arr = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010]
 # zurich scenario from 2000 to 2010
 cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/runs/run_3.test_no_action_1pct_30it_2000-2010_warm-hot-start'
 
-types = ['mapnik_map']
-
 print "creating indicators for %s" % os.environ['OPUSPROJECTNAME']
 
 indicators = {
     
     'population':Indicator(
         dataset_name = 'zone',
-        attribute = 'zone.aggregate(urbansim.zone.population)' ),
-              
+        attribute = 'zone.aggregate(household.persons, intermediates=[building,parcel])' ),
+            
     # No further division into single family or multi family residential!  (Wohngebaeude)
     'residential_units':Indicator(
         dataset_name = 'zone',
@@ -52,18 +50,18 @@ indicators = {
     #    attribute = 'urbansim_parcel.zone.average_household_income' ),
               
     # travel time dependent indicators
-    #'employment_within_10_minutes_travel_time_hbw_am_drive_alone':Indicator(
-    #    dataset_name = 'zone',
-    #    attribute = 'urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone' ),
-    #'employment_within_30_minutes_travel_time_hbw_am_drive_alone':Indicator(
-    #    dataset_name = 'zone',
-    #    attribute = 'urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone' ),
-    #'travel_time_to_611':Indicator( # in zone 611 is the main station 
-    #   dataset_name = 'zone',
-    #   attribute = 'psrc.zone.travel_time_hbw_am_drive_alone_to_611'),
-    #'travel_time_accessibility':Indicator( # in zone 611 is the main station 
-    #   dataset_name = 'zone',
-    #   attribute = 'zone.travel_time_accessibility'),
+    'employment_within_10_minutes_travel_time_hbw_am_drive_alone':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone' ),
+    'employment_within_30_minutes_travel_time_hbw_am_drive_alone':Indicator(
+        dataset_name = 'zone',
+        attribute = 'urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone' ),
+    'travel_time_to_611':Indicator( # in zone 611 is the main station 
+       dataset_name = 'zone',
+       attribute = 'psrc.zone.travel_time_hbw_am_drive_alone_to_611'),
+    'travel_time_accessibility':Indicator( # in zone 611 is the main station 
+       dataset_name = 'zone',
+       attribute = 'zone.travel_time_accessibility'),
            
 }
 print "... done."
@@ -83,7 +81,7 @@ source_data = SourceData(
    #comparison_cache_directory = cache_directory,
    years = years_arr,
    dataset_pool_configuration = DatasetPoolConfiguration(
-         package_order=['zurich_parcel','urbansim_parcel', 'urbansim_zone' 'urbansim', 'psrc', 'opus_core'],
+         package_order=['urbansim_zone', 'urbansim_parcel', 'urbansim', 'psrc', 'opus_core'],
          ),
    #name = project_name
 )
@@ -119,14 +117,14 @@ visualizations += visualizer.visualize(
     indicators_to_visualize = ['population'],
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
-    name = 'population'
+    #name = 'population'
     )
 
 visualizations += visualizer.visualize(
     indicators_to_visualize = ['residential_units'], 
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
-    name = 'residential_units'
+    #name = 'residential_units'
     )
 
 #visualizations += visualizer.visualize(
@@ -140,21 +138,21 @@ visualizations += visualizer.visualize(
     indicators_to_visualize = ['amin_sqft'], 
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
-    name = 'amin_sqft'
+    #name = 'amin_sqft'
     )
 
 visualizations += visualizer.visualize(
     indicators_to_visualize = ['number_of_jobs'], 
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
-    name = 'number_of_jobs'
+    #name = 'number_of_jobs'
     )
 
 visualizations += visualizer.visualize(
     indicators_to_visualize = ['number_of_households'], 
     computed_indicators = computed_indicators,
     visualization_type = 'mapnik_map',
-    name = 'number_of_households'
+    #name = 'number_of_households'
     )
 
 #visualizations += visualizer.visualize(
@@ -164,32 +162,106 @@ visualizations += visualizer.visualize(
 #    name = 'average_income'
 #    )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['employment_within_10_minutes_travel_time_hbw_am_drive_alone'], 
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'employment_within_10_minutes_travel_time_hbw_am_drive_alone'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['employment_within_10_minutes_travel_time_hbw_am_drive_alone'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'employment_within_10_minutes_travel_time_hbw_am_drive_alone'
+    )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['employment_within_30_minutes_travel_time_hbw_am_drive_alone'], 
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'employment_within_30_minutes_travel_time_hbw_am_drive_alone'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['employment_within_30_minutes_travel_time_hbw_am_drive_alone'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'employment_within_30_minutes_travel_time_hbw_am_drive_alone'
+    )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['travel_time_to_611'], 
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'travel_time_to_611'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['travel_time_to_611'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'travel_time_to_611'
+    )
 
-#visualizations += visualizer.visualize(
-#    indicators_to_visualize = ['travel_time_accessibility'], 
-#    computed_indicators = computed_indicators,
-#    visualization_type = 'mapnik_map',
-#    name = 'travel_time_accessibility'
-#    )
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['travel_time_accessibility'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'mapnik_map',
+    #name = 'travel_time_accessibility'
+    )
+
+### these are tables
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['population'],
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'population',
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['residential_units'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'residential_units'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['amin_sqft'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'amin_sqft'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['number_of_jobs'],
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'number_of_jobs',
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['number_of_households'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'number_of_households'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['employment_within_10_minutes_travel_time_hbw_am_drive_alone'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'employment_within_10_minutes_travel_time_hbw_am_drive_alone'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['employment_within_30_minutes_travel_time_hbw_am_drive_alone'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'employment_within_10_minutes_travel_time_hbw_am_drive_alone'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['travel_time_to_611'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'travel_time_to_611'
+    )
+
+visualizations += visualizer.visualize(
+    indicators_to_visualize = ['travel_time_accessibility'], 
+    computed_indicators = computed_indicators,
+    visualization_type = 'table',
+    output_type = 'csv',
+    #name = 'travel_time_accessibility'
+    )
 
 print 'Finished with creating indicators'
