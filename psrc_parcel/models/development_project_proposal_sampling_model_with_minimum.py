@@ -101,7 +101,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             
         self._compute_variables_for_dataset_if_needed(self.realestate_dataset, self.column_names + occupied_spaces_variables + total_spaces_variables)
         self._compute_variables_for_dataset_if_needed(self.proposal_component_set, self.column_names + total_spaces_variables)
-        self.proposal_set.compute_variables("urbansim_parcel.development_project_proposal.number_of_components", 
+        self.proposal_set.compute_variables(["urbansim_parcel.development_project_proposal.number_of_components", 
+                                             "urbansim_parcel.development_project_proposal.land_area_taken"],
                                             dataset_pool=self.dataset_pool)
         
         n_column = len(self.column_names)
@@ -214,7 +215,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         # so it can be used by the building_construction_model for the proper
         # computation of units_proposed for those projects with velocity curves
         if actv.size > 0:          
-            total_land_area_taken_computed = self.proposal_set.get_attribute('urbansim_parcel.development_project_proposal.land_area_taken')
+            total_land_area_taken_computed = self.proposal_set['land_area_taken']
             self.proposal_set.modify_attribute('total_land_area_taken', total_land_area_taken_computed[actv], actv)
 
         return (self.proposal_set, self.realestate_dataset.get_id_attribute()[self.demolished_buildings])
