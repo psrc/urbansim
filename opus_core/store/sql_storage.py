@@ -89,37 +89,57 @@ class sql_storage(Storage):
             for col_name, (column, col_type) in col_data.items():
                 table_data[col_name].append(row[column])
                     
-        problem_rows = set()
-        problem_columns = set()
-        for key, column in table_data.items():
-            for i in range(len(column)):
-                if column[i] == None:
-                    problem_rows.add(i)
-                    problem_columns.add(key)
+        len_all = len(table_data.values()[0])
 
+        problem_rows = set()
+        problem_columns = {}
+        remove_columns = {}
+        for key, column in table_data.items():
+            problem_rows_for_column = []
+            for i in range(len_all):
+                if column[i] is None:
+                    problem_rows_for_column.append(i)
+            num_problem_rows_for_column = len(problem_rows_for_column)
+            # ignore column if it contains more than 50% NULL values
+            if num_problem_rows_for_column * 2 >= len(column):
+                remove_columns[key] = num_problem_rows_for_column
+            elif num_problem_rows_for_column > 0:
+                problem_columns[key] = num_problem_rows_for_column
+                problem_rows.update(problem_rows_for_column)
+
+        len_rm = len(remove_columns)
+        if len_rm > 0:
+            logger.log_warning('%s of %s columns ignored in %s '
+                               'due to NULL values in column(s) (with row count in parens) "%s"' 
+                               % (len_rm, len(table_data.keys()), table_name,
+                               '), "'.join('%s" (%s' % (k, remove_columns[k]) for k in sorted(list(remove_columns)))))
+            
+            
         len_pr = len(problem_rows)
-        len_all = len(table_data[table_data.keys()[0]])
         if len_pr > 0:
             rate_failed = float(len_pr) / len_all
             rate_succeeded = 1.0 - rate_failed
             percentage_succeeded = round(100.0 * rate_succeeded, 2)
             logger.log_warning('%s of %s rows ignored in %s (%s%% successful) '
-                               'due to NULL values in column(s) "%s"' 
+                               'due to NULL values in column(s) (with row count in parens) "%s)' 
                                % (len_pr, len_all, table_name,
-                                   percentage_succeeded,
-                                   '", "'.join(sorted(list(problem_columns)))))
-        else:
-            logger.log_note('All rows imported successfully')
+                               percentage_succeeded,
+                               '), "'.join('%s" (%s' % (k, problem_columns[k]) for k in sorted(list(problem_columns)))))
+        
+        if len_pr + len_rm == 0:
+            logger.log_note('All rows and columns imported successfully')
             
         for col_name, (column, col_type) in col_data.items():
+            if col_name in remove_columns:
+                del table_data[col_name]
+                continue
+            
             try:
                 clean_column_data = table_data[col_name]
                 if len_pr > 0:
                     # select only those rows that can be loaded (as determined before)
                     clean_column_data = [x for (r, x) in enumerate(clean_column_data)
                                          if r not in problem_rows]
-                    
-                clean_column_data = list(clean_column_data)
                     
                 table_data[col_name] = array(clean_column_data, dtype=col_type)
             except:
@@ -667,15 +687,16 @@ else:
                         'd': 'INTEGER',
                         'e': 'FLOAT',
                         'f': 'TEXT',
+                        'g': 'INTEGER',
                     }
                     db.create_table_from_schema(table_name = 'bar', table_schema = schema)
                             
                     tbl = db.get_table('bar')        
-                    i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+                    i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6", 'g':None})
                     db.execute(i)
-                    i = tbl.insert(values = {'d':7, 'e':8.75, 'f':None})
+                    i = tbl.insert(values = {'d':7, 'e':8.75, 'f':None, 'g':None})
                     db.execute(i)
-                    i = tbl.insert(values = {'d':1, 'e':2.25, 'f':"3"})
+                    i = tbl.insert(values = {'d':1, 'e':2.25, 'f':"3", 'g':None})
                     db.execute(i)
                           
                     expected_data = {
