@@ -77,6 +77,7 @@ class Ui_ExecuteToolGui(object):
 
         self.execTool = QtGui.QPushButton(self.widget)
         self.execTool.setObjectName("execTool")
+        self.execTool.setDefault(True)
         self.gridlayout.addWidget(self.execTool,0,2,1,1)
 
         self.cancelExec = QtGui.QPushButton(self.widget)
