@@ -55,9 +55,6 @@ class sql_storage(Storage):
         available_column_names = self.get_column_names(table_name, lowercase)
         final_cols = self._select_columns(column_names, available_column_names) 
         
-        if final_cols == []:
-            return {}
-        
         col_data = {}
         selectable_columns = []
         table_data = {}
@@ -76,7 +73,10 @@ class sql_storage(Storage):
                 col_data[col_name] = (column, col_type)
                 table_data[col_name] = []
                 selectable_columns.append(column)
-                         
+                
+        if len(selectable_columns) == 0:
+            return {}
+                
         query = select(
             columns = selectable_columns
         )        
