@@ -31,7 +31,7 @@ class ExportStorage(object):
         logger.start_block('Exporting dataset %s' % dataset_name)
         try:
             values_from_storage = in_storage.load_table(dataset_name)
-            length = len(values_from_storage.values()[0])
+            length = len(values_from_storage) and len(values_from_storage.values()[0])
             if  length == 0:
                 logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
                 return
