@@ -34,9 +34,9 @@ share_pattern = "%s * (urbansim.building.building_type_id == %s)"
 observed_share_var = []
 sampled_share_var = []
 for k, v in observed_shares.iteritems():
-	observed_share_var.append( share_pattern % (v, k) )
-        assert k in sampled_shares
-	sampled_share_var.append( share_pattern % (sampled_shares[k], k) )
+    observed_share_var.append( share_pattern % (v, k) )
+    assert k in sampled_shares
+    sampled_share_var.append( share_pattern % (sampled_shares[k], k) )
 
 observed_share_var = "observed_share=" + '+'.join(observed_share_var)
 sampled_share_var = "sampled_share=" + '+'.join(sampled_share_var)
