@@ -249,9 +249,10 @@ class XmlModel(QAbstractItemModel):
         parent_index = self.index_for_item(item.parent_item)
         return self.index(item.row(), 0, parent_index)
 
-    def update_node(self, node):
+    def update_node(self, node, new_node=None):
         '''
         Refreshes the node by removing it and reinserting it.
+        If new_node is given, node will be replaced by the new.
         '''
         item = self.item_for_node(node)
         if item is None:
@@ -260,8 +261,10 @@ class XmlModel(QAbstractItemModel):
         if parent_index is None:
             return
         row = item.row()
-        self.removeRow(row, parent_index)
-        self.insertRow(row, parent_index, node)
+        
+        if new_node is None:
+            new_node = node
+        self.remove_or_update_row(row, parent_index, new_node)
 
     # CK: This is a pretty ineffective method of finding the node <-> item mapping.
     # A dictionary mapping would be better.
