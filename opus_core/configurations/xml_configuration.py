@@ -485,7 +485,7 @@ class XMLConfiguration(object):
             if not child_element.tail or not child_element.tail.strip():
                 child_element.tail = i
         else:
-            if level and (not element.tail or not element.tail.strip()):
+            if not element.tail or not element.tail.strip():
                 element.tail = i
 
     def _find_node(self, path, name = None, get_all = False):
