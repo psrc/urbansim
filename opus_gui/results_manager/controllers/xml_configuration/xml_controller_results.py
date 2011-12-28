@@ -198,15 +198,8 @@ class XmlController_Results(XmlController):
 
     def _viewDocumentation(self):
         pass
-
-    def process_custom_menu(self, point):
-        item = self.select_item_at(point)
-        if not item:
-            return
-
-        node = item.node
-        menu = QMenu(self.view)
-
+    
+    def add_custom_menu_items_for_node(self, node, menu):
         # Populate menu
         if node.tag == 'run':
             menu.addAction(self.actRestartRun)  #TODO:disable restart run for base_year_data
@@ -225,8 +218,4 @@ class XmlController_Results(XmlController):
         elif node.tag == 'batch_visualization': # get('type') == 'batch_visualization':
             menu.addAction(self.actConfigureExistingBatchIndicatorVis)
         
-        if node.tag != 'run':  # default menu items aren't meaningful for simulation run nodes
-            self.add_default_menu_items_for_node(node, menu)
-
-        if not menu.isEmpty():
-            menu.exec_(QCursor.pos())
+        return True # default menu items aren't meaningful for simulation run nodes

@@ -82,15 +82,8 @@ class XmlController_Scenarios(XmlController):
         else:
             node.set('executable', 'True')
         self.model.dirty = True
-
-    def process_custom_menu(self, point):
-        ''' See XmlController for documentation '''
-        item = self.select_item_at(point)
-        if not item:
-            return
-        menu = QMenu()
-        node = item.node
-
+        
+    def add_custom_menu_items_for_node(self, node, menu):
         if node.get('type') == 'scenario':
             node_executable = (node.get('executable') == 'True')
             menu.addAction(self.actExecutable)
@@ -122,11 +115,6 @@ class XmlController_Scenarios(XmlController):
                 action = self.create_action('model', model_name, cb)
                 models_menu.addAction(action)
             menu.addMenu(models_menu)
-
-        self.add_default_menu_items_for_node(node, menu)
-
-        if not menu.isEmpty():
-            menu.exec_(QCursor.pos())
     
     def addModelsToRun(self):
         assert self.has_selected_item()

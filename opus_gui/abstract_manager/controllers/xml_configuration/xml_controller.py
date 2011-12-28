@@ -120,7 +120,9 @@ class XmlController(object):
 
     def process_custom_menu(self, position):
         '''
-        Abstract method for creating a context sensitive popup menu.
+        Default method for creating a context sensitive popup menu.
+        Calls self.add_custom_menu_items_for_node() to populate the menu
+        with context-specific menu items.
         @param position (QPoint) point of request for the popupmenu.
         '''
         item = self.select_item_at(position)
@@ -129,7 +131,10 @@ class XmlController(object):
         node = item.node
 
         menu = QMenu(self.view)
-        self.add_default_menu_items_for_node(node, menu)
+        if not self.add_custom_menu_items_for_node(node, menu):
+            if not menu.isEmpty():
+                menu.addSeparator()
+            self.add_default_menu_items_for_node(node, menu)
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
 
@@ -227,6 +232,16 @@ class XmlController(object):
             return None
         self.view.setCurrentIndex(index)
         return index.internalPointer()
+    
+    def add_custom_menu_items_for_node(self, node, menu):
+        '''
+        Append a list of menu items specific to a manager.
+        Supposed to be overridden.
+        @param node (Element): node to inspect
+        @param menu (QMenu): menu to append actions to
+        @return: True if no default menu items should be inserted
+        '''
+        pass
 
     def add_default_menu_items_for_node(self, node, menu):
         '''

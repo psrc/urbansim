@@ -149,16 +149,8 @@ class XmlController_Models(XmlController):
             for child in edited_node:
                 current_node.append(child)
         self.project.dirty = True
-
-    def process_custom_menu(self, point):
-        ''' See XmlConfig.processCustomMenu for documentation '''
-        index = self.select_item_at(point)
-        if not index:
-            return
-
-        node = self.selected_item().node
-        menu = QMenu(self.view)
-
+        
+    def add_custom_menu_items_for_node(self, node, menu):
         if node.tag == 'models':
             submenu = QMenu(menu) # to populate with templates
             submenu.setTitle('Create model from template')
@@ -190,8 +182,3 @@ class XmlController_Models(XmlController):
 
         if node.tag == 'submodel_group':
             menu.addAction(self.action_run_estimation_group)
-
-        self.add_default_menu_items_for_node(node, menu)
-
-        if not menu.isEmpty():
-            menu.exec_(QCursor.pos())

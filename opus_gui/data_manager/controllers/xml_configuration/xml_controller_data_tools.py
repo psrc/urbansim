@@ -386,22 +386,13 @@ class XmlController_DataTools(XmlController):
             return
 
 
-    def process_custom_menu(self, position):
-        ''' See XmlConfig.processCustomMenu for documentation '''
-        item = self.select_item_at(position)
-
-        index = self.view.indexAt(position)
+    def add_custom_menu_items_for_node(self, node, menu):
+        index = self.model.index_for_node(node)
         cnt = self.model.rowCount(index.parent())
 
         istop = index.row() == 0
         isbottom = index.row() == cnt-1
         isonly = cnt == 1
-
-        if not item:
-            return
-
-        node = item.node
-        menu = QMenu(self.view)
 
         # Tool files are the "actual" tools
         if node.tag == "tool":
@@ -463,15 +454,8 @@ class XmlController_DataTools(XmlController):
             menu.addSeparator()
             menu.addAction(self.actCloneNode)
 
-        # Default menu items
-        self.add_default_menu_items_for_node(node, menu)
-
         # Now add the export and import methods
         menu.addSeparator()
         menu.addAction(self.actExportXMLToFile)
         menu.addAction(self.actImportXMLFromFile)
-
-        # Check if the menu has any elements before exec is called
-        if not menu.isEmpty():
-            menu.exec_(QCursor.pos())
 
