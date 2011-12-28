@@ -107,9 +107,9 @@ class TestOpusProject(opus_unittest.OpusTestCase):
             return [p.find(name) for name in names]
             
         p = self._open('child.xml')
-        i_names = ('inherited',)
-        s_names = ('shadowing',)
-        l_names = ('local',)
+        i_names = ('inherited', 'a/pretty/deep/inherited')
+        s_names = ('shadowing', 'a/pretty/deep/shadowing')
+        l_names = ('local', 'a/pretty/deep/local', 'another/pretty/deep/local')
         il_start = get_nodes_by_name_as_list(i_names)
         sl_start = get_nodes_by_name_as_list(s_names)
         ll_start = get_nodes_by_name_as_list(l_names)
