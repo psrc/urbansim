@@ -102,6 +102,15 @@ class XmlModel(QAbstractItemModel):
         @param row (int) row number to remove
         @param parent_index (QModelIndex) index of parent element
         '''
+        return self.remove_or_update_row(row, parent_index, new_node=None)
+    
+    def remove_or_update_row(self, row, parent_index, new_node=None):
+        '''
+        Removes an object from the data model
+        @param row (int) row number to remove
+        @param parent_index (QModelIndex) index of parent element
+        @param new_node (Element) contents of new node, or None if node is to be deleted
+        '''
         # Make sure we have a valid parent_index
         if parent_index == QModelIndex():
             parent_item = self._root_item
@@ -121,7 +130,7 @@ class XmlModel(QAbstractItemModel):
         if self.project is None:
             child_item.node.getparent().remove(child_item.node)
         else:
-            reinserted_node = self.project.delete_node(child_item.node)
+            reinserted_node = self.project.delete_or_update_node(child_item.node, new_node)
         self.endRemoveRows()
         self.emit(SIGNAL("layoutChanged()"))
 
