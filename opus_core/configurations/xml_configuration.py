@@ -51,6 +51,11 @@ def strip_comments(tree_root):
         if isinstance(node, _Comment):
             node.getparent().remove(node)
 
+def load_xml_file(filename):
+    tree = ElementTree(file=filename)
+    strip_comments(tree.getroot())
+    return tree
+
 def get_variable_dataset_and_name(variable_node):
     ''' extract the dataset and the variable name from a node.
     if the node has an attribute 'dataset', the dataset is taken from there ande the whole name
@@ -129,8 +134,7 @@ class XMLConfiguration(object):
         If is_parent is true, mark all of the nodes as inherited
         (either from this configuration or a grandparent)."""
         # try to load the element tree
-        tree = ElementTree(file = self.full_filename)
-        strip_comments(tree.getroot())
+        tree = load_xml_file(self.full_filename)
         self._initialize(tree, is_parent)
 
     def update(self, newconfig_str):
