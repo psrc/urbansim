@@ -66,6 +66,18 @@ class OpusProject(object):
         os.environ['OPUSPROJECTNAME'] = self.name
         self.dirty = False
         
+    def _add_shadowing_nodes(self, root_node, root_node_id):
+        # map id's to nodes for the inherited and the local nodes
+        inherited_ids_to_nodes = dict((node_identity_string(n), n) for n in self._inherited_root.getiterator())
+        local_ids_to_nodes = dict((root_node_id + node_identity_string(n), n) for 
+            n in root_node.getiterator() if not n.get('inherited'))
+        # join the local and inherited nodes on id-match
+        for id_, node in local_ids_to_nodes.items():
+            if id_ in inherited_ids_to_nodes:
+                shadowing_node = inherited_ids_to_nodes[id_]
+                assert node.tag == shadowing_node.tag
+                self._shadowing_nodes[node] = shadowing_node
+
     def load_minimal_project(self):
         ''' Setup the project as if it was loaded with an absolute minimal project config file '''
         minimal_config = XMLConfiguration()
@@ -161,10 +173,24 @@ class OpusProject(object):
         @node (Element) node to remove
         @return the (re-inserted) node (Element) or None
         '''
-        # The three cases of deleting a node:
+        return self.delete_or_update_node(node, None)
+    
+    def delete_or_update_node(self, node, new_node):
+        '''
+        Delete or update a node from the XML DOM. If the node was shadowing an inherited node, the inherited
+        node is (re-)inserted into the DOM (after merging with new_node in the case of an update) and returned.
+        Calling delete_or_update_node on an inherited node has no effect.
+        @node (Element) node to remove
+        @new_node (Element) node to insert instead of the removed element; None to remove only 
+        @return the (re-inserted) node (Element) or None
+        '''
+        # The three cases of deleting/updating a node:
         # The node is local (simplest case -- just remove it)
+        #   - if updating, simply add the new node
         # The node is inherited (no, wait, this is the simplest case -- do nothing)
-        # The node is shadowing an inherited node (remove the node, insert the inherited copy)
+        # The node is shadowing an inherited node (remove the node)
+        #   - if removing, reinsert the inherited node
+        #   - if updating, merge the new node with the inherited node and insert
 
         # helper function to clean out all child nodes from shadowing_nodes
         def clean_shadownodes(node):
@@ -172,21 +198,33 @@ class OpusProject(object):
                 clean_shadownodes(child_node)
             if node in self._shadowing_nodes:
                 del self._shadowing_nodes[node]
-        reinserted_node = None
-        if node.get('inherited'):
-            pass
-        elif node in self._shadowing_nodes:
+            assert node not in self._shadowing_nodes
+            
+        parent = node.getparent()
+        node_index = parent.index(node)
+        inherited_node = None
+        reinserted_node = new_node
+        if node in self._shadowing_nodes:
             inherited_node = copy.deepcopy(self._shadowing_nodes[node])
-            clean_shadownodes(node)
-            parent = node.getparent()
-            node_index = parent.index(node)
-            parent.remove(node)
-            parent.insert(node_index, inherited_node)
-            reinserted_node = inherited_node
+            if new_node is None:
+                reinserted_node = inherited_node
+                inherited_node = None
+        elif node.get('inherited'):
+            return
         else:
-            clean_shadownodes(node)
-            parent = node.getparent()
-            parent.remove(node)
+            pass
+            
+        clean_shadownodes(node)
+        node_id = node_identity_string(node)
+        parent.remove(node)
+        
+        if inherited_node is not None:
+            assert new_node is not None
+            self.xml_config._merge_nodes(inherited_node, new_node)
+        if new_node is not None:
+            self._add_shadowing_nodes(new_node, node_id)
+        if reinserted_node is not None:
+            parent.insert(node_index, reinserted_node)
         return reinserted_node
 
     def make_local(self, node):

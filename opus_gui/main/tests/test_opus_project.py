@@ -166,6 +166,76 @@ class TestOpusProject(opus_unittest.OpusTestCase):
                 self.assert_(i is not None, s)
                 self.assert_(i.get('inherited') is not None, s)
 
+    def test_update_node(self):
+        def get_nodes_by_name_as_list(names):
+            return [p.find(name) for name in names]
+            
+        p = self._open('child.xml')
+        i_names = ('inherited', 'a/pretty/deep/inherited')
+        s_names = ('shadowing', 'a/pretty/deep/shadowing')
+        l_names = ('local', 'a/pretty/deep/local', 'another/pretty/deep/local')
+        il_start = get_nodes_by_name_as_list(i_names)
+        sl_start = get_nodes_by_name_as_list(s_names)
+        ll_start = get_nodes_by_name_as_list(l_names)
+        
+        # shadowing node should be only the following nodes:
+        # - three nodes: opus_project, general and shadowing
+        # - four nodes: a, pretty, deep, shadowing
+        for s in sl_start:
+            self.assertTrue(s in p._shadowing_nodes)
+        self.assertTrue(p.root_node() in p._shadowing_nodes)
+        self.assertTrue(p.find('general') in p._shadowing_nodes)
+        self.assertEqual(len(p._shadowing_nodes), 7)
+
+        # updated nodes and assert that nothing changes the inherited tree (orignal values for nodes)
+        inherited_tree_start = tostring(p._inherited_root)
+        
+        for start in il_start:
+            start_copy = copy.deepcopy(start)
+            start_copy.text += ' appended_text'
+            ins = p.delete_or_update_node(start, start_copy)
+            self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
+            self.assertTrue(ins is None)
+            
+        for start in ll_start + sl_start:
+            start_copy = copy.deepcopy(start)
+            start_copy.text += ' appended_text'
+            ins = p.delete_or_update_node(start, start_copy)
+            self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
+            self.assertTrue(ins is not None)
+
+        il_end = get_nodes_by_name_as_list(i_names)
+        sl_end = get_nodes_by_name_as_list(s_names)
+        ll_end = get_nodes_by_name_as_list(l_names)
+        
+        for start, end in zip(il_start, il_end):
+            self.assertTrue(start is end) # update inherited is a no-op and should leave the node intact
+        for end in sl_end:
+            self.assertTrue(end.get('inherited') is None)
+            self.assertEqual(end.text, 'shadowed_value_child appended_text', 'update shadowing node changes text')
+        for end in ll_end:
+            self.assertTrue(end.get('inherited') is None)
+            print end.text
+            self.assertEquals(end.text, 'local appended_text', 'update shadowing node changes text')
+
+        # check that the shadowing node was removed from the shadowing nodes map
+        self.assertTrue(p.root_node() in p._shadowing_nodes)
+        self.assertTrue(p.find('general') in p._shadowing_nodes)
+        # run multiple passes of making local and deleting inherited nodes -- some things vary
+        # when doing this (like which nodes that are readded), so it's useful to test it
+        for name in i_names:
+            for nth in range(1, 3):
+                i = p.find(name)
+                p.make_local(i)
+                ic = p.delete_or_update_node(i, copy.deepcopy(i))
+                i_ins = p.delete_node(ic)
+                i = p.find(name)
+                s = 'pass #%d of make_local/delete_node failed for node %s' % (nth, node_identity_string(i))
+                self.assert_(i_ins is i, s)
+                self.assert_(i not in p._shadowing_nodes, s)
+                self.assert_(i is not None, s)
+                self.assert_(i.get('inherited') is not None, s)
+
     def test_find(self):
         p = self._open('find.xml')
         anode_default = p.find('node')
