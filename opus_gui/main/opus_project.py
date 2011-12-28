@@ -47,24 +47,13 @@ class OpusProject(object):
             self._inherited_root = XMLConfiguration().full_tree.getroot()
         else:
             self._inherited_root = xml_config.inherited_tree
-        # map id's to nodes for the inherited and the local nodes
-        inherited_ids_to_nodes = dict((node_identity_string(n), n) for
-                                      n in self._inherited_root.getiterator())
-        local_ids_to_nodes = dict((node_identity_string(n), n) for
-                                  n in self._root_node.getiterator() if not n.get('inherited'))
-
+        
+        self._init_shadowing_nodes()
+        self._set_project_name()
+        
+    def _init_shadowing_nodes(self):
         self._shadowing_nodes = {}
-        # join the local and inherited nodes on id-match
-        for id_, node in local_ids_to_nodes.items():
-            if id_ in inherited_ids_to_nodes:
-                self._shadowing_nodes[node] = inherited_ids_to_nodes[id_]
-
-        if self.find('./general/project_name') is not None:
-            self.name = self.find('./general/project_name').text
-        else:
-            self.name = 'unnamed_project'
-        os.environ['OPUSPROJECTNAME'] = self.name
-        self.dirty = False
+        self._add_shadowing_nodes(self._root_node, '')
         
     def _add_shadowing_nodes(self, root_node, root_node_id):
         # map id's to nodes for the inherited and the local nodes
@@ -78,6 +67,14 @@ class OpusProject(object):
                 assert node.tag == shadowing_node.tag
                 self._shadowing_nodes[node] = shadowing_node
 
+    def _set_project_name(self):
+        if self.find('./general/project_name') is not None:
+            self.name = self.find('./general/project_name').text
+        else:
+            self.name = 'unnamed_project'
+        os.environ['OPUSPROJECTNAME'] = self.name
+        self.dirty = False
+        
     def load_minimal_project(self):
         ''' Setup the project as if it was loaded with an absolute minimal project config file '''
         minimal_config = XMLConfiguration()
