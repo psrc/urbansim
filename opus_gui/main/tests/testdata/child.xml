@@ -4,4 +4,19 @@
     </general>
     <local type="string">local</local>
     <shadowing type="string">shadowed_value_child</shadowing>
+    <a>
+        <pretty>
+            <deep>
+                <local type="string">local</local>
+                <shadowing type="string">shadowed_value_child</shadowing>
+            </deep>
+        </pretty>
+    </a>
+    <another>
+        <pretty>
+            <deep>
+                <local type="string">local<with><subnode/></with></local>
+            </deep>
+        </pretty>
+    </another>
 </opus_project>

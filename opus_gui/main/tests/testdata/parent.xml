@@ -9,6 +9,8 @@
             <deep>
                 <path name="first child" />
                 <path name="second child"/>
+                <inherited type="string">inherited_value</inherited>
+                <shadowing type="string">parent_value</shadowing>
             </deep>
         </pretty>
     </a>

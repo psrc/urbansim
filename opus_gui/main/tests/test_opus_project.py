@@ -103,53 +103,68 @@ class TestOpusProject(opus_unittest.OpusTestCase):
         self.assertTrue(p.data_path().endswith('test'))
 
     def test_delete_node(self):
-        # TODO need tests for deletion of nodes deeper than rootnode children
+        def get_nodes_by_name_as_list(names):
+            return [p.find(name) for name in names]
+            
         p = self._open('child.xml')
-        i_start = p.find('inherited')
-        s_start = p.find('shadowing')
-        l_start = p.find('local')
-        # shadowing node should be only the three nodes: opus_project, general and shadowing
-        self.assertTrue(s_start in p._shadowing_nodes)
+        i_names = ('inherited',)
+        s_names = ('shadowing',)
+        l_names = ('local',)
+        il_start = get_nodes_by_name_as_list(i_names)
+        sl_start = get_nodes_by_name_as_list(s_names)
+        ll_start = get_nodes_by_name_as_list(l_names)
+        
+        # shadowing node should be only the following nodes:
+        # - three nodes: opus_project, general and shadowing
+        # - four nodes: a, pretty, deep, shadowing
+        for s in sl_start:
+            self.assertTrue(s in p._shadowing_nodes)
         self.assertTrue(p.root_node() in p._shadowing_nodes)
         self.assertTrue(p.find('general') in p._shadowing_nodes)
-        self.assertEqual(len(p._shadowing_nodes), 3)
+        self.assertEqual(len(p._shadowing_nodes), 7)
 
         # delete nodes and assert that nothing changes the inherited tree (orignal values for nodes)
         inherited_tree_start = tostring(p._inherited_root)
-        ins_i = p.delete_node(i_start)
-        self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
-        ins_s = p.delete_node(s_start)
-        self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
-        ins_l = p.delete_node(l_start)
-        self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
+        
+        for start in il_start + ll_start:
+            ins = p.delete_node(start)
+            self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
+            # test that only removing shadowing nodes returns inserted nodes
+            self.assertTrue(ins is None)
+        for start in sl_start:
+            ins = p.delete_node(start)
+            self.assertEqual(inherited_tree_start, tostring(p._inherited_root))
+            # test that only removing shadowing nodes returns inserted nodes
+            self.assertTrue(ins is not None)
 
-        i_end = p.find('inherited')
-        s_end = p.find('shadowing')
-        l_end = p.find('local')
+        il_end = get_nodes_by_name_as_list(i_names)
+        sl_end = get_nodes_by_name_as_list(s_names)
+        ll_end = get_nodes_by_name_as_list(l_names)
 
-        self.assertTrue(i_start is i_end) # delete inherited should leave the node intact
-        self.assertTrue(s_end.get('inherited') is not None)
-        self.assertTrue(s_end.text == 'parent_value') # delete shadowing node reinserts inherited
-        self.assertTrue(l_end is None) # deleting locals removes them
-        # test that only removing shadowing nodes returns inserted nodes
-        self.assertTrue(ins_i is None)
-        self.assertTrue(ins_s is not None)
-        self.assertTrue(ins_l is None)
+        for start, end in zip(il_start, il_end):
+            self.assertTrue(start is end) # delete inherited should leave the node intact
+        for end in sl_end:
+            self.assertTrue(end.get('inherited') is not None)
+            self.assertEqual(end.text, 'parent_value', 'delete shadowing node reinserts inherited')
+        for end in ll_end:
+            self.assertTrue(end is None) # deleting locals removes them
+
         # check that the shadowing node was removed from the shadowing nodes map
         self.assertTrue(p.root_node() in p._shadowing_nodes)
         self.assertTrue(p.find('general') in p._shadowing_nodes)
         # run multiple passes of making local and deleting inherited nodes -- some things vary
         # when doing this (like which nodes that are readded), so it's useful to test it
-        for nth in range(1, 3):
-            i = p.find('inherited')
-            p.make_local(i)
-            i_ins = p.delete_node(i)
-            i = p.find('inherited')
-            self.assert_(i_ins is i)
-            self.assert_(i not in p._shadowing_nodes)
-            s = 'pass #%d of make_local/delete_node failed' % nth
-            self.assert_(i is not None, s)
-            self.assert_(i.get('inherited') is not None, s)
+        for name in i_names:
+            for nth in range(1, 3):
+                i = p.find(name)
+                p.make_local(i)
+                i_ins = p.delete_node(i)
+                i = p.find(name)
+                s = 'pass #%d of make_local/delete_node failed for node %s' % (nth, node_identity_string(i))
+                self.assert_(i_ins is i, s)
+                self.assert_(i not in p._shadowing_nodes, s)
+                self.assert_(i is not None, s)
+                self.assert_(i.get('inherited') is not None, s)
 
     def test_find(self):
         p = self._open('find.xml')
