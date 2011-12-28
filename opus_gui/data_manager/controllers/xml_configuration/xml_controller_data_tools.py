@@ -45,8 +45,6 @@ class XmlController_DataTools(XmlController):
         self.actMoveNodeUp = self.create_action('arrow_up',"Move Up",self.moveNodeUp)
         self.actMoveNodeDown = self.create_action('arrow_down',"Move Down",self.moveNodeDown)
         self.actExecBatch = self.create_action('execute',"Execute Tool Set",self.execBatch)
-        self.actExportXMLToFile = self.create_action('export',"Export XML Node To File",self.exportXMLToFile)
-        self.actImportXMLFromFile = self.create_action('import',"Import XML Node From File",self.importXMLFromFile)
 
     def addParam(self):
         assert self.has_selected_item()
@@ -289,102 +287,6 @@ class XmlController_DataTools(XmlController):
             tool_config_nodes,
             tool_config_to_tool_name).show()
 
-    def exportXMLToFile(self):
-        ''' NO DOCUMENTATION '''
-        assert self.has_selected_item()
-
-        # Ask the users where they want to save the file
-        start_dir = ''
-        opus_home = paths.OPUS_HOME
-        if opus_home:
-            start_dir_test = os.path.join(opus_home, 'project_configs')
-            if start_dir_test:
-                start_dir = start_dir_test
-        configDialog = QFileDialog()
-        filter_str = QString("*.xml")
-        fd = configDialog.getSaveFileName(self.manager.base_widget,
-                                          QString("Save As..."),
-                                          QString(start_dir), filter_str)
-        # Check for cancel
-        if len(fd) == 0:
-            return
-        fileNameInfo = QFileInfo(QString(fd))
-        fileName = fileNameInfo.fileName().trimmed()
-        fileNamePath = fileNameInfo.absolutePath().trimmed()
-        saveName = os.path.join(str(fileNamePath),str(fileName))
-
-        # proper root node for XmlConfiguration
-        root_node = Element('opus_project')
-        import copy
-        root_node.append(copy.deepcopy(self.selected_item().node))
-
-        # Write out the file
-        ElementTree(root_node).write(saveName)
-
-    def importXMLFromFile(self):
-        ''' NO DOCUMENTATION '''
-        assert self.has_selected_item()
-        # print "importXMLFromFile"
-        # First, prompt the user for the filename to read in
-        start_dir = ''
-        opus_home = paths.OPUS_HOME
-        if opus_home:
-            start_dir_test = os.path.join(opus_home, 'project_configs')
-            if start_dir_test:
-                start_dir = start_dir_test
-        configDialog = QFileDialog()
-        filter_str = QString("*.xml")
-        fd = configDialog.getOpenFileName(self.manager.base_widget,
-                                          "Please select an xml file to import...",
-                                          start_dir, filter_str)
-        # Check for cancel
-        if len(fd) == 0:
-            return
-        fileName = QString(fd)
-        fileNameInfo = QFileInfo(QString(fd))
-        fileNameInfoBaseName = fileNameInfo.completeBaseName()
-        fileNameInfoName = fileNameInfo.fileName().trimmed()
-        fileNameInfoPath = fileNameInfo.absolutePath().trimmed()
-
-        # Pass that in to create a new XMLConfiguration
-        xml_config = XMLConfiguration(str(fileNameInfoName),str(fileNameInfoPath))
-
-        xml_node = xml_config.full_tree.getroot()
-        if len(xml_node) == 0:
-            raise ValueError('Loading node from XML file failed. '
-                             'No node definition found')
-        xml_node = xml_node[0]
-
-        parent_node = self.selected_item().node
-
-        allowed_parent_tags = {"tool": ["tool_group"], \
-                               "class_module": ["tool"], \
-                                    "path_to_tool_modules": ["tool_library"], \
-                               "tool_library": ["data_manager"], \
-                               "tool_group": ["tool_library"], \
-                               "params": ["tool"], \
-                               "param": ["params"], \
-                               "tool_config": ["tool_set"], \
-                               "tool_set": ["tool_sets"], \
-                               "tool_sets": ["data_manager"]}
-        if parent_node.tag not in allowed_parent_tags[xml_node.tag]:
-            MessageBox.error(mainwindow = self.view,
-                text = 'Invalid Xml insert',
-                detailed_text = ('Xml insert of node of type "%s" failed.  '
-                'Invalid type of parent node is "%s" - needs to be one of %s' %
-                (xml_node.tag, parent_node.tag, str(allowed_parent_tags[xml_node.tag]))))
-            return
-
-        # Insert it into the parent node from where the user clicked
-        name = xml_node.get('name') if xml_node.get('name') is not None else ''
-        if self.model.insertRow(0, self.selected_index(), xml_node) is False:
-            MessageBox.error(mainwindow = self.view,
-                text = 'Xml Insert Failed',
-                detailed_text = ('Xml insert of node with name "%s" failed - '
-                'most likely because there is already a node with that name.' %
-                name))
-            return
-
 
     def add_custom_menu_items_for_node(self, node, menu):
         index = self.model.index_for_node(node)
@@ -453,9 +355,4 @@ class XmlController_DataTools(XmlController):
             menu.addAction(self.actOpenDocumentation)
             menu.addSeparator()
             menu.addAction(self.actCloneNode)
-
-        # Now add the export and import methods
-        menu.addSeparator()
-        menu.addAction(self.actExportXMLToFile)
-        menu.addAction(self.actImportXMLFromFile)
 

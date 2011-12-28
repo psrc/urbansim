@@ -265,6 +265,16 @@ class XmlModel(QAbstractItemModel):
         if new_node is None:
             new_node = node
         self.remove_or_update_row(row, parent_index, new_node)
+            
+    def update_root(self, new_node):
+        '''
+        Replaces a complete tree with a new one. 
+        '''
+        new_node = self.project.delete_or_update_node(self._root_node, new_node)
+        self._root_node = new_node
+        self._root_item = XmlItem(self._root_node, None)
+        self.rebuild_tree()
+        self.dirty = True
 
     # CK: This is a pretty ineffective method of finding the node <-> item mapping.
     # A dictionary mapping would be better.

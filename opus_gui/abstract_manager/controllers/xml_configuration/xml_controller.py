@@ -4,16 +4,22 @@
 
 # TODO rename methods to follow OPUS code conventions
 
+import os
 from copy import deepcopy
 
-from PyQt4.QtCore import QObject, SIGNAL, Qt
-from PyQt4.QtGui import QCursor, QMenu
+from PyQt4.QtCore import QObject, SIGNAL, Qt, QString, QFileInfo
+from PyQt4.QtGui import QCursor, QMenu, QFileDialog
 
+from lxml.etree import ElementTree
+
+from opus_core import paths
+from opus_core.configurations.xml_configuration import load_xml_file
 from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
 from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import RenameDialog
 from opus_gui.util.convenience import create_qt_action
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 # List node types that are removable (which also makes them rename-able)
 _REMOVABLE_NODE_TYPES = (
@@ -60,6 +66,12 @@ class XmlController(object):
         self.act_make_editable = self.create_action('make_editable', 'Make node local', self.make_selected_editable)
         self.act_clone_node = self.create_action('clone', 'Duplicate', self.clone_selected_node)
         self.act_rename_node = self.create_action('rename', 'Rename', self.rename_selected_node)
+        self.actExportXMLToFile = self.create_action('export', "Export XML Node With Inherited Values To File", self.exportXMLToFile)
+        self.actImportXMLFromFile = self.create_action('import', "Import XML Node From File", self.importXMLFromFile)
+        self.actExportXMLToFile_all = self.create_action('export_all', "Export all XML Nodes With Inherited Values To File", self.exportXMLToFile)
+        self.actImportXMLFromFile_all = self.create_action('import_all', "Import all XML Nodes From File", self.importXMLFromFile)
+        self.actExportXMLToFile_without_inherited = self.create_action('export_without_inherited', 'Export XML Node To File', self.export_without_inherited)
+        self.actExportXMLToFile_all_without_inherited = self.create_action('export_all_without_inherited', 'Export all XML Nodes To File', self.export_without_inherited)
 
     def add_model_view_delegate(self):
         '''
@@ -241,6 +253,116 @@ class XmlController(object):
         assert item is not None
         return item
     
+    def get_selected_or_root_node(self):
+        if not self.has_selected_item():
+            return self.model.root_node()
+        else:
+            return self.selected_item().node
+    
+    def get_selected_or_root_node_and_index(self):
+        node = self.get_selected_or_root_node()
+        if node is self.model.root_node():
+            index = self.model.index_for_item(self.model.root_item())
+        else:
+            index = self.model.index_for_node(node)
+        assert index is not None
+        return node, index
+    
+    def get_clean_copy_of_selected_node(self, inherited=True):
+        root_node = self.get_selected_or_root_node()
+        root_node = deepcopy(root_node)
+        if not inherited:
+            self.project.xml_config._clean_tree(root_node)
+            
+        # Write out the file
+        self.project.xml_config._indent(root_node)
+        return root_node
+    
+    def exportXMLToFile(self, inherited=True):
+        ''' NO DOCUMENTATION '''
+
+        # Ask the users where they want to save the file
+        start_dir= paths.get_project_configs_path()
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getSaveFileName(self.manager.base_widget,
+                                          QString("Save As..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+            return
+        fileNameInfo = QFileInfo(QString(fd))
+        fileName = fileNameInfo.fileName().trimmed()
+        fileNamePath = fileNameInfo.absolutePath().trimmed()
+        saveName = os.path.join(str(fileNamePath), str(fileName))
+
+        root_node = self.get_clean_copy_of_selected_node()
+        ElementTree(root_node).write(saveName)
+        
+    def check_import_node(self, clicked_node, xml_node):
+        if (clicked_node.tag == xml_node.tag) and (clicked_node.get('name') == xml_node.get('name')):
+            return
+        
+        root_dummy = clicked_node.tag
+        if 'name' in clicked_node:
+            root_dummy += ' name="%s"' % clicked_node['name']
+        root_dummy = '<%s/>' % root_dummy
+        raise ValueError('Expected an element like %s as root element'
+             % root_dummy)
+
+    def importXMLFromFile(self):
+        ''' NO DOCUMENTATION '''
+        # print "importXMLFromFile"
+        # First, prompt the user for the filename to read in
+        start_dir= paths.get_project_configs_path()
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getOpenFileName(self.manager.base_widget,
+                                          "Please select an XML file to import...",
+                                          start_dir, filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+            return
+        fileName = QString(fd)
+
+        # Pass that in to create a new XMLConfiguration
+        try:
+            options = ''
+            xml_tree = load_xml_file(str(fileName))
+            xml_node = xml_tree.getroot()
+            
+            options = ' or another node in the tree view'
+            self.import_from_node(xml_node)
+        except Exception, e:
+            MessageBox.error(mainwindow = self.view,
+                text = 'Cannot insert XML file.',
+                detailed_text = 'XML insert failed.  '
+                    '%s.  '
+                    'Please select another XML file%s.'
+                    % (e, options))
+            return
+        
+    def import_from_node(self, xml_node):
+        clicked_node, clicked_index = self.get_selected_or_root_node_and_index()
+
+        self.check_import_node(clicked_node, xml_node)
+        
+        if clicked_node is self.model.root_node():
+            self.model.update_root(xml_node)
+        else:
+            was_expanded = self.view.isExpanded(clicked_index)
+            
+            self.model.update_node(clicked_node, xml_node)
+            
+            new_index = self.model.last_inserted_index
+            
+            self.view.setCurrentIndex(new_index)
+            if was_expanded:
+                self.view.setExpanded(new_index, True)
+    
+    def export_without_inherited(self):
+        self.exportXMLToFile(inherited=False)
+        
     def add_custom_menu_items_for_node(self, node, menu):
         '''
         Append a list of menu items specific to a manager.
@@ -274,12 +396,16 @@ class XmlController(object):
             added_actions.append(self.act_revert)
         elif node.get('type') in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
             added_actions.append(self.act_remove_selected)
+        added_actions.append(self.actExportXMLToFile)
+        added_actions.append(self.actExportXMLToFile_without_inherited)
+        added_actions.append(self.actImportXMLFromFile)
 
         # Separate from other items
         if added_actions and not menu.isEmpty():
             menu.addSeparator()
         map(lambda x: menu.addAction(x), added_actions)
-        # [menu.addAction(action) for action in added_actions]
         
     def add_default_menu_items_for_widget(self, menu):
-        pass
+        menu.addAction(self.actExportXMLToFile_all)
+        menu.addAction(self.actExportXMLToFile_all_without_inherited)
+        menu.addAction(self.actImportXMLFromFile_all)
