@@ -126,12 +126,13 @@ class XmlController(object):
         @param position (QPoint) point of request for the popupmenu.
         '''
         item = self.select_item_at(position)
-        if not item:
-            return
+        assert item is not None
         node = item.node
-
+        
         menu = QMenu(self.view)
-        if not self.add_custom_menu_items_for_node(node, menu):
+        if item is self.model.root_item():
+            self.add_default_menu_items_for_widget(menu)
+        elif not self.add_custom_menu_items_for_node(node, menu):
             if not menu.isEmpty():
                 menu.addSeparator()
             self.add_default_menu_items_for_node(node, menu)
@@ -223,15 +224,22 @@ class XmlController(object):
         '''
         Select the item at "point" to visualize which item we are working on and
         making the item accessible through self.selected_item().
+        If the point is invalid, the currently selected item, if any, is deselected,
+        and the root item is returned.
 
         @param point (QPoint): coordinates for where to get the item.
         @return: The selected item if the point was valid, None otherwise
         '''
         index = self.view.indexAt(point)
         if not index.isValid or index.column() != 0: # only allow right-clicking on left side nodes
-            return None
+            index = self.view.rootIndex()
+            item = self.model.root_item()
+        else:
+            item = index.internalPointer()
         self.view.setCurrentIndex(index)
-        return index.internalPointer()
+        
+        assert item is not None
+        return item
     
     def add_custom_menu_items_for_node(self, node, menu):
         '''
@@ -272,3 +280,6 @@ class XmlController(object):
             menu.addSeparator()
         map(lambda x: menu.addAction(x), added_actions)
         # [menu.addAction(action) for action in added_actions]
+        
+    def add_default_menu_items_for_widget(self, menu):
+        pass
