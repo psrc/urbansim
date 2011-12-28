@@ -20,6 +20,7 @@ from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
 from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import RenameDialog
 from opus_gui.util.convenience import create_qt_action
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_editor import XML_Editor_Gui
 
 # List node types that are removable (which also makes them rename-able)
 _REMOVABLE_NODE_TYPES = (
@@ -72,6 +73,8 @@ class XmlController(object):
         self.actImportXMLFromFile_all = self.create_action('import_all', "Import all XML Nodes From File", self.importXMLFromFile)
         self.actExportXMLToFile_without_inherited = self.create_action('export_without_inherited', 'Export XML Node To File', self.export_without_inherited)
         self.actExportXMLToFile_all_without_inherited = self.create_action('export_all_without_inherited', 'Export all XML Nodes To File', self.export_without_inherited)
+        self.act_edit = self.create_action('inspect', 'Edit as XML', self.edit)
+        self.act_edit_all = self.create_action('inspect_all', 'Edit all as XML', self.edit)
 
     def add_model_view_delegate(self):
         '''
@@ -363,6 +366,15 @@ class XmlController(object):
     def export_without_inherited(self):
         self.exportXMLToFile(inherited=False)
         
+    def edit(self):
+        root_node = self.get_clean_copy_of_selected_node(inherited=False)
+        
+        w = XML_Editor_Gui(self.manager.base_widget, self, root_node)
+        w.setModal(True)
+        if w.exec_() == XML_Editor_Gui.Accepted:
+            assert w.edited_node is not None
+            self.import_from_node(w.edited_node)
+        
     def add_custom_menu_items_for_node(self, node, menu):
         '''
         Append a list of menu items specific to a manager.
@@ -399,6 +411,8 @@ class XmlController(object):
         added_actions.append(self.actExportXMLToFile)
         added_actions.append(self.actExportXMLToFile_without_inherited)
         added_actions.append(self.actImportXMLFromFile)
+        if not node.get('inherited'):
+            added_actions.append(self.act_edit)
 
         # Separate from other items
         if added_actions and not menu.isEmpty():
@@ -409,3 +423,4 @@ class XmlController(object):
         menu.addAction(self.actExportXMLToFile_all)
         menu.addAction(self.actExportXMLToFile_all_without_inherited)
         menu.addAction(self.actImportXMLFromFile_all)
+        menu.addAction(self.act_edit_all)
