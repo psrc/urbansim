@@ -15,8 +15,10 @@ os.environ['OPUSPROJECTNAME'] = pn
 
 years_arr = [2000,2002,2004,2006,2008,2010]
 # zurich scenario from 2000 to 2010
-cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/runs/run_3.test_no_action_1pct_30it_2000-2010_warm-hot-start'
-#cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/runs/run_4.test_schwamendingertunnel_1pct_30it_2000-2010_war-hot-start'
+#cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_3.test_no_action_1pct_30it_2000-2010_warm-hot-start'
+#cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_4.test_schwamendingertunnel_1pct_30it_2000-2010_war-hot-start'
+#cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_5.test_no_action_with_accessibility_1pct_30it_2000-2010_warm-hot-start'
+cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_6.test_schwamendingertunnel_with_accessibility_1pct_30it_2000-2010_warm-hot-start'
 
 print "creating indicators for %s" % os.environ['OPUSPROJECTNAME']
 
