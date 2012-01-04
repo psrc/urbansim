@@ -4,7 +4,7 @@
 
 aliases = [        
            #"is_untaken_non_home_based_job = numpy.logical_and(job.number_of_agents(person)==0, job.number_of_agents(person)==0)", #DOES NOT WORK!!! WOULD BE variation of urbansim_parcel, use job.number_of_agents(person)<>0 instead
-           "is_untaken_non_home_based_job = job.number_of_agents(person)==0"
+           "is_untaken_non_home_based_job = job.number_of_agents(person)==0",
            "building_type = job.disaggregate(building.building_type_id)"
    #copy of urbansim_parcel       
   # "zone_id = job.disaggregate(urbansim_parcel.building.zone_id)",
