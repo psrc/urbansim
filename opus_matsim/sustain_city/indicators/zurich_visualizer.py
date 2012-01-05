@@ -93,8 +93,7 @@ indicators = {
         attribute = 'urbansim_parcel.zone.number_of_households' ),
     'number_of_1person_households':Indicator(
         dataset_name = 'zone',
-        #attribute = 'zone.aggregate(household.persons == 1, intermediates=[building, parcel])' ),
-        attribute = 'zone.number_of_agents(household.persons == 1)' ),
+        attribute = 'zone.aggregate(household.persons == 1, intermediates=[building, parcel])' ),
     'average_household_income':Indicator(
         dataset_name = 'zone',
         attribute = 'urbansim_parcel.zone.average_household_income' ),
