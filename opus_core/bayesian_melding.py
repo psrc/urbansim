@@ -7,7 +7,7 @@
 import os
 import gc
 from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate
-from numpy import round_, argsort, resize, average
+from numpy import round_, argsort, resize, average, ndarray
 from opus_core import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
@@ -476,13 +476,17 @@ class BayesianMelding(MultipleRuns):
         self.compute_m(year, quantity_of_interest)
         
     def get_index_for_quantity(self, variable_name):
-        variable_list = self.get_variable_names()
-        if variable_name not in variable_list:
+        variable_list = self.get_short_variable_names()
+        short_name = VariableName(variable_name).get_alias()
+        if short_name not in variable_list:
             raise ValueError, "Quantity %s is not among observed data." % variable_name
-        return variable_list.index(variable_name)
+        return variable_list.index(short_name)
         
     def get_variable_names(self):
         return map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+    
+    def get_short_variable_names(self):
+        return map(lambda x: x.get_alias(), self.observed_data.get_variable_names())
     
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
@@ -584,17 +588,25 @@ class BayesianMelding(MultipleRuns):
         if self.simulated_values is None:
             raise StandardError, "Values were not simulated yet. Use method 'generate_posterior_distribution'."
 
-    def get_probability_interval(self, probability):
-        """Returns an array with two rows. First row contains the mins, the second row contains the max values
-        that correspond to the given probability interval.
+    def get_quantiles(self, quantiles):
+        """Returns a matrix where each column corresponds to one element of the quantiles array.
+        """
+        if not isinstance(quantiles, ndarray):
+            quantiles = array(quantiles)
+        sorted_values = sort(self.simulated_values, axis=1)
+        result = zeros((sorted_values.shape[0], quantiles.size))
+        n = sorted_values.shape[1]
+        for i in range(quantiles.size):
+            result[:,i] = sorted_values[:, int(n * quantiles[i])]
+        return result
+
+    def get_probability_interval(self, interval):
+        """Returns an array with two columns. First column contains the lower bound, the second column contains the 
+        upper bound of the given probability interval.
         """
         self._check_simulated_values()
-        sorted_values = sort(self.simulated_values, axis=1)
-        tmp = (1-probability)/2.0
-        n = sorted_values.shape[1]
-        minvalues = sorted_values[:, int(n * tmp)]
-        maxvalues = sorted_values[:, int(n * (1-tmp))]
-        return array([minvalues, maxvalues])
+        tmp = (1-interval/100.0)/2.0
+        return self.get_quantiles([tmp, 1-tmp])
         
     def export_confidence_intervals(self, confidence_levels, filename, delimiter='\t'):
         """Export confidence intervals into a file. 
