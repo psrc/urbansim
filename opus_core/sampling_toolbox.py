@@ -91,7 +91,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
             return array([], dtype=source_array.dtype)
             
     if prob_array is None:
-        return sample_replace(source_array,sample_size, return_index=return_index)
+        return sample_noreplace(source_array, sample_size, return_index=return_index)
     else:
         #make a copy of prob_array so we won't change its original value in the sampling process
         prob_array2 = prob_array.copy()
