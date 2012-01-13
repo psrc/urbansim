@@ -5,7 +5,7 @@ from numpy import ndarray, arange, array, reshape, zeros, where, repeat, logical
 from numpy import ma
 from opus_core.ndimage import sum as ndimage_sum
 from opus_core.misc import unique
-from urbansim.lottery_choices import lottery_choices
+from opus_core.upc.lottery_choices import lottery_choices
 from opus_core.logger import logger
 
 class constrain_choices(object):

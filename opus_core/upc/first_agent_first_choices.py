@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import array, ones, arange, argsort
-from urbansim.lottery_choices import lottery_choices
+from opus_core.upc.lottery_choices import lottery_choices
 from opus_core.ndimage import sum as ndimage_sum
 
 class first_agent_first_choices(lottery_choices):
