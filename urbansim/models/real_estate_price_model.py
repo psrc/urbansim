@@ -21,7 +21,14 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
                  outcome_attribute = "unit_price",
                  run_config=None,
                  estimate_config=None,
-                 debuglevel=0, dataset_pool=None):
+                 debuglevel=0, 
+                 model_name=None,
+                 model_short_name=None,
+                 dataset_pool=None):
+        if model_name is not None:
+            self.model_name = model_name
+        if model_short_name is not None:
+            self.model_short_name = model_short_name
         self.filter_attribute = filter_attribute
         RegressionModelWithAdditionInitialResiduals.__init__(self,
                                  regression_procedure=regression_procedure,

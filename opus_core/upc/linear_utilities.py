@@ -5,6 +5,7 @@
 from numpy import sum
 from opus_core.misc import check_dimensions
 from opus_core.utilities import Utilities
+from numpy.core.umath_tests import inner1d
 
 class linear_utilities(Utilities):
     """    Class for computing linear utilities.
@@ -23,8 +24,8 @@ class linear_utilities(Utilities):
             if not check_dimensions(data[0,:,:], coefficients):
                 raise StandardError, "Mismatch in dimensions of data and coefficients."
 
-        utility = data*coefficients
-        return sum(utility,axis=2)
+        utility = inner1d(data, coefficients)
+        return utility
 
 from opus_core.tests import opus_unittest
 from numpy import array
