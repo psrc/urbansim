@@ -1,0 +1,1074 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">SustainCity: Zurich case study</description>
+    <project_name hidden="True" type="string">zurich_parcel</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <expression_library type="dictionary">
+      <variable use="both" source="expression" name="job.SC_is_placed_job" type="variable_definition">(urbansim_parcel.job.zone_id&gt;0).astype(int32)</variable>
+      <variable use="both" source="expression" name="parcel.SC_unbuilt_parcel_area" type="variable_definition">parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])</variable>
+      <variable use="both" source="Python class" name="building.Inwork_SC_building_type" type="variable_definition">zurich_parcel.building.is_building_type_3</variable>
+      <variable use="both" source="Python class" name="parcel.Inwork_SC_bauzone" type="variable_definition">zurich_parcel.parcel.is_plan_type_smaller_7000</variable>
+      <variable use="both" source="expression" name="parcel.SC_is_built" type="variable_definition">zurich_parcel.parcel.number_of_buildings &gt; 0</variable>
+      <variable use="both" source="expression" name="person.SC_dist_to_job" type="variable_definition">sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))^2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))^2)</variable>
+      <variable use="both" source="expression" name="job.SC_job_xcoord" type="variable_definition">job.disaggregate(parcel.x_coord_sp, intermediates=[building])</variable>
+      <variable use="both" source="expression" name="parcel.SC_is_generic_land_use_type_smaller_7" type="variable_definition">parcel.generic_land_use_type_id &lt; 7</variable>
+      <variable use="model variable" source="expression" name="building.SC_logit_slope" type="variable_definition">ln(building.disaggregate(parcel.slope, intermediates=[parcel])) - ln(1 - building.disaggregate(parcel.slope, intermediates=[parcel]))</variable>
+      <variable use="model variable" source="expression" name="parcel.SC_logit_foreigners_within_56_of_parcel" type="variable_definition">ln(zurich_parcel.parcel.households_foreign_within_56_of_parcel) - ln(1 - zurich_parcel.parcel.households_foreign_within_56_of_parcel)</variable>
+      <variable use="model variable" source="expression" name="building.SC_ln_jobs_G52_H_within_1km" type="variable_definition">building.disaggregate(ln(urbansim_parcel.parcel.jobs_of_sector_5_within_1000_of_parcel), intermediates=[parcel])#urbansim_parcel.parcel.jobs_within_1000_of_parcel did work</variable>
+      <variable use="both" source="Python class" name="zone.SC_number_of_housholds_in_zone" type="variable_definition">urbansim_parcel.zone.number_of_households#zone.number_of_agents(household)#zurich_parcel.parcel.number_of_households</variable>
+      <variable use="both" source="expression" name="household.SC_building_pt_acc_X_dummy_nocar" type="variable_definition">household.disaggregate(parcel.acc_pt, intermediates=[building])* (numpy.ma.masked_where(household.cars==0, household.cars+1))</variable>
+      <variable use="both" source="expression" name="building.SC_building_age" type="variable_definition">2050-(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built==0, building.year_built))</variable>
+      <variable use="model variable" source="expression" name="household.SC_hh_size1_X_hh1_density" type="variable_definition">numpy.ma.masked_where(household.persons == 1, household.persons * household.disaggregate(urbansim_parcel.parcel.households_within_1000_of_parcel, intermediates=[parcel, building]))</variable>
+      <variable use="both" source="expression" name="building.SC_building_year_built" type="variable_definition">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built==0,building.year_built)</variable>
+      <variable use="both" source="expression" name="household_x_building.SC_pop_dens_within_1km_X_young_hh_dummy" type="variable_definition">(household.age_of_head &lt; 35)*(building.disaggregate(zurich_parcel.parcel.persons_within_1000_of_parcel))#(building.disaggregate(zuerich_parcel.urbansim_parcel.parcel.persons_within_1000_of_parcel, intermediates=[household])* (household.age_of_head &lt; 30)</variable>
+      <variable use="model variable" source="expression" name="building.SC_rent_vacancy_per_municipality" type="variable_definition">building.disaggregate(city.aggregate(zone.aggregate(building.residential_units, intermediates=[parcel])- zone.number_of_agents(household)), intermediates=[parcel, building])#city.aggregate(zone.aggregate(building.residential_units, intermediates=[parcel])- zone.number_of_agents(household))</variable>
+      <variable use="model variable" source="expression" name="building.SC_jobs_in_municipality" type="variable_definition">building.disaggregate(city.aggregate(zone.number_of_agents(job)),intermediates=[zone,parcel])</variable>
+      <variable use="model variable" source="expression" name="building.SC_jobs_G52_H_within_1km" type="variable_definition">building.disaggregate(urbansim_parcel.parcel.jobs_of_sector_5_within_1000_of_parcel, intermediates=[parcel])#urbansim_parcel.parcel.jobs_within_1000_of_parcel did work</variable>
+      <variable use="both" source="expression" name="building.SC_building_is_pre_1941" type="variable_definition">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1921</variable>
+      <variable use="model variable" source="expression" name="building.SC_jobs_within_1km" type="variable_definition">building.disaggregate(ln(parcel.bz05_g52_1km+parcel.bz05_h_1km+1)) #this uses the precalculated values out of GIS</variable>
+      <variable use="both" source="expression" name="zones.SC_number_of_resid_units_in_zone" type="variable_definition">zones.aggregate(buildings.residential_units, intermediates=[parcels])</variable>
+      <variable use="both" source="expression" name="building.SC_ln_dist_to_station" type="variable_definition">ln(building.disaggregate(parcel.dist_to_station))</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_autobahn_within_100m" type="variable_definition">parcel.autobahn_100m</variable>
+      <variable use="both" source="expression" name="building.SC_ln_taxlevel" type="variable_definition">ln(building.disaggregate(parcel.municipal_taxindex))</variable>
+      <variable use="both" source="expression" name="zone.SC_number_of_hh_in_zone" type="variable_definition">zone.number_of_agents(household)</variable>
+      <variable use="model variable" source="Python class" name="parcel.SC_households_within_500_of_parcel" type="variable_definition">urbansim_parcel.parcel.households_within_500_of_parcel</variable>
+      <variable use="model variable" source="Python class" name="parcel.SC_pop_ha" type="variable_definition">zurich_parcel.parcel.persons_within_56_of_parcel</variable>
+      <variable use="both" source="expression" name="building.SC_acc_pt" type="variable_definition">building.disaggregate(parcel.acc_pt)</variable>
+      <variable use="both" source="expression" name="building.SC_acc_car" type="variable_definition">building.disaggregate(parcel.acc_car)</variable>
+      <variable use="both" source="expression" name="building.SC_ln_sqm_per_unit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.SC_is_house" type="variable_definition">building.building_quality_id == 1021</variable>
+      <variable use="both" source="expression" name="building.SC_building_built91to05" type="variable_definition">numpy.logical_or(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1991, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 2005)</variable>
+      <variable use="both" source="expression" name="building.SC_building_built81to90" type="variable_definition">numpy.logical_or(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1981, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1990)</variable>
+      <variable use="both" source="expression" name="building.SC_building_is_pre_1921" type="variable_definition">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1921</variable>
+      <variable use="both" source="expression" name="building.SC_building_built21to30" type="variable_definition">numpy.logical_or(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1921, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1930)</variable>
+      <variable use="both" source="expression" name="building.SC_ln_dist_to_zh_cbd" type="variable_definition">ln(building.disaggregate(parcel.dist_to_zh_cbd))</variable>
+      <variable use="both" source="expression" name="parcel.is_nearer_100_highway" type="variable_definition">parcel.dist_to_highwaynet&lt;100</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_share_of_university_degrees" type="variable_definition">parcel.share_of_universitydegrees</variable>
+      <variable use="both" source="expression" name="parcel.SC_noise" type="variable_definition">(parcel.dist_to_highwaynet&lt;100) * (parcel.dist_to_railnet&lt;100)</variable>
+      <variable use="both" source="expression" name="building.SC_dist_to_zh_cbd" type="variable_definition">building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="both" source="expression" name="building.SC_dist_to_win_cbd" type="variable_definition">building.disaggregate(parcel.dist_to_win_cbd)</variable>
+      <variable use="both" source="expression" name="building.SC_dist_to_station" type="variable_definition">building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="both" source="expression" name="building.SC_dist_to_highway" type="variable_definition">building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="both" source="expression" name="household_x_building.SC_interaction_year_built_age_of_head" type="variable_definition">numpy.absolute(building.year_built - (household.age_of_head * 30))</variable>
+      <variable use="both" source="expression" name="building.SC_rent_vacancy_per_zone" type="variable_definition">building.disaggregate((zone.aggregate(building.residential_units, intermediates=[parcel])-zone.number_of_agents(household)), intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.SC_number_of_hh_in_zone" type="variable_definition">zone.number_of_agents(household)</variable>
+      <variable use="both" source="expression" name="building.SC_residential_units_per_zone" type="variable_definition">building.disaggregate(zone.aggregate(building.residential_units, intermediates=[parcel]), intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.SC_share_of_buildings_pre_1971_per_zone" type="variable_definition">building.disaggregate(zone.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1971, intermediates = [parcel])/(zone.number_of_agents(building)), intermediates = [parcel])</variable>
+      <variable use="both" source="expression" name="zone.SC_number_of_buildings_per_zone" type="variable_definition">zone.number_of_agents(building)</variable>
+      <variable use="both" source="expression" name="zone.SC_number_of_buildings_pre_1971_per_zone" type="variable_definition">zone.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1971, intermediates = [parcel])</variable>
+      <variable use="both" source="expression" name="building.SC_mean_year_built_within_zone" type="variable_definition">building.disaggregate(zone.aggregate(building.year_built, function=mean, intermediates=[parcel]))</variable>
+      <variable use="both" source="expression" name="&lt;unknown&gt;.SC_households_with_same_size" type="variable_definition">numpy.ma.masked_where(household.persons == household.persons, households.persons * households.persons)</variable>
+      <variable use="model variable" source="expression" name="building.SC_households_within_1000_of_parcel" type="variable_definition">building.disaggregate(urbansim_parcel.parcel.households_within_1000_of_parcel)</variable>
+      <variable use="both" source="expression" name="building.SC_building_is_pre_1971" type="variable_definition">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1971</variable>
+      <variable name="building.blngcdacbd" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</variable>
+      <variable name="household_x_building.is_high_income_x_ln_sqft_per_unit" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</variable>
+      <variable use="model variable" source="expression" name="household_x_building.SC_population_density_interacted_young_household" type="variable_definition">(ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32) * (household.age_of_head &lt; 30)</variable>
+      <variable name="parcel.is_pre_1971" source="expression" type="variable_definition" use="model variable">parcel.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) &lt; 1971</variable>
+      <variable use="model variable" source="expression" name="parcel.pop_density_within_1000_of_parcel" type="variable_definition">urbansim_parcel.parcel.persons_within_1000_of_parcel / (1000**2 * 3.1415926535897931)</variable>
+      <variable use="model variable" source="Python class" name="parcel.SC_persons_within_1000_of_parcel" type="variable_definition">zurich_parcel.parcel.persons_within_1000_of_parcel</variable>
+      <variable use="both" source="expression" name="household.pop_density_x_young_hh" type="variable_definition">ln(urbansim.household.is_young)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HWnet_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HWnet_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HWnet_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HWnet_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HWnet_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HW_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HW_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HW_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HW_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_HW_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_PT_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_PT_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_PT_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_PT_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_PT_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="both" source="expression" name="job_x_building.RH_zonal_income_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zonal_income_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zonal_income_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zonal_income_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zonal_income_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_pop_dens_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) *  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_pop_dens_wtrade" type="variable_definition">(job.sector_id == 3) *  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_pop_dens_trade" type="variable_definition">(job.sector_id == 4) *  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_pop_dens_hotelbar" type="variable_definition">(job.sector_id == 5) *  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_pop_dens_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) *  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_parcel_land_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.parcel_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_parcel_land_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.parcel_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_parcel_land_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.parcel_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_parcel_land_hotelbar" type="variable_definition">(job.sector_id == 5) * building.disaggregate(parcel.parcel_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_parcel_land_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.disaggregate(parcel.parcel_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_wtrade" type="variable_definition">(job.sector_id == 3) * ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_trade" type="variable_definition">(job.sector_id == 4) * ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_hotelbar" type="variable_definition">(job.sector_id == 5) * ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_imp_value_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.improvement_value</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_imp_value_wtrade" type="variable_definition">(job.sector_id == 3) * building.improvement_value</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_imp_value_trade" type="variable_definition">(job.sector_id == 4) * building.improvement_value</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_imp_value_hotelbar" type="variable_definition">(job.sector_id == 5) * building.improvement_value</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_imp_value_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.improvement_value</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.land_area</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_wtrade" type="variable_definition">(job.sector_id == 3) * building.land_area</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_trade" type="variable_definition">(job.sector_id == 4) * building.land_area</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_hotelbar" type="variable_definition">(job.sector_id == 5) * building.land_area</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.land_area</variable>
+    </expression_library>
+    <available_datasets type="list">['building_x_parcel','building','parcel','household','business','household_x_building','zone','tract','district14','district24','alldata','pdist','buildings_for_estimation', 'development_event_history', 'job_x_building']</available_datasets>
+    <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
+    <dataset_pool_configuration type="class" hidden="False">
+      <class_name type="string">DatasetPoolConfiguration</class_name>
+      <class_module type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['zurich_parcel','urbansim_parcel','urbansim','opus_core']</argument>
+    </dataset_pool_configuration>
+  </general>
+  <data_manager>
+    <tool_library setexpanded="True">
+      <tool_group name="opus_data_import_export_tools" setexpanded="True">
+        <tool name="sql_data_to_opus_tool">
+          <class_module>sql_data_to_opus</class_module>
+          <params>
+            <param name="database_server_connection" param_type="db_connection_hook" required="True">scenario_database_server</param>
+            <param name="database_name" param_type="string" required="True">baseyear_v1_copy</param>
+            <param name="table_name" param_type="string" required="True">persons</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">data/zurich_parcel/base_year_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2000</param>
+            <param name="overwrite" param_type="boolean" required="True">True</param>
+          </params>
+        </tool>
+        <tool name="esri_data_to_opus_tool">
+          <class_module>esri_data_to_opus</class_module>
+          <params>
+            <param name="esri_data_path" param_type="dir_path" required="True">data/zurich_parcel/shapefiles</param>
+            <param name="esri_table_name" param_type="dir_path" required="True">zonen_kvm</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">data/zurich_parcel/base_year_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2000</param>
+          </params>
+        </tool>
+        <tool name="csv_data_to_opus_tool">
+          <class_module>csv_data_to_opus</class_module>
+          <params>
+            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_parcel/base_year_data/2000/Copy of household_location_choice_model_coefficients_OLD</param>
+            <param name="csv_table_name" param_type="string" required="True">Copy_of_household_location_choice_model_coefficients</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">data/zurich_parcel/base_year_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2000</param>
+          </params>
+        </tool>
+      </tool_group>
+    </tool_library>
+  </data_manager>
+  <model_manager>
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="LAST of SC_workplace_location_choice" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
+            <class_name type="string">AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+            <argument name="location_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">job.number_of_agents(person)==0</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">person.job_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">WorkplaceLocationChoiceModel</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">WLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel.person</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="compute_capacity_flag" type="boolean">True</key>
+              <key convert_blank_to_none="True" name="capacity_string" type="string" model_dependency_type="variable">(zurich_parcel.job.is_untaken_non_home_based_job).astype(int32)</key>
+              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id)&lt;&gt;1).astype(int32)</key>
+              <key convert_blank_to_none="True" name="number_of_agents_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" model_dependency_type="variable">SC_is_placed_job = (urbansim_parcel.job.zone_id&gt;0).astype(int32)</key>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="estimation_size_agents" type="float">0.1</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, wlcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">LAST of SC_workplace_location_choice_specification</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">zurich_parcel.person.is_non_home_based_worker_with_job</argument>
+            <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_index" type="string">wlcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">LAST of SC_workplace_location_choice_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">LAST of SC_workplace_location_choice_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">alcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="person.SC_dist_to_job"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="Copy of SC_workplace_location_choice__estimation_works_sim_not" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
+            <class_name type="string">AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+            <argument name="location_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">job.number_of_agents(person)&lt;&gt;0</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">person.job_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">WorkplaceLocationChoiceModel</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">WLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel.person</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="compute_capacity_flag" type="boolean">False</key>
+              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id)&lt;&gt;1).astype(int32)</key>
+              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" model_dependency_type="variable">SC_is_placed_job = (urbansim_parcel.job.zone_id&gt;0).astype(int32)</key>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="estimation_size_agents" type="float">0.1</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, wlcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_specification</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">zurich_parcel.person.is_non_home_based_worker_with_job</argument>
+            <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_index" type="string">wlcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">alcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="person.SC_dist_to_job"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="SC_workplace_location_chocie" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
+            <class_name type="string">AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+            <argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.number_of_jobs&lt;&gt;0</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.building_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">AgentLocationChoiceModel</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">WLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel.person</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="compute_capacity_flag" type="boolean">True</key>
+              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable">number_of_jobs</key>
+              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable">number_of_persons</key>
+              <key name="lottery_max_iterations" type="integer">3</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="estimation_size_agents" type="float">0.5</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, alcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_specification</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_index" type="string">alcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">new_workplace_location_chocie_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">alcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="person.SC_dist_to_job"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="employment_transition_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.employment_transition_model</class_module>
+            <class_name>EmploymentTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">EmploymentTransitionModel</name>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output hidden="True" name="output" type="string">control_totals</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
+            <argument name="job_building_types" type="string">job_building_type</argument>
+            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="employment_relocation_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.employment_relocation_model_creator</class_module>
+            <class_name>EmploymentRelocationModelCreator</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">urbansim.employment_relocation_probabilities</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output hidden="True" name="output" type="string">erm_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_job_relocation_rates</argument>
+            <argument name="what" parser_action="quote_string" type="string">jobs</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output hidden="True" name="output" type="string">erm_index</output>
+            <argument hidden="True" name="resources" type="string">erm_resources</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="Copy of real_estate_price_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.real_estate_price_model</class_module>
+            <class_name>RealEstatePriceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">RealEstatePriceModel</name>
+            <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">building_type_id</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln_total_price=ln(building.improvement_value)</argument>
+            <argument name="filter_attribute" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_or(zurich_parcel.building.is_building_type_1, zurich_parcel.building.is_building_type_5)</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="estimate_config" type="string">Resources({'save_predicted_values_and_errors': False})</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">Copy of real_estate_price_model_specification</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">Copy of real_estate_price_model_coefficients</argument>
+            <output hidden="True" name="output" type="string">(specification, coefficients)</output>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <argument hidden="True" name="coefficients" type="string">coefficients</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument name="run_config" type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':3, 'outlier_is_greater_than': 7})</argument>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_estimate</name>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">Copy of real_estate_price_model_specification</argument>
+            <argument name="filter_variable" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="threshold" type="integer">0</argument>
+            <output hidden="True" name="output" type="string">(specification, index)</output>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln_total_price=ln(building.improvement_value)</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument hidden="True" name="index" type="string">index</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
+            <output hidden="True" name="output" type="string">(coefficients, dummy)</output>
+          </estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="rent" submodel_id="1" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.SC_acc_car"/>
+              <variable_spec name="building.SC_acc_pt" ignore="True"/>
+              <variable_spec name="parcel.SC_autobahn_within_100m" ignore="True"/>
+              <variable_spec name="building.SC_building_built21to30" ignore="True"/>
+              <variable_spec name="building.SC_building_built81to90" ignore="True"/>
+              <variable_spec name="building.SC_building_built91to05" ignore="True"/>
+              <variable_spec name="building.SC_building_is_pre_1921" ignore="True"/>
+              <variable_spec name="building.SC_is_house" ignore="True"/>
+              <variable_spec name="building.SC_ln_dist_to_station" ignore="True"/>
+              <variable_spec name="building.SC_ln_sqm_per_unit" ignore="True"/>
+              <variable_spec name="building.SC_ln_taxlevel" ignore="True"/>
+              <variable_spec name="parcel.SC_logit_foreigners_within_56_of_parcel" ignore="True"/>
+              <variable_spec name="building.SC_logit_slope" ignore="True"/>
+              <variable_spec name="parcel.SC_pop_ha" ignore="True"/>
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+        </specification>
+      </model>
+      <model name="building_transition_model" type="model">
+        <structure type="dictionary">
+          <import hidden="False" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.real_estate_transition_model</class_module>
+            <class_name>RealEstateTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="False" name="name" type="string">RealEstateTransitionModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">_DISCARD</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="dataset_name" parser_action="quote_string" type="string">target_vacancy</argument>
+            <argument name="table_name" parser_action="quote_string" type="string">target_vacancies</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">building, new_building_index</output>
+            <argument name="realestate_dataset" type="string">building</argument>
+            <argument name="year" type="string">year</argument>
+            <argument name="occupied_spaces_variable" parser_action="quote_string" type="string">occupied_spaces</argument>
+            <argument name="total_spaces_variable" parser_action="quote_string" type="string">total_spaces</argument>
+            <argument name="sample_from_dataset" type="string">building</argument>
+            <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
+            <argument name="append_to_realestate_dataset" type="string">True</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="sample_filter" type="string">""</argument>
+            <argument name="resources" type="string">model_resources</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="building_location_choice_model_from_template" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
+            <class_name type="string">AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+            <argument name="location_set" type="string" model_dependency_type="dataset">parcel</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">BuildingLocationChoiceModel</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">BLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="compute_capacity_flag" type="boolean">True</key>
+              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable">area_capacity</key>
+              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable">land_area</key>
+              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable">built_area</key>
+              <key name="lottery_max_iterations" type="integer">3</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="estimation_size_agents" type="float">1.0</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, alcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_specification</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">buildings_for_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="agents_index" type="string">alcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
+            <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">alcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="parcel.SC_pop_ha"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="Copy of household_location_choice_model" type="model">
+        <dependencies type="list">['household_relocation_model', 'household_transition_model']</dependencies>
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="agents_index" type="string">alcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">HouseholdLocationChoiceModel</name>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_wesml_mnl_estimation</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">vacant_residential_units</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">residential_units</argument>
+            <argument name="number_of_units_string" parser_action="quote_string" type="string">residential_units</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="location_id_string" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
+            <argument name="estimation_size_agents" type="float">0.5</argument>
+            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(building.residential_units, building.sqft_per_unit))</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 7})</argument>
+            <argument name="estimate_config" type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, alcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">Copy of household_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">households</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string"/>
+            <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string">building_id</argument>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output hidden="True" name="output" type="string">(_specification, _coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">Copy of household_location_choice_model_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">Copy of household_location_choice_model_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string">household</argument>
+            <argument hidden="True" name="agents_index" type="string">hrm_index</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument hidden="True" name="coefficients" type="string">_coefficients</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">A first model to run.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.SC_acc_pt"/>
+              <variable_spec name="building.SC_building_age"/>
+              <variable_spec name="building.SC_building_is_pre_1941"/>
+              <variable_spec name="building.SC_dist_to_station"/>
+              <variable_spec name="building.SC_dist_to_zh_cbd"/>
+              <variable_spec name="building.SC_jobs_G52_H_within_1km"/>
+              <variable_spec name="household_x_building.SC_pop_dens_within_1km_X_young_hh_dummy"/>
+              <variable_spec name="building.SC_rent_vacancy_per_municipality" ignore="True"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="employment_location_choice_model" type="model">
+        <dependencies type="list">['employment_relocation_model']</dependencies>
+        <structure type="dictionary">
+          <group_by_attribute type="tuple">
+            <argument name="grouping_table" type="string" model_dependency_type="table">home_based_status</argument>
+          </group_by_attribute>
+          <init type="dictionary">
+            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
+            <argument name="sample_size_locations" type="integer">10</argument>
+            <argument name="estimation_size_agents" type="float">.05</argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">jobs</argument>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel_group name="home_based" type="submodel_group">
+            <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+              <description type="string">No submodel</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.blngcdacbd"/>
+              </variable_list>
+            </submodel>
+          </submodel_group>
+          <submodel_group name="non_home_based" type="submodel_group">
+            <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+              <description type="string">No submodel</description>
+              <variable_list type="variable_list">
+                <variable_spec name="job_x_building.RH_distance_to_CBD_hotelbar"/>
+                <variable_spec name="job_x_building.RH_distance_to_CBD_indust"/>
+                <variable_spec name="job_x_building.RH_distance_to_CBD_service"/>
+                <variable_spec name="job_x_building.RH_distance_to_CBD_trade"/>
+                <variable_spec name="job_x_building.RH_distance_to_CBD_wtrade"/>
+                <variable_spec name="job_x_building.RH_distance_to_HW_hotelbar"/>
+                <variable_spec name="job_x_building.RH_distance_to_HW_indust"/>
+                <variable_spec name="job_x_building.RH_distance_to_HW_service"/>
+                <variable_spec name="job_x_building.RH_distance_to_HW_trade"/>
+                <variable_spec name="job_x_building.RH_distance_to_HWnet_hotelbar"/>
+                <variable_spec name="job_x_building.RH_distance_to_HWnet_indust"/>
+                <variable_spec name="job_x_building.RH_distance_to_HWnet_service"/>
+                <variable_spec name="job_x_building.RH_distance_to_HWnet_trade"/>
+                <variable_spec name="job_x_building.RH_distance_to_PT_hotelbar"/>
+                <variable_spec name="job_x_building.RH_distance_to_PT_indust"/>
+                <variable_spec name="job_x_building.RH_distance_to_PT_service"/>
+                <variable_spec name="job_x_building.RH_distance_to_PT_trade"/>
+                <variable_spec name="job_x_building.RH_distance_to_PT_wtrade"/>
+                <variable_spec name="job_x_building.RH_imp_value_hotelbar"/>
+                <variable_spec name="job_x_building.RH_imp_value_indust"/>
+                <variable_spec name="job_x_building.RH_imp_value_service"/>
+                <variable_spec name="job_x_building.RH_imp_value_trade"/>
+                <variable_spec name="job_x_building.RH_imp_value_wtrade"/>
+                <variable_spec name="job_x_building.RH_ln_surf_hotelbar"/>
+                <variable_spec name="job_x_building.RH_ln_surf_indust"/>
+                <variable_spec name="job_x_building.RH_ln_surf_service"/>
+                <variable_spec name="job_x_building.RH_ln_surf_trade"/>
+                <variable_spec name="job_x_building.RH_parcel_land_hotelbar"/>
+                <variable_spec name="job_x_building.RH_parcel_land_indust"/>
+                <variable_spec name="job_x_building.RH_parcel_land_service"/>
+                <variable_spec name="job_x_building.RH_parcel_land_trade"/>
+                <variable_spec name="job_x_building.RH_parcel_land_wtrade"/>
+                <variable_spec name="job_x_building.RH_pop_dens_hotelbar"/>
+                <variable_spec name="job_x_building.RH_pop_dens_indust"/>
+                <variable_spec name="job_x_building.RH_pop_dens_service"/>
+                <variable_spec name="job_x_building.RH_pop_dens_trade"/>
+                <variable_spec name="job_x_building.RH_pop_dens_wtrade"/>
+              </variable_list>
+            </submodel>
+          </submodel_group>
+        </specification>
+      </model>
+      <model name="Copy of household_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim_parcel.models.household_transition_model</class_module>
+            <class_name>HouseholdTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">HouseholdTransitionModel</name>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(control_totals, characteristics)</output>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="characteristics" type="string">characteristics</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="Copy of workplace_choice_model_for_resident" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim_parcel.models.workplace_choice_model</class_module>
+            <class_name>WorkplaceChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">WorkplaceChoiceModel</name>
+            <argument name="location_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Non-home-based Workplace Choice Model for residents</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="submodel_string" type="string">None</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
+            <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key name="weights_for_estimation_string" type="string" model_dependency_type="variable">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
+              <key name="number_of_units_string" type="string" model_dependency_type="variable">(job.building_type==2).astype(int32)</key>
+              <key name="number_of_agents_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key name="weights_for_estimation_string" type="string" model_dependency_type="variable">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+            </argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">workplace_choice_model_for_resident_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">workplace_choice_model_for_resident_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_index" type="string">None</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_non_home_based_worker_without_job</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_estimate</name>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="join_datasets" type="string">True</argument>
+            <argument name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.is_non_home_based_worker_with_job</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">persons_for_estimation</argument>
+            <argument name="households_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">households_for_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <output hidden="True" name="output" type="string">(specification, agents_index)</output>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
+            <argument name="agents_index" type="string">agents_index</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <output hidden="True" name="output" type="string">(coefficients, _)</output>
+          </estimate>
+        </structure>
+      </model>
+    </models>
+    <estimation_config name="Estimation Configuration" config_name="estimation_config" type="dictionary">
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">True</selectable>
+        <selectable name="parcel" type="selectable">True</selectable>
+        <selectable name="buildings_for_estimation" type="selectable">False</selectable>
+      </datasets_to_preload>
+      <save_estimation_results type="boolean">True</save_estimation_results>
+      <dataset_pool_configuration type="class">
+        <argument name="package_order" type="list">['zurich_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</cache_directory>
+      <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
+      <years type="tuple">
+        <firstyear name="" type="integer" field_identifier="Base Year">2000</firstyear>
+        <lastyear name="" type="integer" field_identifier="Base Year">2000</lastyear>
+      </years>
+    </estimation_config>
+  </model_manager>
+  <scenario_manager>
+    <scenario name="test_run" type="scenario" executable="True">
+      <advanced type="category">
+        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <debuglevel type="integer">4</debuglevel>
+        <flush_variables type="boolean">False</flush_variables>
+        <seed type="integer" convert_blank_to_none="True">None</seed>
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['zurich_parcel','urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable name="zone" type="selectable">False</selectable>
+          <selectable name="household" type="selectable">True</selectable>
+          <selectable name="building" type="selectable">True</selectable>
+          <selectable name="buildings_for_estimation" type="selectable">True</selectable>
+          <selectable name="parcel" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="person" type="selectable">True<package_name type="string">zurich_parcel</package_name>
+          </selectable>
+          <selectable name="development_template" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="development_template_component" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="job" type="selectable">True</selectable>
+          <selectable name="building_type" type="selectable">True<package_name type="string">zurich_parcel</package_name>
+          </selectable>
+          <selectable name="travel_data" type="selectable">False</selectable>
+          <selectable name="job_building_type" type="selectable">True</selectable>
+        </datasets_to_preload>
+        <run_in_same_process type="boolean">True</run_in_same_process>
+      </advanced>
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_parcel/runs</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</argument>
+        </argument>
+      </creating_baseyear_cache_configuration>
+      <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear name="" type="integer" field_identifier="First Year of Simulation">2001</firstyear>
+        <lastyear name="" type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable return_value="Copy of real_estate_price_model" type="selectable" name="Copy of real_estate_price_model_1">False</selectable>
+        <selectable return_value="building_transition_model" type="selectable" name="building_transition_model_1">True</selectable>
+        <selectable return_value="building_location_choice_model_from_template" type="selectable" name="building_location_choice_model_from_template_1">True</selectable>
+        <selectable return_value="household_transition_model" type="selectable" name="household_transition_model_1">True</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
+        <selectable return_value="Copy of household_location_choice_model" type="selectable" name="Copy of household_location_choice_model_1">True</selectable>
+        <selectable return_value="employment_transition_model" type="selectable" name="employment_transition_model_1">False</selectable>
+        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">False</selectable>
+        <selectable return_value="employment_location_choice_model" type="selectable" name="employment_location_choice_model_1">False</selectable>
+        <selectable return_value="Copy of SC_workplace_location_chocie" type="selectable" name="Copy of SC_workplace_location_chocie_1">False</selectable>
+        <selectable return_value="LAST of SC_workplace_location_choice" type="selectable" name="LAST of SC_workplace_location_choice_1">True</selectable>
+      </models_to_run>
+    </scenario>
+    <scenario name="urbansim_parcel_baseline" type="scenario" executable="True">
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_parcel/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</argument>
+        </argument>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <argument name="package_order" type="list">['zurich_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+      </advanced>
+      <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear name="" type="integer" field_identifier="First Year of Simulation">2001</firstyear>
+        <lastyear name="" type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
+      </years_to_run>
+    </scenario>
+  </scenario_manager>
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="hlc">
+        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0,#c7e9c0,#a1d99b,#7ccd7c,#74c476,#41ab5d,#238b45,#006400,#00441b,#00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_animated_map</visualization_type>
+          <indicators>['SC_pop_dens_within_1km_X_young_hh_dummy']</indicators>
+          <output_type>mapnik_animated_map</output_type>
+          <dataset_name>household_x_building</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="untitled_indicator_batch"/>
+    </indicator_batches>
+  </results_manager>
+</opus_project>
+
