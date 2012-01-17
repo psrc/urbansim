@@ -138,6 +138,9 @@ class LocationChoiceModel(ChoiceModel):
                                       0.0)
             if self.capacity is not None:
                 logger.log_status("Available capacity: %s units." % self.capacity.sum())
+                if self.capacity.sum() == 0 and config.get("accept_unavailability_of_choices", False):
+                    return array(agents_index.size*[-1], dtype="int32")
+                
         self.run_config.merge({"capacity":self.capacity})
         if self.run_config.get("agent_units_string", None):
             self.run_config["agent_units_all"] = agent_set.get_attribute_by_index(self.run_config["agent_units_string"], agents_index)
