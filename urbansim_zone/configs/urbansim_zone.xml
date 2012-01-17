@@ -194,6 +194,7 @@
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="agent_set" type="string">job</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="maximum_runs" type="integer">3</argument>
@@ -509,7 +510,7 @@
             <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
             <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
             <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
-	    <argument name="filter" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units&gt;0</argument>
+      <argument name="filter" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units&gt;0</argument>
             <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>

@@ -269,17 +269,16 @@
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">
         <selectable name="real_estate_price_model" type="selectable">False</selectable>
-        <selectable name="development_project_transition_model" type="selectable">False</selectable>
-        <selectable name="residential_subarea_development_project_location_choice_model" type="selectable">False</selectable>
-        <selectable name="non_residential_subarea_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="development_project_transition_model" type="selectable">True</selectable>
+        <selectable name="residential_subarea_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="non_residential_subarea_development_project_location_choice_model" type="selectable">True</selectable>
         <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
-        <selectable name="household_transition_model" type="selectable">False</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
         <selectable name="household_transition_model_with_persons" type="selectable">False</selectable>
-        <selectable name="employment_transition_model" type="selectable">False</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
         <selectable name="household_relocation_model" type="selectable">False</selectable>
         <selectable name="household_location_choice_model" type="selectable">False</selectable>
         <selectable name="employment_relocation_model" type="selectable">False</selectable>
-        <selectable name="mortality_model" type="selectable">True</selectable>
         <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
         </selectable>
       </models_to_run>    

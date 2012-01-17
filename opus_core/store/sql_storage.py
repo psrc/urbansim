@@ -144,7 +144,6 @@ class sql_storage(Storage):
                 table_data[col_name] = array(clean_column_data, dtype=col_type)
             except:
                 logger.log_error("Error occurred when exporting column %s; it may be caused by NULL values." % col_name)
-                import ipdb; ipdb.set_trace()
                 raise
                    
         self._dispose_db(db)

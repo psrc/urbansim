@@ -125,17 +125,13 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         if self.compute_capacity_flag:
             overfilled_string = config.get("is_choice_overfilled_string", None) 
             if overfilled_string:
-                import ipdb; ipdb.set_trace()
                 tmp_agent_set = copy.copy(agent_set)
-                overfilled_locations_idx = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
-                overfilled_locations = self.choice_set[id_name][overfilled_locations_idx]
-                overfilled_location_with_agents = intersect1d(agents_locations, overfilled_locations)
-                while overfilled_location_with_agents.size > 0:
-                    for location in overfilled_location_with_agents:
+                overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
+                current_agents_in_overfilled_locations = intersect1d(agents_locations, overfilled_locations)
+                while current_agents_in_overfilled_locations.size > 0:
+                    for location in current_agents_in_overfilled_locations:
                         agents_of_this_location = where(agents_locations == location)[0]
                         if agents_of_this_location.size > 1:
-                            #we don't know how many agents need to be relocated 
-                            #before the location becomes not overfilled, so we relocate one at a time
                             sampled_agents = probsample_noreplace(agents_of_this_location, 1)
                         else:
                             sampled_agents = agents_of_this_location
@@ -144,9 +140,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                     tmp_agent_set.set_values_of_one_attribute(id_name, -1, agents_index[movers])
                     agents_locations = tmp_agent_set.get_attribute_by_index(id_name, agents_index)
                     self.dataset_pool.replace_dataset(tmp_agent_set.get_dataset_name(), tmp_agent_set)
-                    overfilled_locations_idx = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool, quiet=True))[0]
-                    overfilled_locations = self.choice_set[id_name][overfilled_locations_idx]
-                    overfilled_location_with_agents = intersect1d(agents_locations, overfilled_locations)
+                    overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
+                    current_agents_in_overfilled_locations = intersect1d(agents_locations, overfilled_locations)
                 self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
             else:
                 new_locations_vacancy = self.get_locations_vacancy(agent_set)
@@ -308,7 +303,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                                     change_ids_if_not_unique=True)
                 index = arange(agent_set.size()-estimation_set.size(),agent_set.size())
             else:
-                index = agent_set.try_get_id_index(estimation_set.get_id_attribute())
+                index = agent_set.get_id_index(estimation_set.get_id_attribute())
         else:
             if agent_set is not None:
                 if filter is not None:
