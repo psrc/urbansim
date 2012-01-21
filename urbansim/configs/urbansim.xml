@@ -287,13 +287,13 @@
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
-              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
-              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="capacity_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_agents_string" type="string" model_dependency_type="variable"/>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
-              <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" model_dependency_type="variable"/>
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="estimation_size_agents" type="float">1.0</key>
@@ -467,13 +467,13 @@
             <argument name="run_config" type="dictionary">
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
-              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
-              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="capacity_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="number_of_agents_string" type="string" model_dependency_type="variable"/>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
-              <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" model_dependency_type="variable"/>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="estimation_size_agents" type="float">1.0</key>
             </argument>
