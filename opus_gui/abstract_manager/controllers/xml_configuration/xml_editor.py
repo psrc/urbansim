@@ -4,6 +4,7 @@ from PyQt4.QtGui import QDialog
 from opus_gui.abstract_manager.views.ui_xml_editor import Ui_XML_Editor
 from lxml.etree import tostring, fromstring
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
+from PyQt4 import QtCore
 
 class XML_Editor_Gui(QDialog, Ui_XML_Editor):
     ATTENTION = '''Attention: This function didn't check whether the syntax makes sense to OPUS.  It just checks for a valid XML structure.'''
@@ -15,7 +16,7 @@ class XML_Editor_Gui(QDialog, Ui_XML_Editor):
         @param xml_controller (XmlController): Parent XML controller
         @param base_node (Element): Base XML node to edit
         '''
-        QDialog.__init__(self, opus_gui_window)
+        QDialog.__init__(self, opus_gui_window, QtCore.Qt.Window)
         self.setupUi(self)
         self.xml_controller = xml_controller
         self._base_node = base_node
