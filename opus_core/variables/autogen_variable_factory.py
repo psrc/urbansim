@@ -132,6 +132,8 @@ class AutogenVariableFactory(object):
         # Raise an exception if the expression doesn't match either an expression
         # or a statement (this would happen if the expression consists of multiple
         # statements, which parses correctly so wouldn't be caught by the Python compiler).
+        if expr.strip() == '':
+            raise ValueError, "empty expression"
         full_tree = parser.ast2tuple(parser.suite(expr))
         same, vars = match(FULL_TREE_EXPRESSION, full_tree)
         if same:
