@@ -562,7 +562,7 @@
           </submodel>
         </specification>
       </model>
-      <model name="building_transition_model" type="model">
+      <model name="SC_building_transition_model" type="model">
         <structure type="dictionary">
           <import hidden="False" name="import" type="dictionary">
             <class_module type="string">urbansim.models.real_estate_transition_model</class_module>
@@ -593,7 +593,7 @@
           </run>
         </structure>
       </model>
-      <model name="building_location_choice_model_from_template" type="model">
+      <model name="SC_building_location_choice_model_from_template" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
@@ -634,7 +634,7 @@
             <name name="name" type="string">prepare_for_estimate</name>
             <output name="output" type="string">(alcm_specification, alcm_index)</output>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_building_location_choice_model_from_template_specification</argument>
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">buildings_for_estimation</argument>
@@ -658,9 +658,9 @@
             <name name="name" type="string">prepare_for_run</name>
             <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_building_location_choice_model_from_template_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">building_location_choice_model_from_template_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_building_location_choice_model_from_template_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
@@ -1014,8 +1014,8 @@
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="Copy of real_estate_price_model" type="selectable" name="Copy of real_estate_price_model_1">False</selectable>
-        <selectable return_value="building_transition_model" type="selectable" name="building_transition_model_1">True</selectable>
-        <selectable return_value="building_location_choice_model_from_template" type="selectable" name="building_location_choice_model_from_template_1">True</selectable>
+        <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
+        <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">True</selectable>
         <selectable return_value="household_transition_model" type="selectable" name="household_transition_model_1">True</selectable>
         <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
         <selectable return_value="Copy of household_location_choice_model" type="selectable" name="Copy of household_location_choice_model_1">True</selectable>
