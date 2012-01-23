@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_XML_Editor(object):
     def setupUi(self, XML_Editor):
         XML_Editor.setObjectName(_fromUtf8("XML_Editor"))
-        XML_Editor.resize(600, 400)
+        XML_Editor.resize(914, 598)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
