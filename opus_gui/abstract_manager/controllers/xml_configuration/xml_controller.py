@@ -281,6 +281,9 @@ class XmlController(object):
         self.project.xml_config._indent(root_node)
         return root_node
     
+    def export_without_inherited(self):
+        self.exportXMLToFile(inherited=False)
+        
     def exportXMLToFile(self, inherited=True):
         ''' NO DOCUMENTATION '''
 
@@ -299,7 +302,7 @@ class XmlController(object):
         fileNamePath = fileNameInfo.absolutePath().trimmed()
         saveName = os.path.join(str(fileNamePath), str(fileName))
 
-        root_node = self.get_clean_copy_of_selected_node()
+        root_node = self.get_clean_copy_of_selected_node(inherited)
         ElementTree(root_node).write(saveName)
         
     def check_import_node(self, clicked_node, xml_node):
@@ -363,9 +366,6 @@ class XmlController(object):
             if was_expanded:
                 self.view.setExpanded(new_index, True)
     
-    def export_without_inherited(self):
-        self.exportXMLToFile(inherited=False)
-        
     def edit(self):
         root_node = self.get_clean_copy_of_selected_node(inherited=False)
         
