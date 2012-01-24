@@ -8,7 +8,6 @@
       <variable use="both" source="expression" name="job.SC_is_placed_job" type="variable_definition">(urbansim_parcel.job.zone_id&gt;0).astype(int32)</variable>
       <variable use="both" source="expression" name="parcel.SC_unbuilt_parcel_area" type="variable_definition">parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])</variable>
       <variable use="both" source="Python class" name="building.Inwork_SC_building_type" type="variable_definition">zurich_parcel.building.is_building_type_3</variable>
-      <variable use="both" source="Python class" name="parcel.Inwork_SC_bauzone" type="variable_definition">zurich_parcel.parcel.is_plan_type_smaller_7000</variable>
       <variable use="both" source="expression" name="parcel.SC_is_built" type="variable_definition">zurich_parcel.parcel.number_of_buildings &gt; 0</variable>
       <variable use="both" source="expression" name="person.SC_dist_to_job" type="variable_definition">sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))^2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))^2)</variable>
       <variable use="both" source="expression" name="job.SC_job_xcoord" type="variable_definition">job.disaggregate(parcel.x_coord_sp, intermediates=[building])</variable>
