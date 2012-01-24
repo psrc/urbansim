@@ -413,13 +413,14 @@ class BayesianMelding(MultipleRuns):
 
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
                                         use_bias_and_variance_from=None, transformed_back=True, aggregate_to=None,
-                                        intermediates=[], propagation_factor=1, **kwargs):
+                                        intermediates=[], propagation_factor=1, omit_bias=False, **kwargs):
         """
         'quantity_of_interest' is a variable name about which we want to get the posterior distribution.
         If there is multiple known_output, it must be made clear from which one the bias and variance
         is to be used (argument use_bias_and_variance_from). If it is None, the first known output is used.
         """
-        self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from, propagation_factor=propagation_factor)
+        self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from, propagation_factor=propagation_factor,
+                           omit_bias=omit_bias)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
