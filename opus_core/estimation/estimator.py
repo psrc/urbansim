@@ -352,7 +352,10 @@ class Estimator(ModelExplorer):
         logger.start_block("%s Estimation Results" % self.model_name)        
         for submodel, submodel_results in results.items():
             logger.log_status( "Submodel %s" % submodel)
-            procedure.print_results(submodel_results)
+            if submodel_results == {}:
+                logger.log_warning("No estimation results for submodel %s" % submodel)
+            else:
+                procedure.print_results(submodel_results)
         logger.end_block()
         logger.disable_file_logging()        
     
