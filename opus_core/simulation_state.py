@@ -36,6 +36,7 @@ class SimulationState(object):
             self._created_base_cache_dir = created_base_cache_dir
             self.time_increment = time_increment
             self.start_time = start_time
+            self.flush_datasets = False
                         
         def set_current_time(self, time):
             self.current_time = time
@@ -86,6 +87,12 @@ class SimulationState(object):
         def get_current_cache_directory(self):
             """Return cache_directory/current_time"""
             return os.path.join(self.get_cache_directory(), str(self.get_current_time()))
+        
+        def set_flush_datasets(self, flush_datasets):
+            self.flush_datasets = flush_datasets
+            
+        def get_flush_datasets(self):
+            return self.flush_datasets
         
     __instance = None
     
