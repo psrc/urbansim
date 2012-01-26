@@ -35,6 +35,9 @@ aliases = [
     "weight_for_pub_jobs = mag_zone.building.num_of_pub_jobs + (numpy.logical_and(building.building_type_id == 6, mag_zone.building.num_of_pub_jobs == 0)*(building.non_residential_sqft/50)).astype(int32)",
     "wah_capacity = building.residential_units * 3",
     "mpa_population = building.disaggregate(zone.disaggregate(mpa.aggregate(household.persons)))",
-    "mpa_city_jobs = building.disaggregate(mpa.aggregate(mag_zone.building.num_of_pub_jobs))"
+    "mpa_city_jobs = building.disaggregate(mpa.aggregate(mag_zone.building.num_of_pub_jobs))",
+    "vacant_residential_units_with_negatives = building.residential_units - urbansim_zone.building.number_of_households",
+    "vacant_non_home_based_job_spaces_with_negatives = urbansim_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs",
+    "vacant_home_based_job_spaces_with_negatives = urbansim_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs",
            ]
 
