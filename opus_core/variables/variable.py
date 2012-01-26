@@ -12,6 +12,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.datasets.dataset import Dataset
 from opus_core.variables.attribute_box import AttributeBox
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.simulation_state import SimulationState
 from opus_core.storage_factory import StorageFactory
 
 from numpy import longlong, int32
@@ -91,7 +92,7 @@ class Variable(object):
             
     def _do_flush_dependent_variables_if_required(self):
         try:
-            if not SessionConfiguration().get('flush_variables', False):
+            if not SimulationState().get_flush_datasets():
                 return
         except:
             return
@@ -398,7 +399,6 @@ def get_dependency_datasets(variables, dataset, quiet=False):
     return datasetslist
 
 from opus_core.tests import opus_unittest
-from opus_core.simulation_state import SimulationState
 import platform
 from numpy import int8, int64
 
@@ -457,7 +457,7 @@ class VariableTests(opus_unittest.OpusTestCase):
         
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name='id', dataset_name='tests')
         
-        SessionConfiguration(in_storage=storage)["flush_variables"] = True
+        SimulationState().set_flush_datasets(True)
         dataset.get_attribute("a_dependent_variable")
         self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
         dataset.compute_variables("opus_core.tests.a_test_variable")

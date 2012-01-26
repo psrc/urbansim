@@ -99,8 +99,6 @@ class ModelSystem(object):
 
                 start_year = years[0]
                 end_year = years[-1]
-                if not resources.has_key("flush_variables"): # if dependent attributes/variables should be flushed after each computation
-                    resources["flush_variables"] = False
 
                 debuglevel = resources.get("debuglevel", 0)
                 seed_values = resources.get('seed', NO_SEED)
@@ -190,7 +188,7 @@ class ModelSystem(object):
                 self.vardict['cache_storage'] = cache_storage
                 base_cache_storage = AttributeCache().get_flt_storage_for_year(base_year)
                 self.vardict['base_cache_storage'] = base_cache_storage
-                SessionConfiguration()["flush_variables"] = resources["flush_variables"]
+                simulation_state.set_flush_datasets(resources.get("flush_variables", False))
                 SessionConfiguration()["simulation_year"] = year
                 SessionConfiguration()["debuglevel"] = debuglevel
                 datasets_to_preload_in_year = resources.get('datasets_to_preload_in_year',{})

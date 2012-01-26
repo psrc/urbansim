@@ -7,7 +7,6 @@ from urbansim_parcel.datasets.development_project_proposal_component_dataset imp
 from opus_core.logger import logger
 from opus_core.misc import unique
 from opus_core.simulation_state import SimulationState
-from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
 from numpy import where, arange, resize, array, cumsum, concatenate, rint, any, logical_or, logical_and, logical_not
@@ -50,8 +49,8 @@ class BuildingConstructionModel(Model):
         # It is important that during this method no variable flushing happens, since
         # we create datasets of the same name  but different sizes than existing 
         # (possibly already flushed) datasets.
-        flush_variables_current = SessionConfiguration().get('flush_variables', False)
-        SessionConfiguration().put_data({'flush_variables': False})
+        flush_variables_current = SimulationState().get_flush_datasets()
+        SimulationState().set_flush_datasets(False)
             
         active_proposal_set = DatasetSubset(development_proposal_set, active_idx)
         
@@ -222,7 +221,7 @@ class BuildingConstructionModel(Model):
             
         dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
         # switch flush_variables to the original value
-        SessionConfiguration().put_data({'flush_variables': flush_variables_current})
+        SimulationState().set_flush_datasets(flush_variables_current)
         return development_proposal_set
     
     def demolish_buildings(self, buildings_to_be_demolished, building_dataset, dataset_pool):

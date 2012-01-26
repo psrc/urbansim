@@ -96,6 +96,9 @@ class LagVariable(Variable):
         calling_dataset_pool = SessionConfiguration().get_dataset_pool()
         calling_time = SimulationState().get_current_time()
         SimulationState().set_current_time(time)
+        # Do not flush any variables when computing dependencies for a lag variable.
+        prior_flush_state = SimulationState().get_flush_datasets()
+        SimulationState().set_flush_datasets(False)
         try:
             # Get an empty dataset pool with same search paths.
             my_dataset_pool = DatasetPool(
@@ -115,6 +118,7 @@ class LagVariable(Variable):
             return values
         finally:
             SimulationState().set_current_time(calling_time)
+            SimulationState().set_flush_datasets(prior_flush_state)
 
     def _add_remove_datasets(self, lag_index_array, lag_var_array, current_index_array, current_var_array):
         unremoved_items = []
