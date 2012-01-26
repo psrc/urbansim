@@ -149,10 +149,13 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
                     nestnode = SubElement(specnode[isubmodelnode], 'nest', 
                                             nest_id="%s" % nest, name="Nest %s" % nest)
                     keep_fixed = "True"
-                    if nest <> nested_structure.keys()[0]: # is it not the first nest processed
+                    force_asc=False
+                    if len(choices) > 1:
                         keep_fixed = "False"
+                    if (nest <> nested_structure.keys()[0]) and (choices[0] <> -2): # is it not the first nest processed                       
+                        force_asc=True
                     add_vars = {'keep_fixed': keep_fixed, 'starting_value': '1'}
-                    self._generate_equations_specification(nestnode, choices)
+                    self._generate_equations_specification(nestnode, choices, force_asc=force_asc)
                     eqnode = nestnode.find('equation/variable_list')
                     SubElement(eqnode, "variable_spec", name='__logsum_%s' % nest, **add_vars)
                 if nestidsnode is not None:
@@ -162,12 +165,12 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
                 choices = eval(node.text)
                 self._generate_equations_specification(specnode[isubmodelnode], choices)
                 
-    def _generate_equations_specification(self, node, choices, add_vars={}):
+    def _generate_equations_specification(self, node, choices, add_vars={}, force_asc=False):
         for choice in choices:
             eq = SubElement(node, 'equation', equation_id="%s" % choice, 
                             name="Choice %s" % choice, type="submodel_equation")
             varl = SubElement(eq, "variable_list", type="variable_list")
-            if choice <> choices[0]:
+            if force_asc or (choice <> choices[0]):
                 SubElement(varl, "variable_spec", name="constant")
             for key, value in add_vars.iteritems():
                 SubElement(varl, "variable_spec", name=key, **value)
