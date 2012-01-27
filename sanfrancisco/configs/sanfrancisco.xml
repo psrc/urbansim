@@ -171,7 +171,7 @@
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Business Relocation Model</argument>
             <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
-            <argument name="probabilities" parser_action="quote_string" type="string">sanfrancisco.business_relocation_probabilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>

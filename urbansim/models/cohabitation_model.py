@@ -2,37 +2,37 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import array, zeros, ones, where, logical_and, arange, exp, sqrt, cumsum, searchsorted
 from numpy.random import random, uniform, shuffle
 
-class MarriageModel(AgentRelocationModel):
+class CohabitationModel(RateBasedModel):
     """
     """
-    model_name = "Marriage Model"
+    model_name = "Cohabitation Model"
 
     def run(self, person_set, household_set, resources=None):
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
-        logger.log_status("%s persons are in the marriage market." % (index.size) )
+        index = RateBasedModel.run(self, person_set, resources=resources)
+        logger.log_status("%s persons are in the cohabitation market." % (index.size) )
 
         person_ds_name, person_id_name = person_set.get_dataset_name(), person_set.get_id_name()[0]
         hh_ds_name, hh_id_name = household_set.get_dataset_name(), household_set.get_id_name()[0]
 
-        #Flag the pool of individuals that are eligible to get married
-        person_set.add_attribute(name='marriage_eligible', data=zeros(person_set.size(), dtype='b'))
-        person_set['marriage_eligible'][index] = True
+        #Flag the pool of individuals that are eligible to cohabitate
+        person_set.add_attribute(name='cohabitation_eligible', data=zeros(person_set.size(), dtype='b'))
+        person_set['cohabitation_eligible'][index] = True
 
 
         #Separate the males from the females
         if 'gender' in person_set.get_primary_attribute_names():
-            index_eligible_males = where(logical_and(person_set['marriage_eligible'], person_set['gender']==1))[0]
-            index_eligible_females = where(logical_and(person_set['marriage_eligible'], person_set['gender']==2))[0]
+            index_eligible_males = where(logical_and(person_set['cohabitation_eligible'], person_set['gender']==1))[0]
+            index_eligible_females = where(logical_and(person_set['cohabitation_eligible'], person_set['gender']==2))[0]
         if 'sex' in person_set.get_primary_attribute_names():
-            index_eligible_males = where(logical_and(person_set['marriage_eligible'], person_set['sex']==1))[0]
-            index_eligible_females = where(logical_and(person_set['marriage_eligible'], person_set['sex']==2))[0]
+            index_eligible_males = where(logical_and(person_set['cohabitation_eligible'], person_set['sex']==1))[0]
+            index_eligible_females = where(logical_and(person_set['cohabitation_eligible'], person_set['sex']==2))[0]
         logger.log_status("There are %s eligible males and %s eligible females." % (index_eligible_males.size,index_eligible_females.size) )
-        logger.log_status("%s new married couple households will be formed." % (index_eligible_females.size))
+        logger.log_status("%s new cohabitating households will be formed." % (index_eligible_females.size))
 
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1
         person_set.add_attribute(name='unmatched', data=ones(person_set.size(), dtype='b'))
@@ -45,7 +45,7 @@ class MarriageModel(AgentRelocationModel):
                         
         person_set.delete_one_attribute('single_parent')
         person_set.delete_one_attribute('one_person_hh') 
-        person_set.delete_one_attribute('marriage_eligible')
+        person_set.delete_one_attribute('cohabitation_eligible')
         person_set.delete_one_attribute('unmatched')        
         #Remove records from household_set that have no persons left
         persons = household_set.compute_variables("%s.number_of_agents(%s)" % (hh_ds_name, person_ds_name), resources=resources)
@@ -103,9 +103,9 @@ class MarriageModel(AgentRelocationModel):
             if person_set['unmatched'][available_mates[the_lucky_person]] > 0:
                 person_set['unmatched'][available_mates[the_lucky_person]] = False
                 person_set['unmatched'][chooser] = False
-                #Designate the couple as married
-                person_set['marriage_status'][available_mates[the_lucky_person]] = 1
-                person_set['marriage_status'][chooser] = 1
+                #Designate the couple as cohabitating.  Existing marriage_status variable takes values 1 through 6 and does not have a cohabitation category.  I designate cohabitators with marriage_status of 7.    
+                person_set['marriage_status'][available_mates[the_lucky_person]] = 7
+                person_set['marriage_status'][chooser] = 7
                 #if both persons are in a 1 person hh, assign the man the woman's household_id
                 if ((person_set['one_person_hh'][available_mates[the_lucky_person]]) > 0) and ((person_set['one_person_hh'][chooser]) > 0):
                     person_set['household_id'][available_mates[the_lucky_person]] = person_set['household_id'][chooser]
@@ -137,11 +137,11 @@ class MarriageModel(AgentRelocationModel):
         if (person_set['unmatched'][available_mates].sum() > 0) and (person_set['unmatched'][choosers].sum() > 0):
             #Recreate indexes for the eligible males and eligible females that remain
             if 'gender' in person_set.get_primary_attribute_names():
-                available_mates = where(logical_and(person_set['marriage_eligible'], ((person_set['gender']) * (person_set['unmatched'])) ==1))[0]
-                choosers = where(logical_and(person_set['marriage_eligible'], ((person_set['gender']) * (person_set['unmatched'])) ==2))[0]
+                available_mates = where(logical_and(person_set['cohabitation_eligible'], ((person_set['gender']) * (person_set['unmatched'])) ==1))[0]
+                choosers = where(logical_and(person_set['cohabitation_eligible'], ((person_set['gender']) * (person_set['unmatched'])) ==2))[0]
             if 'sex' in person_set.get_primary_attribute_names():
-                available_mates = where(logical_and(person_set['marriage_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==1))[0]
-                choosers = where(logical_and(person_set['marriage_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==2))[0]
+                available_mates = where(logical_and(person_set['cohabitation_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==1))[0]
+                choosers = where(logical_and(person_set['cohabitation_eligible'], ((person_set['sex']) * (person_set['unmatched'])) ==2))[0]
 
             self.mate_match(choosers, available_mates, person_set, household_set, new_hh_id, new_hh_id_counter, hh_id_name, max_hh_id)
         else:

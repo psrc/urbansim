@@ -26,7 +26,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
         result = dataset.compute_variables([expr])
         should_be = array([3.16227766, 7.0710678, 10])
-        self.assertEqual(ma.allclose(result, should_be, rtol=1e-5), True, msg="error in test_unary_functions_fully_qualified_name")
+        self.assertEqual(ma.allclose(result, should_be, rtol=1e-3), True, msg="error in test_unary_functions_fully_qualified_name")
         # check that the access methods for the variable all return the correct values
         name = VariableName(expr)
         autogen = name.get_autogen_class()

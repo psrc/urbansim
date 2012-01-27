@@ -8,7 +8,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import where, arange, take, ones, newaxis, ndarray, zeros, concatenate, resize
 from numpy import searchsorted, column_stack
-from opus_core.samplers.constants import UNPLACED_ID
+from opus_core.samplers.constants import UNPLACED_ID, DTYPE
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
 from opus_core.sampling_toolbox import nonzerocounts
 from opus_core.misc import lookup
@@ -129,14 +129,14 @@ class weighted_sampler(Sampler):
             if non_zero_counts > 0:
                 sampled_index = prob2dsample( index2, sample_size=(index1.size, J),
                                         prob_array=prob, exclude_index=chosen_choice_index_to_index2,
-                                        replace=replace, return_index=True ).astype('int32')
+                                        replace=replace, return_index=True )
             else:
                 # all alternatives have a zero weight
-                sampled_index = zeros((index1.size, 0), dtype="int32")
+                sampled_index = zeros((index1.size, 0), dtype=DTYPE)
             #return index2[sampled_index]
 
         if rank_of_weight == 2:
-            sampled_index = zeros((index1.size,J), dtype="int32") - 1
+            sampled_index = zeros((index1.size,J), dtype=DTYPE) - 1
                 
             for i in range(index1.size):
                 replace = with_replacement          # sampling with/without replacement
@@ -231,7 +231,7 @@ class Test(opus_unittest.OpusTestCase):
                             index2=index2, sample_size=sample_size, weight="weight",include_chosen_choice=icc)
             # get results
             sampled_index = sampler_ret.get_2d_index()
-            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
             where_chosen = where(sampler_ret.get_attribute("chosen_choice"))
             chosen_choices[where_chosen[0]]=where_chosen[1]
 
@@ -241,11 +241,11 @@ class Test(opus_unittest.OpusTestCase):
             if icc:
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
-                chosen_choice_index = resize(array([UNPLACED_ID], dtype="int32"), index1.shape)
+                chosen_choice_index = resize(array([UNPLACED_ID], dtype=DTYPE), index1.shape)
                 w = where(chosen_choices>=0)[0]
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
-                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
+                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]]
                 self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
             
@@ -268,7 +268,7 @@ class Test(opus_unittest.OpusTestCase):
                             index2=index2, sample_size=sample_size, weight=weight,include_chosen_choice=icc)
 
             sampled_index = sampler_ret.get_2d_index()
-            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
             where_chosen = where(sampler_ret.get_attribute("chosen_choice"))
             chosen_choices[where_chosen[0]]=where_chosen[1]
 
@@ -278,9 +278,9 @@ class Test(opus_unittest.OpusTestCase):
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
 
-                chosen_choice_index = resize(array([UNPLACED_ID], dtype="int32"), index1.shape)
+                chosen_choice_index = resize(array([UNPLACED_ID], dtype=DTYPE), index1.shape)
                 w = where(chosen_choices>=0)[0]
-                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
+                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]]
                 self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
                 

@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import where, array, zeros, cumsum, searchsorted, logical_and
 from numpy.random import random, uniform
 
-class MortalityModel(AgentRelocationModel):
+class MortalityModel(RateBasedModel):
     """
     """
     model_name = "Mortality Model"
@@ -15,7 +15,7 @@ class MortalityModel(AgentRelocationModel):
     def run(self, person_set, household_set, resources=None):
         person_ds_name = person_set.get_dataset_name()
         hh_ds_name = household_set.get_dataset_name()
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
+        index = RateBasedModel.run(self, person_set, resources=resources)
         logger.log_status("%s deaths occurred (before accounting for adults saved to prevent orphans)" % (index.size) )
 
         #avoid orphaning children before we handle them in an adoption model

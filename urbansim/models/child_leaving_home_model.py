@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import where, arange, array, logical_and, zeros, ones, cumsum, searchsorted, exp, sqrt
 from numpy.random import random, uniform, randint, shuffle
 
-class ChildLeavingHomeModel(AgentRelocationModel):
+class ChildLeavingHomeModel(RateBasedModel):
     """
     """
     model_name = "Child Leaving Home Model"
@@ -17,7 +17,7 @@ class ChildLeavingHomeModel(AgentRelocationModel):
         hh_ds_name, hh_id_name = household_set.get_dataset_name(), household_set.get_id_name()[0]
         person_set.add_attribute(name='much_younger_than_head', data=person_set.compute_variables('(person.age) < ((person.disaggregate(household.age_of_head))-18)'))
         person_set.add_attribute(name='same_race_as_head', data=person_set.compute_variables('(person.race) ==(person.disaggregate(household.aggregate(person.head_of_hh * person.race)))'))
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
+        index = RateBasedModel.run(self, person_set, resources=resources)
         logger.log_status("%s children will be leaving their homes" % (index.size) )
 
         max_hh_id = household_set.get_attribute(hh_id_name).max() + 1

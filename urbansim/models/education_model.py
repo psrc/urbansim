@@ -2,18 +2,18 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import where, array, zeros, logical_and
 
-class EducationModel(AgentRelocationModel):
+class EducationModel(RateBasedModel):
     """
     """
     model_name = "Education Model"
 
     def run(self, person_set, household_set, resources=None):
         person_ds_name = person_set.get_dataset_name()
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
+        index = RateBasedModel.run(self, person_set, resources=resources)
         logger.log_status("%s students decide to leave school" % (index.size) )
 
         #Update educational level attained by students, accounting for their age

@@ -8,7 +8,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import where, arange, take, ones, newaxis, ndarray, zeros, concatenate, resize 
 from numpy import searchsorted, empty, digitize, column_stack
 from numpy.random import rand
-from opus_core.samplers.constants import UNPLACED_ID
+from opus_core.samplers.constants import UNPLACED_ID, DTYPE
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
 from opus_core.sampling_toolbox import nonzerocounts
 from opus_core.logger import logger
@@ -86,7 +86,7 @@ class weighted_sampler_by_category(weighted_sampler):
         local_resources.merge_with_defaults({'with_replacement': with_replacement})
         with_replacement = local_resources.get("with_replacement")
         
-        sampled_index = empty((index1.size, J), dtype="int32")
+        sampled_index = empty((index1.size, J), dtype=DTYPE)
         sampling_prob = empty((index1.size, J), dtype="float64")
         
         _digitize, _where,  _normalize = digitize, where, normalize
@@ -219,7 +219,7 @@ class Test(opus_unittest.OpusTestCase):
                                                                 include_chosen_choice=icc, resources=estimation_config)
             # get results
             sampled_index = sampler_ret.get_2d_index()
-            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
             where_chosen = where(sampler_ret.get_attribute("chosen_choice"))
             chosen_choices[where_chosen[0]]=where_chosen[1]
 
@@ -227,7 +227,7 @@ class Test(opus_unittest.OpusTestCase):
             if icc:
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
-                chosen_choice_index = resize(array([UNPLACED_ID], dtype="int32"), index1.shape)
+                chosen_choice_index = resize(array([UNPLACED_ID], dtype=DTYPE), index1.shape)
                 w = where(chosen_choices>=0)[0]
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything

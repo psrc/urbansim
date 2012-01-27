@@ -2,18 +2,18 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import array, zeros, ones, where, logical_and, arange, exp, sqrt, cumsum, searchsorted
 from numpy.random import random, uniform, shuffle
 
-class BreakupModel(AgentRelocationModel):
+class BreakupModel(RateBasedModel):
     """
     """
     model_name = "Breakup Model"
 
     def run(self, person_set, household_set, resources=None):
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
+        index = RateBasedModel.run(self, person_set, resources=resources)
 
         person_ds_name, person_id_name = person_set.get_dataset_name(), person_set.get_id_name()[0]
         hh_ds_name, hh_id_name = household_set.get_dataset_name(), household_set.get_id_name()[0]

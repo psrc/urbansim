@@ -122,7 +122,7 @@ my_controller_configuration = {
             "init": {
                 "name": "AgentRelocationModel",
                 "arguments": {"choices":"opus_core.random_choices",
-                              "probabilities":"psrc.job_change_probabilities",
+                              "probabilities":"opus_core.upc.rate_based_probabilities",
                               "location_id_name":"'psrc.person.workplace_zone_id'",
                               "model_name":"job change model",
                               "debuglevel": config['debuglevel']

@@ -8,7 +8,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import where, arange, take, ones, concatenate, searchsorted
 from numpy import newaxis, ndarray, zeros, array, rank, float32 
 from opus_core.misc import lookup, unique
-from opus_core.samplers.constants import *
+from opus_core.samplers.constants import NO_STRATUM_ID, UNPLACED_ID, DTYPE
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
 from opus_core.sampling_toolbox import nonzerocounts
 from opus_core.logger import logger
@@ -124,7 +124,7 @@ class stratified_sampler(Sampler):
         
         ##TODO: check all chosen strata are in selectable strata
         #i.e. chosen_choice_index is in index2
-        chosen_stratum = ones(chosen_choice_index.size, dtype="int32") * NO_STRATUM_ID
+        chosen_stratum = ones(chosen_choice_index.size, dtype=DTYPE) * NO_STRATUM_ID
         chosen_stratum[where(chosen_choice_index!=-1)] = stratum[chosen_choice_index[where(chosen_choice_index!=-1)]]
         selectable_strata = stratum[index2]
         unique_strata = unique(selectable_strata)
@@ -139,7 +139,7 @@ class stratified_sampler(Sampler):
         sample_size_from_each_stratum = local_resources.get("sample_size_from_each_stratum", None)
         if sample_size_from_each_stratum is None:
             sample_size_from_each_stratum = sample_size
-        strata_sample_size = ones(unique_strata.size, dtype="int32") * sample_size_from_each_stratum
+        strata_sample_size = ones(unique_strata.size, dtype=DTYPE) * sample_size_from_each_stratum
         sample_rate = local_resources.get("sample_rate", None)
         if sample_rate is not None:
             raise UnImplementedError, "sample_rate is not implemented yet."
@@ -157,7 +157,7 @@ class stratified_sampler(Sampler):
                 sampled_index = self._sample_by_agent_and_stratum(index1, index2, selectable_strata, prob,
                                                                   chosen_choice_index_to_index2, strata_sample_pairs)
         else:
-            strata_sample_setting = zeros((index1.size,unique_strata.size,2), dtype="int32")
+            strata_sample_setting = zeros((index1.size,unique_strata.size,2), dtype=DTYPE)
             for i in range(index1.size):
                 agents_strata_sample_size = copy.copy(strata_sample_size)
                 if sample_size_from_chosen_stratum is None:
@@ -208,9 +208,9 @@ class stratified_sampler(Sampler):
         if prob_array.ndim <> 1:
             raise RuntimeError, "_sample_by_stratum only suitable for 1d prob_array"
 
-        sampled_index = zeros((index1.size,1), dtype="int32") - 1
+        sampled_index = zeros((index1.size,1), dtype=DTYPE) - 1
         self._sampling_probability = zeros((index1.size,1),dtype=float32)
-        self._stratum_id = ones((index1.size,1), dtype="int32") * NO_STRATUM_ID
+        self._stratum_id = ones((index1.size,1), dtype=DTYPE) * NO_STRATUM_ID
         for this_stratum, this_size in strata_sample_setting:
             index_not_in_stratum = where(stratum!=this_stratum)[0]
             this_prob = copy.copy(prob_array)
@@ -233,7 +233,7 @@ class stratified_sampler(Sampler):
                                                        this_prob[this_sampled_index]),
                                                        axis=1)
             self._stratum_id = concatenate( (self._stratum_id,
-                                             ones( (this_sampled_index.shape[0],1) , dtype="int32") * this_stratum ),
+                                             ones( (this_sampled_index.shape[0],1), dtype=DTYPE) * this_stratum ),
                                              axis=1)
 
         self._sampling_probability = self._sampling_probability[:, 1:]
@@ -248,9 +248,9 @@ class stratified_sampler(Sampler):
         rank_of_strata = rank(strata_sample_setting)
 
         J = self.__determine_sampled_index_size(strata_sample_setting, rank_of_strata)
-        sampled_index = zeros((index1.size,J), dtype="int32") - 1
+        sampled_index = zeros((index1.size,J), dtype=DTYPE) - 1
         self._sampling_probability = zeros( (index1.size,J ), dtype=float32)
-        self._stratum_id = ones( (index1.size,J) , dtype="int32") * NO_STRATUM_ID
+        self._stratum_id = ones( (index1.size,J), dtype=DTYPE) * NO_STRATUM_ID
 
         for i in range(index1.size):
             if rank_of_strata == 3:
@@ -283,7 +283,7 @@ class stratified_sampler(Sampler):
                 sampled_index[i,j:j+this_size] = this_sampled_index
 
                 self._sampling_probability[i,j:j+this_size] = this_prob[this_sampled_index]
-                self._stratum_id[i,j:j+this_size] = ones( (this_sampled_index.size,) , dtype="int32") * this_stratum
+                self._stratum_id[i,j:j+this_size] = ones( (this_sampled_index.size,), dtype=DTYPE) * this_stratum
 
                 j += this_size
 
@@ -351,7 +351,7 @@ class Test(opus_unittest.OpusTestCase):
                             include_chosen_choice=icc)
             # get results
             sampled_index = sample_ret.get_2d_index()
-            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
             where_chosen = where(sample_ret.get_attribute("chosen_choice"))
             chosen_choices[where_chosen[0]]=where_chosen[1]
             
@@ -364,7 +364,7 @@ class Test(opus_unittest.OpusTestCase):
                 self.assertEqual( chosen_choices.size, index1.size)
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
-                chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
+                chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype=DTYPE)
                 w = where(chosen_choices>=0)[0]
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
@@ -390,7 +390,7 @@ class Test(opus_unittest.OpusTestCase):
                             weight="weight",include_chosen_choice=icc)
             # get results
             sampled_index = sample_ret.get_2d_index()
-            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
             where_chosen = where(sample_ret.get_attribute("chosen_choice"))
             chosen_choices[where_chosen[0]]=where_chosen[1]
 
@@ -403,7 +403,7 @@ class Test(opus_unittest.OpusTestCase):
                 self.assertEqual( chosen_choices.size, index1.size)
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
-                chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
+                chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype=DTYPE)
                 w = where(chosen_choices>=0)[0]
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
                 self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
@@ -422,7 +422,7 @@ class Test(opus_unittest.OpusTestCase):
                         weight="weight",include_chosen_choice=True)
         # get results
         sampled_index = sample_ret.get_2d_index()
-        chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+        chosen_choices = UNPLACED_ID * ones(index1.size, dtype=DTYPE) 
         where_chosen = where(sample_ret.get_attribute("chosen_choice"))
         chosen_choices[where_chosen[0]]=where_chosen[1]
 
@@ -431,7 +431,7 @@ class Test(opus_unittest.OpusTestCase):
         self.assertEqual( chosen_choices.size, index1.size)
         placed_agents_index = self.gridcells.try_get_id_index(
                                 self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
-        chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
+        chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype=DTYPE)
         w = where(chosen_choices>=0)[0]
         chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
         self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )

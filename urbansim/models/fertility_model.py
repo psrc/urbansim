@@ -2,18 +2,18 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from numpy import zeros, arange, where, array
 from numpy.random import randint
 from opus_core.logger import logger
 
-class FertilityModel(AgentRelocationModel):
+class FertilityModel(RateBasedModel):
     """
     """
     model_name = "Fertility Model"
 
     def run(self, person_set, household_set, resources=None):
-        index = AgentRelocationModel.run(self, person_set, resources=resources)
+        index = RateBasedModel.run(self, person_set, resources=resources)
         logger.log_status("%s births occurred" % (index.size) )
 
         person_ds_name, person_id_name = person_set.get_dataset_name(), person_set.get_id_name()[0]

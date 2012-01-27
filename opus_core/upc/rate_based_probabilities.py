@@ -22,15 +22,16 @@ class rate_based_probabilities(Probabilities):
             agents = resources.get(self.agent_set, None)
         else:
             agents = resources.get('agent_set', None)
-            if agents is not None: self.agent_set = agents.get_dataset_name()
-        if agents == None:
+            #if agents is not None: self.agent_set = agents.get_dataset_name()
+        if agents is None:
             raise RuntimeError("Unable to get agent set " + self.agent_set)
 
         if self.rate_set:
             rates = resources.get(self.rate_set, None)
         else:
-            rates = resources.get('relocation_rate', None)
-            if rates is not None: self.rate_set = rates.get_dataset_name()
+            rates = resources.get('rate_set', None)
+            #if rates is not None: self.rate_set = rates.get_dataset_name()
+        
         if (rates is None) or (not isinstance(rates, RateDataset)):
             logger.log_warning("Rate table %s is not loaded; agents in agent_set %s will have probability of 0.0" % (self.rate_set, self.agent_set))
             return zeros(agents.size(), dtype="float32")

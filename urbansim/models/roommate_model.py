@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim.models.agent_relocation_model import AgentRelocationModel
+from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
 from numpy import where, arange, array, logical_and, zeros, ones, cumsum, searchsorted, exp, sqrt
 from numpy.random import random, uniform, randint, shuffle
 
-class RoommateModel(AgentRelocationModel):
+class RoommateModel(RateBasedModel):
     """
     """
     model_name = "Roommate Model"
