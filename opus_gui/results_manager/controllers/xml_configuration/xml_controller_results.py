@@ -211,7 +211,7 @@ class XmlController_Results(XmlController):
             menu.addAction(self.actImportRun)
         elif node.tag == 'indicator_batch':
             menu.addAction(self.actAddVisualizationToBatch)
-            run_batch_on_menu = QMenu('Run indicator batch on...')
+            run_batch_on_menu = QMenu('Run indicator batch on...', menu)
             self._createBatchRunMenu(run_batch_on_menu)
             menu.addMenu(run_batch_on_menu)
 
