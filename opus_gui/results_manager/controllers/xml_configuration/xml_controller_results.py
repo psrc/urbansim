@@ -218,4 +218,4 @@ class XmlController_Results(XmlController):
         elif node.tag == 'batch_visualization': # get('type') == 'batch_visualization':
             menu.addAction(self.actConfigureExistingBatchIndicatorVis)
         
-        return True # default menu items aren't meaningful for simulation run nodes
+        return node.tag == 'run' # default menu items aren't meaningful for simulation run nodes
