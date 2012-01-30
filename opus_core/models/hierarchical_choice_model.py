@@ -27,12 +27,12 @@ class HierarchicalChoiceModel(ChoiceModel):
         self.create_nested_and_tree_structure(nested_structure, stratum, **kwargs)
         self.set_model_interaction(**kwargs)
         
-    def set_choice_set_size(self):
+    def set_choice_set_size(self, **kwargs):
         if self.sampler_size is None:
             self.sampler_size = 0
             for nest, values in self.nested_structure.iteritems():
                 self.sampler_size += len(values)
-        ChoiceModel.set_choice_set_size(self)
+        ChoiceModel.set_choice_set_size(self, **kwargs)
         
     def get_number_of_elemental_alternatives(self):
         return self.membership_in_nests[0].shape[1]

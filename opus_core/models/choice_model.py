@@ -352,7 +352,7 @@ class ChoiceModel(ChunkModel):
             
         self.model_interaction.set_agent_set(agent_set)
 
-        self.set_choice_set_size()
+        self.set_choice_set_size(estimation=True)
         nchoices = self.get_choice_set_size()
 
         estimation_size_agents = self.estimate_config.get("estimation_size_agents", None) # should be a proportion of the agent_set
@@ -691,14 +691,18 @@ class ChoiceModel(ChunkModel):
     def get_agents_order(self, agents):
         return permutation(agents.size())
     
-    def set_choice_set_size(self):
-        """If "sample_size" is specified in resources, it is considered as the choice set size. Otherwise
+    def set_choice_set_size(self, estimation=False):
+        """If "sample_size_locations" is specified in resources, it is considered as the choice set size. Otherwise
         the value of resources entry "sample_proportion_locations" is considered as determining the size of 
         the choice set.
         """
         if self.sampler_class is not None:
-            pchoices =  self.run_config.get("sample_proportion_locations", None)
-            nchoices =  self.run_config.get("sample_size_locations", None)
+            if estimation:
+                resources = self.estimate_config
+            else:
+                resources = self.run_config
+            pchoices =  resources.get("sample_proportion_locations", None)
+            nchoices =  resources.get("sample_size_locations", None)
             if nchoices == None:
                 if pchoices == None:
                     logger.log_warning("Neither 'sample_proportion_locations' nor 'sample_size_locations' " +

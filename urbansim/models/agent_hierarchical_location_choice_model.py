@@ -36,8 +36,8 @@ class AgentHierarchicalLocationChoiceModel(AgentLocationChoiceModel, Hierarchica
         HierarchicalChoiceModel.add_logsum_to_coefficients(self, result)
         return result
 
-    def set_choice_set_size(self):
-        HierarchicalChoiceModel.set_choice_set_size(self)
+    def set_choice_set_size(self, **kwargs):
+        HierarchicalChoiceModel.set_choice_set_size(self, **kwargs)
         
     def get_number_of_elemental_alternatives(self):
         return HierarchicalChoiceModel.get_number_of_elemental_alternatives(self)
