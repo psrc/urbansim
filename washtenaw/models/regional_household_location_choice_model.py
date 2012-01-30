@@ -43,6 +43,7 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
             agent_set.modify_attribute(name=self.large_area_id_name, 
                                        data=chosen_large_areas, 
                                        index=agent_index_no_large_area[where_valid_choice])
+        return agent_set[self.choice_set.get_id_name()[0]][agents_index]
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, arange, where, zeros, concatenate

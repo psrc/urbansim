@@ -165,6 +165,7 @@ class Estimator(ModelExplorer):
             #self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
             #new_choices = agents.get_attribute(choice_id_name).copy()
             agents.modify_attribute(name=choice_id_name, data=current_choices)
+            import ipdb; ipdb.set_trace()
             dummy_data[agents_index] = new_choices
             if predicted_choice_id_name not in agents.get_known_attribute_names():
                 agents.add_primary_attribute(name=predicted_choice_id_name, data=dummy_data)
@@ -219,7 +220,7 @@ class Estimator(ModelExplorer):
             chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
             predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
             chosen_choice_index = choices.get_id_index(chosen_choice_id)
-            predicted_choice_index = choices.get_id_index(predicted_choice_id)
+            predicted_choice_index = choices.try_get_id_index(predicted_choice_id)
             
             chosen_summary_id = summary_id[chosen_choice_index]
             predicted_summary_id = summary_id[predicted_choice_index]
