@@ -152,7 +152,7 @@ class XmlController(object):
                 menu.addSeparator()
             self.add_default_menu_items_for_node(node, menu)
         if not menu.isEmpty():
-            menu.exec_(QCursor.pos())
+            menu.exec_(self.view.mapToGlobal(position))
 
 
     def set_project_dirty(self):
