@@ -226,10 +226,10 @@ class LocationChoiceModel(ChoiceModel):
         """
         
         nchoices = self.get_choice_set_size()
-        if nchoices==self.choice_set.size():
+        ## apply (alternative) filter when alternative size equals to the size of choice set, or sampler class is None
+        if (self.sampler_class is None) or (nchoices==self.choice_set.size()):
             if self.filter is None:
-                ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
-                return
+                return ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
             else:  # apply filter without doing sampling
                 filter_index = self.apply_filter(self.filter, agent_set, agents_index)
                 self.model_interaction.create_interaction_datasets(agents_index, filter_index)
