@@ -13,7 +13,7 @@ class HouseholdRelocationModelConfigurationCreator(object):
                 debuglevel = 'debuglevel',
                 rate_table = 'annual_relocation_rates_for_households',
                 location_id_name = 'grid_id',
-                probabilities = 'urbansim.household_relocation_probabilities',
+                probabilities = 'opus_core.upc.rate_based_probabilities',
                 what = 'households',
                 output_index = 'hrm_index'):
         self.agent_set = agent_set
@@ -79,7 +79,7 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
                               'location_id_name': "'grid_id'",
-                              'probabilities': "'urbansim.household_relocation_probabilities'"},
+                              'probabilities': "'opus_core.upc.rate_based_probabilities'"},
                 'name': 'HouseholdRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
@@ -119,7 +119,7 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
             'init': {
                 'arguments': {'debuglevel': 9999,
                               'location_id_name': "'grid_id'",
-                              'probabilities': "'urbansim.household_relocation_probabilities'"                      
+                              'probabilities': "'opus_core.upc.rate_based_probabilities'"                      
                                   },
                 'name': 'HouseholdRelocationModelCreator().get_model'
                 },

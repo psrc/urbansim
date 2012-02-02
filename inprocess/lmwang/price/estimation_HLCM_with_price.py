@@ -340,7 +340,7 @@ if __name__ == "__main__":
 
     ## relocate movers
     from urbansim.models.household_relocation_model_creator import HouseholdRelocationModelCreator
-    hrm = HouseholdRelocationModelCreator().get_model(probabilities='urbansim.household_relocation_probabilities',
+    hrm = HouseholdRelocationModelCreator().get_model(probabilities='opus_core.upc.rate_based_probabilities',
                                                       location_id_name='building_id' )
     hrm_resources = hrm.prepare_for_run(rate_storage=attribute_cache,
                                         rate_table='annual_relocation_rates_for_households',

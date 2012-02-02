@@ -15,7 +15,7 @@ class EmploymentRelocationModelConfigurationCreator(object):
                 what = 'jobs',
                 rate_table = 'annual_relocation_rates_for_jobs',
                 location_id_name = 'grid_id',
-                probabilities = 'urbansim.employment_relocation_probabilities',
+                probabilities = 'opus_core.upc.rate_based_probabilities',
                 output_index = 'erm_index'):
         self.debuglevel = debuglevel
         self.agent_set = agent_set
@@ -81,7 +81,7 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
                               'location_id_name': "'grid_id'",
-                              'probabilities': "'urbansim.employment_relocation_probabilities'"},
+                              'probabilities': "'opus_core.upc.rate_based_probabilities'"},
                 'name': 'EmploymentRelocationModelCreator().get_model',
                 
                 },
@@ -122,7 +122,7 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
             'init': {
                 'arguments': {'debuglevel': 9999,
                               'location_id_name': "'grid_id'",
-                              'probabilities': "'urbansim.employment_relocation_probabilities'",},
+                              'probabilities': "'opus_core.upc.rate_based_probabilities'",},
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {

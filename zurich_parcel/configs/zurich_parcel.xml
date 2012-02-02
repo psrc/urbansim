@@ -473,7 +473,7 @@
             <name hidden="True" name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
             <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
-            <argument name="probabilities" parser_action="quote_string" type="string">urbansim.employment_relocation_probabilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>

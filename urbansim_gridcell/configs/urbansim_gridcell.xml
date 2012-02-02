@@ -538,7 +538,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">HouseholdRelocationModelCreator().get_model</name>
-            <argument convert_blank_to_none="True" name="probabilities" type="string">'urbansim.household_relocation_probabilities'</argument>
+            <argument convert_blank_to_none="True" name="probabilities" type="string">'opus_core.upc.rate_based_probabilities'</argument>
             <argument name="location_id_name" type="string">'grid_id'</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
           </init>
@@ -651,7 +651,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
-            <argument convert_blank_to_none="True" name="probabilities" type="string">'urbansim.employment_relocation_probabilities'</argument>
+            <argument convert_blank_to_none="True" name="probabilities" type="string">'opus_core.upc.rate_based_probabilities'</argument>
             <argument name="location_id_name" type="string">'grid_id'</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
           </init>
