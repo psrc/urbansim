@@ -804,7 +804,7 @@
     </estimation_config>
   </model_manager>
   <scenario_manager>
-    <scenario executable="True" name="urbansim_parcel_baseline" type="scenario">
+    <scenario executable="False" name="urbansim_parcel_baseline" type="scenario">
       <models_to_run config_name="models" type="selectable_list" />
       <base_year type="integer" field_identifier="Base Year">2000</base_year>
       <years_to_run config_name="years" type="tuple">

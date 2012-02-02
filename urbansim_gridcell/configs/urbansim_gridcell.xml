@@ -1018,7 +1018,7 @@
     </estimation_config>
   </model_manager>
   <scenario_manager>
-    <scenario executable="True" name="default_scenario" type="scenario">
+    <scenario executable="False" name="default_scenario" type="scenario">
       <models_to_run config_name="models" type="selectable_list">
           <selectable name="prescheduled_events" type="selectable">True</selectable>
           <selectable name="events_coordinator" type="selectable">True</selectable>
