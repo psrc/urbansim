@@ -8,6 +8,7 @@
 from numpy import ma
 import numpy
 import opus_core.misc
+from scipy.stats import stats
 
 def clip_to_zero(v):
     """Returns the given values with all negative values clipped to 0."""
@@ -47,6 +48,18 @@ def sqrt(v):
     """Returns an array of square roots.  Values < 0 result in 0."""
     return numpy.sqrt(ma.filled(ma.masked_where(v<0, v), 0.0))
 
+def zscore(v):
+    """Returns a 1D array of z-scores, one for each score in the passed array, computed relative to the passed array.
+    """
+    return stats.zscore(v)
+
+def safeguard(v, fill=0):
+    """fill in NaN and inf with a default value
+    """
+    results = v.copy()
+    results[numpy.isinf(results)] = fill
+    results[numpy.isnan(results)] = fill
+    return results
 
 # unit tests for all the functions
 
