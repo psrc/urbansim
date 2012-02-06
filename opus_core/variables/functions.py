@@ -6,9 +6,12 @@
 # of these, so that they are available for use in computing the values of expressions.
 
 from numpy import ma, rank
-import numpy
+import numpy, scipy
 import opus_core.misc
-from scipy.stats import stats
+if scipy.__version__ <= '0.7.0':
+    from scipy.stats.stats import zs as scipy_zscore
+else:
+    from scipy.stats.stats import zscore as scipy_zscore
 
 def clip_to_zero(v):
     """Returns the given values with all negative values clipped to 0."""
@@ -53,9 +56,9 @@ def zscore(v):
     """
     if rank(v) > 1:
         shape = v.shape
-        z = stats.zscore(v.ravel())
+        z = scipy_zscore(v.ravel())
         return z.reshape(shape)
-    return stats.zscore(v)
+    return scipy_zscore(v)
 
 def sfg(v, fill=0):
     """safeguard: fill in NaN and inf with a default filling value
