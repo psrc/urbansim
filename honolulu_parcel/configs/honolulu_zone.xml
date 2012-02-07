@@ -9,6 +9,26 @@
     </dataset_pool_configuration>
     <available_datasets type="list">['job','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <expression_library type="dictionary">
+      <variable use="both" source="primary attribute" name="household.year_moved" type="variable_definition">household.year_moved</variable>
+      <variable use="both" source="expression" name="building.emp_retail_200" type="variable_definition">where(building.disaggregate(zone.aggregate(job.sector_id==9))&lt;200,building.disaggregate(zone.aggregate(job.sector_id==9)),200)/200</variable>
+      <variable use="both" source="expression" name="building.land_per_unit_1k" type="variable_definition">(building.land_area/building.residential_units)/1000</variable>
+      <variable use="both" source="expression" name="household_x_building.children_and_lot_size" type="variable_definition">ln_bounded(household.children*((building.land_area/building.residential_units)/1000))</variable>
+      <variable use="both" source="expression" name="building.ln_bldg_landarea" type="variable_definition">ln_bounded(building.land_area)</variable>
+      <variable use="both" source="expression" name="building.res_sqft_per_unit_1k" type="variable_definition">building.sqft_per_unit*(building.building_type_id&lt;3)/1000</variable>
+      <variable use="both" source="expression" name="building.ln_price" type="variable_definition">ln_bounded(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="household.young_adults" type="variable_definition">(household.children==0)*(household.age_of_head&lt;35)*(household.aggregate(person.age&gt;34) ==0)*(household.aggregate(person.age&lt;25) ==0)</variable>
+      <variable use="both" source="expression" name="household.renter_hh" type="variable_definition">household.tenure==2</variable>
+      <variable use="both" source="expression" name="building.year_built_building" type="variable_definition">(building.year_built) * (building.year_built &gt; 0)</variable>
+      <variable use="both" source="expression" name="building.apartment_unit_price" type="variable_definition">(building.building_type_id==3) * (building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.apartment_units" type="variable_definition">(building.building_type_id==3) * (building.residential_units)</variable>
+      <variable use="model variable" source="expression" name="building.ln_avg_val_res_sqft" type="variable_definition">safe_array_divide(building.improvement_value,building.residential_sqft)</variable>
+      <variable use="both" source="expression" name="building.ln_sqft_per_unit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="primary attribute" name="building.sqft_per_unit" type="variable_definition">building.sqft_per_unit</variable>
+      <variable use="both" source="expression" name="building.proportion_apartment_zone" type="variable_definition">building.disaggregate(safe_array_divide(zone.aggregate((building.residential_units)*(building.building_type_id==3)), zone.aggregate(building.residential_units)))</variable>
+      <variable use="both" source="expression" name="building.ln_apartment_unit_price" type="variable_definition">ln((building.building_type_id==3) * (building.average_value_per_unit))</variable>
+      <variable use="both" source="expression" name="building.ln_apartment_units" type="variable_definition">ln((building.building_type_id==3) * (building.residential_units))</variable>
+      <variable use="model variable" source="expression" name="household_x_building.wkrs_hhs_ln_jobs_30_min" type="variable_definition">safe_array_divide(household.workers,household.persons)*ln_bounded(building.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</variable>
+      <variable use="both" source="expression" name="building.proportion_sf_zone" type="variable_definition">building.disaggregate(safe_array_divide(zone.aggregate((building.residential_units)*(building.building_type_id==1)), zone.aggregate(building.residential_units)))</variable>
       <variable use="both" source="expression" name="household_x_building.inc_avginc_ratio_close" type="variable_definition">(safe_array_divide(household.income,(building.aggregate(household.income, function=mean)))&gt;.8)*(safe_array_divide(household.income,(building.aggregate(household.income, function=mean)))&lt;1.2)</variable>
       <variable use="both" source="expression" name="household_x_building.children_x_apartment" type="variable_definition">(household.children&gt;1) * (building.building_type_id==3)</variable>
       <variable use="both" source="expression" name="household_x_building.highinc_yearbuilt" type="variable_definition">(household.income_group&gt;6) * (building.year_built &gt; 1990)</variable>
@@ -74,7 +94,7 @@
       <variable use="both" source="expression" name="building.land_per_unit" type="variable_definition">building.land_area/building.residential_units</variable>
       <variable use="both" source="expression" name="household_x_building.persons_land_per_unit" type="variable_definition">household.persons*building.land_area/building.residential_units</variable>
       <variable use="both" source="expression" name="household_x_building.ln_income_sqft_per_unit" type="variable_definition">ln(household.income*building.sqft_per_unit)</variable>
-      <variable use="model variable" source="expression" name="household_x_building.wkrs_hhs_ln_jobs_30_min" type="variable_definition">safe_array_divide(household.workers,household.persons)*ln_bounded(building.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</variable>
+      <variable use="model variable" source="expression" name="household_x_building.wkrs_ln_jobs_30_min" type="variable_definition">(household.workers)*ln_bounded(building.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</variable>
       <variable use="model variable" source="expression" name="building.ln_jobs_within_30_min" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</variable>
       <variable use="model variable" source="expression" name="household_x_building.income_schl_dist1" type="variable_definition">household.income/10000*building.disaggregate(zone.schl_district==1)</variable>
       <variable use="both" source="expression" name="household_x_building.persons_sqft_per_unit" type="variable_definition">household.persons*building.sqft_per_unit</variable>
@@ -105,8 +125,8 @@
       <variable use="model variable" source="expression" name="building.cbd_time" type="variable_definition">building.disaggregate(zone.travel_time_to_cbd)</variable>
       <variable use="model variable" source="expression" name="building.rd_density" type="variable_definition">building.disaggregate(zone.rd_density)</variable>
       <variable use="model variable" source="expression" name="building.schl_dist1" type="variable_definition">building.disaggregate(zone.schl_district==1)</variable>
-      <variable use="both" source="expression" name="building.ln_sf_unit_price" type="variable_definition">ln((building.building_type_id==9) * (building.average_value_per_unit))</variable>
-      <variable use="both" source="expression" name="building.ln_sf_units" type="variable_definition">ln((building.building_type_id==9) * (building.residential_units))</variable>
+      <variable use="both" source="expression" name="building.ln_sf_unit_price" type="variable_definition">ln((building.building_type_id==1) * (building.average_value_per_unit))</variable>
+      <variable use="both" source="expression" name="building.ln_sf_units" type="variable_definition">ln((building.building_type_id==1) * (building.residential_units))</variable>
       <variable use="both" source="expression" name="building.ln_mf_unit_price" type="variable_definition">ln((building.building_type_id==3) * (building.average_value_per_unit))</variable>
       <variable use="both" source="expression" name="building.ln_mf_units" type="variable_definition">ln((building.building_type_id==3) * (building.residential_units))</variable>
       <variable use="both" source="expression" name="building.ln_average_value_per_sqft" type="variable_definition">ln(building.average_value_per_unit * building.disaggregate(building_type.is_residential==0))</variable>
@@ -114,12 +134,24 @@
       <variable use="both" source="expression" name="building.ln_avg_value_per_sqft_retail" type="variable_definition">ln((building.building_type_id==7)*(building.average_value_per_unit))</variable>
       <variable use="both" source="expression" name="building.ln_avg_value_per_sqft_office" type="variable_definition">ln((building.building_type_id==5)*(building.average_value_per_unit))</variable>
       <variable use="both" source="expression" name="household.workers_id" type="variable_definition"> 1*(household.workers==0) +2*(household.workers==1) +3*(household.workers&gt;=2)</variable>
+      <variable use="both" source="expression" name="household.typetenure_id" type="variable_definition"> 1*((household.building_type_id==1)*(household.tenure==1))+2*((household.building_type_id==1)*(household.tenure==2))+ 3*((household.building_type_id==2)*(household.tenure==1))+4*((household.building_type_id==2)*(household.tenure==2))+ 5*((household.building_type_id==3)*(household.tenure==1))+6*((household.building_type_id==3)*(household.tenure==2))+ 7*((household.building_type_id==4)*(household.tenure==1))+8*((household.building_type_id==4)*(household.tenure==2))</variable>
+      <variable use="both" source="expression" name="household.typetenureincome_id" type="variable_definition"> 1*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==1))+2*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==1))+ 3*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==1))+4*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==1))+ 5*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==1))+6*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==1))+ 7*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==1))+8*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==1))+ 9*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==2))+10*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==2))+ 11*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==2))+12*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==2))+ 13*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==2))+14*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==2))+ 15*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==2))+16*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==2))+  17*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==3))+18*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==3))+ 19*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==3))+20*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==3))+ 21*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==3))+22*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==3))+ 23*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==3))+24*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==3))+  25*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==4))+26*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==4))+ 27*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==4))+28*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==4))+ 29*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==4))+30*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==4))+ 31*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==4))+32*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==4))+  33*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==5))+34*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==5))+ 35*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==5))+36*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==5))+ 37*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==5))+38*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==5))+ 39*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==5))+40*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==5))+  41*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==6))+42*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==6))+ 43*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==6))+44*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==6))+ 45*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==6))+46*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==6))+ 47*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==6))+48*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==6))+  49*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==7))+50*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==7))+ 51*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==7))+52*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==7))+ 53*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==7))+54*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==7))+ 55*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==7))+56*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==7))+  57*((household.building_type_id==1)*(household.tenure==1)*(household.income_group==8))+58*((household.building_type_id==35)*(household.tenure==2)*(household.income_group==8))+ 59*((household.building_type_id==2)*(household.tenure==1)*(household.income_group==8))+60*((household.building_type_id==36)*(household.tenure==2)*(household.income_group==8))+ 61*((household.building_type_id==3)*(household.tenure==1)*(household.income_group==8))+62*((household.building_type_id==37)*(household.tenure==2)*(household.income_group==8))+ 63*((household.building_type_id==4)*(household.tenure==1)*(household.income_group==8))+64*((household.building_type_id==38)*(household.tenure==2)*(household.income_group==8))  </variable>
+      <variable use="both" source="expression" name="household.typetenureincome4_id" type="variable_definition"> 1*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&lt;3))+2*((household.building_type_id==1)*(household.tenure==2)*(household.income_group&lt;3))+ 3*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&lt;3))+4*((household.building_type_id==2)*(household.tenure==2)*(household.income_group&lt;3))+ 5*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&lt;3))+6*((household.building_type_id==3)*(household.tenure==2)*(household.income_group&lt;3))+ 7*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&lt;3))+8*((household.building_type_id==4)*(household.tenure==2)*(household.income_group&lt;3))+  9*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5))+10*((household.building_type_id==1)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5))+ 11*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5))+12*((household.building_type_id==2)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5))+ 13*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5))+14*((household.building_type_id==3)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5))+ 15*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5))+16*((household.building_type_id==4)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5))+  17*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7))+18*((household.building_type_id==1)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7))+ 19*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7))+20*((household.building_type_id==2)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7))+ 21*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7))+22*((household.building_type_id==3)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7))+ 23*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7))+24*((household.building_type_id==4)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7))+    25*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;6))+26*((household.building_type_id==1)*(household.tenure==2)*(household.income_group&gt;6))+ 27*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;6))+28*((household.building_type_id==2)*(household.tenure==2)*(household.income_group&gt;6))+ 29*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;6))+30*((household.building_type_id==3)*(household.tenure==2)*(household.income_group&gt;6))+ 31*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;6))+32*((household.building_type_id==4)*(household.tenure==2)*(household.income_group&gt;6))  </variable>
+      <variable use="both" source="expression" name="household.typetenureincfam_id" type="variable_definition"> 1*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==1))+2*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==1))+ 3*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==1))+4*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==1))+ 5*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==1))+6*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==1))+ 7*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==1))+8*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==1))+  9*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+10*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+ 11*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+12*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+ 13*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+14*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+ 15*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+16*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==1))+  17*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+18*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+ 19*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+20*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+ 21*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+22*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+ 23*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+24*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==1))+    25*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==1))+26*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==1))+ 27*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==1))+28*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==1))+ 29*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==1))+30*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==1))+ 31*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==1))+32*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==1)) + 33*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==2))+34*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==2))+ 35*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==2))+36*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==2))+ 37*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==2))+38*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==2))+ 39*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&lt;3)*(household.family_type==2))+40*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&lt;3)*(household.family_type==2))+  41*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+42*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+ 43*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+44*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+ 45*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+46*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+ 47*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+48*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;2)*(household.income_group&lt;5)*(household.family_type==2))+  49*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+50*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+ 51*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+52*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+ 53*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+54*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+ 55*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+56*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;4)*(household.income_group&lt;7)*(household.family_type==2))+    57*((household.building_type_id==1)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==2))+58*((household.building_type_id==35)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==2))+ 59*((household.building_type_id==2)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==2))+60*((household.building_type_id==36)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==2))+ 61*((household.building_type_id==3)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==2))+62*((household.building_type_id==37)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==2))+ 63*((household.building_type_id==4)*(household.tenure==1)*(household.income_group&gt;6)*(household.family_type==2))+64*((household.building_type_id==38)*(household.tenure==2)*(household.income_group&gt;6)*(household.family_type==2)) </variable>
       <variable use="both" source="primary attribute" name="household.age_of_head" type="variable_definition">household.age_of_head</variable>
       <variable use="both" source="expression" name="household.oldhead" type="variable_definition">household.age_of_head &gt; 64</variable>
       <variable use="both" source="primary attribute" name="household.persons" type="variable_definition">household.persons</variable>
       <variable use="both" source="primary attribute" name="household.children" type="variable_definition">household.children</variable>
       <variable use="both" source="primary attribute" name="household.workers" type="variable_definition">household.workers</variable>
       <variable use="both" source="primary attribute" name="household.income" type="variable_definition">household.income</variable>
+      <variable use="both" source="expression" name="household.ln_income" type="variable_definition">ln(household.income)</variable>
+      <variable use="both" source="expression" name="household.nonfamily" type="variable_definition">household.family_type==2</variable>
+      <variable use="both" source="primary attribute" name="household.vehicles" type="variable_definition">household.vehicles</variable>
+      <variable use="both" source="expression" name="household.veh_per_person" type="variable_definition">safe_array_divide(household.vehicles * 1.0,household.persons)</variable>
+      <variable use="both" source="expression" name="household.enrollment_of_head" type="variable_definition">household.aggregate((person.school_enrollment&gt;1)*(person.relation ==1)) </variable>
+      <variable use="both" source="primary attribute" name="household.building_type_id" type="variable_definition">household.building_type_id</variable>
+      <variable use="both" source="expression" name="household.buildingtype_id" type="variable_definition"> 1*(household.building_type_id==1) +2*(household.building_type_id==2) +3*(household.building_type_id==3) + 4*(household.building_type_id==4)</variable>
+      <variable use="both" source="expression" name="building.proportion_renter_hh" type="variable_definition">(safe_array_divide(building.aggregate(household.tenure==2), building.number_of_agents(household)))</variable>
     </expression_library>
   </general>
   <model_manager>
@@ -213,6 +245,1052 @@
           </submodel_group>
         </specification>
       </model>
+      <model name="household_location_choice_model_income_submodels" type="model">
+        <dependencies type="list">['household_relocation_model']</dependencies>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="agents_index" type="string">hrm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">building.residential_units</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">household.typetenureincome_id</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">building.residential_units - building.number_of_agents(household)</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(building.residential_units&gt;0)*((building_type_id==1)*((SUBMODEL==1) + (SUBMODEL==9) + (SUBMODEL==17) + (SUBMODEL==25) + (SUBMODEL==33) + (SUBMODEL==41) + (SUBMODEL==49) + (SUBMODEL==57)) + (building_type_id==35)*( (SUBMODEL==2) +  (SUBMODEL==10)  + (SUBMODEL==18)  + (SUBMODEL==26)  + (SUBMODEL==34) +  (SUBMODEL==42) + (SUBMODEL==50)  + (SUBMODEL==58)) + (building_type_id==2)*((SUBMODEL==3) + (SUBMODEL==11) + (SUBMODEL==19) + (SUBMODEL==27) + (SUBMODEL==35) + (SUBMODEL==43) + (SUBMODEL==51) + (SUBMODEL==59)) + (building_type_id==36)*((SUBMODEL==4) + (SUBMODEL==12) + (SUBMODEL==20) + (SUBMODEL==28) + (SUBMODEL==36) +  (SUBMODEL==44) + (SUBMODEL==52) + (SUBMODEL==60)) +(building_type_id==3)*((SUBMODEL==5) + (SUBMODEL==13) + (SUBMODEL==21) + (SUBMODEL==29) + (SUBMODEL==37) + (SUBMODEL==45) + (SUBMODEL==53) + (SUBMODEL==61)) +(building_type_id==37)*((SUBMODEL==6) + (SUBMODEL==14) + (SUBMODEL==22) + (SUBMODEL==30) + (SUBMODEL==38) + (SUBMODEL==46) + (SUBMODEL==54) + (SUBMODEL==62))+ (building_type_id==4)*((SUBMODEL==7) + (SUBMODEL==15) + (SUBMODEL==23) + (SUBMODEL==31) + (SUBMODEL==39) + (SUBMODEL==47) + (SUBMODEL==55) + (SUBMODEL==63)) + (building_type_id==38)*((SUBMODEL==8) + (SUBMODEL==16) + (SUBMODEL==24) + (SUBMODEL==32) + (SUBMODEL==40) + (SUBMODEL==48) + (SUBMODEL==56) + (SUBMODEL==64)))</argument>
+            <argument name="sample_size_locations" type="integer">50</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3,"sample_alternatives_by_submodel":True})</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string">1.0</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string">building.residential_units</argument>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation_with_diagnose</argument>
+            <argument name="estimate_config" type="string">Resources({"sample_alternatives_by_submodel":True})</argument>
+            <name name="name" type="string">HouseholdLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="portion_to_unplace" type="float">0.333333333333</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="index_to_unplace" type="string">None</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="join_datasets" type="boolean">False</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel name="sf_own1" submodel_id="1" type="submodel" hidden="Children">
+            <description type="string">sf_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent1" submodel_id="2" type="submodel" hidden="Children">
+            <description type="string">sf_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own1" submodel_id="3" type="submodel" hidden="Children">
+            <description type="string">duplex_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent1" submodel_id="4" type="submodel" hidden="Children">
+            <description type="string">duplex_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own1" submodel_id="5" type="submodel" hidden="Children">
+            <description type="string">apartment_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent1" submodel_id="6" type="submodel" hidden="Children">
+            <description type="string">apartment_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own1" submodel_id="7" type="submodel" hidden="Children">
+            <description type="string">townhome_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent1" submodel_id="8" type="submodel" hidden="Children">
+            <description type="string">townhome_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own2" submodel_id="9" type="submodel" hidden="Children">
+            <description type="string">sf_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent2" submodel_id="10" type="submodel" hidden="Children">
+            <description type="string">sf_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own2" submodel_id="11" type="submodel" hidden="Children">
+            <description type="string">duplex_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent2" submodel_id="12" type="submodel" hidden="Children">
+            <description type="string">duplex_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own2" submodel_id="13" type="submodel" hidden="Children">
+            <description type="string">apartment_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent2" submodel_id="14" type="submodel" hidden="Children">
+            <description type="string">apartment_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own2" submodel_id="15" type="submodel" hidden="Children">
+            <description type="string">townhome_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent2" submodel_id="16" type="submodel" hidden="Children">
+            <description type="string">townhome_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own3" submodel_id="17" type="submodel" hidden="Children">
+            <description type="string">sf_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent3" submodel_id="18" type="submodel" hidden="Children">
+            <description type="string">sf_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own3" submodel_id="19" type="submodel" hidden="Children">
+            <description type="string">duplex_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent3" submodel_id="20" type="submodel" hidden="Children">
+            <description type="string">duplex_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own3" submodel_id="21" type="submodel" hidden="Children">
+            <description type="string">apartment_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent3" submodel_id="22" type="submodel" hidden="Children">
+            <description type="string">apartment_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own3" submodel_id="23" type="submodel" hidden="Children">
+            <description type="string">townhome_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent3" submodel_id="24" type="submodel" hidden="Children">
+            <description type="string">townhome_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own4" submodel_id="25" type="submodel" hidden="Children">
+            <description type="string">sf_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent4" submodel_id="26" type="submodel" hidden="Children">
+            <description type="string">sf_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own4" submodel_id="27" type="submodel" hidden="Children">
+            <description type="string">duplex_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent4" submodel_id="28" type="submodel" hidden="Children">
+            <description type="string">duplex_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own4" submodel_id="29" type="submodel" hidden="Children">
+            <description type="string">apartment_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent4" submodel_id="30" type="submodel" hidden="Children">
+            <description type="string">apartment_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own4" submodel_id="31" type="submodel" hidden="Children">
+            <description type="string">townhome_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent4" submodel_id="32" type="submodel" hidden="Children">
+            <description type="string">townhome_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own5" submodel_id="33" type="submodel" hidden="Children">
+            <description type="string">sf_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent5" submodel_id="34" type="submodel" hidden="Children">
+            <description type="string">sf_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own5" submodel_id="35" type="submodel" hidden="Children">
+            <description type="string">duplex_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent5" submodel_id="36" type="submodel" hidden="Children">
+            <description type="string">duplex_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own5" submodel_id="37" type="submodel" hidden="Children">
+            <description type="string">apartment_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent5" submodel_id="38" type="submodel" hidden="Children">
+            <description type="string">apartment_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own5" submodel_id="39" type="submodel" hidden="Children">
+            <description type="string">townhome_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent5" submodel_id="40" type="submodel" hidden="Children">
+            <description type="string">townhome_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own6" submodel_id="41" type="submodel" hidden="Children">
+            <description type="string">sf_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent6" submodel_id="42" type="submodel" hidden="Children">
+            <description type="string">sf_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own6" submodel_id="43" type="submodel" hidden="Children">
+            <description type="string">duplex_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent6" submodel_id="44" type="submodel" hidden="Children">
+            <description type="string">duplex_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own6" submodel_id="45" type="submodel" hidden="Children">
+            <description type="string">apartment_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent6" submodel_id="46" type="submodel" hidden="Children">
+            <description type="string">apartment_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own6" submodel_id="47" type="submodel" hidden="Children">
+            <description type="string">townhome_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent6" submodel_id="48" type="submodel" hidden="Children">
+            <description type="string">townhome_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own7" submodel_id="49" type="submodel" hidden="Children">
+            <description type="string">sf_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent7" submodel_id="50" type="submodel" hidden="Children">
+            <description type="string">sf_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own7" submodel_id="51" type="submodel" hidden="Children">
+            <description type="string">duplex_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent7" submodel_id="52" type="submodel" hidden="Children">
+            <description type="string">duplex_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own7" submodel_id="53" type="submodel" hidden="Children">
+            <description type="string">apartment_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent7" submodel_id="54" type="submodel" hidden="Children">
+            <description type="string">apartment_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own7" submodel_id="55" type="submodel" hidden="Children">
+            <description type="string">townhome_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent7" submodel_id="56" type="submodel" hidden="Children">
+            <description type="string">townhome_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own8" submodel_id="57" type="submodel" hidden="Children">
+            <description type="string">sf_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent8" submodel_id="58" type="submodel" hidden="Children">
+            <description type="string">sf_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own8" submodel_id="59" type="submodel" hidden="Children">
+            <description type="string">duplex_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent8" submodel_id="60" type="submodel" hidden="Children">
+            <description type="string">duplex_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own8" submodel_id="61" type="submodel" hidden="Children">
+            <description type="string">apartment_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent8" submodel_id="62" type="submodel" hidden="Children">
+            <description type="string">apartment_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own8" submodel_id="63" type="submodel" hidden="Children">
+            <description type="string">townhome_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent8" submodel_id="64" type="submodel" hidden="Children">
+            <description type="string">townhome_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+        </specification>
+      </model>
+      <model name="household_location_choice_model_incomefam_submodels" type="model">
+        <dependencies type="list">['household_relocation_model']</dependencies>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="agents_index" type="string">hrm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">building.residential_units</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">household.typetenureincfam_id</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">building.residential_units - building.number_of_agents(household)</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(building.residential_units&gt;0)*((building_type_id==1)*((SUBMODEL==1) + (SUBMODEL==9) + (SUBMODEL==17) + (SUBMODEL==25) + (SUBMODEL==33) + (SUBMODEL==41) + (SUBMODEL==49) + (SUBMODEL==57)) + (building_type_id==35)*( (SUBMODEL==2) +  (SUBMODEL==10)  + (SUBMODEL==18)  + (SUBMODEL==26)  + (SUBMODEL==34) +  (SUBMODEL==42) + (SUBMODEL==50)  + (SUBMODEL==58)) + (building_type_id==2)*((SUBMODEL==3) + (SUBMODEL==11) + (SUBMODEL==19) + (SUBMODEL==27) + (SUBMODEL==35) + (SUBMODEL==43) + (SUBMODEL==51) + (SUBMODEL==59)) + (building_type_id==36)*((SUBMODEL==4) + (SUBMODEL==12) + (SUBMODEL==20) + (SUBMODEL==28) + (SUBMODEL==36) +  (SUBMODEL==44) + (SUBMODEL==52) + (SUBMODEL==60)) +(building_type_id==3)*((SUBMODEL==5) + (SUBMODEL==13) + (SUBMODEL==21) + (SUBMODEL==29) + (SUBMODEL==37) + (SUBMODEL==45) + (SUBMODEL==53) + (SUBMODEL==61)) +(building_type_id==37)*((SUBMODEL==6) + (SUBMODEL==14) + (SUBMODEL==22) + (SUBMODEL==30) + (SUBMODEL==38) + (SUBMODEL==46) + (SUBMODEL==54) + (SUBMODEL==62))+ (building_type_id==4)*((SUBMODEL==7) + (SUBMODEL==15) + (SUBMODEL==23) + (SUBMODEL==31) + (SUBMODEL==39) + (SUBMODEL==47) + (SUBMODEL==55) + (SUBMODEL==63)) + (building_type_id==38)*((SUBMODEL==8) + (SUBMODEL==16) + (SUBMODEL==24) + (SUBMODEL==32) + (SUBMODEL==40) + (SUBMODEL==48) + (SUBMODEL==56) + (SUBMODEL==64)))</argument>
+            <argument name="sample_size_locations" type="integer">50</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3,"sample_alternatives_by_submodel":True})</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string">1.0</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string">building.residential_units</argument>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation_with_diagnose</argument>
+            <argument name="estimate_config" type="string">Resources({"sample_alternatives_by_submodel":True})</argument>
+            <name name="name" type="string">HouseholdLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="portion_to_unplace" type="float">0.333333333333</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="index_to_unplace" type="string">None</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="join_datasets" type="boolean">False</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel name="sf_own1" submodel_id="1" type="submodel" hidden="Children">
+            <description type="string">sf_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent1" submodel_id="2" type="submodel" hidden="Children">
+            <description type="string">sf_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own1" submodel_id="3" type="submodel" hidden="Children">
+            <description type="string">duplex_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent1" submodel_id="4" type="submodel" hidden="Children">
+            <description type="string">duplex_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own1" submodel_id="5" type="submodel" hidden="Children">
+            <description type="string">apartment_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent1" submodel_id="6" type="submodel" hidden="Children">
+            <description type="string">apartment_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own1" submodel_id="7" type="submodel" hidden="Children">
+            <description type="string">townhome_own1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent1" submodel_id="8" type="submodel" hidden="Children">
+            <description type="string">townhome_rent1</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own2" submodel_id="9" type="submodel" hidden="Children">
+            <description type="string">sf_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent2" submodel_id="10" type="submodel" hidden="Children">
+            <description type="string">sf_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own2" submodel_id="11" type="submodel" hidden="Children">
+            <description type="string">duplex_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent2" submodel_id="12" type="submodel" hidden="Children">
+            <description type="string">duplex_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own2" submodel_id="13" type="submodel" hidden="Children">
+            <description type="string">apartment_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent2" submodel_id="14" type="submodel" hidden="Children">
+            <description type="string">apartment_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own2" submodel_id="15" type="submodel" hidden="Children">
+            <description type="string">townhome_own2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent2" submodel_id="16" type="submodel" hidden="Children">
+            <description type="string">townhome_rent2</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own3" submodel_id="17" type="submodel" hidden="Children">
+            <description type="string">sf_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent3" submodel_id="18" type="submodel" hidden="Children">
+            <description type="string">sf_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own3" submodel_id="19" type="submodel" hidden="Children">
+            <description type="string">duplex_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent3" submodel_id="20" type="submodel" hidden="Children">
+            <description type="string">duplex_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own3" submodel_id="21" type="submodel" hidden="Children">
+            <description type="string">apartment_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent3" submodel_id="22" type="submodel" hidden="Children">
+            <description type="string">apartment_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own3" submodel_id="23" type="submodel" hidden="Children">
+            <description type="string">townhome_own3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent3" submodel_id="24" type="submodel" hidden="Children">
+            <description type="string">townhome_rent3</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own4" submodel_id="25" type="submodel" hidden="Children">
+            <description type="string">sf_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent4" submodel_id="26" type="submodel" hidden="Children">
+            <description type="string">sf_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own4" submodel_id="27" type="submodel" hidden="Children">
+            <description type="string">duplex_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent4" submodel_id="28" type="submodel" hidden="Children">
+            <description type="string">duplex_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own4" submodel_id="29" type="submodel" hidden="Children">
+            <description type="string">apartment_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent4" submodel_id="30" type="submodel" hidden="Children">
+            <description type="string">apartment_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own4" submodel_id="31" type="submodel" hidden="Children">
+            <description type="string">townhome_own4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent4" submodel_id="32" type="submodel" hidden="Children">
+            <description type="string">townhome_rent4</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own5" submodel_id="33" type="submodel" hidden="Children">
+            <description type="string">sf_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent5" submodel_id="34" type="submodel" hidden="Children">
+            <description type="string">sf_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own5" submodel_id="35" type="submodel" hidden="Children">
+            <description type="string">duplex_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent5" submodel_id="36" type="submodel" hidden="Children">
+            <description type="string">duplex_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own5" submodel_id="37" type="submodel" hidden="Children">
+            <description type="string">apartment_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent5" submodel_id="38" type="submodel" hidden="Children">
+            <description type="string">apartment_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own5" submodel_id="39" type="submodel" hidden="Children">
+            <description type="string">townhome_own5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent5" submodel_id="40" type="submodel" hidden="Children">
+            <description type="string">townhome_rent5</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own6" submodel_id="41" type="submodel" hidden="Children">
+            <description type="string">sf_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent6" submodel_id="42" type="submodel" hidden="Children">
+            <description type="string">sf_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own6" submodel_id="43" type="submodel" hidden="Children">
+            <description type="string">duplex_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent6" submodel_id="44" type="submodel" hidden="Children">
+            <description type="string">duplex_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own6" submodel_id="45" type="submodel" hidden="Children">
+            <description type="string">apartment_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent6" submodel_id="46" type="submodel" hidden="Children">
+            <description type="string">apartment_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own6" submodel_id="47" type="submodel" hidden="Children">
+            <description type="string">townhome_own6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent6" submodel_id="48" type="submodel" hidden="Children">
+            <description type="string">townhome_rent6</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own7" submodel_id="49" type="submodel" hidden="Children">
+            <description type="string">sf_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent7" submodel_id="50" type="submodel" hidden="Children">
+            <description type="string">sf_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own7" submodel_id="51" type="submodel" hidden="Children">
+            <description type="string">duplex_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent7" submodel_id="52" type="submodel" hidden="Children">
+            <description type="string">duplex_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own7" submodel_id="53" type="submodel" hidden="Children">
+            <description type="string">apartment_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent7" submodel_id="54" type="submodel" hidden="Children">
+            <description type="string">apartment_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own7" submodel_id="55" type="submodel" hidden="Children">
+            <description type="string">townhome_own7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent7" submodel_id="56" type="submodel" hidden="Children">
+            <description type="string">townhome_rent7</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_own8" submodel_id="57" type="submodel" hidden="Children">
+            <description type="string">sf_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent8" submodel_id="58" type="submodel" hidden="Children">
+            <description type="string">sf_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own8" submodel_id="59" type="submodel" hidden="Children">
+            <description type="string">duplex_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent8" submodel_id="60" type="submodel" hidden="Children">
+            <description type="string">duplex_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own8" submodel_id="61" type="submodel" hidden="Children">
+            <description type="string">apartment_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent8" submodel_id="62" type="submodel" hidden="Children">
+            <description type="string">apartment_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own8" submodel_id="63" type="submodel" hidden="Children">
+            <description type="string">townhome_own8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent8" submodel_id="64" type="submodel" hidden="Children">
+            <description type="string">townhome_rent8</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+        </specification>
+      </model>
       <model name="household_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
@@ -220,6 +1298,11 @@
         <structure type="dictionary">
           <init type="dictionary">
             <argument name="estimation_weight_string" parser_action="quote_string" type="string">building.residential_units&gt;0</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">household.typetenure_id</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(building.residential_units&gt;0)*((building_type_id==1)*((SUBMODEL==1) + (SUBMODEL==2)) + (building_type_id==2)*((SUBMODEL==3) + (SUBMODEL==4)) + (building_type_id==3)*((SUBMODEL==5) + (SUBMODEL==6)) + (building_type_id==4)*((SUBMODEL==7) + (SUBMODEL==8)))</argument>
+            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3,"sample_alternatives_by_submodel":True})</argument>
+            <argument name="estimate_config" type="string">Resources({"sample_alternatives_by_submodel":True})</argument>
           </init>
           <prepare_for_estimate type="dictionary">
             <argument name="index_to_unplace" type="string">None</argument>
@@ -228,30 +1311,126 @@
           </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-          <submodel name="submodel" submodel_id="1" type="submodel" hidden="Children">
-            <description type="string">submodel1</description>
+          <submodel name="sf_own" submodel_id="1" type="submodel" hidden="Children">
+            <description type="string">sf_own</description>
             <variable_list type="variable_list">
-              <variable_spec name="building.avg_hh_income_zonal"/>
+              <variable_spec name="building.avg_hh_income"/>
               <variable_spec name="building.cbd_time"/>
-              <variable_spec name="household_x_building.children_x_apartment"/>
+              <variable_spec name="building.cbd_time_sq"/>
               <variable_spec name="household_x_building.highinc_yearbuilt"/>
               <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
               <variable_spec name="household_x_building.income_sqft_per_unit"/>
-              <variable_spec name="building.is_single_family"/>
-              <variable_spec name="household_x_building.ln_inc_avg_inc"/>
-              <variable_spec name="building.ln_job_density_zone"/>
               <variable_spec name="building.ln_jobs_within_15_min"/>
               <variable_spec name="household_x_building.ln_persons_land_per_unit"/>
               <variable_spec name="household_x_building.ln_persons_sqft_per_unit"/>
-              <variable_spec name="building.ln_pop_density_zone"/>
+              <variable_spec name="building.ln_sf_units"/>
+              <variable_spec name="household_x_building.price_income_ratio_g5"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+            </variable_list>
+          </submodel>
+          <submodel name="sf_rent" submodel_id="2" type="submodel" hidden="Children">
+            <description type="string">sf_rent</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="household_x_building.ln_inc_avg_inc"/>
               <variable_spec name="building.ln_residential_units"/>
-              <variable_spec name="household_x_building.persons_x_single_family"/>
               <variable_spec name="household_x_building.price_income_ratio_g5"/>
               <variable_spec name="household_x_building.price_income_ratio_l1"/>
-              <variable_spec name="building.travel_time_to_waikiki"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_own" submodel_id="3" type="submodel" hidden="Children">
+            <description type="string">duplex_own</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.cbd_time"/>
+              <variable_spec name="building.cbd_time_sq"/>
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="household_x_building.ln_inc_avg_inc"/>
+              <variable_spec name="building.ln_job_density_zone"/>
+              <variable_spec name="household_x_building.price_income_ratio_g5"/>
+              <variable_spec name="household_x_building.price_income_ratio_l1"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+            </variable_list>
+          </submodel>
+          <submodel name="duplex_rent" submodel_id="4" type="submodel" hidden="Children">
+            <description type="string">duplex_rent</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.cbd_time"/>
+              <variable_spec name="building.cbd_time_sq"/>
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="household_x_building.ln_inc_avg_inc"/>
+              <variable_spec name="household_x_building.price_income_ratio"/>
+              <variable_spec name="household_x_building.price_income_ratio_l1"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_own" submodel_id="5" type="submodel" hidden="Children">
+            <description type="string">apartment_own</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.cbd_time"/>
+              <variable_spec name="building.cbd_time_sq"/>
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="building.ln_apartment_unit_price"/>
+              <variable_spec name="building.ln_apartment_units"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+            </variable_list>
+          </submodel>
+          <submodel name="apartment_rent" submodel_id="6" type="submodel" hidden="Children">
+            <description type="string">apartment_rent</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.apartment_units"/>
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="building.ln_apartment_unit_price"/>
+              <variable_spec name="household_x_building.ln_inc_avg_inc"/>
+              <variable_spec name="household_x_building.price_income_ratio_l1"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+              <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_own" submodel_id="7" type="submodel" hidden="Children">
+            <description type="string">townhome_own</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.ln_cbd_time"/>
+              <variable_spec name="household_x_building.price_income_ratio_g5"/>
+              <variable_spec name="building.proportion_renter_hh"/>
+              <variable_spec name="building.unit_price"/>
+            </variable_list>
+          </submodel>
+          <submodel name="townhome_rent" submodel_id="8" type="submodel" hidden="Children">
+            <description type="string">townhome_rent</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_building.inc_avginc_ratio_close"/>
+              <variable_spec name="household_x_building.price_income_ratio_g5"/>
+              <variable_spec name="building.proportion_renter_hh"/>
               <variable_spec name="building.unit_price"/>
               <variable_spec name="household_x_building.wkrs_hhs_ln_jobs_30_min"/>
-              <variable_spec name="household_x_building.younghh_apartment"/>
+            </variable_list>
+          </submodel>
+        </specification>
+      </model>
+      <model name="residential_development_project_location_choice_model" type="model">
+        <specification type="dictionary">
+          <submodel hidden="Children" name="mf_residential" submodel_id="3" type="submodel">
+            <description type="string">mf residential</description>
+            <variable_list type="variable_list">
+              <variable_spec name="development_project_x_building.ln_res_units_x_zone_dev_acre"/>
+              <variable_spec name="building.ln_job_density_zone"/>
+              <variable_spec name="building.avg_hh_income_zonal"/>
+              <variable_spec name="building.ln_dev_acre_in_zone"/>
+              <variable_spec name="building.ln_mf_unit_price"/>
+              <variable_spec name="building.ln_mf_units"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="sf_residential" submodel_id="9" type="submodel">
+            <description type="string">sf residential</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.ln_job_density_zone"/>
+              <variable_spec name="building.avg_hh_income_zonal"/>
+              <variable_spec name="building.zone_ln_emp_30_min"/>
+              <variable_spec name="building.ln_sf_unit_price"/>
+              <variable_spec name="building.ln_sf_units"/>
+              <variable_spec name="building.ln_dev_acre_in_zone"/>
             </variable_list>
           </submodel>
         </specification>
@@ -340,24 +1519,25 @@
           </submodel>
         </specification>
       </model>
-      <model name="household_housingtype_model" type="model">
+      <model name="household_typetenure_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">opus_core.models.choice_model</class_module>
-            <class_name type="string">ChoiceModel</class_name>
+            <class_module type="string">mag_zone.models.housing_typetenure_choice_model</class_module>
+            <class_name type="string">HouseholdTypeTenureChoiceModel</class_name>
           </import>
           <init type="dictionary">
-            <name name="name" type="string">ChoiceModel</name>
-            <argument name="choice_set" type="string" model_dependency_type="dataset">[0,1,2,3]</argument>
+            <name name="name" type="string">HouseholdTypeTenureChoiceModel</name>
+            <argument name="choice_set" type="string" model_dependency_type="dataset">[3,4,5,6,7,8,9,10]</argument>
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices</argument>
-            <argument name="submodel_string" parser_action="quote_string" type="string">workers_id</argument>
-            <argument name="choice_attribute_name" parser_action="quote_string" type="string" model_dependency_type="variable">housingtype_id =0*(household.building_type_id==1)+1*(household.building_type_id==2)+2*(household.building_type_id==3)+3*(household.building_type_id==4)</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
+            <argument convert_blank_to_none="True" field_description="test description" name="submodel_string" type="string"/>
+            <argument name="choice_attribute_name" parser_action="quote_string" type="string" model_dependency_type="variable">housingtype_id =3*((household.building_type_id==1)*(household.tenure==1))+4*((household.building_type_id==1)*(household.tenure==2))+ 5*((household.building_type_id==2)*(household.tenure==1))+6*((household.building_type_id==2)*(household.tenure==2))+ 7*((household.building_type_id==3)*(household.tenure==1))+8*((household.building_type_id==3)*(household.tenure==2))+ 9*((household.building_type_id==4)*(household.tenure==1))+10*((household.building_type_id==4)*(household.tenure==2)) </argument>
             <argument name="interaction_pkg" parser_action="quote_string" type="string">opus_core</argument>
             <argument convert_blank_to_none="True" name="run_config" type="string"/>
             <argument name="estimate_config" type="dictionary">
-              <key name="estimation_size_agents" type="float">1.0</key>
+              <key name="estimation_size_agents" type="float">0.25</key>
             </argument>
             <argument name="debuglevel" type="integer">0</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -366,19 +1546,19 @@
             <argument name="specification" type="string">specification</argument>
             <argument name="coefficients" type="string">coefficients</argument>
             <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
-            <argument name="agents_index" type="string">cm_index</argument>
-            <argument convert_blank_to_none="True" name="chunk_specification" type="string">{'nchunks':12}</argument>
+            <argument name="agents_index" type="string">hrm_index</argument>
+            <argument convert_blank_to_none="True" name="chunk_specification" type="string">{'nchunks':6}</argument>
             <argument name="data_objects" type="string">datasets</argument>
           </run>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
-            <output name="output" type="string">(specification, coefficients, cm_index)</output>
+            <output name="output" type="string">(specification, coefficients, hrm_index)</output>
             <argument convert_blank_to_none="True" name="agent_set" type="string" model_dependency_type="dataset">household</argument>
             <argument convert_blank_to_none="True" name="agent_filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">household_housingtype_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">household_typetenure_model_specification</argument>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">household_housingtype_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">household_typetenure_model_coefficients</argument>
             <argument name="cache_storage" type="string">base_cache_storage</argument>
             <argument name="sample_coefficients" type="boolean">False</argument>
             <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
@@ -402,84 +1582,95 @@
           </prepare_for_estimate>
         </structure>
         <specification type="dictionary" dynamic="True">
-          <submodel type="submodel" hidden="Children" name="one_working_age_person" submodel_id="1">
-            <description type="string">OneWorkingAge</description>
-            <equation equation_id="0" name="0worker" type="submodel_equation">
-              <variable_list type="variable_list">
-                </variable_list>
-            </equation>
-            <equation equation_id="1" name="1worker" type="submodel_equation">
-              <variable_list type="variable_list">
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="constant"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-              </variable_list>
-            </equation>
-          </submodel>
-          <submodel type="submodel" hidden="Children" name="two_working_age_persons" submodel_id="2">
-            <description type="string">TwoWorkingAge</description>
-            <equation equation_id="0" name="0worker" type="submodel_equation">
-              <variable_list type="variable_list">
-                </variable_list>
-            </equation>
-            <equation equation_id="1" name="1worker" type="submodel_equation">
-              <variable_list type="variable_list">
-                <variable_spec name="constant" coefficient_name="oneworker_constant"/>
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-              </variable_list>
-            </equation>
-            <equation equation_id="2" name="2worker">
-              <variable_list type="variable_list">
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-                <variable_spec name="constant" coefficient_name="twoworker_constant"/>
-              </variable_list>
-            </equation>
-          </submodel>
-          <submodel type="submodel" hidden="Children" name="threeplus_working_age_persons" submodel_id="3">
-            <description type="string">ThreePlusWorkingAge</description>
-            <equation equation_id="0" name="0worker" type="submodel_equation">
+          <submodel type="submodel" hidden="Children" name="no_submodels" submodel_id="-2">
+            <description type="string">No_submodels</description>
+            <equation equation_id="0" name="sf_own" type="submodel_equation">
               <variable_list type="variable_list">
               </variable_list>
             </equation>
-            <equation equation_id="1" name="1worker" type="submodel_equation">
+            <equation equation_id="4" name="sf_rent" type="submodel_equation">
               <variable_list type="variable_list">
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-                <variable_spec name="constant" coefficient_name="oneworker_constant"/>
+                <variable_spec name="household.age_of_head" coefficient_name="sf_rent_age_of_head"/>
+                <variable_spec name="household.persons" coefficient_name="sf_rent_persons"/>
+                <variable_spec name="household.children" coefficient_name="sf_rent_children"/>
+                <variable_spec name="household.income" coefficient_name="sf_rent_income"/>
+                <variable_spec name="household.oldhead" coefficient_name="sf_rent_oldhead"/>
+                <variable_spec name="household.nonfamily" coefficient_name="sf_rent_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="sf_rent_vehicles"/>
+                <variable_spec name="household.enrollment_of_head" coefficient_name="sf_rent_enrolled_head"/>
+                <variable_spec name="constant" coefficient_name="sf_rent_constant"/>
               </variable_list>
             </equation>
-            <equation equation_id="2" name="2worker">
+            <equation equation_id="5" name="duplex_own">
               <variable_list type="variable_list">
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-                <variable_spec name="constant" coefficient_name="twoworker_constant"/>
+                <variable_spec name="household.age_of_head" coefficient_name="duplex_own_age_of_head"/>
+                <variable_spec name="household.persons" coefficient_name="duplex_own_persons"/>
+                <variable_spec name="household.children" coefficient_name="duplex_own_children"/>
+                <variable_spec name="household.income" coefficient_name="duplex_own_income"/>
+                <variable_spec name="household.oldhead" coefficient_name="duplex_own_oldhead"/>
+                <variable_spec name="household.nonfamily" coefficient_name="duplex_own_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="duplex_own_vehicles"/>
+                <variable_spec name="constant" coefficient_name="duplex_own_constant"/>
               </variable_list>
             </equation>
-            <equation equation_id="3" name="3worker">
+            <equation equation_id="6" name="duplex_rent">
               <variable_list type="variable_list">
-                <variable_spec name="household.age_of_head"/>
-                <variable_spec name="household.persons"/>
-                <variable_spec name="household.children"/>
-                <variable_spec name="household.income"/>
-                <variable_spec name="household.oldhead"/>
-                <variable_spec name="constant" coefficient_name="threeplusworker_constant"/>
+                <variable_spec name="household.age_of_head" coefficient_name="duplex_rent_age_of_head"/>
+                <variable_spec name="household.persons" coefficient_name="duplex_rent_persons"/>
+                <variable_spec name="household.children" coefficient_name="duplex_rent_children"/>
+                <variable_spec name="household.income" coefficient_name="duplex_rent_income"/>
+                <variable_spec name="household.oldhead" coefficient_name="duplex_rent_oldhead"/>
+                <variable_spec name="household.workers" coefficient_name="duplex_rent_workers"/>
+                <variable_spec name="household.nonfamily" coefficient_name="duplex_rent_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="duplex_rent_vehicles"/>
+                <variable_spec name="household.enrollment_of_head" coefficient_name="duplex_rent_enrolled_head"/>
+                <variable_spec name="constant" coefficient_name="duplex_rent_constant"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="7" name="apartment_own">
+              <variable_list type="variable_list">
+                <variable_spec name="household.age_of_head" coefficient_name="apartment_own_age_of_head"/>
+                <variable_spec name="household.persons" coefficient_name="apartment_own_persons"/>
+                <variable_spec name="household.children" coefficient_name="apartment_own_children"/>
+                <variable_spec name="household.income" coefficient_name="apartment_own_income"/>
+                <variable_spec name="household.nonfamily" coefficient_name="apartment_own_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="apartment_own_vehicles"/>
+                <variable_spec name="constant" coefficient_name="apartment_own_constant"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="8" name="apartment_rent">
+              <variable_list type="variable_list">
+                <variable_spec name="household.age_of_head" coefficient_name="apartment_rent_age_of_head"/>
+                <variable_spec name="household.persons" coefficient_name="apartment_rent_persons"/>
+                <variable_spec name="household.children" coefficient_name="apartment_rent_children"/>
+                <variable_spec name="household.income" coefficient_name="apartment_rent_income"/>
+                <variable_spec name="household.oldhead" coefficient_name="apartment_rent_oldhead"/>
+                <variable_spec name="household.workers" coefficient_name="apartment_rent_workers"/>
+                <variable_spec name="household.nonfamily" coefficient_name="apartment_rent_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="apartment_rent_vehicles"/>
+                <variable_spec name="household.enrollment_of_head" coefficient_name="apartment_rent_enrolled_head"/>
+                <variable_spec name="constant" coefficient_name="apartment_rent_constant"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="9" name="town_own">
+              <variable_list type="variable_list">
+                <variable_spec name="household.age_of_head" coefficient_name="town_own_age_of_head"/>
+                <variable_spec name="household.children" coefficient_name="town_own_children"/>
+                <variable_spec name="household.income" coefficient_name="town_own_income"/>
+                <variable_spec name="household.nonfamily" coefficient_name="town_own_nonfamily"/>
+                <variable_spec name="household.vehicles" coefficient_name="town_own_vehicles"/>
+                <variable_spec name="constant" coefficient_name="town_own_constant"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="10" name="town_rent">
+              <variable_list type="variable_list">
+                <variable_spec name="household.age_of_head" coefficient_name="town_rent_age_of_head"/>
+                <variable_spec name="household.children" coefficient_name="town_rent_children"/>
+                <variable_spec name="household.income" coefficient_name="town_rent_income"/>
+                <variable_spec name="household.oldhead" coefficient_name="town_rent_oldhead"/>
+                <variable_spec name="household.vehicles" coefficient_name="town_rent_vehicles"/>
+                <variable_spec name="household.enrollment_of_head" coefficient_name="town_rent_enrolled_head"/>
+                <variable_spec name="constant" coefficient_name="town_rent_constant"/>
               </variable_list>
             </equation>
           </submodel>
@@ -557,34 +1748,38 @@
     </models>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="household" type="selectable">True</selectable>
-        <selectable name="zone" type="selectable">True</selectable>
         <selectable name="building" type="selectable">True</selectable>
-        <selectable name="parcel" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
-        </selectable>
-        <selectable name="person" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
-        </selectable>
+        <selectable name="zone" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
         <selectable name="job" type="selectable">True</selectable>
+        <selectable name="target_vacancy" type="selectable">True</selectable>
+        <selectable name="building_type" type="selectable">True</selectable>
       </datasets_to_preload>
       <save_estimation_results type="boolean">True</save_estimation_results>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">san_antonio_zone/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">honolulu_zone/base_year_data</cache_directory>
       <estimation_database_configuration type="class">
         <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
         <argument name="database_name" type="string"/>
       </estimation_database_configuration>
+      <scenario_database_configuration type="class">
+        <class_name type="string">ScenarioDatabaseConfiguration</class_name>
+        <class_module type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+        <argument name="database_name" type="string">honolulu_zone</argument>
+      </scenario_database_configuration>
       <dataset_pool_configuration type="class">
         <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['psrc_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+        <argument name="package_order" type="list">['honolulu_parcel','honolulu_zone','psrc_zone', 'mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
       </dataset_pool_configuration>
       <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
       <low_memory_mode type="boolean">False</low_memory_mode>
-      <base_year type="integer" field_identifier="Base Year">2005</base_year>
+      <base_year type="integer" field_identifier="Base Year">2000</base_year>
       <years type="tuple">
-        <firstyear type="integer" field_identifier="Base Year">2005</firstyear>
-        <lastyear type="integer" field_identifier="Base Year">2005</lastyear>
+        <firstyear type="integer" field_identifier="Base Year">2000</firstyear>
+        <lastyear type="integer" field_identifier="Base Year">2000</lastyear>
       </years>
+      <seed type="integer">1</seed>
     </estimation_config>
   </model_manager>
   <data_manager>
@@ -605,43 +1800,32 @@
     <scenario type="scenario" executable="True" name="san_antonio_baseline_test">
       <parent type="scenario_name">san_antonio_baseline</parent>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2006</firstyear>
-        <lastyear type="integer">2009</lastyear>
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2001</lastyear>
       </years_to_run>
     </scenario>
-    <scenario copyable="True" executable="True" name="san_antonio_baseline" type="scenario">
+    <scenario copyable="True" executable="True" name="honolulu_baseline" type="scenario">
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="refinement_model" type="model_choice">False</selectable>
-        <selectable name="real_estate_price_model" type="model_choice">False</selectable>
-        <selectable name="development_project_transition_model" type="model_choice">True</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="add_projects_to_buildings" type="model_choice">True</selectable>
-        <selectable name="household_transition_model" type="model_choice">True</selectable>
-        <selectable name="employment_transition_model" type="model_choice">True</selectable>
-        <selectable name="household_relocation_model" type="model_choice">True</selectable>
-        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="employment_relocation_model" type="model_choice">True</selectable>
-        <selectable name="employment_location_choice_model" type="model_choice">True
-          <group_members type="string">_all_</group_members>
-        </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
+        <selectable return_value="household_transition_model" type="selectable" name="household_transition_model_1">True</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
+        <selectable return_value="household_typetenure_model" type="selectable" name="household_typetenure_model_1">True</selectable>
+        <selectable return_value="household_location_choice_model" type="selectable" name="household_location_choice_model_1">True</selectable>
       </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2005</base_year>
+      <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2006</firstyear>
-        <lastyear type="integer">2019</lastyear>
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2001</lastyear>
       </years_to_run>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">san_antonio_zone/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">honolulu_zone/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">san_antonio_zone/runs</argument>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">honolulu_zone/runs</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">san_antonio_zone/base_year_data</argument>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">honolulu_zone/base_year_data</argument>
         </argument>
         <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
         <argument name="advanced" type="category">
@@ -660,29 +1844,14 @@
             <selectable name="building_sqft_per_job" type="selectable">True</selectable>
             <selectable name="building_types" type="selectable">True</selectable>
             <selectable name="buildings" type="selectable">True</selectable>
-            <selectable name="cities" type="selectable">True</selectable>
-            <selectable name="counties" type="selectable">True</selectable>
-            <selectable name="development_constraints" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
             <selectable name="employment_sectors" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
             <selectable name="households" type="selectable">True</selectable>
             <selectable name="households_for_estimation" type="selectable">True</selectable>
             <selectable name="jobs" type="selectable">True</selectable>
-            <selectable name="jobs_for_estimation" type="selectable">False</selectable>
-            <selectable name="non_home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="non_home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="race_names" type="selectable">True</selectable>
-            <selectable name="real_estate_price_model_coefficients" type="selectable">True</selectable>
-            <selectable name="real_estate_price_model_specification" type="selectable">True</selectable>
             <selectable name="target_vacancies" type="selectable">True</selectable>
             <selectable name="travel_data" type="selectable">True</selectable>
-            <selectable name="urbansim_constants" type="selectable">True</selectable>
             <selectable name="zones" type="selectable">True</selectable>
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
@@ -694,7 +1863,7 @@
         <dataset_pool_configuration type="class">
           <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['urbansim_zone', 'urbansim', 'opus_core']</argument>
+          <argument name="package_order" type="list">['honolulu_parcel','honolulu_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
         <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
         <flush_variables type="boolean">False</flush_variables>
@@ -703,29 +1872,16 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
-          <selectable name="parcel" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
-          </selectable>
-          <selectable name="person" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
+          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="job" type="selectable">True</selectable>
           <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
           <selectable name="home_based_status" type="selectable">True</selectable>
         </datasets_to_preload>
       </advanced>
-      <travel_model_configuration type="dictionary">
-        <travel_model_base_directory type="string">baseline_travel_model_psrc_2008</travel_model_base_directory>
-        <emme2_batch_file_name type="string">MODEL1-0.BAT</emme2_batch_file_name>
-        <models type="selectable_list">
-          <selectable name="opus_emme2.models.get_cache_data_into_emme2" type="selectable">False</selectable>
-          <selectable name="opus_emme2.models.run_travel_model" type="selectable">False</selectable>
-          <selectable name="opus_emme2.models.run_export_macros" type="selectable">False</selectable>
-          <selectable name="opus_emme2.models.get_emme2_data_into_cache" type="selectable">False</selectable>
-        </models>
-      </travel_model_configuration>
     </scenario>
   </scenario_manager>
   <results_manager>
@@ -811,4 +1967,3 @@
     </indicator_batches>
   </results_manager>
 </opus_project>
-
