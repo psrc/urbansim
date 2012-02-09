@@ -232,12 +232,14 @@ class delimited_storage(Storage):
     def _get_header_information(self, table_name):
         column_names, column_types = self.__get_header_information_from_table(table_name)
         
-        if None in column_types:
-            inferred_column_types = self.__infer_header_information_in_table(table_name)
-
-            for i in range(len(column_types)):
-                if column_types[i] is None:
-                    column_types[i] = inferred_column_types[i]
+        inferred_column_types = None
+        for i in range(len(column_types)):
+            if column_types[i] is None:
+                if inferred_column_types is None:
+                    inferred_column_types = self.__infer_header_information_in_table(table_name)
+                column_types[i] = inferred_column_types[i]
+            elif re.match(r'S[0-9]+', column_types[i]):
+                column_types[i] = 'S'
                 
         return column_names, column_types
     
@@ -628,7 +630,7 @@ class TestDelimitedStorage(TestStorageInterface):
         # Header information exists:
         column_names, column_types = self.storage._get_header_information(self.table_name)
         expected_column_names = ['attribute1', 'attribute2', 'attribute3']
-        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
+        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S']
         self.assertEqual(expected_column_names, column_names)
         self.assertEqual(expected_column_types, column_types)
         # Make a file with no header information:
