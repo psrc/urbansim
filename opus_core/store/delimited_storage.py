@@ -95,8 +95,6 @@ class delimited_storage(Storage):
         header = []
         values = []
         for column_name in column_names:
-            column_type = table_data[column_name].dtype.str
-            
             if append_type_info:
                 column_header = ('%s:%s%s' 
                     % (column_name, 
