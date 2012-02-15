@@ -23,7 +23,7 @@ from opus_core.model import get_specification_for_estimation, prepare_specificat
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64, isnan, isinf, newaxis, row_stack
+from numpy import int32, compress, float64, isnan, isinf, newaxis, row_stack, asarray
 from numpy.random import permutation
 from opus_core.variables.attribute_type import AttributeType
 
@@ -260,12 +260,13 @@ class ChoiceModel(ChunkModel):
                 data = self.get_all_data(submodel)
                 nan_index = where(isnan(data))[2]
                 inf_index = where(isinf(data))[2]
+                vnames = asarray(coef[submodel].get_variable_names())
                 if nan_index.size > 0:
                     nan_var_index = unique(nan_index)
-                    raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
+                    raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
                 if inf_index.size > 0:
                     inf_var_index = unique(inf_index)
-                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[inf_var_index]
+                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
 
                 res = self.simulate_submodel(data, coefficients, submodel)
                 restmp = res.astype(int32)
