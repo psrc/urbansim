@@ -37,7 +37,7 @@ class M_DDDjt(Variable):
     def compute(self, dataset_pool):
         ds = self.get_dataset()
         alldata = dataset_pool.get_dataset('alldata')
-        results = ds['M_{}j0'.format(self.type_id)] * safe_array_divide(alldata['TM_{}t'.format(self.type_id)], alldata['TM_{}0'.format(self.type_id)]) * safe_array_divide(ds['V_ijt'], ds['V_ij0'])
+        results = ds['M_{0}j0'.format(self.type_id)] * safe_array_divide(alldata['TM_{0}t'.format(self.type_id)], alldata['TM_{0}0'.format(self.type_id)]) * safe_array_divide(ds['V_ijt'], ds['V_ij0'])
         return results
 
 
