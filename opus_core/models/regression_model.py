@@ -122,7 +122,7 @@ class RegressionModel(ChunkModel):
                                                                 index = index[self.observations_mapping[submodel]])
             nan_index = where(isnan(self.data[submodel]))[1]
             inf_index = where(isinf(self.data[submodel]))[1]
-			vnames = asarray(coef[submodel].get_variable_names())
+            vnames = asarray(coef[submodel].get_variable_names())
             if nan_index.size > 0:
                 nan_var_index = unique(nan_index)
                 raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
