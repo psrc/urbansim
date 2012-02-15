@@ -15,6 +15,7 @@ from numpy import ma, array, ndarray
 from inspect import getmembers, ismethod
 from opus_core.logger import logger
 from opus_core.ndimage import sum
+from pkg_resources import parse_version
 
 
 DEFAULT_BYTEORDER = 'little'
@@ -382,8 +383,8 @@ def intersect1d(ar1, ar2, **kwargs):
     """ wrapper for numpy.intersect1d and numpy.intersect1d_nu for different version of numpy
     """
     import numpy
-    ver = numpy.__version__ 
-    if ver < '1.4.0':
+    ver = parse_version(numpy.__version__)
+    if ver < parse_version('1.4.0'):
         f = numpy.intersect1d_nu
         return f(ar1, ar2)
     else:
@@ -394,14 +395,14 @@ def unique(arr, return_index=False, **kwargs):
     """ wrapper for numpy.unique and numpy.unique1d for different version of numpy
     """
     import numpy
-    ver = numpy.__version__ 
-    if ver < '1.2.0':   #numpy 1.0 and 1.1 don't accept extra argument
+    ver = parse_version(numpy.__version__) 
+    if ver < parse_version('1.2.0'):   #numpy 1.0 and 1.1 don't accept extra argument
         f = numpy.unique1d
         return f(arr, return_index=return_index)[::-1]
-    elif ver < '1.3.0': #numpy 1.2+ accepts return_inverse argument
+    elif ver < parse_version('1.3.0'): #numpy 1.2+ accepts return_inverse argument
         f = numpy.unique1d
         return f(arr, return_index=return_index, **kwargs)[::-1]
-    elif ver < '1.4.0': #numpy 1.3 reverses the order of outputs from unique1d
+    elif ver < parse_version('1.4.0'): #numpy 1.3 reverses the order of outputs from unique1d
         f = numpy.unique1d
     else:               #unique1d is deprecated in numpy 1.4+, use unique instead
         f = numpy.unique
@@ -601,7 +602,7 @@ def ismember(ar1, ar2) :
     (The numpy function setmember1d claims to do the same but works only on ar1 with unique values.) 
     """
     import numpy
-    if numpy.__version__ >= '1.4.0':
+    if parse_version(numpy.__version__) >= parse_version('1.4.0'):
         return numpy.in1d(ar1, ar2)
     
     a = numpy.sort(ar2)

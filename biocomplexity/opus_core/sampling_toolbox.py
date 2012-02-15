@@ -22,6 +22,7 @@ from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, un
 from opus_core.misc import ncumsum, unique, is_masked_array
 from opus_core.logger import logger
 from numpy.random import uniform, randint, random
+from pkg_resources import parse_version
 
 def sample_replace(source_array, size, return_index=False):
     """Equal probability sampling; with-replacement case
@@ -168,7 +169,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
 #         if not sometrue(dup_indicator):
 #             return sampled_index
         i = 0
-        if numpy.__version__ >= '1.2.0':
+        if parse_version(numpy.__version__) >= parse_version('1.2.0'):
         ## numpy.unique1d in version 1.2.0 has reversed the return, changed [0]->[1]
             i = 1
         uniqueidx = unique1d(proposed_index, True)[i]

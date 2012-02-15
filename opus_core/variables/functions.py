@@ -8,10 +8,14 @@
 from numpy import ma, rank
 import numpy, scipy
 import opus_core.misc
-if scipy.__version__ <= '0.7.0':
-    from scipy.stats.stats import zs as scipy_zscore
-else:
-    from scipy.stats.stats import zscore as scipy_zscore
+from pkg_resources import parse_version
+try:
+    if parse_version(scipy.__version__) <= parse_version('0.7.0'):
+        from scipy.stats.stats import zs as scipy_zscore
+    else:
+        from scipy.stats.stats import zscore as scipy_zscore
+except ImportError:
+    print "There is an error importing zscore from scipy; zscore function is not available."
 
 def clip_to_zero(v):
     """Returns the given values with all negative values clipped to 0."""
