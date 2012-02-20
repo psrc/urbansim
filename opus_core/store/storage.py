@@ -129,24 +129,17 @@ class Storage:
                 if len(available_columns)!=len(available_columns_lower):
                     raise AttributeError("List of available columns "
                         "contains duplicate case-insensitive entries.")
-            
-                for column_name in requested_columns:
-                    if column_name.lower() not in available_columns_lower:
-                        raise AttributeError("Requested column '%s' is not an "
-                            "available column."
-                                % column_name)
                     
-                    result.append(column_name)
+                available_columns = available_columns_lower
                 
-            else:
-                for column_name in requested_columns:
-                    if column_name not in available_columns:
-                        raise AttributeError("Requested column '%s' is not an "
-                            "available column."
-                                % column_name)
-                
-                    result.append(column_name)
-                            
+            for column_name in requested_columns:
+                if column_name not in available_columns:
+                    raise AttributeError("Requested column '%s' is not an "
+                        "available column. Available columns: %s"
+                            % (column_name, available_columns))
+            
+                result.append(column_name)
+                        
         return result
     
     def _get_python_type_from_numpy_type(self, numpy_type):
