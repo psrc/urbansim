@@ -24,7 +24,7 @@ class total_spaces(Variable):
         results = zeros(buildings.size(), dtype=self._return_type)        
         for unit_name in unique(buildings["unit_name"]):
             #should not count parcel_sqft
-            if unit_name == "parcel_sqft":continue
+            if unit_name == "parcel_sqft" or unit_name == "":continue
             self.add_and_solve_dependencies(["urbansim_parcel.building." + unit_name], dataset_pool)
             matched = buildings["unit_name"] == unit_name
             results[matched] = buildings[unit_name][matched].astype(self._return_type)

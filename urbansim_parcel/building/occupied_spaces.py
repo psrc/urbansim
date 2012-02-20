@@ -6,6 +6,7 @@ from opus_core.variables.variable import Variable
 from opus_core.misc import unique
 from variable_functions import my_attribute_label
 from numpy import zeros
+from opus_core.logger import logger
 
 class occupied_spaces(Variable):
     """units occupied by consumers, the unit is defined by unit_name in building_types 
@@ -17,16 +18,24 @@ class occupied_spaces(Variable):
     _return_type="int32"
         
     def dependencies(self):
-        return [
+        return ["urbansim_parcel.building.building_sqft",
                 "unit_name=building.disaggregate(building_type.unit_name)"
                 ]
 
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
-        results = zeros(buildings.size(), dtype=self._return_type)        
-        for unit_name in unique(buildings["unit_name"]):
+        results = zeros(buildings.size(), dtype=self._return_type)
+        unit_names = unique(buildings["unit_name"])
+        logger.log_note("Unit names: %s" % unit_names)        
+        for unit_name in unit_names:
             #should not count parcel_sqft
-            if unit_name == "parcel_sqft":continue
+            if unit_name == "parcel_sqft":
+                logger.log_warning("occupied_spaces: Skipping unit name %s" % unit_name)
+                continue
+            if unit_name == '':
+                logger.log_warning("occupied_spaces: Skipping empty unit name")
+                continue
+            
             vname = "occupied_" + unit_name
             self.add_and_solve_dependencies(["urbansim_parcel.building." + vname], dataset_pool)
             matched = buildings["unit_name"] == unit_name
