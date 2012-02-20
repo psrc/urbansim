@@ -140,8 +140,8 @@ class Storage:
                     
                 if test_column_name not in available_columns:
                     raise AttributeError("Requested column '%s' is not an "
-                        "available column. Available columns: %s"
-                            % (column_name, available_columns))
+                        "available column. Requested columns: %s. Available columns: %s"
+                            % (column_name, requested_columns, available_columns))
             
                 result.append(column_name)
                         
