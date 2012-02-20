@@ -133,7 +133,12 @@ class Storage:
                 available_columns = available_columns_lower
                 
             for column_name in requested_columns:
-                if column_name not in available_columns:
+                if case_insensitive:
+                    test_column_name = column_name.lower()
+                else:
+                    test_column_name = column_name
+                    
+                if test_column_name not in available_columns:
                     raise AttributeError("Requested column '%s' is not an "
                         "available column. Available columns: %s"
                             % (column_name, available_columns))
