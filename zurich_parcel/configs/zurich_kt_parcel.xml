@@ -5,6 +5,7 @@
     <project_name hidden="True" type="string">zurich_kt_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="zone.SC_pop_ha_per_zone" type="variable_definition">zone.aggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
       <variable use="both" source="expression" name="job.SC_is_placed_job" type="variable_definition">(urbansim_parcel.job.zone_id&gt;0).astype(int32)</variable>
       <variable use="both" source="expression" name="parcel.SC_unbuilt_parcel_area" type="variable_definition">parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])</variable>
       <variable use="both" source="Python class" name="building.Inwork_SC_building_type" type="variable_definition">zurich_parcel.building.is_building_type_3</variable>
@@ -31,7 +32,7 @@
       <variable use="both" source="primary attribute" name="parcel.SC_autobahn_within_100m" type="variable_definition">parcel.autobahn_100m</variable>
       <variable use="both" source="expression" name="building.SC_ln_taxlevel" type="variable_definition">ln(building.disaggregate(parcel.municipal_taxindex))</variable>
       <variable use="model variable" source="Python class" name="parcel.SC_households_within_500_of_parcel" type="variable_definition">urbansim_parcel.parcel.households_within_500_of_parcel</variable>
-      <variable use="model variable" source="Python class" name="parcel.SC_pop_ha" type="variable_definition">zurich_parcel.parcel.persons_within_56_of_parcel</variable>
+      <variable use="both" source="Python class" name="parcel.SC_pop_ha" type="variable_definition">zurich_parcel.parcel.persons_within_56_of_parcel</variable>
       <variable use="both" source="expression" name="building.SC_acc_pt" type="variable_definition">building.disaggregate(parcel.acc_pt)</variable>
       <variable use="both" source="expression" name="building.SC_acc_car" type="variable_definition">building.disaggregate(parcel.acc_car)</variable>
       <variable use="both" source="expression" name="building.SC_ln_sqm_per_unit" type="variable_definition">ln(building.sqft_per_unit)</variable>
@@ -118,13 +119,13 @@
       <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_hotelbar" type="variable_definition">(job.sector_id == 5) * building.land_area</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_land_surfb_service" type="variable_definition">(((job.sector_id == 7)+(job.sector_id == 8))&gt;0) * building.land_area</variable>
       <variable use="model variable" source="expression" name="building.SC_logit_foreigners_within_56_of_building" type="variable_definition">building.disaggregate(ln(zurich_parcel.parcel.households_foreign_within_56_of_parcel) - ln(1 - zurich_parcel.parcel.households_foreign_within_56_of_parcel))</variable>
-      <variable use="model variable" source="expression" name="building.SC_pop_ha_per_building" type="variable_definition">building.disaggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
+      <variable use="both" source="expression" name="building.SC_pop_ha_per_building" type="variable_definition">building.disaggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
       <variable use="both" source="expression" name="parcel.SC_is_unbuilt" type="variable_definition">zurich_parcel.parcel.number_of_buildings == 0</variable>
       <variable use="both" source="expression" name="building_x_parcel.SC_building_fit_parcel" type="variable_definition">building.land_area - parcel.parcel_sqft</variable>
       <variable use="both" source="expression" name="parcel.SC_plan_type_id_smaller_7000" type="variable_definition">parcel.plan_type_id &lt; 7000</variable>
       <variable use="both" source="expression" name="parcel.SC_ln_jobs_within_56" type="variable_definition">ln(urbansim_parcel.parcel.jobs_within_56_of_parcel)</variable>
       <variable use="both" source="Python class" name="parcel.SC_jobs_within_56" type="variable_definition">urbansim_parcel.parcel.jobs_within_56_of_parcel</variable>
-      <variable use="model variable" source="expression" name="parcel.SC_ln_pop_ha" type="variable_definition">ln(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
+      <variable use="both" source="expression" name="parcel.SC_ln_pop_ha" type="variable_definition">ln(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
       <variable use="both" source="expression" name="parcel.SC_dist_to_station" type="variable_definition">parcel.dist_to_station</variable>
       <variable use="both" source="primary attribute" name="parcel.SC_slope" type="variable_definition">parcel.slope</variable>
       <variable use="both" source="primary attribute" name="parcel.SC_dist_to_zh_cbd" type="variable_definition">parcel.dist_to_zh_cbd</variable>
@@ -160,12 +161,21 @@
             <param name="opus_data_year" param_type="string" required="True">2000</param>
           </params>
         </tool>
+        <tool name="opus_data_to_sql_tool">
+          <params>
+            <param name="database_server_connection" param_type="db_connection_hook" required="True">scenario_database_server</param>
+            <param name="database_name" param_type="string" required="True">results_testrun</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/runs/run_39.run_120221_1419/indicators/_stored_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2000</param>
+            <param name="opus_table_name" param_type="string" required="True">zone</param>
+          </params>
+        </tool>
         <tool name="csv_data_to_opus_tool">
           <class_module>csv_data_to_opus</class_module>
           <params>
-            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_parcel/base_year_data/2000/Copy of household_location_choice_model_coefficients_OLD</param>
-            <param name="csv_table_name" param_type="string" required="True">Copy_of_household_location_choice_model_coefficients</param>
-            <param name="opus_data_directory" param_type="dir_path" required="True">data/zurich_parcel/base_year_data</param>
+            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/Desktop</param>
+            <param name="csv_table_name" param_type="string" required="True">annual_household_control_totals</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/base_year_data</param>
             <param name="opus_data_year" param_type="string" required="True">2000</param>
           </params>
         </tool>
@@ -818,9 +828,9 @@
     </models>
     <estimation_config name="Estimation Configuration" config_name="estimation_config" type="dictionary">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="building" type="selectable" followers="my_dataset">True</selectable>
-        <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
-        <selectable name="job" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">True</selectable>
         <selectable name="parcel" type="selectable">True</selectable>
         <selectable name="buildings_for_estimation" type="selectable">False</selectable>
       </datasets_to_preload>
@@ -894,35 +904,34 @@
         <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">True</selectable>
         <selectable return_value="employment_transition_model" type="selectable" name="employment_transition_model_1">False</selectable>
         <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">True</selectable>
-        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">False</selectable>
+        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">True</selectable>
         <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">False</selectable>
         <selectable return_value="employment_location_choice_model" type="selectable" name="employment_location_choice_model_1">False</selectable>
-        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">False</selectable>
+        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">True</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
-      <indicator_batch name="hlc">
-        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+      <indicator_batch name="hh_per_ha">
+        <batch_visualization hidden="Children" type="batch_visualization" name="pop_ha_per_bldg">
           <settings>
             <setting name="mapnik_bucket_labels">range_labels</setting>
             <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
             <setting name="mapnik_map_lower_left">0.5,0.5</setting>
             <setting name="mapnik_page_dims">8.5,5.5</setting>
-            <setting name="mapnik_bucket_colors">#e0eee0,#c7e9c0,#a1d99b,#7ccd7c,#74c476,#41ab5d,#238b45,#006400,#00441b,#00340b</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
             <setting name="mapnik_map_upper_right">6.0,5.0</setting>
             <setting name="mapnik_resolution">96</setting>
             <setting name="mapnik_bucket_ranges">linear_scale</setting>
             <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
           </settings>
           <visualization_type>mapnik_animated_map</visualization_type>
-          <indicators>['SC_pop_dens_within_1km_X_young_hh_dummy']</indicators>
+          <indicators>['SC_pop_ha_per_zone']</indicators>
           <output_type>mapnik_animated_map</output_type>
-          <dataset_name>household_x_building</dataset_name>
+          <dataset_name>zone</dataset_name>
         </batch_visualization>
       </indicator_batch>
-      <indicator_batch name="untitled_indicator_batch"/>
     </indicator_batches>
   </results_manager>
 </opus_project>
