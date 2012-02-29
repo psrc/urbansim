@@ -3,4 +3,7 @@
 # See opus_core/LICENSE
 aliases = [
         "dept_id = building.dept",
+        "vacant_non_home_based_job_spaces = clip_to_zero(urbansim_zone.building.total_non_home_based_job_spaces - paris.building.number_of_non_home_based_jobs)",
+        "number_of_non_home_based_jobs = building.aggregate(establishment.employment)",
+
            ]
