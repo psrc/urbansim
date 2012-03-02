@@ -170,6 +170,14 @@
             <param name="opus_table_name" param_type="string" required="True">zone</param>
           </params>
         </tool>
+        <tool name="opus_data_to_csv_tool">
+          <params>
+            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/Desktop/export</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/runs/run_39.run_120221_1419/indicators/_stored_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2002</param>
+            <param name="opus_table_name" param_type="string" required="True">zone</param>
+          </params>
+        </tool>
         <tool name="csv_data_to_opus_tool">
           <class_module>csv_data_to_opus</class_module>
           <params>
