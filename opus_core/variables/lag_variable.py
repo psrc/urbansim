@@ -230,7 +230,42 @@ class TestLagVariables(opus_unittest.OpusTestCase):
         ds.compute_variables(['opus_core.tests.attr1_lag1'])
         self.assert_(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30])))
     
+    def test_simple_lag_variable2(self):
+        test_data = {
+            1000:{
+                'tests':{
+                    'id':array([1,2,3,4]),
+                    'attr1':array([10,20,30,40]),
+                    },
+                },
+            1001:{
+                'tests':{
+                    'id':array([1,2,3,5]),
+                    'attr1':array([111,222,333,555]),
+                    },
+                },
+            }
+        cache_creator = CreateTestAttributeCache()
+        cache_creator.create_attribute_cache_with_data(self._temp_dir, test_data)
         
+        SimulationState().set_current_time(1001)
+        
+        attribute_cache = AttributeCache()
+        SessionConfiguration(new_instance=True,
+                             package_order=['opus_core'],
+                             in_storage=attribute_cache)
+        
+        ds = Dataset(in_storage = attribute_cache, 
+                     in_table_name = 'tests', 
+                     id_name = ['id'], 
+                     dataset_name = 'tests')
+        
+        ds.compute_variables(['opus_core.tests.attr1'])
+        self.assert_(ma.allequal(ds.get_attribute('attr1'), array([111,222,333,555])))
+        
+        ds.compute_variables(['opus_core.tests.attr1_lag1'])
+        self.assert_(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30,555])))
+       
     
 if __name__ == '__main__':
     opus_unittest.main()
