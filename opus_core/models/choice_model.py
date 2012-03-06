@@ -25,6 +25,7 @@ from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
 from numpy import int32, compress, float64, isnan, isinf, newaxis, row_stack, asarray
 from numpy.random import permutation
+import numpy as np
 from opus_core.variables.attribute_type import AttributeType
 
 class ChoiceModel(ChunkModel):
@@ -243,21 +244,25 @@ class ChoiceModel(ChunkModel):
         logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         
         coef = {}
-        result = resize(array([-1], dtype="int32"), self.observations_mapping["index"].size)
         index = self.run_config["index"]
         self.debug.print_debug("Simulate ...",4)
+        utilities = np.empty((self.observations_mapping["index"].size,
+                              self.get_choice_set_size())
+                            )
         for submodel in self.model_interaction.get_submodels():
             self.model_interaction.prepare_data_for_simulation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
             self.coefficient_names[submodel] = self.model_interaction.get_variable_names_for_simulation(submodel)
             self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, self.observations_mapping[submodel].size), 5)
             self.increment_current_status_piece()
+            ## TODO: there may be submodels without specification/data,
+            ## TODO: which need to be excluded from utilities & index, 
+            ## TODO: and therefore probabilities & choices step
             if self.model_interaction.is_there_data(submodel): # observations for this submodel available
-                if index is not None:
-                    self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
                 self.run_config.merge({"specified_coefficients": coef[submodel]})
                 coefficients = coef[submodel].get_coefficient_values()
                 data = self.get_all_data(submodel)
+
                 nan_index = where(isnan(data))[2]
                 inf_index = where(isinf(data))[2]
                 vnames = asarray(coef[submodel].get_variable_names())
@@ -268,42 +273,39 @@ class ChoiceModel(ChunkModel):
                     inf_var_index = unique(inf_index)
                     raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
 
-                res = self.simulate_submodel(data, coefficients, submodel)
-                restmp = res.astype(int32)
-                res_positive_idx = where(res>=0)[0]
-                if index is not None:
-                    if index.shape[1] <> coef[submodel].nequations():
-                        restmp[res_positive_idx] = array(map(lambda x:
-                            index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx)).astype(int32)
-                else:
-                    restmp[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]].astype(int32)
-                result[self.observations_mapping[submodel]] = restmp
-        return result
+                utilities[self.observations_mapping[submodel], :] = self.upc_sequence.compute_utilities(data, coefficients, resources=self.run_config)
 
-    def simulate_submodel(self, data, coefficients, submodel=0):
-        result = self.upc_sequence.run(data, coefficients, resources=self.run_config)
-        if self.compute_demand_flag:
-            self.compute_demand(submodel)
+        self.upc_sequence.utilities = utilities
+        self.upc_sequence.compute_probabilities(resources=self.run_config)
+        choices = self.upc_sequence.compute_choices(resources=self.run_config)
+
         if self.run_config.get("export_simulation_data", False):
-            self.export_probabilities(submodel, 
-                                        self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
-        return result
+            self.export_probabilities(self.upc_sequence.probabilities, 
+                                      self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
+       
+        if self.compute_demand_flag:
+            self.compute_demand(self.upc_sequence.probabilities)
 
-    def compute_demand(self, submodel=0):
+        choices = choices.astype(int32)
+        res_positive_idx = where(choices>=0)[0]
+        if index is not None:
+            if index.shape[1] <> coef[submodel].nequations():
+                choices[res_positive_idx] = array(map(lambda x:
+                    index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx)).astype(int32)
+        else:
+            choices[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]].astype(int32)
+        return choices
+
+    def compute_demand(self, probabilities):
         """sums probabilities for each alternative and adds it to the demand attribute of the choice set.
         """
-        demand = self.get_demand_for_submodel(submodel)
+        demand = probabilities.sum(axis=0)
         demand_attr = self.run_config.get("demand_string")
         self.choice_set.modify_attribute(name=demand_attr,
                                          data = self.choice_set.get_attribute(demand_attr) + demand)
 
-    def get_demand_for_submodel(self, submodel=0):
-        probs = self.upc_sequence.get_probabilities()
-        return probs.sum(axis=0) # sums probabilities for each alternative
-
-
     def estimate(self, specification, agent_set, agents_index=None, procedure=None, data_objects=None,
-                  estimate_config=None, debuglevel=0):
+                 estimate_config=None, debuglevel=0):
         """ Run an estimation process and return a tuple where the first element is an object of class Coefficients
             containing the estimated coefficients, and the second element is a dictionary with an entry for each submodel
             giving the return values of the specified estimation procedure.
@@ -573,32 +575,30 @@ class ChoiceModel(ChunkModel):
         """
         return arange(ichunk*chunksize, min((ichunk+1)*chunksize, max_index))
 
-    def get_export_simulation_file_names(self, submodel, file_name):
+    def get_export_simulation_file_names(self, file_name):
         import os
         file_name_root, file_name_ext = os.path.splitext(file_name)
-        if submodel < 0:
-            submodel = ''
-        else:
-            submodel='_submodel%s' % submodel
-        out_file_probs = "%s_probabilities%s%s" % (file_name_root, submodel, file_name_ext)
-        out_file_choices = "%s_choices%s%s" % (file_name_root, submodel, file_name_ext)
+
+        out_file_probs = "%s_probabilities%s" % (file_name_root, file_name_ext)
+        out_file_choices = "%s_choices%s" % (file_name_root, file_name_ext)
         return (out_file_probs, out_file_choices)
                 
-    def get_probabilities_and_choices(self, submodel):
+    def get_probabilities_and_choices(self, probabilities):
         """Return a tuple of probabilities (2d array, first column are the agent ids, remaining columns
         are probabilities for each choice) and choices (2d array of [possibly sampled] choice ids, 
                                                         where the first column are the agent ids)."""
         from numpy import argsort
-        agent_ids = self.model_interaction.get_agent_ids_for_submodel(submodel)
-        probs = concatenate((agent_ids[...,newaxis], self.upc_sequence.get_probabilities()), axis=1)
-        choice_ids = concatenate((agent_ids[...,newaxis], self.model_interaction.get_choice_ids_for_submodel(submodel)), axis=1)
+        agent_ids = self.model_interaction.interaction_dataset.get_id_attribute_of_dataset(1)
+        probs = concatenate((agent_ids[...,newaxis], probabilities), axis=1)
+        choice_ids = concatenate((agent_ids[...,newaxis], 
+                                  self.model_interaction.get_choice_index()), axis=1)
         # sort results
         order_idx = argsort(agent_ids)
         probs = probs[order_idx,:]
         choice_ids = choice_ids[order_idx,:]
         return (probs, choice_ids)
-        
-    def export_probabilities(self, submodel, file_name):
+
+    def export_probabilities(self, probabilities, file_name):
         """Export the current probabilities into a file.
         """
         from opus_core.misc import write_table_to_text_file
@@ -607,11 +607,13 @@ class ChoiceModel(ChunkModel):
             mode = 'w'
         else:
             mode = 'a'
-        export_file_probs, export_file_choices = self.get_export_simulation_file_names(submodel, file_name)
-        probs, choice_ids = self.get_probabilities_and_choices(submodel)
+
+        export_file_probs, export_file_choices = self.get_export_simulation_file_names(file_name)
+        probs, choice_ids = self.get_probabilities_and_choices(probabilities)
         logger.start_block('Exporting probabilities (%s x %s) into %s' % (probs.shape[0], probs.shape[1], export_file_probs))
         write_table_to_text_file(export_file_probs, probs, mode=mode, delimiter='\t')
         logger.end_block()
+
         logger.start_block('Exporting choices into %s' % export_file_choices)
         write_table_to_text_file(export_file_choices, choice_ids, mode=mode, delimiter='\t')
         logger.end_block()
@@ -1106,7 +1108,7 @@ if __name__=="__main__":
                 nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
                 li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
 
-                return array(nli+li)
+                return concatenate((nli, li))
 
             # first 4 - distribution of modes should be the same for households with no low income
             # second 4 - distribution of modes 1-3 should be the same for households with low income and 0 for mode 4.
@@ -1177,7 +1179,7 @@ if __name__=="__main__":
                 nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
                 li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
                 self.demand = cm.choice_set.get_attribute("demand")
-                return array(nli+li)
+                return concatenate((nli,li))
             # distribution of modes should correspond to the original data
             expected_results = array(4*[1250] + [10, 2490, 2490, 10])
             self.run_stochastic_test(__file__, run_model, expected_results, 10)
@@ -1250,7 +1252,7 @@ if __name__=="__main__":
                 nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
                 li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
                 self.demand = cm.choice_set.get_attribute("demand")
-                return array(nli+li)
+                return concatenate((nli, li))
             # distribution of modes should correspond to the original data
             expected_results = array(4*[1250] + [10, 2490, 2490, 10])
             self.run_stochastic_test(__file__, run_model, expected_results, 10)
@@ -1312,7 +1314,7 @@ if __name__=="__main__":
                 nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
                 li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
                 self.demand = cm.choice_set.get_attribute("demand")
-                return array(nli+li)
+                return concatenate((nli,li))
             # distribution of modes should correspond to the original data
             expected_results = array(2*[2500] + [4700, 300])
             self.run_stochastic_test(__file__, run_model, expected_results, 10)
@@ -1360,4 +1362,5 @@ if __name__=="__main__":
             self.assert_(all(choices.shape == array([100, 11])))
             self.assertEqual(unique(choices[:,0]).size == 100, True)
             rmtree(temp_dir)
+            
     opus_unittest.main()
