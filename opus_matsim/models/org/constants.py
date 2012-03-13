@@ -33,5 +33,5 @@ first_iteration = 0
 # matsim4urbansim xsd location
 matsim4urbansim_v1_xsd_url = 'http://matsim.org/files/dtd/matsim4urbansim_v1.xsd'
 matsim4urbansim_v1_xsd_name = 'matsim4urbansim_v1.xsd'
-matsim4urbansim_v11_xsd_url = 'http://matsim.org/files/dtd/matsim4urbansim_v1.1.xsd'
-matsim4urbansim_v11_xsd_name = 'matsim4urbansim_v1.1.xsd'
+matsim4urbansim_v2_xsd_url = 'http://matsim.org/files/dtd/matsim4urbansim_v2.xsd'
+matsim4urbansim_v2_xsd_name = 'matsim4urbansim_v2.xsd'
