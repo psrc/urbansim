@@ -43,7 +43,7 @@ if __name__ == "__main__":
     if options.xsd_source == None:
         logger.log_error("Missing source location (url) to xsd file")
     if options.xsd_destination == None:
-        logger.log_error("Missing destiantion location for xsd file")
+        logger.log_error("Missing destination location for xsd file")
     
     load = LoadXSD( options.xsd_source, options.xsd_destination )
     load.load_and_store()
