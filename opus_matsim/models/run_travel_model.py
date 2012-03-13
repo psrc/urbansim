@@ -26,14 +26,9 @@ class RunTravelModel(AbstractTravelModel):
         is correctly set and the matsim tar-file was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
         be problems with the java version.
         """
-
+        
         logger.start_block("Starting RunTravelModel.run(...)")
-        
-        #try: # tnicolai :for debugging
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
-        
+
         config_obj = MATSimConfigObject(config, year)
         self.matsim_config_full = config_obj.marschall()
         
@@ -49,20 +44,20 @@ class RunTravelModel(AbstractTravelModel):
         # calling travel model with cmd command
         if sys.platform.lower() == 'win32': 
             # reserve memory for java
-            xmx = '-Xmx1500m'# Windows can't reserve more 1500m
+            xmx = '-Xmx1500m' # Windows can't reserve more than 1500m
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim.jar;jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim", #"playground.run.Matsim4Urbansim"
+                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         else:
             # reserve memory for java
-            xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
+            xmx = '-Xmx2000m'
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim.jar:jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim", #"playground.run.Matsim4Urbansim"
+                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
