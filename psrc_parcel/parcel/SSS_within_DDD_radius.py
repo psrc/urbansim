@@ -8,21 +8,19 @@ class SSS_within_DDD_radius(Variable):
     """Sum SSS over cells within DDD radius. """
 
     def __init__(self, name, radius):
-        self.varname = name
-        self.radius = radius
-        self.gc_name = "_gc_%s" % name
+        self.var_name = "%s_within_%s_radius" % (name, radius)
         Variable.__init__(self)
         
     def dependencies(self):
         return ['grid_id=household.disaggregate(parcel.grid_id, intermediates=[building])',
                 'grid_id=job.disaggregate(parcel.grid_id, intermediates=[building])',
                 "gridcell.grid_id", 'parcel.grid_id', 
-                '%s = psrc_parcel.gridcell.%s_within_%s_radius' % (self.gc_name, self.varname, self.radius)]
+                'psrc_parcel.gridcell.%s' % self.var_name]
 
     def compute(self, dataset_pool):
         gcs = dataset_pool.get_dataset('gridcell')
         parcels = self.get_dataset()
-        return parcels.get_join_data(gcs, self.gc_name)
+        return parcels.get_join_data(gcs, self.var_name)
 
 
 
