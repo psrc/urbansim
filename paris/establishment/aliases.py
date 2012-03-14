@@ -27,5 +27,6 @@ aliases = vars + [
         "insee = establishment.disaggregate(zone.insee, intermediates=[building])",
         "LaDef = numpy.setmember1d(establishment.insee, (92050, 92026, 92062))",
         "CVilNouvel = numpy.setmember1d(establishment.insee, (92050, 92026, 92062))",
-        "rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean)))"
+        "rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean)))",
+        "emp_250 = (establishment.employment < 250).astype('i')"
            ]
