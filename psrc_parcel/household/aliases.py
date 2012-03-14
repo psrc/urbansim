@@ -8,7 +8,8 @@ aliases = [
            "nonneg_large_area_id = (psrc_parcel.household.large_area_id > 0)*psrc_parcel.household.large_area_id",
            "age_of_oldest_child = household.aggregate((person.age<=18) * person.age, function=maximum)",
            "age_of_oldest_child_in_private_school = household.aggregate(psrc_parcel.person.is_in_private_k12_school * person.age, function=maximum)",
-           "age_of_oldest_child_in_home_school = household.aggregate(psrc_parcel.person.is_in_home_school * person.age, function=maximum)",
+           "age_of_oldest_child_in_home_school = household.aggregate(person.home_school * person.age, function=maximum)",
+           "age_of_oldest_child_in_school = household.aggregate((psrc_parcel.person.student==1) * person.age, function=maximum)",
            "is_poor = %s + %s + %s + %s + %s + %s + %s + %s" % (
                             "(household.persons==1)*(household.income < 8350)",
                             "(household.persons==2)*(household.income < 11250)",
