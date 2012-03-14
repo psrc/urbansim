@@ -29,10 +29,10 @@ class RunTravelModel(AbstractTravelModel):
 
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         config_obj = MATSimConfigObject(config, year)
         self.matsim_config_full = config_obj.marschall()
