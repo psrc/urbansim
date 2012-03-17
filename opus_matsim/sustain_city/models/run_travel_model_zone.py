@@ -26,9 +26,14 @@ class RunTravelModel(AbstractTravelModel):
         is correctly set and the matsim tar-file was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
         be problems with the java version.
         """
-        
-        logger.start_block("Starting RunTravelModel.run(...)")
 
+        logger.start_block("Starting RunTravelModel.run(...)")
+        
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         config_obj = MATSimConfigObject(config, year)
         self.matsim_config_full = config_obj.marschall()
         
@@ -44,20 +49,20 @@ class RunTravelModel(AbstractTravelModel):
         # calling travel model with cmd command
         if sys.platform.lower() == 'win32': 
             # reserve memory for java
-            xmx = '-Xmx1500m' # Windows can't reserve more than 1500m
+            xmx = '-Xmx1500m'# Windows can't reserve more than 1500m
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/matsim.jar;jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim",
+                'classpath': "jar/matsim4urbansim.jar",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         else:
             # reserve memory for java
-            xmx = '-Xmx2000m'
+            xmx = '-Xmx2500m'
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/matsim.jar:jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSim",
+                'classpath': "jar/MATSim4UrbanSimZoneTest20120312.jar",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         

@@ -21,9 +21,16 @@ class transit_shares(Variable):
     # number of records in the estimation dataset per area
     number_hh_est = array([[134, 766, 566, 572, 593], # out of transit area
                            [1275, 523, 189, 95, 26]]) # in transit area
-    # number of records in the household survey per area
-    number_hh_survey = array([[6917, 308692, 194788, 250733, 91674], # out of transit area
-                              [254457, 175978, 59223, 32244, 2722]]) # in transit area
+    # total number of households per area
+    number_hh_survey = array([[37406, 327836, 205055, 260343, 90671], # out of transit area
+                              [228578, 154052, 45074, 28101, 3446]]) # in transit area
+    #number_hh_survey = array([[6917, 308692, 194788, 250733, 91674], # out of transit area
+    #                          [254457, 175978, 59223, 32244, 2722]]) # in transit area
+    
+     
+    
+
+
     total_transit_est = float(number_hh_est.sum())
     total_transit_observed = (weights*number_hh_survey).sum()
     W = (weights*number_hh_survey)/total_transit_observed

@@ -13,4 +13,5 @@ aliases = [
    "large_area_id = job.disaggregate(parcel.large_area_id, intermediates=[building])",
    "is_home_based = job.home_based_status==1",
    "is_non_home_based = numpy.logical_not(urbansim_parcel.job.is_home_based)",
+   'residence_type = job.disaggregate(building.building_type_id)',
            ]

@@ -14,6 +14,10 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.status_for_gui import StatusForGui
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.variables.variable_name import VariableName
+from opus_core.equation_specification import EquationSpecification
+from opus_core.coefficients import Coefficients
+from opus_core.datasets.dataset import Dataset
+from opus_core.resources import Resources
 
 class Model(ModelComponent):
     """The base class for all Opus models.
@@ -190,16 +194,21 @@ class Model(ModelComponent):
     def _get_status_piece_description(self):
         return ""
     
-def get_specification_for_estimation(specification_dict=None, specification_storage=None,
-                                        specification_table = None):
-    from opus_core.equation_specification import EquationSpecification
+def get_specification_for_estimation(specification_dict=None, 
+                                     specification_storage=None,
+                                     specification_table = None):
     if specification_dict is not None:
         return EquationSpecification(specification_dict=specification_dict)
     (specification, dummy) = prepare_specification_and_coefficients(specification_storage, specification_table)
     return specification
 
-def prepare_specification_and_coefficients(specification_storage=None, specification_table=None, coefficients_storage=None,
-                         coefficients_table=None, sample_coefficients=False, cache_storage=None, **kwargs):
+def prepare_specification_and_coefficients(specification_storage=None, 
+                                           specification_table=None, 
+                                           coefficients_storage=None,
+                                           coefficients_table=None, 
+                                           sample_coefficients=False, 
+                                           cache_storage=None, 
+                                           **kwargs):
     """ Load specification and coefficients from given tables in given storages.
     If 'sample_coefficients' is True, coefficients are sampled from given distribution. In such a case,
     either an argument 'distribution' should be given (equal either 'normal' or 'uniform'), 
@@ -207,8 +216,6 @@ def prepare_specification_and_coefficients(specification_storage=None, specifica
     (see docstring for method sample_values in opus_core/coefficients.py).
     If coefficients are sampled, the new values are flushed into cache.
     """
-    from opus_core.equation_specification import EquationSpecification
-    from opus_core.coefficients import Coefficients
     specification = None
     if specification_storage is not None and specification_table is not None:
         specification = EquationSpecification(in_storage=specification_storage)
@@ -223,6 +230,55 @@ def prepare_specification_and_coefficients(specification_storage=None, specifica
 
     return (specification, coefficients)
     
+def prepare_for_estimate(specification_dict=None,
+                         specification_storage=None,
+                         specification_table=None,
+                         agent_set=None,
+                         agents_for_estimation_storage=None,
+                         agents_for_estimation_table=None,
+                         join_datasets=False,
+                         filter=None,
+                         agents_filter=None,
+                         data_objects=None):
+
+    """
+    filter - alias to agents_filter for backforward compatibility, which is more specific
+    """
+
+    if agents_filter is None and filter is not None:
+        agents_filter = filter
+
+    specification = get_specification_for_estimation(specification_dict, 
+                                                     specification_storage, 
+                                                     specification_table)
+    if agents_for_estimation_storage is not None:                 
+        estimation_set = Dataset(in_storage=agents_for_estimation_storage, 
+                                 in_table_name=agents_for_estimation_table,
+                                 id_name=agent_set.get_id_name(), 
+                                 dataset_name=agent_set.get_dataset_name())
+        
+        filter_index = arange(estimation_set.size())
+        if agents_filter:
+            filter_condition = estimation_set.compute_variables(agents_filter, 
+                                                                resources=Resources(data_objects))
+            filter_index = where(filter_condition)[0]
+        
+        if join_datasets:
+            agent_set.join_by_rows(estimation_set, 
+                                   require_all_attributes=False,
+                                   change_ids_if_not_unique=True)
+            index = arange(agent_set.size() - estimation_set.size(), 
+                           agent_set.size())[filter_index]
+        else:
+            index = agent_set.get_id_index(estimation_set.get_id_attribute()[filter_index])
+    else:
+        if agent_set is not None:
+            index = arange(agent_set.size())
+        else:
+            index = None
+            
+    return (specification, index)
+
 from opus_core.tests import opus_unittest
 import re
 

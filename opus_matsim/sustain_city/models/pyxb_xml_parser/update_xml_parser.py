@@ -9,10 +9,10 @@ import shutil
 import tempfile
 import sys
 from opus_core.logger import logger
-import opus_matsim.models.pyxb_xml_parser as pyxb_path
+import opus_matsim.sustain_city.models.pyxb_xml_parser as sustain_city_pyxb_path
 from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
 import opus_matsim.lib
-from opus_matsim.models.org.constants import matsim4urbansim_v1_xsd_url, matsim4urbansim_v1_xsd_name
+from opus_matsim.models.org.constants import matsim4urbansim_v2_xsd_url, matsim4urbansim_v2_xsd_name
 
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
@@ -52,7 +52,7 @@ class UpdateBindingClass(object):
         binding_class_destination = destination
         if binding_class_destination == None:
             logger.log_note('Destination for binding classes not given. Using default location...')
-            binding_class_destination = pyxb_path.__path__[0]
+            binding_class_destination = sustain_city_pyxb_path.__path__[0]
         logger.log_status('Destination directory for PyXB binding classes: %s' % binding_class_destination)
         logger.log_status('XSD reposit: %s' % xsd_location)
         logger.log_status('New pyxb xml binding class: %s' % self.output_pyxb_package_file)
@@ -160,10 +160,10 @@ class UpdateBindingClass(object):
         # set temporary output dir for xsd file
         self.temp_dir = tempfile.mkdtemp(prefix='xsd_tmp')
 
-        xsd_reposit = os.path.join(self.temp_dir, matsim4urbansim_v1_xsd_name)
+        xsd_reposit = os.path.join(self.temp_dir, matsim4urbansim_v2_xsd_name)
         
         # load and store xsd
-        xsd_loader = LoadXSD(matsim4urbansim_v1_xsd_url, xsd_reposit)
+        xsd_loader = LoadXSD(matsim4urbansim_v2_xsd_url, xsd_reposit)
         xsd_loader.load_and_store()
         
         # return xsd location
@@ -178,6 +178,8 @@ if __name__ == "__main__":
     parser.add_option("-t", "--testrun", dest="test_run_flag", action="store", type="int",
                       help="Indicates if this is a test run")
     (options, args) = parser.parse_args()
+    
+    print options.xsd_file_name
     
     # default: updates with default xsd on matsim.org
     UpdateBindingClass().run( options.xsd_file_name, None, None, False )
