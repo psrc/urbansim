@@ -5,7 +5,7 @@
 import re
 from numpy import array, exp, arange, zeros
 from opus_core.resources import Resources
-from opus_core.regression_model import RegressionModel
+from opus_core.models.regression_model import RegressionModel
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 
