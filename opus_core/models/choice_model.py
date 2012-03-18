@@ -38,16 +38,21 @@ class ChoiceModel(ChunkModel):
     model_name = "Choice Model"
     model_short_name ="ChoiceM"
 
-    def __init__(self, choice_set, utilities="opus_core.linear_utilities",
-                        probabilities="opus_core.mnl_probabilities",
-                        choices="opus_core.random_choices",
-                        sampler=None, sampler_size=None,
-                        submodel_string=None,
-                        choice_attribute_name="choice_id",
-                        interaction_pkg="opus_core",
-                        run_config=None, estimate_config=None, debuglevel=0,
-                        dataset_pool=None,
-                        **kwargs
+    def __init__(self, choice_set, 
+                 model_name=None, 
+                 short_name=None,
+                 utilities="opus_core.upc.linear_utilities",
+                 probabilities="opus_core.upc.mnl_probabilities",
+                 choices="opus_core.upc.random_choices",
+                 sampler=None, sampler_size=None,
+                 submodel_string=None,
+                 choice_attribute_name="choice_id",
+                 interaction_pkg="opus_core",
+                 run_config=None, 
+                 estimate_config=None, 
+                 debuglevel=0,
+                 dataset_pool=None,
+                 **kwargs
                 ):
         """
         Arguments:
@@ -70,6 +75,12 @@ class ChoiceModel(ChunkModel):
         An instance of upc_sequence class with components utilities, probabilities and choices is created. Also an instance
         of Sampler class for given sampler procedure is created.
         """
+
+        if model_name is not None:
+            self.model_name = model_name
+        if short_name is not None:
+            self.model_short_name = short_name
+ 
         self.debug = DebugPrinter(debuglevel)
 
         self.compute_choice_attribute = False
@@ -96,8 +107,10 @@ class ChoiceModel(ChunkModel):
                 )
 
         self.choice_set = choice_set
-        self.upc_sequence = UPCFactory().get_model(
-            utilities=utilities, probabilities=probabilities, choices=choices, debuglevel=debuglevel)
+        self.upc_sequence = UPCFactory().get_model(utilities=utilities, 
+                                                   probabilities=probabilities, 
+                                                   choices=choices, 
+                                                   debuglevel=debuglevel)
             
         self.sampler_class = SamplerFactory().get_sampler(sampler)
         if (sampler <> None) and (self.sampler_class == None):

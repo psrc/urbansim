@@ -27,15 +27,12 @@ class LocationChoiceModel(ChoiceModel):
     model_name = "Location Choice Model"
     model_short_name = "LCM"
 
-    def __init__(self, location_set, sampler="opus_core.samplers.weighted_sampler",
-                        utilities="opus_core.linear_utilities",
-                        probabilities="opus_core.mnl_probabilities",
-                        choices="opus_core.random_choices",
-                        interaction_pkg="urbansim.datasets",
-                        filter=None, submodel_string=None,
-                        location_id_string = None,
-                        run_config=None, estimate_config=None,
-                        debuglevel=0, dataset_pool=None, **kwargs):
+    def __init__(self, location_set, 
+                 filter=None, 
+                 location_id_string = None,
+                 dataset_pool=None, 
+                 *args,
+                 **kwargs):
         """
         Arguments:
             location_set - Dataset of locations to be chosen from.
@@ -58,13 +55,11 @@ class LocationChoiceModel(ChoiceModel):
         An instance of upc_sequence class with components utilities, probabilities and choices is created. Also an instance
         of Sampler class for given sampler procedure is created.
         """
+
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
-        ChoiceModel.__init__(self, choice_set=location_set, utilities=utilities,
-                        probabilities=probabilities, choices=choices, sampler=sampler,
-                        submodel_string=submodel_string,
-                        interaction_pkg=interaction_pkg,
-                        run_config=run_config, estimate_config=estimate_config,
-                        debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
+        ChoiceModel.__init__(self, choice_set=location_set, 
+                             dataset_pool=self.dataset_pool, 
+                             *args, **kwargs)
         
         self.filter = filter
         self.location_id_string = location_id_string
@@ -162,13 +157,15 @@ class LocationChoiceModel(ChoiceModel):
 
         return ChoiceModel.simulate_submodel(self, data, coefficients, submodel)
 
-    def get_demand_for_submodel(self, submodel=0):
-        """Return aggregated probabilities for each location for the submodel."""
-        probs = self.upc_sequence.get_probabilities()
-        demand = ndimage.sum(probs.ravel().astype("float32"), labels=self.run_config["index"].ravel()+1,
-                             index=arange(self.choice_set.size())+1)
-        return demand
-
+    def compute_demand(self, probabilities):
+        """sums probabilities for each alternative and adds it to the demand attribute of the choice set.
+        """
+        demand = ndimage.sum(probabilities.ravel().astype("float32"), 
+                             labels=self.run_config["index"].ravel()+1,
+                             index=arange(self.choice_set.size())+1)        
+        demand_attr = self.run_config.get("demand_string")
+        self.choice_set.modify_attribute(name=demand_attr,
+                                         data = self.choice_set.get_attribute(demand_attr) + demand)
 
     def estimate(self, specification, agent_set, agents_index=None, procedure=None, data_objects=None,
                   estimate_config=None, debuglevel=0):
