@@ -1,3 +1,6 @@
+Steps to update urbansim_parcel project to work with trunk code (svn rev17953)
+##TODO: update urbansim website documentation: http://urbansim.org/Documentation/Parcel/WebHome
+
 1. replace job_building_type with home_based_status table
 
 home_based_status, name
@@ -16,7 +19,9 @@ mysql> update jobs_for_estimation set home_based_status=1 where building_type=1;
 mysql> update jobs_for_estimation set home_based_status=0 where building_type=2;
 mysql> alter table jobs_for_estimation drop building_type;
 
-3. reformat annual_employment_control_totals
+3. rename annual_relocation_rates_for_households to annual_household_relocation_rates; rename annual_relocation_rates_for_jobs to annual_job_relocation_rates
+
+4. reformat annual_employment_control_totals
 
 SELECT * FROM annual_employment_control_totals a;
 
@@ -37,7 +42,7 @@ alter table annual_employment_control_totals
   drop total_home_based_employment,
   drop total_non_home_based_employment;
   
-4. reformat annual_household_control_totals
+5. reformat annual_household_control_totals
 
 SELECT * FROM annual_household_control_totals a;
 SELECT * FROM household_characteristics_for_ht h;
