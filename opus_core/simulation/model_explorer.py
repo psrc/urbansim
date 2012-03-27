@@ -11,8 +11,8 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.model_coordinators.model_system import ModelSystem
 from opus_core.choice_model import ChoiceModel
-from numpy import zeros, take, ones, where
-from opus_core.misc import unique
+from numpy import zeros, take, ones, where, reshape, concatenate, array
+from opus_core.misc import unique, write_table_to_text_file, write_to_text_file
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.specified_coefficients import SpecifiedCoefficientsFor1Submodel
@@ -400,10 +400,12 @@ class ModelExplorer(object):
         ds.delete_one_attribute(dummy_attribute_name)
         ds.delete_one_attribute(dummy_filter_name)
                    
-    def plot_coefficients(self, submodel=-2, exclude_constant=True, eqidx=0):
+    def plot_coefficients(self, submodel=-2, exclude_constant=True, eqidx=0, plot=True, 
+                          store_values_to_file=None):
         """ Plot a barchart of coefficient values. This can be used in a regression model, 
         when coefficients are standardized 
         (i.e. using the estimation module opus_core.estimate_linear_regression_standardized).
+        store_values_to_file can be a file name where the values are stored.
         """
         coef = self.get_coefficients(submodel)
         values = coef.get_coefficient_values()
@@ -414,7 +416,18 @@ class ModelExplorer(object):
             pos = coef.get_constants_positions()
             if pos.size > 0:               
                 idx[pos]=0
-        plot_barchart(values[eqidx, idx], labels = names[eqidx, idx], errors=sd[eqidx, idx])
+        if store_values_to_file is not None:
+            n = idx.sum()
+            result = concatenate((reshape(names[eqidx, idx], (n,1)), 
+                                 reshape(values[eqidx, idx], (n,1)),
+                                 reshape(sd[eqidx, idx], (n,1))), axis=1)
+            write_to_text_file(store_values_to_file, array(['coefficient_name', 'estimate', 'standard_error']), 
+                               delimiter='\t')
+            write_table_to_text_file(store_values_to_file, result, delimiter='\t', mode='a')
+        if plot:
+            plot_barchart(values[eqidx, idx], labels = names[eqidx, idx], errors=sd[eqidx, idx])
+        else:
+            return {'names': names[eqidx, idx], 'values': values[eqidx, idx], 'errors': sd[eqidx, idx]}
         
     def create_latex_tables(self, directory, other_info_keys=None):
         from opus_core.latex_table_creator import LatexTableCreator
