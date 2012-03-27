@@ -12,8 +12,15 @@ class annualized_disappearance_probabilities(mnl_probabilities):
     def run(self, *args, **kwargs):
         """
         """
-	prob = mnl_probabilities.run(self, *args, **kwargs)
-	annualized_prob = 1 - np.power(1-prob, 1.0/self.years)
+        prob = mnl_probabilities.run(self, *args, **kwargs)
+        estimate = False
+        if 'resources' in kwargs:
+            resources = kwargs['resources']
+            estimate = resources.get('estimate', False)
 
-        return annualized_prob
+        if not estimate:
+            ## annualized prob for simulation
+            prob = 1 - np.power(1-prob, 1.0/self.years)
+
+        return prob
 

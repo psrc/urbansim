@@ -33,7 +33,7 @@ class EstablishmentEvolutionModel(RealEstatePriceModel, RegressionModelWithAddit
                                          run_config=run_config, debuglevel=debuglevel)
 
         initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
-        initial_error = dataset[initial_error_name]
+        initial_error = dataset[initial_error_name][index]
         mean = init_outcome - initial_error
 
         rmse = dataset.compute_variables("paris.establishment.rmse_ln_emp_ratio")
@@ -43,7 +43,7 @@ class EstablishmentEvolutionModel(RealEstatePriceModel, RegressionModelWithAddit
         if _epsilon_name not in dataset.get_known_attribute_names():
             dataset.add_primary_attribute(name=_epsilon_name, data=zeros(dataset.size(), dtype="float32"))
         dataset.set_values_of_one_attribute(_epsilon_name, _epsilon, index)
-        outcome = mean + _epsilon
+        outcome = mean + _epsilon[index]
 
         if (outcome == None) or (outcome.size <= 0):
             return outcome
