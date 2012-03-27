@@ -191,7 +191,7 @@ class Model(ModelComponent):
         return ""
     
 def get_specification_for_estimation(specification_dict=None, specification_storage=None,
-                                        specification_table = None):
+                                        specification_table = None, **kwargs):
     from opus_core.equation_specification import EquationSpecification
     if specification_dict is not None:
         return EquationSpecification(specification_dict=specification_dict)

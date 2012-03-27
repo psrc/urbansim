@@ -4,7 +4,8 @@
 
 from opus_core.estimation_procedure import EstimationProcedure
 from opus_core.logger import logger
-from numpy import zeros,log,transpose,float32,dot,reshape,diagonal,sqrt, array, ones, where, arange, exp
+from numpy import zeros,log,transpose,float32,dot,reshape,diagonal,sqrt
+from numpy import array, ones, where, arange, exp, newaxis
 from numpy.linalg import inv
 from opus_core.third_party.pstat import chisqprob
 from opus_core.misc import get_indices_of_matched_items
@@ -32,6 +33,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         b1 = result['estimators']
         se = result['standard_errors']
         tvalues = result["other_measures"]["t_statistic"]
+        warnflag = result["warnflag"]
         
         logger.log_status("Akaike's Information Criterion (AIC): ", str(aic), tags=tags, verbosity=verbosity_level)
         logger.log_status("Bayesian Information Criterion (BIC): ", str(bic), tags=tags, verbosity=verbosity_level)
@@ -52,6 +54,8 @@ class bhhh_mnl_estimation(EstimationProcedure):
         for i in arange(nvars):
             logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],b1[i],se[i],tvalues[i]), tags=tags, verbosity_level=verbosity_level)
         logger.log_status('***********************************************', tags=tags, verbosity_level=verbosity_level)
+        if warnflag:
+            logger.log_warning(warnflag, tags=tags, verbosity_level=verbosity_level)
         #logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=verbosity_level)
 
         
@@ -86,6 +90,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         l_2=self.mnl_loglikelihood(data, b2, depm)
         l_0 = l_2
         s=1
+        warnflag = ''
 
         for it in range(maxiter):
             b1=b2
@@ -94,12 +99,15 @@ class bhhh_mnl_estimation(EstimationProcedure):
             try:
                 h=self.get_hessian(g)
             except:
-                logger.log_warning("Estimation led to singular matrix. No results.", tags=tags, verbosity_level=vl)
+                msg = "Estimation led to singular matrix. No results."
+                warnflag += msg + "\n"
+                logger.log_warning(msg, tags=tags, verbosity_level=vl)
                 return {}
             g=g.sum(axis=0)
             c=dot(dot(transpose(g),h),g)
             if c <= eps:
-                logger.log_status('Convergence achieved.', tags=tags, verbosity_level=vl)
+                msg = "Convergence achieved."
+                logger.log_status(msg, tags=tags, verbosity_level=vl)
                 break
             d=dot(h,g)
             b2[index_of_not_fixed_values]=(b1[index_of_not_fixed_values]+s*d).astype(b2.dtype)
@@ -107,12 +115,16 @@ class bhhh_mnl_estimation(EstimationProcedure):
             if l_2 <= l_1:
                 s=s/2.0
             if s <= .001:
-                logger.log_warning('Cannot find increase', tags=tags, verbosity_level=vl)
+                msg = "Cannot find increase."
+                warnflag += msg + "\n"
+                #logger.log_warning(msg, tags=tags, verbosity_level=vl)
                 break
         # end of the iteration loop
         
         if it>=(maxiter-1):
-            logger.log_warning('Maximum iterations reached without convergence', tags=tags, verbosity_level=vl)
+            msg = "Maximum iterations reached without convergence."
+            warnflag += msg + "\n"
+            #logger.log_warning(msg, tags=tags, verbosity_level=vl)
  
         se[index_of_not_fixed_values]=self.get_standard_error(h).astype(se.dtype)
         tvalues[index_of_not_fixed_values] = (b1[index_of_not_fixed_values]/se[index_of_not_fixed_values]).astype(tvalues.dtype)
@@ -149,7 +161,8 @@ class bhhh_mnl_estimation(EstimationProcedure):
                                 "nvars": nvars,
                                 "nalts": alts,
                                 "iterations": it+1
-                                }}
+                                },
+                  "warnflag": warnflag}
         self.print_results(result)
         
         return result
@@ -162,9 +175,12 @@ class bhhh_mnl_estimation(EstimationProcedure):
         self.upc_sequence.compute_utilities(data, b, self.resources)
         p = self.upc_sequence.compute_probabilities(self.resources)
         d = (depm - p)
-        g = (reshape((reshape(d,(nobs*alts,1))*reshape(data[:,:,index_of_not_fixed_values], 
-                                           (nobs*alts,index_of_not_fixed_values.size))),
-                                         (nobs,alts,index_of_not_fixed_values.size))).sum(axis=1)
+
+        #g = (reshape((reshape(d,(nobs*alts,1))*reshape(data[:,:,index_of_not_fixed_values], 
+        #                                   (nobs*alts,index_of_not_fixed_values.size))),
+        #                                 (nobs,alts,index_of_not_fixed_values.size))).sum(axis=1)
+
+        g = (d[..., newaxis] * data[..., index_of_not_fixed_values]).sum(axis=1)
         return g
 
     def get_hessian(self, derivative):

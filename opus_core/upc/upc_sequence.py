@@ -31,11 +31,13 @@ class upc_sequence(object):
         local_resources = Resources()
         if resources:
             local_resources.merge(resources)
-        last_result = self.compute_utilities(data, coefficients, local_resources)
-        this_result = self.compute_probabilities(local_resources)
+        last_result = self.compute_utilities(data=data, 
+                                             coefficients=coefficients, 
+                                             resources=local_resources)
+        this_result = self.compute_probabilities(resources=local_resources)
         if this_result <> None:
             last_result = this_result
-        this_result = self.compute_choices(local_resources)
+        this_result = self.compute_choices(resources=local_resources)
         if this_result <> None:
             last_result = this_result
         return last_result
@@ -45,7 +47,9 @@ class upc_sequence(object):
             self.debug.print_debug("No utilities class given.",10)
             return None
         self.debug.print_debug("compute_utilities ...",3)
-        self.utilities = self.utility_class.run(data, coefficients, resources)
+        self.utilities = self.utility_class.run(data, 
+                                                coefficients, 
+                                                resources=resources)
         return self.utilities
 
     def compute_probabilities(self, resources=None):
@@ -53,7 +57,8 @@ class upc_sequence(object):
             self.debug.print_debug("No probabilities class given.",10)
             return None
         self.debug.print_debug("compute_probabilities ...",3)
-        self.probabilities = self.probability_class.run(self.utilities, resources)
+        self.probabilities = self.probability_class.run(self.utilities, 
+                                                        resources=resources)
         return self.probabilities
 
     def compute_choices(self, resources=None):
@@ -61,7 +66,8 @@ class upc_sequence(object):
             self.debug.print_debug("No choices class given.",10)
             return None
         self.debug.print_debug("compute_choices ...",3)
-        self.choices = self.choice_class.run(self.probabilities, resources)
+        self.choices = self.choice_class.run(self.probabilities, 
+                                             resources=resources)
         return self.choices
 
     def get_utilities(self):
