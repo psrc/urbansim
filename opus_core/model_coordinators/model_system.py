@@ -253,7 +253,7 @@ class ModelSystem(object):
                         datasets_to_preload_for_this_model = controller_config.get('_model_structure_dependencies_',{}).get('dataset',[])
                         for dataset_name in datasets_to_preload_for_this_model:
                             try:
-                                if not dataset_pool.has_dataset(dataset_name):
+                                if not dataset_pool.has_dataset(dataset_name) or (dataset_name not in datasets.keys()):
                                     ds = dataset_pool.get_dataset(dataset_name)
                                     self.vardict[dataset_name] = ds
                                     datasets[dataset_name] = ds
