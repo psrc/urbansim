@@ -31,7 +31,10 @@ aliases = [
        "building_density_wwd = psrc_parcel.parcel.urbansim_parcel_package_building_sqft_wwd / psrc_parcel.parcel.psrc_parcel_package_parcel_sqft_wwd",
        "avg_zonal_parcel_sqft = parcel.disaggregate(zone.aggregate(parcel.parcel_sqft)/zone.number_of_agents(parcel))",
        "is_lut_19_25_26 = (parcel.land_use_type_id == 19) + (parcel.land_use_type_id == 25) + (parcel.land_use_type_id == 26)",
-       "existing_units = (urbansim_parcel.parcel.building_sqft > 0)*urbansim_parcel.parcel.building_sqft + (urbansim_parcel.parcel.building_sqft <= 0)*parcel.parcel_sqft"
+       "existing_units = (urbansim_parcel.parcel.building_sqft > 0)*urbansim_parcel.parcel.building_sqft + (urbansim_parcel.parcel.building_sqft <= 0)*parcel.parcel_sqft",
+       "building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)/ (parcel.parcel_sqft).astype(float32)",
+       "non_residential_building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft * urbansim_parcel.building.is_non_residential)/ (parcel.parcel_sqft).astype(float32)",
+
            ]
 
 
