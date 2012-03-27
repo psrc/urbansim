@@ -33,9 +33,6 @@ class ModelGroup(object):
     def get_member_names(self):
         return self.grouping_names
 
-    def get_attributes_of_grouping_dataset(self):
-        return dataset.get_known_attribute_names()
-
     def get_grouping_attribute(self):
         return self.grouping_attribute
 
@@ -44,11 +41,13 @@ class ModelGroupMember(object):
         self.model_group = model_group
         self.member_name = member_name
         self.member_index = None
+        self.member_code = None
         if isinstance(model_group, ModelGroup):
             self.member_index = model_group.get_member_index_by_name(member_name)
-        self.member_code = None
-        if self.member_index is not None:
-            self.member_code = model_group.get_member_code_by_index(self.member_index)
+            if self.member_index.size > 0:
+                self.member_code = model_group.get_member_code_by_index(self.member_index)
+            else:
+                logger.log_warning("Member %s not found. Available group members: %s" % (member_name, model_group.get_member_names()))
         self.agents_grouping_attribute = None
 
     def get_member_name(self):
@@ -63,12 +62,6 @@ class ModelGroupMember(object):
     def get_attribute_value(self, attribute):
         return self.model_group.dataset.get_attribute_by_index(attribute, self.get_member_index())
 
-    def get_values_of_all_attributes(self):
-        result = {}
-        for attr in self.model_group.get_attributes_of_grouping_dataset():
-            result[attr] = self.get_attribute_value(attr)
-        return result
-
     def set_agents_grouping_attribute(self, attribute):
         self.agents_grouping_attribute = attribute
         logger.log_status("'agents_grouping_attribute' set to %s." % self.agents_grouping_attribute)
@@ -77,6 +70,8 @@ class ModelGroupMember(object):
         return self.agents_grouping_attribute
 
     def get_index_of_my_agents(self, dataset, index, dataset_pool=None, resources=None):
+        if self.member_code is None:
+            return arange(index.size)
         agents_grouping_attr = self.get_agents_grouping_attribute()
         if agents_grouping_attr is None:
             logger.log_warning("'agents_grouping_attribute' wasn't set. No agent selection was done.")
@@ -111,7 +106,9 @@ class ModelGroupMember(object):
 
 
 from opus_core.tests import opus_unittest
-
+from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset import Dataset
+from numpy import array
 
 class TestModelGroupMember(opus_unittest.TestCase):
     def setUp(self):
@@ -153,6 +150,24 @@ class TestModelGroupMember(opus_unittest.TestCase):
                 % (expected_table_name, actual_table_name))
         self.assertEqual(None, self.model_group_member.add_member_prefix_to_table_name(None), 'None expected as result')
 
-
+    def test_non_existing_member(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name = 'my_groups', 
+                        table_data = {'id': arange(1, 4),
+                                      'group1': array(['a', 'b', 'c']),
+                                      'group2': array(['d', 'e', 'f'])
+                                      }
+                        )
+        grouping_dataset = Dataset(in_storage = storage, 
+                           in_table_name='my_groups',
+                           id_name='id'
+                           )
+        group = ModelGroup(grouping_dataset, 'group1')
+        member_a = ModelGroupMember(group, 'a')
+        self.assertEqual(1, member_a.get_member_code()) # code = 1
+        member_na = ModelGroupMember(group, 'e') # should print out warnings
+        self.assertEqual(None, member_na.get_member_code()) # code = None
+        
+        
 if __name__ == '__main__':
     opus_unittest.main()
