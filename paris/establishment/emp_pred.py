@@ -19,5 +19,5 @@ class emp_pred(Variable):
     def compute(self, dataset_pool):
         dataset = self.get_dataset()
         result = dataset['emp_ratio'] * dataset['emp_pre1']
-        #result = clip(result, 0, 15000)
+        result = clip(result, 0, 15000)
         return result
