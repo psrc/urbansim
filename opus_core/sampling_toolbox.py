@@ -22,7 +22,7 @@ def sample_replace(source_array, size, return_index=False):
     else:
         return source_array[randint(min,max,size)]
 
-def sample_noreplace(source_array, size, return_index=False):
+def sample_noreplace(source_array, size, return_index=False, try_replace=True):
     """equal probability sampling; without replacement case.
     Using numpy functions, efficient for large array"""
     if not isinstance(source_array, ndarray):
@@ -37,8 +37,11 @@ def sample_noreplace(source_array, size, return_index=False):
             return array([], dtype='i')
         else:
             return array([], dtype=source_array.dtype)
-    prob_array = resize(array([1.0/n], dtype = float32), n)  #fake a equal probability array to use probsample_noreplace
-    return probsample_noreplace(source_array, size, prob_array, return_index=return_index)
+    prob_array = resize(array([1.0/n], dtype = float32), n)  
+    #fake a equal probability array to use probsample_noreplace
+    return probsample_noreplace(source_array, size, prob_array, 
+                                return_index=return_index, 
+                                try_replace=try_replace)
 
 def probsample_replace(source_array, size, prob_array, return_index=False):
     """Unequal probability sampling; with replacement case.
@@ -69,7 +72,9 @@ def probsample_replace(source_array, size, prob_array, return_index=False):
         return source_array[sampled_index]
 
 def probsample_noreplace(source_array, sample_size, prob_array=None,
-                         exclude_element=None, exclude_index=None, return_index=False):
+                         exclude_element=None, exclude_index=None, 
+                         return_index=False,
+                         try_replace=True):
     """generate non-repeat random 1d samples from source_array of sample_size, excluding
     indices appeared in exclude_index.
 
@@ -91,7 +96,8 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
             return array([], dtype=source_array.dtype)
             
     if prob_array is None:
-        return sample_noreplace(source_array, sample_size, return_index=return_index)
+        return sample_noreplace(source_array, sample_size, return_index=return_index,
+                                try_replace=try_replace)
     else:
         #make a copy of prob_array so we won't change its original value in the sampling process
         prob_array2 = prob_array.copy()
@@ -110,11 +116,15 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
         if nzc == 0:
             raise ValueError, "The weight array contains no non-zero elements. Check the weight used for sampling."
         if nzc < sample_size:
-            logger.log_warning("The weight array contains %s non-zero elements, less than the sample_size %s. Use probsample_replace. " %
-                  (nzc, sample_size))
-            #sample_size = max
-            return probsample_replace(source_array, sample_size, prob_array=prob_array2, return_index=return_index)
-        elif nzc == sample_size:
+            if try_replace:
+                logger.log_warning("The weight array contains %s non-zero elements, less than the sample_size %s. Use probsample_replace. " %
+                      (nzc, sample_size))
+                return probsample_replace(source_array, sample_size, prob_array=prob_array2, return_index=return_index)
+            else:
+                logger.log_warning("The are %s eligible elements, less than the sample_size %s. Sample %s. " %
+                      (nzc, sample_size, nzc))
+                sample_size = nzc
+        if nzc == sample_size:
             nonzeroindex = prob_array2.nonzero()[0]
             if return_index:
                 return nonzeroindex
