@@ -515,7 +515,13 @@ class TransitionModel(Model):
                         if n > 1:
                             n = int( ceil(( abs_diff - action_num) / (mean_size * STEP_SIZE**i)) )
                         legit_index_not_yet_sampled = setdiff1d(legit_index, to_be_removed)
-                        lucky_index = sample_noreplace(legit_index_not_yet_sampled, n)
+                        if legit_index_not_yet_sampled.size == 0:
+                            error_str = str(error_num)
+                            error_log += "%s. We run out of eligible samples to match target %s exactly.\n" % \
+                                                                             (error_num, target_num)
+                            error_num += 1
+                            break
+                        lucky_index = sample_noreplace(legit_index_not_yet_sampled, n, try_replace=False)
                         temp_num = accounting[lucky_index].sum()
                         
                         if action_num + temp_num <= abs_diff:
