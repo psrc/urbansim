@@ -23,7 +23,8 @@ from opus_core.model import get_specification_for_estimation, prepare_specificat
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64, isnan, isinf, newaxis, row_stack, asarray
+from numpy import int32, compress, float64, newaxis, row_stack, asarray
+from numpy import isinf, isnan, inf, nan, nan_to_num
 from numpy.random import permutation
 from opus_core.variables.attribute_type import AttributeType
 
@@ -263,10 +264,14 @@ class ChoiceModel(ChunkModel):
                 vnames = asarray(coef[submodel].get_variable_names())
                 if nan_index.size > 0:
                     nan_var_index = unique(nan_index)
-                    raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
+                    data = nan_to_num(data)
+                    logger.log_warning("NaN(Not A Number) is returned from variable %s; it is replaced with %s." % (vnames[nan_var_index], nan_to_num(nan)))
+                    #raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
                 if inf_index.size > 0:
                     inf_var_index = unique(inf_index)
-                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
+                    data = nan_to_num(data)
+                    logger.log_warning("Inf is returned from variable %s; it is replaced with %s." % (vnames[inf_var_index], nan_to_num(inf)))                    
+                    #raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
 
                 res = self.simulate_submodel(data, coefficients, submodel)
                 restmp = res.astype(int32)
@@ -761,7 +766,21 @@ class ChoiceModel(ChunkModel):
     
     def prepare_for_estimate(self, agent_set=None, agent_filter=None, filter_threshold=0, **kwargs):
         spec = get_specification_for_estimation(**kwargs)
-        if (agent_set is not None) and (agent_filter is not None):
+        if 'agents_for_estimation_storage' in kwargs and 'agents_for_estimation_table' in kwargs:
+            estimation_set = Dataset(in_storage = kwargs['agents_for_estimation_storage'],
+                                     in_table_name=kwargs['agents_for_estimation_table'],
+                                     id_name=agent_set.get_id_name(), 
+                                     dataset_name=agent_set.get_dataset_name())
+            if agent_filter:
+                values = estimation_set.compute_variables(agent_filter)
+                index = where(values > 0)[0]
+                estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
+
+            if 'join_datasets' in kwargs and kwargs['join_dataset']:
+                agent_set.join_by_rows(estimation_set, require_all_attributes=False,
+                                       change_ids_if_not_unique=True)
+                index = arange(agent_set.size()-estimation_set.size(),agent_set.size())
+        elif (agent_set is not None) and (agent_filter is not None):
             filter_values = agent_set.compute_variables([agent_filter], dataset_pool=self.dataset_pool)
             index = where(filter_values > filter_threshold)[0]
         else:

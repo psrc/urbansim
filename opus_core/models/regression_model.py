@@ -16,7 +16,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.model import prepare_specification_and_coefficients, get_specification_for_estimation
 from opus_core.logger import logger
 from numpy import arange, zeros, float32, ndarray, array, where, inf, concatenate, asarray
-from numpy import isinf, isnan
+from numpy import isinf, isnan, inf, nan, nan_to_num
 from time import time
 
 class RegressionModel(ChunkModel):
@@ -125,10 +125,14 @@ class RegressionModel(ChunkModel):
             vnames = asarray(coef[submodel].get_variable_names())
             if nan_index.size > 0:
                 nan_var_index = unique(nan_index)
-                raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
+                self.data[submodel] = nan_to_num(self.data[submodel])
+                logger.log_warning("NaN(Not A Number) is returned from variable %s; it is replaced with %s." % (vnames[nan_var_index], nan_to_num(nan)))
+                #raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
             if inf_index.size > 0:
                 inf_var_index = unique(inf_index)
-                raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
+                self.data[submodel] = nan_to_num(self.data[submodel])
+                logger.log_warning("Inf is returned from variable %s; it is replaced with %s." % (vnames[inf_var_index], nan_to_num(inf)))
+                #raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
             
             if (self.data[submodel].shape[0] > 0) and (self.data[submodel].size > 0): # observations for this submodel available
                 outcome[self.observations_mapping[submodel]] = \
