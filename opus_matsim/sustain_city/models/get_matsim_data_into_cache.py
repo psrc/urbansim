@@ -95,7 +95,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     def clear_cache_travel_data(self, year):
         """ deleting unneeded travel data columns in cache
         """
-        logger.log_status('Cearing travel data cache ...')
+        logger.log_status('Clearing travel data cache ...')
         cache_directory = AttributeCache().get_storage_location()
         dir = os.path.join(cache_directory, str(year), self.travel_data_table_name)
         if os.path.exists(dir):
@@ -108,10 +108,10 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
     
     def get_zone_based_accessibility_into_cache(self, year):
-        """ Copies workplace accessibility results from matsim into 
+        """ Copies accessibility results from matsim into 
             urbansim cache
         """
-        logger.log_status('Importing workplace accessibility indicators from matsim ...')
+        logger.log_status('Importing zone-based accessibility indicators from matsim ...')
         
         zone_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.zone_table_name)
         
@@ -126,7 +126,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                                              out_storage=out_storage,
                                               out_table_name=self.zone_table_name)
         
-        logger.log_status('Finished importing workplace accessibility indicators.')
+        logger.log_status('Finished importing zone-based accessibility indicators to zone dataset.')
 
 
 # called from opus via main!      

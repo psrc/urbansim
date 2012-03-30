@@ -111,7 +111,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         """ imports matsim zone-based workplace accessibility results 
             into urbansim cache
         """
-        logger.log_status('Importing zone-based workplace accessibility data from matsim into urbansim zones data set ...')
+        logger.log_status('Importing zone-based accessibility indicators from matsim ...')
         
         zone_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.zone_table_name)
         
@@ -126,7 +126,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                                              out_storage=out_storage,
                                               out_table_name=self.zone_table_name)
         
-        logger.log_status('Finished importing zone-based workplace accessibility.')
+        logger.log_status('Finished importing zone-based accessibility indicators to zone dataset.')
 
 
 # called from opus via main!      

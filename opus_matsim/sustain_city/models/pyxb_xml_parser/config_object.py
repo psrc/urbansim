@@ -16,6 +16,10 @@ class MATSimConfigObject(object):
     def __init__(self, config, year):
         """ Constructor
         """
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         self.config_dictionary = config
         self.sub_config_exists = False
@@ -71,10 +75,7 @@ class MATSimConfigObject(object):
         try:
             self.test_parameter = matsim_common[ test_parameter ]
         except: pass
-        self.backup_run_data = False
-        try:
-            self.backup_run_data = self.__get_value_as_boolean( backup_run_data, matsim_common) #matsim_common[ backup_run_data ]
-        except: pass
+        self.backup_run_data = self.__get_value_as_boolean( backup_run_data, matsim_common['backup'])
 
         # matsim4urbansim controler
         self.zone2zone_impedance      = self.__get_value_as_boolean( 'zone2zone_impedance', matsim_controler )
@@ -82,6 +83,7 @@ class MATSimConfigObject(object):
         self.zone_based_accessibility = self.__get_value_as_boolean( 'zone_based_accessibility', matsim_controler )
         self.cell_based_accessibility = self.__get_value_as_boolean( 'cell_based_accessibility', matsim_controler )
         self.cell_size                = matsim_controler_parameter['cell_size']
+        self.use_bounding_box         = self.__get_value_as_boolean( 'use_bounding_box', matsim_controler_parameter['bounding_box'])
         self.bounding_box_top         = matsim_controler_parameter['bounding_box_top']
         self.bounding_box_left        = matsim_controler_parameter['bounding_box_left']
         self.bounding_box_right       = matsim_controler_parameter['bounding_box_right']
@@ -239,6 +241,7 @@ class MATSimConfigObject(object):
         matsim4urbansim_controler_elem.cellBasedAccessibility= self.cell_based_accessibility
         matsim4urbansim_controler_elem.cellSizeCellBasedAccessibility= self.cell_size
         matsim4urbansim_controler_elem.shapeFileCellBasedAccessibility= shapefile_elem
+        matsim4urbansim_controler_elem.useCustomBoundingBox = self.use_bounding_box
         matsim4urbansim_controler_elem.boundingBoxTop       = self.bounding_box_top
         matsim4urbansim_controler_elem.boundingBoxLeft      = self.bounding_box_left
         matsim4urbansim_controler_elem.boundingBoxRight     = self.bounding_box_right
