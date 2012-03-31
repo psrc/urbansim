@@ -1068,327 +1068,327 @@ class TestChoiceModel(StochasticTestCase):
     def tearDown(self):
         SimulationState().remove_base_cache_directory()
 
-#    def test_do_nothing_if_no_agents(self):
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        storage.write_table(
-#            table_name = 'households',
-#            table_data = {
-#                "household_id": arange(10000)+1,
-#                "autos": array(10000*[-1])
-#                }
-#            )
-#
-#        #create households
-#        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#
-#        # create coefficients and specification
-#        coefficients = Coefficients(names=("costcoef", ), values=(-0.001,))
-#        specification = EquationSpecification(variables=("autos", ), coefficients=("costcoef", ))
-#
-#        # run the model
-#        cm = ChoiceModel(choice_set=[0,1,2,3], choices = "opus_core.random_choices_from_index")
-#        result = cm.run(specification, coefficients, agent_set=households, agents_index=array([], dtype='int32'), debuglevel=1)
-#        # check
-#        self.assertEqual(result.size , 0)
-#
-#    def test_agents_do_not_choose_certain_mode_if_low_income(self):
-#        """4 modes;
-#        10,000 households - 5000 with no low income, 5000 with low income
-#        Attractiveness for mode 4 if low income is -100, otherwise 0.001.
-#        Result: No household with low income should choose mode 4. The number of households that chose
-#                remaining modes should be equally distributed.
-#        """
-#        #create households
-#        household_data = {"household_id": arange(10000)+1, "is_low_income": array(5000*[0]+5000*[1])}
-#        modes=array([1,2,3,4])
-#        # create coefficients and specification (different coefficient names for each equation)
-#        coefficients = Coefficients(names=("li1", "li2","li3","li4"), values=(0.001, 0.001, 0.001, -100))
-#        specification = EquationSpecification(variables=("household.is_low_income", "household.is_low_income",
-#                                               "household.is_low_income", "household.is_low_income"),
-#                                              coefficients=("li1", "li2","li3","li4"),
-#                                              equations=(1,2,3,4))
-#        # using ASCs
-##            coefficients = Coefficients(names=("li1", "asc2", "li2", "asc3", "li3", "asc4", "li4"),
-##                                        values=(0, 0.1, 0, 0.1, 0, 0.1, -100))
-##            specification = EquationSpecification(variables=("household.is_low_income", "constant", "household.is_low_income",
-##                                                             "constant", "household.is_low_income", "constant", "household.is_low_income"),
-##                                                  coefficients=("li1", "asc2", "li2", "asc3", "li3", "asc4", "li4"),
-##                                                  equations=(1,2,2,3,3,4,4))
-#        tmp = ones(5000, dtype="int32")
-#        # run the model
-#        def run_model():
-#            storage = StorageFactory().get_storage('dict_storage')
-#
-#            storage.write_table(
-#                table_name = 'households', 
-#                table_data = household_data)
-#
-#            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#
-#            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#
-#            result = cm.run(specification, coefficients, agent_set=households,
-#                         chunk_specification={'nchunks':1},
-#                         debuglevel=1)
-#
-#            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
-#            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
-#
-#            return concatenate((nli, li))
-#
-#        # first 4 - distribution of modes should be the same for households with no low income
-#        # second 4 - distribution of modes 1-3 should be the same for households with low income and 0 for mode 4.
-#        expected_results = array(4*[1250]+3*[1667]+[0])
-#        self.run_stochastic_test(__file__, run_model, expected_results, 10)
-#
-#
-#    def test_estimate_and_simulate_4_mode_model(self):
-#        """4 modes;
-#        10,000 households - 5000 with no low income, 5000 with low income
-#        The modes 1-4 are equally distributed among households that don't have low income.
-#        Households with low income decided equally for choices 2 and 3 (2490 hhs per choice) and only few of them decided for choices
-#        1 and 4 (10 households per choice).
-#        Coefficients for "is_low_income" are estimated separately for each choice where the first
-#        choice is the reference alternative (coef. li2, li3, li4).
-#        Result: Coefficient li4 should be close to 0, since the same number of households with low income  decided for
-#        alternative 1 and 4.  Coefficient li2 and li3 should be positive and equal.
-#        A simulation with the estimated coefficients is run and the resulting distribution should correspond to the original
-#        data.
-#        """
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        household_data = {
-#            'household_id': arange(10000)+1,
-#            'is_low_income': array(5000*[0]+5000*[1]),
-#            'choice_id':array(1250*[1] + 1250*[2] + 1250*[3] + 1250*[4] + 10*[4] + 2490*[3] + 10*[1] + 2490*[2])
-#            }
-#
-#        storage.write_table(
-#            table_name = 'households', 
-#            table_data = household_data)
-#
-#        # create households
-#        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#
-#        modes=array([1,2,3,4])
-#
-#        specification = EquationSpecification(variables=("household.is_low_income",
-#                                                         "household.is_low_income",
-#                                                         "household.is_low_income", "constant"),
-#                                              coefficients=( "li2", "li3","li4","c"),
-#                                              equations=(2,3,4,1))
-#        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#        coef, dummy = cm.estimate(specification, agent_set = households,
-#                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
-#        li2=coef.get_values_of_one_coefficient("li2")
-#        li3=coef.get_values_of_one_coefficient("li3")
-#        li4=coef.get_values_of_one_coefficient("li4")
-#        self.assertEqual(ma.allclose(li2, li3 , rtol=0.00001), True)
-#        self.assertEqual(li2 > 1, True)
-#        self.assertEqual(ma.allclose(li4, 0 , rtol=0.00001), True)
-#
-#        tmp = ones(5000, dtype="int32")
-#
-#        def run_model():
-#            storage = StorageFactory().get_storage('dict_storage')
-#
-#            storage.write_table(
-#                table_name = 'households', 
-#                table_data = household_data)
-#
-#            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#            # run a simulation with the estimated coefficients
-#            result = cm.run(specification, coef, agent_set=households,
-#                             chunk_specification={'nchunks':1},
-#                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
-#            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
-#            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
-#            self.demand = cm.choice_set.get_attribute("demand")
-#            return concatenate((nli,li))
-#        # distribution of modes should correspond to the original data
-#        expected_results = array(4*[1250] + [10, 2490, 2490, 10])
-#        self.run_stochastic_test(__file__, run_model, expected_results, 10)
-#        #check aggregated demand
-#        self.assertEqual(ma.allclose(self.demand, array([1260, 3740, 3740, 1260]) , rtol=0.1), True)
-#        
-#        # estimate with a fixed value of one coefficient and check that the value of this coefficint is the assigned one
-#        specification = EquationSpecification(variables=("household.is_low_income",
-#                                                         "household.is_low_income",
-#                                                         "household.is_low_income", "constant", "__dummy"),
-#                                              coefficients=( "li2", "li3","li4","c", "a"),
-#                                              equations=(2,3,4,1,1),
-#                                              fixed_values=(0,0,0,0,2))
-#        coef, dummy = cm.estimate(specification, agent_set = households,
-#                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
-#        a=coef.get_values_of_one_coefficient("a")
-#        self.assertEqual(ma.allclose(a, 2 , rtol=0.00001), True)
-#
-#    def test_estimate_and_simulate_4_mode_model_with_reference_equation(self):
-#        """Like test_estimate_and_simulate_4_mode_model, but the reference equation (the first one) does not have any terms.
-#        Furthermore, the equations have arbitrary ids.
-#        """
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        household_data = {
-#            'household_id': arange(10000)+1,
-#            'is_low_income': array(5000*[0]+5000*[1]),
-#            'choice_id':array(1250*[3] + 1250*[5] + 1250*[10] + 1250*[25] + 10*[25] + 2490*[10] + 10*[3] + 2490*[5])
-#            }
-#
-#        storage.write_table(
-#            table_name = 'households', 
-#            table_data = household_data)
-#
-#        # create households
-#        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#
-#        modes=array([3,5,10,25])
-#
-#        specification = EquationSpecification(variables=("household.is_low_income", "constant",
-#                                                         "household.is_low_income", "constant",
-#                                                         "household.is_low_income", "constant"),
-#                                              coefficients=( "li2", "c2", "li4", "c4", "li3", "c3"),
-#                                              equations=(5,5,25,25,10,10))
-#        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#        coef, dummy = cm.estimate(specification, agent_set = households,
-#                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
-#        li2=coef.get_values_of_one_coefficient("li2")
-#        li3=coef.get_values_of_one_coefficient("li3")
-#        li4=coef.get_values_of_one_coefficient("li4")
-#        self.assertEqual(ma.allclose(li2, li3 , rtol=0.00001), True)
-#        self.assertEqual(li2 > 1, True)
-#        self.assertEqual(ma.allclose(li4, 0 , rtol=0.00001), True)
-#        
-#        tmp = ones(5000, dtype="int32")
-#
-#        def run_model():
-#            storage = StorageFactory().get_storage('dict_storage')
-#
-#            storage.write_table(
-#                table_name = 'households', 
-#                table_data = household_data)
-#
-#            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#            # run a simulation with the estimated coefficients
-#            result = cm.run(specification, coef, agent_set=households,
-#                             chunk_specification={'nchunks':1},
-#                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
-#            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
-#            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
-#            self.demand = cm.choice_set.get_attribute("demand")
-#            return concatenate((nli, li))
-#        # distribution of modes should correspond to the original data
-#        expected_results = array(4*[1250] + [10, 2490, 2490, 10])
-#        self.run_stochastic_test(__file__, run_model, expected_results, 10)
-#        #check aggregated demand
-#        self.assertEqual(ma.allclose(self.demand, array([1260, 3740, 3740, 1260]) , rtol=0.1), True)
-#        
-#    def test_estimate_and_simulate_2_mode_model_with_reference_equation(self):
-#        """2 modes;
-#        10,000 households - 5000 with no low income, 5000 with low income
-#        The modes 1-2 are equally distributed among households that don't have low income.
-#        Most of the households with low income decided for choice 1 (4700) and much less households decided for choice 2 (300).
-#        Coefficient for "is_low_income" (li) is estimated for choice 1 (the second choice is the reference alternative 
-#        and does not have any entries in the specification).
-#        Result: Coefficient li should be positive.
-#        A simulation with the estimated coefficient is run and the resulting distribution should correspond to the original
-#        data.
-#        """
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        household_data = {
-#            'household_id': arange(10000)+1,
-#            'is_low_income': array(5000*[0]+5000*[1]),
-#            'choice_id':array(2500*[1] + 2500*[2] + 4700*[1] + 300*[2])
-#            }
-#
-#        storage.write_table(
-#            table_name = 'households', 
-#            table_data = household_data)
-#
-#        # create households
-#        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#
-#        modes=array([1,2])
-#
-#        specification = EquationSpecification(variables=("household.is_low_income", "constant"),
-#                                              coefficients=( "li", "c"),
-#                                              equations=(1,1))
-#        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#        coef, dummy = cm.estimate(specification, agent_set = households,
-#                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
-#        li=coef.get_values_of_one_coefficient("li")[0]
-#        self.assertEqual(li > 1, True)
-#        
-#        tmp = ones(5000, dtype="int32")
-#
-#        def run_model():
-#            storage = StorageFactory().get_storage('dict_storage')
-#
-#            storage.write_table(
-#                table_name = 'households', 
-#                table_data = household_data)
-#
-#            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
-#            # run a simulation with the estimated coefficients
-#            result = cm.run(specification, coef, agent_set=households,
-#                             chunk_specification={'nchunks':1},
-#                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
-#            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
-#            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
-#            self.demand = cm.choice_set.get_attribute("demand")
-#            return concatenate((nli,li))
-#        # distribution of modes should correspond to the original data
-#        expected_results = array(2*[2500] + [4700, 300])
-#        self.run_stochastic_test(__file__, run_model, expected_results, 10)
-#        #check aggregated demand
-#        self.assertEqual(ma.allclose(self.demand, array([7200, 2800]) , rtol=0.1), True)
-#         
-#    def test_run_model_and_write_simulation_data(self):
-#        temp_dir = tempfile.mkdtemp(prefix='opus_choice_model_test')
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        household_data = {
-#            'household_id': arange(100)+1,
-#            'is_low_income': array(50*[0]+50*[1])
-#            }
-#        location_data = {
-#             'location_id': arange(500) +1,
-#             'cost': array(100*[20] + 100*[30] + 100*[50] + 200*[100])
-#             }
-#        storage.write_table(
-#            table_name = 'households', 
-#            table_data = household_data)
-#        storage.write_table(
-#            table_name = 'locations', 
-#            table_data = location_data)
-#        specification = EquationSpecification(variables=("household.is_low_income*location.cost",),
-#                                              coefficients=("lic",))
-#        coef = Coefficients(names=("lic",), values=(0.01,))
-#        # create households
-#        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-#        locations = Dataset(in_storage=storage, in_table_name='locations', id_name="location_id", dataset_name="location")
-#        
-#        cm = ChoiceModel(choice_set=locations, choices = "opus_core.random_choices",
-#                         sampler='opus_core.samplers.weighted_sampler')
-#        cm.run(specification, coef, agent_set=households,
-#                             chunk_specification={'nchunks':2},
-#                             debuglevel=1, 
-#                             run_config=Resources({"sample_size_locations": 10,
-#                                                   "export_simulation_data": True,
-#                                                   "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
-#                             )
-#        probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))[0]
-#        self.assert_(all(probs.shape == array([100, 11])))
-#        self.assertEqual(unique(probs[:,0]).size == 100, True)
-#        choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))[0]
-#        self.assert_(all(choices.shape == array([100, 11])))
-#        self.assertEqual(unique(choices[:,0]).size == 100, True)
-#        rmtree(temp_dir)
+    def test_do_nothing_if_no_agents(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(
+            table_name = 'households',
+            table_data = {
+                "household_id": arange(10000)+1,
+                "autos": array(10000*[-1])
+                }
+            )
+
+        #create households
+        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+
+        # create coefficients and specification
+        coefficients = Coefficients(names=("costcoef", ), values=(-0.001,))
+        specification = EquationSpecification(variables=("autos", ), coefficients=("costcoef", ))
+
+        # run the model
+        cm = ChoiceModel(choice_set=[0,1,2,3], choices = "opus_core.random_choices_from_index")
+        result = cm.run(specification, coefficients, agent_set=households, agents_index=array([], dtype='int32'), debuglevel=1)
+        # check
+        self.assertEqual(result.size , 0)
+
+    def test_agents_do_not_choose_certain_mode_if_low_income(self):
+        """4 modes;
+        10,000 households - 5000 with no low income, 5000 with low income
+        Attractiveness for mode 4 if low income is -100, otherwise 0.001.
+        Result: No household with low income should choose mode 4. The number of households that chose
+                remaining modes should be equally distributed.
+        """
+        #create households
+        household_data = {"household_id": arange(10000)+1, "is_low_income": array(5000*[0]+5000*[1])}
+        modes=array([1,2,3,4])
+        # create coefficients and specification (different coefficient names for each equation)
+        coefficients = Coefficients(names=("li1", "li2","li3","li4"), values=(0.001, 0.001, 0.001, -100))
+        specification = EquationSpecification(variables=("household.is_low_income", "household.is_low_income",
+                                               "household.is_low_income", "household.is_low_income"),
+                                              coefficients=("li1", "li2","li3","li4"),
+                                              equations=(1,2,3,4))
+        # using ASCs
+#            coefficients = Coefficients(names=("li1", "asc2", "li2", "asc3", "li3", "asc4", "li4"),
+#                                        values=(0, 0.1, 0, 0.1, 0, 0.1, -100))
+#            specification = EquationSpecification(variables=("household.is_low_income", "constant", "household.is_low_income",
+#                                                             "constant", "household.is_low_income", "constant", "household.is_low_income"),
+#                                                  coefficients=("li1", "asc2", "li2", "asc3", "li3", "asc4", "li4"),
+#                                                  equations=(1,2,2,3,3,4,4))
+        tmp = ones(5000, dtype="int32")
+        # run the model
+        def run_model():
+            storage = StorageFactory().get_storage('dict_storage')
+
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
+
+            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+
+            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+
+            result = cm.run(specification, coefficients, agent_set=households,
+                         chunk_specification={'nchunks':1},
+                         debuglevel=1)
+
+            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
+            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
+
+            return concatenate((nli, li))
+
+        # first 4 - distribution of modes should be the same for households with no low income
+        # second 4 - distribution of modes 1-3 should be the same for households with low income and 0 for mode 4.
+        expected_results = array(4*[1250]+3*[1667]+[0])
+        self.run_stochastic_test(__file__, run_model, expected_results, 10)
+
+
+    def test_estimate_and_simulate_4_mode_model(self):
+        """4 modes;
+        10,000 households - 5000 with no low income, 5000 with low income
+        The modes 1-4 are equally distributed among households that don't have low income.
+        Households with low income decided equally for choices 2 and 3 (2490 hhs per choice) and only few of them decided for choices
+        1 and 4 (10 households per choice).
+        Coefficients for "is_low_income" are estimated separately for each choice where the first
+        choice is the reference alternative (coef. li2, li3, li4).
+        Result: Coefficient li4 should be close to 0, since the same number of households with low income  decided for
+        alternative 1 and 4.  Coefficient li2 and li3 should be positive and equal.
+        A simulation with the estimated coefficients is run and the resulting distribution should correspond to the original
+        data.
+        """
+        storage = StorageFactory().get_storage('dict_storage')
+
+        household_data = {
+            'household_id': arange(10000)+1,
+            'is_low_income': array(5000*[0]+5000*[1]),
+            'choice_id':array(1250*[1] + 1250*[2] + 1250*[3] + 1250*[4] + 10*[4] + 2490*[3] + 10*[1] + 2490*[2])
+            }
+
+        storage.write_table(
+            table_name = 'households', 
+            table_data = household_data)
+
+        # create households
+        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+
+        modes=array([1,2,3,4])
+
+        specification = EquationSpecification(variables=("household.is_low_income",
+                                                         "household.is_low_income",
+                                                         "household.is_low_income", "constant"),
+                                              coefficients=( "li2", "li3","li4","c"),
+                                              equations=(2,3,4,1))
+        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+        coef, dummy = cm.estimate(specification, agent_set = households,
+                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
+        li2=coef.get_values_of_one_coefficient("li2")
+        li3=coef.get_values_of_one_coefficient("li3")
+        li4=coef.get_values_of_one_coefficient("li4")
+        self.assertEqual(ma.allclose(li2, li3 , rtol=0.00001), True)
+        self.assertEqual(li2 > 1, True)
+        self.assertEqual(ma.allclose(li4, 0 , rtol=0.00001), True)
+
+        tmp = ones(5000, dtype="int32")
+
+        def run_model():
+            storage = StorageFactory().get_storage('dict_storage')
+
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
+
+            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+            # run a simulation with the estimated coefficients
+            result = cm.run(specification, coef, agent_set=households,
+                             chunk_specification={'nchunks':1},
+                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
+            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
+            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
+            self.demand = cm.choice_set.get_attribute("demand")
+            return concatenate((nli,li))
+        # distribution of modes should correspond to the original data
+        expected_results = array(4*[1250] + [10, 2490, 2490, 10])
+        self.run_stochastic_test(__file__, run_model, expected_results, 10)
+        #check aggregated demand
+        self.assertEqual(ma.allclose(self.demand, array([1260, 3740, 3740, 1260]) , rtol=0.1), True)
+        
+        # estimate with a fixed value of one coefficient and check that the value of this coefficint is the assigned one
+        specification = EquationSpecification(variables=("household.is_low_income",
+                                                         "household.is_low_income",
+                                                         "household.is_low_income", "constant", "__dummy"),
+                                              coefficients=( "li2", "li3","li4","c", "a"),
+                                              equations=(2,3,4,1,1),
+                                              fixed_values=(0,0,0,0,2))
+        coef, dummy = cm.estimate(specification, agent_set = households,
+                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
+        a=coef.get_values_of_one_coefficient("a")
+        self.assertEqual(ma.allclose(a, 2 , rtol=0.00001), True)
+
+    def test_estimate_and_simulate_4_mode_model_with_reference_equation(self):
+        """Like test_estimate_and_simulate_4_mode_model, but the reference equation (the first one) does not have any terms.
+        Furthermore, the equations have arbitrary ids.
+        """
+        storage = StorageFactory().get_storage('dict_storage')
+
+        household_data = {
+            'household_id': arange(10000)+1,
+            'is_low_income': array(5000*[0]+5000*[1]),
+            'choice_id':array(1250*[3] + 1250*[5] + 1250*[10] + 1250*[25] + 10*[25] + 2490*[10] + 10*[3] + 2490*[5])
+            }
+
+        storage.write_table(
+            table_name = 'households', 
+            table_data = household_data)
+
+        # create households
+        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+
+        modes=array([3,5,10,25])
+
+        specification = EquationSpecification(variables=("household.is_low_income", "constant",
+                                                         "household.is_low_income", "constant",
+                                                         "household.is_low_income", "constant"),
+                                              coefficients=( "li2", "c2", "li4", "c4", "li3", "c3"),
+                                              equations=(5,5,25,25,10,10))
+        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+        coef, dummy = cm.estimate(specification, agent_set = households,
+                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
+        li2=coef.get_values_of_one_coefficient("li2")
+        li3=coef.get_values_of_one_coefficient("li3")
+        li4=coef.get_values_of_one_coefficient("li4")
+        self.assertEqual(ma.allclose(li2, li3 , rtol=0.00001), True)
+        self.assertEqual(li2 > 1, True)
+        self.assertEqual(ma.allclose(li4, 0 , rtol=0.00001), True)
+        
+        tmp = ones(5000, dtype="int32")
+
+        def run_model():
+            storage = StorageFactory().get_storage('dict_storage')
+
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
+
+            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+            # run a simulation with the estimated coefficients
+            result = cm.run(specification, coef, agent_set=households,
+                             chunk_specification={'nchunks':1},
+                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
+            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
+            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
+            self.demand = cm.choice_set.get_attribute("demand")
+            return concatenate((nli, li))
+        # distribution of modes should correspond to the original data
+        expected_results = array(4*[1250] + [10, 2490, 2490, 10])
+        self.run_stochastic_test(__file__, run_model, expected_results, 10)
+        #check aggregated demand
+        self.assertEqual(ma.allclose(self.demand, array([1260, 3740, 3740, 1260]) , rtol=0.1), True)
+        
+    def test_estimate_and_simulate_2_mode_model_with_reference_equation(self):
+        """2 modes;
+        10,000 households - 5000 with no low income, 5000 with low income
+        The modes 1-2 are equally distributed among households that don't have low income.
+        Most of the households with low income decided for choice 1 (4700) and much less households decided for choice 2 (300).
+        Coefficient for "is_low_income" (li) is estimated for choice 1 (the second choice is the reference alternative 
+        and does not have any entries in the specification).
+        Result: Coefficient li should be positive.
+        A simulation with the estimated coefficient is run and the resulting distribution should correspond to the original
+        data.
+        """
+        storage = StorageFactory().get_storage('dict_storage')
+
+        household_data = {
+            'household_id': arange(10000)+1,
+            'is_low_income': array(5000*[0]+5000*[1]),
+            'choice_id':array(2500*[1] + 2500*[2] + 4700*[1] + 300*[2])
+            }
+
+        storage.write_table(
+            table_name = 'households', 
+            table_data = household_data)
+
+        # create households
+        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+
+        modes=array([1,2])
+
+        specification = EquationSpecification(variables=("household.is_low_income", "constant"),
+                                              coefficients=( "li", "c"),
+                                              equations=(1,1))
+        cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+        coef, dummy = cm.estimate(specification, agent_set = households,
+                                   procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)
+        li=coef.get_values_of_one_coefficient("li")[0]
+        self.assertEqual(li > 1, True)
+        
+        tmp = ones(5000, dtype="int32")
+
+        def run_model():
+            storage = StorageFactory().get_storage('dict_storage')
+
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
+
+            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
+            # run a simulation with the estimated coefficients
+            result = cm.run(specification, coef, agent_set=households,
+                             chunk_specification={'nchunks':1},
+                             debuglevel=1, run_config=Resources({"demand_string": "choice.demand"}))
+            nli = ndimage_sum(tmp, labels=result[0:5000], index=modes)
+            li = ndimage_sum(tmp, labels=result[5000:10000], index=modes)
+            self.demand = cm.choice_set.get_attribute("demand")
+            return concatenate((nli,li))
+        # distribution of modes should correspond to the original data
+        expected_results = array(2*[2500] + [4700, 300])
+        self.run_stochastic_test(__file__, run_model, expected_results, 10)
+        #check aggregated demand
+        self.assertEqual(ma.allclose(self.demand, array([7200, 2800]) , rtol=0.1), True)
+         
+    def test_run_model_and_write_simulation_data(self):
+        temp_dir = tempfile.mkdtemp(prefix='opus_choice_model_test')
+        storage = StorageFactory().get_storage('dict_storage')
+
+        household_data = {
+            'household_id': arange(100)+1,
+            'is_low_income': array(50*[0]+50*[1])
+            }
+        location_data = {
+             'location_id': arange(500) +1,
+             'cost': array(100*[20] + 100*[30] + 100*[50] + 200*[100])
+             }
+        storage.write_table(
+            table_name = 'households', 
+            table_data = household_data)
+        storage.write_table(
+            table_name = 'locations', 
+            table_data = location_data)
+        specification = EquationSpecification(variables=("household.is_low_income*location.cost",),
+                                              coefficients=("lic",))
+        coef = Coefficients(names=("lic",), values=(0.01,))
+        # create households
+        households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+        locations = Dataset(in_storage=storage, in_table_name='locations', id_name="location_id", dataset_name="location")
+        
+        cm = ChoiceModel(choice_set=locations, choices = "opus_core.random_choices",
+                         sampler='opus_core.samplers.weighted_sampler')
+        cm.run(specification, coef, agent_set=households,
+                             chunk_specification={'nchunks':2},
+                             debuglevel=1, 
+                             run_config=Resources({"sample_size_locations": 10,
+                                                   "export_simulation_data": True,
+                                                   "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
+                             )
+        probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))[0]
+        self.assert_(all(probs.shape == array([100, 11])))
+        self.assertEqual(unique(probs[:,0]).size == 100, True)
+        choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))[0]
+        self.assert_(all(choices.shape == array([100, 11])))
+        self.assertEqual(unique(choices[:,0]).size == 100, True)
+        rmtree(temp_dir)
 
     def test_equilibration_choices(self):
         storage = StorageFactory().get_storage('dict_storage')
