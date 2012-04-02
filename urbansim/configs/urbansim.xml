@@ -1234,6 +1234,7 @@
             <param name="opus_data_directory" param_type="dir_path" required="True"/>
             <param name="opus_data_year" param_type="string" required="True"/>
             <param name="opus_table_name" param_type="string" required="True">ALL</param>
+            <param name="execute_after_export" param_type="file_path" required="False"/>
           </params>
         </tool>
         <tool name="csv_data_to_opus_tool">

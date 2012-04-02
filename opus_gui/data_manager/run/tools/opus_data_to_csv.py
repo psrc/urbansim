@@ -23,6 +23,8 @@ def opusRun(progressCB,logCB,params):
     # Data clasification - Array (explicit or ALL)
     opus_table_name = params_dict['opus_table_name']
 
+    execute_after_export = params_dict['execute_after_export']
+
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
     attribute_cache_years = [int(year) for year in os.listdir(opus_data_directory) if year.isdigit() and len(year) == 4]
 
@@ -52,3 +54,10 @@ def opusRun(progressCB,logCB,params):
                 in_storage = input_storage,
                 out_storage = output_storage,
                 )
+            
+    open_table(csv_data_path+'/'+opus_table_name+'.csv',execute_after_export)
+
+def open_table(file_path,program):
+
+    from subprocess import *
+    Popen([program, file_path])
