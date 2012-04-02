@@ -111,6 +111,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actOpenProject.setShortcut('Ctrl+O')
         self.actSaveProject.setShortcut('Ctrl+S')
         self.actSaveProjectAs.setShortcut('Ctrl+Shift+S')
+        self.actReloadProject.setShortcut('Ctrl+Shift+R')
         self.actCloseProject.setShortcut('Ctrl+W')
         self.actExit.setShortcut('Ctrl+Q')
         self.actVariableLibrary.setShortcut('Ctrl+V')
@@ -125,6 +126,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         connect(self.actOpenProject, self.openProject)
         connect(self.actSaveProject, self.saveProject)
         connect(self.actSaveProjectAs, self.saveProjectAs)
+        connect(self.actReloadProject, self.reloadProject)
         connect(self.actCloseProject, self.closeProject)
         connect(self.actExit, self.close)
         connect(self.actAbout, self.openAbout)
@@ -316,6 +318,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actCloseProject.setEnabled(True)
         self.actSaveProject.setEnabled(True)
         self.actSaveProjectAs.setEnabled(True)
+        self.actReloadProject.setEnabled(True)
         self.updateFontSize()
 
         self.update_saved_state()
@@ -388,6 +391,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                                'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage)
 
+    def reloadProject(self):
+        self.openProject(self.project.filename)
+    
     def okToCloseProject(self, text = None):
         '''
         Called before an operation that causes this project to close.
@@ -427,6 +433,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actCloseProject.setEnabled(False)
         self.actSaveProject.setEnabled(False)
         self.actSaveProjectAs.setEnabled(False)
+        self.actReloadProject.setEnabled(False)
 
     def closeEvent(self, event):
         '''
