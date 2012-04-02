@@ -270,6 +270,18 @@ class Tests(opus_unittest.OpusTestCase):
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
 
+    def test_external(self):
+	if not hasattr(self,'external_proforma_inputs'): return
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim_parcel','urbansim'],
+            test_data=self.external_proforma_inputs
+	    )
+        should_be = array([-4938532.5]) #array([-5116654.78223655])
+        
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
+  
+
     def test_visitacion(self):
         tester = VariableTester(
             __file__,
