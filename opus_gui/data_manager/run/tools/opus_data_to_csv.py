@@ -3,6 +3,7 @@
 # See opus_core/LICENSE
 
 import os, sys
+import subprocess
 from opus_core.export_storage import ExportStorage
 from opus_core.store.csv_storage import csv_storage 
 from opus_core.store.attribute_cache import AttributeCache
@@ -57,9 +58,6 @@ def opusRun(progressCB,logCB,params):
             
         logCB("Successfully exported all datasets.")
             
-    open_table(csv_data_path+'/'+opus_table_name+'.csv',execute_after_export)
-
-def open_table(file_path,program):
-
-    from subprocess import *
-    Popen([program, file_path])
+    file_name_list = [output_storage._get_file_path_for_table(i)
+                      for i in opus_table_name_list]
+    subprocess.Popen([execute_after_export] + file_name_list)
