@@ -187,6 +187,8 @@ class Ui_MainWindow(object):
         self.tabActionPythonConsole.setIcon(icon16)
         self.tabActionPythonConsole.setObjectName("tabActionPythonConsole")
         self.tabActionLogView = QtGui.QAction(MainWindow)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/Images/Images/folder.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabActionLogView.setIcon(icon6)
         self.tabActionLogView.setObjectName("tabActionLogView")
         self.actPythonView = QtGui.QAction(MainWindow)
