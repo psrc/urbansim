@@ -33,17 +33,14 @@ def opusRun(progressCB,logCB,params):
     if table_name == 'ALL':
         logCB('caching all tables...\n')
         lst = input_storage.get_table_names()
-        for i in lst:
-            ExportStorage().export_dataset(
-                dataset_name = i,
-                in_storage = input_storage,
-                out_storage = output_storage,
-            )
     else:
+        lst = [table_name]
+        
+    for i in lst:
         logCB("Exporting table '%s' to year %s of cache located at %s...\n" %
-                   (table_name, opus_data_year, opus_data_directory))
+                   (i, opus_data_year, opus_data_directory))
         ExportStorage().export_dataset(
-            dataset_name = table_name,
+            dataset_name = i,
             in_storage = input_storage,
             out_storage = output_storage)
 
