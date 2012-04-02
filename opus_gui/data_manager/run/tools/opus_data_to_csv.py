@@ -57,7 +57,8 @@ def opusRun(progressCB,logCB,params):
                 )
             
         logCB("Successfully exported all datasets.")
-            
-    file_name_list = [output_storage._get_file_path_for_table(i)
-                      for i in opus_table_name_list]
-    subprocess.Popen([execute_after_export] + file_name_list)
+
+    if execute_after_export:
+        file_name_list = [output_storage._get_file_path_for_table(i)
+                          for i in opus_table_name_list]
+        subprocess.Popen([execute_after_export] + file_name_list)
