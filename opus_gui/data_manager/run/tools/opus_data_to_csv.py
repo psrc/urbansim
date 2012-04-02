@@ -55,6 +55,8 @@ def opusRun(progressCB,logCB,params):
                 out_storage = output_storage,
                 )
             
+        logCB("Successfully exported all datasets.")
+            
     open_table(csv_data_path+'/'+opus_table_name+'.csv',execute_after_export)
 
 def open_table(file_path,program):

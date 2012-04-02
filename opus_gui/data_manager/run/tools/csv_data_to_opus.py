@@ -44,6 +44,8 @@ def opusRun(progressCB,logCB,params):
             in_storage = input_storage,
             out_storage = output_storage)
 
+    logCB("Successfully exported all tables.")
+    
 def opusHelp():
     help = 'This tool will get a table in csv format and export it to the OPUS cache format.\n' \
            '\n' \
