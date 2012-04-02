@@ -195,7 +195,8 @@ class FileController_OpusData(FileController):
     def fillInAvailableTools(self):
 
         # Operations on the selected item
-        choices = {}
+        export_choices = {}
+        import_choices = {}
 
         # Classification for the selected item
         classification = ""
@@ -251,10 +252,10 @@ class FileController_OpusData(FileController):
             tool_classifications = acts_on_node.text.split(',')
             exports_to_value = exports_to_node.text
             if classification in tool_classifications:
-                choices[exports_to_value] = tool_node
+                export_choices[exports_to_value] = tool_node
 
         self.classification = classification
-        return choices
+        return (export_choices, import_choices)
 
 #         print "Classification = " + classification
 #        dbxml = self.treeview.model().index(0,0,QModelIndex()).parent()
@@ -340,13 +341,13 @@ class FileController_OpusData(FileController):
                 self.menu.addAction(self.actOpenTextFile)
             else:
                 # Do stuff for directories
-                choices = self.fillInAvailableTools()
+                export_choices = self.fillInAvailableTools()[0]
                 if self.classification == "dataset":
                     self.export_menu = QMenu(QString('Export Opus dataset to'), self.treeview)
                     self.export_menu.setIcon(IconLibrary.icon('export'))
-                    if len(choices) > 0:
+                    if len(export_choices) > 0:
                         self.dynactions = {}
-                        for export_type,tool_node in choices.iteritems():
+                        for export_type,tool_node in export_choices.iteritems():
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.dynactions[export_type] = tool_node
@@ -359,9 +360,9 @@ class FileController_OpusData(FileController):
                 if self.classification == "database":
                     self.export_menu = QMenu(QString('Export Opus database to'))
                     self.export_menu.setIcon(IconLibrary.icon('export'))
-                    if len(choices) > 0:
+                    if len(export_choices) > 0:
                         self.dynactions = {}
-                        for export_type,tool_node in choices.iteritems():
+                        for export_type,tool_node in export_choices.iteritems():
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.dynactions[export_type] = tool_node
