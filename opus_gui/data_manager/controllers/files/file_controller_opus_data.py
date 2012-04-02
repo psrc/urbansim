@@ -323,7 +323,7 @@ class FileController_OpusData(FileController):
             filepath = self.model.filePath(self.currentIndex)
             parentfilepath = self.model.filePath(self.currentIndex.parent())
 
-            params = self.getOptionalParams()
+            params = self.getOptionalParams(actiontext)
             window = ExecuteToolGui(parent_widget = self.treeview,
                                     tool_node = tool_node,
                                     tool_config = None,
@@ -333,16 +333,20 @@ class FileController_OpusData(FileController):
             window.show()
         return
 
-    def getOptionalParams(self):
+    def getOptionalParams(self, actiontext):
         params = {'tool_path': get_path_to_tool_modules(self.manager.project)}
         if self.classification == 'database':
             params['opus_data_directory'] = str(self.model.filePath(self.currentIndex.parent()))
             params['opus_data_year'] = str(self.model.fileName(self.currentIndex))
             params['opus_table_name'] = 'ALL'
+            if actiontext == 'CSV':
+                params['csv_table_name'] = 'ALL'
         elif self.classification == 'dataset':
             params['opus_data_directory'] = str(self.model.filePath(self.currentIndex.parent().parent()))
             params['opus_data_year'] = str(self.model.fileName(self.currentIndex.parent()))
             params['opus_table_name'] = str(self.model.fileName(self.currentIndex))
+            if actiontext == 'CSV':
+                params['csv_table_name'] = str(self.model.fileName(self.currentIndex))
         return params
 
 
