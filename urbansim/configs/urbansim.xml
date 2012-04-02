@@ -1238,6 +1238,8 @@
           </params>
         </tool>
         <tool name="csv_data_to_opus_tool">
+          <acts_on hidden="True">database,dataset</acts_on>
+          <imports_from hidden="True">CSV</imports_from>
           <class_module>csv_data_to_opus</class_module>
           <params>
             <param name="csv_data_path" param_type="dir_path" required="True"/>

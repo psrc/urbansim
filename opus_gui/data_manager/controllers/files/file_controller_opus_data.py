@@ -244,15 +244,24 @@ class FileController_OpusData(FileController):
         for tool_node in tool_file_nodes:
             acts_on_node = tool_node.find('acts_on')
             exports_to_node = tool_node.find('exports_to')
+            imports_from_node = tool_node.find('imports_from')
 
-            if acts_on_node is None or exports_to_node is None:
-                # This tool doesn't export anything
+            if acts_on_node is None:
+                # This tool doesn't export or import anything
                 continue
 
             tool_classifications = acts_on_node.text.split(',')
-            exports_to_value = exports_to_node.text
-            if classification in tool_classifications:
-                export_choices[exports_to_value] = tool_node
+            
+            if not imports_from_node is None:
+                imports_from_value = imports_from_node.text
+                if classification in tool_classifications:
+                    import_choices[imports_from_value] = tool_node
+
+            if not exports_to_node is None:
+                exports_to_value = exports_to_node.text
+                if classification in tool_classifications:
+                    export_choices[exports_to_value] = tool_node
+                
 
         self.classification = classification
         return (export_choices, import_choices)
@@ -299,11 +308,17 @@ class FileController_OpusData(FileController):
 #        self.classification = classification
 #        return choices
 
-    def dataActionMenuFunction(self,action):
+    def dataActionMenuFunctionImport(self, action):
+        return self.dataActionMenuFunction(self.import_dynactions, action)
+    
+    def dataActionMenuFunctionExport(self, action):
+        return self.dataActionMenuFunction(self.export_dynactions, action)
+
+    def dataActionMenuFunction(self, dynactions, action):
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
         if action != self.actRefresh:
             actiontext = str(action.text())
-            tool_node = self.dynactions[actiontext]
+            tool_node = dynactions[actiontext]
             filename = self.model.fileName(self.currentIndex)
             filepath = self.model.filePath(self.currentIndex)
             parentfilepath = self.model.filePath(self.currentIndex.parent())
@@ -330,6 +345,7 @@ class FileController_OpusData(FileController):
             params['opus_table_name'] = str(self.model.fileName(self.currentIndex))
         return params
 
+
     def process_custom_menu(self, position):
         self.currentColumn = self.treeview.indexAt(position).column()
         self.currentIndex=self.treeview.indexAt(position)
@@ -341,35 +357,38 @@ class FileController_OpusData(FileController):
                 self.menu.addAction(self.actOpenTextFile)
             else:
                 # Do stuff for directories
-                export_choices = self.fillInAvailableTools()[0]
-                if self.classification == "dataset":
-                    self.export_menu = QMenu(QString('Export Opus dataset to'), self.treeview)
+                export_choices, import_choices = self.fillInAvailableTools()
+                
+                if self.classification == "dataset" or self.classification == "database":
+                    self.export_menu = QMenu(QString('Export Opus %s to' % self.classification), self.treeview)
                     self.export_menu.setIcon(IconLibrary.icon('export'))
+                    self.import_menu = QMenu(QString('Import Opus %s from' % self.classification), self.treeview)
+                    self.import_menu.setIcon(IconLibrary.icon('import'))
+                    
                     if len(export_choices) > 0:
-                        self.dynactions = {}
+                        self.export_dynactions = {}
                         for export_type,tool_node in export_choices.iteritems():
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
-                            self.dynactions[export_type] = tool_node
+                            self.export_dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
-                                        self.dataActionMenuFunction)
+                                        self.dataActionMenuFunctionExport)
+                        
+                    if len(import_choices) > 0:
+                        self.import_dynactions = {}
+                        for import_type,tool_node in import_choices.iteritems():
+                            dynaction = QAction(IconLibrary.icon('spreadsheet'), import_type, self.treeview)
+                            self.import_menu.addAction(dynaction)
+                            self.import_dynactions[import_type] = tool_node
+                        QObject.connect(self.import_menu, SIGNAL("triggered(QAction*)"),
+                                        self.dataActionMenuFunctionImport)
+                        
                     self.menu.addMenu(self.export_menu)
+                    self.menu.addMenu(self.import_menu)
                     self.menu.addSeparator()
+                    
                     # We need to provide the option to open the dataset
                     self.menu.addAction(self.actViewDataset)
-                if self.classification == "database":
-                    self.export_menu = QMenu(QString('Export Opus database to'))
-                    self.export_menu.setIcon(IconLibrary.icon('export'))
-                    if len(export_choices) > 0:
-                        self.dynactions = {}
-                        for export_type,tool_node in export_choices.iteritems():
-                            dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
-                            self.export_menu.addAction(dynaction)
-                            self.dynactions[export_type] = tool_node
-                        QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
-                                        self.dataActionMenuFunction)
-                    self.menu.addMenu(self.export_menu)
-                    self.menu.addSeparator()
 
         # Now tack on a refresh for all right clicks
         #print "Setting model refresh"
