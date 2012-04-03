@@ -14,6 +14,7 @@ from urbansim.datasets.zone_dataset import ZoneDataset
 from opus_core.storage_factory import StorageFactory
 from opus_matsim.models.org.constants import matsim4opus, matsim_temp
 from opus_core import paths
+from urbansim_parcel.datasets.person_dataset import PersonDataset
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -21,11 +22,14 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """
     
     def init(self, year, config):
+        
         self.input_directory = paths.get_opus_home_path( matsim4opus, matsim_temp )
         logger.log_status("input_directory: " + self.input_directory )
         self.in_storage = csv_storage(storage_location = self.input_directory)
         self.cache_storage = AttributeCache().get_flt_storage_for_year(year)
         self.cache_directory = config['cache_directory']
+        # tnicolai: experimental code 
+        self.matsim_controler = self.__get_matsim_controler_section(config)
         
         # this deletes travel model attributes from cache that are not updated/handled by the travel model (MATSim)
         self.delete_travel_data_columns = ['am_bike_to_work_travel_time', 
@@ -52,10 +56,11 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                                       'single_vehicle_to_work_travel_distance']
         
         self.travel_data_table_name = "travel_data"
-        self.zone_table_name = "zones"
+        self.zone_table_name        = "zones"
+        self.person_data_table      = "persons"
 
     def get_travel_data_from_travel_model(self, config, year, zone_set):
-        """ Reads the output from the travel model and imports the fresh computed travel data attributes into the cache. 
+        """ Reads the output from the travel model and imports the fresh computed travel data into the cache. 
         """
         logger.log_status('Starting GetMatsimDataIntoCache.get_travel_data...')
         # print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, Urbansim does not truly merge them"
@@ -69,26 +74,29 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         self.init(year, config);
         
-        # tnicolai: experimental -> import workplace accessibility from matsim
-        self.get_zone_based_accessibility_into_cache(year)
+        # import zone-based accessibilities from MATSim into zones table
+        if( self.__get_value_as_boolean('zone_based_accessibility', self.matsim_controler) ):
+            self.get_zone_based_accessibility_into_cache(year)
+        # import agent performances from MATSim into persons table
+        if( self.__get_value_as_boolean( 'agent_performance', self.matsim_controler ) ):
+            self.get_agent_performance_into_cache(year)
         
-        # import travel data from matsim
-        travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )
-        # tnicolai : Replace travel data table 
-        # Case 1) Delete all 'columns' but the 'columns' passing to urbansim first. then no join operation is needed
-        # Case 2) Join the data sets and delete unneeded 'columns' here
-        
-        # delete travel data attributes in UrbanSim data store (see list above: "self.delete_travel_data_columns") -> (tnicolai: may causes errors in some models)
-        #self.clear_cache_travel_data(year) 
-        # load actual travel data set from cache
+        # delete travel data attributes in UrbanSim data store (see list above: "self.delete_travel_data_columns") -> (may causes errors in some models)
+        # self.clear_cache_travel_data(year) 
+        # load current travel data set from cache
         existing_travel_data_set = TravelDataDataset( in_storage=self.cache_storage, in_table_name=self.travel_data_table_name )
-        
-        ##TODO:This may not work or may be wrong after the id_names of travel_data 
-        ##changed from ['from_zone_id', 'to_zone_id'] to _hidden_id (lmwang)
-        
-        # join remaining data set with imported travel data
-        existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)
-        
+        # import zone2zone impedances from MATSim into travel_data table
+        if(self.__get_value_as_boolean('zone2zone_impedance', self.matsim_controler)):
+            travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )
+            # tnicolai : Replace travel data table 
+            # Case 1) Delete all 'columns' but the 'columns' passing to urbansim first. then no join operation is needed
+            # Case 2) Join the data sets and delete unneeded 'columns' here
+            
+            ##TODO:This may not work or may be wrong after the id_names of travel_data 
+            ##changed from ['from_zone_id', 'to_zone_id'] to _hidden_id (lmwang)
+            # join current data set with imported matsim travel data
+            existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)
+                
         # return new travel data set
         return existing_travel_data_set
             
@@ -104,14 +112,13 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                 if os.path.exists(file):
                     logger.log_status('Removing %s ...'%file)
                     os.remove(file)
-        logger.log_status('Finished clearing.')
-        
+        logger.log_status('Finished clearing.')        
     
     def get_zone_based_accessibility_into_cache(self, year):
-        """ Copies accessibility results from matsim into 
-            urbansim cache
+        """ Imports accessibility results from MATSim into 
+            UrbanSim cache (zones table)
         """
-        logger.log_status('Importing zone-based accessibility indicators from matsim ...')
+        logger.log_status('Importing zone-based accessibility indicators from MATSim ...')
         
         zone_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.zone_table_name)
         
@@ -119,16 +126,52 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         existing_zone_data_set.join(zone_data_set, zone_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
         
-        logger.log_status('Writing travel data to cache ...')
+        logger.log_status('Writing zone data to cache ...')
         flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
         out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
         existing_zone_data_set.write_dataset(attributes=existing_zone_data_set.get_known_attribute_names(),
                                              out_storage=out_storage,
-                                              out_table_name=self.zone_table_name)
+                                             out_table_name=self.zone_table_name)
         
         logger.log_status('Finished importing zone-based accessibility indicators to zone dataset.')
+        
+    def get_agent_performance_into_cache(self, year):
+        """ Imports person/agent performances, like travel durations or distances,
+            from MATSim into UrbanSim cache (persons table)
+        """
+        logger.log_status('Importing person/agent performances from MATSim ...')
+        
+        person_data_set = PersonDataset( in_storage=self.in_storage, in_table_name=self.person_data_table )
+        
+        existing_person_data_set = PersonDataset( in_storage=self.cache_storage, in_table_name=self.person_data_table )
+        
+        existing_person_data_set.join(person_data_set, person_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
+        
+        logger.log_status('Writing person data to cache ...')
+        flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
+        out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
+        existing_person_data_set.write_dataset(attributes=existing_person_data_set.get_known_attribute_names(),
+                                               out_storage=out_storage,
+                                               out_table_name=self.person_data_table)
+        
+        logger.log_status('Finished importing person/agent performances to person dataset.')
+        
+    def __get_matsim_controler_section(self, config):
+        """ returns the matsim_controler configuration section from the travel model configuration
+        """
+        # get travel model parameter from the opus dictionary
+        travel_model_configuration = config['travel_model_configuration']
+        matsim4urbansim = travel_model_configuration['matsim4urbansim']
+        return matsim4urbansim['matsim_controler']
 
-
+    def __get_value_as_boolean(self, option, sub_config):
+        ''' if a value (option) is listed in the sub_config, than it is marked in the config checkbox'''
+        if sub_config != None and option != None:
+            for param in sub_config:
+                if str(param).lower() == str(option).lower():
+                    return True
+            return False
+    
 # called from opus via main!      
 if __name__ == "__main__":
     from optparse import OptionParser

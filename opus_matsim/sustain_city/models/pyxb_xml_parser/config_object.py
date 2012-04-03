@@ -354,3 +354,4 @@ class MATSimConfigObject(object):
         else:
             logger.log_error("Invalid XML")
             return False
+        
