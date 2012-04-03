@@ -12,7 +12,7 @@ slopes: W3slope W6slope W10slope W20slope W50slope W100slope (2, 3-5, 6-9, 10-19
 bins = [2, 3, 6, 10, 20, 50, 100]
 bins_str = [str(i) for i in bins]
 bin_pre = None
-bin_var = 'establishment.employment_lag2'
+bin_var = 'establishment.employment_lag1'
 lower_bound = ['(%s >= %s)' % (bin_var, bin) for bin in bins]
 upper_bound = ['(%s < %s)' % (bin_var, bin) for bin in bins[1:]] + ['']
 vars = []
