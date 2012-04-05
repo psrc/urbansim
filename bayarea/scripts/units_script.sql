@@ -8,7 +8,9 @@ CREATE TABLE units2010 (
 	building_id integer, --FK
 	unit_sqft real, --this should be integer but need approximation 
 	sale_price integer, --I don't know why this is stored as text
+	sale_date date,
 	rent integer, --?
+	rent_date date,
 	story integer,
 	bedrooms integer
 ); 
@@ -108,10 +110,11 @@ BEGIN
 				FOR i IN 1..num_units LOOP
 					/* For first unit in group, add all info */
 					IF i = 1 THEN
-						EXECUTE 'INSERT INTO units2010 (building_id, unit_sqft, sale_price, bedrooms)
+						EXECUTE 'INSERT INTO units2010 (building_id, unit_sqft, sale_price, sale_date, bedrooms)
 							VALUES (' || units.building_id || ', ' || 
 									coalesce(units.parcel_sqft_per_unit, units.building_sqft_per_unit, -1)
 									|| ', ' || quote_nullable(units.homesale_sale_price) || ', ' 
+									|| quote_nullable(to_date(units.homesale_sale_date, 'MM/DD/YYYY')) || ','
 									|| quote_nullable(units.homesale_bedrooms) || ')';
 					/* Otherwise add only the building ID and square footage */
 					ELSE
@@ -135,9 +138,11 @@ BEGIN
 				
 				/* Loop over number of units */
 				FOR j IN 1..num_largeapt_units LOOP
-					EXECUTE 'INSERT INTO units2010 (building_id, unit_sqft, rent, bedrooms) 
+					EXECUTE 'INSERT INTO units2010 (building_id, unit_sqft, rent, rent_date, bedrooms) 
 							VALUES (' || units.building_id || ',' || units.largeapt_sqft 
-									|| ',' || units.largeapt_avg_rent || ',' || br || ')';
+									|| ',' || units.largeapt_avg_rent || ','
+									|| to_date(units.largeapt_last_updated, 'YYYY-MM-DD') 
+									|| ',' || br || ')';
 				END LOOP;
 			/* Other multiple units	on parcel (for sales only?)*/
 			ELSE
@@ -152,6 +157,7 @@ BEGIN
 					EXECUTE 'UPDATE units2010 u
 						SET unit_sqft = ' || coalesce(units.parcel_sqft_per_unit, units.building_building_sqft) || ',
 						sale_price = ' || quote_nullable(units.homesale_sale_price) || ',
+						sale_date = ' || quote_nullable(to_date(units.homesale_sale_date, 'MM/DD/YYYY')) || ',
 						bedrooms = ' || units.homesale_bedrooms || '
 						FROM (select unit_id from units2010 where sale_price is null 
 							and building_id = ' || units.building_id || '
