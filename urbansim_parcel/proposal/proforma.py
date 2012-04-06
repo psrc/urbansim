@@ -8,6 +8,8 @@ import numpy as np
 from numpy import ma, zeros, arange, array, asarray
 from numpy import float32, column_stack, asscalar
 
+DEBUG = 0
+
 periods_per_year = 4
 construction_loan_rate = 0.085 / periods_per_year
 construction_loan_size = 0.50
@@ -73,11 +75,15 @@ class proforma(Variable):
         component_leases_revenue = c['leases_revenue_per_period'].copy()
         construction_periods = p['sales_start_period'] - p['construction_start_period']
         
-        for period in arange(max_periods)+1:
+        for period in arange(max_periods):
             
             if period == 1:
                 land_equity = p['land_cost']
                 costs[period] += land_equity            
+            
+            elif component_rent_revenue.sum() >= c['rent_revenue'].sum() and \
+                component_leases_revenue.sum() >= c['leases_revenue'].sum():
+                full_rent_periods += 1
             
             if period < p['sales_start_period']:
                 #revenues
@@ -116,6 +122,7 @@ class proforma(Variable):
                             out=component_sales_revenue)
                 else:
                     sales_revenue = 0
+                if sales_revenue < 0: sales_revenue = 0
                 
                 # before reaching full occupancy for rent property
                 if not sold_for_rent and any(component_rent_revenue <= c['rent_revenue']):
@@ -143,11 +150,7 @@ class proforma(Variable):
                     np.clip(component_leases_revenue, 
                             0, c['leases_revenue'],
                             out=component_leases_revenue)                    
-
-                if component_rent_revenue.sum() >= c['rent_revenue'].sum() and \
-                   component_leases_revenue.sum() >= c['leases_revenue'].sum():
-                    full_rent_periods += 1
-                    
+ 
                 #revenues
                 if not sold_for_rent:
                     revenues[period] += sales_revenue + rent_revenue + leases_revenue
@@ -194,8 +197,9 @@ class proforma(Variable):
                     costs[period] = 0
                 
                 construction_loan_balance -= construction_loan_repayment
-                    
-                if full_rent_periods > for_rent_seasoning_threshold and \
+                if DEBUG: print period, sales_revenue, full_rent_periods, for_rent_seasoning_threshold 
+                if full_rent_periods > for_rent_seasoning_threshold+1 and \
+                   sales_revenue <= 0 and \
                    not sold_for_rent:
                     #sell_for_rent = 1
                     perm_loan_repayment = perm_loan_size
@@ -205,10 +209,12 @@ class proforma(Variable):
                     sold_for_rent = 1
                     #break
 
-	print "REVENUES:", revenues
-	print "COSTS:", costs
+        if DEBUG: print "REVENUES:", revenues
+        if DEBUG: print "COSTS:", costs
         cash_flow = (revenues - costs)[1:period]
         npv = np.npv(discount_rate, cash_flow)
+        if DEBUG: print "CASHFLOW:", cash_flow
+        if DEBUG: print "NPV:", npv
         irr = np.irr(cash_flow)
 
         return asarray(npv)
@@ -224,7 +230,6 @@ from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
-	return
         tester = VariableTester(
             __file__,
             package_order=['urbansim_parcel','urbansim'],
@@ -286,7 +291,7 @@ class Tests(opus_unittest.OpusTestCase):
   
 
     def test_visitacion(self):
-	return
+        return
         tester = VariableTester(
             __file__,
             package_order=['urbansim_parcel','urbansim'],

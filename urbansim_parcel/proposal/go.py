@@ -6,7 +6,6 @@ from __future__ import division
 import os, sys, cPickle, traceback
 from pycel.excelutil import *
 from pycel.excellib import *
-from pycel.excelcompiler import ExcelCompiler, Spreadsheet
 from os.path import normpath,abspath
 import getopt
 from devmdl_utils import *
@@ -17,9 +16,26 @@ import scipy
 from openopt import *
 sys.path.insert(1,'d:\urban_sim_ffoti')
 import proforma
+from pycel.excelcompiler import ExcelCompiler, Spreadsheet
+from opus_core.logger import logger
 
+DEBUG = 0
 SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,9:79,10:80,11:81,12:83,13:84}
+
+'''
+run multithreaded
+cost factor by county
+buffer queries for revenue, absorption, and unit and lot size
+
+land cost
+deal with nonresidential building prices
+
+get scenario-based zoning when it exists
+account for parking
+reimplement cost model
+check all the constants?
+'''
 
 def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     global sp
@@ -53,9 +69,75 @@ def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     if saveexcel and excel: 
         save(excel.excel,'output/%s.xlsx' % excelprefix)
 
-    #print params
-    #print npv
+    if DEBUG: print "PARAMS:", params
+    if DEBUG: print "NPV2", npv
+    return -1*npv/100000.0
+    	
+def _objfunc2(params,btype,saveexcel=0,excelprefix=None):
 
+    global proforma_inputs
+    e = None
+    if DEBUG: print "PARAMS", params
+    if btype == 1: # single family one-off
+        assert len(params) == 4
+        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (63+i), params[i])
+    elif btype == 2: # single family builder
+        assert len(params) == 4
+        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (58+i), params[i])
+    elif btype == 3: # mf-rental
+        assert len(params) == 4
+        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (68+i), params[i])
+    elif btype == 5: # mf-condo
+        assert len(params) == 4
+        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
+    elif btype == 6: # mxd-condo
+        assert len(params) == 5
+        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
+        set_value(e,sp,'Bldg Form','K78', params[4])
+    elif btype in COMMERCIALTYPES_D: # commercial types
+        assert len(params) == 1
+        set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
+
+    d = proforma_inputs['proposal_component']
+    logger.set_verbosity_level(0)
+
+    d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
+    d['rent_revenue'] =      array([  0,  0,  0,  0,  0])
+    d['leases_revenue'] =    array([  0,  0,  0,  0,  0])
+    if btype in [1,2]: 
+      for i in range(4):
+        d['sales_revenue'][i] = \
+			max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
+    elif btype in [5,6]:
+      for i in range(4):
+        d['sales_revenue'][i] = \
+			max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
+    elif btype in [3,4]: 
+      for i in range(4):
+        d['rent_revenue'][i] = \
+			max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
+    else:
+        d['leases_revenue'][4] = \
+			max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+    d['sales_absorption'] =  .2*d['sales_revenue']
+    d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
+    d['leases_absorption'] = array([  1,  1,  1,  1,  6])
+
+    proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
+    if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
+
+    if DEBUG: print "SALES REVENUE", d['sales_revenue']
+    if DEBUG: print d['rent_revenue']
+    if DEBUG: print d['leases_revenue']
+    if DEBUG: print d['sales_absorption']
+    if DEBUG: print d['rent_absorption']
+    if DEBUG: print d['leases_absorption']
+
+    from opus_core.tests.utils import variable_tester
+    po=['urbansim_parcel','urbansim']
+    v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
+    npv = v._get_attribute('npv')
+    #print npv, "\n\n"
     return -1*npv/100000.0
 
 def optimize(sp,btype):
@@ -99,7 +181,7 @@ def optimize(sp,btype):
     x0 = numpy.array([0 for i in range(len(bounds))])
 
     bounds = numpy.array([(0,x) for x in bounds],dtype=numpy.float32)
-    print "BOUNDS: ", bounds
+    if DEBUG: print "BOUNDS: ", bounds
 
     def ieqcons_sf_builder(X,*args):
         global bounds
@@ -119,6 +201,7 @@ def optimize(sp,btype):
 
     def ieqcons_sf_oneoff(X,*args):
         global bounds
+        #print bounds
         #print X
         cons = []
         for i in range(len(X)):
@@ -164,19 +247,33 @@ def optimize(sp,btype):
         sqft = sp.evaluate('Bldg Form!C49')
         sqft -= X[0]*SQFTFACTOR
         cons.append(sqft)
+        cons.append(X[0])
         return numpy.array(cons)
 
     ieqcons = None 
     if btype == 1: ieqcons = ieqcons_sf_oneoff
-    if btype == 2: ieqcons = ieqcons_sf_builder
-    if btype == 3: ieqcons = ieqcons_mf_rental
-    if btype == 5: ieqcons = ieqcons_mf_condo
-    if btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
+    elif btype == 2: ieqcons = ieqcons_sf_builder
+    elif btype in [3,4]: ieqcons = ieqcons_mf_rental
+    elif btype in [5,6]: ieqcons = ieqcons_mf_condo
+    elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
+    else: assert 0
 
     #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
-    r = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.01)
+    if DEBUG:
+        r2 = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
+        print r2
+        r2[0] = numpy.round(r2[0], decimals=1)
+        r2[1] = _objfunc(r2[0],btype)
 
-    #print r
+    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
+    print r
+    r[0] = numpy.round(r[0], decimals=1)
+    r[1] = _objfunc2(r[0],btype)
+    if DEBUG: 
+        print r2
+        print r
+        numpy.testing.assert_approx_equal(r2[1],r[1],significant=1)
+
     return r[0], r[1]
 
 def set_value(excel,sp,sheet,cell,value):
@@ -186,52 +283,48 @@ def set_value(excel,sp,sheet,cell,value):
     
 def save(excel,fname):
     excel.save_as(abspath(fname),True)
-
-class DeveloperModel:
-
-  def __init__(my):
-	external_proforma_inputs = {            
+	
+proforma_inputs = {            
             'parcel':
             {
                 "parcel_id":        array([1]),
                 "property_tax":     array([0.01]),
-                "land_cost":        array([ 5]) * 1000000, #Land + other equity                
-                 
+                "land_cost":        array([ 1]) * 100000, #Land + other equity
             },
             
             'proposal_component':
             {
-                "proposal_component_id": array([1,  2,  3,  4,  5]),
-                "proposal_id":           array([1,  1,  1,  1,  1]),
-           "building_type_id":           array([1,  1,  1,  1,  5]),  #Single Family, Single Family builder, Condo
-                   "bedrooms":           array([1,  2,  3,  4,  0]),
-                   "sales_revenue":      array([2,  3,  4,  5,  0]) * 1000000, #total
-                "sales_absorption":    array([.25,0.3,0.35,0.4,  0]) * 1000000, #per period
-                    "rent_revenue":    array([ .1,0.2,0.3,0.4,  0]) * 1000000, #per period
-                  "rent_absorption":   array([  8,  4,  4,  8,  8]),
-                 "leases_revenue":      array([  0,  0,  0,  0,  4]) * 1000000, #per period
-                  "leases_absorption":  array([  0,  0,  0,  0,  8]),                   
-              "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
-             "operating_cost":         array([0.2,0.2,0.2,0.2, 0.1]),
+               "proposal_component_id": array([1,  2,  3,  4,  5]),
+               "proposal_id":           array([1,  1,  1,  1,  1]),
+	           "building_type_id":      array([1,  1,  1,  1,  5]),  
+               "bedrooms":              array([1,  2,  3,  4,  0]),
+               "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
+               "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
+               "rent_revenue":          array([ .1,0.2,0.3,0.4,  0]) * 1000000,
+               "rent_absorption":       array([  8,  4,  4,  8,  8]),
+               "leases_revenue":        array([  0,  0,  0,  0,  4]) * 1000000,
+               "leases_absorption":     array([  0,  0,  0,  0,  8]),
+               "vacancy_rates":        array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
+               "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
              },
             'proposal':
             {
              
-                "proposal_id":array([1]),
-                  "parcel_id":array([1]),
-  "construction_start_period":array([ 1]),           #construction start date                  
-     "sales_start_period":    array([ 5]),           #Sales/Rent start date
-     "rent_sqft":             array([ 75]) * 1000,
-     "total_sqft":            array([ 75]) * 1000,  #TODO:fake it so that it pays taxes on all portions
-     "construction_cost":     array([ 30]) * 1000000,
-     "public_contribution":   array([ 0.0]),
+               "proposal_id":array([1]),
+               "parcel_id":array([1]),
+               "construction_start_period":array([ 1]),
+               "sales_start_period":    array([ 5]),
+               "rent_sqft":             array([ 75]) * 100,
+               "total_sqft":            array([ 75]) * 100,
+               "construction_cost":     array([ 30]) * 1000000,
+               "public_contribution":   array([ 0.0]),
             },
-            
-            }
-    	p = proforma.Tests.external_proforma_inputs = external_proforma_inputs
-	from opus_core.tests import opus_unittest
-    	opus_unittest.main(proforma) 
-	sys.exit(0)
+}
+
+class DeveloperModel:
+
+  def __init__(my):
+    pass
 
   def load(my):
     generatepython = 0
@@ -287,7 +380,8 @@ class DeveloperModel:
     #set_value(excel,sp,'Revenue Model','B97',100.0) # artificially increase retail revenue for testing
 
     print "Num of parcels:", len(p.get_pids())
-    for pid in [1223340]: #p.get_pids()[:3]:
+    for pid in p.get_pids()[:100]:
+        #proforma_inputs['parcel']['parcel_id'] = pid
 
         print "parcel_id is %d" % pid
         v = float(p.get_attr(pid,'shape_area'))*10.7639
@@ -414,7 +508,7 @@ class DeveloperModel:
             X, npv = optimize(sp,btype)
             if npv == -1: continue # error code
 
-            _objfunc(X,btype,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
+            _objfunc2(X,btype,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
             print
 
 if __name__ == '__main__':

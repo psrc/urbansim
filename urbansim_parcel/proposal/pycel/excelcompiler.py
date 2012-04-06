@@ -7,7 +7,7 @@ from decimal import *
 from networkx.classes.digraph import DiGraph
 from networkx.drawing.nx_pydot import write_dot
 from networkx.drawing.nx_pylab import draw, draw_circular
-from networkx.readwrite.gexf import write_gexf
+#from networkx.readwrite.gexf import write_gexf
 from tokenizer import ExcelParser, f_token, shunting_yard
 import cPickle
 import logging
