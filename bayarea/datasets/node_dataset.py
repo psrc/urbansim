@@ -3,7 +3,10 @@
 # See opus_core/LICENSE 
 
 import os, cPickle, time, sys, string, StringIO
-from bayarea.accessibility.pyaccess import PyAccess
+try:
+    from bayarea.accessibility.pyaccess import PyAccess
+except:
+    from bayarea.accessibility.pyaccess import PyAccess
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core import paths
 import numpy
