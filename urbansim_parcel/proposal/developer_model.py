@@ -12,7 +12,7 @@ from os.path import normpath,abspath
 import getopt
 from devmdl_utils import *
 import numpy
-from numpy import array, zeros, ones, where, logical_and, arange, exp, sqrt, cumsum, searchsorted, integer, divide
+from numpy import array, zeros, ones, where, logical_and, arange, integer, divide
 from scipy.optimize import *
 import scipy
 #from openopt import *
