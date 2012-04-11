@@ -1202,7 +1202,7 @@
           </params>
         </tool>
         <tool name="opus_data_to_sql_tool">
-          <acts_on hidden="True">database,dataset</acts_on>
+          <acts_on hidden="True">database,dataset,database_collection</acts_on>
           <exports_to hidden="True">SQL</exports_to>
           <class_module>opus_data_to_sql</class_module>
           <params>

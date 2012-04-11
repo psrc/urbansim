@@ -205,6 +205,7 @@ class FileController_OpusData(FileController):
             regex = QRegExp("\\d{4}") # match directory names with four digits
             name = self.model.fileName(self.currentIndex)
             parentname = self.model.fileName(self.model.parent(self.currentIndex))
+            isDatabaseCollection = any([self.model.fileName(self.currentIndex.child(i,0)) for i in range(self.model.rowCount(self.currentIndex))]) 
             isdir = self.model.isDir(self.currentIndex)
             if self.model.parent(self.currentIndex).isValid():
                 parentisdir = self.model.isDir(self.model.parent(self.currentIndex))
@@ -219,6 +220,9 @@ class FileController_OpusData(FileController):
                 # We have a dataset
                 # print "Dataset Dir"
                 classification = "dataset"
+            if isdir and isDatabaseCollection:
+                classification = "database_collection"
+                
         else:
             regex = QRegExp("\\d{4}")
             model = self.model
@@ -262,7 +266,6 @@ class FileController_OpusData(FileController):
                 if classification in tool_classifications:
                     export_choices[exports_to_value] = tool_node
                 
-
         self.classification = classification
         return (export_choices, import_choices)
 
@@ -347,6 +350,12 @@ class FileController_OpusData(FileController):
             params['opus_table_name'] = str(self.model.fileName(self.currentIndex))
             if actiontext == 'CSV':
                 params['csv_table_name'] = str(self.model.fileName(self.currentIndex))
+        elif self.classification == 'database_collection':
+            params['opus_data_directory'] = str(self.model.filePath(self.currentIndex))
+            params['opus_data_year'] = 'ALL'
+            params['opus_table_name'] = 'ALL'
+            if actiontext == 'CSV':
+                params['csv_table_name'] = str(self.model.fileName(self.currentIndex))
         return params
 
 
@@ -363,7 +372,7 @@ class FileController_OpusData(FileController):
                 # Do stuff for directories
                 export_choices, import_choices = self.fillInAvailableTools()
                 
-                if self.classification == "dataset" or self.classification == "database":
+                if self.classification == "dataset" or self.classification == "database" or self.classification == "database_collection":
                     self.export_menu = QMenu(QString('Export Opus %s to' % self.classification), self.treeview)
                     self.export_menu.setIcon(IconLibrary.icon('export'))
                     self.import_menu = QMenu(QString('Import Opus %s from' % self.classification), self.treeview)
@@ -377,6 +386,7 @@ class FileController_OpusData(FileController):
                             self.export_dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
                                         self.dataActionMenuFunctionExport)
+                        self.menu.addMenu(self.export_menu)
                         
                     if len(import_choices) > 0:
                         self.import_dynactions = {}
@@ -386,9 +396,8 @@ class FileController_OpusData(FileController):
                             self.import_dynactions[import_type] = tool_node
                         QObject.connect(self.import_menu, SIGNAL("triggered(QAction*)"),
                                         self.dataActionMenuFunctionImport)
+                        self.menu.addMenu(self.import_menu)
                         
-                    self.menu.addMenu(self.export_menu)
-                    self.menu.addMenu(self.import_menu)
                     self.menu.addSeparator()
                     
                     # We need to provide the option to open the dataset
