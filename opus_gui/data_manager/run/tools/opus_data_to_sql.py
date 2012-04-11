@@ -34,8 +34,9 @@ def opusRun(progressCB,logCB,params):
     for year in attribute_cache_years:
         #input_storage = sql_storage(storage_location = opusdb)
         input_storage = attribute_cache.get_flt_storage_for_year(year)
-                
         #output_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+        if opus_data_year == 'ALL':
+            opusdb = server.get_database(database_name=database_name+"_"+str(year))
         output_storage = sql_storage(storage_location = opusdb)
         SimulationState().set_current_time(year)
         SessionConfiguration(new_instance=True,
