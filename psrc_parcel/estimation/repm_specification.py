@@ -56,12 +56,14 @@ all_variables = [
                  ]
 variables_for_development_project_proposal = {
       'ln_bldgage' : 'ln_bounded((urbansim_parcel.development_project_proposal.building_age).astype(float32))',
+      'lns_bldgage' : 'ln_shifted((urbansim_parcel.development_project_proposal.building_age).astype(float32))',
+      'bldgage' : 'urbansim_parcel.development_project_proposal.building_age',
       'lnsqft': 'ln_bounded((urbansim_parcel.development_project_proposal.building_sqft).astype(float32))',
       "lnsqftunit": 'ln_bounded(safe_array_divide(urbansim_parcel.development_project_proposal.building_sqft, (urbansim_parcel.development_project_proposal.units_proposed).astype(float32)))',
       "lnlotsqftunit": "ln_bounded(safe_array_divide(urbansim_parcel.development_project_proposal.parcel_sqft, (urbansim_parcel.development_project_proposal.units_proposed).astype(float32)))",
       "ln_invfar": "ln_bounded(safe_array_divide(urbansim_parcel.development_project_proposal.parcel_sqft, (urbansim_parcel.development_project_proposal.building_sqft).astype(float32)))",
       'lnunits': 'ln_bounded((urbansim_parcel.development_project_proposal.units_proposed).astype(float32))',
-      'bldgage' : 'urbansim_parcel.development_project_proposal.building_age',
+
       'lnsbsqft': 'ln_shifted((urbansim_parcel.development_project_proposal.building_sqft_non_residential).astype(float32))',
       'lnsbsqft_psf': 'ln_shifted(urbansim_parcel.development_project_proposal.building_sqft_non_residential/(urbansim_parcel.development_project_proposal.parcel_sqft).astype(float32))',
       'lnsbsqft_all': 'ln_shifted((urbansim_parcel.development_project_proposal.building_sqft).astype(float32))',
@@ -71,9 +73,13 @@ variables_for_development_project_proposal = {
       'nvalid_bldgage': 'urbansim_parcel.development_project_proposal.building_age >= 0',
       'lnsunits': 'ln_shifted((urbansim_parcel.development_project_proposal.units_proposed).astype(float32))',
       'lnsunits_psf': 'ln_shifted(urbansim_parcel.development_project_proposal.units_proposed/(urbansim_parcel.development_project_proposal.parcel_sqft).astype(float32))',
+      'lndevcapacity': 'ln_shifted(psrc_parcel.development_project_proposal.developable_capacity)',
       'lndevcapacity_psf': 'ln_shifted(psrc_parcel.development_project_proposal.developable_capacity/ (urbansim_parcel.development_project_proposal.parcel_sqft).astype(float32))',
       'isdevcap_le0': 'psrc_parcel.development_project_proposal.developable_capacity <= 0',
       'lnyardsqft': 'ln_shifted(clip_to_zero(urbansim_parcel.development_project_proposal.parcel_sqft - urbansim_parcel.development_project_proposal.land_area_taken)/ (urbansim_parcel.development_project_proposal.parcel_sqft).astype(float32))',
+      'lnimprval': 'ln_shifted(urbansim_parcel.development_project_proposal.construction_cost)',
+      'imprvalle0': 'urbansim_parcel.development_project_proposal.construction_cost <= 0',
+      
     }
 
 specification = {
