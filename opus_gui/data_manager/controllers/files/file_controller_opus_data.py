@@ -200,37 +200,43 @@ class FileController_OpusData(FileController):
 
         # Classification for the selected item
         classification = ""
+        
+        regex = QRegExp("\\d{4}")# match directory names with four digits
+        def isYear(filename):
+            return regex.exactMatch(filename)
 
         if self.model.isDir(self.currentIndex):
-            regex = QRegExp("\\d{4}") # match directory names with four digits
+
+            def hasYearChild(index):
+                return any([isYear(self.model.fileName(index.child(i,0))) 
+                            for i in range(self.model.rowCount(index))])
+            
             name = self.model.fileName(self.currentIndex)
             parentname = self.model.fileName(self.model.parent(self.currentIndex))
-            isDatabaseCollection = any([self.model.fileName(self.currentIndex.child(i,0)) for i in range(self.model.rowCount(self.currentIndex))]) 
             isdir = self.model.isDir(self.currentIndex)
             if self.model.parent(self.currentIndex).isValid():
                 parentisdir = self.model.isDir(self.model.parent(self.currentIndex))
             else:
                 parentisdir = False
             # print "%s %s %s %s" % (name, parentname,isdir,parentisdir)
-            if isdir and regex.exactMatch(name):
+            if isdir and isYear(name):
                 # We have a database dir
                 # print "Database Dir"
                 classification = "database"
-            elif parentisdir and regex.exactMatch(parentname):
+            elif parentisdir and isYear(parentname):
                 # We have a dataset
                 # print "Dataset Dir"
                 classification = "dataset"
-            if isdir and isDatabaseCollection:
+            elif isdir and hasYearChild(self.currentIndex):
                 classification = "database_collection"
                 
         else:
-            regex = QRegExp("\\d{4}")
             model = self.model
             parentIndex = model.parent(self.currentIndex)
             parentparentIndex = model.parent(parentIndex)
             parentparentname = model.fileName(parentparentIndex)
             parentparentisdir = model.isDir(parentparentIndex)
-            if parentparentisdir and regex.exactMatch(parentparentname):
+            if parentparentisdir and isYear(parentparentname):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
 
