@@ -18,7 +18,7 @@ class NodeDataset(UrbansimDataset):
     in_table_name_default = "nodes"
     out_table_name_default = "nodes"
     dataset_name = "node"
-    path = paths.get_opus_home_path("src","bayarea","accessibility","network.jar")
+    path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
     d = cPickle.load(open(path))
     pya = PyAccess()
     pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
