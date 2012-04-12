@@ -6,17 +6,18 @@ account for parking, reimplement cost model, check all the constants?
 
 from __future__ import division
 import os, sys, cPickle, traceback, time, string, StringIO
-from urbansim_parcel.proposal.pycel.excelutil import *
-from urbansim_parcel.proposal.pycel.excellib import *
 from os.path import normpath,abspath
 import getopt
 from devmdl_utils import *
+import devmdl_optimize
+from devmdl_optimize import set_value
 import numpy
 from numpy import array, zeros, ones, where, logical_and, arange, integer, divide
-from scipy.optimize import *
 import scipy
+import copy
 #from openopt import *
-sys.path.insert(1,'d:\urban_sim_ffoti')
+
+sys.path.insert(1,os.path.join(os.environ['OPUS_HOME'],'src/urbansim_parcel/proposal'))
 import proforma
 from urbansim_parcel.proposal.pycel.excelcompiler import ExcelCompiler, Spreadsheet
 from opus_core.logger import logger
@@ -26,44 +27,7 @@ from bayarea.accessibility.pyaccess import PyAccess
 from opus_core import paths
 
 DEBUG = 0
-SQFTFACTOR = 300.0
-COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 
-proforma_inputs = {            
-            'parcel':
-            {
-                "parcel_id":        array([1]),
-                "property_tax":     array([0.01]),
-                "land_cost":        array([ 1]) * 100000, #Land + other equity
-            },
-            'proposal_component':
-            {
-               "proposal_component_id": array([1,  2,  3,  4,  5]),
-               "proposal_id":           array([1,  1,  1,  1,  1]),
-	           "building_type_id":      array([1,  1,  1,  1,  5]),  
-               "bedrooms":              array([1,  2,  3,  4,  0]),
-               "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
-               "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
-               "rent_revenue":          array([ .1,0.2,0.3,0.4,  0]) * 1000000,
-               "rent_absorption":       array([  8,  4,  4,  8,  8]),
-               "leases_revenue":        array([  0,  0,  0,  0,  4]) * 1000000,
-               "leases_absorption":     array([  0,  0,  0,  0,  8]),
-               "vacancy_rates":        array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
-               "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
-             },
-            'proposal':
-            {
-             
-               "proposal_id":array([1]),
-               "parcel_id":array([1]),
-               "construction_start_period":array([ 1]),
-               "sales_start_period":    array([ 5]),
-               "rent_sqft":             array([ 75]) * 100,
-               "total_sqft":            array([ 75]) * 100,
-               "construction_cost":     array([ 30]) * 1000000,
-               "public_contribution":   array([ 0.0]),
-            },
-}
 
 class DeveloperModel(Model):
 
@@ -76,7 +40,7 @@ class DeveloperModel(Model):
     generatepython = 0
     generatedb = 0
     repressoutput = 0
-    fname = 'C:\\opus\\src\\urbansim_parcel\\proposal\\proforma.xlsx'
+    fname = os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/proforma.xlsx')
     opts, args = getopt.getopt(sys.argv[1:], "dgrf:")
     for o, a in opts:
         if o == "-d": generatedb = 1
@@ -99,14 +63,14 @@ class DeveloperModel(Model):
         cPickle.dump((z,p),open('databaseinfo.jar','w'))
     else:
         print "Reading db info from jar..."
-        z,p = cPickle.load(open('C:\\opus\\src\\urbansim_parcel\\proposal\\databaseinfo.jar'))
+        z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
+    opts, args = getopt.getopt(sys.argv[1:], "dgrf:")
 
-    global sp
     if generatepython:
         print "Compiling..., starting from NPV"
-        sp = excel.gen_graph('B52',sheet='Proforma')
+        SP = excel.gen_graph('B52',sheet='Proforma')
         print "Serializing to disk..."
-        sp.save_to_file(fname + ".jar")
+        SP.save_to_file(fname + ".jar")
     
         # show the graph usisng matplotlib
         #print "Plotting using matplotlib..."
@@ -117,7 +81,7 @@ class DeveloperModel(Model):
         #sp.export_to_gexf(fname + ".gexf")
     else:
         print "Reading formula from jar..."
-        sp = Spreadsheet.load_from_file(fname+'.jar')
+        SP = Spreadsheet.load_from_file(fname+'.jar')
 
     if generatedb or generatepython: 
         print "Done generating, run again for proforma"
@@ -130,7 +94,8 @@ class DeveloperModel(Model):
     building_set = dataset_pool.get_dataset('building')
     building_set = dataset_pool.get_dataset('residential_unit')
     node_set = dataset_pool.get_dataset('node')
-
+    node_ids = array(node_set.node_ids, dtype="int32")
+    '''
     node_sum_unit_sqft_sf = node_set.compute_variables('node.aggregate((building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(building.building_type_id<3),intermediates=[parcel])')
     node_sum_unit_sqft_sf = array(node_sum_unit_sqft_sf, dtype="float32")
 
@@ -162,16 +127,16 @@ class DeveloperModel(Model):
     node_number_of_sfdetach_resunits = array(node_number_of_sfdetach_resunits, dtype="float32")
 
     node_set.pya.initializeAccVars(10)
-    node_set.pya.initializeAccVar(0,node_set.node_ids,node_sum_unit_sqft_sf)
-    node_set.pya.initializeAccVar(1,node_set.node_ids,node_number_of_sf_resunits)
-    node_set.pya.initializeAccVar(2,node_set.node_ids,node_sum_unit_sqft_mf)
-    node_set.pya.initializeAccVar(3,node_set.node_ids,node_number_of_mf_resunits)
-    node_set.pya.initializeAccVar(4,node_set.node_ids,node_sum_sf_parcel_area)
-    node_set.pya.initializeAccVar(5,node_set.node_ids,node_number_of_sfdetach_resunits)
-    node_set.pya.initializeAccVar(6,node_set.node_ids,node_sum_sf_price)
-    node_set.pya.initializeAccVar(7,node_set.node_ids,node_sum_mf_price)
-    node_set.pya.initializeAccVar(8,node_set.node_ids,node_sum_sf_rent)
-    node_set.pya.initializeAccVar(9,node_set.node_ids,node_sum_mf_rent)
+    node_set.pya.initializeAccVar(0,node_ids,node_sum_unit_sqft_sf)
+    node_set.pya.initializeAccVar(1,node_ids,node_number_of_sf_resunits)
+    node_set.pya.initializeAccVar(2,node_ids,node_sum_unit_sqft_mf)
+    node_set.pya.initializeAccVar(3,node_ids,node_number_of_mf_resunits)
+    node_set.pya.initializeAccVar(4,node_ids,node_sum_sf_parcel_area)
+    node_set.pya.initializeAccVar(5,node_ids,node_number_of_sfdetach_resunits)
+    node_set.pya.initializeAccVar(6,node_ids,node_sum_sf_price)
+    node_set.pya.initializeAccVar(7,node_ids,node_sum_mf_price)
+    node_set.pya.initializeAccVar(8,node_ids,node_sum_sf_rent)
+    node_set.pya.initializeAccVar(9,node_ids,node_sum_mf_rent)
 
     sf_sqft=node_set.pya.getAllAggregateAccessibilityVariables(3000,0,0,1,0)
     sf_units=node_set.pya.getAllAggregateAccessibilityVariables(3000,1,0,1,0)
@@ -213,32 +178,62 @@ class DeveloperModel(Model):
     mf_rent=mf_rent.astype(integer)
     result=divide(mf_rent,mf_units)
     node_set.add_primary_attribute(name='avg_mf_unit_rent', data=result)
+    '''
 
-    empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)")
+    empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = where(empty_parcels==1)[0]
+    test_parcels = test_parcels[:10]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
-    for parcel in test_parcels[:1000]:
+
+    global parcel_set, z, node_set, SP
+
+    #import hotshot, hotshot.stats, test.pystone
+    #prof = hotshot.Profile('devmdl.prof')
+    #prof.start()
+
+    from multiprocessing import Pool
+    pool = Pool(processes=24)
+    results = pool.map(process_parcel,test_parcels)
+    results = [x for x in results if x <> None and x <> -1]
+    print results
+    #for p in test_parcels: process_parcel(p)
+    #print "DONE"
+    #prof.stop()
+    #prof.close()
+    #stats = hotshot.stats.load('devmdl.prof')
+    #stats.strip_dirs()
+    #stats.sort_stats('cumulative')
+    #stats.print_stats(20)
+
+def process_parcel(parcel):
+
+        global parcel_set, z, node_set, SP
+        sp = copy.deepcopy(SP) # LIMING, this is a major bottleneck but I can fix it later
+ 
         pid = parcel_set['parcel_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
         print "parcel_id is %d" % pid
-        print "node_id is %d" % node_id
+        if DEBUG > 0: print "node_id is %d" % node_id
         shape_area = parcel_set['shape_area'][parcel]
         v = float(shape_area)*10.7639
         set_value(excel,sp,"Bldg Form","C28",v)
 
         try: zoning = z.get_zoning(pid)
         except: 
-            print "Can't find zoning for parcel: %d, skipping\n" % pid
-            continue
+            print "Can't find zoning for parcel: %d, skipping" % pid
+            return
         btypes = z.get_building_types(pid)
         if not zoning:
-            print "NO ZONING FOR PARCEL\n"
-            continue
+            print "NO ZONING FOR PARCEL"
+            return
         if not btypes:
-            print "NO BUILDING TYPES FOR PARCEL\n"
-            continue
-        print "Parcel size is %f" % v
+            print "NO BUILDING TYPES FOR PARCEL"
+            return
+        if v < 800:
+            print "PARCEL SIZE IS TOO SMALL"
+            return
+        if DEBUG > 0: print "Parcel size is %f" % v
         far = z.get_attr(zoning,'max_far', 100)
         height = int(z.get_attr(zoning,'max_height', 1000))
 
@@ -249,7 +244,7 @@ class DeveloperModel(Model):
         if far > 1 or height > 15:
             set_value(excel,sp,"Bldg Form","C39",1) # multi-story
 
-        print "ZONING BTYPES:", btypes
+        if DEBUG > 0: print "ZONING BTYPES:", btypes
 
         # right now we can't have MF-CONDO (type 5)
         devmdl_btypes = []
@@ -272,20 +267,22 @@ class DeveloperModel(Model):
 
         idx_node_parcel = where(node_set['node_id']==node_id)[0]
 
-	print "DEVMDL BTYPES:", btypes
+        if DEBUG > 0: print "DEVMDL BTYPES:", btypes
+
+        maxnpv, maxbuilding = 0, -1
 
         for btype in btypes:
-            print "building type = %s" % btype
+            if DEBUG > 0: print "building type = %s" % btype
             
-            if btype in [1,2,3,4,5,6]: # RESIDENTIAL
+            if 1: #btype in [1,2,3,4,5,6]: # RESIDENTIAL
                 zone_id = parcel_set['zone_id'][parcel]
-                lotsize = node_set['avg_sf_lot_size'][idx_node_parcel]
-                unitsize = node_set['avg_sf_unit_size'][idx_node_parcel]
-                unitsize2 = node_set['avg_mf_unit_size'][idx_node_parcel]
-                unitprice = node_set['avg_sf_unit_price'][idx_node_parcel]
-                unitprice2 = node_set['avg_mf_unit_price'][idx_node_parcel]
-                unitrent = node_set['avg_sf_unit_rent'][idx_node_parcel]
-                unitrent2 = node_set['avg_mf_unit_rent'][idx_node_parcel]
+                lotsize = node_set['avg_sf_lot_size'][idx_node_parcel][0]
+                unitsize = node_set['avg_sf_unit_size'][idx_node_parcel][0]
+                unitsize2 = node_set['avg_mf_unit_size'][idx_node_parcel][0]
+                unitprice = node_set['avg_sf_unit_price'][idx_node_parcel][0]
+                unitprice2 = node_set['avg_mf_unit_price'][idx_node_parcel][0]
+                unitrent = node_set['avg_sf_unit_rent'][idx_node_parcel][0]
+                unitrent2 = node_set['avg_mf_unit_rent'][idx_node_parcel][0]
             if not unitsize: unitsize = 1111  
             if unitsize<250:  unitsize = 1111   
             if unitsize>8000:  unitsize = 8000
@@ -296,11 +293,12 @@ class DeveloperModel(Model):
             price_per_sqft_mf = (unitprice2*1.0)/unitsize2
             rent_per_sqft_sf = (unitrent*1.0)/unitsize
             rent_per_sqft_mf = (unitrent2*1.0)/unitsize2
-            print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
+            if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
+            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf)
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
             if lotsize>10000000: lotsize=10000000
-            print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
+            if DEBUG > 0: print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
 
             if btype in [4,6,8,9]:
                 set_value(excel,sp,"Bldg Form","C39",1) # ground floor retail
@@ -355,279 +353,33 @@ class DeveloperModel(Model):
                 allowable_uses(excel,sp,[78,82])
 
             elif btype == 14: # LODGING
-                continue # skip fo now
+                return # skip fo now
 
-            elif btype in COMMERCIALTYPES_D: # COMMERCIAL TYPES
-                allowable_uses(excel,sp,[COMMERCIALTYPES_D[btype]])
+            elif btype in devmdl_optimize.COMMERCIALTYPES_D: # COMMERCIAL TYPES
+                allowable_uses(excel,sp,[devmdl_optimize.COMMERCIALTYPES_D[btype]])
 
             else: assert(0)
 
-            X, npv = optimize(sp,btype)
-            if npv == -1: continue # error code
+            X, npv = devmdl_optimize.optimize(sp,btype,prices)
+            #if npv == -1: return # error code
+            if npv > maxnpv:
+                maxnpv = npv
+                sqft = 0 #sp.evaluate('Bldg Form!H97') 
+                stories = 0 #sqft / sp.evaluate('Bldg Form!H96') 
+                if btype in [1,2,3,4,5,6]: # RESIDENTIAL
+                    nonres_sqft = sp.evaluate('Bldg Form!K78') 
+                    res_sqft = sqft - nonres_sqft
+                    res_units = sum(X[0:4])
+                else:
+                    nonres_sqft = sqft
+                    res_sqft = 0
+                    res_units = 0
+                tenure = 0
+                if btype in [3,4]: tenure = 1
+                year_built = 2010
+                building = (pid, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
+                maxbuilding = building
 
-            _objfunc2(X,btype,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
-            print
-    node_set.delete_one_attribute('avg_sf_unit_size')
-    node_set.delete_one_attribute('avg_mf_unit_size')
-    node_set.delete_one_attribute('avg_sf_lot_size')
-    node_set.delete_one_attribute('avg_sf_unit_price')
-    node_set.delete_one_attribute('avg_mf_unit_price')
-    node_set.delete_one_attribute('avg_sf_unit_rent')
-    node_set.delete_one_attribute('avg_mf_unit_rent')
-
-def _objfunc(params,btype,saveexcel=0,excelprefix=None):
-    global sp
-    global c
-
-    e = None
-    if saveexcel: e = excel
-
-    if btype == 1: # single family one-off
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (63+i), params[i])
-    elif btype == 2: # single family builder
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (58+i), params[i])
-    elif btype == 3: # mf-rental
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (68+i), params[i])
-    elif btype == 5: # mf-condo
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
-    elif btype == 6: # mxd-condo
-        assert len(params) == 5
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
-        set_value(e,sp,'Bldg Form','K78', params[4])
-    elif btype in COMMERCIALTYPES_D: # commercial types
-        assert len(params) == 1
-        set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
-
-    npv = sp.evaluate('Proforma!B52')
-
-    if saveexcel and excel: 
-        save(excel.excel,'output/%s.xlsx' % excelprefix)
-
-    if DEBUG: print "PARAMS:", params
-    if DEBUG: print "NPV2", npv
-    return -1*npv/100000.0
-    	
-def _objfunc2(params,btype,saveexcel=0,excelprefix=None):
-
-    global proforma_inputs
-    e = None
-    if DEBUG: print "PARAMS", params
-    if btype == 1: # single family one-off
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (63+i), params[i])
-    elif btype == 2: # single family builder
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (58+i), params[i])
-    elif btype == 3: # mf-rental
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (68+i), params[i])
-    elif btype == 5: # mf-condo
-        assert len(params) == 4
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
-    elif btype == 6: # mxd-condo
-        assert len(params) == 5
-        for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (73+i), params[i])
-        set_value(e,sp,'Bldg Form','K78', params[4])
-    elif btype in COMMERCIALTYPES_D: # commercial types
-        assert len(params) == 1
-        set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
-
-    d = proforma_inputs['proposal_component']
-    logger.set_verbosity_level(0)
-    
-
-    d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
-    d['rent_revenue'] =      array([  0,  0,  0,  0,  0])
-    d['leases_revenue'] =    array([  0,  0,  0,  0,  0])
-    if btype in [1,2]: 
-      for i in range(4):
-        d['sales_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
-    elif btype in [5,6]:
-      for i in range(4):
-        d['sales_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
-    elif btype in [3,4]: 
-      for i in range(4):
-        d['rent_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
-    else:
-        d['leases_revenue'][4] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
-    d['sales_absorption'] =  .2*d['sales_revenue']
-    d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
-    d['leases_absorption'] = array([  1,  1,  1,  1,  6])
-
-    proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
-    if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
-
-    if DEBUG: print "SALES REVENUE", d['sales_revenue']
-    if DEBUG: print d['rent_revenue']
-    if DEBUG: print d['leases_revenue']
-    if DEBUG: print d['sales_absorption']
-    if DEBUG: print d['rent_absorption']
-    if DEBUG: print d['leases_absorption']
-
-    from opus_core.tests.utils import variable_tester
-    po=['urbansim_parcel','urbansim']
-    v = variable_tester.VariableTester('C:\\opus\\src\\urbansim_parcel\\proposal\\proforma.py',po,proforma_inputs)
-    npv = v._get_attribute('npv')
-    #print npv, "\n\n"
-    return -1*npv/100000.0
-
-def optimize(sp,btype):
-   
-    global bounds
-    bounds = []
-    if btype == 1: # single family one-off
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (63+i))
-            bounds.append(v)
-    
-    elif btype == 2: # single family builder
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (58+i))
-            bounds.append(v)
-
-    elif btype in [3,4]: # multifamily
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (68+i))
-            bounds.append(v)
-    
-    elif btype in [5,6]: # condo
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (73+i))
-            bounds.append(v)
-
-    elif btype in COMMERCIALTYPES_D:
-        v = sp.evaluate('Bldg Form!J%d' % COMMERCIALTYPES_D[btype])/SQFTFACTOR
-        bounds.append(v)
-
-    if btype in [4,6,8]: # ground floor retail
-        v = sp.evaluate('Bldg Form!J78')
-        bounds.append(v)
-
-    if bounds.count(0) == len(bounds):
-        print "Nothing to optimize\n"
-        return [], -1.0
-
-    bounds = numpy.array(bounds,dtype=numpy.float32)
-
-    x0 = numpy.array([0 for i in range(len(bounds))])
-
-    bounds = numpy.array([(0,x) for x in bounds],dtype=numpy.float32)
-    if DEBUG: print "BOUNDS: ", bounds
-
-    def ieqcons_sf_builder(X,*args):
-        global bounds
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!J88')
-        sqft -= sp.evaluate('Bldg Form!D58')*X[0]
-        sqft -= sp.evaluate('Bldg Form!D59')*X[1]
-        sqft -= sp.evaluate('Bldg Form!D60')*X[2]
-        sqft -= sp.evaluate('Bldg Form!D61')*X[3]
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_sf_oneoff(X,*args):
-        global bounds
-        #print bounds
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        units = 1 - X[0] - X[1] - X[2] - X[3]
-        cons.append(units)
-        #print cons
-        return numpy.array(cons)
-    
-    def ieqcons_mf_rental(X,*args):
-        global bounds
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!C49')
-        
-        for i in range(4): sqft -= sp.evaluate('Bldg Form!E%d'%(68+i))*X[i]
-        #sqft -= X[8]*SQFTFACTOR
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_mf_condo(X,*args):
-        global bounds
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!C49')
-        #print sqft
-        for i in range(4): sqft -= sp.evaluate('Bldg Form!E%d'%(73+i))*X[i]
-        #sqft -= X[8]*SQFTFACTOR
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_commercial(X,*args):
-        cons = []
-        sqft = sp.evaluate('Bldg Form!C49')
-        sqft -= X[0]*SQFTFACTOR
-        cons.append(sqft)
-        cons.append(X[0])
-        return numpy.array(cons)
-
-    ieqcons = None 
-    if btype == 1: ieqcons = ieqcons_sf_oneoff
-    elif btype == 2: ieqcons = ieqcons_sf_builder
-    elif btype in [3,4]: ieqcons = ieqcons_mf_rental
-    elif btype in [5,6]: ieqcons = ieqcons_mf_condo
-    elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
-    else: ieqcons = ieqcons_sf_oneoff #assert 0        ***************************** NOTE THIS WAS COMMENTED OUT FOR TESTING PURPOSES ONLY.  UNCOMMENT?? -->  ASSERTION ERROR
-
-    #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
-    if DEBUG:
-        r2 = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
-        print r2
-        r2[0] = numpy.round(r2[0], decimals=1)
-        r2[1] = _objfunc(r2[0],btype)
-
-    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
-    print r
-    r[0] = numpy.round(r[0], decimals=1)
-    r[1] = _objfunc2(r[0],btype)
-    if DEBUG: 
-        print r2
-        print r
-        numpy.testing.assert_approx_equal(r2[1],r[1],significant=1)
-
-    return r[0], r[1]
-
-def set_value(excel,sp,sheet,cell,value):
-    if excel:
-        excel.excel.app.ActiveWorkbook.Sheets(sheet).Range(cell).Value=float(value)
-    sp.set_value('%s!%s' % (sheet,cell), value)
-    
-def save(excel,fname):
-    excel.save_as(abspath(fname),True)
-
-if __name__ == '__main__':
-    d = DeveloperModel()
-    try:
-        d.load()
-    except Exception as e:
-        traceback.print_exc()
-    try: excel.excel.close()
-    except: pass
+            #_objfunc2(X,btype,prices,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
+            #print
+        return maxbuilding 

@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 from math import log
 import random, operator
-from pycel.excelutil import flatten
+from urbansim_parcel.proposal.pycel.excelutil import flatten
 import numpy
 
 ######################################################################################

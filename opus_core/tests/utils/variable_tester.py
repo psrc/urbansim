@@ -101,7 +101,7 @@ class VariableTester(object):
             variable_name = given_variable_name
         dataset_name = variable_name.split('.')[1]
         dataset = self.dataset_pool.get_dataset(dataset_name)
-        dataset.compute_variables(variable_name, self.dataset_pool)
+        dataset.compute_variables(variable_name, self.dataset_pool,quiet=True)
         return dataset.get_attribute(variable_name)
 
     def test_is_equal_for_variable_defined_by_this_module(self, test_class, should_be):

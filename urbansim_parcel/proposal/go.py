@@ -24,9 +24,10 @@ SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,9:79,10:80,11:81,12:83,13:84}
 
 '''
-run multithreaded
+deal with hardcoded paths
 cost factor by county
-buffer queries for revenue, absorption, and unit and lot size
+deal with outliers in accessibility computations
+write buildings back to db
 
 land cost
 deal with nonresidential building prices
@@ -35,6 +36,11 @@ get scenario-based zoning when it exists
 account for parking
 reimplement cost model
 check all the constants?
+'''
+
+'''
+DONE:
+run multithreaded
 '''
 
 def _objfunc(params,btype,saveexcel=0,excelprefix=None):

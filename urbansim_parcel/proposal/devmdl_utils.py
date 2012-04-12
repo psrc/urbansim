@@ -59,7 +59,7 @@ sum(building_sqft-non_residential_sqft)/sum(residential_units) > 300 order by _z
 	return my.parcels.keys()
 
     def get_attr(my,pid,attr_name):
-	return my.parcels[pid][my.parcelfnames[attr_name]]
+        return my.parcels[pid][my.parcelfnames[attr_name]]
 
     def get_lotsize(my, zone_id):
 	if zone_id not in my.lotsize or len(my.lotsize[zone_id]) == 0: return None
@@ -133,6 +133,6 @@ class Zoning():
 
     def get_attr(my, zoning, attr_name, default):
         ind = my.zoningfnames[attr_name]
-	v = zoning[ind]
-	if not v: return default
-	return v
+        v = zoning[ind]
+        if not v: return default
+        return v
