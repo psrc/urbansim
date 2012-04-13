@@ -8,7 +8,7 @@ from __future__ import division
 import os, sys, cPickle, traceback, time, string, StringIO
 from os.path import normpath,abspath
 import getopt
-from devmdl_utils import *
+from devmdl_zoning import *
 import devmdl_optimize
 from devmdl_optimize import set_value
 import numpy

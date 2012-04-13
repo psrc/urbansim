@@ -8,7 +8,7 @@ from pycel.excelutil import *
 from pycel.excellib import *
 from os.path import normpath,abspath
 import getopt
-from devmdl_utils import *
+from devmdl_zoning import *
 import numpy
 from numpy import array
 from scipy.optimize import *
