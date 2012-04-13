@@ -15,6 +15,18 @@ aliases = [
                          " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000) +" + \
                          " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000) +" + \
                          " 4 * (household.income >= 75000)",
+    "income_4_person_3 = 1 * (household.income < 25000)*(household.persons < 2) +" + \
+                         " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000)*(household.persons < 2) +" + \
+                         " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons < 2) +" + \
+                         " 4 * (household.income >= 75000)*(household.persons < 2) +" +\
+                         " 5 * (household.income < 25000)*(household.persons == 2) +" + \
+                         " 6 * numpy.logical_and(household.income >= 25000, household.income < 45000)*(household.persons == 2) +" + \
+                         " 7 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons == 2) +" + \
+                         " 8 * (household.income >= 75000)*(household.persons == 2) +" +\
+                         " 9 * (household.income < 25000)*(household.persons > 2) +" + \
+                         " 10 * numpy.logical_and(household.income >= 25000, household.income < 45000)*(household.persons > 2) +" + \
+                         " 11 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons > 2) +" + \
+                         " 12 * (household.income >= 75000)*(household.persons > 2)",
     "submarket_id = household.disaggregate(bayarea.building.submarket_id)",
 
            ]
