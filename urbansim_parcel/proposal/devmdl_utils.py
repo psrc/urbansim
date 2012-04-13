@@ -2,7 +2,7 @@ import psycopg2
 
 class Parcels():
     def __init__(my):
-        conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='Visua1ization'"
+        conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='***'"
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
 
