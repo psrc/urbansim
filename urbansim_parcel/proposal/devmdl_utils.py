@@ -70,7 +70,7 @@ sum(building_sqft-non_residential_sqft)/sum(residential_units) > 300 order by _z
 
 class Zoning():
     def __init__(my):
-        conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='Visua1ization'"
+        conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='***'"
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
 
