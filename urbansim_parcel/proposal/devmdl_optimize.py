@@ -143,7 +143,8 @@ def _objfunc2(params,btype,prices,sp,bounds,saveexcel=0,excelprefix=None):
 			#max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
     else:
         d['leases_revenue'][4] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+            X[0]*20.0 # we need price info for non-residential!
+			#max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
     d['sales_absorption'] =  .2*d['sales_revenue']
     d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
     d['leases_absorption'] = array([  1,  1,  1,  1,  6])

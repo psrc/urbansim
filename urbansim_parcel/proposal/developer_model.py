@@ -40,7 +40,7 @@ class DeveloperModel(Model):
     generatepython = 0
     generatedb = 0
     repressoutput = 0
-    fname = os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/proforma.xlsx')
+    fname = os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/costproforma.xlsx')
     opts, args = getopt.getopt(sys.argv[1:], "dgrf:")
     for o, a in opts:
         if o == "-d": generatedb = 1
@@ -182,7 +182,7 @@ class DeveloperModel(Model):
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = where(empty_parcels==1)[0]
-    test_parcels = test_parcels[:10]
+    test_parcels = test_parcels[:1000]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
 
@@ -209,7 +209,7 @@ class DeveloperModel(Model):
 def process_parcel(parcel):
 
         global parcel_set, z, node_set, SP
-        sp = copy.deepcopy(SP) # LIMING, this is a major bottleneck but I can fix it later
+        sp = copy.deepcopy(SP)
  
         pid = parcel_set['parcel_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
