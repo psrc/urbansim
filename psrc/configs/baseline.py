@@ -78,7 +78,7 @@ class Baseline(GeneralConfiguration):
                     'employment_adhoc_sector_groups',
                     #'employment_events',
                     'employment_sectors',
-                    'land_use_events',
+                    #'land_use_events',
                     'plan_types',
                     'race_names',
                     'target_vacancies',
