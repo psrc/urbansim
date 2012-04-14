@@ -79,7 +79,7 @@ def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     if DEBUG: print "NPV2", npv
     return -1*npv/100000.0
     	
-def _objfunc2(params, dataset_pool, btype, saveexcel=0, excelprefix=None):
+def _objfunc2(params,btype,saveexcel=0,excelprefix=None):
 
     global proforma_inputs
     e = None
@@ -104,16 +104,12 @@ def _objfunc2(params, dataset_pool, btype, saveexcel=0, excelprefix=None):
         assert len(params) == 1
         set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
 
-    #d = proforma_inputs['proposal_component']
-    proposal = dataset_pool.get_dataset('proposal')
-    proposal_comp = dataset_pool.get_dataset('proposal_component')
+    d = proforma_inputs['proposal_component']
     logger.set_verbosity_level(0)
 
-    d = {}
     d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
     d['rent_revenue'] =      array([  0,  0,  0,  0,  0])
     d['leases_revenue'] =    array([  0,  0,  0,  0,  0])
-
     if btype in [1,2]: 
       for i in range(4):
         d['sales_revenue'][i] = \
@@ -129,36 +125,24 @@ def _objfunc2(params, dataset_pool, btype, saveexcel=0, excelprefix=None):
     else:
         d['leases_revenue'][4] = \
 			max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+    d['sales_absorption'] =  .2*d['sales_revenue']
+    d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
+    d['leases_absorption'] = array([  1,  1,  1,  1,  6])
 
-    proposal_component.modify_attribute('sales_revenue', d['sales_revenue']))
-    proposal_component.modify_attribute('rent_revenue',  d['rent_revenue']))
-    proposal_component.modify_attribute('lease_revenue', d['leases_revenue']))
-
-    proposal_component.modify_attribute('sales_absorption', .2*d['sales_revenue']))
-    ##updatate these when needed
-    #proposal_component.modify_attribute('rent_absorption',   ?)
-    #proposal_component.modify_attribute('leases_absorption', ?)
-    #d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
-    #d['leases_absorption'] = array([  1,  1,  1,  1,  6])
-
-    proposal.modify_attribute('construction_cost') = array(sp.evaluate('Proforma Inputs!B40'))
-    if DEBUG: print "COST:", proposal'construction_cost')
-    #proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
-    #if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
+    proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
+    if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
 
     if DEBUG: print "SALES REVENUE", d['sales_revenue']
     if DEBUG: print d['rent_revenue']
     if DEBUG: print d['leases_revenue']
-    #if DEBUG: print d['sales_absorption']
-    #if DEBUG: print d['rent_absorption']
-    #if DEBUG: print d['leases_absorption']
+    if DEBUG: print d['sales_absorption']
+    if DEBUG: print d['rent_absorption']
+    if DEBUG: print d['leases_absorption']
 
-    #from opus_core.tests.utils import variable_tester
-    #po=['urbansim_parcel','urbansim']
-    #v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
-    #npv = v._get_attribute('npv')
-    npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
-                                     dataset_pool=dataset_pool)
+    from opus_core.tests.utils import variable_tester
+    po=['urbansim_parcel','urbansim']
+    v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
+    npv = v._get_attribute('npv')
     #print npv, "\n\n"
     return -1*npv/100000.0
 
@@ -287,8 +271,7 @@ def optimize(sp,btype):
         r2[0] = numpy.round(r2[0], decimals=1)
         r2[1] = _objfunc(r2[0],btype)
 
-    dataset_pool = setup_dataset_pool()
-    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[dataset_pool,btype],iter=150,acc=.001)
+    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
     print r
     r[0] = numpy.round(r[0], decimals=1)
     r[1] = _objfunc2(r[0],btype)
@@ -307,8 +290,7 @@ def set_value(excel,sp,sheet,cell,value):
 def save(excel,fname):
     excel.save_as(abspath(fname),True)
 	
-def setup_dataset_pool():
-    proforma_inputs = {            
+proforma_inputs = {            
             'parcel':
             {
                 "parcel_id":        array([1]),
@@ -343,13 +325,8 @@ def setup_dataset_pool():
                "construction_cost":     array([ 30]) * 1000000,
                "public_contribution":   array([ 0.0]),
             },
-    }
+}
 
-    from opus_core.tests.utils import variable_tester
-    po=['urbansim_parcel','urbansim']
-    v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
-    return v.dataset_pool
- 
 class DeveloperModel:
 
   def __init__(my):
