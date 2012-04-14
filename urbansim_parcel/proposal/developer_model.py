@@ -88,8 +88,21 @@ class DeveloperModel(Model):
         sys.exit(0)
 
     #set_value(excel,sp,'Revenue Model','B97',100.0) # artificially increase retail revenue for testing
+    
+    try:
+        dataset_pool = SessionConfiguration().get_dataset_pool()
+    except:
+        from opus_core.store.attribute_cache import AttributeCache
+        from opus_core.simulation_state import SimulationState
+        ss = SimulationState()
+        ss.set_cache_directory(os.path.join(os.environ['OPUS_DATA'], 'bay_area_parcel/runs/run_21.2012_04_13_18_01'))
+        ss.set_current_time(2010)
+        attribute_cache = AttributeCache()
+        dataset_pool = SessionConfiguration(new_instance=True,
+                                 package_order=['bayarea', 'urbansim_parcel', 'urbansim', 'opus_core'],
+                                 in_storage=attribute_cache
+                                ).get_dataset_pool()        
 
-    dataset_pool = SessionConfiguration().get_dataset_pool()
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
     building_set = dataset_pool.get_dataset('residential_unit')
@@ -383,3 +396,6 @@ def process_parcel(parcel):
             #_objfunc2(X,btype,prices,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
             #print
         return maxbuilding 
+
+if __name__ == "__main__":
+    DeveloperModel().run()

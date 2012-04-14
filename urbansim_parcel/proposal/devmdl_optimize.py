@@ -9,13 +9,15 @@ DEBUG = 0
 SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 
-PROFORMA_INPUTS = {            
-            'parcel':
-            {
-                "parcel_id":        array([1]),
-                "property_tax":     array([0.01]),
-                "land_cost":        array([ 1]) * 100000, #Land + other equity
-            },
+def setup_dataset_pool():
+    proforma_inputs = {            
+                    'parcel':
+                    {
+                        "parcel_id":        array([1]),
+                        "property_tax":     array([0.01]),
+                        "land_cost":        array([ 1]) * 100000, #Land + other equity
+                    },
+                    
             'proposal_component':
             {
                "proposal_component_id": array([1,  2,  3,  4,  5]),
@@ -25,10 +27,12 @@ PROFORMA_INPUTS = {
                "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
                "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
                "rent_revenue":          array([ .1,0.2,0.3,0.4,  0]) * 1000000,
-               "rent_absorption":       array([  8,  4,  4,  8,  8]),
                "leases_revenue":        array([  0,  0,  0,  0,  4]) * 1000000,
-               "leases_absorption":     array([  0,  0,  0,  0,  8]),
-               "vacancy_rates":        array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
+                #"rent_absorption":       array([  8,  4,  4,  8,  8]),
+                #"leases_absorption":     array([  0,  0,  0,  0,  8]),
+               'rent_absorption':      array([  8,  4,  4,  8,  8]),
+               'leases_absorption':    array([  1,  1,  1,  1,  6]),
+               "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
                "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
              },
             'proposal':
@@ -43,7 +47,12 @@ PROFORMA_INPUTS = {
                "construction_cost":     array([ 30]) * 1000000,
                "public_contribution":   array([ 0.0]),
             },
-}
+    }
+
+    from opus_core.tests.utils import variable_tester
+    po=['urbansim_parcel','urbansim']
+    v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
+    return v.dataset_pool
 
 def set_value(excel,sp,sheet,cell,value):
     if excel:
@@ -90,10 +99,10 @@ def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     if DEBUG > 1: print "NPV2", npv
     return -1*npv/100000.0
     	
-def _objfunc2(params,btype,prices,sp,bounds,saveexcel=0,excelprefix=None):
+def _objfunc2(params, btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix=None):
 
-    global PROFORMA_INPUTS
-    proforma_inputs = copy.copy(PROFORMA_INPUTS)
+    #global PROFORMA_INPUTS
+    #proforma_inputs = copy.copy(PROFORMA_INPUTS)
     X = params
 
     e = None
@@ -118,13 +127,16 @@ def _objfunc2(params,btype,prices,sp,bounds,saveexcel=0,excelprefix=None):
         assert len(params) == 1
         set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
 
-    d = proforma_inputs['proposal_component']
+    #d = proforma_inputs['proposal_component']
+    proposal = dataset_pool.get_dataset('proposal')
+    proposal_comp = dataset_pool.get_dataset('proposal_component')
     logger.set_verbosity_level(0)
-    
 
+    d = {}
     d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
     d['rent_revenue'] =      array([  0,  0,  0,  0,  0])
     d['leases_revenue'] =    array([  0,  0,  0,  0,  0])
+
     if btype in [1,2]: 
       for i in range(4):
         d['sales_revenue'][i] = \
@@ -145,24 +157,37 @@ def _objfunc2(params,btype,prices,sp,bounds,saveexcel=0,excelprefix=None):
         d['leases_revenue'][4] = \
             X[0]*20.0 # we need price info for non-residential!
 			#max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
-    d['sales_absorption'] =  .2*d['sales_revenue']
-    d['rent_absorption'] =   array([  8,  4,  4,  8,  -1])
-    d['leases_absorption'] = array([  -1,  -1,  -1,  -1,  6])
 
-    proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
-    if DEBUG > 1: print "COST:",proforma_inputs['proposal']['construction_cost']
+    proposal_comp.modify_attribute('sales_revenue', d['sales_revenue'])
+    proposal_comp.modify_attribute('rent_revenue',  d['rent_revenue'])
+    proposal_comp.modify_attribute('leases_revenue', d['leases_revenue'])
+
+    proposal_comp.modify_attribute('sales_absorption', .2*d['sales_revenue'])
+    ##updatate these when needed
+    #proposal_comp.modify_attribute('rent_absorption',   ?)
+    #proposal_comp.modify_attribute('leases_absorption', ?)
+    #d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
+    #d['leases_absorption'] = array([  1,  1,  1,  1,  6])
+
+    proposal.modify_attribute('construction_cost', array(sp.evaluate('Proforma Inputs!B40')))
+    if DEBUG: print "COST:", proposal['construction_cost']
+    #proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
+    #if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
 
     if DEBUG > 1: print "SALES REVENUE", d['sales_revenue']
     if DEBUG > 1: print d['rent_revenue']
     if DEBUG > 1: print d['leases_revenue']
-    if DEBUG > 1: print d['sales_absorption']
-    if DEBUG > 1: print d['rent_absorption']
-    if DEBUG > 1: print d['leases_absorption']
+    #if DEBUG > 1: print d['sales_absorption']
+    #if DEBUG > 1: print d['rent_absorption']
+    #if DEBUG > 1: print d['leases_absorption']
 
-    from opus_core.tests.utils import variable_tester
-    po=['urbansim_parcel','urbansim']
-    v = variable_tester.VariableTester('/home/ffoti/urbansim/src/urbansim_parcel/proposal/proforma.py',po,proforma_inputs)
-    npv = v._get_attribute('npv')
+    #from opus_core.tests.utils import variable_tester
+    #po=['urbansim_parcel','urbansim']
+    #v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
+    #npv = v._get_attribute('npv')
+    npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
+                                     dataset_pool=dataset_pool)
+ 
     #print npv, "\n\n"
     return -1*npv/100000.0
 
@@ -296,11 +321,12 @@ def optimize(sp,btype,prices):
         r2[0] = numpy.round(r2[0], decimals=1)
         r2[1] = _objfunc(r2[0],btype)
 
-    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds],iter=150,acc=.01)
+    dataset_pool = setup_dataset_pool()
+    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds, dataset_pool],iter=150,acc=.01)
     if DEBUG > 0: print r
     #print r
     r[0] = numpy.round(r[0], decimals=1)
-    r[1] = _objfunc2(r[0],btype,prices,sp,bounds)
+    r[1] = _objfunc2(r[0],btype,prices,sp,bounds, dataset_pool)
     if 0: #DEBUG: 
         print r2
         print r
