@@ -7,6 +7,7 @@ from urbansim_parcel.proposal.pycel.excellib import *
 from scipy.optimize import *
 from numpy import array
 from opus_core.logger import logger
+from proforma import proforma
 import copy
 
 DEBUG = 0
@@ -14,14 +15,14 @@ SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0
 
-def setup_dataset_pool():
+def setup_dataset_pool(opus=True):
     proforma_inputs = {            
-            'parcel':
-            {
-                "parcel_id":        array([1]),
-                "property_tax":     array([0.01]),
-                "land_cost":        array([ 1]) * 100000, #Land + other equity
-            },
+        #'parcel':
+        #    {
+        #        "parcel_id":        array([1]),
+        #        "property_tax":     array([0.01]),
+        #        "land_cost":        array([ 1]) * 100000, #Land + other equity
+        #    },
             
             'proposal_component':
             {
@@ -57,6 +58,9 @@ def setup_dataset_pool():
                "public_contribution":   array([ 0.0]),
 
                 ##below are supposedly computed attributes; converted to primary attributes for speed
+                "property_tax":     array([0.01]),
+                "land_cost":        array([ 1]) * 100000, #Land + other equity
+
                 "sales_revenue":         array([ 0.0]),
                 "sales_revenue_per_period": array([ 0.0]),
                 "rent_revenue":             array([ 0.0]),
@@ -71,10 +75,14 @@ def setup_dataset_pool():
             },
     }
 
-    from opus_core.tests.utils import variable_tester
-    po=['urbansim_parcel','urbansim']
-    v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
-    return v.dataset_pool
+    if opus:
+        from opus_core.tests.utils import variable_tester
+        po=['urbansim_parcel','urbansim']
+        v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
+        dataset_pool = v.dataset_pool
+    else:
+        dataset_pool = proforma_inputs
+    return dataset_pool
 
 def set_value(excel,sp,sheet,cell,value):
     if excel:
@@ -154,8 +162,10 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
         set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
 
     #d = proforma_inputs['proposal_component']
-    proposal = dataset_pool.get_dataset('proposal')
-    proposal_comp = dataset_pool.get_dataset('proposal_component')
+    #proposal = dataset_pool.get_dataset('proposal')
+    proposal = dataset_pool['proposal']
+    #proposal_comp = dataset_pool.get_dataset('proposal_component')
+    proposal_comp = dataset_pool['proposal_component']
 
     d = {}
     d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
@@ -222,8 +232,9 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     #po=['urbansim_parcel','urbansim']
     #v = variable_tester.VariableTester('proforma.py',po,proforma_inputs)
     #npv = v._get_attribute('npv')
-    npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
-                                     dataset_pool=dataset_pool)
+    npv = proforma.do_proforma(proposal, proposal_comp)
+    #npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
+    #                                 dataset_pool=dataset_pool)
  
     #print npv, "\n\n"
     return -1*npv/100000.0
@@ -351,7 +362,12 @@ def optimize(sp,btype,prices):
     elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
     else: ieqcons = ieqcons_sf_oneoff 
     
-    dataset_pool = setup_dataset_pool()
+    dataset_pool = setup_dataset_pool(opus=False)
+    #proposal = dataset_pool.get_dataset('proposal')
+    logger.set_verbosity_level(0)
+    #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
+    #                            "land_cost = proposal.disaggregate(parcel.land_cost)"], 
+    #                           dataset_pool=dataset_pool)
 
     #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
     if 0: #DEBUG:
@@ -360,11 +376,6 @@ def optimize(sp,btype,prices):
         #r2[0] = numpy.round(r2[0], decimals=1)
         #r2[1] = _objfunc(r2[0],btype)
 
-    proposal = dataset_pool.get_dataset('proposal')
-    logger.set_verbosity_level(0)
-    proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
-                                "land_cost = proposal.disaggregate(parcel.land_cost)"], 
-                               dataset_pool=dataset_pool)
    
     r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds, dataset_pool],iter=150,acc=.01)
     #if DEBUG > 0: print r
