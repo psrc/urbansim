@@ -33,7 +33,7 @@ class proforma(Variable):
     _return_type = "float32"
     
     def dependencies(self):
-        return []
+        return ['proposal.construction_cost']
     
 #               [
 #                "property_tax = proposal.disaggregate(parcel.property_tax)",
