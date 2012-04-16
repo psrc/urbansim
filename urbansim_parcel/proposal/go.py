@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 '''
 Simple example file showing how a spreadsheet can be translated to python and executed
 '''
@@ -78,7 +82,7 @@ def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     if DEBUG: print "PARAMS:", params
     if DEBUG: print "NPV2", npv
     return -1*npv/100000.0
-    	
+        
 def _objfunc2(params,btype,saveexcel=0,excelprefix=None):
 
     global proforma_inputs
@@ -113,18 +117,18 @@ def _objfunc2(params,btype,saveexcel=0,excelprefix=None):
     if btype in [1,2]: 
       for i in range(4):
         d['sales_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
+            max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
     elif btype in [5,6]:
       for i in range(4):
         d['sales_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
+            max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
     elif btype in [3,4]: 
       for i in range(4):
         d['rent_revenue'][i] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
+            max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
     else:
         d['leases_revenue'][4] = \
-			max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+            max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
     d['sales_absorption'] =  .2*d['sales_revenue']
     d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
     d['leases_absorption'] = array([  1,  1,  1,  1,  6])
@@ -289,7 +293,7 @@ def set_value(excel,sp,sheet,cell,value):
     
 def save(excel,fname):
     excel.save_as(abspath(fname),True)
-	
+    
 proforma_inputs = {            
             'parcel':
             {
@@ -302,7 +306,7 @@ proforma_inputs = {
             {
                "proposal_component_id": array([1,  2,  3,  4,  5]),
                "proposal_id":           array([1,  1,  1,  1,  1]),
-	           "building_type_id":      array([1,  1,  1,  1,  5]),  
+               "building_type_id":      array([1,  1,  1,  1,  5]),  
                "bedrooms":              array([1,  2,  3,  4,  0]),
                "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
                "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
@@ -421,12 +425,12 @@ class DeveloperModel:
         devmdl_btypes = []
         if 1 in btypes or 2 in btypes: devmdl_btypes+=[1,2]
         if 3 in btypes: 
-	    devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
+        devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
         if 4 in btypes: devmdl_btypes.append(7) # office to office
         #if 5 in btypes: continue # hotel
         #if 6 in btypes: continue # schools
         if 7 in btypes or 8 in btypes: # light industrial and warehouse to warehouse
-	    devmdl_btypes.append(13) 
+        devmdl_btypes.append(13) 
         if 9 in btypes: devmdl_btypes.append(12) # heavy industrial to manufacturing
         if 10 in btypes: devmdl_btypes.append(10) # strip mall to auto
         if 11 in btypes: devmdl_btypes.append(11) # big box to big box
@@ -436,7 +440,7 @@ class DeveloperModel:
 
         btypes = devmdl_btypes
 
-	print "DEVMDL BTYPES:", btypes
+    print "DEVMDL BTYPES:", btypes
 
         for btype in btypes:
             print "building type = %s" % btype
@@ -448,8 +452,8 @@ class DeveloperModel:
                 unitsize2 = p.get_unitsize(zone_id,'MR')
             if not unitsize: unitsize = 1111
             if not unitsize2: unitsize2 = 888
-	    if not lotsize: lotsize = 11111
-	    print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
+        if not lotsize: lotsize = 11111
+        print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
 
             if btype in [4,6,8,9]:
                 set_value(excel,sp,"Bldg Form","C39",1) # ground floor retail

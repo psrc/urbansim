@@ -33,26 +33,31 @@ class proforma(Variable):
     _return_type = "float32"
     
     def dependencies(self):
-        return ["property_tax = proposal.disaggregate(parcel.property_tax)",
-                "land_cost = proposal.disaggregate(parcel.land_cost)",
-                "sales_revenue = proposal.aggregate(proposal_component.sales_revenue)",
-                "sales_revenue_per_period = proposal.aggregate(proposal_component.sales_absorption)",
-                "rent_revenue = proposal.aggregate(proposal_component.rent_revenue)",
-                "rent_revenue_per_period = safe_array_divide(proposal_component.rent_revenue, proposal_component.rent_absorption)",
-                "rent_revenue_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period)",
-                "rent_vacancy_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period * proposal_component.vacancy_rates)",
-                "rent_operating_cost_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period * proposal_component.operating_cost)",
-
-                "leases_revenue = proposal.aggregate(proposal_component.leases_revenue)",
-                "leases_revenue_per_period = safe_array_divide(proposal_component.leases_revenue, proposal_component.leases_absorption)",
-                "leases_revenue_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period)",
-                "leases_vacancy_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period * proposal_component.vacancy_rates)",
-                "leases_operating_cost_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period * proposal_component.operating_cost)",
-                #"urbansim_parcel.proposal.existing_units",
-                #"improvement_value=proposal.disaggregate(urbansim_parcel.parcel.improvement_value)",
-                #"urbansim_parcel.proposal.land_area_taken",
-                #"land_area=proposal.disaggregate(parcel.parcel_sqft)",
-                ]
+        return []
+    
+#               [
+#                "property_tax = proposal.disaggregate(parcel.property_tax)",
+#                "land_cost = proposal.disaggregate(parcel.land_cost)",
+#
+#                "sales_revenue = proposal.aggregate(proposal_component.sales_revenue)",
+#                "sales_revenue_per_period = proposal.aggregate(proposal_component.sales_absorption)",
+#                "rent_revenue = proposal.aggregate(proposal_component.rent_revenue)",
+#                "rent_revenue_per_period = safe_array_divide(proposal_component.rent_revenue, proposal_component.rent_absorption)",
+#                "rent_revenue_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period)",
+#                "rent_vacancy_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period * proposal_component.vacancy_rates)",
+#                "rent_operating_cost_per_period = proposal.aggregate(proposal_component.rent_revenue_per_period * proposal_component.operating_cost)",
+#
+#                "leases_revenue = proposal.aggregate(proposal_component.leases_revenue)",
+#                "leases_revenue_per_period = safe_array_divide(proposal_component.leases_revenue, proposal_component.leases_absorption)",
+#                "leases_revenue_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period)",
+#
+#                "leases_vacancy_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period * proposal_component.vacancy_rates)",
+#                "leases_operating_cost_per_period = proposal.aggregate(proposal_component.leases_revenue_per_period * proposal_component.operating_cost)",
+#                #"urbansim_parcel.proposal.existing_units",
+#                #"improvement_value=proposal.disaggregate(urbansim_parcel.parcel.improvement_value)",
+#                #"urbansim_parcel.proposal.land_area_taken",
+#                #"land_area=proposal.disaggregate(parcel.parcel_sqft)",
+#                ]
 
     def compute(self, dataset_pool):
         p = self.get_dataset()
@@ -279,12 +284,12 @@ class Tests(opus_unittest.OpusTestCase):
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
 
     def test_external(self):
-	if not hasattr(self,'external_proforma_inputs'): return
+        if not hasattr(self,'external_proforma_inputs'): return
         tester = VariableTester(
             __file__,
             package_order=['urbansim_parcel','urbansim'],
             test_data=self.external_proforma_inputs
-	    )
+        )
         should_be = array([-4938532.5]) #array([-5116654.78223655])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)

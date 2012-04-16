@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 '''
 run multithreaded, cost factor by county, buffer queries for revenue, absorption, and unit and lot size
 land cost, deal with nonresidential building prices, get scenario-based zoning when it exists
@@ -105,7 +109,7 @@ class DeveloperModel(Model):
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
-    building_set = dataset_pool.get_dataset('residential_unit')
+    #building_set = dataset_pool.get_dataset('residential_unit')
     node_set = dataset_pool.get_dataset('node')
     node_ids = array(node_set.node_ids, dtype="int32")
     '''
@@ -195,7 +199,7 @@ class DeveloperModel(Model):
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = where(empty_parcels==1)[0]
-    test_parcels = test_parcels[:1000]
+    test_parcels = test_parcels[:10]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
     import time
@@ -203,26 +207,26 @@ class DeveloperModel(Model):
 
     global parcel_set, z, node_set, SP
 
-    #import hotshot, hotshot.stats, test.pystone
-    #prof = hotshot.Profile('devmdl.prof')
-    #prof.start()
+    import hotshot, hotshot.stats, test.pystone
+    prof = hotshot.Profile('devmdl.prof')
+    prof.start()
 
-    from multiprocessing import Pool
-    pool = Pool(processes=24)
-    results = pool.map(process_parcel,test_parcels)
-    results = [x for x in results if x <> None and x <> -1]
-    print results
-    #for p in test_parcels: process_parcel(p)
+    #from multiprocessing import Pool
+    #pool = Pool(processes=24)
+    #results = pool.map(process_parcel,test_parcels)
+    #results = [x for x in results if x <> None and x <> -1]
+    #print results
+    for p in test_parcels: process_parcel(p)
     t2 = time.time()
     print "Finished in %f seconds" % (t2-t1)
     print "Ran optimization %d times" % devmdl_optimize.OBJCNT
-    #print "DONE"
-    #prof.stop()
-    #prof.close()
-    #stats = hotshot.stats.load('devmdl.prof')
-    #stats.strip_dirs()
-    #stats.sort_stats('cumulative')
-    #stats.print_stats(20)
+    print "DONE"
+    prof.stop()
+    prof.close()
+    stats = hotshot.stats.load('devmdl.prof')
+    stats.strip_dirs()
+    stats.sort_stats('cumulative')
+    stats.print_stats(20)
 
 def process_parcel(parcel):
 
@@ -268,12 +272,12 @@ def process_parcel(parcel):
         devmdl_btypes = []
         if 1 in btypes or 2 in btypes: devmdl_btypes+=[1,2]
         if 3 in btypes: 
-	    devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
+            devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
         if 4 in btypes: devmdl_btypes.append(7) # office to office
         #if 5 in btypes: continue # hotel
         #if 6 in btypes: continue # schools
         if 7 in btypes or 8 in btypes: # light industrial and warehouse to warehouse
-	    devmdl_btypes.append(13) 
+            devmdl_btypes.append(13) 
         if 9 in btypes: devmdl_btypes.append(12) # heavy industrial to manufacturing
         if 10 in btypes: devmdl_btypes.append(10) # strip mall to auto
         if 11 in btypes: devmdl_btypes.append(11) # big box to big box

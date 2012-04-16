@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 from urbansim_parcel.proposal.pycel.excelutil import *
 from urbansim_parcel.proposal.pycel.excellib import *
 from scipy.optimize import *
@@ -12,18 +16,18 @@ OBJCNT = 0
 
 def setup_dataset_pool():
     proforma_inputs = {            
-                    'parcel':
-                    {
-                        "parcel_id":        array([1]),
-                        "property_tax":     array([0.01]),
-                        "land_cost":        array([ 1]) * 100000, #Land + other equity
-                    },
-                    
+            'parcel':
+            {
+                "parcel_id":        array([1]),
+                "property_tax":     array([0.01]),
+                "land_cost":        array([ 1]) * 100000, #Land + other equity
+            },
+            
             'proposal_component':
             {
                "proposal_component_id": array([1,  2,  3,  4,  5]),
                "proposal_id":           array([1,  1,  1,  1,  1]),
-	           "building_type_id":      array([1,  1,  1,  1,  5]),  
+               "building_type_id":      array([1,  1,  1,  1,  5]),  
                "bedrooms":              array([1,  2,  3,  4,  0]),
                "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
                "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
@@ -35,6 +39,10 @@ def setup_dataset_pool():
                'leases_absorption':    array([  1,  1,  1,  1,  6]),
                "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
                "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
+
+                ##below are supposedly computed attributes; converted to primary attributes for speed
+                "rent_revenue_per_period":   array([0, 0, 0, 0, 0]),
+                "leases_revenue_per_period": array([0, 0, 0, 0, 0]),
              },
             'proposal':
             {
@@ -47,6 +55,19 @@ def setup_dataset_pool():
                "total_sqft":            array([ 75]) * 100,
                "construction_cost":     array([ 30]) * 1000000,
                "public_contribution":   array([ 0.0]),
+
+                ##below are supposedly computed attributes; converted to primary attributes for speed
+                "sales_revenue":         array([ 0.0]),
+                "sales_revenue_per_period": array([ 0.0]),
+                "rent_revenue":             array([ 0.0]),
+                "rent_revenue_per_period":  array([0.0]),
+                "rent_vacancy_per_period":  array([0.0]),
+                "rent_operating_cost_per_period": array([0.0]),
+                "leases_revenue":           array([0.0]),
+                "leases_revenue_per_period":array([0.0]),
+                "leases_vacancy_per_period":array([0.0]),
+                "leases_operating_cost_per_period": array([0.0])
+
             },
     }
 
@@ -100,7 +121,7 @@ def _objfunc(params,btype,prices,sp,bounds,dataset_pool,saveexcel=0,excelprefix=
     if DEBUG > 1: print "PARAMS:", params
     if DEBUG > 1: print "NPV2", npv
     return -1*npv/100000.0
-    	
+        
 def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix=None):
 
     global OBJCNT
@@ -135,7 +156,6 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     #d = proforma_inputs['proposal_component']
     proposal = dataset_pool.get_dataset('proposal')
     proposal_comp = dataset_pool.get_dataset('proposal_component')
-    logger.set_verbosity_level(0)
 
     d = {}
     d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
@@ -145,36 +165,48 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     if btype in [1,2]: 
       for i in range(4):
         d['sales_revenue'][i] = \
-			sp.evaluate('Bldg Form!E%d' % (58+i))*prices[0]*X[i]
-			#max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
+            sp.evaluate('Bldg Form!E%d' % (58+i))*prices[0]*X[i]
+            #max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
     elif btype in [5,6]:
       for i in range(4):
         d['sales_revenue'][i] = \
-			sp.evaluate('Bldg Form!E%d' % (68+i))*prices[1]*X[i]
-			#max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
+            sp.evaluate('Bldg Form!E%d' % (68+i))*prices[1]*X[i]
+            #max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
     elif btype in [3,4]: 
       for i in range(4):
         d['rent_revenue'][i] = \
-			sp.evaluate('Bldg Form!E%d' % (68+i))*prices[3]*3*X[i]
+            sp.evaluate('Bldg Form!E%d' % (68+i))*prices[3]*3*X[i]
             # rents are per month but need to be period so we multiply by 3
-			#max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
+            #max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
     else:
         d['leases_revenue'][4] = \
             X[0]*20.0 # we need price info for non-residential!
-			#max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+            #max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
 
-    proposal_comp.modify_attribute('sales_revenue', d['sales_revenue'])
-    proposal_comp.modify_attribute('rent_revenue',  d['rent_revenue'])
-    proposal_comp.modify_attribute('leases_revenue', d['leases_revenue'])
+    proposal_comp['sales_revenue'] = d['sales_revenue']
+    proposal_comp['rent_revenue'] = d['rent_revenue']
+    proposal_comp['leases_revenue'] = d['leases_revenue']
+    proposal['sales_revenue'] = proposal_comp['sales_revenue'].sum()
+    proposal['rent_revenue'] = proposal_comp['rent_revenue'].sum()
+    proposal['leases_revenue'] = proposal_comp['leases_revenue'].sum()
 
-    proposal_comp.modify_attribute('sales_absorption', .2*d['sales_revenue'])
+    proposal_comp['sales_absorption'] = .2*d['sales_revenue']
     ##updatate these when needed
-    #proposal_comp.modify_attribute('rent_absorption',   ?)
-    #proposal_comp.modify_attribute('leases_absorption', ?)
+    #proposal_comp['rent_absorption'] =  ?
+    #proposal_comp['leases_absorption'] = ?
     #d['rent_absorption'] =   array([  8,  4,  4,  8,  8])
     #d['leases_absorption'] = array([  1,  1,  1,  1,  6])
+    proposal_comp['rent_revenue_per_period'] = proposal_comp['rent_revenue'] / proposal_comp['rent_absorption']
+    proposal_comp['leases_revenue_per_period'] = proposal_comp['leases_revenue'] / proposal_comp['leases_absorption']
 
-    proposal.modify_attribute('construction_cost', array(sp.evaluate('Proforma Inputs!B40')))
+    proposal['rent_revenue_per_period'] =  proposal_comp['rent_revenue_per_period'].sum()
+    proposal['leases_revenue_per_period'] = proposal_comp['leases_revenue_per_period'].sum()
+    proposal['rent_operating_cost_per_period'] = (proposal_comp['rent_revenue_per_period'] * proposal_comp['operating_cost']).sum()
+    proposal['leases_operating_cost_per_period'] = (proposal_comp['leases_revenue_per_period'] * proposal_comp['operating_cost']).sum()
+    proposal['rent_vacancy_per_period'] = (proposal_comp['rent_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
+    proposal['leases_vacancy_per_period'] = (proposal_comp['leases_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
+
+    proposal['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
     if DEBUG: print "COST:", proposal['construction_cost']
     #proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
     #if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
@@ -328,6 +360,12 @@ def optimize(sp,btype,prices):
         #r2[0] = numpy.round(r2[0], decimals=1)
         #r2[1] = _objfunc(r2[0],btype)
 
+    proposal = dataset_pool.get_dataset('proposal')
+    logger.set_verbosity_level(0)
+    proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
+                                "land_cost = proposal.disaggregate(parcel.land_cost)"], 
+                               dataset_pool=dataset_pool)
+   
     r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds, dataset_pool],iter=150,acc=.01)
     #if DEBUG > 0: print r
     #print r
