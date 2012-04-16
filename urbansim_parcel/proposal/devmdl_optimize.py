@@ -162,10 +162,12 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
         set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
 
     #d = proforma_inputs['proposal_component']
-    #proposal = dataset_pool.get_dataset('proposal')
-    proposal = dataset_pool['proposal']
-    #proposal_comp = dataset_pool.get_dataset('proposal_component')
-    proposal_comp = dataset_pool['proposal_component']
+    if type(dataset_pool) == dict:
+        proposal = dataset_pool['proposal']
+        proposal_comp = dataset_pool['proposal_component']
+    else:
+        proposal = dataset_pool.get_dataset('proposal')
+        proposal_comp = dataset_pool.get_dataset('proposal_component')
 
     d = {}
     d['sales_revenue'] =     array([  0,  0,  0,  0,  0])
@@ -362,7 +364,7 @@ def optimize(sp,btype,prices):
     elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
     else: ieqcons = ieqcons_sf_oneoff 
     
-    dataset_pool = setup_dataset_pool(opus=False)
+    dataset_pool = setup_dataset_pool(opus=True)
     #proposal = dataset_pool.get_dataset('proposal')
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
