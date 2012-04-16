@@ -364,7 +364,7 @@ def optimize(sp,btype,prices):
     elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
     else: ieqcons = ieqcons_sf_oneoff 
     
-    dataset_pool = setup_dataset_pool(opus=True)
+    dataset_pool = setup_dataset_pool(opus=False)
     #proposal = dataset_pool.get_dataset('proposal')
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
