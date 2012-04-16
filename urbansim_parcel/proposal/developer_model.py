@@ -198,6 +198,8 @@ class DeveloperModel(Model):
     test_parcels = test_parcels[:1000]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
+    import time
+    t1 = time.time()
 
     global parcel_set, z, node_set, SP
 
@@ -211,6 +213,9 @@ class DeveloperModel(Model):
     results = [x for x in results if x <> None and x <> -1]
     print results
     #for p in test_parcels: process_parcel(p)
+    t2 = time.time()
+    print "Finished in %f seconds" % (t2-t1)
+    print "Ran optimization %d times" % devmdl_optimize.OBJCNT
     #print "DONE"
     #prof.stop()
     #prof.close()

@@ -8,6 +8,7 @@ import copy
 DEBUG = 0
 SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
+OBJCNT = 0
 
 def setup_dataset_pool():
     proforma_inputs = {            
@@ -63,9 +64,10 @@ def save(excel,fname):
     excel.save_as(abspath(fname),True)
 
 
-def _objfunc(params,btype,saveexcel=0,excelprefix=None):
-    global sp
+def _objfunc(params,btype,prices,sp,bounds,dataset_pool,saveexcel=0,excelprefix=None):
     global c
+    global OBJCNT
+    OBJCNT += 1    
 
     e = None
     if saveexcel: e = excel
@@ -99,7 +101,10 @@ def _objfunc(params,btype,saveexcel=0,excelprefix=None):
     if DEBUG > 1: print "NPV2", npv
     return -1*npv/100000.0
     	
-def _objfunc2(params, btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix=None):
+def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix=None):
+
+    global OBJCNT
+    OBJCNT += 1    
 
     #global PROFORMA_INPUTS
     #proforma_inputs = copy.copy(PROFORMA_INPUTS)
@@ -313,17 +318,18 @@ def optimize(sp,btype,prices):
     elif btype in [5,6]: ieqcons = ieqcons_mf_condo
     elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
     else: ieqcons = ieqcons_sf_oneoff 
+    
+    dataset_pool = setup_dataset_pool()
 
     #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
     if 0: #DEBUG:
-        r2 = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=1,full_output=1,epsilon=1,args=[btype],iter=150,acc=.001)
-        print r2
-        r2[0] = numpy.round(r2[0], decimals=1)
-        r2[1] = _objfunc(r2[0],btype)
+        r = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds,dataset_pool],iter=150,acc=.01)
+        print r
+        #r2[0] = numpy.round(r2[0], decimals=1)
+        #r2[1] = _objfunc(r2[0],btype)
 
-    dataset_pool = setup_dataset_pool()
     r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds, dataset_pool],iter=150,acc=.01)
-    if DEBUG > 0: print r
+    #if DEBUG > 0: print r
     #print r
     r[0] = numpy.round(r[0], decimals=1)
     r[1] = _objfunc2(r[0],btype,prices,sp,bounds, dataset_pool)
