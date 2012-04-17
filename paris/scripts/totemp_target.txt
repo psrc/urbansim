@@ -1,0 +1,13 @@
+zgp_id	name                   totemp_2005
+21      Clichy-Montfermeil             61923   
+22      Biotech                        296013  
+23      Confluence                     164733  
+24      Descartes                      175687  
+25      LaDefense                      322928  
+26      LeBourget                      44679   
+47      Pleyel                         147720  
+48      Roissy-pole                    219996  
+49      Saclay                         394291  
+50      ValdeFrance-Gonesse            47097   
+75      Paris                          1646905
+99      autrescommunes                 1838475

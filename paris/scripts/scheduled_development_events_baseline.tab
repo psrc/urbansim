@@ -1,0 +1,2 @@
+year:i4	action:S20	attribute:S40	amount:i4	building_id:i4	zone_id:i4	building_type_id:i4
+2032	add_value	residential_units	0	5949	-1	-1

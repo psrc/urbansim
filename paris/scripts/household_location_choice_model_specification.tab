@@ -1,0 +1,1119 @@
+coefficient_name:S20	equation_id:i4	sub_model_id:i2	variable_name:S556
+biotech_chlcm	-2	1	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	1	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	1	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	1	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	1	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	1	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceH	-2	1	CLCsPriceH = ln_bounded(building.price)
+CLCsPriceH_HRRinc	-2	1	CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	1	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CNGsubwSP_HBRcar0	-2	1	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	1	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	1	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	1	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+CNRsUnitsH	-2	1	CNRsUnitsH = building.residential_units
+confluence_chlcm	-2	1	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	1	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	1	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	1	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	1	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	1	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	1	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	1	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	1	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	1	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	1	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	1	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	1	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	1	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	1	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	1	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	1	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	1	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	1	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	1	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	1	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	1	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	1	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	1	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	1	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	1	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	1	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	1	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	1	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	1	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	1	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	2	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	2	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	2	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	2	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	2	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	2	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceF	-2	2	CLCsPriceF = ln_bounded(building.price)
+CLCsPriceF_HRRinc	-2	2	CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	2	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsF	-2	2	CLRsUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	2	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	2	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	2	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	2	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	2	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	2	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	2	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	2	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	2	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	2	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	2	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	2	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	2	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	2	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	2	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	2	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	2	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	2	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	2	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	2	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	2	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	2	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	2	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	2	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	2	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	2	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	2	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	2	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	2	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	2	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	2	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	2	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	2	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	2	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	2	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	3	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	3	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	3	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	3	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	3	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	3	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceH	-2	3	CLCrPriceH = ln_bounded(building.price)
+CLCrPriceH_HRRinc	-2	3	CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	3	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsH	-2	3	CLRrUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	3	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	3	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	3	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	3	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	3	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	3	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	3	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	3	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	3	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	3	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	3	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	3	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	3	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	3	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	3	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	3	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	3	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	3	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	3	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	3	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	3	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	3	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	3	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	3	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	3	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	3	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	3	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	3	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	3	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	3	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	3	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	3	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	3	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	3	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	3	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	4	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	4	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	4	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	4	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	4	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	4	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceF	-2	4	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	4	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	4	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	4	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	4	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	4	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	4	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	4	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	4	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	4	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	4	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	4	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	4	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	4	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	4	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	4	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	4	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	4	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	4	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	4	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	4	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	4	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	4	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	4	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	4	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	4	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	4	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	4	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	4	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	4	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	4	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	4	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	4	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	4	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	4	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	4	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	4	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	4	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	4	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	5	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	5	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	5	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	5	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	5	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	5	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceH	-2	5	CLCsPriceH = ln_bounded(building.price)
+CLCsPriceH_HRRinc	-2	5	CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	5	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsH	-2	5	CLRsUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	5	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	5	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	5	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	5	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	5	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	5	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	5	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	5	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	5	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	5	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	5	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	5	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	5	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	5	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	5	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	5	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	5	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	5	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	5	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	5	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	5	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	5	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	5	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	5	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	5	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	5	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	5	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	5	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	5	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	5	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	5	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	5	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	5	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	5	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	5	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	6	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	6	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	6	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	6	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	6	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	6	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceF	-2	6	CLCsPriceF = ln_bounded(building.price)
+CLCsPriceF_HRRinc	-2	6	CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	6	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsF	-2	6	CLRsUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	6	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	6	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	6	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	6	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	6	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	6	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	6	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	6	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	6	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	6	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	6	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	6	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	6	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	6	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	6	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	6	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	6	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	6	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	6	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	6	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	6	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	6	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	6	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	6	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	6	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	6	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	6	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	6	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	6	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	6	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	6	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	6	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	6	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	6	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	6	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	7	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	7	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	7	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	7	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	7	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	7	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceH	-2	7	CLCrPriceH = ln_bounded(building.price)
+CLCrPriceH_HRRinc	-2	7	CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	7	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsH	-2	7	CLRrUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	7	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	7	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	7	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	7	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	7	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	7	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	7	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	7	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	7	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	7	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	7	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	7	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	7	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	7	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	7	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	7	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	7	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	7	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	7	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	7	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	7	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	7	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	7	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	7	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	7	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	7	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	7	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	7	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	7	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	7	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	7	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	7	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	7	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	7	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	7	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	8	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	8	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	8	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	8	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	8	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	8	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceF	-2	8	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	8	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	8	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	8	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	8	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	8	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	8	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	8	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	8	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	8	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	8	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	8	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	8	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	8	CPOforest = building.disaggregate(zone.cpbois)
+CPOwater	-2	8	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	8	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	8	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	8	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	8	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	8	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	8	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	8	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	8	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	8	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	8	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	8	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	8	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	8	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	8	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	8	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	8	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	8	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	8	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	8	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	8	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	8	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	8	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	8	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	8	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	9	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	9	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	9	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	9	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	9	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	9	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceH	-2	9	CLCsPriceH = ln_bounded(building.price)
+CLCsPriceH_HRRinc	-2	9	CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	9	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsH	-2	9	CLRsUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	9	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	9	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	9	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	9	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	9	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	9	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	9	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	9	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	9	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	9	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	9	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	9	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	9	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	9	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	9	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	9	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	9	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	9	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	9	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	9	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	9	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	9	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	9	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	9	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	9	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	9	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	9	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	9	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	9	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	9	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	9	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	9	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	9	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	9	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	9	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	9	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	10	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	10	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	10	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	10	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	10	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	10	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceF	-2	10	CLCsPriceF = ln_bounded(building.price)
+CLCsPriceF_HRRinc	-2	10	CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	10	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsF	-2	10	CLRsUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	10	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	10	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	10	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	10	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	10	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	10	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	10	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	10	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	10	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	10	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	10	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	10	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	10	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	10	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	10	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	10	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	10	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	10	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	10	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	10	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	10	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	10	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	10	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	10	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	10	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	10	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	10	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	10	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	10	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	10	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	10	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	10	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	10	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	10	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	10	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	10	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	11	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	11	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	11	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	11	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	11	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	11	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceH	-2	11	CLCrPriceH = ln_bounded(building.price)
+CLCrPriceH_HRRinc	-2	11	CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	11	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsH	-2	11	CLRrUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	11	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	11	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	11	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	11	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	11	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	11	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	11	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	11	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	11	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	11	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	11	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	11	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	11	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	11	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	11	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	11	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	11	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	11	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	11	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	11	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	11	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	11	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	11	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	11	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	11	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	11	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	11	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	11	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	11	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	11	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	11	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	11	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	11	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	11	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	11	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	11	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	12	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	12	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	12	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	12	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	12	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	12	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceF	-2	12	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	12	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	12	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	12	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	12	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	12	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	12	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	12	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	12	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	12	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	12	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	12	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	12	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	12	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	12	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	12	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	12	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	12	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	12	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	12	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	12	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	12	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	12	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	12	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	12	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	12	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	12	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	12	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	12	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	12	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	12	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	12	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	12	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	12	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	12	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	12	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	12	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	12	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	12	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	12	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	13	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	13	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	13	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	13	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	13	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	13	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceH	-2	13	CLCsPriceH = ln_bounded(building.price)
+CLCsPriceH_HRRinc	-2	13	CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	13	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsH	-2	13	CLRsUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	13	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	13	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	13	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	13	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	13	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	13	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	13	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	13	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	13	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	13	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	13	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	13	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	13	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	13	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	13	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	13	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	13	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	13	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	13	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	13	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	13	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	13	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	13	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	13	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	13	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	13	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	13	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	13	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	13	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	13	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	13	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	13	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	13	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	13	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	13	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	13	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	14	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	14	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	14	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	14	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	14	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	14	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCsPriceF	-2	14	CLCsPriceF = ln_bounded(building.price)
+CLCsPriceF_HRRinc	-2	14	CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	14	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsF	-2	14	CLRsUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	14	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	14	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	14	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	14	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	14	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	14	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	14	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	14	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	14	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	14	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	14	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	14	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	14	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	14	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	14	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	14	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	14	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	14	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	14	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	14	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	14	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	14	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	14	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	14	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	14	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	14	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	14	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	14	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	14	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	14	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	14	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	14	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	14	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	14	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	14	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	14	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	15	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	15	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	15	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	15	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	15	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	15	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceH	-2	15	CLCrPriceH = ln_bounded(building.price)
+CLCrPriceH_HRRinc	-2	15	CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	15	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsH	-2	15	CLRrUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	15	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	15	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	15	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	15	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	15	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	15	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	15	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	15	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	15	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	15	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	15	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	15	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	15	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	15	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	15	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	15	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	15	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	15	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	15	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	15	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	15	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	15	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	15	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	15	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	15	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	15	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	15	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	15	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	15	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	15	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	15	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	15	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	15	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	15	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	15	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	15	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	16	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	16	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	16	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	16	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGart	-2	16	CDGart = building.disaggregate(zone.cdistart)/1000
+CDGhighw	-2	16	CDGhighw = building.disaggregate(zone.cdisthwy)/1000
+CLCrPriceF	-2	16	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	16	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	16	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	16	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	16	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	16	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	16	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	16	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	16	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	16	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	16	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	16	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	16	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	16	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	16	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	16	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	16	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	16	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	16	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	16	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	16	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	16	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	16	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	16	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	16	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	16	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	16	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	16	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	16	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	16	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	16	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	16	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	16	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	16	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	16	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	16	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	16	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	16	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	16	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	16	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	17	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	17	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	17	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	17	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	17	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	17	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	17	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	17	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCsPriceH	-2	17	CLCsPriceH = ln_bounded(building.price)
+CLCsPriceH_HRRinc	-2	17	CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	17	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsH	-2	17	CLRsUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	17	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	17	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	17	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	17	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	17	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	17	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	17	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	17	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	17	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	17	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	17	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	17	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	17	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	17	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	17	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	17	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	17	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	17	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	17	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	17	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	17	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	17	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	17	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	17	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	17	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	17	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	17	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	17	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	17	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	17	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	17	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	17	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	17	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	17	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	17	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	17	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	18	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	18	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	18	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	18	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	18	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	18	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	18	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	18	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCsPriceF	-2	18	CLCsPriceF = ln_bounded(building.price)
+CLCsPriceF_HRRinc	-2	18	CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	18	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRsUnitsF	-2	18	CLRsUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	18	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	18	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	18	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	18	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	18	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	18	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	18	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	18	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	18	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	18	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	18	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	18	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	18	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	18	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1g_HBRam1g	-2	18	CPRam1g_HBRam1g = (household.workers>=1)*(building.disaggregate(zone.aggregate(household.workers>=1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	18	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	18	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	18	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	18	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	18	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	18	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	18	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	18	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	18	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	18	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	18	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	18	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	18	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	18	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	18	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	18	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	18	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	18	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	18	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	18	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	18	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	19	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	19	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	19	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	19	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	19	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	19	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	19	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	19	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceH	-2	19	CLCrPriceH = ln_bounded(building.price)
+CLCrPriceH_HRRinc	-2	19	CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	19	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsH	-2	19	CLRrUnitsH = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	19	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	19	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	19	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	19	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	19	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	19	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	19	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	19	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	19	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	19	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	19	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	19	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	19	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	19	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	19	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	19	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	19	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	19	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	19	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	19	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	19	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	19	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	19	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	19	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	19	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	19	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	19	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	19	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	19	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	19	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	19	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	19	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	19	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	19	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	19	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	19	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	19	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	20	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	20	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	20	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	20	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	20	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	20	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	20	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	20	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceF	-2	20	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	20	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	20	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	20	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	20	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	20	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	20	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	20	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	20	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	20	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	20	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	20	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	20	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	20	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	20	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	20	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	20	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	20	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	20	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	20	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	20	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	20	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	20	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	20	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	20	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	20	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	20	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	20	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	20	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	20	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	20	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	20	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	20	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	20	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	20	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	20	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	20	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	20	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	20	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	20	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	20	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	21	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	21	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	21	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	21	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	21	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	21	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	21	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	21	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceF	-2	21	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	21	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	21	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	21	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	21	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	21	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	21	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	21	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	21	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	21	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	21	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	21	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	21	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	21	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	21	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	21	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	21	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	21	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	21	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	21	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	21	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	21	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	21	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	21	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	21	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	21	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	21	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	21	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	21	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	21	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	21	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	21	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	21	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	21	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	21	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	21	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	21	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	21	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	21	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	21	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	21	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	22	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	22	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	22	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	22	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	22	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	22	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	22	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	22	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceF	-2	22	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	22	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	22	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	22	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	22	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	22	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	22	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	22	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	22	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	22	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	22	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	22	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	22	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	22	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	22	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	22	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	22	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	22	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	22	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	22	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	22	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	22	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	22	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	22	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	22	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	22	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	22	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	22	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	22	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	22	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	22	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	22	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	22	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	22	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	22	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	22	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	22	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	22	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	22	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	22	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	22	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	23	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	23	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	23	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	23	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	23	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	23	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	23	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	23	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceF	-2	23	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	23	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	23	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	23	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	23	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	23	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	23	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	23	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	23	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	23	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	23	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	23	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	23	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	23	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	23	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	23	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	23	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	23	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	23	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	23	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	23	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	23	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	23	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	23	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	23	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	23	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	23	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	23	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	23	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	23	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	23	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	23	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	23	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	23	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	23	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	23	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	23	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	23	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	23	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	23	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	23	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
+biotech_chlcm	-2	24	biotech_chlcm = (paris.building.zgp_id==22) * 0
+CBAnwCty	-2	24	CBAnwCty = building.disaggregate(zone.cvilnouvel)
+CBAparis	-2	24	CBAparis = building.disaggregate(zone.dept==75)
+CBAPC	-2	24	CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+CDGartClse	-2	24	CDGartClse = building.disaggregate(zone.cdgartclse)
+CDGartFar	-2	24	CDGartFar = building.disaggregate(zone.cdgartfar)
+CDGhighwClse	-2	24	CDGhighwClse = building.disaggregate(zone.cdghighwclse)
+CDGhighwFar	-2	24	CDGhighwFar = building.disaggregate(zone.cdghighwfar)
+CLCrPriceF	-2	24	CLCrPriceF = ln_bounded(building.price)
+CLCrPriceF_HRRinc	-2	24	CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)
+clichy_montfermeil_chlcm	-2	24	clichy_montfermeil_chlcm = (paris.building.zgp_id==21) * 0
+CLRrUnitsF	-2	24	CLRrUnitsF = ln_bounded(building.residential_units)
+CNGsubwSP_HBRcar0	-2	24	CNGsubwSP_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.csubway9))
+CNGsubwSP_HBRcar1g	-2	24	CNGsubwSP_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.csubway9))
+CNGtrainSt_HBRcar0	-2	24	CNGtrainSt_HBRcar0 = (household.cars==0)*(building.disaggregate(zone.ctrain9))
+CNGtrainSt_HBRcar1g	-2	24	CNGtrainSt_HBRcar1g = (household.cars>=1)*(building.disaggregate(zone.ctrain9))
+confluence_chlcm	-2	24	confluence_chlcm = (paris.building.zgp_id==23) * 0
+CPBhghInc_HBRhghInc	-2	24	CPBhghInc_HBRhghInc = (household.lincomepc>10.3)*(building.disaggregate(zone.aggregate(household.lincomepc>10.3, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBlowInc_HBRlowInc	-2	24	CPBlowInc_HBRlowInc = (household.lincomepc<=9.9)*(building.disaggregate(zone.aggregate(household.lincomepc<=9.9, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPBMedInc_HBRmedInc	-2	24	CPBMedInc_HBRmedInc = (household.lincomepc<=10.3)*(household.lincomepc>9.9)*((building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.lincomepc<=9.9, intermediates = [building])- zone.aggregate(household.lincomepc>10.3, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum))))*100)
+CPInoise	-2	24	CPInoise = building.disaggregate(zone.cnoise)
+CPOforest	-2	24	CPOforest = building.disaggregate(zone.cpbois)
+CPOpark	-2	24	CPOpark = building.disaggregate(zone.cpparc_jardin)
+CPOwater	-2	24	CPOwater = building.disaggregate(zone.cpeau)
+CPRaft90	-2	24	CPRaft90 = building.disaggregate(zone.cpraft90)
+CPRam0_HBRam0	-2	24	CPRam0_HBRam0 = (household.workers==0)*(building.disaggregate(zone.aggregate(household.workers==0, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam1_HBRam1	-2	24	CPRam1_HBRam1 = (household.workers==1)*(building.disaggregate(zone.aggregate(household.workers==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRam2g_HBRam2g	-2	24	CPRam2g_HBRam2g = (household.workers>=2)*(building.disaggregate(zone.aggregate(household.workers>=2, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRbef15	-2	24	CPRbef15 = building.disaggregate(zone.cprbef15)
+CPRKfrgn_KBRfrgn	-2	24	CPRKfrgn_KBRfrgn = (household.race_id==1)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKfrgn_KBRnoFrgn	-2	24	CPRKfrgn_KBRnoFrgn = (household.race_id==0)*(building.disaggregate(zone.aggregate(household.race_id==1, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKmidAge_KBRmidAge	-2	24	CPRKmidAge_KBRmidAge = ((household.age_of_head>35) * (household.age_of_head<=55))*(building.disaggregate(zone.aggregate(building.number_of_agents(household),function=sum)- zone.aggregate(household.age_of_head>55, intermediates = [building])- zone.aggregate(household.age_of_head<=35, intermediates = [building]))/building.disaggregate((zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKold_KBRold	-2	24	CPRKold_KBRold = (household.age_of_head>55)*(building.disaggregate(zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CPRKyng_KBRyng	-2	24	CPRKyng_KBRyng = (household.age_of_head<=35)*(building.disaggregate(zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.aggregate(building.number_of_agents(household),function=sum)))*100)
+CREdensEmp	-2	24	CREdensEmp = building.disaggregate(zone.aggregate(establishment.employment,function=sum))/(1000*building.disaggregate(zone.careakm2))
+CRRdensPop	-2	24	CRRdensPop = building.disaggregate(zone.ZRRdensPop)
+ctdtco_HBRcar0	-2	24	ctdtco_HBRcar0 = (household.cars==0)*(building.ctdtco)
+ctdtco_HBRcar1g	-2	24	ctdtco_HBRcar1g = (household.cars>=1)*(building.ctdtco)
+ctdvpo_HBRcar0	-2	24	ctdvpo_HBRcar0 = (household.cars==0)*(building.ctdvpo)
+ctdvpo_HBRcar1g	-2	24	ctdvpo_HBRcar1g = (household.cars>=1)*(building.ctdvpo)
+descartes_chlcm	-2	24	descartes_chlcm = (paris.building.zgp_id==24) * 0
+HBRsmeDept	-2	24	HBRsmeDept = (household.previous_dpt==75)*(building.disaggregate(zone.dept==75))+(household.previous_dpt==77)*(building.disaggregate(zone.dept==77))+(household.previous_dpt==78)*(building.disaggregate(zone.dept==78))+(household.previous_dpt==91)*(building.disaggregate(zone.dept==91))+(household.previous_dpt==92)*(building.disaggregate(zone.dept==92))+(household.previous_dpt==93)*(building.disaggregate(zone.dept==93))+(household.previous_dpt==94)*(building.disaggregate(zone.dept==94))+(household.previous_dpt==95)*(building.disaggregate(zone.dept==95))
+la_defense_chlcm	-2	24	la_defense_chlcm = (paris.building.zgp_id==25) * 0
+le_bourget_chlcm	-2	24	le_bourget_chlcm = (paris.building.zgp_id==26) * 0
+paris_pole_chlcm	-2	24	paris_pole_chlcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) * 0 
+pleyel_chlcm	-2	24	pleyel_chlcm = (paris.building.zgp_id==47) * 0
+roissy_chlcm	-2	24	roissy_chlcm = (paris.building.zgp_id==48) * 0
+saclay_chlcm	-2	24	saclay_chlcm = (paris.building.zgp_id==49) * 0
+val_de_france_gonesse_chlcm	-2	24	val_de_france_gonesse_chlcm = (paris.building.zgp_id==50) * 0
