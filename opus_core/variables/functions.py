@@ -25,6 +25,13 @@ def exp(v):
     """Returns exp of its argument."""
     return numpy.exp(v)
 
+def expfin(v):
+    """Returns exp of its argument where all infinite values are clipped to the maximum of its type."""
+    result = numpy.exp(v)
+    pidx = numpy.isinf(result)
+    result[numpy.where(pidx)] = numpy.finfo(result.dtype).max
+    return result
+
 def ln(v):
     """Returns an array of natural logarithms. Values = 0 result in 0."""
     return ma.filled(ma.log(ma.masked_where(v==0,v)),0.0)
@@ -130,6 +137,13 @@ class Tests(opus_unittest.OpusTestCase):
 
         input = np.random.randn(2, 3, 6) * 6 + 4.5
         self.assert_(np.allclose(zscore(input), z(input)))
+        
+    def test_expfin(self):
+        import numpy as np
+        type = np.exp(1).dtype
+        self.function_tester('expfin', np.array([1000, 8, 700, 10, 0], dtype='int32'), 
+                                        [np.finfo(type).max, 2980.9579870417283, 1.0142320547350045e+304,
+                                         22026.465794806718, 1.0])
        
     # the function_tester is just set up for unary functions, and safe_array_divide takes two numpy arguments,
     # so it is tested separately
