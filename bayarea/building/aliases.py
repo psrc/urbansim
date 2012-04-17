@@ -4,9 +4,10 @@
 
 aliases = [
     "zone_id = building.disaggregate(parcel.zone_id)",
-    "superd = building.disaggregate(parcel.superd)",
-    "neighborhood_type = building.disaggregate(parcel.neighborhood_type)",
-    "building_type = 1*(building.building_type_id==1) + 2*(building.building_type_id==2) + 3*(building.building_type_id>2)",
+    "superdistrict_id = building.disaggregate((parcel.superdistrict_id)*(parcel.superdistrict_id>0)+(parcel.superdistrict_id<1))",
+    "schooldistrict = building.disaggregate((parcel.schooldistrict_id)*(parcel.schooldistrict_id>0))",
+    "neighborhood_type = building.disaggregate((parcel.neighborhood_type)*(parcel.neighborhood_type>0)+(parcel.neighborhood_type<1))",
+    "building_type = 1*(building.building_type_id<2) + 2*(building.building_type_id==2) + 3*(building.building_type_id>2)",
     "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id"
            ]
