@@ -50,7 +50,8 @@ aliases = [
              "acquisition_cost = clip_to_zero(development_project_proposal.disaggregate(parcel.land_value + urbansim_parcel.parcel.improvement_value) - development_project_proposal.disaggregate(urbansim_parcel.parcel.improvement_value) * (development_project_proposal.is_redevelopment == 0))",
              "total_investment = (psrc_parcel.development_project_proposal.acquisition_cost + urbansim_parcel.development_project_proposal.demolition_cost + urbansim_parcel.development_project_proposal.construction_cost).astype(float32)",
              #"total_revenue = development_project_proposal.total_parcel_value_per_sqft * urbansim_parcel.development_project_proposal.parcel_sqft",
-             "total_revenue = development_project_proposal.parcel_land_value + urbansim_parcel.development_project_proposal.construction_cost",
+             #"total_revenue = development_project_proposal.parcel_land_value + urbansim_parcel.development_project_proposal.construction_cost",
+             "total_revenue = development_project_proposal.disaggregate(parcel.expected_sales_price_per_unit) * development_project_proposal.units_proposed",
              "profit = psrc_parcel.development_project_proposal.total_revenue - psrc_parcel.development_project_proposal.total_investment",
              "expected_rate_of_return_on_investment = safe_array_divide(psrc_parcel.development_project_proposal.profit, psrc_parcel.development_project_proposal.total_investment)"
            ]
