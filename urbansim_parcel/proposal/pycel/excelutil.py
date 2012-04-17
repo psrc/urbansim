@@ -206,10 +206,10 @@ class Cell(object):
             fs = r.Formula
             vs = r.Value
           
-	    try: vs[0][0]
-	    except: vs = [[vs]]
+        try: vs[0][0]
+        except: vs = [[vs]]
             
-	    for it in (list(izip(*x)) for x in izip(ads,fs,vs)):
+        for it in (list(izip(*x)) for x in izip(ads,fs,vs)):
                 row = []
                 for c in it:
                     a = c[0]
