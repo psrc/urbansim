@@ -11,7 +11,8 @@ import traceback
 from gc import collect
 from opus_core.singleton import Singleton
 from opus_core.strings import indent_text
-
+from functools import wraps
+from contextlib import contextmanager
 
 # Current code supports portable memory logging with psutil Python package.
 _can_get_memory_usage = False
@@ -417,8 +418,50 @@ class _Logger(Singleton):
 # so callers can say 'from opus_core.logger import logger'.
 logger = _Logger()        
 
-import copy
+@contextmanager
+def block(name='Unnamed block', verbose=True, *args, **kwargs):
+    """ 
+    arguments directly map to 
+    logger.start_block(name='Unnamed block', verbose=True, tags=[], verbosity_level=3) 
 
+    Enable block as a context manager, e.g.
+    with block(name='new block'):
+        do something
+        logger.log_status('log stuff')
+
+    """
+    logger.start_block(name=name, verbose=verbose, *args, **kwargs)
+    try:
+        yield None
+    finally:
+        logger.end_block(verbose=verbose)
+
+def log_block(*decorator_args, **decorator_kwargs):
+    """ 
+    arguments directly map to 
+    logger.start_block(name='Unnamed block', verbose=True, tags=[], verbosity_level=3) 
+
+    Decorator providing block logging:
+    @log_block()
+    def my_func(x, y):
+        print x + y
+
+    my_func('a', 'b')
+    #outputs: 
+    my_func: started on Tue Apr 17 10:14:12 2012........0.0 sec
+    ab
+    """
+    def factory(func):
+        if not decorator_args and 'name' not in decorator_kwargs:
+            decorator_kwargs['name'] = func.__name__
+        @wraps(func)
+        def decorator(*func_args, **func_kwargs):
+            with block(*decorator_args, **decorator_kwargs):
+                return func(*func_args, **func_kwargs)
+        return decorator
+    return factory
+
+import copy
 from opus_core.tests import opus_unittest
 
 class LoggerTests(opus_unittest.OpusTestCase):
