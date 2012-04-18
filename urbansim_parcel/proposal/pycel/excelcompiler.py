@@ -115,7 +115,7 @@ class Spreadsheet(object):
         # no formula, fixed value
         if not cell.formula or cell.value != None:
             #print "  returning constant or cached value for ", cell.address()
-        if type(cell.value) == type(Decimal()): return float(cell.value)
+            if type(cell.value) == type(Decimal()): return float(cell.value)
             return cell.value
         
         # recalculate formula

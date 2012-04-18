@@ -210,14 +210,14 @@ class Cell(object):
         except: vs = [[vs]]
             
         for it in (list(izip(*x)) for x in izip(ads,fs,vs)):
-                row = []
-                for c in it:
-                    a = c[0]
-                    f = c[1] if c[1] and c[1].startswith('=') else None
-                    v = c[2]
-                    cl = Cell(a,sheet,value=v, formula=f)
-                    row.append(cl)
-                cells.append(row)
+            row = []
+            for c in it:
+                a = c[0]
+                f = c[1] if c[1] and c[1].startswith('=') else None
+                v = c[2]
+                cl = Cell(a,sheet,value=v, formula=f)
+                row.append(cl)
+            cells.append(row)
             
             #return as vector
             if numrows == 1:
