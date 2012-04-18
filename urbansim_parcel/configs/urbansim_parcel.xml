@@ -214,69 +214,62 @@
           </estimate>
         </structure>
       </model>
+
       <model name="employment_transition_model" type="model">
         <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_transition_model</class_module>
-            <class_name>EmploymentTransitionModel</class_name>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name hidden="True" name="name" type="string">EmploymentTransitionModel</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">ETM</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">control_totals</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_employment_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
-            <argument name="job_building_types" type="string">job_building_type</argument>
-            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
       <model name="employment_relocation_model" type="model">
         <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_relocation_model_creator</class_module>
-            <class_name>EmploymentRelocationModelCreator</class_name>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.agent_relocation_model</class_module>
+            <class_name>AgentRelocationModel</class_name>
           </import>
           <init type="dictionary">
-            <name hidden="True" name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Relocation Model</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">AgentRelocationModel</name>
           </init>
           <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">erm_resources</output>
+            <output name="output" type="string">erm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_relocation_rates_for_jobs</argument>
-            <argument name="what" parser_action="quote_string" type="string">jobs</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_job_relocation_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <output hidden="True" name="output" type="string">erm_index</output>
-            <argument hidden="True" name="resources" type="string">erm_resources</argument>
-            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+            <output name="output" type="string">erm_index</output>
+            <argument name="resources" type="string">erm_resources</argument>
+            <argument name="agent_set" type="string">job</argument>
           </run>
         </structure>
       </model>
       <model name="employment_location_choice_model" type="model">
         <dependencies type="list">['employment_relocation_model']</dependencies>
         <structure type="dictionary">
-          <estimate type="dictionary">
-            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
-            <argument hidden="True" name="agents_index" type="string">index</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument hidden="True" name="specification" type="string">specification</argument>
-            <output hidden="True" name="output" type="string">(coefficients, _)</output>
-          </estimate>
           <group_by_attribute type="tuple">
-            <argument name="grouping_table" type="string" model_dependency_type="table">job_building_type</argument>
+            <argument name="grouping_table" type="string" model_dependency_type="table">home_based_status</argument>
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
           <import hidden="True" name="import" type="dictionary">
@@ -285,6 +278,7 @@
           </import>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">EmploymentLocationChoiceModel</name>
+            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
@@ -315,6 +309,14 @@
             <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_specification</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</argument>
           </prepare_for_estimate>
+          <estimate type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument hidden="True" name="agents_index" type="string">index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <output hidden="True" name="output" type="string">(coefficients, _)</output>
+          </estimate>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">(specification, coefficients)</output>
@@ -397,27 +399,27 @@
       </model>
       <model name="household_relocation_model" type="model">
         <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.household_relocation_model_creator</class_module>
-            <class_name>HouseholdRelocationModelCreator</class_name>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.agent_relocation_model</class_module>
+            <class_name>AgentRelocationModel</class_name>
           </import>
           <init type="dictionary">
-            <name hidden="True" name="name" type="string">HouseholdRelocationModelCreator().get_model</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Relocation Model</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">AgentRelocationModel</name>
           </init>
           <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">hrm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_relocation_rates_for_households</argument>
-            <argument name="what" parser_action="quote_string" type="string">households</argument>
-            <output hidden="True" name="output" type="string">hrm_resources</output>
+            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_household_relocation_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <output hidden="True" name="output" type="string">hrm_index</output>
-            <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
-            <argument hidden="True" name="resources" type="string">hrm_resources</argument>
+            <output name="output" type="string">hrm_index</output>
+            <argument name="resources" type="string">hrm_resources</argument>
+            <argument name="agent_set" type="string">household</argument>
           </run>
         </structure>
       </model>
@@ -586,24 +588,24 @@
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>urbansim_parcel.models.household_transition_model</class_module>
-            <class_name>HouseholdTransitionModel</class_name>
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name name="name" type="string">HouseholdTransitionModel</name>
-            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output name="output" type="string">(control_totals, characteristics)</output>
             <name name="name" type="string">prepare_for_run</name>
-            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="characteristics" type="string">characteristics</argument>
-            <argument name="household_set" type="string" model_dependency_type="dataset">household</argument>            
-            <argument name="person_set" type="string" model_dependency_type="dataset">person</argument>
-            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
             <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>

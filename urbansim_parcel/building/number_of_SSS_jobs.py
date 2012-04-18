@@ -16,13 +16,13 @@ class number_of_SSS_jobs(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["urbansim.job.is_building_type_%s" % self.status,
+        return ["urbansim_parcel.job.is_%s" % self.status,
                 "job.building_id"
                 ]
 
     def compute(self,  dataset_pool):
         jobs = dataset_pool.get_dataset('job')
-        return self.get_dataset().sum_dataset_over_ids(jobs, attribute_name="is_building_type_%s" % self.status)
+        return self.get_dataset().sum_dataset_over_ids(jobs, attribute_name="is_%s" % self.status)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("job").size()
@@ -42,19 +42,13 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'job':
             {"job_id":array([1,2,3,4,5]),
-             "building_type":array([1,2,1,1,2]),
+             "home_based_status":array([1,0,1,1,0]),
              "building_id":array([1,1,3,2,2]),
              },
             'building':
             {
              "building_id":array([1,2,3]),
              },
-            'job_building_type':
-            {
-             "id":array([1,2]),
-             "name":array(["home_based", "non_home_based"])
-             },
-             
            }
         )
         
