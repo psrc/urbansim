@@ -15,23 +15,24 @@ from opus_core.misc import DebugPrinter
 
 class ActiveDevelopmentsModel(Model):
     """
-    Note: do not use yet, code still in progress
+    
+    If you have questions, contact Jesse Ayers at MAG:  jayers@azmag.gov
+    
     """
 
     model_name = "Active Developments Model"
     model_short_name = "ADM"
 
-    def __init__(self, debuglevel=1):
+    def __init__(self, debuglevel=0):
         self.debug = DebugPrinter(debuglevel)
         self.debuglevel = debuglevel
 
-    def run(self, percent_active_development=100, year=None, dataset_pool=None,
+    def run(self, percent_active_development=100, build_minimum_units=False, year=None, dataset_pool=None,
             capacity_this_year_variable='mag_zone.active_development.capacity_this_year'):
         # General TODO:
-        #    - create more unit tests
         #    - deal w/ "other_spaces" columns
         #    - look at generalizing the weight used when building units
-        #    - low priority: percent_active_development by building type?
+        #    - build unit test for minimum build feature
 
         # LIST OF MODEL ASSUMPTIONS:
         #    - TODO: can i generalize the need for these pre-defined variables?
@@ -41,7 +42,16 @@ class ActiveDevelopmentsModel(Model):
         #        - occupied_<building_type_name>_units_col
         #    - building_type_name must be unique, lowercase, contain no spaces
         #    - target_vacancy.is_developing defines which building_types are considered
-
+        
+        # Minimum build feature
+        #    - The user can specify 2 additional columns in the building_types dataset:
+        #        - adm_minimum_annual_build_units
+        #        - adm_minimum_annual_build_max_year
+        #    - If these fields are present, and the "build_minimum_units" run option is set to True
+        #        - The model will utilize the information in the fields to build the minimum # of units annually 
+        #          specified in the building_types table up to the maximum year specified in the table.  This feature
+        #          is designed to simulate the case when demand is too low to build new units, some will be built anyway
+        
         # CURRENT LIST OF KNOWN ISSUES:
         #    - 
 
@@ -118,7 +128,7 @@ class ActiveDevelopmentsModel(Model):
                 developing_building_types_info[developing_building_type_id]['building_type_name'] = building_type_names[counter]
                 counter += 1
             except:
-                logger.log_warning('There is a mismatch in the building_type_ids between those in the target_vacancies dataset and the developing types in the building_types dataset.')
+                logger.log_warning('You may have a mismatch in the building_type_ids between those in the target_vacancies dataset and the developing types in the building_types dataset.')
         # debug help
         if self.debuglevel > 0:
             self.debug_printer('developing_building_types_info', developing_building_types_info)
@@ -133,17 +143,34 @@ class ActiveDevelopmentsModel(Model):
         # debug help
         if self.debuglevel > 0:
             self.debug_printer('developing_building_types_info', developing_building_types_info)
-
+            
+        # add 'adm_minimum_annual_build_units' and 'adm_minimum_annual_build_max_year' to the developing_building_types_info dictionary
+        # now the dictionary takes the form of:
+        #    building_type_id:{'':<float>,'building_type_name':<string>,'is_residential':<integer>,'adm_minimum_annual_build_units':<integer>, 'adm_minimum_annual_build_max_units':<integer>}
+        if build_minimum_units:
+            try:
+                for developing_building_type in developing_building_types_info:
+                    indx = where(building_types_dataset.get_attribute('building_type_id')==developing_building_type)[0]
+                    developing_building_types_info[developing_building_type]['adm_minimum_annual_build_units'] = building_types_dataset.get_attribute('adm_minimum_annual_build_units')[indx][0]
+                for developing_building_type in developing_building_types_info:
+                    indx = where(building_types_dataset.get_attribute('building_type_id')==developing_building_type)[0]
+                    developing_building_types_info[developing_building_type]['adm_minimum_annual_build_max_year'] = building_types_dataset.get_attribute('adm_minimum_annual_build_max_year')[indx][0]
+            except:
+                logger.log_error('\n\nYou have the option "build_minimum_units" set to "True" but appear to be missing the "adm_minimum_annual_build_units" and "adm_minimum_annual_build_max_year" units in your "building_types" dataset.\n')
+                return
 
         # build a list of total and occupied units variables to compute of the form
         #     ['occupied_rsf_units_col','total_rsf_units_col', ...]
         # The variables that this section creates and computes need to be defined in the buildings
-        #     dataset aliases.py file
+        #     dataset aliases.py file        
         building_variables = []
         for building_type_id,dict_of_info in developing_building_types_info.iteritems():
-            total, occupied = 'total_%s_units_col' % dict_of_info['building_type_name'], 'occupied_%s_units_col' % dict_of_info['building_type_name']
-            building_variables.append(total)
-            building_variables.append(occupied)
+            try:
+                total, occupied = 'total_%s_units_col' % dict_of_info['building_type_name'], 'occupied_%s_units_col' % dict_of_info['building_type_name']
+                building_variables.append(total)
+                building_variables.append(occupied)
+            except:
+                logger.log_warning('You may have a mismatch in the building_type_ids between those in the target_vacancies dataset and the developing types in the building_types dataset.')                
         # debug help
         if self.debuglevel > 0:
             self.debug_printer('building_variables', building_variables)
@@ -166,13 +193,13 @@ class ActiveDevelopmentsModel(Model):
 
         # set up a table to log into
         status_log = PrettyTable()
-        status_log.set_field_names(["Type",
+        status_log.set_field_names([#"Type",
                                     "Name",
                                     "Occ Units",
                                     "Tot Units",
-                                    "Cur Vac Rate",
+                                    "CurrentVR",
                                     "Target Units",
-                                    "Target Vac Rate",
+                                    "TargetVR",
                                     "Difference",
                                     "Max Act Dev Action",
                                     "Avail Act Dev",
@@ -195,14 +222,35 @@ class ActiveDevelopmentsModel(Model):
                     total_and_occupied_variable_sums['total_%s_units' % developing_building_types_info[developing_building_type]['building_type_name']]
 
             # compute action variables
-            # TODO: do i need to create 1 additional unit where the type is residential?
+            # if the computed difference is  0 or negative (no demand for units of this type):
             if developing_building_types_info[developing_building_type]['%s_diff' % developing_building_types_info[developing_building_type]['building_type_name']] < 1:
-                #build nothing
-                developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = 0
+                # consider whether to build the minimum units
+                # check simulation year against maximum annual build year
+                if build_minimum_units and developing_building_types_info[developing_building_type]['adm_minimum_annual_build_max_year'] >= simulation_year:
+                    # build minimum
+                    developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = \
+                        developing_building_types_info[developing_building_type]['adm_minimum_annual_build_units']
+                else:
+                    #build nothing
+                    developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = 0
+            # the computed difference is positive (demand for units of this type)
+            # decide how much to build, the actual number demanded, or the minimum
             else:
-                #build the difference * the percent_active_development
-                developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = \
-                    int(developing_building_types_info[developing_building_type]['%s_diff' % developing_building_types_info[developing_building_type]['building_type_name']] * percent_active_development)
+                # compute the difference * the percent_active_development
+                diff_with_pct_active = int(developing_building_types_info[developing_building_type]['%s_diff' % developing_building_types_info[developing_building_type]['building_type_name']] * percent_active_development)
+                # if the diff_with_pct_active is greater than the minimum development:
+                if build_minimum_units and diff_with_pct_active > developing_building_types_info[developing_building_type]['adm_minimum_annual_build_units']:
+                    # just build the diff_with_pct_active
+                    developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = diff_with_pct_active
+                # the pct_diff_with_pct_active < minimum build and the max year for annual build is appropriate:
+                elif build_minimum_units and developing_building_types_info[developing_building_type]['adm_minimum_annual_build_max_year'] >= simulation_year:
+                    # build the minimum
+                    developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = \
+                        developing_building_types_info[developing_building_type]['adm_minimum_annual_build_units']
+                # last case is the demand < minimum, but the simulation year > max year:
+                else:
+                    # build the pct_diff_with_pct_active
+                    developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']] = diff_with_pct_active
 
             # compute how much development is available in active developments
             # add this information to the developing_building_types_info dictionary:
@@ -218,7 +266,7 @@ class ActiveDevelopmentsModel(Model):
             developing_building_types_info[developing_building_type]['action_to_take_this_year'] = actual_action
 
             # create status line for logging
-            status_line = [developing_building_type,
+            status_line = [#developing_building_type,
                            developing_building_types_info[developing_building_type]['building_type_name'],
                            total_and_occupied_variable_sums['occupied_%s_units' % developing_building_types_info[developing_building_type]['building_type_name']],
                            total_and_occupied_variable_sums['total_%s_units' % developing_building_types_info[developing_building_type]['building_type_name']],
@@ -233,7 +281,7 @@ class ActiveDevelopmentsModel(Model):
                            actual_action
                            ]
             status_log.add_row(status_line)
-
+        
         # print the status table to the log
         logger.log_status(status_log)
 
@@ -370,7 +418,7 @@ class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
         # set up and run the model
         model = ActiveDevelopmentsModel(debuglevel=0)
         capacity_this_year = 'numpy.minimum((active_developments.build_out_capacity - active_developments.current_built_units),active_developments.max_annual_capacity)'
-        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year)
+        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year, build_minimum_units=False)
         
         # Check that the buildings dataset was updated properly
         buildings_result = self.buildings.get_attribute('residential_units')
@@ -386,7 +434,7 @@ class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
         # set up and run the model
         model = ActiveDevelopmentsModel(debuglevel=0)
         capacity_this_year = 'numpy.minimum((active_developments.build_out_capacity - active_developments.current_built_units),active_developments.max_annual_capacity)'
-        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year)
+        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year, build_minimum_units=False)
         
         # Check that the buildings dataset was updated properly       
         buildings_result = self.buildings.get_attribute('non_residential_sqft')

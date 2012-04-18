@@ -321,9 +321,11 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">ActiveDevelopmentsModel</name>
+			<argument name="debuglevel" type="integer">0</argument>
           </init>
           <run type="dictionary">
           	<argument name="percent_active_development" type="integer">20</argument>
+			<argument name="build_minimum_units" type="boolean">False</argument>
           </run>
         </structure>
         <specification type="dictionary"/>
