@@ -428,7 +428,6 @@
             <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
             <selectable name="households" type="selectable">True</selectable>
             <selectable name="households_for_estimation" type="selectable">True</selectable>
-            <selectable name="job_building_types" type="selectable">True</selectable>
             <selectable name="jobs" type="selectable">True</selectable>
             <selectable name="jobs_for_estimation" type="selectable">True</selectable>
             <selectable name="land_use_types" type="selectable">True</selectable>
@@ -476,7 +475,6 @@
           <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
-          <selectable name="job_building_type" type="selectable">True</selectable>
         </datasets_to_preload>
       </advanced>
     </scenario>
