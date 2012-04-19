@@ -1,0 +1,25 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name hidden="True" type="string">zurich_mini_parcel</project_name>
+  </general>
+  <model_manager>
+    <estimation_config name="Estimation Configuration" config_name="estimation_config" type="dictionary">
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_mini_parcel/base_year_data</cache_directory>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        </datasets_to_preload>
+    </estimation_config>
+  </model_manager>
+  <scenario_manager>
+    <scenario name="test_run" type="scenario" executable="True">
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_mini_parcel/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_mini_parcel/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_mini_parcel/base_year_data</argument>
+        </argument>
+      </creating_baseyear_cache_configuration>
+    </scenario>
+  </scenario_manager>
+</opus_project>
+
