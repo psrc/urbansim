@@ -8,6 +8,7 @@ from numpy import zeros
 from numpy import array
 from scipy.spatial import KDTree
 from numpy import column_stack
+from opus_core.logger import logger
 
 class persons_within_DDD_of_parcel(Variable):
     """total number of persons within radius DDD of parcel"""
@@ -25,12 +26,28 @@ class persons_within_DDD_of_parcel(Variable):
                 ]
 
     def compute(self, dataset_pool):
+        logger.start_block(name="compute variable persons_within_DDD_of_parcel with DDD=%s" % self.radius, verbose=False)
+
+        logger.start_block(name="initialize datasets", verbose=False)
         parcels = self.get_dataset()
         arr = self.get_dataset().sum_dataset_over_ids(dataset_pool.get_dataset('household'), attribute_name="persons")
         coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
+        logger.end_block()
+
+        logger.start_block(name="build KDTree", verbose=False)
         kd_tree = KDTree(coords, 100)
+        logger.end_block()
+
+        logger.start_block(name="compute")
         results = kd_tree.query_ball_tree(kd_tree, self.radius)
-        return array(map(lambda l: arr[l].sum(), results))
+        logger.end_block()
+
+        logger.start_block(name="sum results", verbose=False)
+        return_values = array(map(lambda l: arr[l].sum(), results))
+        logger.end_block()
+
+        logger.end_block()
+        return return_values
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
