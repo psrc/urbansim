@@ -2,7 +2,7 @@
   <xml_version>2.0</xml_version>
   <general>
     <description type="string">SustainCity: Zurich case study</description>
-    <project_name hidden="True" type="string">zurich_kt_parcel</project_name>
+    <project_name hidden="True" type="string">zurich_li_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
       <variable use="both" source="expression" name="zone.SC_pop_ha_per_zone" type="variable_definition">zone.aggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
@@ -68,6 +68,26 @@
       <variable use="model variable" source="expression" name="parcel.pop_density_within_1000_of_parcel" type="variable_definition">urbansim_parcel.parcel.persons_within_1000_of_parcel / (1000**2 * 3.1415926535897931)</variable>
       <variable use="model variable" source="Python class" name="parcel.SC_persons_within_1000_of_parcel" type="variable_definition">zurich_parcel.parcel.persons_within_1000_of_parcel</variable>
       <variable use="both" source="expression" name="household.pop_density_x_young_hh" type="variable_definition">ln(urbansim.household.is_young)</variable>
+      <variable use="model variable" source="expression" name="building.RH_distance_to_CBD" type="variable_definition">building.disaggregate(parcel.dist_to_zh_cbd)</variable>
+      <variable use="model variable" source="expression" name="building.RH_distance_to_HWnet" type="variable_definition"> building.disaggregate(parcel.dist_to_highwaynet)</variable>
+      <variable use="model variable" source="expression" name="building.RH_distance_to_HW" type="variable_definition"> building.disaggregate(parcel.dist_to_highwayaccess)</variable>
+      <variable use="model variable" source="expression" name="building.RH_distance_to_PT" type="variable_definition"> building.disaggregate(parcel.dist_to_station)</variable>
+      <variable use="model variable" source="expression" name="building.RH_zonal_income" type="variable_definition"> building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
+      <variable use="model variable" source="expression" name="building.RH_pop_dens" type="variable_definition">  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
+      <variable use="model variable" source="expression" name="building.RH_ln_surf" type="variable_definition">ln(building.non_residential_sqft)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs" type="variable_definition">(zone.number_of_agents(job))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zone_jobs_1" type="variable_definition">building.disaggregate(zone.aggregate(parcel.aggregate(building.aggregate(job.sector_id==1))))</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_zone_jobs_same" type="variable_definition">urbansim_parcel.job_x_building.same_sector_employment_in_zone</variable>
+      <variable use="model variable" source="expression" name="job_x_building.RH_walk_jobs_same" type="variable_definition">urbansim_parcel.job_x_building.same_sector_employment_within_walking_distance</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type1" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_1)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type2" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_2)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type3" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_3)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type4" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_4)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type5" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_5)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type6" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_6)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type7" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_7)</variable>
+      <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type8" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_8)</variable>
+      <variable use="model variable" source="expression" name="building.RH_ln_surf" type="variable_definition">ln(building.non_residential_sqft)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
@@ -165,15 +185,15 @@
           <params>
             <param name="database_server_connection" param_type="db_connection_hook" required="True">scenario_database_server</param>
             <param name="database_name" param_type="string" required="True">results_testrun</param>
-            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/runs/run_39.run_120221_1419/indicators/_stored_data</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_li_parcel/runs/run_39.run_120221_1419/indicators/_stored_data</param>
             <param name="opus_data_year" param_type="string" required="True">2000</param>
             <param name="opus_table_name" param_type="string" required="True">zone</param>
           </params>
         </tool>
         <tool name="opus_data_to_csv_tool">
           <params>
-            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/Desktop/export</param>
-            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/runs/run_39.run_120221_1419/indicators/_stored_data</param>
+            <param name="csv_data_path" param_type="dir_path" required="True">C:/Users/hurtubia/Documents/UrbanSim_Zurich</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">C:/opus/data/zurich_li_parcel/base_year_data</param>
             <param name="opus_data_year" param_type="string" required="True">2002</param>
             <param name="opus_table_name" param_type="string" required="True">zone</param>
           </params>
@@ -181,9 +201,9 @@
         <tool name="csv_data_to_opus_tool">
           <class_module>csv_data_to_opus</class_module>
           <params>
-            <param name="csv_data_path" param_type="dir_path" required="True">/home/schirpat/Desktop</param>
-            <param name="csv_table_name" param_type="string" required="True">annual_household_control_totals</param>
-            <param name="opus_data_directory" param_type="dir_path" required="True">/home/schirpat/00_UrbanSim_workspace/data/zurich_kt_parcel/base_year_data</param>
+            <param name="csv_data_path" param_type="dir_path" required="True">C:/Users/hurtubia/Documents/UrbanSim_Zurich</param>
+            <param name="csv_table_name" param_type="string" required="True">annual_employment_control_totals</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">C:/opus/data/zurich_li_parcel/base_year_data</param>
             <param name="opus_data_year" param_type="string" required="True">2000</param>
           </params>
         </tool>
@@ -284,53 +304,27 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model>
-      <model name="employment_transition_model" type="model">
+      <model name="new_employment_transition_model" type="model">
         <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_transition_model</class_module>
-            <class_name>EmploymentTransitionModel</class_name>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name hidden="True" name="name" type="string">EmploymentTransitionModel</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">ETM</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">control_totals</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_employment_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
-            <argument name="job_building_types" type="string">job_building_type</argument>
-            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="year" type="string">year</argument>
-          </run>
-        </structure>
-      </model>
-      <model name="employment_relocation_model" type="model">
-        <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_relocation_model_creator</class_module>
-            <class_name>EmploymentRelocationModelCreator</class_name>
-          </import>
-          <init type="dictionary">
-            <name hidden="True" name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
-            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
-          </init>
-          <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">erm_resources</output>
-            <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_job_relocation_rates</argument>
-            <argument name="what" parser_action="quote_string" type="string">jobs</argument>
-          </prepare_for_run>
-          <run type="dictionary">
-            <output hidden="True" name="output" type="string">erm_index</output>
-            <argument hidden="True" name="resources" type="string">erm_resources</argument>
-            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -464,16 +458,22 @@
       <model name="employment_location_choice_model" type="model">
         <dependencies type="list">['employment_relocation_model']</dependencies>
         <structure type="dictionary">
-          <group_by_attribute type="tuple">
-            <argument name="grouping_table" type="string" model_dependency_type="table">home_based_status</argument>
-          </group_by_attribute>
+          <group_by_attribute type="list">('home_based_status', 'name')</group_by_attribute>
+          <estimate type="dictionary">
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+            <argument hidden="True" name="agents_index" type="string">index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <output hidden="True" name="output" type="string">(coefficients, _)</output>
+          </estimate>
           <init type="dictionary">
-            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument name="sample_size_locations" type="integer">10</argument>
             <argument name="estimation_size_agents" type="float">.05</argument>
           </init>
           <prepare_for_estimate type="dictionary">
             <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">jobs</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(job.building_id&gt;0)</argument>
           </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
@@ -481,51 +481,162 @@
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.blngcdacbd"/>
+                <variable_spec name="building.SC_ln_dist_to_station"/>
               </variable_list>
             </submodel>
           </submodel_group>
           <submodel_group name="non_home_based" type="submodel_group">
-            <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
-              <description type="string">No submodel</description>
+            <submodel hidden="Children" name="manufacturing" submodel_id="1" type="submodel">
+              <description type="string">manufacturing</description>
               <variable_list type="variable_list">
-                <variable_spec name="job_x_building.RH_distance_to_CBD_hotelbar"/>
-                <variable_spec name="job_x_building.RH_distance_to_CBD_indust"/>
-                <variable_spec name="job_x_building.RH_distance_to_CBD_service"/>
-                <variable_spec name="job_x_building.RH_distance_to_CBD_trade"/>
-                <variable_spec name="job_x_building.RH_distance_to_CBD_wtrade"/>
-                <variable_spec name="job_x_building.RH_distance_to_HW_hotelbar"/>
-                <variable_spec name="job_x_building.RH_distance_to_HW_indust"/>
-                <variable_spec name="job_x_building.RH_distance_to_HW_service"/>
-                <variable_spec name="job_x_building.RH_distance_to_HW_trade"/>
-                <variable_spec name="job_x_building.RH_distance_to_HWnet_hotelbar"/>
-                <variable_spec name="job_x_building.RH_distance_to_HWnet_indust"/>
-                <variable_spec name="job_x_building.RH_distance_to_HWnet_service"/>
-                <variable_spec name="job_x_building.RH_distance_to_HWnet_trade"/>
-                <variable_spec name="job_x_building.RH_distance_to_PT_hotelbar"/>
-                <variable_spec name="job_x_building.RH_distance_to_PT_indust"/>
-                <variable_spec name="job_x_building.RH_distance_to_PT_service"/>
-                <variable_spec name="job_x_building.RH_distance_to_PT_trade"/>
-                <variable_spec name="job_x_building.RH_distance_to_PT_wtrade"/>
-                <variable_spec name="job_x_building.RH_imp_value_hotelbar"/>
-                <variable_spec name="job_x_building.RH_imp_value_indust"/>
-                <variable_spec name="job_x_building.RH_imp_value_service"/>
-                <variable_spec name="job_x_building.RH_imp_value_trade"/>
-                <variable_spec name="job_x_building.RH_imp_value_wtrade"/>
-                <variable_spec name="job_x_building.RH_ln_surf_hotelbar"/>
-                <variable_spec name="job_x_building.RH_ln_surf_indust"/>
-                <variable_spec name="job_x_building.RH_ln_surf_service"/>
-                <variable_spec name="job_x_building.RH_ln_surf_trade"/>
-                <variable_spec name="job_x_building.RH_parcel_land_hotelbar"/>
-                <variable_spec name="job_x_building.RH_parcel_land_indust"/>
-                <variable_spec name="job_x_building.RH_parcel_land_service"/>
-                <variable_spec name="job_x_building.RH_parcel_land_trade"/>
-                <variable_spec name="job_x_building.RH_parcel_land_wtrade"/>
-                <variable_spec name="job_x_building.RH_pop_dens_hotelbar"/>
-                <variable_spec name="job_x_building.RH_pop_dens_indust"/>
-                <variable_spec name="job_x_building.RH_pop_dens_service"/>
-                <variable_spec name="job_x_building.RH_pop_dens_trade"/>
-                <variable_spec name="job_x_building.RH_pop_dens_wtrade"/>
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+                <variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="construction" submodel_id="2" type="submodel">
+              <description type="string">construction</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="trade" submodel_id="3" type="submodel">
+              <description type="string">trade</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="retail" submodel_id="4" type="submodel">
+              <description type="string">retail</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="hotels_restaurants" submodel_id="5" type="submodel">
+              <description type="string">hotels_restaurants</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="transport" submodel_id="6" type="submodel">
+              <description type="string">transport</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="services" submodel_id="7" type="submodel">
+              <description type="string">services</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type8"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="health" submodel_id="8" type="submodel">
+              <description type="string">health</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.RH_zonal_income"/>
+                <variable_spec name="job_x_building.RH_zone_jobs_same"/>
+				<variable_spec name="zone.RH_zone_jobs_type1"/>
+				<variable_spec name="zone.RH_zone_jobs_type2"/>
+				<variable_spec name="zone.RH_zone_jobs_type3"/>
+				<variable_spec name="zone.RH_zone_jobs_type4"/>
+				<variable_spec name="zone.RH_zone_jobs_type5"/>
+				<variable_spec name="zone.RH_zone_jobs_type6"/>
+				<variable_spec name="zone.RH_zone_jobs_type7"/>
+                <variable_spec name="building.SC_dist_to_highway"/>
+                <variable_spec name="building.SC_dist_to_station"/>
+				<variable_spec name="building.RH_ln_surf"/>
+				
+				
               </variable_list>
             </submodel>
           </submodel_group>
@@ -846,7 +957,7 @@
       <dataset_pool_configuration type="class">
         <argument name="package_order" type="list">['zurich_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
       </dataset_pool_configuration>
-      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_kt_parcel/base_year_data</cache_directory>
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_li_parcel/base_year_data</cache_directory>
       <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
       <years type="tuple">
         <firstyear name="" type="integer" field_identifier="Base Year">2000</firstyear>
@@ -883,21 +994,20 @@
           <selectable name="building_type" type="selectable">True<package_name type="string">zurich_parcel</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">False</selectable>
-          <selectable name="job_building_type" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">False</selectable>
         </datasets_to_preload>
         <run_in_same_process type="boolean">True</run_in_same_process>
       </advanced>
-      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_kt_parcel/base_year_data</cache_directory>
+      <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_li_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_kt_parcel/runs</argument>
+        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_li_parcel/runs</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_kt_parcel/base_year_data</argument>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_li_parcel/base_year_data</argument>
         </argument>
       </creating_baseyear_cache_configuration>
       <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
@@ -906,16 +1016,20 @@
         <lastyear name="" type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable return_value="SC_real_estate_price_model" type="selectable" name="SC_real_estate_price_model_1">True</selectable>
-        <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
-        <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">True</selectable>
-        <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">True</selectable>
-        <selectable return_value="employment_transition_model" type="selectable" name="employment_transition_model_1">False</selectable>
-        <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">True</selectable>
-        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">True</selectable>
-        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">False</selectable>
-        <selectable return_value="employment_location_choice_model" type="selectable" name="employment_location_choice_model_1">False</selectable>
-        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">True</selectable>
+        <selectable return_value="SC_real_estate_price_model" type="selectable" name="SC_real_estate_price_model_1">False</selectable>
+        <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">False</selectable>
+        <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">False</selectable>
+        <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">False</selectable>
+        
+        <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">False</selectable>
+        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">False</selectable>
+        <selectable return_value="new_employment_transition_model" type="selectable" name="new_employment_transition_model_1">True</selectable>
+        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True
+          <group_members type="string">non_home_based</group_members>
+        </selectable>
+        
+        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">False</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
