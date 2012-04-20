@@ -25,6 +25,7 @@ sys.path.insert(1,os.path.join(os.environ['OPUS_HOME'],'src/urbansim_parcel/prop
 import proforma
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.simulation_state import SimulationState
 from opus_core.model import Model
 from opus_core import paths
 
@@ -38,6 +39,7 @@ class DeveloperModel(Model):
     pass
 
   def run(my):
+    global parcel_set, z, node_set
 
     if 0:
         z = Zoning()
@@ -51,7 +53,6 @@ class DeveloperModel(Model):
         dataset_pool = SessionConfiguration().get_dataset_pool()
     except:
         from opus_core.store.attribute_cache import AttributeCache
-        from opus_core.simulation_state import SimulationState
         ss = SimulationState()
         ss.set_cache_directory(os.path.join(os.environ['OPUS_DATA'], 'bay_area_parcel/runs/run_21.2012_04_13_18_01'))
         ss.set_current_time(2010)
@@ -75,8 +76,7 @@ class DeveloperModel(Model):
     print "Num of parcels:", test_parcels.size
     import time
 
-    global parcel_set, z, node_set
-    HOTSHOT = 1
+    HOTSHOT = 0
 
     from multiprocessing import Pool, Queue
     pool = Pool(processes=24)
@@ -111,9 +111,10 @@ def process_parcel(parcel):
 
         global parcel_set, z, node_set
  
+        current_year = SimulationState().get_current_time()
         pid = parcel_set['parcel_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
-        print "parcel_id is %d" % pid
+        #print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
         shape_area = parcel_set['shape_area'][parcel]
         v = float(shape_area)*10.7639
@@ -161,7 +162,7 @@ def process_parcel(parcel):
         if 14 in btypes: devmdl_btypes.append(7) # employment-focused to MXD-office
 
         btypes = devmdl_btypes
-        print btypes
+        #print btypes
 
         idx_node_parcel = numpy.where(node_set['node_id']==node_id)[0]
 
@@ -200,25 +201,26 @@ def process_parcel(parcel):
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
             bform.btype = btype 
-            print btype
+            #print btype
             X, npv = devmdl_optimize.optimize(bform,prices)
-            print X, npv
+            #print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv
-                sqft = 0 #sp.evaluate('Bldg Form!H97') 
-                stories = 0 #sqft / sp.evaluate('Bldg Form!H96') 
+                nonres_sqft = bform.nonres_sqft
+                sqft = nonres_sqft # add residential below
                 if btype in [1,2,3,4,5,6]: # RESIDENTIAL
-                    nonres_sqft = 0 #sp.evaluate('Bldg Form!K78') 
-                    res_sqft = sqft - nonres_sqft
-                    res_units = sum(X[0:4])
+                    if btype in [1,2]: res_sqft = bform.sf_builtarea()
+                    else: res_sqft = bform.mf_builtarea()
+                    sqft += res_sqft
+                    res_units = sum(bform.num_units)
                 else:
-                    nonres_sqft = sqft
                     res_sqft = 0
                     res_units = 0
+                stories = sqft / bform.buildable_area
                 tenure = 0
                 if btype in [3,4]: tenure = 1
-                year_built = 2010
+                year_built = current_year
                 building = (pid, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
                 maxbuilding = building
 

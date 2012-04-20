@@ -45,6 +45,9 @@ class BForm:
     def sfbuilder_bounds(my,X,*args):
         return numpy.append(X,my.parcel_size - numpy.dot(my.lotsize,X))
 
+    def sf_builtarea(my):
+        return numpy.dot(my.sfunitsizes,my.num_units)
+
     def mf_builtarea(my,X=None):
         if X == None: 
             return numpy.dot(my.mfunitsizes,my.num_units) + my.nonres_sqft
