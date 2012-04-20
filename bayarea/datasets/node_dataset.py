@@ -29,7 +29,7 @@ class NodeDataset(UrbansimDataset):
         node_ids = self.get_id_attribute()
         node_d = dict(zip(self.d['nodeids'],range(len(node_ids))))
         node_ids = [node_d[x] for x in node_ids]
-        self.node_ids = array(node_ids, dtype="int")
+        self.node_ids = array(node_ids, dtype="int32")
 
     # def design_variable_query(self, distance):
         # result = self.pya.computeAllDesignVariables(distance,"LINEALSTREETFEET")
