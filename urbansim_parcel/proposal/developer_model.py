@@ -29,9 +29,9 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.model import Model
 from bayarea.accessibility.pyaccess import PyAccess
 from opus_core import paths
+from bform import BForm
 
 DEBUG = 0
-
 
 class DeveloperModel(Model):
 
@@ -112,7 +112,7 @@ class DeveloperModel(Model):
     #building_set = dataset_pool.get_dataset('residential_unit')
     node_set = dataset_pool.get_dataset('node')
     node_ids = array(node_set.node_ids, dtype="int32")
-    '''
+    
     node_sum_unit_sqft_sf = node_set.compute_variables('node.aggregate((building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(building.building_type_id<3),intermediates=[parcel])')
     node_sum_unit_sqft_sf = array(node_sum_unit_sqft_sf, dtype="float32")
 
@@ -195,47 +195,54 @@ class DeveloperModel(Model):
     mf_rent=mf_rent.astype(integer)
     result=divide(mf_rent,mf_units)
     node_set.add_primary_attribute(name='avg_mf_unit_rent', data=result)
-    '''
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = where(empty_parcels==1)[0]
-    test_parcels = test_parcels[:10]
+    test_parcels = test_parcels[:1000]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
     import time
+
+    global parcel_set, z, node_set, SP, SPs
+
+    from multiprocessing import Pool, Queue
+    NUMPROCESSES = 24
+    pool = Pool(processes=NUMPROCESSES)
+    #SPs = Queue()
+    #for i in range(NUMPROCESSES): SPs.put(copy.deepcopy(SP))
+    #import hotshot, hotshot.stats, test.pystone
+    #prof = hotshot.Profile('devmdl.prof')
+    #prof.start()
     t1 = time.time()
 
-    global parcel_set, z, node_set, SP
-
-    import hotshot, hotshot.stats, test.pystone
-    prof = hotshot.Profile('devmdl.prof')
-    prof.start()
-
-    #from multiprocessing import Pool
-    #pool = Pool(processes=24)
-    #results = pool.map(process_parcel,test_parcels)
-    #results = [x for x in results if x <> None and x <> -1]
-    #print results
-    for p in test_parcels: process_parcel(p)
+    results = pool.map(process_parcel,test_parcels)
+    results = [x for x in results if x <> None and x <> -1]
+    #for p in test_parcels: process_parcel(p)
     t2 = time.time()
+    print results
     print "Finished in %f seconds" % (t2-t1)
     print "Ran optimization %d times" % devmdl_optimize.OBJCNT
     print "DONE"
-    prof.stop()
-    prof.close()
-    stats = hotshot.stats.load('devmdl.prof')
-    stats.strip_dirs()
-    stats.sort_stats('cumulative')
-    stats.print_stats(20)
+    #prof.stop()
+    #prof.close()
+    #stats = hotshot.stats.load('devmdl.prof')
+    #stats.strip_dirs()
+    #stats.sort_stats('cumulative')
+    #stats.print_stats(20)
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set, SP
-        sp = copy.deepcopy(SP)
+        def cleanup(sp):
+            global SPs
+            #SPs.put(sp)
+            pass
+
+        global parcel_set, z, node_set, SP, SPs
+        sp = SP #copy.deepcopy(SP)
  
         pid = parcel_set['parcel_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
-        print "parcel_id is %d" % pid
+        #print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
         shape_area = parcel_set['shape_area'][parcel]
         v = float(shape_area)*10.7639
@@ -244,16 +251,20 @@ def process_parcel(parcel):
         try: zoning = z.get_zoning(pid)
         except: 
             print "Can't find zoning for parcel: %d, skipping" % pid
+            cleanup(sp)
             return
         btypes = z.get_building_types(pid)
         if not zoning:
             print "NO ZONING FOR PARCEL"
+            cleanup(sp)
             return
         if not btypes:
             print "NO BUILDING TYPES FOR PARCEL"
+            cleanup(sp)
             return
         if v < 800:
             print "PARCEL SIZE IS TOO SMALL"
+            cleanup(sp)
             return
         if DEBUG > 0: print "Parcel size is %f" % v
         far = z.get_attr(zoning,'max_far', 100)
@@ -262,6 +273,8 @@ def process_parcel(parcel):
         if far == 100 and height == 1000: far,height = .75,10
         set_value(excel,sp,"Bldg Form","C34",far) # far
         set_value(excel,sp,"Bldg Form","C33",height) # height
+            
+        bform = BForm(v,far,height)
 
         if far > 1 or height > 15:
             set_value(excel,sp,"Bldg Form","C39",1) # multi-story
@@ -321,6 +334,7 @@ def process_parcel(parcel):
             if lotsize <1000:  lotsize = 11111   
             if lotsize>10000000: lotsize=10000000
             if DEBUG > 0: print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
+            bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
             if btype in [4,6,8,9]:
                 set_value(excel,sp,"Bldg Form","C39",1) # ground floor retail
@@ -375,6 +389,7 @@ def process_parcel(parcel):
                 allowable_uses(excel,sp,[78,82])
 
             elif btype == 14: # LODGING
+                cleanup(sp)
                 return # skip fo now
 
             elif btype in devmdl_optimize.COMMERCIALTYPES_D: # COMMERCIAL TYPES
@@ -382,14 +397,15 @@ def process_parcel(parcel):
 
             else: assert(0)
 
-            X, npv = devmdl_optimize.optimize(sp,btype,prices)
+            X, npv = devmdl_optimize.optimize(sp,bform,btype,prices)
+            #print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv
                 sqft = 0 #sp.evaluate('Bldg Form!H97') 
                 stories = 0 #sqft / sp.evaluate('Bldg Form!H96') 
                 if btype in [1,2,3,4,5,6]: # RESIDENTIAL
-                    nonres_sqft = sp.evaluate('Bldg Form!K78') 
+                    nonres_sqft = 0 #sp.evaluate('Bldg Form!K78') 
                     res_sqft = sqft - nonres_sqft
                     res_units = sum(X[0:4])
                 else:
@@ -404,6 +420,7 @@ def process_parcel(parcel):
 
             #_objfunc2(X,btype,prices,saveexcel=1,excelprefix='%d_%s' % (pid,btype))
             #print
+        cleanup(sp)
         return maxbuilding 
 
 if __name__ == "__main__":

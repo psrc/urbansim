@@ -36,7 +36,7 @@ def setup_dataset_pool(opus=True):
                "leases_revenue":        array([  0,  0,  0,  0,  4]) * 1000000,
                 #"rent_absorption":       array([  8,  4,  4,  8,  8]),
                 #"leases_absorption":     array([  0,  0,  0,  0,  8]),
-               'rent_absorption':      array([  8,  4,  4,  8,  8]),
+               'rent_absorption':      array([  8,  4,  4,  8, 1]),
                'leases_absorption':    array([  1,  1,  1,  1,  6]),
                "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
                "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
@@ -93,7 +93,7 @@ def save(excel,fname):
     excel.save_as(abspath(fname),True)
 
 
-def _objfunc(params,btype,prices,sp,bounds,dataset_pool,saveexcel=0,excelprefix=None):
+def _objfunc(params,btype,prices,sp,dataset_pool,saveexcel=0,excelprefix=None):
     global c
     global OBJCNT
     OBJCNT += 1    
@@ -130,10 +130,13 @@ def _objfunc(params,btype,prices,sp,bounds,dataset_pool,saveexcel=0,excelprefix=
     if DEBUG > 1: print "NPV2", npv
     return -1*npv/100000.0
         
-def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix=None):
+def _objfunc2(params,bform,btype,prices,sp,dataset_pool,baveexcel=0,excelprefix=None):
 
     global OBJCNT
     OBJCNT += 1    
+    if len(params) >= 4: bform.set_num_units(array(params[:4]))
+    if len(params) == 5: bform.set_nonres_sqft(params[4])
+    if len(params) == 1: bform.set_nonres_sqft(params[0])
 
     #global PROFORMA_INPUTS
     #proforma_inputs = copy.copy(PROFORMA_INPUTS)
@@ -141,6 +144,7 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
 
     e = None
     if DEBUG > 1: print "PARAMS", params
+    '''
     if btype == 1: # single family one-off
         assert len(params) == 4
         for i in range(4): set_value(e,sp,'Bldg Form','K%d' % (63+i), params[i])
@@ -160,7 +164,7 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     elif btype in COMMERCIALTYPES_D: # commercial types
         assert len(params) == 1
         set_value(e,sp,'Bldg Form','K%d'%(COMMERCIALTYPES_D[btype]), params[0]*SQFTFACTOR)
-
+    '''
     #d = proforma_inputs['proposal_component']
     if type(dataset_pool) == dict:
         proposal = dataset_pool['proposal']
@@ -175,25 +179,22 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     d['leases_revenue'] =    array([  0,  0,  0,  0,  0])
 
     if btype in [1,2]: 
-      for i in range(4):
-        d['sales_revenue'][i] = \
-            sp.evaluate('Bldg Form!E%d' % (58+i))*prices[0]*X[i]
-            #max(sp.evaluate('Proforma Inputs!B%d' % (60+i)),0)
+        d['sales_revenue'] = \
+            prices[0]*numpy.append(X*bform.sfunitsizes,0)
     elif btype in [5,6]:
-      for i in range(4):
-        d['sales_revenue'][i] = \
-            sp.evaluate('Bldg Form!E%d' % (68+i))*prices[1]*X[i]
-            #max(sp.evaluate('Proforma Inputs!B%d' % (48+i)),0)
+        d['sales_revenue'] = \
+            prices[1]*numpy.append(X[:4]*bform.condounitsizes,0)
     elif btype in [3,4]: 
-      for i in range(4):
-        d['rent_revenue'][i] = \
-            sp.evaluate('Bldg Form!E%d' % (68+i))*prices[3]*3*X[i]
+        d['rent_revenue'] = \
+            prices[3]*3*numpy.append(X[:4]*bform.mfunitsizes,0)
             # rents are per month but need to be period so we multiply by 3
-            #max(sp.evaluate('Proforma Inputs!B%d' % (74+i)),0)
     else:
         d['leases_revenue'][4] = \
             X[0]*20.0 # we need price info for non-residential!
-            #max(sp.evaluate('Proforma Inputs!B%d' % (92)),0)
+
+    #print btype
+    #print params
+    #print d
 
     proposal_comp['sales_revenue'] = d['sales_revenue']
     proposal_comp['rent_revenue'] = d['rent_revenue']
@@ -218,7 +219,16 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     proposal['rent_vacancy_per_period'] = (proposal_comp['rent_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
     proposal['leases_vacancy_per_period'] = (proposal_comp['leases_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
 
-    proposal['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
+    if btype in [1,2]: cost = bform.sf_cost()
+    elif btype in [3,4]: cost = bform.mf_cost('apt')
+    elif btype in [5,6]: cost = bform.mf_cost('condo')
+    else: cost = bform.commercial_cost(btype)
+
+    #print btype, params
+    #print "cost", cost
+    #print "cost2", array(sp.evaluate('Proforma Inputs!B40'))
+    proposal['construction_cost'] = cost 
+    #print proposal['construction_cost']
     if DEBUG: print "COST:", proposal['construction_cost']
     #proforma_inputs['proposal']['construction_cost'] = array(sp.evaluate('Proforma Inputs!B40'))
     #if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
@@ -241,128 +251,22 @@ def _objfunc2(params,btype,prices,sp,bounds,dataset_pool,baveexcel=0,excelprefix
     #print npv, "\n\n"
     return -1*npv/100000.0
 
-def optimize(sp,btype,prices):
+def optimize(sp,bform,btype,prices):
    
-    bounds = []
- 
-    if btype == 1: # single family one-off
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (63+i))
-            bounds.append(v)
-    
-    elif btype == 2: # single family builder
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (58+i))
-            bounds.append(v)
-
-    elif btype in [3,4]: # multifamily
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (68+i))
-            bounds.append(v)
-    
-    elif btype in [5,6]: # condo
-        for i in range(4):
-            v = sp.evaluate('Bldg Form!J%d' % (73+i))
-            bounds.append(v)
-
-    elif btype in COMMERCIALTYPES_D:
-        v = sp.evaluate('Bldg Form!J%d' % COMMERCIALTYPES_D[btype])/SQFTFACTOR
-        bounds.append(v)
-
-    if btype in [4,6,8]: # ground floor retail
-        v = sp.evaluate('Bldg Form!J78')
-        bounds.append(max(v,0))
-
-    if bounds.count(0) == len(bounds):
-        if DEBUG > 0: print "Nothing to optimize\n"
-        return [], -1.0
-
-    bounds = numpy.array(bounds,dtype=numpy.float32)
-
-    x0 = numpy.array([0 for i in range(len(bounds))])
-
-    bounds = numpy.array([(0,x) for x in bounds],dtype=numpy.float32)
-    if DEBUG > 1: print "BOUNDS: ", bounds
-
-    def ieqcons_sf_builder(X,*args):
-        sp = args[2]
-        bounds = args[3]
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!J88')
-        sqft -= sp.evaluate('Bldg Form!D58')*X[0]
-        sqft -= sp.evaluate('Bldg Form!D59')*X[1]
-        sqft -= sp.evaluate('Bldg Form!D60')*X[2]
-        sqft -= sp.evaluate('Bldg Form!D61')*X[3]
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_sf_oneoff(X,*args):
-        sp = args[2]
-        bounds = args[3]
-        #print bounds
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        units = 1 - X[0] - X[1] - X[2] - X[3]
-        cons.append(units)
-        #print cons
-        return numpy.array(cons)
-    
-    def ieqcons_mf_rental(X,*args):
-        sp = args[2]
-        bounds = args[3]
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!C49')
-        
-        for i in range(4): sqft -= sp.evaluate('Bldg Form!E%d'%(68+i))*X[i]
-        #sqft -= X[8]*SQFTFACTOR
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_mf_condo(X,*args):
-        sp = args[2]
-        bounds = args[3]
-        #print X
-        cons = []
-        for i in range(len(X)):
-            cons.append(bounds[i][1]-X[i])
-            cons.append(X[i]-bounds[i][0])
-        sqft = sp.evaluate('Bldg Form!C49')
-        #print sqft
-        for i in range(4): sqft -= sp.evaluate('Bldg Form!E%d'%(73+i))*X[i]
-        #sqft -= X[8]*SQFTFACTOR
-        cons.append(sqft)
-        #print cons
-        return numpy.array(cons)
-
-    def ieqcons_commercial(X,*args):
-        sp = args[2]
-        cons = []
-        sqft = sp.evaluate('Bldg Form!C49')
-        sqft -= X[0]*SQFTFACTOR
-        cons.append(sqft)
-        cons.append(X[0])
-        return numpy.array(cons)
-
     ieqcons = None 
-    if btype == 1: ieqcons = ieqcons_sf_oneoff
-    elif btype == 2: ieqcons = ieqcons_sf_builder
-    elif btype in [3,4]: ieqcons = ieqcons_mf_rental
-    elif btype in [5,6]: ieqcons = ieqcons_mf_condo
-    elif btype in COMMERCIALTYPES_D: ieqcons = ieqcons_commercial
-    else: ieqcons = ieqcons_sf_oneoff 
+    if btype == 1: ieqcons = bform.sfoneoff_bounds
+    elif btype == 2: ieqcons = bform.sfbuilder_bounds
+    elif btype in [3,4]: ieqcons = bform.mf_bounds
+    elif btype in [5,6]: ieqcons = bform.mf_bounds
+    elif btype in COMMERCIALTYPES_D: bform.commercial_bounds
+    else: assert 0
+
+    if btype == 2: return [], -1.0
+
+    if btype in [4,6]: nf = 5
+    elif btype in COMMERCIALTYPES_D: nf = 1
+    else: nf = 4
+    x0 = array([0 for i in range(nf)])
     
     dataset_pool = setup_dataset_pool(opus=False)
     #proposal = dataset_pool.get_dataset('proposal')
@@ -373,17 +277,16 @@ def optimize(sp,btype,prices):
 
     #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
     if 0: #DEBUG:
-        r = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds,dataset_pool],iter=150,acc=.01)
+        r = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,dataset_pool],iter=150,acc=.01)
         print r
         #r2[0] = numpy.round(r2[0], decimals=1)
         #r2[1] = _objfunc(r2[0],btype)
-
    
-    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,sp,bounds, dataset_pool],iter=150,acc=.01)
+    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[bform,btype,prices,sp,dataset_pool],iter=150,acc=.1)
     #if DEBUG > 0: print r
     #print r
     r[0] = numpy.round(r[0], decimals=1)
-    r[1] = _objfunc2(r[0],btype,prices,sp,bounds, dataset_pool)
+    r[1] = _objfunc2(r[0],bform,btype,prices,sp,dataset_pool)
     if 0: #DEBUG: 
         print r2
         print r
