@@ -11,7 +11,7 @@ CONDOFACTOR = 1.1 # ratio of own to ave
 
 class BForm:
 
-    def __init__(my,parcel_size,FAR,height):
+    def __init__(my,parcel_size,FAR,height,county):
         my.height = height
         my.FAR = FAR
         my.parcel_size = parcel_size
@@ -22,6 +22,7 @@ class BForm:
         my.max_floor_area = min(far_area,height_area)
         my.num_units = array([0, 0, 0, 0])
         my.nonres_sqft = 0
+        my.F = COSTFACTOR * LOCALCOST_D[county]/100.0
 
     def set_btype(my,btype):
         my.btype = btype
@@ -65,6 +66,7 @@ class BForm:
         return array([cons])
 
     def sf_cost(my):
+        F = my.F
         cost = numpy.dot(my.sfunitsizes,my.num_units)*SFCOST*F
         cost += numpy.sum(my.num_units)*IMPACTFEE
         cost += numpy.dot(SFPARKING,my.num_units)*F
@@ -78,6 +80,7 @@ class BForm:
     def commercial_cost(my,btype):
         sqft = my.nonres_sqft
         height = my.get_height()
+        F = my.F
         if btype == 7 or btype == 8:
             if height < 25: return sqft*OFFICELOWRISE*F
             elif height < 45: return sqft*OFFICEMIDRISE*F
@@ -92,6 +95,7 @@ class BForm:
         else: assert 0
 
     def mf_cost(my,mf='apt'):
+        F = my.F
         cost = 0
         height = my.get_height()
         if mf == 'apt': sqft = numpy.dot(my.mfunitsizes,my.num_units)
@@ -105,7 +109,7 @@ class BForm:
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F
         return cost
 
-F = .5
+COSTFACTOR = .5
 SFCOST = 140.0
 MFLOWRISE = 140.0
 MFMIDRISE = 140.0
@@ -126,3 +130,14 @@ OFFICEMID2RISE = 120.00
 OFFICEHIGHRISE = 130.00
 OFFICESKYSCRAPER = 140.00
 SFPARKING = array([18000.0,30000.0,30000.0,36000.0])
+LOCALCOST_D = {
+49:115.58, # sonoma
+41:114.6, # san mateo
+1:116.2, # alameda
+43:117.1, # santa clara
+28:115.58, # napa
+38:123.8, # san fran
+7:112.9, # contra costa
+48:110.5, # solano
+21:115.58 # marin 
+}

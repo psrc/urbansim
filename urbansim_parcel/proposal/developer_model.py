@@ -71,7 +71,7 @@ class DeveloperModel(Model):
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = numpy.where(empty_parcels==1)[0]
-    test_parcels = test_parcels[:10]
+    test_parcels = test_parcels[:1000]
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
     import time
@@ -92,7 +92,7 @@ class DeveloperModel(Model):
     else:
         results = pool.map(process_parcel,test_parcels)
         results = [x for x in results if x <> None and x <> -1]
-        print results
+        #print results
     t2 = time.time()
 
     print "Finished in %f seconds" % (t2-t1)
@@ -113,6 +113,7 @@ def process_parcel(parcel):
  
         current_year = SimulationState().get_current_time()
         pid = parcel_set['parcel_id'][parcel]
+        county_id = parcel_set['county_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
         #print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
@@ -140,7 +141,7 @@ def process_parcel(parcel):
 
         if far == 100 and height == 1000: far,height = .75,10
             
-        bform = BForm(v,far,height)
+        bform = BForm(v,far,height,county_id)
 
         if DEBUG > 0: print "ZONING BTYPES:", btypes
 
