@@ -42,6 +42,7 @@ class DeveloperModel(Model):
   def run(my):
     global parcel_set, z, node_set, isr
 
+    '''
     if 0:
         z = Zoning()
         p = Parcels()
@@ -49,6 +50,7 @@ class DeveloperModel(Model):
     else:
         print "Reading db info from jar..."
         z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
+    '''
 
     try:
         dataset_pool = SessionConfiguration().get_dataset_pool()
@@ -70,6 +72,8 @@ class DeveloperModel(Model):
    
     #compute_devmdl_accvars(node_set,node_ids) 
 
+    current_year = SimulationState().get_current_time()
+    z = Zoning(1,current_year)
     isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")

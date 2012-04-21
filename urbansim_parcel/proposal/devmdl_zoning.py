@@ -1,4 +1,5 @@
 import psycopg2
+import os
 
 class Parcels():
   def __init__(my):
@@ -70,8 +71,9 @@ sum(building_sqft-non_residential_sqft)/sum(residential_units) > 300 order by _z
         return my.unitsize.get((zone_id,btype),None)
 
 class Zoning():
-  def __init__(my):
-    conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='***'"
+  def __init__(my,scenario,year):
+    passwd = os.environ['OPUS_DBPASS']
+    conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='%s'" % passwd
     conn = psycopg2.connect(conn_string)
     cursor = conn.cursor()
 
@@ -81,27 +83,28 @@ class Zoning():
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
-    assert 'id' == fnames[0]
-    print fnames
+    assert fnames[-1] == "id_class"
+    #print fnames
     d = {}
     for r in records:
-        id = r[0]
+        id = r[-1]
         d[id] = r
-        my.zoning = d
+
+    my.zoning = d
     my.zoningfnames = dict(zip(fnames,range(len(fnames))))
 
     # then relate to parcels
-    s = "select * from geography_zoning_parcel_relation"
+    s = "select * from zoning_for_parcels(%d,'%d-01-01 00:00:00')" % (scenario,year)
     print s
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
+    #print fnames
+    assert 'parcel' == fnames[0]
     assert 'zoning' == fnames[1]
-    assert 'parcel_id' == fnames[2]
-    print fnames
     d = {}
     for r in records:
-        pid = r[2]
+        pid = r[0]
         zid = r[1]
         d[pid] = zid
     my.pid2zid = d
