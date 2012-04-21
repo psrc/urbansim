@@ -11,7 +11,7 @@ CONDOFACTOR = 1.1 # ratio of own to ave
 
 class BForm:
 
-    def __init__(my,parcel_size,FAR,height,county):
+    def __init__(my,parcel_size,FAR,height,county,taz,isr):
         my.height = height
         my.FAR = FAR
         my.parcel_size = parcel_size
@@ -23,6 +23,8 @@ class BForm:
         my.num_units = array([0, 0, 0, 0])
         my.nonres_sqft = 0
         my.F = COSTFACTOR * LOCALCOST_D[county]/100.0
+        my.isr = isr
+        my.taz = taz
 
     def set_btype(my,btype):
         my.btype = btype
@@ -69,6 +71,7 @@ class BForm:
         F = my.F
         cost = numpy.dot(my.sfunitsizes,my.num_units)*SFCOST*F
         cost += numpy.sum(my.num_units)*IMPACTFEE
+        cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         cost += numpy.dot(SFPARKING,my.num_units)*F
         return cost
 
@@ -81,18 +84,22 @@ class BForm:
         sqft = my.nonres_sqft
         height = my.get_height()
         F = my.F
+        cost = 0
         if btype == 7 or btype == 8:
-            if height < 25: return sqft*OFFICELOWRISE*F
-            elif height < 45: return sqft*OFFICEMIDRISE*F
-            elif height < 85: return sqft*OFFICEMID2RISE*F
-            elif height < 120: return sqft*OFFICEHIGHRISE*F
-        elif btype == 9: return sqft*NEIGHBORHOODRETAIL*F
-        elif btype == 10: return sqft*AUTORETAIL*F
-        elif btype == 11: return sqft*BIGBOXRETAIL*F
-        elif btype == 12: return sqft*INDUSTRIAL*F
-        elif btype == 13: return sqft*WAREHOUSE*F
-        elif btype == 14: return sqft*LODGING*F
+            if height < 25: cost += sqft*OFFICELOWRISE*F
+            elif height < 45: cost += sqft*OFFICEMIDRISE*F
+            elif height < 85: cost += sqft*OFFICEMID2RISE*F
+            elif height < 120: cost += sqft*OFFICEHIGHRISE*F
+        elif btype == 9: cost += sqft*NEIGHBORHOODRETAIL*F
+        elif btype == 10: cost += sqft*AUTORETAIL*F
+        elif btype == 11: cost += sqft*BIGBOXRETAIL*F
+        elif btype == 12: cost += sqft*INDUSTRIAL*F
+        elif btype == 13: cost += sqft*WAREHOUSE*F
+        elif btype == 14: cost += sqft*LODGING*F
         else: assert 0
+
+        cost += my.isr.nonres_isr_fee(my.taz)*sqft
+        return cost
 
     def mf_cost(my,mf='apt'):
         F = my.F
@@ -106,6 +113,7 @@ class BForm:
         elif height < 120: cost += sqft*MFHIGHRISE*F
         else: cost += sqft*MFSKYSCRAPER*F
         cost += numpy.sum(my.num_units)*IMPACTFEE
+        cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F
         return cost
 

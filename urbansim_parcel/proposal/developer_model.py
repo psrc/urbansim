@@ -3,12 +3,12 @@
 # See opus_core/LICENSE
 
 '''
-cost factor by county
 absorption
 land cost
 nonresidential building prices
 get scenario-based zoning when it exists
 building construction model
+
 account for parking
 '''
 
@@ -18,6 +18,7 @@ from numpy import array
 
 from devmdl_zoning import *
 import devmdl_optimize
+from isr import ISR
 from bform import BForm
 from devmdl_accvars import compute_devmdl_accvars
 
@@ -39,7 +40,7 @@ class DeveloperModel(Model):
     pass
 
   def run(my):
-    global parcel_set, z, node_set
+    global parcel_set, z, node_set, isr
 
     if 0:
         z = Zoning()
@@ -68,6 +69,8 @@ class DeveloperModel(Model):
     node_ids = array(node_set.node_ids, dtype="int32")
    
     #compute_devmdl_accvars(node_set,node_ids) 
+
+    isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     test_parcels = numpy.where(empty_parcels==1)[0]
@@ -109,11 +112,12 @@ class DeveloperModel(Model):
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set
+        global parcel_set, z, node_set, isr
  
         current_year = SimulationState().get_current_time()
         pid = parcel_set['parcel_id'][parcel]
         county_id = parcel_set['county_id'][parcel]
+        taz = parcel_set['zone_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
         #print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
@@ -141,7 +145,7 @@ def process_parcel(parcel):
 
         if far == 100 and height == 1000: far,height = .75,10
             
-        bform = BForm(v,far,height,county_id)
+        bform = BForm(v,far,height,county_id,taz,isr)
 
         if DEBUG > 0: print "ZONING BTYPES:", btypes
 
