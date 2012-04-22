@@ -33,9 +33,17 @@ class ISR:
     def res_isr_fee(my,taz):
         stddev = my.isr[taz][0]
         if stddev < 0: return 0
-        return stddev * RESFEE
+        elif stddev < 1: return 5000
+        elif stddev < 2: return 15000
+        elif stddev < 3: return 25000
+        else: return 50000
+        #return stddev * RESFEE
     
     def nonres_isr_fee(my,taz):
         stddev = my.isr[taz][1]
         if stddev < 0: return 0
-        return stddev * NONRESFEE
+        elif stddev < 1: return 2
+        elif stddev < 2: return 6
+        elif stddev < 3: return 10
+        else: return 20
+        #return stddev * NONRESFEE
