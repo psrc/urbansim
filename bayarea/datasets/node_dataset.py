@@ -36,8 +36,8 @@ class NodeDataset(UrbansimDataset):
         #print dataset_pool.datasets_in_pool()
         #transit_set = dataset_pool.get_dataset('transit_station')
 
-        x = numpy.load((os.path.join(os.environ['OPUS_DATA_PATH'],'bay_area_parcel','base_year_data','2010','transit_stations','x.lf4')))
-        y = numpy.load((os.path.join(os.environ['OPUS_DATA_PATH'],'bay_area_parcel','base_year_data','2010','transit_stations','y.lf4')))
+        x = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','x.lf4'))))
+        y = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','y.lf4'))))
         xys = numpy.column_stack((x,y))
         self.pya.initializePOIs(1,.5*1.6*1000,1)
         self.pya.initializeCategory(0,xys)
