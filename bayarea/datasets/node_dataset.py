@@ -8,6 +8,7 @@ try:
 except:
     from bayarea.accessibility.pyaccess import PyAccess
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
+from opus_core.session_configuration import SessionConfiguration
 from opus_core import paths
 import numpy
 from numpy import array
@@ -23,14 +24,23 @@ class NodeDataset(UrbansimDataset):
     pya = PyAccess()
     pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
     pya.precomputeRange(500)
-  
+
     def __init__(self, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
         node_ids = self.get_id_attribute()
         node_d = dict(zip(self.d['nodeids'],range(len(node_ids))))
         node_ids = [node_d[x] for x in node_ids]
         self.node_ids = array(node_ids, dtype="int32")
-
+        
+        #dataset_pool = SessionConfiguration().get_dataset_pool() 
+        #print dataset_pool.datasets_in_pool()
+        #transit_set = dataset_pool.get_dataset('transit_station')
+        x = numpy.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel','base_year_data','2010','transit_stations','x.lf4')))
+        y = numpy.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel','base_year_data','2010','transit_stations','y.lf4')))
+        xys = numpy.column_stack((x,y))
+        self.pya.initializePOIs(1,.5*1.6*1000,1)
+        self.pya.initializeCategory(0,xys)
+   
     # def design_variable_query(self, distance):
         # result = self.pya.computeAllDesignVariables(distance,"LINEALSTREETFEET")
         # return result
@@ -67,4 +77,6 @@ class NodeDataset(UrbansimDataset):
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,1,1,0)
         return result
 
-
+    def transit_dist_query(self, distance):
+        result = self.pya.findAllNearestPOIs(distance,0)
+        return result

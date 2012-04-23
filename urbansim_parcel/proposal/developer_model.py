@@ -6,9 +6,7 @@
 absorption
 land cost
 nonresidential building prices
-get scenario-based zoning when it exists
 building construction model
-
 account for parking
 '''
 
@@ -52,22 +50,15 @@ class DeveloperModel(Model):
         z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
     '''
 
-    try:
-        dataset_pool = SessionConfiguration().get_dataset_pool()
-    except:
-        from opus_core.store.attribute_cache import AttributeCache
-        ss = SimulationState()
-        ss.set_cache_directory(os.path.join(os.environ['OPUS_DATA'], 'bay_area_parcel/runs/run_21.2012_04_13_18_01'))
-        ss.set_current_time(2010)
-        attribute_cache = AttributeCache()
-        dataset_pool = SessionConfiguration(new_instance=True,
-                                 package_order=['bayarea', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                                 in_storage=attribute_cache
-                                ).get_dataset_pool()        
+    dataset_pool = SessionConfiguration().get_dataset_pool()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
     node_set = dataset_pool.get_dataset('node')
+
+    from bayarea.node import transit_within_DDD_meters
+    v = transit_within_DDD_meters.transit_within_DDD_meters(300)
+    print v.compute(dataset_pool)
     node_ids = array(node_set.node_ids, dtype="int32")
    
     #compute_devmdl_accvars(node_set,node_ids) 
