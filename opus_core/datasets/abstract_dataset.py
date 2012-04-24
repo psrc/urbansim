@@ -2065,8 +2065,8 @@ class AbstractDataset(object):
         if index is not None:
             v1 = v1[index]
             v2 = v2[index]
-        if (npoints <> None) and (npoints < v1.size()):
-            rindex = randint(0, v1.size(), size=npoints)
+        if (npoints is not None) and (npoints < v1.size):
+            rindex = randint(0, v1.size, size=npoints)
             v1 = v1[rindex]
             v2 = v2[rindex]
         return (v1, v2)
