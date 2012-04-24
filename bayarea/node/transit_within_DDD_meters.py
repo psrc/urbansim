@@ -10,9 +10,8 @@ class transit_within_DDD_meters(Variable):
     """
     """
     
-    def __init__(self, cat, distance):
+    def __init__(self, distance):
         Variable.__init__(self)
-        self.category = cat
         self.distance = distance
         
     def compute(self, dataset_pool):
