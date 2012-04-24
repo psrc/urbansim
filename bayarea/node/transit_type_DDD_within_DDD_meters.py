@@ -6,7 +6,7 @@ from opus_core.variables.variable import Variable
 from numpy import zeros
 import numpy
 
-class transit_within_DDD_meters(Variable):
+class transit_type_DDD_within_DDD_meters(Variable):
     """
     """
     
@@ -15,9 +15,9 @@ class transit_within_DDD_meters(Variable):
         self.category = cat
         self.distance = distance
         
-    def compute(self, dataset_pool):
+    def compute(self,  dataset_pool):
         nodes = dataset_pool.get_dataset('node')
-        result = nodes.transit_dist_query(self.distance)
+        result = nodes.transit_dist_query(self.distance,self.category)
         result = numpy.array(result,dtype=numpy.float32)
         result = numpy.array(result < self.distance,dtype=int)
         return result

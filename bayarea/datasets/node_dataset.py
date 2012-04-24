@@ -19,15 +19,27 @@ d = cPickle.load(open(path))
 pya = PyAccess()
 pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
 pya.precomputeRange(MAXDISTANCE)
-pya.initializePOIs(1,MAXDISTANCE,1)
+pya.initializePOIs(7,MAXDISTANCE,1)
 dataset_pool = SessionConfiguration().get_dataset_pool()
 transit_set = dataset_pool.get_dataset('transit_station')
 x = transit_set['x']
 y = transit_set['y']
+route_type = transit_set['route_type']
+agency_id = transit_set['agency_id']
 #x = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','x.lf4'))))
 #y = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','y.lf4'))))
+for i in range(6):
+    if i == 1: # bart
+        xys = numpy.column_stack((x[agency_id == 6],y[agency_id == 6]))
+    elif i == 2: # caltrain
+        xys = numpy.column_stack((x[agency_id == 9],y[agency_id == 9]))
+    else:
+        xys = numpy.column_stack((x[route_type==i],y[route_type==i]))
+    pya.initializeCategory(i,xys)
+
 xys = numpy.column_stack((x,y))
-pya.initializeCategory(0,xys)
+pya.initializeCategory(6,xys)
+
 
 class NodeDataset(UrbansimDataset):
    
@@ -95,7 +107,8 @@ class NodeDataset(UrbansimDataset):
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,1,1,0)
         return result
 
-    def transit_dist_query(self, distance):
+    def transit_dist_query(self, distance, category=6):
         assert distance <= self.MAXDISTANCE
-        result = self.pya.findAllNearestPOIs(distance,0)
+        assert category < 7
+        result = self.pya.findAllNearestPOIs(distance,category)
         return result

@@ -59,13 +59,14 @@ class DeveloperModel(Model):
     #transit_set = dataset_pool.get_dataset('transit_station')
     #print dataset_pool.datasets_in_pool()
     '''
-    from bayarea.node import transit_within_DDD_meters
-    v = transit_within_DDD_meters.transit_within_DDD_meters(300)
-    d = v.compute(dataset_pool)
-    print d.size
-    found = d[numpy.nonzero(d)]
-    print found
-    print found.size
+    from bayarea.node import transit_type_DDD_within_DDD_meters
+    for i in range(7):
+        print i
+        v = transit_type_DDD_within_DDD_meters.transit_type_DDD_within_DDD_meters(i,500)
+        d = v.compute(dataset_pool)
+        print d.size
+        found = d[numpy.nonzero(d)]
+        print found.size
     sys.exit()
     '''
     node_ids = array(node_set.node_ids, dtype="int32")
