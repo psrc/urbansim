@@ -12,23 +12,32 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core import paths
 import numpy
 from numpy import array
+    
+MAXDISTANCE=1000 
+path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
+d = cPickle.load(open(path))
+pya = PyAccess()
+pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
+pya.precomputeRange(MAXDISTANCE)
+pya.initializePOIs(1,MAXDISTANCE,1)
+dataset_pool = SessionConfiguration().get_dataset_pool()
+transit_set = dataset_pool.get_dataset('transit_station')
+x = transit_set['x']
+y = transit_set['y']
+#x = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','x.lf4'))))
+#y = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','y.lf4'))))
+xys = numpy.column_stack((x,y))
+pya.initializeCategory(0,xys)
 
 class NodeDataset(UrbansimDataset):
-    
+   
     id_name_default = "node_id"
     in_table_name_default = "nodes"
     out_table_name_default = "nodes"
     dataset_name = "node"
+
     path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
     d = cPickle.load(open(path))
-    pya = PyAccess()
-    pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
-    pya.precomputeRange(500)
-    pya.initializePOIs(1,.5*1.6*1000,1)
-    x = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','x.lf4'))))
-    y = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','y.lf4'))))
-    xys = numpy.column_stack((x,y))
-    pya.initializeCategory(0,xys)
 
     def __init__(self, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
@@ -36,11 +45,10 @@ class NodeDataset(UrbansimDataset):
         node_d = dict(zip(self.d['nodeids'],range(len(node_ids))))
         node_ids = [node_d[x] for x in node_ids]
         self.node_ids = array(node_ids, dtype="int32")
+        global MAXDISTANCE, pya
+        self.MAXDISTANCE = MAXDISTANCE
+        self.pya = pya
         
-        #dataset_pool = SessionConfiguration().get_dataset_pool() 
-        #print dataset_pool.datasets_in_pool()
-        #transit_set = dataset_pool.get_dataset('transit_station')
-
         #x = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','x.lf4'))))
         #y = numpy.load((os.path.join(paths.get_opus_data_path_path('bay_area_parcel','base_year_data','2010','transit_stations','y.lf4'))))
         #xys = numpy.column_stack((x,y))
@@ -56,6 +64,7 @@ class NodeDataset(UrbansimDataset):
         node_data = array(node_data, dtype="float32")
         self.pya.initializeAccVars(1)
         self.pya.initializeAccVar(0,self.node_ids,node_data)
+        assert distance <= self.MAXDISTANCE
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,0,1,0)
         return result
 
@@ -64,6 +73,7 @@ class NodeDataset(UrbansimDataset):
         node_data = array(node_data, dtype="float32")
         self.pya.initializeAccVars(1)
         self.pya.initializeAccVar(0,self.node_ids,node_data)
+        assert distance <= self.MAXDISTANCE
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,0,1,0)
         return result
 
@@ -72,6 +82,7 @@ class NodeDataset(UrbansimDataset):
         node_data = array(node_data, dtype="float32")
         self.pya.initializeAccVars(1)
         self.pya.initializeAccVar(0,self.node_ids,node_data)
+        assert distance <= self.MAXDISTANCE
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,1,1,0)
         return result
 
@@ -80,9 +91,11 @@ class NodeDataset(UrbansimDataset):
         node_data = array(node_data, dtype="float32")
         self.pya.initializeAccVars(1)
         self.pya.initializeAccVar(0,self.node_ids,node_data)
+        assert distance <= self.MAXDISTANCE
         result=self.pya.getAllAggregateAccessibilityVariables(distance,0,1,1,0)
         return result
 
     def transit_dist_query(self, distance):
+        assert distance <= self.MAXDISTANCE
         result = self.pya.findAllNearestPOIs(distance,0)
         return result
