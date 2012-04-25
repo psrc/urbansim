@@ -13,7 +13,7 @@ from opus_core import paths
 import numpy
 from numpy import array
     
-MAXDISTANCE=1000 
+MAXDISTANCE=1500 
 path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
 d = cPickle.load(open(path))
 pya = PyAccess()
