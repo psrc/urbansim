@@ -9,6 +9,7 @@ from numpy import ma, rank
 import numpy, scipy
 import opus_core.misc
 from pkg_resources import parse_version
+from opus_core.misc import ismember as misc_ismember
 try:
     if parse_version(scipy.__version__) <= parse_version('0.7.0'):
         from scipy.stats.stats import zs as scipy_zscore
@@ -78,6 +79,11 @@ def sfg(v, fill=0):
     results[numpy.isinf(results)] = fill
     results[numpy.isnan(results)] = fill
     return results
+
+def ismember(v, member_list):
+    """ an in1d replacement that is compatible with low version of numpy (<=1.4.0)
+    """
+    return misc_ismember(v, member_list)
 
 # unit tests for all the functions
 
