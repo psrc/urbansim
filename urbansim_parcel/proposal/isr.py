@@ -1,5 +1,7 @@
 import psycopg2
 import os
+from opus_core import paths
+import cPickle
 
 RESFEE = 1000 # per unit
 NONRESFEE = 2.50 # per sqft
@@ -7,6 +9,8 @@ NONRESFEE = 2.50 # per sqft
 class ISR:
 
     def __init__(my):
+        my.isr = cPickle.load(open(os.path.join(paths.get_opus_data_path_path(),'bay_area_parcel','isr.jar')))
+        '''
         passwd = os.environ['OPUS_DBPASS']
         conn_string = "host='paris.urbansim.org' dbname='bayarea' user='urbanvision' password='%s'"%passwd
         conn = psycopg2.connect(conn_string)
@@ -29,8 +33,19 @@ class ISR:
                       (vmtworker-avg_per_worker)/dev_per_worker]
 
         my.isr = d
+        '''
 
     def res_isr_fee(my,taz):
+        if taz == 0: return 0
+        z = my.isr[taz][1]
+        if z == "A": return 5000
+        elif z == "B": return 15000
+        elif z == "C": return 25000
+        elif z == "D": return 50000
+        elif z == "No Fee": return 0
+        print z
+        return 0
+        '''
         stddev = my.isr[taz][0]
         if stddev < 0: return 0
         elif stddev < 1: return 5000
@@ -38,8 +53,19 @@ class ISR:
         elif stddev < 3: return 25000
         else: return 50000
         #return stddev * RESFEE
+        '''
     
     def nonres_isr_fee(my,taz):
+        if taz == 0: return 0
+        z = my.isr[taz][0]
+        if z == "A": return 2
+        elif z == "B": return 6
+        elif z == "C": return 10
+        elif z == "D": return 20
+        elif z == "No Fee": return 0
+        print z
+        return 0
+        '''
         stddev = my.isr[taz][1]
         if stddev < 0: return 0
         elif stddev < 1: return 2
@@ -47,3 +73,4 @@ class ISR:
         elif stddev < 3: return 10
         else: return 20
         #return stddev * NONRESFEE
+        '''

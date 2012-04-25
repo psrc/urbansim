@@ -22,7 +22,9 @@ class BForm:
         my.max_floor_area = min(far_area,height_area)
         my.num_units = array([0, 0, 0, 0])
         my.nonres_sqft = 0
-        my.F = COSTFACTOR * LOCALCOST_D[county]/100.0
+        if county not in LOCALCOST_D: localcost = 100.0 # happens in a few cases
+        else: localcost = LOCALCOST_D[county]
+        my.F = COSTFACTOR * localcost/100.0
         my.isr = isr
         my.taz = taz
 
