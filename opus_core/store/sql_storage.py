@@ -679,6 +679,34 @@ else:
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
 
+        def MASKED_test_load_empty_table(self):
+            for db, server, storage in self.dbs:
+                try:
+
+                    schema = {
+                        'd': 'INTEGER',
+                        'e': 'FLOAT',
+                        'f': 'TEXT',
+                        'g': 'INTEGER',
+                    }
+                    db.create_table_from_schema(table_name = 'bar', table_schema = schema)
+                            
+                    tbl = db.get_table('bar')        
+                          
+                    expected_data = {
+                        'd': array([], dtype='i'),
+                        'e': array([], dtype='f'),
+                        'f': array([], dtype='S'),
+                        }
+                    
+                    actual_data = storage.load_table('bar')
+                    
+                    self.assertDictsEqual(expected_data, actual_data)
+                except:
+                    db.drop_table('bar')
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
+
         def test_load_table_ignores_rows_with_null_values(self):
             for db, server, storage in self.dbs:
                 try:
