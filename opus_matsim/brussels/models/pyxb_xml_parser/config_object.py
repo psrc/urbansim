@@ -5,7 +5,7 @@
 import os
 from opus_core.logger import logger
 from lxml import etree
-from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser
+from opus_matsim.brussels.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from opus_matsim.models.org.constants import matsim4opus, matsim_config,\
     matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration,\
     backup_run_data, test_parameter, warmstart_flag, hotstart_flag
@@ -16,10 +16,10 @@ class MATSimConfigObject(object):
     def __init__(self, config, year):
         """ Constructor
         """
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         self.config_dictionary = config
         self.sub_config_exists = False

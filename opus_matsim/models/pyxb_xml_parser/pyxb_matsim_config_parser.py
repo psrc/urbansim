@@ -268,11 +268,11 @@ class urbansimParameterType (pyxb.binding.basis.complexTypeDefinition):
     testParameter = property(__testParameter.value, __testParameter.set, None, None)
 
     
-    # Element samplingRate uses Python identifier samplingRate
-    __samplingRate = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'samplingRate'), 'samplingRate', '__AbsentNamespace0_urbansimParameterType_samplingRate', False)
+    # Element population_sampling_rate uses Python identifier population_sampling_rate
+    __samplingRate = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'population_sampling_rate'), 'population_sampling_rate', '__AbsentNamespace0_urbansimParameterType_samplingRate', False)
 
     
-    samplingRate = property(__samplingRate.value, __samplingRate.set, None, None)
+    population_sampling_rate = property(__samplingRate.value, __samplingRate.set, None, None)
 
 
     _ElementMap = {
@@ -448,9 +448,9 @@ urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.Expa
 
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'testParameter'), pyxb.binding.datatypes.token, scope=urbansimParameterType))
 
-urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'samplingRate'), pyxb.binding.datatypes.double, scope=urbansimParameterType))
+urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'population_sampling_rate'), pyxb.binding.datatypes.double, scope=urbansimParameterType))
 urbansimParameterType._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'samplingRate')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'population_sampling_rate')), min_occurs=1, max_occurs=1),
     pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'year')), min_occurs=1, max_occurs=1),
     pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'opusHome')), min_occurs=1, max_occurs=1),
     pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'opusDataPath')), min_occurs=1, max_occurs=1),

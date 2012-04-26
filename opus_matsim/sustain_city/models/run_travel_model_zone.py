@@ -6,7 +6,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
-from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
 from opus_matsim.models.org.constants import matsim4opus
 from opus_core import paths
 
@@ -61,7 +61,7 @@ class RunTravelModel(AbstractTravelModel):
             xmx = '-Xmx2500m'
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/MATSim4UrbanSimZoneTest20120312.jar",
+                'classpath': "jar/matsim4urbansim.jar",
                 'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
@@ -72,7 +72,7 @@ class RunTravelModel(AbstractTravelModel):
         if cmd_result != 0:
             error_msg = "MATSim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
-            logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the matsim4opus root,")
+            logger.log_error("Note that paths in the matsim config files are relative to the matsim4opus root,")
             logger.log_error("which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         

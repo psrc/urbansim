@@ -49,7 +49,7 @@ class MATSimConfigObject(object):
         
         # urbansim parameter
         self.year = year
-        self.samplingRate = matsim4urbansim_part['sampling_rate']
+        self.population_sampling_rate = matsim4urbansim_part['sampling_rate']
 
         self.opus_home = paths.get_opus_home_path()
         self.opus_data_path = paths.get_opus_data_path_path()
@@ -144,7 +144,7 @@ class MATSimConfigObject(object):
         plan_calc_score_elem.activityType_0 = self.activityType_0
         plan_calc_score_elem.activityType_1 = self.activityType_1
         
-        urbansim_elem.samplingRate = self.samplingRate
+        urbansim_elem.population_sampling_rate = self.population_sampling_rate
         urbansim_elem.year = self.year
         urbansim_elem.opusHome = self.opus_home
         urbansim_elem.opusDataPath = self.opus_data_path
