@@ -441,25 +441,25 @@
       </model>
       <model name="employment_transition_model" type="model">
         <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_transition_model</class_module>
-            <class_name>EmploymentTransitionModel</class_name>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name hidden="True" name="name" type="string">EmploymentTransitionModel</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">ETM</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">control_totals</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_employment_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
-            <argument name="job_building_types" type="string">job_building_type</argument>
-            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -990,7 +990,6 @@
           <selectable name="building_type" type="selectable">True<package_name type="string">zurich_parcel</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">False</selectable>
-          <selectable name="job_building_type" type="selectable">True</selectable>
         </datasets_to_preload>
         <run_in_same_process type="boolean">True</run_in_same_process>
       </advanced>

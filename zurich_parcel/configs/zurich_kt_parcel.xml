@@ -322,6 +322,8 @@
             <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
+            <argument name="control_totals" type="string" model_dependency_type="dataset">control_totals</argument>
+            <argument name="job_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
