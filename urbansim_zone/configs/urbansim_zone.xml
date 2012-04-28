@@ -722,7 +722,6 @@
           <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
           <selectable name="annual_household_control_totals" type="selectable">True</selectable>
           <selectable name="households" type="selectable">True</selectable>
-          <selectable name="job_building_types" type="selectable">True</selectable>
           <selectable name="building_types" type="selectable">True</selectable>
           <selectable name="jobs" type="selectable">True</selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
