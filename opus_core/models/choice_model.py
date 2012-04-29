@@ -268,9 +268,11 @@ class ChoiceModel(ChunkModel):
                               self.get_choice_set_size())
                             )
         price_coef_name = self.run_config.get('price_coef_name', None)
-        if price_coef_name is not None:
+        price_var_name = self.run_config.get('price_variable_name', 
+                                              price_coef_name)
+        if price_var_name is not None:
             price_coef_val = np.empty((self.observations_mapping["index"].size, 1))
-            price = self.choice_set[price_coef_name]
+            price = self.choice_set[price_var_name]
         for submodel in self.model_interaction.get_submodels():
             self.model_interaction.prepare_data_for_simulation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
