@@ -53,7 +53,7 @@ class DeveloperModel(Model):
     '''
 
     data_path = paths.get_opus_data_path_path()
-    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_699.run_2012_04_28_20_50')
+    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_729.run_2012_04_29_12_23')
     year = 2011
     simulation_state = SimulationState()
     simulation_state.set_current_time(year)
