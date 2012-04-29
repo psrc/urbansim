@@ -83,7 +83,7 @@ class LandUseDevelopmentLocationChoiceModel(LocationChoiceModel):
                                   events_for_estimation_storage=None,
                                   events_for_estimation_table=None):
 
-        from opus_core.model import get_specification_for_estimation
+        from opus_core.models.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,
                                                           specification_table)

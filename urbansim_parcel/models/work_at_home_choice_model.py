@@ -12,6 +12,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.misc import unique
 from opus_core.logger import logger
+from opus_core.models.model import prepare_for_estimate as default_prepare_for_estimate
 
 class WorkAtHomeChoiceModel(ChoiceModel):
     """

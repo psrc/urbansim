@@ -98,7 +98,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModel):
                 building_set.join_by_rows(estimation_set,
                                           require_all_attributes=False,
                                           change_ids_if_not_unique=True)
-                index = arange(building_set.size()-estimation_set.size(), agent_set.size())
+                index = arange(building_set.size()-estimation_set.size(), building_set.size())
             else:
                 index = building_set.get_id_index(estimation_set.get_id_attribute())
         else:
@@ -110,7 +110,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModel):
         if add_member_prefix:
             specification_table = self.group_member.add_member_prefix_to_table_names([specification_table])
 
-        from opus_core.model import get_specification_for_estimation
+        from opus_core.models.model import get_specification_for_estimation
         #from urbansim.functions import compute_supply_and_add_to_location_set
         specification = get_specification_for_estimation(specification_dict,
                                                          specification_storage,

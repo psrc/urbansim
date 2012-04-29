@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import DebugPrinter, unique
-from opus_core.upc_factory import UPCFactory
+from opus_core.misc import DebugPrinter
+from opus_core.upc.upc_factory import UPCFactory
 from opus_core.logger import logger
-from opus_core.resources import Resources, merge_resources_if_not_None
-from opus_core.model import Model
-from numpy import where, array, concatenate, asarray, resize
+from opus_core.resources import merge_resources_if_not_None
+from opus_core.models.model import Model
+from numpy import where, array, asarray, resize
 
 class RateBasedModel(Model):
     """Chooses agents for relocation (according to probabilities computed by the probabilities class).
@@ -17,7 +17,7 @@ class RateBasedModel(Model):
     model_name = 'Rate Based Model'
     
     def __init__(self,
-                 probabilities = "urbansim.rate_based_probabilities",
+                 probabilities = "opus_core.upc.rate_based_probabilities",
                  choices = "opus_core.random_choices",
                  model_name = None,
                  debuglevel=0,

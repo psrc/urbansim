@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import zeros, logical_and, where
-from opus_core.choice_model import ChoiceModel
-from opus_core.hierarchical_choice_model import HierarchicalChoiceModel
+from numpy import zeros, logical_and, where, arange
+from opus_core.models.choice_model import ChoiceModel
+from opus_core.models.hierarchical_choice_model import HierarchicalChoiceModel
 from opus_core.datasets.dataset import Dataset
 from opus_core.misc import ismember
 from urbansim.datasets.household_dataset import HouseholdDataset

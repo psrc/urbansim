@@ -9,24 +9,24 @@ from opus_core.datasets.dataset import Dataset
 from numpy import where, arange, concatenate, array, ndarray, zeros, resize
 from opus_core.resources import Resources
 from opus_core.misc import unique
-from numpy import ma, intersect1d
+from numpy import ma, intersect1d, ones_like
 from opus_core.logger import logger
 import copy
 
 class AgentLocationChoiceModel(LocationChoiceModel):
-    """Similar to the LocationChoiceModel. In addition, after a run it checks
-    for over-filled locations and in case of collisions, it runs itself again.
+    """Child class of the LocationChoiceModel. Re-run LocationChoiceModel 
+    if there are unplaced agents after a run.
     """
 
     model_name = "Agent Location Choice Model"
     model_short_name = "ALCM"
     
-    def __init__(self, location_set, model_name=None, short_name=None,
-                        sampler="opus_core.samplers.weighted_sampler", utilities="opus_core.linear_utilities",
-                        probabilities="opus_core.mnl_probabilities", choices="opus_core.random_choices",
-                        filter=None, submodel_string=None, location_id_string = None,
-                        run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None,
-                        variable_package = "urbansim", **kwargs):
+    def __init__(self, location_set, 
+                 run_config=None, 
+                 estimate_config=None, 
+                 variable_package = "urbansim", 
+                 *args,
+                 **kwargs):
         """
         :number_of_units_string:
           number of units string is used to determine whether a choice is over-filled, 
@@ -34,10 +34,6 @@ class AgentLocationChoiceModel(LocationChoiceModel):
           TODO: How does it differ from capacity_string?
            
         """
-        if model_name is not None:
-            self.model_name = model_name
-        if short_name is not None:
-            self.model_short_name = short_name
         if (run_config is not None) and not isinstance(run_config, Resources):
             run_config = Resources(run_config)
         if (estimate_config is not None) and not isinstance(estimate_config, Resources):
@@ -47,12 +43,12 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         self.add_prefix_to_variable_names("weights_for_estimation_string",
                                            location_set, variable_package, estimate_config)
 
-        LocationChoiceModel.__init__(self, location_set=location_set, sampler=sampler, utilities=utilities,
-                        probabilities=probabilities, choices=choices,
-                        filter=filter,
-                        submodel_string=submodel_string, location_id_string=location_id_string,
-                        run_config=run_config, estimate_config=estimate_config,
-                        debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
+        LocationChoiceModel.__init__(self, 
+                                     location_set=location_set, 
+                                     run_config=run_config,
+                                     estimate_config=estimate_config,
+                                     *args, **kwargs
+                                    )
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, agents_filter=None,
@@ -63,8 +59,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         if agents_index is None:
             if agents_filter is not None:
-                agent_set.compute_variables(agents_filter, dataset_pool=self.dataset_pool)
-                agents_index = where(agent_set.get_attribute(VariableName(agents_filter).get_alias()))[0]
+                filter_condition = agent_set.compute_variables(agents_filter, dataset_pool=self.dataset_pool)
+                agents_index = where(filter_condition)[0]
             else:
                 agents_index = arange(agent_set.size())
         if not isinstance(agents_index, ndarray):
@@ -73,126 +69,75 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             except:
                 raise TypeError, "Argument agents_index is of wrong type (numpy array or list allowed.)"
 
-        if agents_index.size <= 0:
+        if agents_index.size == 0:
             logger.log_status("Nothing to be done.")
             return array([], dtype='int32')
 
         if run_config == None:
             run_config = Resources()
         self.run_config = run_config.merge_with_defaults(self.run_config)
+        #this is handled by choices module (in UPC sequence)
         self.number_of_units_string = self.run_config.get("number_of_units_string", None)
-        self.number_of_agents_string = self.run_config.get(
-                        "number_of_agents_string",
-                        "%s.number_of_agents(%s)" % (self.choice_set.get_dataset_name(), agent_set.get_dataset_name()))
+        #self.number_of_agents_string = self.run_config.get(
+        #                "number_of_agents_string",
+        #                "%s.number_of_agents(%s)" % (self.choice_set.get_dataset_name(), agent_set.get_dataset_name()))
             
         if self.number_of_units_string is None:
             maximum_runs = 1
-        unplaced = arange(agents_index.size)
+
+        unplaced = ones_like(agents_index).astype('bool')
+        #boolean of the same shape as agents_index
+        end_choices = -1 * ones_like(agents_index)
         id_name = self.choice_set.get_id_name()[0]
         demand_string = self.run_config.get("demand_string")
         supply_string = self.run_config.get("supply_string")
         for run in range(maximum_runs):
-            unplaced_size_before_model = unplaced.size
-            choices = LocationChoiceModel.run(self, specification, coefficients, agent_set,
-                    agents_index[unplaced], chunk_specification, debuglevel=debuglevel)
-            if run == 0:
-                all_choices=choices
-            else:
-                all_choices[unplaced]=choices
+            unplaced_size_before = unplaced.sum()
+            choices = LocationChoiceModel.run(self, 
+                                              specification=specification, 
+                                              coefficients=coefficients, 
+                                              agent_set=agent_set,
+                                              agents_index=agents_index[unplaced], 
+                                              chunk_specification=chunk_specification, 
+                                              debuglevel=debuglevel)
+            end_choices[unplaced] = choices
+            if run > 0:
                 ## delete demand_string and supply string for later iterations to 
                 ## avoid these variables being distorted by assigning overfilled agents
                 if demand_string: del self.run_config["demand_string"]
                 if supply_string: del self.run_config["supply_string"]
                 
-            unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index, config=run_config)
-            if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size) or (unplaced.size == (unplaced_size_before_model - self.observations_mapping['mapped_index'].size)):
+            unplaced = agent_set[id_name][agents_index] <= 0
+            ## these two lines are inside the loop because self.observations_mapping is 
+            ## not initialized before calling LocationChoiceModel.run
+            agents_size_mapped = self.observations_mapping['mapped_index'].size
+            agents_size_unmapped = agents_index.size - agents_size_mapped
+            
+            if unplaced.sum() in (0, unplaced_size_before, agents_size_unmapped):
                 break
+            else:
+                logger.log_status("Re-run %s to allocate %s unplaced agents" % \
+                                  (self.model_name, unplaced.size)
+                                 )
+
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
             
         if demand_string: self.run_config["demand_string"] = demand_string
         if supply_string: self.run_config["supply_string"] = supply_string
         
-        return all_choices
-
-    def get_movers_from_overfilled_locations(self, agent_set, agents_index, config=None):
-        """Returns an index (relative to agents_index) of agents that should be removed from their locations.
-        """
-        id_name = self.choice_set.get_id_name()[0]
-        agents_locations = agent_set.get_attribute_by_index(id_name, agents_index)
-        # check if there was an overfilling of locations
-        movers = array([], dtype='int32')
-
-        if self.compute_capacity_flag:
-            overfilled_string = config.get("is_choice_overfilled_string", None) 
-            if overfilled_string:
-                tmp_agent_set = copy.copy(agent_set)
-                overfilled_locations_idx = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
-                overfilled_locations = self.choice_set[id_name][overfilled_locations_idx]
-                overfilled_location_with_agents = intersect1d(agents_locations, overfilled_locations)
-                while overfilled_location_with_agents.size > 0:
-                    for location in overfilled_location_with_agents:
-                        agents_of_this_location = where(agents_locations == location)[0]
-                        if agents_of_this_location.size > 1:
-                            #we don't know how many agents need to be relocated 
-                            #before the location becomes not overfilled, so we relocate one at a time
-                            sampled_agents = probsample_noreplace(agents_of_this_location, 1)
-                        else:
-                            sampled_agents = agents_of_this_location
-                        movers = concatenate((movers, sampled_agents))
-                        
-                    tmp_agent_set.set_values_of_one_attribute(id_name, -1, agents_index[movers])
-                    agents_locations = tmp_agent_set.get_attribute_by_index(id_name, agents_index)
-                    self.dataset_pool.replace_dataset(tmp_agent_set.get_dataset_name(), tmp_agent_set)
-                    overfilled_locations_idx = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool, quiet=True))[0]
-                    overfilled_locations = self.choice_set[id_name][overfilled_locations_idx]
-                    overfilled_location_with_agents = intersect1d(agents_locations, overfilled_locations)
-                self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
-            else:
-                new_locations_vacancy = self.get_locations_vacancy(agent_set)
-                movers = self.choose_agents_to_move_from_overfilled_locations(new_locations_vacancy,
-                                                            agent_set, agents_index, agents_locations)
-        return concatenate((movers, where(agents_locations <= 0)[0]))
-
-    def get_locations_vacancy(self, agent_set):
-        if (self.number_of_units_string is not None) and (self.number_of_agents_string is not None):
-            self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
-            self.choice_set.compute_variables([self.number_of_agents_string, self.number_of_units_string],
-                                      dataset_pool=self.dataset_pool)
-            number_of_agents = self.choice_set.get_attribute(self.number_of_agents_string)
-            number_of_units = self.choice_set.get_attribute(self.number_of_units_string)
-            return number_of_units - number_of_agents
-        return None
-        
-        
-    def choose_agents_to_move_from_overfilled_locations(self, capacity,
-                                                        agent_set, agents_index, agents_locations):
-        """Iterates over locations that are overfilled and selects randomly agents placed in those locations
-        to be removed."""
-        if capacity is None:
-            return array([], dtype='int32')
-        index_valid_agents_locations = where(agents_locations > 0)[0]
-        valid_agents_locations = agents_locations[index_valid_agents_locations]
-        index_consider_capacity = unique(self.choice_set.get_id_index(valid_agents_locations))
-        capacity_of_affected_locations = capacity[index_consider_capacity]
-        overfilled = where(capacity_of_affected_locations < 0)[0]
-        movers = array([], dtype='int32')
-        choice_ids = self.choice_set.get_id_attribute()
-        for loc in overfilled:
-            agents_to_move = where(valid_agents_locations == choice_ids[index_consider_capacity[loc]])[0]
-            if agents_to_move.size > 0:
-                n = int(-1*capacity_of_affected_locations[loc])
-                sampled_agents = probsample_noreplace(index_valid_agents_locations[agents_to_move], 
-                                                      min(n, agents_to_move.size))
-                movers = concatenate((movers, sampled_agents))
-        return movers
+        return end_choices
 
     def add_prefix_to_variable_names(self, variable_names, dataset, variable_package, resources):
         """Add a prefix of 'package.dataset_name.' to variable_names from resources.
         """
+        ##TODO: refactor to require variable_package provided with variable_names
+
+        Add a prefix of 'package.dataset_name.' to variable_names from resources.
+        """
         if resources is None:
             return
         if not isinstance(variable_names, list):
-            variable_names = [variable_names]
+            variable_names = [variable_names]        
         for variable_name in variable_names:
             variable_string = resources.get(variable_name, None)
             if variable_string is not None:
@@ -220,26 +165,6 @@ class AgentLocationChoiceModel(LocationChoiceModel):
 
         return LocationChoiceModel.create_interaction_dataset(self, agent_set,
                                                               agents_index, config, **kwargs)
-
-## above method was:
-#    def get_choice_index_for_estimation_and_chosen_choice(self, agent_set,
-#                                                            agents_index, *args, **kwargs):
-#        id_name = self.choice_set.get_id_name()[0]
-#        mod_id_name = "__%s__" % id_name
-#        # This should be only true when reestimating, since the agents for estimation were unplaced
-#        # in the previous run and their original locations were stored in mod_id_name
-#        if mod_id_name in agent_set.get_known_attribute_names():
-#            agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
-#        result = LocationChoiceModel.get_choice_index_for_estimation_and_chosen_choice(self, agent_set,
-#                                                            agents_index, *args, **kwargs)
-#        #logger.log_status("Unplace agents for estimation.")
-#        # Copy the agents locations into a temporary attribute (called e.g. __grid_id__)
-#        # in case it will be needed for reestimation
-#        #if  (mod_id_name not in agent_set.get_known_attribute_names()):
-#        #    agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name))) # must be a copy
-#        # Agents for estimation are unplaced in order not to influence the location characteristics
-#        #agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
-#        return result
 
     def prepare_for_run(self, *args, **kwargs):
         spec, coef, dummy = LocationChoiceModel.prepare_for_run(self, *args, **kwargs)
