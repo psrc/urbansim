@@ -8,9 +8,10 @@ land cost
 nonresidential building prices
 building construction model
 account for parking
+fix buildable area
 '''
 
-import os, sys, cPickle, traceback, time, string, StringIO
+import os, sys, cPickle, traceback, time, string, StringIO, math
 import numpy
 from numpy import array
 
@@ -25,10 +26,11 @@ import proforma
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
+from opus_core.store.attribute_cache import AttributeCache
 from opus_core.model import Model
 from opus_core import paths
 
-DEBUG = 0
+DEBUG = 1
 
 class DeveloperModel(Model):
 
@@ -50,11 +52,28 @@ class DeveloperModel(Model):
         z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
     '''
 
-    dataset_pool = SessionConfiguration().get_dataset_pool()
+    data_path = paths.get_opus_data_path_path()
+    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_699.run_2012_04_28_20_50')
+    year = 2011
+    simulation_state = SimulationState()
+    simulation_state.set_current_time(year)
+    SimulationState().set_cache_directory(cache_dir)
+    attribute_cache = AttributeCache()
+    dataset_pool = SessionConfiguration(new_instance=True,
+                         package_order=['bayarea', 'urbansim_parcel',
+                                        'urbansim', 'opus_core'],
+                         in_storage=attribute_cache
+                        ).get_dataset_pool()
+
+    #dataset_pool = SessionConfiguration().get_dataset_pool()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
     node_set = dataset_pool.get_dataset('node')
+    unit_set = dataset_pool.get_dataset('residential_unit')
+    #print numpy.array(unit_set['rent'] > 0).size
+    #for i in range(unit_set.size()):
+    #    print unit_set['unit_price'][i], unit_set['unit_sqft'][i]
     
     #transit_set = dataset_pool.get_dataset('transit_station')
     #print dataset_pool.datasets_in_pool()
@@ -69,17 +88,36 @@ class DeveloperModel(Model):
         print found.size
     sys.exit()
     '''
-    node_ids = array(node_set.node_ids, dtype="int32")
    
-    #compute_devmdl_accvars(node_set,node_ids) 
+    compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
     z = Zoning(1,current_year)
     isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
-    test_parcels = numpy.where(empty_parcels==1)[0]
-    test_parcels = test_parcels[:1000]
+    res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)*parcel.aggregate(building.building_type_id<4)")
+    SAMPLE_RATE = 0
+    sample = []
+    for i in range(parcel_set.size()):
+        if empty_parcels[i] == 1:
+            sample.append(i+1)
+        elif res_parcels[i] == 1 and numpy.random.ranf() < SAMPLE_RATE:
+            sample.append(i+1)
+    test_parcels = array(sample)
+
+    #test_parcels = numpy.where(empty_parcels==1)[0]
+    
+    global building_sqft, building_price
+    building_sqft = parcel_set.compute_variables('parcel.aggregate(building.building_sqft)')
+    building_price = parcel_set.compute_variables('parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
+    
+    #test_parcels = array([i+1 for i in range(parcel_set.size())])
+    #test_parcels = test_parcels[:10000]
+
+    #test_parcels = test_parcels[:400]
+    test_parcels = numpy.where(parcel_set['parcel_id'] == 149300)[0]
+    #print test_parcels
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
     import time
@@ -87,24 +125,57 @@ class DeveloperModel(Model):
     HOTSHOT = 0
 
     from multiprocessing import Pool, Queue
-    pool = Pool(processes=24)
+    pool = Pool(processes=16)
 
     import hotshot, hotshot.stats, test.pystone
     if HOTSHOT:
         prof = hotshot.Profile('devmdl.prof')
         prof.start()
 
+    outf = open('buildings.csv','w')
+    outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
     t1 = time.time()
     if HOTSHOT:
-        for p in test_parcels: process_parcel(p)
+        results = []
+        for p in test_parcels: 
+            r = process_parcel(p)
+            if r <> None and r <> -1: results.append(r)
     else:
         results = pool.map(process_parcel,test_parcels)
         results = [x for x in results if x <> None and x <> -1]
-        #print results
+    for result in results:
+        #print result
+        outf.write(string.join([str(x) for x in result],sep=',')+'\n')
+    aggd = {}
+    for result in results:
+        units = result[-1]
+        county = result[1]
+        btype = result[2]
+        key = (county,btype)
+        aggd.setdefault(key,0)
+        aggd[key] += units
+        aggd.setdefault(county,0)
+        aggd[county] += units
+    
+    aggf = open('county_aggregations.csv','w')
+    county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
+    btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC'}
+    aggf.write('county,total,'+string.join(btype_names.values(),sep=',')+'\n')
+    for county in county_names.keys():
+        aggf.write(county_names[county]+','+str(aggd.get(county,0)))
+        for btype in btype_names.keys():
+            key = (county,btype)
+            val = aggd.get(key,0) 
+            aggf.write(','+str(val))
+        aggf.write('\n')
+
     t2 = time.time()
 
     print "Finished in %f seconds" % (t2-t1)
     print "Ran optimization %d times" % devmdl_optimize.OBJCNT
+    global NOZONINGCNT, NOBUILDTYPES
+    print "Did not find zoning for parcel %d times" % NOZONINGCNT
+    print "Did not find building types for parcel %d times" % NOBUILDTYPES
     print "DONE"
 
     if HOTSHOT:
@@ -115,16 +186,23 @@ class DeveloperModel(Model):
         stats.sort_stats('cumulative')
         stats.print_stats(20)
 
+NOZONINGCNT = 0
+NOBUILDTYPES = 0
+
 def process_parcel(parcel):
 
         global parcel_set, z, node_set, isr
+        global NOZONINGCNT, NOBUILDTYPES
+        global building_sqft
  
         current_year = SimulationState().get_current_time()
         pid = parcel_set['parcel_id'][parcel]
         county_id = parcel_set['county_id'][parcel]
         taz = parcel_set['zone_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
-        #print "parcel_id is %d" % pid
+        existing_sqft = building_sqft[parcel]
+        existing_price = building_price[parcel]
+        if DEBUG: print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
         shape_area = parcel_set['shape_area'][parcel]
         v = float(shape_area)*10.7639
@@ -132,32 +210,37 @@ def process_parcel(parcel):
 
         try: zoning = z.get_zoning(pid)
         except: 
-            print "Can't find zoning for parcel: %d, skipping" % pid
+            #print "Can't find zoning for parcel: %d, skipping" % pid
             return
         btypes = z.get_building_types(pid)
         if not zoning:
-            print "NO ZONING FOR PARCEL"
+            #print "NO ZONING FOR PARCEL"
+            NOZONINGCNT += 1
             return
         if not btypes:
-            print "NO BUILDING TYPES FOR PARCEL"
+            #print "NO BUILDING TYPES FOR PARCEL"
+            NOBUILDTYPES += 1
             return
         if v < 800:
-            print "PARCEL SIZE IS TOO SMALL"
+            #print "PARCEL SIZE IS TOO SMALL"
             return
         if DEBUG > 0: print "Parcel size is %f" % v
         far = z.get_attr(zoning,'max_far', 100)
         height = int(z.get_attr(zoning,'max_height', 1000))
+        max_dua = int(z.get_attr(zoning,'max_dua', 100))
+        max_dua = min(max_dua,30)
+        if DEBUG: print far, height, max_dua
 
         if far == 100 and height == 1000: far,height = .75,10
             
-        bform = BForm(v,far,height,county_id,taz,isr)
+        bform = BForm(v,far,height,max_dua,county_id,taz,isr,existing_sqft,existing_price)
 
         if DEBUG > 0: print "ZONING BTYPES:", btypes
 
         # right now we can't have MF-CONDO (type 5)
         devmdl_btypes = []
-        if 1 in btypes or 2 in btypes: devmdl_btypes+=[1,2]
-        if 3 in btypes: 
+        if 1 in btypes: devmdl_btypes+=[1,2]
+        if 2 in btypes or 3 in btypes: 
             devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
         if 4 in btypes: devmdl_btypes.append(7) # office to office
         #if 5 in btypes: continue # hotel
@@ -204,6 +287,7 @@ def process_parcel(parcel):
             rent_per_sqft_mf = (unitrent2*1.0)/unitsize2
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
             prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf)
+
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
             if lotsize>10000000: lotsize=10000000
@@ -211,9 +295,9 @@ def process_parcel(parcel):
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
             bform.btype = btype 
-            #print btype
+            if DEBUG: print btype
             X, npv = devmdl_optimize.optimize(bform,prices)
-            #print X, npv
+            if DEBUG: print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv
@@ -231,7 +315,12 @@ def process_parcel(parcel):
                 tenure = 0
                 if btype in [3,4]: tenure = 1
                 year_built = current_year
-                building = (pid, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
+                stories = math.ceil(stories)
+                sqft = math.floor(sqft)
+                res_sqft = math.floor(res_sqft)
+                nonres_sqft = math.floor(nonres_sqft)
+                res_units = math.floor(res_units)
+                building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
                 maxbuilding = building
 
         return maxbuilding 

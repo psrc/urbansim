@@ -10,7 +10,7 @@ from opus_core.logger import logger
 from proforma import proforma
 import copy
 
-DEBUG = 0
+DEBUG = 1
 SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0
@@ -160,6 +160,8 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
 
     #print btype, params
     #print "cost", cost
+    proposal['land_cost'] = bform.procurement_cost()
+    if proposal['land_cost'] == 0: proposal['land_cost'] = 100000
     proposal['construction_cost'] = cost 
     #print proposal['construction_cost']
     if DEBUG: print "COST:", proposal['construction_cost']
@@ -195,7 +197,7 @@ def optimize(bform,prices):
     elif btype in COMMERCIALTYPES_D: bform.commercial_bounds
     else: assert 0
 
-    if btype == 2: return [], -1.0
+    #if btype == 2: return [], -1.0
 
     if btype in [4,6]: nf = 5
     elif btype in COMMERCIALTYPES_D: nf = 1

@@ -3,7 +3,7 @@ from math import ceil
 from numpy import array
 import devmdl_optimize
 
-FLOORHEIGHT = 10
+FLOORHEIGHT = 12
 LOTRATIOS = array([.71,.79,.93,1.16]) # ratio of 1BR, 2BR, etc to average
 UNITRATIOS = array([.835,1.15,1.5,1.72]) # ratio of 1BR, 2BR, etc to average
 RENTFACTOR = .9 # ratio of rent to ave
@@ -11,9 +11,12 @@ CONDOFACTOR = 1.1 # ratio of own to ave
 
 class BForm:
 
-    def __init__(my,parcel_size,FAR,height,county,taz,isr):
+    def __init__(my,parcel_size,FAR,height,max_dua,county,taz,isr,existing_sqft,existing_price):
         my.height = height
         my.FAR = FAR
+        my.max_dua = max_dua
+        my.existing_sqft = existing_sqft
+        my.existing_price = existing_price
         my.parcel_size = parcel_size
         my.buildable_area = parcel_size*.8
         
@@ -48,26 +51,39 @@ class BForm:
         return numpy.append(X,1 - numpy.sum(X))
 
     def sfbuilder_bounds(my,X,*args):
-        return numpy.append(X,my.parcel_size - numpy.dot(my.lotsize,X))
+        Y = numpy.append(X,my.parcel_size/43560.0*my.max_dua - numpy.sum(X))
+        Y = numpy.append(Y,my.parcel_size*SFBUILDEREFFICIENCY - numpy.dot(my.lotsize,X))
+        return Y
 
     def sf_builtarea(my):
         return numpy.dot(my.sfunitsizes,my.num_units)
 
     def mf_builtarea(my,X=None):
         if X == None: 
-            return numpy.dot(my.mfunitsizes,my.num_units) + my.nonres_sqft
+            sqft = numpy.dot(my.mfunitsizes,my.num_units) + my.nonres_sqft
+            return sqft / MFBUILDEREFFICIENCY
 
         sqft = numpy.dot(my.mfunitsizes,X[:4])
 		# ground floor retail
         if len(X) == 5: sqft += X[4]*devmdl_optimize.SQFTFACTOR 
-        return sqft
+        return sqft / MFBUILDEREFFICIENCY
 
     def mf_bounds(my,X,*args):
-        return numpy.append(X,my.max_floor_area - my.mf_builtarea(X))
+        Y = numpy.append(X,my.parcel_size/43560.0*my.max_dua - numpy.sum(X))
+        Y = numpy.append(Y,my.max_floor_area - my.mf_builtarea(X))
+        #print my.max_floor_area, my.mf_builtarea(X), X
+        #print my.parcel_size/43560.0*my.max_dua, numpy.sum(X)
+        return Y
 
     def commercial_bounds(my,X,*args):
         cons = my.max_floor_area - X[0]
         return array([cons])
+
+    def procurement_cost(my):
+        cost = 0
+        cost += my.existing_sqft*DEMOCOST
+        cost += my.existing_price
+        return cost
 
     def sf_cost(my):
         F = my.F
@@ -80,6 +96,7 @@ class BForm:
     def get_height(my):
         builtarea = my.mf_builtarea()
         footprint = min(my.buildable_area,my.max_floor_area)
+        if footprint == 0: return 0
         return ceil(builtarea/footprint)*FLOORHEIGHT
 
     def commercial_cost(my,btype):
@@ -107,6 +124,7 @@ class BForm:
         F = my.F
         cost = 0
         height = my.get_height()
+        assert height >= 0 and height < 250
         if mf == 'apt': sqft = numpy.dot(my.mfunitsizes,my.num_units)
         elif mf == 'condo': sqft = numpy.dot(my.condounitsizes,my.num_units)
         if height < 25: cost += sqft*MFLOWRISE*F
@@ -119,12 +137,15 @@ class BForm:
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F
         return cost
 
-COSTFACTOR = .5
+DEMOCOST = 5.0
+COSTFACTOR = 1.5
 SFCOST = 140.0
+SFBUILDEREFFICIENCY = .9
+MFBUILDEREFFICIENCY = .8
 MFLOWRISE = 140.0
-MFMIDRISE = 140.0
-MFMID2RISE = 168.00
-MFHIGHRISE = 168.00
+MFMIDRISE = 140.0*1.2
+MFMID2RISE = 168.00*1.2
+MFHIGHRISE = 168.00*1.3
 MFSKYSCRAPER = 200.0
 IMPACTFEE = 8000.0
 GROUNDFLOORRETAIL = 120.0

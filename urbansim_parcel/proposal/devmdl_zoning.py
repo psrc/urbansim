@@ -108,6 +108,7 @@ class Zoning():
         zid = r[1]
         d[pid] = zid
     my.pid2zid = d
+    print "Found %d parcel->zoning relationships" % len(d)
 
     s= "select * from geography_building_type_zone_relation"
     print s
