@@ -304,7 +304,8 @@ class ChoiceModel(ChunkModel):
 
                 utilities[self.observations_mapping[submodel], :] = self.upc_sequence.compute_utilities(data, coef_vals, resources=self.run_config)
                 if price_coef_name is not None:
-                    price_coef_val[self.observations_mapping[submodel], 0] = coef_vals[coef_names==price_coef_name]
+                    ##assume the price coef doesn't vary by equation (alternative)
+                    price_coef_val[self.observations_mapping[submodel], 0] = coef_vals[coef_names==price_coef_name][0]
 
         if price_coef_name is not None:
             self.run_config.merge({'price': price, 
@@ -1415,13 +1416,13 @@ class TestChoiceModel(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         household_data = {
-            'household_id': arange(1000)+1,
-            #'submodel': array(500*[1]+500*[2])
-            'submodel': array(1000*[1]),
+            'household_id': arange(2000)+1,
+            #'submodel': array(1000*[1]+1000*[2])
+            'submodel': array(2000*[1]),
             }
         location_data = {
              'location_id': arange(1000) +1,
-             'capacity': ones(1000),
+             'capacity': ones(1000)*2,
              'price': array(500*[10.0] + 500*[0.0])
              }
         storage.write_table(
