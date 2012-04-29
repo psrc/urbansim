@@ -5,6 +5,7 @@
 from opus_core.upc.lottery_choices import lottery_choices
 from scipy.optimize import fmin_l_bfgs_b
 from opus_core.logger import logger
+from opus_core import ndimage
 from copy import copy
 import numpy as np
 try:
@@ -20,20 +21,25 @@ class equilibration_choices(lottery_choices):
             capacity=None,
             resources=None):
         """
-
+        yet to support sampling of alternatives
         """
 
         resources.check_obligatory_keys(['price_coef_name'])
+        ## assume all agents have the same index, ie no sampling of alts
+        assert np.allclose(resources['index'][0, ], resources['index'][1, ])
+        self.index = resources['index'][0, ] 
         if utilities is None:
             utilities = resources.get("utilities")
         self.capacity = capacity
         if self.capacity is None:
             self.capacity = resources.get("capacity", None)
         assert self.capacity is not None
+        self.capacity = self.capacity[self.index]
         nagents, nalts = utilities.shape
-        ##price of shape (1, nalts)
-        self.price = np.empty((1, nalts))
-        self.price[...] = resources.get("price")
+        self.nchoice_set = self.capacity.size
+        ##price of shape (1, self.nalts)
+        self.price = np.matrix(np.empty(nalts))
+        self.price[...] = resources.get("price")[self.index]
         assert self.price.shape == (1, nalts)
         ## agent specific beta for price, of shape (nagents, 1)
         self.beta = resources.get("price_beta")  
@@ -68,6 +74,10 @@ class equilibration_choices(lottery_choices):
         out = ne.evaluate("exp(U_cached + addition)")
         sumV = ne.evaluate("sum(out, axis=1)")[:, np.newaxis]
         ne.evaluate("out / sumV", out=out)
+        ## when alt set is from sampling
+        #demand = ndimage.sum(out.ravel(),
+        #                     labels=self.index.ravel(),
+        #                     index=np.arange(self.nchoice_set))
         demand = ne.evaluate("sum(out, axis=0)")
         return demand, out
 
