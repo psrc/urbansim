@@ -472,6 +472,16 @@ class Dataset(AbstractDataset):
         """
         self.set_values_of_one_attribute(attribute=attr, values=values)
 
+    def to_dataframe(self):
+       from pandas import DataFrame
+       df = {}
+       for attr in self.get_known_attribute_names():
+           df[attr] = self.get_attribute(attr)
+
+       df = DataFrame(df)
+       return df
+       
+
 #    def __getattribute__(self, attr):
 #        """ enable accessing dataset attribute through ``data.attr``; adopted from numpy.core.records.py
 #        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources
@@ -525,7 +535,8 @@ class Dataset(AbstractDataset):
 #        
 #        ret = self.set_values_of_one_attribute(attr, val)
 #        return ret
-       
+
+      
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
     def __init__(self, parent, index):
