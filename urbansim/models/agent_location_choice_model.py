@@ -128,7 +128,6 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         return end_choices
 
     def add_prefix_to_variable_names(self, variable_names, dataset, variable_package, resources):
-        """Add a prefix of 'package.dataset_name.' to variable_names from resources.
         """
         ##TODO: refactor to require variable_package provided with variable_names
 
