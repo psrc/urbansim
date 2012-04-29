@@ -33,7 +33,17 @@ def _safe_getenv(key, default_func):
     return os.environ[key] if key in os.environ else default_func()
 
 def _get_default_opus_home():
-    raise Exception('OPUS_HOME environment variable must be set.') 
+    """
+    get_default_opus_home from the grandparent path of opus_core
+    """
+    try:
+        import opus_core
+    except ImportError:
+        raise Exception('OPUS_HOME environment variable must be set.') 
+
+    opus_core_path = os.path.dirname(opus_core.__file__)
+    opus_home = os.path.normpath(os.path.join(opus_core_path, '../..'))
+    return opus_home
 
 def _get_default_opus_data_path():
     # The path to the opus_data directory is found in the environment variable
