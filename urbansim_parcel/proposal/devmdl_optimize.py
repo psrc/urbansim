@@ -89,8 +89,8 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     global OBJCNT
     OBJCNT += 1    
     if len(params) >= 4: bform.set_num_units(array(params[:4]))
-    if len(params) == 5: bform.set_nonres_sqft(params[4])
-    if len(params) == 1: bform.set_nonres_sqft(params[0])
+    if len(params) == 5: bform.set_nonres_sqft(params[4]*SQFTFACTOR)
+    if len(params) == 1: bform.set_nonres_sqft(params[0]*SQFTFACTOR)
 
     #global PROFORMA_INPUTS
     #proforma_inputs = copy.copy(PROFORMA_INPUTS)
@@ -122,9 +122,19 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
         d['rent_revenue'] = \
             prices[3]*3*numpy.append(X[:4]*bform.mfunitsizes,0)
             # rents are per month but need to be period so we multiply by 3
-    else:
-        d['leases_revenue'][4] = \
-            X[0]*20.0 # we need price info for non-residential!
+    elif btype in [7,8]: # office
+        d['leases_revenue'][4] = X[0]*prices[4]*SQFTFACTOR
+        #print "X", X
+        #print d['leases_revenue']
+    elif btype in [9,10,11]: # retail
+        d['leases_revenue'][4] = X[0]*prices[5]*SQFTFACTOR
+        #print "X", X
+        #print d['leases_revenue']
+    elif btype in [12,13]: # industrial
+        d['leases_revenue'][4] = X[0]*prices[6]*SQFTFACTOR
+        #print "X", X
+        #print d['leases_revenue']
+    else: assert 0
 
     #print btype
     #print params
@@ -194,7 +204,7 @@ def optimize(bform,prices):
     elif btype == 2: ieqcons = bform.sfbuilder_bounds
     elif btype in [3,4]: ieqcons = bform.mf_bounds
     elif btype in [5,6]: ieqcons = bform.mf_bounds
-    elif btype in COMMERCIALTYPES_D: bform.commercial_bounds
+    elif btype in COMMERCIALTYPES_D: ieqcons = bform.commercial_bounds
     else: assert 0
 
     #if btype == 2: return [], -1.0

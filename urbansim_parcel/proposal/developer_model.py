@@ -89,7 +89,7 @@ class DeveloperModel(Model):
     sys.exit()
     '''
    
-    #compute_devmdl_accvars(node_set) 
+    compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
     z = Zoning(1,current_year)
@@ -147,7 +147,6 @@ class DeveloperModel(Model):
         #print result
         outf.write(string.join([str(x) for x in result],sep=',')+'\n')
 
-    '''
     ##TODO: id of buildings to be demolished
     buildings_to_demolish = []
     idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
@@ -163,21 +162,23 @@ class DeveloperModel(Model):
         building_set.add_elements(new_buildings, require_all_attributes=False,
                                  change_ids_if_not_unique=True)
         building_set.flush_dataset()
-    '''
+    
     aggd = {}
     for result in results:
         units = result[-1]
+        nonres_sqft = 1 #result[6]/1000.0
         county = result[1]
         btype = result[2]
         key = (county,btype)
         aggd.setdefault(key,0)
-        aggd[key] += units
+        if btype < 7: aggd[key] += units
+        else: aggd[key] += nonres_sqft
         aggd.setdefault(county,0)
         aggd[county] += units
     
     aggf = open('county_aggregations.csv','w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
-    btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC'}
+    btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC',7:'OF',8:'MXO',9:'CHOOD',10:'CAUTO',11:'CBOX',12:'MANU',13:'WHE'}
     aggf.write('county,total,'+string.join(btype_names.values(),sep=',')+'\n')
     for county in county_names.keys():
         aggf.write(county_names[county]+','+str(aggd.get(county,0)))
@@ -293,6 +294,9 @@ def process_parcel(parcel):
                 unitprice2 = node_set['avg_mf_unit_price'][idx_node_parcel][0]
                 unitrent = node_set['avg_sf_unit_rent'][idx_node_parcel][0]
                 unitrent2 = node_set['avg_mf_unit_rent'][idx_node_parcel][0]
+                of_rent_sqft = node_set['avg_of_sqft_rent'][idx_node_parcel][0]
+                ret_rent_sqft = node_set['avg_ret_sqft_rent'][idx_node_parcel][0]
+                ind_rent_sqft = node_set['avg_ind_sqft_rent'][idx_node_parcel][0]
             if not unitsize: unitsize = 1111  
             if unitsize<250:  unitsize = 1111   
             if unitsize>8000:  unitsize = 8000
@@ -303,8 +307,19 @@ def process_parcel(parcel):
             price_per_sqft_mf = (unitprice2*1.0)/unitsize2
             rent_per_sqft_sf = (unitrent*1.0)/unitsize
             rent_per_sqft_mf = (unitrent2*1.0)/unitsize2
+            if numpy.isinf(price_per_sqft_sf): price_per_sqft_sf = 0
+            if numpy.isinf(price_per_sqft_mf): price_per_sqft_mf = 0
+            if numpy.isinf(rent_per_sqft_sf): rent_per_sqft_sf = 0
+            if numpy.isinf(rent_per_sqft_mf): rent_per_sqft_mf = 0
+            if numpy.isinf(of_rent_sqft): of_rent_sqft = 0
+            if numpy.isinf(ret_rent_sqft): ret_rent_sqft = 0
+            if numpy.isinf(ind_rent_sqft): ind_rent_sqft = 0
+            if price_per_sqft_mf > 800: price_per_sqft_mf = 800
+            if price_per_sqft_mf > 1.8 * price_per_sqft_sf:
+                price_per_sqft_mf = 1.8 * price_per_sqft_sf
+            #price_per_sqft_mf = price_per_sqft_sf
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
-            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf)
+            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*2,ret_rent_sqft*2,ind_rent_sqft*2)
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
@@ -313,9 +328,9 @@ def process_parcel(parcel):
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
             bform.btype = btype 
-            if DEBUG: print btype
+            #if 1: print btype
             X, npv = devmdl_optimize.optimize(bform,prices)
-            if DEBUG: print X, npv
+            #if 1: print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv

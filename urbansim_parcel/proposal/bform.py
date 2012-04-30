@@ -76,8 +76,10 @@ class BForm:
         return Y
 
     def commercial_bounds(my,X,*args):
-        cons = my.max_floor_area - X[0]
-        return array([cons])
+        cons = my.max_floor_area - X[0]*devmdl_optimize.SQFTFACTOR
+        #print "cons", cons
+        #print "FA", my.max_floor_area
+        return array([X[0],cons])
 
     def procurement_cost(my):
         cost = 0
@@ -118,6 +120,7 @@ class BForm:
         else: assert 0
 
         cost += my.isr.nonres_isr_fee(my.taz)*sqft
+        #print cost
         return cost
 
     def mf_cost(my,mf='apt'):
