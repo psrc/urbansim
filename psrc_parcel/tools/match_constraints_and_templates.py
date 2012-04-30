@@ -4,7 +4,7 @@
 
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
-from opus_core.misc import unique, DebugPrinter, write_to_text_file, quantile
+from opus_core.misc import unique, DebugPrinter, write_to_text_file, quantile, write_table_to_text_file
 from opus_core.logger import logger
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.sampling_toolbox import sample_noreplace
@@ -15,7 +15,8 @@ import os
 
 def match_parcels_to_constraints_and_templates(parcel_dataset,
                                                 development_template_dataset,
-                                                output_dir, log_scale=True,
+                                                output_dir, log_scale=True, strict=True,
+                                                output_points=False,
                                                 parcel_index=None,
                                                 template_index=None,
                                                 consider_constraints_as_rules=True,
@@ -27,6 +28,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     It also creates a plot for each GLU and unit type of template ranges and densities.
     parcel_index - 1D array, indices of parcel_dataset (default is all parcels).
     template_index - index to templates that are available (default is all templates).
+    If strict is True, parcels without templates are considered across GLU, otherwise only within each GLU. 
     """
 
     if not os.path.exists(output_dir):
@@ -151,7 +153,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     ### Print summary
     ##################
     unique_glu = parcels_acc_by_constr_wo_templ.keys()
-    parcels_wo_templ = zeros(index1.size, dtype="int32")
+    #parcels_wo_templ = zeros(index1.size, dtype="int32")
     
     #parcels_wo_templ = where(logical_and(vacant_land>0, logical_and(is_developable_parcel, logical_not(has_template))))[0]
     #nr_parcels_wo_templ = parcels_wo_templ.size
@@ -162,9 +164,12 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     parcels_wo_temp_by_glu = {}
     sum1 = 0
     sum2 = 0
+    parcels_wo_templ = logical_not(has_template)
     for glu in unique_glu:
-        #if glu == 1:
-        parcels_wo_templ = logical_or(parcels_wo_templ, parcels_acc_by_constr_wo_templ[glu])
+        if strict:
+            parcels_acc_by_constr_wo_templ[glu] = logical_and(parcels_acc_by_constr_wo_templ[glu], parcels_wo_templ)
+        #if glu == 3:
+        #parcels_wo_templ = logical_or(parcels_wo_templ, parcels_acc_by_constr_wo_templ[glu])
 #        if glu not in generic_land_use_type_ids:
 #            no_glu_templ.append(glu)
         #idx = parcels_glu==glu
@@ -194,7 +199,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         max_templ_attr = {'far': 0, 'units_per_acre': 0}
         min_templ_attr = {'far': 999999, 'units_per_acre': 9999999}
         xy = {'far':[], 'units_per_acre':[]}
-        points = {'far':zeros((0,2)), 'units_per_acre':zeros((0,2))}
+        points = {'far':zeros((0,3)), 'units_per_acre':zeros((0,3))}
         npoints = {'far': 0, 'units_per_acre': 0}
         for i_template in index2:
             if glu <> generic_land_use_type_ids[i_template]:
@@ -208,7 +213,10 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
             #                                      logical_and(is_vacant, units_proposed>0)), 
             #                          logical_and(is_constraint,
             #                                      is_developable_parcel))
-            missed_to_match = unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())
+            missed_to_match = zeros(parcel_dataset.size(), dtype='bool8')
+            missed_to_match[(unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())).astype('int32')] = True
+            missed_to_match = where(logical_and(missed_to_match, parcels_acc_by_constr_wo_templ[glu]))[0]
+            #missed_to_match = unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())
             for constraint_type, constraint in parcel_dataset.development_constraints[glu].iteritems():
                 if density_types[i_template] <> constraint_type:
                     continue
@@ -231,7 +239,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                         thisidx = missed_to_match
                     points[constraint_type] = concatenate((points[constraint_type], 
                                       concatenate((parcel_dataset['vacant_land_area'][thisidx][:,newaxis], 
-                                                   template_attribute*ones((thisidx.size,1))), axis=1)), axis=0)
+                                                   template_attribute*ones((thisidx.size,1)), 
+                                                   parcel_ids[thisidx][:,newaxis]), axis=1)), axis=0)
                     max_land_sqft[constraint_type] = max(max_land_sqft[constraint_type], parcel_dataset['vacant_land_area'][thisidx].max())
                     min_land_sqft[constraint_type] = min(min_land_sqft[constraint_type], parcel_dataset['vacant_land_area'][thisidx].max())
                     max_templ_attr[constraint_type] = max(max_templ_attr[constraint_type], template_attribute)
@@ -249,7 +258,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                 continue
             #print xy[type]
             lxy = array(xy[type])
-            dots = points[type]
+            dots = points[type][:,0:2]
             minx = min_land_sqft[type]-100
             maxx = max_land_sqft[type]+100
             miny = min_templ_attr[type]-0.05
@@ -290,6 +299,9 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
             plt.savefig(os.path.join(output_dir, 'match_templates%s_%s_%s.pdf' % (log_suffix, glu, type)))
             plt.close()
             #plt.show()
+            if output_points:
+            #if glu == 3:
+                write_table_to_text_file(os.path.join(output_dir, 'points_%s_%s.txt' % (glu, type)), points[type], delimiter=', ')
         logger.end_block()
 
     logger.log_status('Resulting figures stored into %s' % output_dir)               
@@ -304,8 +316,10 @@ class FltStorage:
 if __name__ == '__main__':
     ### User's settings:
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_with_income_growth_NHoust/2000"
-    input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
+    #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
+    input_cache =  "/Users/hana/workspace/data/psrc_parcel/runs/run_bm_2.tmod1/2040"
     output_dir =  "/Users/hana/match_templ2" # where the resulting figures are going to be stored
+    output_dir =  "/Users/hana/workspace/data/psrc_parcel/constraints"
     log_scale = True
     ### End of user's settings
     instorage = FltStorage().get(input_cache)
@@ -314,6 +328,6 @@ if __name__ == '__main__':
     parcel_dataset = dataset_pool.get_dataset('parcel')
     development_templates = dataset_pool.get_dataset('development_template')
     res = match_parcels_to_constraints_and_templates(parcel_dataset, development_templates, output_dir=output_dir, 
-                                                     log_scale=log_scale, dataset_pool=dataset_pool)
+                                                     log_scale=log_scale, strict=True, output_points=True, dataset_pool=dataset_pool)
     #write_to_text_file(os.path.join(output_dir, 'dev_parcels_wo_templ.txt'), res[0:100], delimiter='\n')
     
