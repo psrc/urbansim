@@ -8,7 +8,7 @@ aliases = [
     "schooldistrict = building.disaggregate((parcel.schooldistrict_id)*(parcel.schooldistrict_id>0) + 99*(parcel.schooldistrict_id<1))",
     "neighborhood_type = building.disaggregate((parcel.neighborhood_type + 1)*(parcel.neighborhood_type>-1)+ 6*(parcel.neighborhood_type<0))",
     "building_type = 1*(building.building_type_id<2) + 2*(building.building_type_id==2) + 3*(building.building_type_id>2)",
-    "jurisdiction = building.disaggregate(parcel.juris_id)",
+    "jurisdiction_id = building.disaggregate(parcel.jurisdiction_id)",
     "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id",
     "within_half_mile_transit = building.disaggregate(bayarea.node.transit_within_800_meters,intermediates=[parcel])"
