@@ -13,7 +13,7 @@ class EmploymentSubmarketDataset(SubgroupDataset):
     in_table_name_default = "employment_submarket"
     out_table_name_default = "employment_submarket"
     dataset_name = "employment_submarket"
-    subgroup_definition = ['bayarea.building.jurisdiction','building.building_type_id','bayarea.building.within_half_mile_transit']
+    subgroup_definition = ['bayarea.building.jurisdiction_id','building.building_type_id','bayarea.building.within_half_mile_transit']
     
 from opus_core.tests import opus_unittest
 class TestSubmarketDataset(opus_unittest.OpusTestCase):
