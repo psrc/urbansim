@@ -10,7 +10,7 @@ from opus_core.logger import logger
 from proforma import proforma
 import copy
 
-DEBUG = 1
+DEBUG = 0
 SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0

@@ -30,7 +30,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.model import Model
 from opus_core import paths
 
-DEBUG = 1
+DEBUG = 0
 
 class DeveloperModel(Model):
 
@@ -51,7 +51,7 @@ class DeveloperModel(Model):
         print "Reading db info from jar..."
         z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
     '''
-
+    '''
     data_path = paths.get_opus_data_path_path()
     cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_729.run_2012_04_29_12_23')
     year = 2011
@@ -64,8 +64,8 @@ class DeveloperModel(Model):
                                         'urbansim', 'opus_core'],
                          in_storage=attribute_cache
                         ).get_dataset_pool()
-
-    #dataset_pool = SessionConfiguration().get_dataset_pool()
+    '''
+    dataset_pool = SessionConfiguration().get_dataset_pool()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
@@ -89,7 +89,7 @@ class DeveloperModel(Model):
     sys.exit()
     '''
    
-    compute_devmdl_accvars(node_set) 
+    #compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
     z = Zoning(1,current_year)
@@ -116,7 +116,7 @@ class DeveloperModel(Model):
     #test_parcels = test_parcels[:10000]
 
     #test_parcels = test_parcels[:400]
-    test_parcels = numpy.where(parcel_set['parcel_id'] == 149300)[0]
+    #test_parcels = numpy.where(parcel_set['parcel_id'] == 149300)[0]
     #print test_parcels
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
@@ -147,6 +147,7 @@ class DeveloperModel(Model):
         #print result
         outf.write(string.join([str(x) for x in result],sep=',')+'\n')
 
+    '''
     ##TODO: id of buildings to be demolished
     import pdb; pdb.set_trace()
     buildings_to_demolish = []
@@ -162,7 +163,7 @@ class DeveloperModel(Model):
             new_buildings[col_name] = buildings_data[:, icol]
         building_set.add_elements(new_buildings, require_all_attributes=False)
         building_set.flush_dataset()
-
+    '''
     aggd = {}
     for result in results:
         units = result[-1]

@@ -124,7 +124,7 @@ class BForm:
         F = my.F
         cost = 0
         height = my.get_height()
-        assert height >= 0 and height < 250
+        #assert height >= 0 and height < 250
         if mf == 'apt': sqft = numpy.dot(my.mfunitsizes,my.num_units)
         elif mf == 'condo': sqft = numpy.dot(my.condounitsizes,my.num_units)
         if height < 25: cost += sqft*MFLOWRISE*F
