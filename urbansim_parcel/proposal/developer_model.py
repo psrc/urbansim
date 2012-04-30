@@ -146,6 +146,23 @@ class DeveloperModel(Model):
     for result in results:
         #print result
         outf.write(string.join([str(x) for x in result],sep=',')+'\n')
+
+    ##TODO: id of buildings to be demolished
+    import pdb; pdb.set_trace()
+    buildings_to_demolish = []
+    idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
+    building_set.remove_elements(idx_buildings_to_demolish)
+    column_names = ["parcel_id","county","building_type_id","stories",
+                    "building_sqft","residential_sqft","non_residential_sqft",
+                    "tenure","year_built","residential_units"]
+    buildings_data = array(results)
+    new_buildings = {}
+    if buildings_data.size > 0:
+        for icol, col_name in enumerate(column_names):
+            new_buildings[col_name] = buildings_data[:, icol]
+        building_set.add_elements(new_buildings, require_all_attributes=False)
+        building_set.flush_dataset()
+
     aggd = {}
     for result in results:
         units = result[-1]
