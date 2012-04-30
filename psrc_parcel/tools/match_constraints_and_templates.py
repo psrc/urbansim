@@ -318,6 +318,7 @@ if __name__ == '__main__':
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_with_income_growth_NHoust/2000"
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
     input_cache =  "/Users/hana/workspace/data/psrc_parcel/runs/run_bm_2.tmod1/2040"
+    output_data_points = False # If true a text files are created that contain the x and y of the points in the figures
     output_dir =  "/Users/hana/match_templ2" # where the resulting figures are going to be stored
     output_dir =  "/Users/hana/workspace/data/psrc_parcel/constraints"
     log_scale = True
@@ -328,6 +329,6 @@ if __name__ == '__main__':
     parcel_dataset = dataset_pool.get_dataset('parcel')
     development_templates = dataset_pool.get_dataset('development_template')
     res = match_parcels_to_constraints_and_templates(parcel_dataset, development_templates, output_dir=output_dir, 
-                                                     log_scale=log_scale, strict=True, output_points=True, dataset_pool=dataset_pool)
+                    log_scale=log_scale, strict=True, output_points=output_data_points, dataset_pool=dataset_pool)
     #write_to_text_file(os.path.join(output_dir, 'dev_parcels_wo_templ.txt'), res[0:100], delimiter='\n')
     
