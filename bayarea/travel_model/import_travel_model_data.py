@@ -17,7 +17,8 @@ def to_opus_dataset(df, out_store, table_name):
     id_names = df.index.names
     if id_names is None or id_names == [None]:
         id_names = []
-    df = df.reset_index()
+    else:
+        df = df.reset_index()
     for name in df.columns:
         data_dict[name] = df[name].values
     in_store = StorageFactory().get_storage('dict_storage')
