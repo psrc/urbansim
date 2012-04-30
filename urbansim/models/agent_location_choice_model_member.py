@@ -61,4 +61,8 @@ class AgentLocationChoiceModelMember(AgentLocationChoiceModel):
             specification_table = self.group_member.add_member_prefix_to_table_name(specification_table)
         if 'movers_variable' in kwargs.keys():
             kwargs['movers_variable'] = re.sub('SSS', self.group_member.get_member_name(), kwargs['movers_variable'])
-        return AgentLocationChoiceModel.prepare_for_estimate(self, specification_dict, specification_storage, specification_table, **kwargs)
+        return AgentLocationChoiceModel.prepare_for_estimate(self, 
+                                                             specification_dict=specification_dict, 
+                                                             specification_storage=specification_storage, 
+                                                             specification_table=specification_table, 
+                                                             **kwargs)

@@ -11,6 +11,7 @@ from opus_core.resources import Resources
 from opus_core.misc import unique
 from numpy import ma, intersect1d, ones_like
 from opus_core.logger import logger
+from opus_core.models.model import prepare_for_estimate
 import copy
 
 class AgentLocationChoiceModel(LocationChoiceModel):
@@ -129,7 +130,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
 
     def add_prefix_to_variable_names(self, variable_names, dataset, variable_package, resources):
         """
-        ##TODO: refactor to require variable_package provided with variable_names
+        ##TODO: refactor to require variable_package to be provided with variable_names
 
         Add a prefix of 'package.dataset_name.' to variable_names from resources.
         """
@@ -169,28 +170,29 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         spec, coef, dummy = LocationChoiceModel.prepare_for_run(self, *args, **kwargs)
         return (spec, coef)
     
-    def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
-                              specification_table=None, agent_set=None, 
-                              agents_for_estimation_storage=None,
-                              agents_for_estimation_table=None, join_datasets=False,
-                              index_to_unplace=None, portion_to_unplace=1.0,
-                              compute_lambda=False, grouping_location_set=None,
-                              movers_variable=None, movers_index=None,
-                              filter=None, location_id_variable=None,
-                              data_objects={}):
+    def prepare_for_estimate(self, 
+                             agent_set=None, 
+                             index_to_unplace=None, 
+                             portion_to_unplace=1.0,
+                             compute_lambda=False, 
+                             grouping_location_set=None,
+                             movers_variable=None, 
+                             movers_index=None,
+                             location_id_variable=None,
+                             data_objects={},
+                             *args, **kwargs
+                            ):
         """Put 'location_id_variable' always in, if the location id is to be computed on the estimation set,
         i.e. if it is not a primary attribute of the estimation set. Set 'index_to_unplace' to None, if 'compute_lambda' is True.
         In such a case, the annual supply is estimated without unplacing agents. 'grouping_location_set', 'movers_variable' and
         'movers_index' must be given, if 'compute_lambda' is True.
         """
-        from opus_core.model import get_specification_for_estimation
         from urbansim.functions import compute_supply_and_add_to_location_set
-        specification = get_specification_for_estimation(specification_dict,
-                                                          specification_storage,
-                                                          specification_table)
+
         if (agent_set is not None) and (index_to_unplace is not None):
             if self.location_id_string is not None:
-                agent_set.compute_variables(self.location_id_string, resources=Resources(data_objects))
+                agent_set.compute_variables(self.location_id_string, 
+                                            resources=Resources(data_objects))
             if portion_to_unplace < 1:
                 unplace_size = int(portion_to_unplace*index_to_unplace.size)
                 end_index_to_unplace = sample_noreplace(index_to_unplace, unplace_size)
@@ -198,7 +200,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                 end_index_to_unplace = index_to_unplace
             logger.log_status("Unplace " + str(end_index_to_unplace.size) + " agents.")
             agent_set.modify_attribute(self.choice_set.get_id_name()[0],
-                                        resize(array([-1]), end_index_to_unplace.size), end_index_to_unplace)
+                                        resize(array([-1]), end_index_to_unplace.size), 
+                                       end_index_to_unplace)
         if compute_lambda:
             movers = zeros(agent_set.size(), dtype="bool8")
             if movers_index is not None:
@@ -212,38 +215,10 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                                                    self.estimate_config["weights_for_estimation_string"],
                                                    resources=Resources(data_objects))
 
-        # create agents for estimation
-        if (agents_for_estimation_storage is not None) and (agents_for_estimation_table is not None):
-            estimation_set = Dataset(in_storage = agents_for_estimation_storage,
-                                      in_table_name=agents_for_estimation_table,
-                                      id_name=agent_set.get_id_name(), dataset_name=agent_set.get_dataset_name())
-            if location_id_variable is not None:
-                estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
-                # needs to be a primary attribute because of the join method below
-                estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).get_alias())
-            if filter:
-                values = estimation_set.compute_variables(filter, resources=Resources(data_objects))
-                index = where(values > 0)[0]
-                estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
+        specification, index = prepare_for_estimate(agent_set=agent_set,
+                                                    *args, **kwargs)
 
-            if join_datasets:
-                agent_set.join_by_rows(estimation_set, require_all_attributes=False,
-                                    change_ids_if_not_unique=True)
-                index = arange(agent_set.size()-estimation_set.size(),agent_set.size())
-            else:
-                index = agent_set.try_get_id_index(estimation_set.get_id_attribute())
-        else:
-            if agent_set is not None:
-                if filter is not None:
-                    values = agent_set.compute_variables(filter, resources=Resources(data_objects))
-                    index = where(values > 0)[0]
-                else:
-                    index = arange(agent_set.size())
-            else:
-                index = None
         return (specification, index)
-
-
 
 ### In order to remove a circular dependency between this file and
 ### household_location_choice_model_creator, these unit tests were moved into
