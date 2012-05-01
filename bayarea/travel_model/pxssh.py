@@ -131,7 +131,10 @@ class pxssh (spawn):
         # connecting to a heavily loaded machine I have.
         # If latency is worse than these values then this will fail.
 
-        self.read_nonblocking(size=10000,timeout=1) # GAS: Clear out the cache before getting the prompt
+        try:
+            self.read_nonblocking(size=10000,timeout=1) # GAS: Clear out the cache before getting the prompt
+        except pexpect.TIMEOUT:
+            pass
         time.sleep(0.1)
         self.sendline()
         time.sleep(0.5)
