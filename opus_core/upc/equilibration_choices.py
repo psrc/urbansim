@@ -24,10 +24,13 @@ class equilibration_choices(lottery_choices):
         yet to support sampling of alternatives
         """
 
-        resources.check_obligatory_keys(['price_coef_name'])
+        resources.check_obligatory_keys(['price_coef_name', 'utilities', 'index'])
         ## assume all agents have the same index, ie no sampling of alts
-        assert np.allclose(resources['index'][0, ], resources['index'][1, ])
-        self.index = resources['index'][0, ] 
+        index = resources['index']
+        sampling_check = np.allclose(index[0, ], index[-1, ])
+        assert sampling_check, "Sampling of alternatives is not yet supported " \
+           + "by equilibration_choices; please disable sampler and try it again."
+        self.index = index[0, ] 
         if utilities is None:
             utilities = resources.get("utilities")
         self.capacity = capacity
