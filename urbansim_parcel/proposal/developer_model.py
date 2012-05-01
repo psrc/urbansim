@@ -132,7 +132,7 @@ class DeveloperModel(Model):
         prof = hotshot.Profile('devmdl.prof')
         prof.start()
 
-    outf = open('buildings.csv','w')
+    outf = open('buildings-%d.csv' % current_year,'w')
     outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
     t1 = time.time()
     if HOTSHOT:
@@ -176,11 +176,11 @@ class DeveloperModel(Model):
         aggd.setdefault(county,0)
         aggd[county] += units
     
-    aggf = open('county_aggregations.csv','w')
+    aggf = open('county_aggregations-%d.csv' % current_year,'w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
     btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC',7:'OF',8:'MXO',9:'CHOOD',10:'CAUTO',11:'CBOX',12:'MANU',13:'WHE'}
     aggf.write('county,total,'+string.join(btype_names.values(),sep=',')+'\n')
-    for county in county_names.keys():
+    for county in [38,41,43,1,7,48,28,49,21]:
         aggf.write(county_names[county]+','+str(aggd.get(county,0)))
         for btype in btype_names.keys():
             key = (county,btype)
@@ -314,12 +314,12 @@ def process_parcel(parcel):
             if numpy.isinf(of_rent_sqft): of_rent_sqft = 0
             if numpy.isinf(ret_rent_sqft): ret_rent_sqft = 0
             if numpy.isinf(ind_rent_sqft): ind_rent_sqft = 0
-            if price_per_sqft_mf > 800: price_per_sqft_mf = 800
-            if price_per_sqft_mf > 1.8 * price_per_sqft_sf:
-                price_per_sqft_mf = 1.8 * price_per_sqft_sf
-            #price_per_sqft_mf = price_per_sqft_sf
+            if price_per_sqft_mf > 700: price_per_sqft_mf = 700
+            if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
+                price_per_sqft_mf = 1.5 * price_per_sqft_sf
+            #price_per_sqft_mf = price_per_sqft_sf*1.5
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
-            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*2,ret_rent_sqft*2,ind_rent_sqft*2)
+            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*2,ret_rent_sqft*2,ind_rent_sqft*2.5)
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   

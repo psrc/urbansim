@@ -168,10 +168,10 @@ LOCALCOST_D = {
 49:115.58, # sonoma
 41:114.6, # san mateo
 1:116.2, # alameda
-43:117.1, # santa clara
-28:115.58, # napa
-38:123.8, # san fran
-7:112.9, # contra costa
+43:117.1*1.0, # santa clara
+28:115.58*1.45, # napa
+38:123.8*1.1, # san fran
+7:112.9*.8, # contra costa
 48:110.5, # solano
-21:115.58 # marin 
+21:115.58*1.1 # marin 
 }
