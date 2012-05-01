@@ -5,10 +5,14 @@
 from opus_core.tests import opus_unittest
 
 class TestPackageSyntax(opus_unittest.OpusTestCase):
-    def __init__(self, method_name = 'test_no_opus_syntax_violations', package_name = None):
+    modul = None
+
+    def __init__(self, method_name='test_no_opus_syntax_violations', 
+                 package_name=None):
         opus_unittest.OpusTestCase.__init__(self, method_name)
-        self.modul = package_name
-        
+        if package_name is not None:
+            self.modul = package_name
+
     def test_no_opus_syntax_violations(self):
         if self.modul is not None:
             from opus_core.tests.find_opus_syntax_violations import OpusSyntaxChecker

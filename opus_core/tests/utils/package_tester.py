@@ -16,8 +16,16 @@ from opus_core.opus_package import OpusPackage
 class PackageTester(object):
     def run_all_tests_for_package(self, package):
         # Common tests to be run on each package
-        TestForSQLPassword(package_name = package).test_no_sql_password_in_files()
-        TestPackageSyntax(package_name = package).test_no_opus_syntax_violations()
+        suite = []
+        test_loader = opus_unittest.TestLoader()
+        TestForSQLPassword.modul = package
+        TestPackageSyntax.modul = package
+        suite += test_loader.loadTestsFromTestCase(TestForSQLPassword)
+        suite += test_loader.loadTestsFromTestCase(TestPackageSyntax)
+        test_suite = opus_unittest.TestSuite(suite)
+        opus_unittest.TextTestRunner(verbosity=2).run(test_suite)
+        #TestForSQLPassword(package_name = package).test_no_sql_password_in_files()
+        #TestPackageSyntax(package_name = package).test_no_opus_syntax_violations()
         
         # Default
         loader = PackageTestLoader().load_tests_from_package
