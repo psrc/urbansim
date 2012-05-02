@@ -92,8 +92,11 @@ class DeveloperModel(Model):
     compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
-    z = Zoning(1,current_year)
-    isr = ISR()
+    SCENARIONAME = 'Studio'
+    scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
+    z = Zoning(scenario_d[SCENARIONAME],current_year)
+    isr = None
+    if SCENARIONAME in ['Studio','Transit Priority']: isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)*parcel.aggregate(building.building_type_id<4)")
@@ -125,7 +128,7 @@ class DeveloperModel(Model):
     HOTSHOT = 0
 
     from multiprocessing import Pool, Queue
-    pool = Pool(processes=16)
+    pool = Pool(processes=24)
 
     import hotshot, hotshot.stats, test.pystone
     if HOTSHOT:
@@ -283,6 +286,7 @@ def process_parcel(parcel):
         maxnpv, maxbuilding = 0, -1
 
         for btype in btypes:
+            
             if DEBUG > 0: print "building type = %s" % btype
             
             if 1: #btype in [1,2,3,4,5,6]: # RESIDENTIAL
@@ -314,12 +318,13 @@ def process_parcel(parcel):
             if numpy.isinf(of_rent_sqft): of_rent_sqft = 0
             if numpy.isinf(ret_rent_sqft): ret_rent_sqft = 0
             if numpy.isinf(ind_rent_sqft): ind_rent_sqft = 0
-            if price_per_sqft_mf > 700: price_per_sqft_mf = 700
-            if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
-                price_per_sqft_mf = 1.5 * price_per_sqft_sf
-            #price_per_sqft_mf = price_per_sqft_sf*1.5
+            #if price_per_sqft_mf > 700: price_per_sqft_mf = 700
+            price_per_sqft_mf *= .1
+            #if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
+            #    price_per_sqft_mf = 1.5 * price_per_sqft_sf
+            #price_per_sqft_mf = price_per_sqft_sf*.5
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
-            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*2,ret_rent_sqft*2,ind_rent_sqft*2.5)
+            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
@@ -327,7 +332,12 @@ def process_parcel(parcel):
             if DEBUG > 0: print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
-            bform.btype = btype 
+            bform.set_btype(btype)
+
+            parking = z.get_parking_requirements(pid, btype)
+
+            bform.set_parking(parking)
+
             #if 1: print btype
             X, npv = devmdl_optimize.optimize(bform,prices)
             #if 1: print X, npv

@@ -124,7 +124,31 @@ class Zoning():
         d.setdefault(zid,[])
         d[zid].append(btype)
     my.zid2btype = d
+    
+
+    s= "select * from geography_parking_requirement where unit = 1"
+    print s
+    cursor.execute(s)
+    records = cursor.fetchall()
+    fnames = [x[0] for x in cursor.description]
+    assert 'zone' == fnames[1]
+    assert 'use' == fnames[2]
+    assert 'min_quantity' == fnames[4]
+    d = {}
+    for r in records:
+        btype = r[2]
+        zid = r[1]
+        parking = r[4]
+        d[(zid,btype)] = parking
+    my.zid2parking = d
         
+  def get_parking_requirements(my, parcel_id, btype):
+        if parcel_id not in my.pid2zid: return None
+        zid = my.pid2zid[parcel_id]
+        key = (zid, btype)
+        if key not in my.zid2parking: return None
+        return my.zid2parking[key]
+
   def get_building_types(my, parcel_id):
         if parcel_id not in my.pid2zid: return None
         zid = my.pid2zid[parcel_id]
