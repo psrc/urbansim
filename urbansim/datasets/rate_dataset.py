@@ -12,7 +12,7 @@ import re
 
 class RateDataset(UrbansimDataset):
 
-    id_name_default = ['rate_id']
+    id_name_default = []
     in_table_name_default = "annual_relocation_rates"
     out_table_name_default = "annual_relocation_rates"
     dataset_name = "rate"

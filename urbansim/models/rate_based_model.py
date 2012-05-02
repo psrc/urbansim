@@ -64,7 +64,7 @@ class RateBasedModel(Model):
         return movers_indices
 
     def prepare_for_run(self, what=None, 
-                        rate_dataset_name=None, 
+                        rate_dataset_name="rate",
                         rate_storage=None, 
                         rate_table=None, 
                         probability_attribute=None,
