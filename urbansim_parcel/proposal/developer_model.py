@@ -11,7 +11,7 @@ account for parking
 fix buildable area
 '''
 
-import os, sys, cPickle, traceback, time, string, StringIO, math
+import os, sys, cPickle, traceback, time, string, StringIO, math, copy
 import numpy
 from numpy import array
 
@@ -153,7 +153,7 @@ class DeveloperModel(Model):
             if r <> None and r <> -1: results.append(r)
     else:
         results = pool.map(process_parcel,test_parcels)
-        results = [x for x in results if x <> None and x <> -1]
+        results = [list(x) for x in results if x <> None and x <> -1]
     for result in results:
         #print result
         outf.write(string.join([str(x) for x in result],sep=',')+'\n')
@@ -165,10 +165,11 @@ class DeveloperModel(Model):
     column_names = ["parcel_id","county","building_type_id","stories",
                     "building_sqft","residential_sqft","non_residential_sqft",
                     "tenure","year_built","residential_units"]
-    buildings_data = array(results)
     devmdltypes = [1,1,3,12,3,12,4,14,10,10,11,7,8,5]
-    for i in range(buildings_data.size):
-        buildings_data[i][2] = devmdltypes[buildings_data[i][2]-1]
+    buildings_data = copy.deepcopy(results)
+    for i in range(len(buildings_data)):
+        buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
+    buildings_data = array(buildings_data)
     new_buildings = {}
     if buildings_data.size > 0:
         for icol, col_name in enumerate(column_names):
