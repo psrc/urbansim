@@ -40,7 +40,7 @@ def compute_devmdl_accvars(node_set):
     node_sum_mf_rent = array(node_sum_mf_rent, dtype="float32")
     node_sum_mf_rent_sqft = array(node_sum_mf_rent_sqft, dtype="float32")
     
-    node_sum_of_rent = node_set.compute_variables('node.aggregate((building.rent)*(building.rent>0)*(building.building_type_id==4),intermediates=[parcel])')
+    node_sum_of_rent = node_set.compute_variables('node.aggregate((building.non_residential_rent)*(building.non_residential_rent>0)*(building.building_type_id==4),intermediates=[parcel])')
     node_sum_of_rent_sqft = node_set.compute_variables('node.aggregate((1)*(building.rent>0)*(building.building_type_id==4),intermediates=[parcel])')
     node_sum_of_rent = array(node_sum_of_rent, dtype="float32")
     node_sum_of_rent_sqft = array(node_sum_of_rent_sqft, dtype="float32")
