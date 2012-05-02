@@ -101,10 +101,14 @@ def setup_dataset_pool(opus=True, submarket_info=None):
                 raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
             
         ## adjust for quarter/month
-        proposal_comp['sales_absorption'] = proposal_comp['sales_absorption']/4
+        proposal_comp['sales_absorption'] = proposal_comp['sales_absorption']
         #proposal_comp['rent_absorption'] = 4/proposal_comp['rent_absorption']
         #proposal_comp['leases_absorption'] = 4/proposal_comp['leases_absorption']
         proposal_comp['vacancy_rates'] = proposal_comp['vacancy_rates'] / 12
+
+        #print "sales absorption", proposal_comp['sales_absorption']
+        #print "rent absorption", proposal_comp['rent_absorption']
+        #print "vacancy rates", proposal_comp['vacancy_rates']
     if opus:
         from opus_core.tests.utils import variable_tester
         po=['urbansim_parcel','urbansim']
@@ -178,6 +182,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     proposal['leases_revenue'] = proposal_comp['leases_revenue'].sum()
 
     proposal_comp['sales_absorption'] *= d['sales_revenue']
+    #proposal_comp['sales_absorption'] = .25*d['sales_revenue']
     ##updatate these when needed
     #proposal_comp['rent_absorption'] =  ?
     #proposal_comp['leases_absorption'] = ?

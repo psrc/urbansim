@@ -53,7 +53,7 @@ class DeveloperModel(Model):
     '''
     '''
     data_path = paths.get_opus_data_path_path()
-    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_58.2012_05_01_21_10')
+    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_79.2012_05_02_02_44')
     year = 2011
     simulation_state = SimulationState()
     simulation_state.set_current_time(year)
@@ -94,6 +94,7 @@ class DeveloperModel(Model):
 
     current_year = SimulationState().get_current_time()
     SCENARIONAME = 'Studio'
+    #SCENARIONAME = 'Baseline'
     scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
     z = Zoning(scenario_d[SCENARIONAME],current_year)
     isr = None
@@ -125,7 +126,7 @@ class DeveloperModel(Model):
     #test_parcels = array([i+1 for i in range(parcel_set.size())])
     #test_parcels = test_parcels[:10000]
 
-    #test_parcels = test_parcels[:400]
+    #test_parcels = test_parcels[:150]
     #test_parcels = numpy.where(parcel_set['parcel_id'] == 149300)[0]
     #print test_parcels
     logger.log_status("%s parcels to test" % (test_parcels.size))
@@ -165,6 +166,9 @@ class DeveloperModel(Model):
                     "building_sqft","residential_sqft","non_residential_sqft",
                     "tenure","year_built","residential_units"]
     buildings_data = array(results)
+    devmdltypes = [1,1,3,12,3,12,4,14,10,10,11,7,8,5]
+    for i in range(buildings_data.size):
+        buildings_data[i][2] = devmdltypes[buildings_data[i][2]-1]
     new_buildings = {}
     if buildings_data.size > 0:
         for icol, col_name in enumerate(column_names):
@@ -356,7 +360,7 @@ def process_parcel(parcel):
             for attr in submarket.get_known_attribute_names():
                 submarket_info[attr] = submarket[attr][sub_idx]
             X, npv = devmdl_optimize.optimize(bform,prices,submarket_info=submarket_info)
-            #if 1: print X, npv
+            if DEBUG: print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv

@@ -156,7 +156,10 @@ class Zoning():
         return my.zid2btype[zid]
 
   def get_zoning(my, parcel_id):
-        if parcel_id not in my.pid2zid: return None
+        print len(my.pid2zid)
+        parcel_id = int(parcel_id)
+        if parcel_id not in my.pid2zid:
+            return None
         zid = my.pid2zid[parcel_id]
         return my.zoning[zid]
 
