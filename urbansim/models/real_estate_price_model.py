@@ -39,7 +39,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
                                  debuglevel=debuglevel, dataset_pool=dataset_pool)
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
-            data_objects=None, run_config=None, debuglevel=0):
+            data_objects=None, run_config=None, debuglevel=0, **kwargs):
         """ For info on the arguments see RegressionModel.
         """
         if data_objects is not None:
