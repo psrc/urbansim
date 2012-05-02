@@ -16,6 +16,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.lag_variable_parser import LagVariableParser
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.opus_error import FileNotFoundError
 
 class LagVariable(Variable):
     """An abstract class containing common code for lag variables.
@@ -104,9 +105,13 @@ class LagVariable(Variable):
             my_dataset_pool = DatasetPool(
                 package_order=calling_dataset_pool.get_package_order(),
                 storage=AttributeCache())
-
-            ds = dataset.empty_dataset_like_me(in_storage=AttributeCache())
-
+            
+            try:
+                ds = dataset.empty_dataset_like_me(in_storage=AttributeCache())
+            except FileNotFoundError:
+                ## necessary when a dataset is not cached, but created on-the-fly, e.g submarket
+                ds = my_dataset_pool.get_dataset(dataset.dataset_name)
+                
             # Don't pass any datasets via resources, since they may be from a different time.
             my_resources = Resources(resources)
             for key in my_resources:
