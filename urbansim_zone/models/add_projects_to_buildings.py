@@ -54,6 +54,7 @@ class AddProjectsToBuildings(Model):
         
         for quantity_attribute in quantity_attribute_names:
             developmentproject_quantity = developmentproject_dataset.get_attribute(quantity_attribute)[is_placed_project]
+            if developmentproject_quantity.sum() == 0: continue
             quantity_sum = ndimage.sum(developmentproject_quantity, labels=project_identifier, index=unique_project_identifier)
             for i in range(unique_project_identifier.size):
                 if quantity_sum[i] != 0:
