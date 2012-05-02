@@ -5,7 +5,8 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class ZoneAccessibilityDataset(UrbansimDataset):
-    id_name_default = "zone_id"
+    id_name_default = "taz"
     in_table_name_default = "zone_accessibility"
     out_table_name_default = "zone_accessibility"
     dataset_name = "zone_accessibility"
+
