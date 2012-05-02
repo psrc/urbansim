@@ -15,7 +15,7 @@ SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0
 
-def setup_dataset_pool(opus=True):
+def setup_dataset_pool(opus=True, submarket_info=None):
     proforma_inputs = {            
         #'parcel':
         #    {
@@ -31,20 +31,21 @@ def setup_dataset_pool(opus=True):
                "building_type_id":      array([1,  1,  1,  1,  5]),  
                "bedrooms":              array([1,  2,  3,  4,  0]),
                "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
-               "sales_absorption":      array([.25,0.3,0.35,0.4,  0]) * 1000000,
+               "sales_absorption":      array([.25,0.3,0.35,0.4,  0]), #* 1000000,
                "rent_revenue":          array([ .1,0.2,0.3,0.4,  0]) * 1000000,
                "leases_revenue":        array([  0,  0,  0,  0,  4]) * 1000000,
                 #"rent_absorption":       array([  8,  4,  4,  8,  8]),
                 #"leases_absorption":     array([  0,  0,  0,  0,  8]),
                'rent_absorption':      array([  8,  4,  4,  8, 1]),
                'leases_absorption':    array([  1,  1,  1,  1,  6]),
-               "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
+               "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]), # / 12,
                "operating_cost":        array([0.2,0.2,0.2,0.2, 0.1]),
 
                 ##below are supposedly computed attributes; converted to primary attributes for speed
                 "rent_revenue_per_period":   array([0, 0, 0, 0, 0]),
                 "leases_revenue_per_period": array([0, 0, 0, 0, 0]),
              },
+
             'proposal':
             {
              
@@ -75,6 +76,35 @@ def setup_dataset_pool(opus=True):
             },
     }
 
+    if submarket_info is not None:
+        proposal_comp = proforma_inputs['proposal_component']
+        for i in xrange(proposal_comp['proposal_component_id'].size):
+            bldg_type = proposal_comp['building_type_id'][i]
+            submarket_sales_idx = numpy.logical_and( submarket_info['building_type'] == bldg_type,
+                                                     submarket_info['tenure_id'] == 2)
+            submarket_rent_idx = numpy.logical_and( submarket_info['building_type'] == bldg_type,
+                                                    submarket_info['tenure_id'] == 1)
+            if submarket_sales_idx.sum() == 1:
+                v = submarket_info['sales_absorption'][submarket_sales_idx]
+                if v != 0: 
+                    proposal_comp['sales_absorption'][i] = v 
+            elif submarket_sales_idx.sum() > 1:
+                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+            #use default if the building_type & tenure isn't in submarket (submarket_sales_idx.size==0)
+
+            if submarket_rent_idx.sum() == 1:
+                v = submarket_info['rent_absorption'][submarket_rent_idx]
+                if v != 0: 
+                    proposal_comp['rent_absorption'][i] = round(1 / v)
+                proposal_comp['vacancy_rates'][i] = submarket_info['vacancy_rates'][submarket_rent_idx]
+            elif submarket_sales_idx.sum() > 1:
+                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+            
+        ## adjust for quarter/month
+        proposal_comp['sales_absorption'] = proposal_comp['sales_absorption']/4
+        #proposal_comp['rent_absorption'] = 4/proposal_comp['rent_absorption']
+        #proposal_comp['leases_absorption'] = 4/proposal_comp['leases_absorption']
+        proposal_comp['vacancy_rates'] = proposal_comp['vacancy_rates'] / 12
     if opus:
         from opus_core.tests.utils import variable_tester
         po=['urbansim_parcel','urbansim']
@@ -147,7 +177,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     proposal['rent_revenue'] = proposal_comp['rent_revenue'].sum()
     proposal['leases_revenue'] = proposal_comp['leases_revenue'].sum()
 
-    proposal_comp['sales_absorption'] = .2*d['sales_revenue']
+    proposal_comp['sales_absorption'] *= d['sales_revenue']
     ##updatate these when needed
     #proposal_comp['rent_absorption'] =  ?
     #proposal_comp['leases_absorption'] = ?
@@ -195,7 +225,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     #print npv, "\n\n"
     return -1*npv/100000.0
 
-def optimize(bform,prices):
+def optimize(bform,prices,submarket_info=None):
    
     btype = bform.btype
 
@@ -214,7 +244,7 @@ def optimize(bform,prices):
     else: nf = 4
     x0 = array([0 for i in range(nf)])
     
-    dataset_pool = setup_dataset_pool(opus=False)
+    dataset_pool = setup_dataset_pool(opus=False,submarket_info=submarket_info)
     #proposal = dataset_pool.get_dataset('proposal')
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",

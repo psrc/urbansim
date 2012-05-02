@@ -40,7 +40,7 @@ class DeveloperModel(Model):
     pass
 
   def run(my):
-    global parcel_set, z, node_set, isr
+    global parcel_set, z, node_set, submarket, isr
 
     '''
     if 0:
@@ -53,7 +53,7 @@ class DeveloperModel(Model):
     '''
     '''
     data_path = paths.get_opus_data_path_path()
-    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_729.run_2012_04_29_12_23')
+    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_58.2012_05_01_21_10')
     year = 2011
     simulation_state = SimulationState()
     simulation_state.set_current_time(year)
@@ -71,6 +71,7 @@ class DeveloperModel(Model):
     building_set = dataset_pool.get_dataset('building')
     node_set = dataset_pool.get_dataset('node')
     unit_set = dataset_pool.get_dataset('residential_unit')
+    submarket = dataset_pool.get_dataset('submarket')
     #print numpy.array(unit_set['rent'] > 0).size
     #for i in range(unit_set.size()):
     #    print unit_set['unit_price'][i], unit_set['unit_sqft'][i]
@@ -114,7 +115,13 @@ class DeveloperModel(Model):
     global building_sqft, building_price
     building_sqft = parcel_set.compute_variables('parcel.aggregate(building.building_sqft)')
     building_price = parcel_set.compute_variables('parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
-    
+
+    #info used to match from proposal_component to submarket
+    parcel_set.compute_variables(["bayarea.parcel.within_half_mile_transit", 
+                                  "bayarea.parcel.schooldistrict"])
+    sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
+    rent_absorption = submarket.compute_variables('bayarea.submarket.rent_absorption')
+    vacancy_rates = submarket.compute_variables('bayarea.submarket.vacancy_rates')
     #test_parcels = array([i+1 for i in range(parcel_set.size())])
     #test_parcels = test_parcels[:10000]
 
@@ -213,7 +220,7 @@ NOBUILDTYPES = 0
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set, isr
+        global parcel_set, z, node_set, submarket, isr
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
  
@@ -339,7 +346,16 @@ def process_parcel(parcel):
             bform.set_parking(parking)
 
             #if 1: print btype
-            X, npv = devmdl_optimize.optimize(bform,prices)
+            pschooldistrict = parcel_set['schooldistrict'][parcel]
+            ptransit = parcel_set['within_half_mile_transit'][parcel]
+            from numpy import logical_and, where
+            sub_idx = where(logical_and(submarket['schooldistrict'] == pschooldistrict,
+                                       submarket['within_half_mile_transit'] == ptransit)
+                           )[0]
+            submarket_info = {}
+            for attr in submarket.get_known_attribute_names():
+                submarket_info[attr] = submarket[attr][sub_idx]
+            X, npv = devmdl_optimize.optimize(bform,prices,submarket_info=submarket_info)
             #if 1: print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:
