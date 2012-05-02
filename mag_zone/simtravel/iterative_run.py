@@ -6,7 +6,7 @@ from travel_model.models.abstract_travel_model import AbstractTravelModel
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
-import subprocess, sys
+import subprocess, sys, os
 
 MAX_ITERATION = 10
 class IterativeRun(AbstractTravelModel):
