@@ -17,7 +17,7 @@ class RateDataset(UrbansimDataset):
     out_table_name_default = "annual_relocation_rates"
     dataset_name = "rate"
     probability_attribute = "probability_of_relocating"
-    attribute_aliases = {}  
+    attribute_aliases = {'age':'age_of_head'}  
     ## to keep backward compatibility, allow using aliases for attributes, 
     ## e.g. 'age' for 'age_of_head'
     

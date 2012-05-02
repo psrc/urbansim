@@ -255,6 +255,7 @@
           <prepare_for_run type="dictionary">
             <output name="output" type="string">erm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
+	    <argument name="probability_attribute" parser_action="quote_string"  type="string">job_relocation_probability</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_job_relocation_rates</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
