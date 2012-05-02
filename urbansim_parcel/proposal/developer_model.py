@@ -137,7 +137,7 @@ class DeveloperModel(Model):
     from multiprocessing import Pool, Queue
     pool = Pool(processes=24)
 
-    import hotshot, hotshot.stats, test.pystone
+    import hotshot, hotshot.stats#, test.pystone
     if HOTSHOT:
         prof = hotshot.Profile('devmdl.prof')
         prof.start()

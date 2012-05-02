@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from optparse import OptionParser
-#from urbansim.models.monte_carlo_assignment_model import MonteCarloAssignmentModel
+from urbansim.models.monte_carlo_assignment_model import MonteCarloAssignmentModel
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
@@ -111,13 +111,17 @@ if __name__ == '__main__':
     fraction_attribute_name = options.fraction_attribute_name
     storage = StorageFactory().get_storage('flt_storage', storage_location=options.cache_directory)
     individual_dataset = Dataset(in_storage=storage, id_name=[], in_table_name=individual_table)
-    counts_dataset = Dataset(in_storage=storage, id_name=[], in_table_name=counts_table)
     fraction_dataset = Dataset(in_storage=storage, id_name=[], in_table_name=fraction_table)
+    if counts_table is None:
+        MonteCarloAssignmentModel().run(individual_dataset, fraction_dataset, 
+                                        id_name1=options.id_name1, id_name2=options.id_name2,
+                                        fraction_attribute_name=options.fraction_attribute_name)
+    else:
+        counts_dataset = Dataset(in_storage=storage, id_name=[], in_table_name=counts_table)
+        MonteCarloAssignmentModelWithCounts(individual_dataset, counts_dataset, fraction_dataset, 
+                                            id_name1=options.id_name1, id_name2=options.id_name2,
+                                            fraction_attribute_name=options.fraction_attribute_name)
+
     
-    MonteCarloAssignmentModel().run(individual_dataset, counts_dataset, fraction_dataset, 
-                                    id_name1=options.id_name1, id_name2=options.id_name2,
-                                    fraction_attribute_name=options.fraction_attribute_name,
-                                    out_storage=storage)
-    
-    individual_dataset.write_dataset(out_storage=storage, out_table_name=individual_table, attributes=[options.id_name2])
+    #individual_dataset.write_dataset(out_storage=storage, out_table_name=individual_table, attributes=[options.id_name2])
     
