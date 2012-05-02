@@ -1,0 +1,1324 @@
+Cache directory for run 135 set to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51
+Running opus_core.store.utils.cache_flt_data.CacheFltData: started on Tue Apr 10 09:51:46 2012
+    Caching files from '/workspace/opus/data/paris_zone/base_year_data' 
+    to '/workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51'.
+Running opus_core.store.utils.cache_flt_data.CacheFltData: completed.....0.9 sec
+Logging to file: /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/run_multiprocess.log
+Running simulation for years 2000 thru 2050
+Simulation root seed: 1
+Running simulation for year 2000 in new process: started on Tue Apr 10 09:51:47 2012
+    Closing log file: /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/run_multiprocess.log
+    Invoking: /usr/bin/python /workspace/opus/src/opus_core/model_coordinators/model_system.py -r /tmp/tmp_zmsJr/resources.pickle --log-file-name run_multiprocess.log
+Cache Directory set to: /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51
+Start simulation run: started on Tue Apr 10 09:51:48 2012
+    random seed = (1061650668,)
+    Starting simulation for year 2000: started on Tue Apr 10 09:51:48 2012
+        Closing log file: /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/run_multiprocess.log
+        Logging to file: /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/year_2000_log.txt
+        Simulate year 2000: started on Tue Apr 10 09:51:48 2012
+            Running Swap Datasets (from opus_core.models.swap_datasets): started on Tue Apr 10 09:51:48 2012
+                Backed up /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_household_control_totals to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_household_control_totals_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_household_control_totals_baseline to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_household_control_totals
+                Renamed /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/scheduled_development_events_baseline to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/scheduled_development_events
+                Backed up /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_employment_control_totals to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_employment_control_totals_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_employment_control_totals_baseline to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/1999/annual_employment_control_totals
+            Running Swap Datasets (from opus_core.models.swap_datasets): completed...0.0 sec
+            Running Swap Datasets (from opus_core.models.swap_datasets): started on Tue Apr 10 09:51:48 2012
+                Backed up /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/2000/zones to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/2000/zones_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/2000/zones_baseline to /workspace/opus/data/paris_zone/runs/run_135.2012_04_10_09_51/2000/zones
+            Running Swap Datasets (from opus_core.models.swap_datasets): completed...0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 09:51:48 2012
+                numpy.clip(vpo, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 09:51:48 2012
+                numpy.clip(tco, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 09:51:48 2012
+                numpy.clip(tcd, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 09:51:48 2012
+                numpy.clip(vpd, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running Scheduled Development Events Model (from urbansim.models.scheduled_events_model): started on Tue Apr 10 09:51:48 2012....0.0 sec
+            Running Development Project Transition Model (from urbansim.models.real_estate_transition_model): started on Tue Apr 10 09:51:48 2012
+                is_residential = building.disaggregate(building_type.is_residential)....0.0 sec
+                is_residential = development_event_history.disaggregate(building_type.is_residential)....0.0 sec
+                
+                +----------------+-----------+-----------+------------+--------+
+                | is_residential |   actual  |   target  | difference | action |
+                +----------------+-----------+-----------+------------+--------+
+                |       1        |  4910845  |  4907910  |   -2935    |   0    |
+                |       0        | 382249150 | 379698384 |  -2550766  |   0    |
+                +----------------+-----------+-----------+------------+--------+
+            Running Development Project Transition Model (from urbansim.models.real_estate_transition_model): completed...1.5 sec
+            Running Non-Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): started on Tue Apr 10 09:51:50 2012
+                Development project dataset is empty. Skip DPLCM
+            Running Non-Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): completed...0.0 sec
+            Running Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): started on Tue Apr 10 09:51:50 2012
+                Development project dataset is empty. Skip DPLCM
+            Running Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): completed...0.0 sec
+            Running Add Development Projects Quantity to Buildings (from urbansim_zone.models.add_projects_to_buildings): started on Tue Apr 10 09:51:50 2012
+                WARNING: Empty development project dataset. Skip add_projects_to_buildings.
+            Running Add Development Projects Quantity to Buildings (from urbansim_zone.models.add_projects_to_buildings): completed...0.0 sec
+            emp_250 = (establishment.employment < 250).astype('i').......0.0 sec
+            Running Establishment Disappearance Model (from paris.models.establishment_disappearance_model): started on Tue Apr 10 09:51:50 2012
+                Total number of individuals: 290106
+                EDM chunk 1 out of 1.: started on Tue Apr 10 09:51:50 2012
+                    Number of agents in this chunk: 290106
+                    EBADefense = establishment.disaggregate(building.CBADefense)
+                        building.disaggregate(zone.insee==92062)+building.disaggregate(zone.insee==92026)+building.disaggregate(zone.insee==92050)
+                            zone.insee==92050............................0.0 sec
+                            zone.insee==92026............................0.0 sec
+                            zone.insee==92062............................0.0 sec
+                        building.disaggregate(zone.insee==92062)+building.disaggregate(zone.insee==92026)+building.disaggregate(zone.insee==92050): completed...0.0 sec
+                    EBADefense = establishment.disaggregate(building.CBADefense): completed...0.0 sec
+                    EBAnwCty = establishment.disaggregate(building.CBAnwCty)
+                        building.disaggregate(zone.cvilnouvel)...........0.0 sec
+                    EBAnwCty = establishment.disaggregate(building.CBAnwCty): completed...0.0 sec
+                    EBAparis = establishment.disaggregate(building.disaggregate(zone.dept==75))
+                        building.disaggregate(zone.dept==75)
+                            zone.dept==75................................0.0 sec
+                        building.disaggregate(zone.dept==75): completed...0.0 sec
+                    EBAparis = establishment.disaggregate(building.disaggregate(zone.dept==75)): completed...0.0 sec
+                    ECTDTcD = establishment.disaggregate(building.ctdtcd)
+                        building.disaggregate(zone.ctdtcd)...............0.0 sec
+                    ECTDTcD = establishment.disaggregate(building.ctdtcd): completed...0.0 sec
+                    ECTDVpD = establishment.disaggregate(building.ctdvpd)
+                        building.disaggregate(zone.ctdvpd)...............0.0 sec
+                    ECTDVpD = establishment.disaggregate(building.ctdvpd): completed...0.0 sec
+                    ELPB = establishment.disaggregate(building.CLPB)
+                        building.disaggregate(zone.ZCLPB)
+                            ln_bounded(zone.aggregate(building.price*(building.building_type_id==6), function=sum)/zone.aggregate((building.building_type_id==6), function=sum))
+                                (building.building_type_id==6)...........0.0 sec
+                                building.price*(building.building_type_id==6)....0.0 sec
+                            ln_bounded(zone.aggregate(building.price*(building.building_type_id==6), function=sum)/zone.aggregate((building.building_type_id==6), function=sum)): completed...0.0 sec
+                        building.disaggregate(zone.ZCLPB): completed.....0.0 sec
+                    ELPB = establishment.disaggregate(building.CLPB): completed...0.0 sec
+                    ENGsubwSP = establishment.disaggregate(building.CNGsubwSP)
+                        building.disaggregate(zone.csubway9).............0.0 sec
+                    ENGsubwSP = establishment.disaggregate(building.CNGsubwSP): completed...0.0 sec
+                    ENGtrainSt = establishment.disaggregate(building.CNGtrainSt)
+                        building.disaggregate(zone.ctrain9)..............0.0 sec
+                    ENGtrainSt = establishment.disaggregate(building.CNGtrainSt): completed...0.0 sec
+                    EPBhghInc = establishment.disaggregate(building.CPBhghInc)/100
+                        building.disaggregate(zone.ZPBhghInc)
+                            100*(zone.aggregate(household.lincomepc>10.3)/(zone.CNRhh))
+                                zone.aggregate(building.number_of_agents(household),function=sum)
+                                    building.number_of_agents(household)....0.6 sec
+                                zone.aggregate(building.number_of_agents(household),function=sum): completed...0.6 sec
+                                household.lincomepc>10.3.................0.0 sec
+                                zone_id = household.disaggregate(building.zone_id)....0.2 sec
+                            100*(zone.aggregate(household.lincomepc>10.3)/(zone.CNRhh)): completed...1.1 sec
+                        building.disaggregate(zone.ZPBhghInc): completed...1.1 sec
+                    EPBhghInc = establishment.disaggregate(building.CPBhghInc)/100: completed...1.1 sec
+                    EPBlowInc = establishment.disaggregate(building.CPBlowInc)/100
+                        building.disaggregate(zone.ZPBlowInc)
+                            100*(zone.aggregate(household.lincomepc<=9.9)/(zone.CNRhh))
+                                household.lincomepc<=9.9.................0.0 sec
+                            100*(zone.aggregate(household.lincomepc<=9.9)/(zone.CNRhh)): completed...0.2 sec
+                        building.disaggregate(zone.ZPBlowInc): completed...0.2 sec
+                    EPBlowInc = establishment.disaggregate(building.CPBlowInc)/100: completed...0.2 sec
+                    ERItaxPro = establishment.disaggregate(building.CRItaxPro)
+                        building.disaggregate(zone.taxpro)...............0.0 sec
+                    ERItaxPro = establishment.disaggregate(building.CRItaxPro): completed...0.0 sec
+                    ERRdensPop = establishment.disaggregate(building.CRRdensPop)
+                        building.disaggregate(zone.ZRRdensPop)
+                            zone.aggregate(household.size, intermediates = [building])/(1000*zone.careakm2)
+                                building.aggregate(household.size).......0.3 sec
+                            zone.aggregate(household.size, intermediates = [building])/(1000*zone.careakm2): completed...0.3 sec
+                        building.disaggregate(zone.ZRRdensPop): completed...0.3 sec
+                    ERRdensPop = establishment.disaggregate(building.CRRdensPop): completed...0.3 sec
+                    ERam0 = establishment.disaggregate(building.CPRam0)/100
+                        building.disaggregate(zone.ZPRam0)
+                            (zone.aggregate(building.aggregate(household.workers==0))/(zone.CNRhh))*100
+                                building.aggregate(household.workers==0)
+                                    household.workers==0.................0.0 sec
+                                building.aggregate(household.workers==0): completed...0.3 sec
+                            (zone.aggregate(building.aggregate(household.workers==0))/(zone.CNRhh))*100: completed...0.3 sec
+                        building.disaggregate(zone.ZPRam0): completed....0.3 sec
+                    ERam0 = establishment.disaggregate(building.CPRam0)/100: completed...0.3 sec
+                    ETPNiv1 = establishment.disaggregate(building.CTPNiv1)
+                        building.disaggregate(zone.ctpniv1)..............0.0 sec
+                    ETPNiv1 = establishment.disaggregate(building.CTPNiv1): completed...0.0 sec
+                    ETPNiv2 = establishment.disaggregate(building.CTPNiv2)
+                        building.disaggregate(zone.ctpniv2)..............0.0 sec
+                    ETPNiv2 = establishment.disaggregate(building.CTPNiv2): completed...0.0 sec
+                    ETPNiv3 = establishment.disaggregate(building.CTPNiv3)
+                        building.disaggregate(zone.ctpniv3)..............0.0 sec
+                    ETPNiv3 = establishment.disaggregate(building.CTPNiv3): completed...0.0 sec
+                    ETPNiv4 = establishment.disaggregate(building.CTPNiv4)
+                        building.disaggregate(zone.ctpniv4)..............0.0 sec
+                    ETPNiv4 = establishment.disaggregate(building.CTPNiv4): completed...0.0 sec
+                    emp = establishment.employment.......................0.0 sec
+                    w10=(establishment.employment_lag1 >= 10)*(establishment.employment_lag1 < 20)
+                        opus_core.variables.VVV_lagLLL...................0.4 sec
+                    w10=(establishment.employment_lag1 >= 10)*(establishment.employment_lag1 < 20): completed...0.4 sec
+                    w100=(establishment.employment_lag1 >= 100)..........0.0 sec
+                    w100slope=paris.establishment.w100*(establishment.employment_lag1 - 100)....0.0 sec
+                    w10slope=paris.establishment.w10*(establishment.employment_lag1 - 10)....0.0 sec
+                    w2=(establishment.employment_lag1 >= 2)*(establishment.employment_lag1 < 3)....0.0 sec
+                    w20=(establishment.employment_lag1 >= 20)*(establishment.employment_lag1 < 50)....0.0 sec
+                    w20slope=paris.establishment.w20*(establishment.employment_lag1 - 20)....0.0 sec
+                    w3=(establishment.employment_lag1 >= 3)*(establishment.employment_lag1 < 6)....0.0 sec
+                    w3slope=paris.establishment.w3*(establishment.employment_lag1 - 3)....0.0 sec
+                    w50=(establishment.employment_lag1 >= 50)*(establishment.employment_lag1 < 100)....0.0 sec
+                    w50slope=paris.establishment.w50*(establishment.employment_lag1 - 50)....0.0 sec
+                    w6=(establishment.employment_lag1 >= 6)*(establishment.employment_lag1 < 10)....0.0 sec
+                    w6slope=paris.establishment.w6*(establishment.employment_lag1 - 6)....0.0 sec
+                    Choice set size: 2
+                EDM chunk 1 out of 1.: completed.........................5.0 sec
+            Running Establishment Disappearance Model (from paris.models.establishment_disappearance_model): completed...5.1 sec
+            Running Establishment Evolution Model (from paris.models.establishment_evolution_model): started on Tue Apr 10 09:51:55 2012
+                (paris.establishment.year_lag1 != paris.establishment.year)*(paris.establishment.emp_250_lag1)*(establishment.building_id>0)
+                    opus_core.variables.VVV_lagLLL
+                        paris.establishment.year.........................0.1 sec
+                        paris.establishment.year.........................0.0 sec
+                    opus_core.variables.VVV_lagLLL: completed............0.4 sec
+                    opus_core.variables.VVV_lagLLL
+                        emp_250 = (establishment.employment < 250).astype('i')....0.1 sec
+                    opus_core.variables.VVV_lagLLL: completed............0.4 sec
+                (paris.establishment.year_lag1 != paris.establishment.year)*(paris.establishment.emp_250_lag1)*(establishment.building_id>0): completed...0.8 sec
+                paris.establishment.ln_emp_ratio
+                    lnemp=ln_bounded(establishment.employment)...........0.0 sec
+                    lnemp_pre=ln_bounded(establishment.employment_lag1)..0.0 sec
+                paris.establishment.ln_emp_ratio: completed..............0.0 sec
+                Total number of individuals: 290106
+                EEM chunk 1 out of 1.: started on Tue Apr 10 09:51:56 2012
+                    Number of agents in this chunk: 290106
+                    EBAdefense_EBEwfb10_250 = establishment.EBADefense * establishment.EBEwfb10_250
+                        (establishment.employment_lag1>9)*(establishment.employment_lag1<250)....0.0 sec
+                    EBAdefense_EBEwfb10_250 = establishment.EBADefense * establishment.EBEwfb10_250: completed...0.0 sec
+                    EBAdefense_EBEwfl10 = establishment.EBADefense * establishment.EBEwfl10
+                        establishment.employment_lag1<10.................0.0 sec
+                    EBAdefense_EBEwfl10 = establishment.EBADefense * establishment.EBEwfl10: completed...0.0 sec
+                    EBAlimit_EBEwfb10_250 = establishment.ELimit * establishment.EBEwfb10_250
+                        establishment.disaggregate(building.disaggregate(zone.limit))
+                            building.disaggregate(zone.limit)............0.0 sec
+                        establishment.disaggregate(building.disaggregate(zone.limit)): completed...0.0 sec
+                    EBAlimit_EBEwfb10_250 = establishment.ELimit * establishment.EBEwfb10_250: completed...0.0 sec
+                    EBAlimit_EBEwfl10 = establishment.ELimit * establishment.EBEwfl10....0.0 sec
+                    EBAnwCty_EBEwfb10_250 = establishment.EBAnwCty * establishment.EBEwfb10_250....0.0 sec
+                    EBAnwCty_EBEwfl10 = establishment.EBAnwCty * establishment.EBEwfl10....0.0 sec
+                    EBAparis_EBEwfb10_250 = establishment.EBAparis * establishment.EBEwfb10_250....0.0 sec
+                    EBAparis_EBEwfl10 = establishment.EBAparis * establishment.EBEwfl10....0.0 sec
+                    EBLCprice_EBEwfb10_250 = establishment.ELPB * establishment.EBEwfb10_250....0.0 sec
+                    EBLCprice_EBEwfl10 = establishment.ELPB * establishment.EBEwfl10....0.0 sec
+                    ECNGsubw_EBEwfb10_250 = establishment.ENGsubwSP * establishment.EBEwfb10_250....0.0 sec
+                    ECNGsubw_EBEwfl10 = establishment.ENGsubwSP * establishment.EBEwfl10....0.0 sec
+                    ECNGtrain_EBEwfb10_250 = establishment.ENGtrainSt * establishment.EBEwfb10_250....0.0 sec
+                    ECNGtrain_EBEwfl10 = establishment.ENGtrainSt * establishment.EBEwfl10....0.0 sec
+                    ECPBhghInc_EBEwfb10_250 = establishment.EPBhghInc * establishment.EBEwfb10_250....0.0 sec
+                    ECPBhghInc_EBEwfl10 = establishment.EPBhghInc * establishment.EBEwfl10....0.0 sec
+                    ECPBlowInc_EBEwfl10 = establishment.EPBlowInc * establishment.EBEwfl10....0.0 sec
+                    ECPR0Ac_EBEwfb10_250 = establishment.ERam0 * establishment.EBEwfb10_250....0.0 sec
+                    ECPR0Ac_EBEwfl10 = establishment.ERam0 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE1_EBEwfb10_250 = establishment.ETPNiv1 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE1_EBEwfl10 = establishment.ETPNiv1 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE2_EBEwfb10_250 = establishment.ETPNiv2 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE2_EBEwfl10 = establishment.ETPNiv2 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE3_EBEwfb10_250 = establishment.ETPNiv3 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE3_EBEwfl10 = establishment.ETPNiv3 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE4_EBEwfb10_250 = establishment.ETPNiv4 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE4_EBEwfl10 = establishment.ETPNiv4 * establishment.EBEwfl10....0.0 sec
+                    ECQRdstPop_EBEwfb10_250 = establishment.ERRdensPop * establishment.EBEwfb10_250....0.0 sec
+                    ECQRdstPop_EBEwfl10 = establishment.ERRdensPop * establishment.EBEwfl10....0.0 sec
+                    ECRFproTax_EBEwfb10_250 = establishment.ERItaxPro * establishment.EBEwfb10_250....0.0 sec
+                    ECRFproTax_EBEwfl10 = establishment.ERItaxPro * establishment.EBEwfl10....0.0 sec
+                    ECTDTcD_EBEwfb10_250 = establishment.ECTDTcD * establishment.EBEwfb10_250....0.0 sec
+                    ECTDTcD_EBEwfl10 = establishment.ECTDTcD * establishment.EBEwfl10....0.0 sec
+                    ECTDVpD_EBEwfb10_250 = establishment.ECTDVpD * establishment.EBEwfb10_250....0.0 sec
+                    ECTDVpD_EBEwfl10 = establishment.ECTDVpD * establishment.EBEwfl10....0.0 sec
+                EEM chunk 1 out of 1.: completed.........................0.8 sec
+                rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean)))
+                    sector.aggregate(establishment._init_error_ln_emp_ratio**2,function=mean)
+                        establishment._init_error_ln_emp_ratio**2........0.0 sec
+                    sector.aggregate(establishment._init_error_ln_emp_ratio**2,function=mean): completed...0.0 sec
+                rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean))): completed...0.0 sec
+            Running Establishment Evolution Model (from paris.models.establishment_evolution_model): completed...1.9 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 09:51:57 2012
+                paris.establishment.emp_pred
+                    emp_pre1=establishment.employment_lag1...............0.0 sec
+                paris.establishment.emp_pred: completed..................0.0 sec
+                (establishment.disappeared == 0)*(establishment.building_id>0)*(paris.establishment.year_lag1 != pari.establishment.year)*(paris.establishment.emp_250_lag1)....0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running Establishment Reappearance Model (from paris.models.establishment_reappearance_model): started on Tue Apr 10 09:51:57 2012
+                _actual_ = control_total.aggregate(establishment.employment)....0.0 sec
+
+                (establishment.disappeared == 1)*(paris.establishment.emp_250)
+                    emp_250 = (establishment.employment < 250).astype('i')....0.0 sec
+                (establishment.disappeared == 1)*(paris.establishment.emp_250): completed...0.0 sec
+                
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                | sector_id | disappeared | actual | target | difference |  action |   N    | note |
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                |     1     |      0      | 14678  | 23639  |    8961    |   +776  |  +101  |      |
+                |     2     |      0      | 529461 | 669637 |   140176   | +103739 | +10717 |      |
+                |     3     |      0      | 151226 | 235165 |   83939    |  +72885 | +11379 |      |
+                |     4     |      0      | 476652 | 662645 |   185993   | +175735 | +26192 |      |
+                |     5     |      0      | 256179 | 293676 |   37497    |  +37497 |   +1   |      |
+                |     6     |      0      | 228778 | 258834 |   30056    |  +30056 |   +1   |      |
+                |     7     |      0      | 52359  | 103730 |   51371    |  +22552 | +3249  |      |
+                |     8     |      0      | 883748 | 972065 |   88317    |  +88317 |   +1   |      |
+                |     9     |      0      | 361404 | 474468 |   113064   |  +75536 | +14961 |      |
+                |     10    |      0      | 680118 | 789083 |   108965   |  +33390 | +4670  |      |
+                |     11    |      0      | 575448 | 610784 |   35336    |  +34124 | +3231  |      |
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                
+            Running Establishment Reappearance Model (from paris.models.establishment_reappearance_model): completed...0.8 sec
+            Running Establishment Transition Model (from paris.models.transition_model): started on Tue Apr 10 09:51:58 2012
+                _actual_ = control_total.aggregate(establishment.employment)....0.0 sec
+                
+                +-----------+-------------+--------+--------+------------+--------+------+
+                | sector_id | disappeared | actual | target | difference | action | note |
+                +-----------+-------------+--------+--------+------------+--------+------+
+                |     1     |      0      | 15454  | 23639  |    8185    | +8185  |      |
+                |     2     |      0      | 633200 | 669637 |   36437    | +36437 |      |
+                |     3     |      0      | 224111 | 235165 |   11054    | +11054 |      |
+                |     4     |      0      | 652387 | 662645 |   10258    | +10258 |      |
+                |     5     |      0      | 293676 | 293676 |     0      |   0    |      |
+                |     6     |      0      | 258834 | 258834 |     0      |   0    |      |
+                |     7     |      0      | 74911  | 103730 |   28819    | +28819 |      |
+                |     8     |      0      | 972065 | 972065 |     0      |   0    |      |
+                |     9     |      0      | 436940 | 474468 |   37528    | +37528 |      |
+                |     10    |      0      | 713508 | 789083 |   75575    | +75575 |      |
+                |     11    |      0      | 609572 | 610784 |    1212    | +1212  |      |
+                +-----------+-------------+--------+--------+------------+--------+------+
+                
+            Running Establishment Transition Model (from paris.models.transition_model): completed...0.5 sec
+            Running Establishment Location Choice Model (from urbansim.models.agent_location_choice_model): started on Tue Apr 10 09:51:58 2012
+                (establishment.disappeared==0)*(establishment.building_id <= 0)....0.0 sec
+                (establishment.employment)*(establishment.disappeared==0)....0.0 sec
+                Total number of individuals: 110034
+                ELCM chunk 1 out of 1.: started on Tue Apr 10 09:51:58 2012
+                    Number of agents in this chunk: 110034
+                    vacant_non_home_based_job_spaces = clip_to_zero(urbansim_zone.building.total_non_home_based_job_spaces - paris.building.number_of_non_home_based_jobs)
+                        total_non_home_based_job_spaces = numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))Warning: invalid value encountered in divide
+....0.0 sec
+                        number_of_non_home_based_jobs = building.aggregate((establishment.employment)*(establishment.disappeared==0))....0.0 sec
+                        WARNING: Negative values detected in function/method ''
+                        WARNING: Minimum: -24863.0. Negative values clipped to zero.
+                    vacant_non_home_based_job_spaces = clip_to_zero(urbansim_zone.building.total_non_home_based_job_spaces - paris.building.number_of_non_home_based_jobs): completed...0.0 sec
+                    Available capacity: 1349922.0 units.
+                    CDGhighw = building.disaggregate(zone.cdisthwy)/1000....0.0 sec
+                    CLEmpTot_lag1 = ln_bounded(building.disaggregate(zone.emptot_lag1))
+                        zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0),intermediates=[building])
+                            building.aggregate(establishment.autogenvar287)
+                                establishment.employment_lag1*(establishment.disappeared_lag1==0)
+                                    opus_core.variables.VVV_lagLLL.......0.4 sec
+                                establishment.employment_lag1*(establishment.disappeared_lag1==0): completed...0.4 sec
+                            building.aggregate(establishment.autogenvar287): completed...0.4 sec
+                        zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0),intermediates=[building]): completed...0.4 sec
+                    CLEmpTot_lag1 = ln_bounded(building.disaggregate(zone.emptot_lag1)): completed...0.4 sec
+                    CLOActPotSt = building.disaggregate(zone.CLOActPotSt)
+                        ln_bounded(zone.CNOActPotSt)
+                            1.0*zone.project99st.........................0.0 sec
+                        ln_bounded(zone.CNOActPotSt): completed..........0.0 sec
+                    CLOActPotSt = building.disaggregate(zone.CLOActPotSt): completed...0.0 sec
+                    CNRKold = building.disaggregate(zone.ZPRKold)
+                        (zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.CNRhh))*100
+                            building.aggregate(household.autogenvar60)
+                                household.age_of_head>55.................0.0 sec
+                            building.aggregate(household.autogenvar60): completed...0.3 sec
+                        (zone.aggregate(household.age_of_head>55, intermediates = [building])/(zone.CNRhh))*100: completed...0.3 sec
+                    CNRKold = building.disaggregate(zone.ZPRKold): completed...0.3 sec
+                    CNRKyng = building.disaggregate(zone.ZPRKyng)
+                        (zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.CNRhh))*100
+                            building.aggregate(household.autogenvar63)
+                                household.age_of_head<=35................0.0 sec
+                            building.aggregate(household.autogenvar63): completed...0.2 sec
+                        (zone.aggregate(household.age_of_head<=35, intermediates = [building])/(zone.CNRhh))*100: completed...0.2 sec
+                    CNRKyng = building.disaggregate(zone.ZPRKyng): completed...0.2 sec
+                    CPGZFU = building.disaggregate(zone.czfu)............0.0 sec
+                    CPRchld111g = building.disaggregate(zone.CPRchld111g)
+                        100*((zone.aggregate(household.children11>=1, intermediates = [building]))/(zone.CNRhh))
+                            building.aggregate(household.autogenvar296)
+                                household.children11>=1..................0.0 sec
+                            building.aggregate(household.autogenvar296): completed...0.3 sec
+                        100*((zone.aggregate(household.children11>=1, intermediates = [building]))/(zone.CNRhh)): completed...0.3 sec
+                    CPRchld111g = building.disaggregate(zone.CPRchld111g): completed...0.3 sec
+                    CQEsec10dst_lag1 = building.disaggregate(zone.emp_s10_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s10_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 10),intermediates=[building])
+                                building.aggregate(establishment.autogenvar299)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==10)
+                                        opus_core.variables.VVV_lagLLL...0.4 sec
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==10): completed...0.4 sec
+                                building.aggregate(establishment.autogenvar299): completed...0.4 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 10),intermediates=[building]): completed...0.4 sec
+                        zone.emp_s10_lag1/(1000*zone.CNOActPotSt): completed...0.4 sec
+                    CQEsec10dst_lag1 = building.disaggregate(zone.emp_s10_lag1/(1000*zone.CNOActPotSt)): completed...0.4 sec
+                    CQEsec11dst_lag1 = building.disaggregate(zone.emp_s11_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s11_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 11),intermediates=[building])
+                                building.aggregate(establishment.autogenvar302)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==11)....0.0 sec
+                                building.aggregate(establishment.autogenvar302): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 11),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s11_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec11dst_lag1 = building.disaggregate(zone.emp_s11_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec2dst_lag1 = building.disaggregate(zone.emp_s2_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s2_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 2),intermediates=[building])
+                                building.aggregate(establishment.autogenvar305)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==2)....0.0 sec
+                                building.aggregate(establishment.autogenvar305): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 2),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s2_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec2dst_lag1 = building.disaggregate(zone.emp_s2_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec3dst_lag1 = building.disaggregate(zone.emp_s3_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s3_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 3),intermediates=[building])
+                                building.aggregate(establishment.autogenvar308)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==3)....0.0 sec
+                                building.aggregate(establishment.autogenvar308): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 3),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s3_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec3dst_lag1 = building.disaggregate(zone.emp_s3_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec4dst_lag1 = building.disaggregate(zone.emp_s4_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s4_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 4),intermediates=[building])
+                                building.aggregate(establishment.autogenvar311)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==4)....0.0 sec
+                                building.aggregate(establishment.autogenvar311): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 4),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s4_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec4dst_lag1 = building.disaggregate(zone.emp_s4_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec5dst_lag1 = building.disaggregate(zone.emp_s5_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s5_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 5),intermediates=[building])
+                                building.aggregate(establishment.autogenvar314)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==5)....0.0 sec
+                                building.aggregate(establishment.autogenvar314): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 5),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s5_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec5dst_lag1 = building.disaggregate(zone.emp_s5_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec6dst_lag1 = building.disaggregate(zone.emp_s6_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s6_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 6),intermediates=[building])
+                                building.aggregate(establishment.autogenvar317)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==6)....0.0 sec
+                                building.aggregate(establishment.autogenvar317): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 6),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s6_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec6dst_lag1 = building.disaggregate(zone.emp_s6_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec7dst_lag1 = building.disaggregate(zone.emp_s7_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s7_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 7),intermediates=[building])
+                                building.aggregate(establishment.autogenvar320)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==7)....0.0 sec
+                                building.aggregate(establishment.autogenvar320): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 7),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s7_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec7dst_lag1 = building.disaggregate(zone.emp_s7_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec8dst_lag1 = building.disaggregate(zone.emp_s8_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s8_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 8),intermediates=[building])
+                                building.aggregate(establishment.autogenvar323)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==8)....0.0 sec
+                                building.aggregate(establishment.autogenvar323): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 8),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s8_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec8dst_lag1 = building.disaggregate(zone.emp_s8_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    CQEsec9dst_lag1 = building.disaggregate(zone.emp_s9_lag1/(1000*zone.CNOActPotSt))
+                        zone.emp_s9_lag1/(1000*zone.CNOActPotSt)
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 9),intermediates=[building])
+                                building.aggregate(establishment.autogenvar326)
+                                    establishment.employment_lag1*(establishment.disappeared_lag1==0)*(establishment.sector_id_lag1==9)....0.0 sec
+                                building.aggregate(establishment.autogenvar326): completed...0.0 sec
+                            zone.aggregate(establishment.employment_lag1*(establishment.disappeared_lag1 == 0)*(establishment.sector_id_lag1 == 9),intermediates=[building]): completed...0.0 sec
+                        zone.emp_s9_lag1/(1000*zone.CNOActPotSt): completed...0.0 sec
+                    CQEsec9dst_lag1 = building.disaggregate(zone.emp_s9_lag1/(1000*zone.CNOActPotSt)): completed...0.0 sec
+                    biotech_celcm = paris.building.zgp_id==22
+                        zgp_id = building.disaggregate(zone.zgp_id)......0.0 sec
+                    biotech_celcm = paris.building.zgp_id==22: completed...0.0 sec
+                    clichy_montfermeil_celcm = paris.building.zgp_id==21....0.0 sec
+                    confluence_celcm = paris.building.zgp_id==23.........0.0 sec
+                    descartes_celcm = paris.building.zgp_id==24..........0.0 sec
+                    la_defense_celcm = paris.building.zgp_id==25.........0.0 sec
+                    le_bourget_celcm = paris.building.zgp_id==26.........0.0 sec
+                    paris_pole_celcm = (paris.building.zgp_id>=27)*(paris.building.zgp_id<=46) ....0.0 sec
+                    pleyel_celcm = paris.building.zgp_id==47.............0.0 sec
+                    roissy_celcm = paris.building.zgp_id==48.............0.0 sec
+                    saclay_celcm = paris.building.zgp_id==49.............0.0 sec
+                    val_de_france_gonesse_celcm = paris.building.zgp_id==50....0.0 sec
+                    Choice set size: 50
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 2 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 2 iterations)
+                    Number of unplaced agents: 0 (in 2 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                    Number of unplaced agents: 0 (in 2 iterations)
+                    Number of unplaced agents: 0 (in 1 iterations)
+                ELCM chunk 1 out of 1.: completed.......................26.3 sec
+            Running Establishment Location Choice Model (from urbansim.models.agent_location_choice_model): completed...26.3 sec
+            Running Household Transition Model (from urbansim.models.transition_model): started on Tue Apr 10 09:52:25 2012
+                _actual_ = control_total.aggregate(household._one_)......0.2 sec
+                
+                +---------+--------+--------+------------+--------+------+
+                | hh_type | actual | target | difference | action | note |
+                +---------+--------+--------+------------+--------+------+
+                |    1    | 155634 | 173788 |   18154    | +18154 |      |
+                |    2    | 377859 | 420885 |   43026    | +43026 |      |
+                |    3    | 47172  | 32330  |   -14842   | -14842 |      |
+                |    4    | 981140 | 954867 |   -26273   | -26273 |      |
+                |    5    | 335787 | 358215 |   22428    | +22428 |      |
+                |    6    | 285132 | 311048 |   25916    | +25916 |      |
+                |    7    | 48804  | 36416  |   -12388   | -12388 |      |
+                |    8    | 588849 | 570088 |   -18761   | -18761 |      |
+                |    9    | 209685 | 216346 |    6661    | +6661  |      |
+                |    10   | 128531 | 141418 |   12887    | +12887 |      |
+                |    11   | 38873  | 30314  |   -8559    | -8559  |      |
+                |    12   | 330542 | 321269 |   -9273    | -9273  |      |
+                |    13   | 233033 | 248488 |   15455    | +15455 |      |
+                |    14   | 101556 | 105640 |    4084    | +4084  |      |
+                |    15   | 38058  | 29221  |   -8837    | -8837  |      |
+                |    16   | 239520 | 230585 |   -8935    | -8935  |      |
+                |    17   | 91069  | 95259  |    4190    | +4190  |      |
+                |    18   | 30201  | 32189  |    1988    | +1988  |      |
+                |    19   | 16953  | 13219  |   -3734    | -3734  |      |
+                |    20   | 104171 | 103797 |    -374    |  -374  |      |
+                |    21   | 36333  | 37582  |    1249    | +1249  |      |
+                |    22   | 11847  | 12165  |    318     |  +318  |      |
+                |    23   |  8483  |  7542  |    -941    |  -941  |      |
+                |    24   | 71137  | 70385  |    -752    |  -752  |      |
+                +---------+--------+--------+------------+--------+------+
+                
+            Running Household Transition Model (from urbansim.models.transition_model): completed...10.0 sec
+            Running Household Relocation Model (from urbansim.models.agent_relocation_model): started on Tue Apr 10 09:52:35 2012
+                Number of agents sampled based on rates: 557553
+                Number of total movers: 703523
+            Running Household Relocation Model (from urbansim.models.agent_relocation_model): completed...4.5 sec
+            Running Household Location Choice Model (from urbansim.models.household_location_choice_model): started on Tue Apr 10 09:52:39 2012
+                Total number of individuals: 703523
+                HLCM chunk 1 out of 1.: started on Tue Apr 10 09:52:40 2012
+                    Number of agents in this chunk: 703523
+                    vacant_residential_units = clip_to_zero(building.residential_units - urbansim_zone.building.number_of_households)
+                        number_of_households = building.number_of_agents(household)....0.5 sec
+                        WARNING: Negative values detected in function/method ''
+                        WARNING: Minimum: -11.0. Negative values clipped to zero.
+                    vacant_residential_units = clip_to_zero(building.residential_units - urbansim_zone.building.number_of_households): completed...0.5 sec
+                    Available capacity: 1061323.0 units.
+                    (urbansim_zone.building.vacant_residential_units>0)*(household.building_type_id==building.building_type_id)....0.0 sec
+                    paris.building.M_DDDjt
+                        M_1j0 = paris.building.number_of_households_of_type_1_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs1=building.aggregate(household.hh_type==1)
+                                        household.hh_type==1.............0.5 sec
+                                    _hhs1=building.aggregate(household.hh_type==1): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs1=building.aggregate(household.hh_type==1)
+                                        household.hh_type==1.............0.0 sec
+                                    _hhs1=building.aggregate(household.hh_type==1): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_1j0 = paris.building.number_of_households_of_type_1_lag1: completed...1.0 sec
+                        TM_1t = alldata.aggregate_all(numpy.logical_and(household.hh_type==1, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==1,household.building_id<=0)....0.0 sec
+                        TM_1t = alldata.aggregate_all(numpy.logical_and(household.hh_type==1, household.building_id<=0)): completed...0.1 sec
+                        TM_10 = paris.alldata.number_of_households_of_type_1_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs1=alldata.aggregate_all(household.hh_type==1)
+                                        household.hh_type==1.............0.5 sec
+                                    _hhs1=alldata.aggregate_all(household.hh_type==1): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs1=alldata.aggregate_all(household.hh_type==1)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_10 = paris.alldata.number_of_households_of_type_1_lag1: completed...0.8 sec
+                        V_ijt = urbansim_zone.building.vacant_residential_units....0.0 sec
+                        V_ij0 = urbansim_zone.building.vacant_residential_units_lag1
+                            opus_core.variables.VVV_lagLLL
+                                vacant_residential_units = clip_to_zero(building.residential_units - urbansim_zone.building.number_of_households)
+                                    number_of_households = building.number_of_agents(household)....1.2 sec
+                                    WARNING: Negative values detected in function/method ''
+                                    WARNING: Minimum: -22.0. Negative values clipped to zero.
+                                vacant_residential_units = clip_to_zero(building.residential_units - urbansim_zone.building.number_of_households): completed...1.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.2 sec
+                        V_ij0 = urbansim_zone.building.vacant_residential_units_lag1: completed...1.2 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................3.0 sec
+                    paris.building.M_DDDjt
+                        M_2j0 = paris.building.number_of_households_of_type_2_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs2=building.aggregate(household.hh_type==2)
+                                        household.hh_type==2.............0.5 sec
+                                    _hhs2=building.aggregate(household.hh_type==2): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs2=building.aggregate(household.hh_type==2)
+                                        household.hh_type==2.............0.0 sec
+                                    _hhs2=building.aggregate(household.hh_type==2): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_2j0 = paris.building.number_of_households_of_type_2_lag1: completed...1.0 sec
+                        TM_2t = alldata.aggregate_all(numpy.logical_and(household.hh_type==2, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==2,household.building_id<=0)....0.0 sec
+                        TM_2t = alldata.aggregate_all(numpy.logical_and(household.hh_type==2, household.building_id<=0)): completed...0.1 sec
+                        TM_20 = paris.alldata.number_of_households_of_type_2_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs2=alldata.aggregate_all(household.hh_type==2)
+                                        household.hh_type==2.............0.5 sec
+                                    _hhs2=alldata.aggregate_all(household.hh_type==2): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs2=alldata.aggregate_all(household.hh_type==2)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_20 = paris.alldata.number_of_households_of_type_2_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.9 sec
+                    paris.building.M_DDDjt
+                        M_3j0 = paris.building.number_of_households_of_type_3_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs3=building.aggregate(household.hh_type==3)
+                                        household.hh_type==3.............0.5 sec
+                                    _hhs3=building.aggregate(household.hh_type==3): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs3=building.aggregate(household.hh_type==3)
+                                        household.hh_type==3.............0.0 sec
+                                    _hhs3=building.aggregate(household.hh_type==3): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_3j0 = paris.building.number_of_households_of_type_3_lag1: completed...1.1 sec
+                        TM_3t = alldata.aggregate_all(numpy.logical_and(household.hh_type==3, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==3,household.building_id<=0)....0.0 sec
+                        TM_3t = alldata.aggregate_all(numpy.logical_and(household.hh_type==3, household.building_id<=0)): completed...0.2 sec
+                        TM_30 = paris.alldata.number_of_households_of_type_3_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs3=alldata.aggregate_all(household.hh_type==3)
+                                        household.hh_type==3.............0.6 sec
+                                    _hhs3=alldata.aggregate_all(household.hh_type==3): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs3=alldata.aggregate_all(household.hh_type==3)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_30 = paris.alldata.number_of_households_of_type_3_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.0 sec
+                    paris.building.M_DDDjt
+                        M_4j0 = paris.building.number_of_households_of_type_4_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs4=building.aggregate(household.hh_type==4)
+                                        household.hh_type==4.............0.6 sec
+                                    _hhs4=building.aggregate(household.hh_type==4): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs4=building.aggregate(household.hh_type==4)
+                                        household.hh_type==4.............0.0 sec
+                                    _hhs4=building.aggregate(household.hh_type==4): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_4j0 = paris.building.number_of_households_of_type_4_lag1: completed...1.1 sec
+                        TM_4t = alldata.aggregate_all(numpy.logical_and(household.hh_type==4, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==4,household.building_id<=0)....0.0 sec
+                        TM_4t = alldata.aggregate_all(numpy.logical_and(household.hh_type==4, household.building_id<=0)): completed...0.1 sec
+                        TM_40 = paris.alldata.number_of_households_of_type_4_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs4=alldata.aggregate_all(household.hh_type==4)
+                                        household.hh_type==4.............0.6 sec
+                                    _hhs4=alldata.aggregate_all(household.hh_type==4): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs4=alldata.aggregate_all(household.hh_type==4)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_40 = paris.alldata.number_of_households_of_type_4_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.1 sec
+                    paris.building.M_DDDjt
+                        M_5j0 = paris.building.number_of_households_of_type_5_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs5=building.aggregate(household.hh_type==5)
+                                        household.hh_type==5.............0.6 sec
+                                    _hhs5=building.aggregate(household.hh_type==5): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs5=building.aggregate(household.hh_type==5)
+                                        household.hh_type==5.............0.0 sec
+                                    _hhs5=building.aggregate(household.hh_type==5): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_5j0 = paris.building.number_of_households_of_type_5_lag1: completed...1.1 sec
+                        TM_5t = alldata.aggregate_all(numpy.logical_and(household.hh_type==5, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==5,household.building_id<=0)....0.0 sec
+                        TM_5t = alldata.aggregate_all(numpy.logical_and(household.hh_type==5, household.building_id<=0)): completed...0.1 sec
+                        TM_50 = paris.alldata.number_of_households_of_type_5_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs5=alldata.aggregate_all(household.hh_type==5)
+                                        household.hh_type==5.............0.6 sec
+                                    _hhs5=alldata.aggregate_all(household.hh_type==5): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs5=alldata.aggregate_all(household.hh_type==5)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_50 = paris.alldata.number_of_households_of_type_5_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.0 sec
+                    paris.building.M_DDDjt
+                        M_6j0 = paris.building.number_of_households_of_type_6_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs6=building.aggregate(household.hh_type==6)
+                                        household.hh_type==6.............0.6 sec
+                                    _hhs6=building.aggregate(household.hh_type==6): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs6=building.aggregate(household.hh_type==6)
+                                        household.hh_type==6.............0.0 sec
+                                    _hhs6=building.aggregate(household.hh_type==6): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_6j0 = paris.building.number_of_households_of_type_6_lag1: completed...1.1 sec
+                        TM_6t = alldata.aggregate_all(numpy.logical_and(household.hh_type==6, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==6,household.building_id<=0)....0.0 sec
+                        TM_6t = alldata.aggregate_all(numpy.logical_and(household.hh_type==6, household.building_id<=0)): completed...0.1 sec
+                        TM_60 = paris.alldata.number_of_households_of_type_6_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs6=alldata.aggregate_all(household.hh_type==6)
+                                        household.hh_type==6.............0.6 sec
+                                    _hhs6=alldata.aggregate_all(household.hh_type==6): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs6=alldata.aggregate_all(household.hh_type==6)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_60 = paris.alldata.number_of_households_of_type_6_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.1 sec
+                    paris.building.M_DDDjt
+                        M_7j0 = paris.building.number_of_households_of_type_7_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs7=building.aggregate(household.hh_type==7)
+                                        household.hh_type==7.............0.6 sec
+                                    _hhs7=building.aggregate(household.hh_type==7): completed...0.9 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.9 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs7=building.aggregate(household.hh_type==7)
+                                        household.hh_type==7.............0.0 sec
+                                    _hhs7=building.aggregate(household.hh_type==7): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_7j0 = paris.building.number_of_households_of_type_7_lag1: completed...1.1 sec
+                        TM_7t = alldata.aggregate_all(numpy.logical_and(household.hh_type==7, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==7,household.building_id<=0)....0.0 sec
+                        TM_7t = alldata.aggregate_all(numpy.logical_and(household.hh_type==7, household.building_id<=0)): completed...0.1 sec
+                        TM_70 = paris.alldata.number_of_households_of_type_7_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs7=alldata.aggregate_all(household.hh_type==7)
+                                        household.hh_type==7.............0.6 sec
+                                    _hhs7=alldata.aggregate_all(household.hh_type==7): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs7=alldata.aggregate_all(household.hh_type==7)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_70 = paris.alldata.number_of_households_of_type_7_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.1 sec
+                    paris.building.M_DDDjt
+                        M_8j0 = paris.building.number_of_households_of_type_8_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs8=building.aggregate(household.hh_type==8)
+                                        household.hh_type==8.............0.6 sec
+                                    _hhs8=building.aggregate(household.hh_type==8): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs8=building.aggregate(household.hh_type==8)
+                                        household.hh_type==8.............0.0 sec
+                                    _hhs8=building.aggregate(household.hh_type==8): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_8j0 = paris.building.number_of_households_of_type_8_lag1: completed...1.0 sec
+                        TM_8t = alldata.aggregate_all(numpy.logical_and(household.hh_type==8, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==8,household.building_id<=0)....0.0 sec
+                        TM_8t = alldata.aggregate_all(numpy.logical_and(household.hh_type==8, household.building_id<=0)): completed...0.1 sec
+                        TM_80 = paris.alldata.number_of_households_of_type_8_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs8=alldata.aggregate_all(household.hh_type==8)
+                                        household.hh_type==8.............0.5 sec
+                                    _hhs8=alldata.aggregate_all(household.hh_type==8): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs8=alldata.aggregate_all(household.hh_type==8)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_80 = paris.alldata.number_of_households_of_type_8_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_9j0 = paris.building.number_of_households_of_type_9_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs9=building.aggregate(household.hh_type==9)
+                                        household.hh_type==9.............0.5 sec
+                                    _hhs9=building.aggregate(household.hh_type==9): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs9=building.aggregate(household.hh_type==9)
+                                        household.hh_type==9.............0.0 sec
+                                    _hhs9=building.aggregate(household.hh_type==9): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.9 sec
+                        M_9j0 = paris.building.number_of_households_of_type_9_lag1: completed...0.9 sec
+                        TM_9t = alldata.aggregate_all(numpy.logical_and(household.hh_type==9, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==9,household.building_id<=0)....0.0 sec
+                        TM_9t = alldata.aggregate_all(numpy.logical_and(household.hh_type==9, household.building_id<=0)): completed...0.1 sec
+                        TM_90 = paris.alldata.number_of_households_of_type_9_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs9=alldata.aggregate_all(household.hh_type==9)
+                                        household.hh_type==9.............0.5 sec
+                                    _hhs9=alldata.aggregate_all(household.hh_type==9): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs9=alldata.aggregate_all(household.hh_type==9)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_90 = paris.alldata.number_of_households_of_type_9_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_10j0 = paris.building.number_of_households_of_type_10_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs10=building.aggregate(household.hh_type==10)
+                                        household.hh_type==10............0.5 sec
+                                    _hhs10=building.aggregate(household.hh_type==10): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs10=building.aggregate(household.hh_type==10)
+                                        household.hh_type==10............0.0 sec
+                                    _hhs10=building.aggregate(household.hh_type==10): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.9 sec
+                        M_10j0 = paris.building.number_of_households_of_type_10_lag1: completed...0.9 sec
+                        TM_10t = alldata.aggregate_all(numpy.logical_and(household.hh_type==10, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==10,household.building_id<=0)....0.0 sec
+                        TM_10t = alldata.aggregate_all(numpy.logical_and(household.hh_type==10, household.building_id<=0)): completed...0.1 sec
+                        TM_100 = paris.alldata.number_of_households_of_type_10_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs10=alldata.aggregate_all(household.hh_type==10)
+                                        household.hh_type==10............0.5 sec
+                                    _hhs10=alldata.aggregate_all(household.hh_type==10): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs10=alldata.aggregate_all(household.hh_type==10)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_100 = paris.alldata.number_of_households_of_type_10_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.7 sec
+                    paris.building.M_DDDjt
+                        M_11j0 = paris.building.number_of_households_of_type_11_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs11=building.aggregate(household.hh_type==11)
+                                        household.hh_type==11............0.5 sec
+                                    _hhs11=building.aggregate(household.hh_type==11): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs11=building.aggregate(household.hh_type==11)
+                                        household.hh_type==11............0.0 sec
+                                    _hhs11=building.aggregate(household.hh_type==11): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_11j0 = paris.building.number_of_households_of_type_11_lag1: completed...1.0 sec
+                        TM_11t = alldata.aggregate_all(numpy.logical_and(household.hh_type==11, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==11,household.building_id<=0)....0.0 sec
+                        TM_11t = alldata.aggregate_all(numpy.logical_and(household.hh_type==11, household.building_id<=0)): completed...0.1 sec
+                        TM_110 = paris.alldata.number_of_households_of_type_11_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs11=alldata.aggregate_all(household.hh_type==11)
+                                        household.hh_type==11............0.5 sec
+                                    _hhs11=alldata.aggregate_all(household.hh_type==11): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs11=alldata.aggregate_all(household.hh_type==11)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_110 = paris.alldata.number_of_households_of_type_11_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_12j0 = paris.building.number_of_households_of_type_12_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs12=building.aggregate(household.hh_type==12)
+                                        household.hh_type==12............0.6 sec
+                                    _hhs12=building.aggregate(household.hh_type==12): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs12=building.aggregate(household.hh_type==12)
+                                        household.hh_type==12............0.0 sec
+                                    _hhs12=building.aggregate(household.hh_type==12): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_12j0 = paris.building.number_of_households_of_type_12_lag1: completed...1.1 sec
+                        TM_12t = alldata.aggregate_all(numpy.logical_and(household.hh_type==12, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==12,household.building_id<=0)....0.0 sec
+                        TM_12t = alldata.aggregate_all(numpy.logical_and(household.hh_type==12, household.building_id<=0)): completed...0.1 sec
+                        TM_120 = paris.alldata.number_of_households_of_type_12_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs12=alldata.aggregate_all(household.hh_type==12)
+                                        household.hh_type==12............0.6 sec
+                                    _hhs12=alldata.aggregate_all(household.hh_type==12): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs12=alldata.aggregate_all(household.hh_type==12)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_120 = paris.alldata.number_of_households_of_type_12_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.0 sec
+                    paris.building.M_DDDjt
+                        M_13j0 = paris.building.number_of_households_of_type_13_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs13=building.aggregate(household.hh_type==13)
+                                        household.hh_type==13............0.6 sec
+                                    _hhs13=building.aggregate(household.hh_type==13): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs13=building.aggregate(household.hh_type==13)
+                                        household.hh_type==13............0.0 sec
+                                    _hhs13=building.aggregate(household.hh_type==13): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.1 sec
+                        M_13j0 = paris.building.number_of_households_of_type_13_lag1: completed...1.1 sec
+                        TM_13t = alldata.aggregate_all(numpy.logical_and(household.hh_type==13, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==13,household.building_id<=0)....0.0 sec
+                        TM_13t = alldata.aggregate_all(numpy.logical_and(household.hh_type==13, household.building_id<=0)): completed...0.1 sec
+                        TM_130 = paris.alldata.number_of_households_of_type_13_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs13=alldata.aggregate_all(household.hh_type==13)
+                                        household.hh_type==13............0.6 sec
+                                    _hhs13=alldata.aggregate_all(household.hh_type==13): completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs13=alldata.aggregate_all(household.hh_type==13)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_130 = paris.alldata.number_of_households_of_type_13_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................2.0 sec
+                    paris.building.M_DDDjt
+                        M_14j0 = paris.building.number_of_households_of_type_14_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs14=building.aggregate(household.hh_type==14)
+                                        household.hh_type==14............0.5 sec
+                                    _hhs14=building.aggregate(household.hh_type==14): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs14=building.aggregate(household.hh_type==14)
+                                        household.hh_type==14............0.0 sec
+                                    _hhs14=building.aggregate(household.hh_type==14): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.9 sec
+                        M_14j0 = paris.building.number_of_households_of_type_14_lag1: completed...0.9 sec
+                        TM_14t = alldata.aggregate_all(numpy.logical_and(household.hh_type==14, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==14,household.building_id<=0)....0.0 sec
+                        TM_14t = alldata.aggregate_all(numpy.logical_and(household.hh_type==14, household.building_id<=0)): completed...0.1 sec
+                        TM_140 = paris.alldata.number_of_households_of_type_14_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs14=alldata.aggregate_all(household.hh_type==14)
+                                        household.hh_type==14............0.5 sec
+                                    _hhs14=alldata.aggregate_all(household.hh_type==14): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs14=alldata.aggregate_all(household.hh_type==14)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_140 = paris.alldata.number_of_households_of_type_14_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_15j0 = paris.building.number_of_households_of_type_15_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs15=building.aggregate(household.hh_type==15)
+                                        household.hh_type==15............0.5 sec
+                                    _hhs15=building.aggregate(household.hh_type==15): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs15=building.aggregate(household.hh_type==15)
+                                        household.hh_type==15............0.0 sec
+                                    _hhs15=building.aggregate(household.hh_type==15): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.9 sec
+                        M_15j0 = paris.building.number_of_households_of_type_15_lag1: completed...0.9 sec
+                        TM_15t = alldata.aggregate_all(numpy.logical_and(household.hh_type==15, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==15,household.building_id<=0)....0.0 sec
+                        TM_15t = alldata.aggregate_all(numpy.logical_and(household.hh_type==15, household.building_id<=0)): completed...0.1 sec
+                        TM_150 = paris.alldata.number_of_households_of_type_15_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs15=alldata.aggregate_all(household.hh_type==15)
+                                        household.hh_type==15............0.5 sec
+                                    _hhs15=alldata.aggregate_all(household.hh_type==15): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs15=alldata.aggregate_all(household.hh_type==15)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_150 = paris.alldata.number_of_households_of_type_15_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.7 sec
+                    paris.building.M_DDDjt
+                        M_16j0 = paris.building.number_of_households_of_type_16_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs16=building.aggregate(household.hh_type==16)
+                                        household.hh_type==16............0.5 sec
+                                    _hhs16=building.aggregate(household.hh_type==16): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs16=building.aggregate(household.hh_type==16)
+                                        household.hh_type==16............0.0 sec
+                                    _hhs16=building.aggregate(household.hh_type==16): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.9 sec
+                        M_16j0 = paris.building.number_of_households_of_type_16_lag1: completed...0.9 sec
+                        TM_16t = alldata.aggregate_all(numpy.logical_and(household.hh_type==16, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==16,household.building_id<=0)....0.0 sec
+                        TM_16t = alldata.aggregate_all(numpy.logical_and(household.hh_type==16, household.building_id<=0)): completed...0.1 sec
+                        TM_160 = paris.alldata.number_of_households_of_type_16_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs16=alldata.aggregate_all(household.hh_type==16)
+                                        household.hh_type==16............0.5 sec
+                                    _hhs16=alldata.aggregate_all(household.hh_type==16): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs16=alldata.aggregate_all(household.hh_type==16)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_160 = paris.alldata.number_of_households_of_type_16_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_17j0 = paris.building.number_of_households_of_type_17_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs17=building.aggregate(household.hh_type==17)
+                                        household.hh_type==17............0.5 sec
+                                    _hhs17=building.aggregate(household.hh_type==17): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs17=building.aggregate(household.hh_type==17)
+                                        household.hh_type==17............0.0 sec
+                                    _hhs17=building.aggregate(household.hh_type==17): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_17j0 = paris.building.number_of_households_of_type_17_lag1: completed...1.0 sec
+                        TM_17t = alldata.aggregate_all(numpy.logical_and(household.hh_type==17, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==17,household.building_id<=0)....0.0 sec
+                        TM_17t = alldata.aggregate_all(numpy.logical_and(household.hh_type==17, household.building_id<=0)): completed...0.1 sec
+                        TM_170 = paris.alldata.number_of_households_of_type_17_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs17=alldata.aggregate_all(household.hh_type==17)
+                                        household.hh_type==17............0.5 sec
+                                    _hhs17=alldata.aggregate_all(household.hh_type==17): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs17=alldata.aggregate_all(household.hh_type==17)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_170 = paris.alldata.number_of_households_of_type_17_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_18j0 = paris.building.number_of_households_of_type_18_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs18=building.aggregate(household.hh_type==18)
+                                        household.hh_type==18............0.5 sec
+                                    _hhs18=building.aggregate(household.hh_type==18): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs18=building.aggregate(household.hh_type==18)
+                                        household.hh_type==18............0.0 sec
+                                    _hhs18=building.aggregate(household.hh_type==18): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_18j0 = paris.building.number_of_households_of_type_18_lag1: completed...1.0 sec
+                        TM_18t = alldata.aggregate_all(numpy.logical_and(household.hh_type==18, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==18,household.building_id<=0)....0.0 sec
+                        TM_18t = alldata.aggregate_all(numpy.logical_and(household.hh_type==18, household.building_id<=0)): completed...0.1 sec
+                        TM_180 = paris.alldata.number_of_households_of_type_18_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs18=alldata.aggregate_all(household.hh_type==18)
+                                        household.hh_type==18............0.5 sec
+                                    _hhs18=alldata.aggregate_all(household.hh_type==18): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs18=alldata.aggregate_all(household.hh_type==18)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_180 = paris.alldata.number_of_households_of_type_18_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_19j0 = paris.building.number_of_households_of_type_19_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs19=building.aggregate(household.hh_type==19)
+                                        household.hh_type==19............0.5 sec
+                                    _hhs19=building.aggregate(household.hh_type==19): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs19=building.aggregate(household.hh_type==19)
+                                        household.hh_type==19............0.0 sec
+                                    _hhs19=building.aggregate(household.hh_type==19): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_19j0 = paris.building.number_of_households_of_type_19_lag1: completed...1.0 sec
+                        TM_19t = alldata.aggregate_all(numpy.logical_and(household.hh_type==19, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==19,household.building_id<=0)....0.0 sec
+                        TM_19t = alldata.aggregate_all(numpy.logical_and(household.hh_type==19, household.building_id<=0)): completed...0.1 sec
+                        TM_190 = paris.alldata.number_of_households_of_type_19_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs19=alldata.aggregate_all(household.hh_type==19)
+                                        household.hh_type==19............0.5 sec
+                                    _hhs19=alldata.aggregate_all(household.hh_type==19): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs19=alldata.aggregate_all(household.hh_type==19)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.8 sec
+                        TM_190 = paris.alldata.number_of_households_of_type_19_lag1: completed...0.8 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.9 sec
+                    paris.building.M_DDDjt
+                        M_20j0 = paris.building.number_of_households_of_type_20_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs20=building.aggregate(household.hh_type==20)
+                                        household.hh_type==20............0.5 sec
+                                    _hhs20=building.aggregate(household.hh_type==20): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs20=building.aggregate(household.hh_type==20)
+                                        household.hh_type==20............0.0 sec
+                                    _hhs20=building.aggregate(household.hh_type==20): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_20j0 = paris.building.number_of_households_of_type_20_lag1: completed...1.0 sec
+                        TM_20t = alldata.aggregate_all(numpy.logical_and(household.hh_type==20, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==20,household.building_id<=0)....0.0 sec
+                        TM_20t = alldata.aggregate_all(numpy.logical_and(household.hh_type==20, household.building_id<=0)): completed...0.1 sec
+                        TM_200 = paris.alldata.number_of_households_of_type_20_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs20=alldata.aggregate_all(household.hh_type==20)
+                                        household.hh_type==20............0.5 sec
+                                    _hhs20=alldata.aggregate_all(household.hh_type==20): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs20=alldata.aggregate_all(household.hh_type==20)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_200 = paris.alldata.number_of_households_of_type_20_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_21j0 = paris.building.number_of_households_of_type_21_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs21=building.aggregate(household.hh_type==21)
+                                        household.hh_type==21............0.5 sec
+                                    _hhs21=building.aggregate(household.hh_type==21): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs21=building.aggregate(household.hh_type==21)
+                                        household.hh_type==21............0.0 sec
+                                    _hhs21=building.aggregate(household.hh_type==21): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_21j0 = paris.building.number_of_households_of_type_21_lag1: completed...1.0 sec
+                        TM_21t = alldata.aggregate_all(numpy.logical_and(household.hh_type==21, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==21,household.building_id<=0)....0.0 sec
+                        TM_21t = alldata.aggregate_all(numpy.logical_and(household.hh_type==21, household.building_id<=0)): completed...0.1 sec
+                        TM_210 = paris.alldata.number_of_households_of_type_21_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs21=alldata.aggregate_all(household.hh_type==21)
+                                        household.hh_type==21............0.5 sec
+                                    _hhs21=alldata.aggregate_all(household.hh_type==21): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs21=alldata.aggregate_all(household.hh_type==21)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_210 = paris.alldata.number_of_households_of_type_21_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_22j0 = paris.building.number_of_households_of_type_22_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs22=building.aggregate(household.hh_type==22)
+                                        household.hh_type==22............0.5 sec
+                                    _hhs22=building.aggregate(household.hh_type==22): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs22=building.aggregate(household.hh_type==22)
+                                        household.hh_type==22............0.0 sec
+                                    _hhs22=building.aggregate(household.hh_type==22): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_22j0 = paris.building.number_of_households_of_type_22_lag1: completed...1.0 sec
+                        TM_22t = alldata.aggregate_all(numpy.logical_and(household.hh_type==22, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==22,household.building_id<=0)....0.0 sec
+                        TM_22t = alldata.aggregate_all(numpy.logical_and(household.hh_type==22, household.building_id<=0)): completed...0.1 sec
+                        TM_220 = paris.alldata.number_of_households_of_type_22_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs22=alldata.aggregate_all(household.hh_type==22)
+                                        household.hh_type==22............0.5 sec
+                                    _hhs22=alldata.aggregate_all(household.hh_type==22): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs22=alldata.aggregate_all(household.hh_type==22)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_220 = paris.alldata.number_of_households_of_type_22_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_23j0 = paris.building.number_of_households_of_type_23_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs23=building.aggregate(household.hh_type==23)
+                                        household.hh_type==23............0.5 sec
+                                    _hhs23=building.aggregate(household.hh_type==23): completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.7 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs23=building.aggregate(household.hh_type==23)
+                                        household.hh_type==23............0.0 sec
+                                    _hhs23=building.aggregate(household.hh_type==23): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_23j0 = paris.building.number_of_households_of_type_23_lag1: completed...1.0 sec
+                        TM_23t = alldata.aggregate_all(numpy.logical_and(household.hh_type==23, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==23,household.building_id<=0)....0.0 sec
+                        TM_23t = alldata.aggregate_all(numpy.logical_and(household.hh_type==23, household.building_id<=0)): completed...0.1 sec
+                        TM_230 = paris.alldata.number_of_households_of_type_23_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs23=alldata.aggregate_all(household.hh_type==23)
+                                        household.hh_type==23............0.5 sec
+                                    _hhs23=alldata.aggregate_all(household.hh_type==23): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs23=alldata.aggregate_all(household.hh_type==23)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_230 = paris.alldata.number_of_households_of_type_23_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    paris.building.M_DDDjt
+                        M_24j0 = paris.building.number_of_households_of_type_24_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs24=building.aggregate(household.hh_type==24)
+                                        household.hh_type==24............0.5 sec
+                                    _hhs24=building.aggregate(household.hh_type==24): completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.8 sec
+                                paris.building.number_of_households_of_type_DDD
+                                    _hhs24=building.aggregate(household.hh_type==24)
+                                        household.hh_type==24............0.0 sec
+                                    _hhs24=building.aggregate(household.hh_type==24): completed...0.2 sec
+                                paris.building.number_of_households_of_type_DDD: completed...0.2 sec
+                            opus_core.variables.VVV_lagLLL: completed....1.0 sec
+                        M_24j0 = paris.building.number_of_households_of_type_24_lag1: completed...1.0 sec
+                        TM_24t = alldata.aggregate_all(numpy.logical_and(household.hh_type==24, household.building_id<=0))
+                            numpy.logical_and(household.hh_type==24,household.building_id<=0)....0.0 sec
+                        TM_24t = alldata.aggregate_all(numpy.logical_and(household.hh_type==24, household.building_id<=0)): completed...0.1 sec
+                        TM_240 = paris.alldata.number_of_households_of_type_24_lag1
+                            opus_core.variables.VVV_lagLLL
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs24=alldata.aggregate_all(household.hh_type==24)
+                                        household.hh_type==24............0.5 sec
+                                    _hhs24=alldata.aggregate_all(household.hh_type==24): completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.6 sec
+                                paris.alldata.number_of_households_of_type_DDD
+                                    _hhs24=alldata.aggregate_all(household.hh_type==24)....0.1 sec
+                                paris.alldata.number_of_households_of_type_DDD: completed...0.1 sec
+                            opus_core.variables.VVV_lagLLL: completed....0.7 sec
+                        TM_240 = paris.alldata.number_of_households_of_type_24_lag1: completed...0.7 sec
+Warning: divide by zero encountered in divide
+                    paris.building.M_DDDjt: completed....................1.8 sec
+                    CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94))
+                        zone.dept==94....................................0.0 sec
+                        zone.dept==92....................................0.0 sec
+                        zone.dept==93....................................0.0 sec
+                    CBAPC = (building.disaggregate(zone.dept==92))+(building.disaggregate(zone.dept==93))+(building.disaggregate(zone.dept==94)): completed...0.0 sec
+                    CBAparis = building.disaggregate(zone.dept==75)......0.0 sec
+                    CDGart = building.disaggregate(zone.cdistart)/1000...0.0 sec
+                    CDGartClse = building.disaggregate(zone.cdgartclse)..0.0 sec
+                    CDGartFar = building.disaggregate(zone.cdgartfar)....0.0 sec
+                    CDGhighwClse = building.disaggregate(zone.cdghighwclse)....0.0 sec
+                    CDGhighwFar = building.disaggregate(zone.cdghighwfar)....0.0 sec
+                    CLCrPriceF = ln_bounded(building.price)..............0.0 sec
+                    CLCrPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)....2 min, 30.0 sec
+                    CLCrPriceH = ln_bounded(building.price)..............0.0 sec
+                    CLCrPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)....1 min, 0.3 sec
+                    CLCsPriceF = ln_bounded(building.price)..............0.0 sec
+                    CLCsPriceF_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)....22.5 sec
+                    CLCsPriceH = ln_bounded(building.price)..............0.0 sec
+                    CLCsPriceH_HRRinc = ln_bounded(building.price) * (household.lincomepc - 10.090716421)Running simulation for year 2000 in new process: completed.......6 min, 48.1 sec
+Traceback (most recent call last):
+  File "/workspace/opus/src/opus_core/tools/start_run.py", line 88, in <module>
+    run_as_multiprocess=run_as_multiprocess)
+  File "/workspace/opus/src/opus_core/services/run_server/run_manager.py", line 119, in run_run
+    model_system.run_multiprocess(run_resources)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 485, in run_multiprocess
+    log_file=log_file)
+  File "/workspace/opus/src/urbansim/model_coordinators/model_system.py", line 32, in _run_each_year_as_separate_process
+    log_file=log_file
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 518, in _run_each_year_as_separate_process
+    resources, optional_args=optional_args)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 591, in _fork_new_process
+    success = self.forked_processes[-1].fork_new_process(module_name, resources, **key_args)
+  File "/workspace/opus/src/opus_core/fork_process.py", line 74, in fork_new_process
+    self.wait()
+  File "/workspace/opus/src/opus_core/fork_process.py", line 90, in wait
+    self.check_status()
+  File "/workspace/opus/src/opus_core/fork_process.py", line 101, in check_status
+    raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
+StandardError: Child python process exited with failure.
+Calling module: opus_core.model_coordinators.model_system
+System command: ['/usr/bin/python', '/workspace/opus/src/opus_core/model_coordinators/model_system.py', '-r', '/tmp/tmp_zmsJr/resources.pickle', '--log-file-name', 'run_multiprocess.log']

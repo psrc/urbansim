@@ -15,8 +15,9 @@ class sectorDDD_employment(Variable):
     def dependencies(self):
         return [
                 "is_sector{0}=establishment.sector_id=={0}".format(self.sector_id), 
-                "establishment.zone_id",
-                "_emp{0}=zone.aggregate(establishment.is_sector{0})".format(self.sector_id)
+                "not_disappeared = numpy.logical_not(establishment.disappeared)",
+                "zone_id=establishment.disaggregate(building.zone_id)",
+                "_emp{0}=zone.aggregate(establishment.is_sector{0} * establishment.not_disappeared)".format(self.sector_id)
                 ]
 
     def compute(self,  dataset_pool):
@@ -41,6 +42,7 @@ class Tests(opus_unittest.OpusTestCase):
             {"establishment_id":array([1,2,3,4,5]),
             "zone_id":          array([1,1,2,2,2]),
              "sector_id":       array([2,2,1,1,2]),
+             "disappeared":     array([0,0,1,0,1]),
              },
             'zone':
             {"zone_id":array([1,2]),
@@ -49,10 +51,10 @@ class Tests(opus_unittest.OpusTestCase):
         )
         
         instance_name = 'paris.zone.sector1_employment'
-        should_be = array([0, 2])
+        should_be = array([0, 1])
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
         instance_name = 'paris.zone.sector2_employment'
-        should_be = array([2, 1])
+        should_be = array([2, 0])
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':

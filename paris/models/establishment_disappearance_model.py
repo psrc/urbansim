@@ -4,7 +4,7 @@
 
 from opus_core.models.choice_model import ChoiceModel
 from opus_core.resources import Resources
-from urbansim_parcel.models.work_at_home_choice_model import prepare_for_estimate
+from opus_core.models.model import prepare_for_estimate
 from numpy import where
 
 class EstablishmentDisappearanceModel(ChoiceModel):

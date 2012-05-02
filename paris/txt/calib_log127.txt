@@ -1,0 +1,370 @@
+Cache directory for run 127 set to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34
+Running opus_core.store.utils.cache_flt_data.CacheFltData: started on Tue Apr 10 07:34:52 2012
+    Caching files from '/workspace/opus/data/paris_zone/base_year_data' 
+    to '/workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34'.
+Running opus_core.store.utils.cache_flt_data.CacheFltData: completed.....7.5 sec
+Logging to file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/run_multiprocess.log
+Running simulation for years 2000 thru 2006
+Simulation root seed: 1
+Running simulation for year 2000 in new process: started on Tue Apr 10 07:35:00 2012
+    Closing log file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/run_multiprocess.log
+    Invoking: /usr/bin/python /workspace/opus/src/opus_core/model_coordinators/model_system.py -r /tmp/tmpx36gcA/resources.pickle --log-file-name run_multiprocess.log
+Cache Directory set to: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34
+Start simulation run: started on Tue Apr 10 07:35:00 2012
+    random seed = (1061650668,)
+    Starting simulation for year 2000: started on Tue Apr 10 07:35:00 2012
+        Closing log file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/run_multiprocess.log
+        Logging to file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/year_2000_log.txt
+        Simulate year 2000: started on Tue Apr 10 07:35:00 2012
+            Running Swap Datasets (from opus_core.models.swap_datasets): started on Tue Apr 10 07:35:00 2012
+                Backed up /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_household_control_totals to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_household_control_totals_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_household_control_totals_baseline to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_household_control_totals
+                Renamed /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/scheduled_development_events_baseline to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/scheduled_development_events
+                Backed up /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_employment_control_totals to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_employment_control_totals_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_employment_control_totals_baseline to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/1999/annual_employment_control_totals
+            Running Swap Datasets (from opus_core.models.swap_datasets): completed...0.0 sec
+            Running Swap Datasets (from opus_core.models.swap_datasets): started on Tue Apr 10 07:35:00 2012
+                Backed up /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/2000/zones to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/2000/zones_ORIGINAL
+                Renamed /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/2000/zones_baseline to /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/2000/zones
+            Running Swap Datasets (from opus_core.models.swap_datasets): completed...0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 07:35:00 2012
+                numpy.clip(vpo, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 07:35:00 2012
+                numpy.clip(tco, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 07:35:00 2012
+                numpy.clip(tcd, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 07:35:00 2012
+                numpy.clip(vpd, 0, 240)..................................0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running Scheduled Development Events Model (from urbansim.models.scheduled_events_model): started on Tue Apr 10 07:35:00 2012....0.0 sec
+            Running Development Project Transition Model (from urbansim.models.real_estate_transition_model): started on Tue Apr 10 07:35:00 2012
+                is_residential = building.disaggregate(building_type.is_residential)....0.0 sec
+                is_residential = development_event_history.disaggregate(building_type.is_residential)....0.0 sec
+                
+                +----------------+-----------+-----------+------------+--------+
+                | is_residential |   actual  |   target  | difference | action |
+                +----------------+-----------+-----------+------------+--------+
+                |       1        |  4910845  |  4907910  |   -2935    |   0    |
+                |       0        | 382249150 | 379698384 |  -2550766  |   0    |
+                +----------------+-----------+-----------+------------+--------+
+            Running Development Project Transition Model (from urbansim.models.real_estate_transition_model): completed...1.4 sec
+            Running Non-Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): started on Tue Apr 10 07:35:02 2012
+                Development project dataset is empty. Skip DPLCM
+            Running Non-Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): completed...0.0 sec
+            Running Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): started on Tue Apr 10 07:35:02 2012
+                Development project dataset is empty. Skip DPLCM
+            Running Residential Development Project Location Choice Model (from urbansim_zone.models.development_project_location_choice_model): completed...0.0 sec
+            Running Add Development Projects Quantity to Buildings (from urbansim_zone.models.add_projects_to_buildings): started on Tue Apr 10 07:35:02 2012
+                WARNING: Empty development project dataset. Skip add_projects_to_buildings.
+            Running Add Development Projects Quantity to Buildings (from urbansim_zone.models.add_projects_to_buildings): completed...0.0 sec
+            emp_250 = (establishment.employment < 250).astype('i').......0.0 sec
+            Running Establishment Disappearance Model (from paris.models.establishment_disappearance_model): started on Tue Apr 10 07:35:02 2012
+                Total number of individuals: 290106
+                EDM chunk 1 out of 1.: started on Tue Apr 10 07:35:02 2012
+                    Number of agents in this chunk: 290106
+                    EBADefense = establishment.disaggregate(building.CBADefense)
+                        building.disaggregate(zone.insee==92062)+building.disaggregate(zone.insee==92026)+building.disaggregate(zone.insee==92050)
+                            zone.insee==92050............................0.0 sec
+                            zone.insee==92026............................0.0 sec
+                            zone.insee==92062............................0.0 sec
+                        building.disaggregate(zone.insee==92062)+building.disaggregate(zone.insee==92026)+building.disaggregate(zone.insee==92050): completed...0.0 sec
+                    EBADefense = establishment.disaggregate(building.CBADefense): completed...0.0 sec
+                    EBAnwCty = establishment.disaggregate(building.CBAnwCty)
+                        building.disaggregate(zone.cvilnouvel)...........0.0 sec
+                    EBAnwCty = establishment.disaggregate(building.CBAnwCty): completed...0.0 sec
+                    EBAparis = establishment.disaggregate(building.disaggregate(zone.dept==75))
+                        building.disaggregate(zone.dept==75)
+                            zone.dept==75................................0.0 sec
+                        building.disaggregate(zone.dept==75): completed...0.0 sec
+                    EBAparis = establishment.disaggregate(building.disaggregate(zone.dept==75)): completed...0.0 sec
+                    ECTDTcD = establishment.disaggregate(building.ctdtcd)
+                        building.disaggregate(zone.ctdtcd)...............0.0 sec
+                    ECTDTcD = establishment.disaggregate(building.ctdtcd): completed...0.0 sec
+                    ECTDVpD = establishment.disaggregate(building.ctdvpd)
+                        building.disaggregate(zone.ctdvpd)...............0.0 sec
+                    ECTDVpD = establishment.disaggregate(building.ctdvpd): completed...0.0 sec
+                    ELPB = establishment.disaggregate(building.CLPB)
+                        building.disaggregate(zone.ZCLPB)
+                            ln_bounded(zone.aggregate(building.price*(building.building_type_id==6), function=sum)/zone.aggregate((building.building_type_id==6), function=sum))
+                                (building.building_type_id==6)...........0.0 sec
+                                building.price*(building.building_type_id==6)....0.0 sec
+                            ln_bounded(zone.aggregate(building.price*(building.building_type_id==6), function=sum)/zone.aggregate((building.building_type_id==6), function=sum)): completed...0.0 sec
+                        building.disaggregate(zone.ZCLPB): completed.....0.0 sec
+                    ELPB = establishment.disaggregate(building.CLPB): completed...0.0 sec
+                    ENGsubwSP = establishment.disaggregate(building.CNGsubwSP)
+                        building.disaggregate(zone.csubway9).............0.0 sec
+                    ENGsubwSP = establishment.disaggregate(building.CNGsubwSP): completed...0.0 sec
+                    ENGtrainSt = establishment.disaggregate(building.CNGtrainSt)
+                        building.disaggregate(zone.ctrain9)..............0.0 sec
+                    ENGtrainSt = establishment.disaggregate(building.CNGtrainSt): completed...0.0 sec
+                    EPBhghInc = establishment.disaggregate(building.CPBhghInc)/100
+                        building.disaggregate(zone.ZPBhghInc)
+                            100*(zone.aggregate(household.lincomepc>10.3)/(zone.CNRhh))
+                                zone.aggregate(building.number_of_agents(household),function=sum)
+                                    building.number_of_agents(household)....0.6 sec
+                                zone.aggregate(building.number_of_agents(household),function=sum): completed...0.6 sec
+                                household.lincomepc>10.3.................0.0 sec
+                                zone_id = household.disaggregate(building.zone_id)....0.2 sec
+                            100*(zone.aggregate(household.lincomepc>10.3)/(zone.CNRhh)): completed...1.1 sec
+                        building.disaggregate(zone.ZPBhghInc): completed...1.1 sec
+                    EPBhghInc = establishment.disaggregate(building.CPBhghInc)/100: completed...1.1 sec
+                    EPBlowInc = establishment.disaggregate(building.CPBlowInc)/100
+                        building.disaggregate(zone.ZPBlowInc)
+                            100*(zone.aggregate(household.lincomepc<=9.9)/(zone.CNRhh))
+                                household.lincomepc<=9.9.................0.0 sec
+                            100*(zone.aggregate(household.lincomepc<=9.9)/(zone.CNRhh)): completed...0.2 sec
+                        building.disaggregate(zone.ZPBlowInc): completed...0.2 sec
+                    EPBlowInc = establishment.disaggregate(building.CPBlowInc)/100: completed...0.3 sec
+                    ERItaxPro = establishment.disaggregate(building.CRItaxPro)
+                        building.disaggregate(zone.taxpro)...............0.0 sec
+                    ERItaxPro = establishment.disaggregate(building.CRItaxPro): completed...0.0 sec
+                    ERRdensPop = establishment.disaggregate(building.CRRdensPop)
+                        building.disaggregate(zone.ZRRdensPop)
+                            zone.aggregate(household.size, intermediates = [building])/(1000*zone.careakm2)
+                                building.aggregate(household.size).......0.2 sec
+                            zone.aggregate(household.size, intermediates = [building])/(1000*zone.careakm2): completed...0.3 sec
+                        building.disaggregate(zone.ZRRdensPop): completed...0.3 sec
+                    ERRdensPop = establishment.disaggregate(building.CRRdensPop): completed...0.3 sec
+                    ERam0 = establishment.disaggregate(building.CPRam0)/100
+                        building.disaggregate(zone.ZPRam0)
+                            (zone.aggregate(building.aggregate(household.workers==0))/(zone.CNRhh))*100
+                                building.aggregate(household.workers==0)
+                                    household.workers==0.................0.0 sec
+                                building.aggregate(household.workers==0): completed...0.3 sec
+                            (zone.aggregate(building.aggregate(household.workers==0))/(zone.CNRhh))*100: completed...0.3 sec
+                        building.disaggregate(zone.ZPRam0): completed....0.3 sec
+                    ERam0 = establishment.disaggregate(building.CPRam0)/100: completed...0.3 sec
+                    ETPNiv1 = establishment.disaggregate(building.CTPNiv1)
+                        building.disaggregate(zone.ctpniv1)..............0.0 sec
+                    ETPNiv1 = establishment.disaggregate(building.CTPNiv1): completed...0.0 sec
+                    ETPNiv2 = establishment.disaggregate(building.CTPNiv2)
+                        building.disaggregate(zone.ctpniv2)..............0.0 sec
+                    ETPNiv2 = establishment.disaggregate(building.CTPNiv2): completed...0.0 sec
+                    ETPNiv3 = establishment.disaggregate(building.CTPNiv3)
+                        building.disaggregate(zone.ctpniv3)..............0.0 sec
+                    ETPNiv3 = establishment.disaggregate(building.CTPNiv3): completed...0.0 sec
+                    ETPNiv4 = establishment.disaggregate(building.CTPNiv4)
+                        building.disaggregate(zone.ctpniv4)..............0.0 sec
+                    ETPNiv4 = establishment.disaggregate(building.CTPNiv4): completed...0.0 sec
+                    emp = establishment.employment.......................0.0 sec
+                    w10=(establishment.employment_lag1 >= 10)*(establishment.employment_lag1 < 20)
+                        opus_core.variables.VVV_lagLLL...................0.4 sec
+                    w10=(establishment.employment_lag1 >= 10)*(establishment.employment_lag1 < 20): completed...0.4 sec
+                    w100=(establishment.employment_lag1 >= 100)..........0.0 sec
+                    w100slope=paris.establishment.w100*(establishment.employment_lag1 - 100)....0.0 sec
+                    w10slope=paris.establishment.w10*(establishment.employment_lag1 - 10)....0.0 sec
+                    w2=(establishment.employment_lag1 >= 2)*(establishment.employment_lag1 < 3)....0.0 sec
+                    w20=(establishment.employment_lag1 >= 20)*(establishment.employment_lag1 < 50)....0.0 sec
+                    w20slope=paris.establishment.w20*(establishment.employment_lag1 - 20)....0.0 sec
+                    w3=(establishment.employment_lag1 >= 3)*(establishment.employment_lag1 < 6)....0.0 sec
+                    w3slope=paris.establishment.w3*(establishment.employment_lag1 - 3)....0.0 sec
+                    w50=(establishment.employment_lag1 >= 50)*(establishment.employment_lag1 < 100)....0.0 sec
+                    w50slope=paris.establishment.w50*(establishment.employment_lag1 - 50)....0.0 sec
+                    w6=(establishment.employment_lag1 >= 6)*(establishment.employment_lag1 < 10)....0.0 sec
+                    w6slope=paris.establishment.w6*(establishment.employment_lag1 - 6)....0.0 sec
+                    Choice set size: 2
+                EDM chunk 1 out of 1.: completed.........................4.8 sec
+            Running Establishment Disappearance Model (from paris.models.establishment_disappearance_model): completed...4.9 sec
+            Running Establishment Evolution Model (from paris.models.establishment_evolution_model): started on Tue Apr 10 07:35:07 2012
+                (paris.establishment.year_lag1 != paris.establishment.year)*(paris.establishment.emp_250_lag1)*(establishment.building_id>0)
+                    opus_core.variables.VVV_lagLLL
+                        paris.establishment.year.........................0.1 sec
+                        paris.establishment.year.........................0.0 sec
+                    opus_core.variables.VVV_lagLLL: completed............0.4 sec
+                    opus_core.variables.VVV_lagLLL
+                        emp_250 = (establishment.employment < 250).astype('i')....0.1 sec
+                    opus_core.variables.VVV_lagLLL: completed............0.4 sec
+                (paris.establishment.year_lag1 != paris.establishment.year)*(paris.establishment.emp_250_lag1)*(establishment.building_id>0): completed...0.8 sec
+                paris.establishment.ln_emp_ratio
+                    lnemp=ln_bounded(establishment.employment)...........0.0 sec
+                    lnemp_pre=ln_bounded(establishment.employment_lag1)..0.0 sec
+                paris.establishment.ln_emp_ratio: completed..............0.0 sec
+                Total number of individuals: 290106
+                EEM chunk 1 out of 1.: started on Tue Apr 10 07:35:08 2012
+                    Number of agents in this chunk: 290106
+                    EBAdefense_EBEwfb10_250 = establishment.EBADefense * establishment.EBEwfb10_250
+                        (establishment.employment_lag1>9)*(establishment.employment_lag1<250)....0.0 sec
+                    EBAdefense_EBEwfb10_250 = establishment.EBADefense * establishment.EBEwfb10_250: completed...0.0 sec
+                    EBAdefense_EBEwfl10 = establishment.EBADefense * establishment.EBEwfl10
+                        establishment.employment_lag1<10.................0.0 sec
+                    EBAdefense_EBEwfl10 = establishment.EBADefense * establishment.EBEwfl10: completed...0.0 sec
+                    EBAlimit_EBEwfb10_250 = establishment.ELimit * establishment.EBEwfb10_250
+                        establishment.disaggregate(building.disaggregate(zone.limit))
+                            building.disaggregate(zone.limit)............0.0 sec
+                        establishment.disaggregate(building.disaggregate(zone.limit)): completed...0.0 sec
+                    EBAlimit_EBEwfb10_250 = establishment.ELimit * establishment.EBEwfb10_250: completed...0.0 sec
+                    EBAlimit_EBEwfl10 = establishment.ELimit * establishment.EBEwfl10....0.0 sec
+                    EBAnwCty_EBEwfb10_250 = establishment.EBAnwCty * establishment.EBEwfb10_250....0.0 sec
+                    EBAnwCty_EBEwfl10 = establishment.EBAnwCty * establishment.EBEwfl10....0.0 sec
+                    EBAparis_EBEwfb10_250 = establishment.EBAparis * establishment.EBEwfb10_250....0.0 sec
+                    EBAparis_EBEwfl10 = establishment.EBAparis * establishment.EBEwfl10....0.0 sec
+                    EBLCprice_EBEwfb10_250 = establishment.ELPB * establishment.EBEwfb10_250....0.0 sec
+                    EBLCprice_EBEwfl10 = establishment.ELPB * establishment.EBEwfl10....0.0 sec
+                    ECNGsubw_EBEwfb10_250 = establishment.ENGsubwSP * establishment.EBEwfb10_250....0.0 sec
+                    ECNGsubw_EBEwfl10 = establishment.ENGsubwSP * establishment.EBEwfl10....0.0 sec
+                    ECNGtrain_EBEwfb10_250 = establishment.ENGtrainSt * establishment.EBEwfb10_250....0.0 sec
+                    ECNGtrain_EBEwfl10 = establishment.ENGtrainSt * establishment.EBEwfl10....0.0 sec
+                    ECPBhghInc_EBEwfb10_250 = establishment.EPBhghInc * establishment.EBEwfb10_250....0.0 sec
+                    ECPBhghInc_EBEwfl10 = establishment.EPBhghInc * establishment.EBEwfl10....0.0 sec
+                    ECPBlowInc_EBEwfl10 = establishment.EPBlowInc * establishment.EBEwfl10....0.0 sec
+                    ECPR0Ac_EBEwfb10_250 = establishment.ERam0 * establishment.EBEwfb10_250....0.0 sec
+                    ECPR0Ac_EBEwfl10 = establishment.ERam0 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE1_EBEwfb10_250 = establishment.ETPNiv1 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE1_EBEwfl10 = establishment.ETPNiv1 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE2_EBEwfb10_250 = establishment.ETPNiv2 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE2_EBEwfl10 = establishment.ETPNiv2 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE3_EBEwfb10_250 = establishment.ETPNiv3 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE3_EBEwfl10 = establishment.ETPNiv3 * establishment.EBEwfl10....0.0 sec
+                    ECPRWnE4_EBEwfb10_250 = establishment.ETPNiv4 * establishment.EBEwfb10_250....0.0 sec
+                    ECPRWnE4_EBEwfl10 = establishment.ETPNiv4 * establishment.EBEwfl10....0.0 sec
+                    ECQRdstPop_EBEwfb10_250 = establishment.ERRdensPop * establishment.EBEwfb10_250....0.0 sec
+                    ECQRdstPop_EBEwfl10 = establishment.ERRdensPop * establishment.EBEwfl10....0.0 sec
+                    ECRFproTax_EBEwfb10_250 = establishment.ERItaxPro * establishment.EBEwfb10_250....0.0 sec
+                    ECRFproTax_EBEwfl10 = establishment.ERItaxPro * establishment.EBEwfl10....0.0 sec
+                    ECTDTcD_EBEwfb10_250 = establishment.ECTDTcD * establishment.EBEwfb10_250....0.0 sec
+                    ECTDTcD_EBEwfl10 = establishment.ECTDTcD * establishment.EBEwfl10....0.0 sec
+                    ECTDVpD_EBEwfb10_250 = establishment.ECTDVpD * establishment.EBEwfb10_250....0.0 sec
+                    ECTDVpD_EBEwfl10 = establishment.ECTDVpD * establishment.EBEwfl10....0.0 sec
+                EEM chunk 1 out of 1.: completed.........................0.8 sec
+                rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean)))
+                    sector.aggregate(establishment._init_error_ln_emp_ratio**2,function=mean)
+                        establishment._init_error_ln_emp_ratio**2........0.0 sec
+                    sector.aggregate(establishment._init_error_ln_emp_ratio**2,function=mean): completed...0.0 sec
+                rmse_ln_emp_ratio = numpy.sqrt(establishment.disaggregate(sector.aggregate(establishment._init_error_ln_emp_ratio**2, function=mean))): completed...0.0 sec
+            Running Establishment Evolution Model (from paris.models.establishment_evolution_model): completed...1.9 sec
+            Running opus_core.simple_model.SimpleModel: started on Tue Apr 10 07:35:09 2012
+                paris.establishment.emp_pred
+                    emp_pre1=establishment.employment_lag1...............0.0 sec
+                paris.establishment.emp_pred: completed..................0.0 sec
+                (establishment.disappeared == 0)*(establishment.building_id>0)*(paris.establishment.year_lag1 != pari.establishment.year)*(paris.establishment.emp_250_lag1)....0.0 sec
+            Running opus_core.simple_model.SimpleModel: completed........0.0 sec
+            Running Establishment Reappearance Model (from paris.models.establishment_reappearance_model): started on Tue Apr 10 07:35:09 2012
+                _actual_ = control_total.aggregate(establishment.employment)....0.0 sec
+
+                (establishment.disappeared == 1)*(paris.establishment.emp_250)
+                    emp_250 = (establishment.employment < 250).astype('i')....0.0 sec
+                (establishment.disappeared == 1)*(paris.establishment.emp_250): completed...0.0 sec
+                
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                | sector_id | disappeared | actual | target | difference |  action |   N    | note |
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                |     1     |      0      | 14678  | 23639  |    8961    |   +776  |  +101  |      |
+                |     2     |      0      | 529461 | 669637 |   140176   | +103739 | +10717 |      |
+                |     3     |      0      | 151226 | 235165 |   83939    |  +72885 | +11379 |      |
+                |     4     |      0      | 476652 | 662645 |   185993   | +175735 | +26192 |      |
+                |     5     |      0      | 256179 | 293676 |   37497    |  +37497 |   +1   |      |
+                |     6     |      0      | 228778 | 258834 |   30056    |  +30056 |   +1   |      |
+                |     7     |      0      | 52359  | 103730 |   51371    |  +22552 | +3249  |      |
+                |     8     |      0      | 883748 | 972065 |   88317    |  +88317 |   +1   |      |
+                |     9     |      0      | 361404 | 474468 |   113064   |  +75536 | +14961 |      |
+                |     10    |      0      | 680118 | 789083 |   108965   |  +33390 | +4670  |      |
+                |     11    |      0      | 575448 | 610784 |   35336    |  +34124 | +3231  |      |
+                +-----------+-------------+--------+--------+------------+---------+--------+------+
+                
+            Running Establishment Reappearance Model (from paris.models.establishment_reappearance_model): completed...0.8 sec
+            Running Establishment Transition Model (from paris.models.transition_model): started on Tue Apr 10 07:35:10 2012
+                _actual_ = control_total.aggregate(establishment.employment)....0.0 sec
+                
+                +-----------+-------------+--------+--------+------------+--------+------+
+                | sector_id | disappeared | actual | target | difference | action | note |
+                +-----------+-------------+--------+--------+------------+--------+------+
+                |     1     |      0      | 15454  | 23639  |    8185    | +8185  |      |
+                |     2     |      0      | 633200 | 669637 |   36437    | +36437 |      |
+                |     3     |      0      | 224111 | 235165 |   11054    | +11054 |      |
+                |     4     |      0      | 652387 | 662645 |   10258    | +10258 |      |
+                |     5     |      0      | 293676 | 293676 |     0      |   0    |      |
+                |     6     |      0      | 258834 | 258834 |     0      |   0    |      |
+                |     7     |      0      | 74911  | 103730 |   28819    | +28819 |      |
+                |     8     |      0      | 972065 | 972065 |     0      |   0    |      |
+                |     9     |      0      | 436940 | 474468 |   37528    | +37528 |      |
+                |     10    |      0      | 713508 | 789083 |   75575    | +75575 |      |
+                |     11    |      0      | 609572 | 610784 |    1212    | +1212  |      |
+                +-----------+-------------+--------+--------+------------+--------+------+
+                
+            Running Establishment Transition Model (from paris.models.transition_model): completed...0.5 sec
+            Running Establishment Location Choice Model (from urbansim.models.agent_location_choice_model): started on Tue Apr 10 07:35:10 2012
+                (establishment.disappeared==0)*(establishment.building_id <= 0)....0.0 sec
+                (establishment.employment)*(establishment.disappeared==0)....0.0 sec
+                Total number of individuals: 110034
+                ELCM chunk 1 out of 1.: started on Tue Apr 10 07:35:10 2012
+                    Number of agents in this chunk: 110034
+                    vacant_non_home_based_job_spaces = clip_to_zero(urbansim_zone.building.total_non_home_based_job_spaces - paris.building.number_of_non_home_based_jobs)
+                        total_non_home_based_job_spaces = numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))Warning: invalid value encountered in divide
+....0.0 sec
+                        number_of_non_home_based_jobs = building.aggregate((establishment.employment)*(establishment.disappeared==0))....0.0 sec
+                        WARNING: Negative values detected in function/method ''
+                        WARNING: Minimum: -24863.0. Negative values clipped to zero.
+                    vacant_non_home_based_job_spaces = clip_to_zero(urbansim_zone.building.total_non_home_based_job_spaces - paris.building.number_of_non_home_based_jobs): completed...0.0 sec
+                    Available capacity: 1349922.0 units.
+                ELCM chunk 1 out of 1.: completed.......................11.0 sec
+            Running Establishment Location Choice Model (from urbansim.models.agent_location_choice_model): completed...11.1 sec
+        Simulate year 2000: completed...................................21.4 sec
+        Closing log file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/year_2000_log.txt
+    Starting simulation for year 2000: completed........................21.4 sec
+Start simulation run: completed.........................................21.4 sec
+Closing log file: /workspace/opus/data/paris_zone/runs/run_127.2012_04_10_07_34/run_multiprocess.log
+Traceback (most recent call last):
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 686, in <module>
+    main(ModelSystem)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 678, in main
+    log_file_name = log_file_name)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 649, in __init__
+    model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=log_file_name)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 127, in run
+    cleanup_datasets=cleanup_datasets)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 297, in _run_year
+    self.vardict[outputvar] = self.do_process(locals())
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 379, in do_process
+    return eval(ev)
+  File "<string>", line 1, in <module>
+  File "/workspace/opus/src/opus_core/models/model.py", line 41, in logged_run_method
+    results = run_method(*req_args, **opt_args)
+  File "/workspace/opus/src/opus_core/configurable.py", line 28, in config_run_method
+    results = run_method(*req_args, **opt_args)                
+  File "/workspace/opus/src/urbansim/models/agent_location_choice_model.py", line 97, in run
+    agents_index[unplaced], chunk_specification, debuglevel=debuglevel)
+  File "/workspace/opus/src/urbansim/models/location_choice_model.py", line 124, in run
+    debuglevel=debuglevel)
+  File "/workspace/opus/src/opus_core/models/choice_model.py", line 193, in run
+    specification=specification, coefficients=coefficients)
+  File "/workspace/opus/src/opus_core/models/chunk_model.py", line 68, in run
+    dataset, **kwargs).astype(result_array_type)
+  File "/workspace/opus/src/urbansim/models/location_choice_model.py", line 148, in run_chunk
+    choices = ChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
+  File "/workspace/opus/src/opus_core/models/choice_model.py", line 219, in run_chunk
+    self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
+  File "/workspace/opus/src/opus_core/models/choice_model.py", line 961, in create_specified_coefficients
+    equation_ids=equation_ids)
+  File "/workspace/opus/src/opus_core/specified_coefficients.py", line 77, in create
+    self.create_coefficient_arrays(neqs, equation_ids)
+  File "/workspace/opus/src/opus_core/specified_coefficients.py", line 114, in create_coefficient_arrays
+    self.specification.get_variable_names())
+  File "/workspace/opus/src/opus_core/specified_coefficients.py", line 287, in match_variable_with_coefficient_names
+    raise StandardError, "Method match_variable_with_coefficient_names: Mismatch in coefficient and variable names."
+StandardError: Method match_variable_with_coefficient_names: Mismatch in coefficient and variable names.
+Running simulation for year 2000 in new process: completed..............21.8 sec
+Traceback (most recent call last):
+  File "/workspace/opus/src/opus_core/tools/start_run.py", line 88, in <module>
+    run_as_multiprocess=run_as_multiprocess)
+  File "/workspace/opus/src/opus_core/services/run_server/run_manager.py", line 119, in run_run
+    model_system.run_multiprocess(run_resources)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 485, in run_multiprocess
+    log_file=log_file)
+  File "/workspace/opus/src/urbansim/model_coordinators/model_system.py", line 32, in _run_each_year_as_separate_process
+    log_file=log_file
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 518, in _run_each_year_as_separate_process
+    resources, optional_args=optional_args)
+  File "/workspace/opus/src/opus_core/model_coordinators/model_system.py", line 591, in _fork_new_process
+    success = self.forked_processes[-1].fork_new_process(module_name, resources, **key_args)
+  File "/workspace/opus/src/opus_core/fork_process.py", line 74, in fork_new_process
+    self.wait()
+  File "/workspace/opus/src/opus_core/fork_process.py", line 90, in wait
+    self.check_status()
+  File "/workspace/opus/src/opus_core/fork_process.py", line 101, in check_status
+    raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
+StandardError: Child python process exited with failure.
+Calling module: opus_core.model_coordinators.model_system
+System command: ['/usr/bin/python', '/workspace/opus/src/opus_core/model_coordinators/model_system.py', '-r', '/tmp/tmpx36gcA/resources.pickle', '--log-file-name', 'run_multiprocess.log']

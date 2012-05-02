@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from numpy import ones
+from numpy import zeros
 from opus_core.simulation_state import SimulationState
 
 class year(Variable):
@@ -14,5 +14,5 @@ class year(Variable):
     def compute(self, dataset_pool):
         current_year = SimulationState().get_current_time()
         dataset = self.get_dataset()
-        year = ones( dataset.size(), dtype='i4' ) + current_year
+        year = zeros( dataset.size(), dtype='i4' ) + current_year
         return year
