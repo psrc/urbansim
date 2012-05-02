@@ -17,6 +17,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable_name import VariableName
 from opus_core.variables.variable_name import is_anonymous_autogen_name
+from opus_core.opus_error import FileNotFoundError
 
 class Dataset(AbstractDataset):
     """
@@ -312,7 +313,8 @@ class Dataset(AbstractDataset):
         store = local_resources['in_storage']
         
         if not store.table_exists(table_name) and not store.table_exists(computed_table_name):
-            raise Exception, '%s and %s does not exist'%(table_name, computed_table_name)
+            raise FileNotFoundError('%s and %s does not exist at %s '%(table_name, computed_table_name,
+                                                                       store.get_storage_location()))
         
         attribute_names = []
         if ((attribute_type == AttributeType.PRIMARY or attribute_type == Storage.ALL_COLUMNS) \
