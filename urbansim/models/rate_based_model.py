@@ -67,6 +67,7 @@ class RateBasedModel(Model):
                         rate_dataset_name=None, 
                         rate_storage=None, 
                         rate_table=None, 
+                        probability_attribute=None,
                         sample_rates=False, 
                         n=100, 
                         multiplicator=1, 
@@ -88,7 +89,8 @@ class RateBasedModel(Model):
                                                                'in_table_name':rate_table,
                                                            }
                                                     )
-        
+        if probability_attribute is not None:
+            rates.probability_attribute = probability_attribute
         if sample_rates:
             cache_storage=None
             if flush_rates:
