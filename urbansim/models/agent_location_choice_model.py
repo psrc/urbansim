@@ -58,12 +58,22 @@ class AgentLocationChoiceModel(LocationChoiceModel):
 
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        if agents_index is None:
-            if agents_filter is not None:
-                filter_condition = agent_set.compute_variables(agents_filter, dataset_pool=self.dataset_pool)
-                agents_index = where(filter_condition)[0]
-            else:
-                agents_index = arange(agent_set.size())
+
+        agents_included = zeros(agent_set.size(), dtype='b')
+        if agents_index is not None:
+            agents_included[agents_index] = True
+
+        if agents_filter is not None:
+            filter_condition = agent_set.compute_variables(agents_filter, 
+                                                           dataset_pool=self.dataset_pool)
+            agents_included[filter_condition] = True
+
+        if agents_filter is None and agents_index is None:
+            ## if neither is specified, include all agents
+            agents_index = arange(agent_set.size())
+        else:
+            agents_index = where(agents_included)[0]
+
         if not isinstance(agents_index, ndarray):
             try:
                 agents_index = array(agents_index)
@@ -114,12 +124,11 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             agents_size_mapped = self.observations_mapping['mapped_index'].size
             agents_size_unmapped = agents_index.size - agents_size_mapped
             
+            logger.log_status("Agent Location Choice Model iteration %s/%s: %s unplaced agents" % \
+                              (run+1, maximum_runs, unplaced.size))
             if unplaced.sum() in (0, unplaced_size_before, agents_size_unmapped):
+                logger.log_status("All agents placed or number of unplaced agents doesn't change; exit ALCM.")
                 break
-            else:
-                logger.log_status("Re-run %s to allocate %s unplaced agents" % \
-                                  (self.model_name, unplaced.size)
-                                 )
 
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
             
