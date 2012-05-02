@@ -219,7 +219,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
         # so it can be used by the building_construction_model for the proper
         # computation of units_proposed for those projects with velocity curves
         if actv.size > 0:          
-            total_land_area_taken_computed = self.proposal_set.get_attribute('urbansim_parcel.development_project_proposal.land_area_taken')
+            total_land_area_taken_computed = self.proposal_set.compute_variables('urbansim_parcel.development_project_proposal.land_area_taken', 
+                                                                                 dataset_pool=self.dataset_pool)
             self.proposal_set.modify_attribute('total_land_area_taken', total_land_area_taken_computed[actv], actv)
 
         return (self.proposal_set, self.demolished_buildings) 
