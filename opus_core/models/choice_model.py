@@ -315,6 +315,17 @@ class ChoiceModel(ChunkModel):
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
+        #attach converged price coming out from equilibration_choices
+        if price_coef_name is not None and self.run_config.has_key('price_converged'):
+            price_converged = price_var_name + "_converged"
+            if price_converged not in self.choice_set.get_known_attribute_names():
+                self.choice_set.add_attribute(data=self.choice_set[price_var_name],
+                                              name=price_converged, 
+                                              metadata=1)
+            self.choice_set.modify_attribute(name=price_converged, 
+                                             data=self.run_config.get('price_converged'),
+                                             index=index[0, :])
+
         if self.run_config.get("export_simulation_data", False):
             self.export_probabilities(self.upc_sequence.probabilities, 
                                       self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
