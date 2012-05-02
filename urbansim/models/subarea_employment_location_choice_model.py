@@ -40,7 +40,7 @@ class SubareaEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
                 #append subarea_id filter to the original filter string if it is set
                 subarea_filter = "(%s.%s==%s)" % (self.choice_set.get_dataset_name(), self.subarea_id_name, area)
                 if filter0:
-                    self.filter = filter0 + "*" + subarea_filter
+                    self.filter = "(" + filter0 + ")" + "*" + subarea_filter
                 else:
                     self.filter = subarea_filter
 
@@ -50,7 +50,7 @@ class SubareaEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
         no_region = where(regions[agents_index] <= 0)[0]
         self.filter = filter0
         if no_region.size > 0: # run the ELCM for jobs that don't have assigned region
-            self.filter = None
+            #self.filter = None
             logger.log_status("ELCM for jobs with no area assigned")
             choices = EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_region], **kwargs)

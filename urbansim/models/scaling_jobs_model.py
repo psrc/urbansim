@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.resources import Resources
-from numpy import where, zeros, array, arange, ones, ma, resize
+from numpy import where, zeros, array, arange, ones, ma, resize, logical_and
 from opus_core.ndimage import sum as ndimage_sum
 from opus_core.misc import DebugPrinter, sample, unique
 from opus_core.sampling_toolbox import probsample_replace
@@ -113,6 +113,15 @@ class ScalingJobsModel(Model):
             i+=1
         return agent_set.get_attribute_by_index(location_id_name, agents_index)
  
+    def prepare_for_run(self, agent_set=None, agents_filter=None, agents_index=None):
+        if agent_set is None or agents_filter is None:
+            return agents_index
+        filter = agent_set.compute_variables([agents_filter], dataset_pool=self.dataset_pool)
+        if agents_index is not None:
+            tmp = zeros(agent_set.size(), dtype='bool8')
+            tmp[agents_index]=True
+            filtered_index = logical_and(filter, tmp)
+        return where(filtered_index)[0]
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, arange

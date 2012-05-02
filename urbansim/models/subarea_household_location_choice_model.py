@@ -43,7 +43,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                 #append subarea_id filter to the original filter string if it is set
                 subarea_filter = "(%s.%s==%s)" % (self.choice_set.get_dataset_name(), self.subarea_id_name, area)
                 if filter0:
-                    self.filter = filter0 + "*" + subarea_filter
+                    self.filter = "(" + filter0 + ")" + "*" + subarea_filter
                 else:
                     self.filter = subarea_filter
                 logger.log_status("HLCM for area %s" % area)
@@ -55,7 +55,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         
         # this loop handles households w/out a subarea
         if no_region.size > 0: # run the HLCM for housseholds that don't have assigned region
-            self.filter = None
+            #self.filter = None
             logger.log_status("HLCM for households with no area assigned")
             choices = HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_region], **kwargs)
