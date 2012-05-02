@@ -1423,7 +1423,7 @@ class TestChoiceModel(StochasticTestCase):
         self.assertEqual(unique(choices[:,0]).size == 100, True)
         rmtree(temp_dir)
 
-    def MASKED_test_equilibration_choices(self):
+    def MASKEDtest_equilibration_choices(self):
         """
         unittest masked because it doesn't work with the default numpy/scipy version on Ubuntu
         """
@@ -1470,7 +1470,9 @@ class TestChoiceModel(StochasticTestCase):
         rmse = np.sqrt(np.mean((locations['capacity'] - agents)**2))
         self.assert_(np.allclose(rmse, 0, atol=1e-3))
         price_converged = resources.get('price_converged')
-        np.allclose(np.std(price_converged), 0, atol=1e-3)
+        self.assert_('price_converged' in locations.get_known_attribute_names())
+        self.assert_(np.allclose(locations['price_converged'], price_converged))
+        self.assert_(np.allclose(np.std(price_converged), 0, atol=1e-3))
             
 if __name__=="__main__":
     opus_unittest.main()
