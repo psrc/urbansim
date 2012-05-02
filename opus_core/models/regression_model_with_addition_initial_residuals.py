@@ -79,9 +79,12 @@ class RegressionModelWithAdditionInitialResiduals(RegressionModel):
             dataset.set_values_of_one_attribute(initial_error_name, initial_error, index)
         else:
             initial_error = dataset.get_attribute_by_index(initial_error_name, index)
+
+        logger.log_status("initial_error saved to %s.%s" % (dataset.dataset_name, initial_error_name))
         if outcome_with_inital_error:
             return outcome + initial_error
         else:
+            logger.log_status("initial_error not added to outcome %s" % self.outcome_attribute.get_alias())
             return outcome
 
     def run_after_estimation(self, *args, **kwargs):
