@@ -154,7 +154,8 @@ class Estimator(ModelExplorer):
             # save current locations of agents
             current_choices = agents.get_attribute(choice_id_name).copy()
             dummy_data = zeros(current_choices.size, dtype=current_choices.dtype)-1
-            agents.modify_attribute(name=choice_id_name, data=dummy_data) #reset all choices
+            #agents.modify_attribute(name=choice_id_name, data=dummy_data)  #reset choices for all agents
+            agents.modify_attribute(name=choice_id_name, data=dummy_data, index=agents_index)  #reset choices for agents in agents_index
             
             run_year_namespace["process"] = "run"
             run_year_namespace["coeff_est"] = self.coefficients
@@ -240,9 +241,10 @@ class Estimator(ModelExplorer):
             logger.log_error("summarize_by expression '%s' is specified for dataset %s, which is neither the choice_set '%s' nor the agent_set '%s'." 
                              % (summarize_by, summarize_dataset_name, choices.dataset_name, agents.dataset_name))
             return False
-            
+
+        unique_nonneg_summary_id = unique_summary_id[unique_summary_id >= 0] 
         # observed on row, predicted on column
-        prediction_matrix = zeros( (unique_summary_id.size, unique_summary_id.size), dtype="int32" )
+        prediction_matrix = zeros( (unique_nonneg_summary_id.size, unique_nonneg_summary_id.size), dtype="int32" )
 
         def _convert_array_to_tab_delimited_string(an_array):
             from numpy import dtype
@@ -251,13 +253,13 @@ class Estimator(ModelExplorer):
             return "\t".join([str(item) for item in an_array])
         
         logger.log_status("Observed_id\tSuccess_rate\t%s" % \
-                          _convert_array_to_tab_delimited_string(unique_summary_id) )
+                          _convert_array_to_tab_delimited_string(unique_nonneg_summary_id) )
         i = 0
         total_correct = 0
-        success_rate = zeros( unique_summary_id.size, dtype="float32" )
-        for observed_id in unique_summary_id:
+        success_rate = zeros( unique_nonneg_summary_id.size, dtype="float32" )
+        for observed_id in unique_nonneg_summary_id:
             predicted_id = predicted_summary_id[chosen_summary_id==observed_id]
-            prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_summary_id )
+            prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_nonneg_summary_id )
             if prediction_matrix[i].sum() > 0:
                 if prediction_matrix[i].sum() > 0:
                     success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
