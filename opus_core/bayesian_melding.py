@@ -535,7 +535,7 @@ class BayesianMelding(MultipleRuns):
                 ids = self.m_ids
             means = zeros((ids.size, self.number_of_runs+1))
             means[:,0] = ids
-            means[self.observed_data.get_quantity_objects()[quantity_index].get_dataset().get_id_index(ids),1:means.shape[1]] = self.get_posterior_component_mean()
+            means[:,1:means.shape[1]] = self.get_posterior_component_mean()
             write_table_to_text_file(file, means, mode='a')            
 
     def export_bm_parameters_of_one_quantity(self, quantity_of_interest, filepath, add_to_file=True, run_index=None):
