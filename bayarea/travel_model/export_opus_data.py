@@ -2,7 +2,7 @@
 # Copyright (C) 2012 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import os
+import os, glob, shutil
 from opus_core.logger import logger, block, log_block
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
@@ -55,6 +55,10 @@ def export_opus_data(config, year):
             dataset.write_dataset(attributes=col_names,
                                 out_storage=out_storage,
                                 out_table_name=data_fname)
+            org_fname = os.path.join(data_exchange_dir, "%s.computed.csv" % data_fname)
+            new_fname = os.path.join(data_exchange_dir, "%s.csv" % data_fname)
+            shutil.move(org_fname, new_fname)
+            os.system("sed 's/:[a-z][0-9]//g' -i %s" % new_fname)
 
 if __name__ == "__main__":
     from optparse import OptionParser
