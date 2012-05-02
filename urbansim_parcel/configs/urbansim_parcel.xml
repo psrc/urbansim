@@ -261,7 +261,7 @@
           <run type="dictionary">
             <output name="output" type="string">erm_index</output>
             <argument name="resources" type="string">erm_resources</argument>
-            <argument name="agent_set" type="string">job</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
           </run>
         </structure>
       </model>
@@ -419,7 +419,7 @@
           <run type="dictionary">
             <output name="output" type="string">hrm_index</output>
             <argument name="resources" type="string">hrm_resources</argument>
-            <argument name="agent_set" type="string">household</argument>
+            <argument name="agent_set" type="string" model_dependency_type="dataset">household</argument>
           </run>
         </structure>
       </model>
