@@ -15,7 +15,8 @@ class SubareaEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
         super(SubareaEmploymentLocationChoiceModel, self).__init__(group_member, location_set, **kwargs)
         self.subarea_id_name = subarea_id_name
     
-    def run(self, specification, coefficients, agent_set, agents_index=None, agents_filter=None, **kwargs):
+    def run(self, specification, coefficients, agent_set, agents_index=None, agents_filter=None, 
+            flush_after_each_subarea=False, **kwargs):
         if agents_index is None:
             if agents_filter is None:
                 agents_index = arange(agent_set.size())
@@ -47,6 +48,9 @@ class SubareaEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
                 logger.log_status("ELCM for area %s" % area)
                 EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=new_index, **kwargs)
+                if flush_after_each_subarea:
+                    agent_set.flush_dataset()
+                    self.choice_set.flush_dataset()
         no_region = where(regions[agents_index] <= 0)[0]
         self.filter = filter0
         if no_region.size > 0: # run the ELCM for jobs that don't have assigned region
