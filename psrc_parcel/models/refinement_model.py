@@ -311,12 +311,13 @@ class RefinementModel(Model):
  
         # remove remaining agents from demolished buildings and update building_id
         for synch_dataset_name in ['job', 'household']:
-            idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
             if synch_dataset_name <> agent_dataset.get_dataset_name():
                 synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
+                idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
                 idx = idxb
             else:
                 synch_dataset = agent_dataset
+                idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
                 idx = movers_index
             synch_dataset.modify_attribute('building_id', 
                                        -1 * ones( idx.size, dtype='int32' ),
