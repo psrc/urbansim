@@ -127,7 +127,7 @@ class DeveloperModel(Model):
     #test_parcels = test_parcels[:10000]
 
     #test_parcels = test_parcels[:150]
-    #test_parcels = numpy.where(parcel_set['parcel_id'] == 149300)[0]
+    #test_parcels = numpy.where(parcel_set['parcel_id'] == 1608920)[0]
     #print test_parcels
     logger.log_status("%s parcels to test" % (test_parcels.size))
     print "Num of parcels:", test_parcels.size
@@ -236,6 +236,8 @@ def process_parcel(parcel):
         node_id = parcel_set['node_id'][parcel]
         existing_sqft = building_sqft[parcel]
         existing_price = building_price[parcel]
+        if existing_sqft < 0: existing_sqft = 0
+        if existing_price < 0: existing_price = 0
         if DEBUG: print "parcel_id is %d" % pid
         if DEBUG > 0: print "node_id is %d" % node_id
         shape_area = parcel_set['shape_area'][parcel]
@@ -336,7 +338,8 @@ def process_parcel(parcel):
             #    price_per_sqft_mf = 1.5 * price_per_sqft_sf
             #price_per_sqft_mf = price_per_sqft_sf*.5
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
-            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
+            if DEBUG > 0: print "of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft
+            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   

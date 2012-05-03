@@ -21,10 +21,10 @@ perm_loan_term = 20 * periods_per_year  #period
 discount_rate = 0.15
 cap_rate = 0.07
 max_periods_of_sale = 5 * periods_per_year
-for_rent_seasoning_threshold = 4
+for_rent_seasoning_threshold = 2
 perm_load_occupancy_threshold = 0.85
 
-property_insurance = 1
+property_insurance = 0
 
 class proforma(Variable):
     """

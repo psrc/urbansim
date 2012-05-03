@@ -59,7 +59,7 @@ def setup_dataset_pool(opus=True, submarket_info=None):
                "public_contribution":   array([ 0.0]),
 
                 ##below are supposedly computed attributes; converted to primary attributes for speed
-                "property_tax":     array([0.01]),
+                "property_tax":     array([0]),
                 "land_cost":        array([ 1]) * 100000, #Land + other equity
 
                 "sales_revenue":         array([ 0.0]),
@@ -154,7 +154,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
             prices[1]*numpy.append(X[:4]*bform.condounitsizes,0)
     elif btype in [3,4]: 
         d['rent_revenue'] = \
-            prices[3]*3*numpy.append(X[:4]*bform.mfunitsizes,0)
+            prices[3]*3*numpy.append(X[:4]*bform.condounitsizes,0)
             # rents are per month but need to be period so we multiply by 3
     elif btype in [7,8]: # office
         d['leases_revenue'][4] = X[0]*prices[4]*SQFTFACTOR
@@ -183,6 +183,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
 
     proposal_comp['sales_absorption'] *= d['sales_revenue']
     proposal_comp['sales_absorption'] = .25*d['sales_revenue']
+    proposal_comp['rent_absorption'] = array([4 for i in range(5)])
     ##updatate these when needed
     #proposal_comp['rent_absorption'] =  ?
     #proposal_comp['leases_absorption'] = ?
@@ -205,7 +206,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
 
     #print btype, params
     #print "cost", cost
-    proposal['land_cost'] = bform.procurement_cost()
+    proposal['land_cost'] = 100000 #bform.procurement_cost()
     if proposal['land_cost'] == 0: proposal['land_cost'] = 100000
     proposal['construction_cost'] = cost 
     #print proposal['construction_cost']
@@ -227,7 +228,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     #npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
     #                                 dataset_pool=dataset_pool)
  
-    #print npv, "\n\n"
+    if DEBUG > 1: print "NPV=", npv, "\n\n"
     return -1*npv/100000.0
 
 def optimize(bform,prices,submarket_info=None):
