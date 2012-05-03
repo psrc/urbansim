@@ -2,8 +2,15 @@ import mtc_config
 import pxssh
 import winssh
 import sys
+from optparse import OptionParser
 
 if __name__ == "__main__":
+
+    parser = OptionParser()
+    parser.add_option("-y", "--yes", dest="yesmode", action="store_true",
+                      help="Answer yes to everything (i.e., non-interactive mode)")
+    (options, args) = parser.parse_args()
+
     config = mtc_config.MTCConfig()
 
     # Set up the server.
@@ -25,10 +32,30 @@ if __name__ == "__main__":
 
     print "Removing stale model outputs..."
     abs_modeldir = "/cygdrive/c/Users/cube/" + config.modeldir
-    tmpfiles = server.cmd("ls -l " + abs_modeldir + " | awk '{print $9}'")[1].split("\r\n")
-    for f in tmpfiles:
-        if f not in ["CTRAMP", "INPUT", "README.txt", "RunModel.bat", ""]:
-            print "rm -rf " + f
+    delfiles = server.cmd("find " + abs_modeldir + " -maxdepth 1 -not -wholename " + abs_modeldir)[1].split("\r\n")
+    for f in map(lambda s: abs_modeldir + '/' + s, ("RunModel.bat", "CTRAMP", "INPUT", "README.txt", "urbansim")):
+        try:
+            delfiles.remove(f)
+        except ValueError:
+            continue
+    if not options.yesmode:
+        print "\r\n".join(delfiles)
+        print "Can I rm -rf all of the files above? [y/n] "
+        y = ""
+        while True:
+            y = sys.stdin.read(1)
+            if y == "\n":
+                continue
+            elif y != "y" and y != "n":
+                print "Please enter y or n"
+            else:
+                break
+        if y != 'y':
+            sys.exit(0)
+
+    for f in delfiles:
+        print "Removing " + f
+        server.cmd_or_fail("rm -rf " + f)
 
     print "Setting up M drive on server..."
     server.cmd("subst /D M:")
