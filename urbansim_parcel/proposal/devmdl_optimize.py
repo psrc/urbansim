@@ -199,8 +199,8 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     proposal['leases_revenue'] = proposal_comp['leases_revenue'].sum()
 
     proposal_comp['sales_absorption'] *= d['sales_revenue']
-    proposal_comp['sales_absorption'] = .25*d['sales_revenue']
-    proposal_comp['rent_absorption'] = array([4 for i in range(5)])
+    #proposal_comp['sales_absorption'] = .25*d['sales_revenue']
+    #proposal_comp['rent_absorption'] = array([4 for i in range(5)])
     ##updatate these when needed
     #proposal_comp['rent_absorption'] =  ?
     #proposal_comp['leases_absorption'] = ?
