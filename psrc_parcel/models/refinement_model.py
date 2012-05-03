@@ -9,7 +9,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 import numpy
-from numpy import logical_and, ones, zeros, concatenate, unique
+from numpy import logical_and, logical_not, ones, zeros, concatenate, unique
 from numpy import where, histogram, round_, sort, array, in1d
 from opus_core.misc import safe_array_divide, unique
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace
@@ -292,7 +292,7 @@ class RefinementModel(Model):
                                               this_refinement.agent_expression, 
                                               this_refinement.location_expression,
                                               dataset_pool)
-            fit_index2 = fit_index2[not in1d(fit_index2, movers_index)]
+            fit_index2 = fit_index2[logical_not(in1d(fit_index2, movers_index))]
             if amount > amount_from_bldgs + fit_index2.size:
                 logger.log_warning("Refinement requests to subtract %i agents,  but there are %i agents in total satisfying %s;" \
                                "subtract %i agents instead" % (amount, amount_from_bldgs + fit_index2.size, 
@@ -308,23 +308,26 @@ class RefinementModel(Model):
             movers_index = concatenate((movers_index, movers_index2))
             
         agents_pool += movers_index.tolist()
-        agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
-                                       -1 * ones( movers_index.size, dtype='int32' ),
-                                       index = movers_index
-                                       )
-        # remove remaining agents from demolished buildings
+ 
+        # remove remaining agents from demolished buildings and update building_id
         for synch_dataset_name in ['job', 'household']:
+            idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
             if synch_dataset_name <> agent_dataset.get_dataset_name():
                 synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
-                idx = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
+                idx = idxb
             else:
                 synch_dataset = agent_dataset
                 idx = movers_index
             synch_dataset.modify_attribute('building_id', 
                                        -1 * ones( idx.size, dtype='int32' ),
                                        index = idx)
-            logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, amount_from_bldgs))
+            logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, idxb.size))
             
+        if location_dataset.get_id_name()[0] <> 'building_id':
+               agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
+                                       -1 * ones( movers_index.size, dtype='int32' ),
+                                       index = movers_index
+                                       )
         self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=movers_index)
         
     def _delete(self, agents_pool, amount, 
