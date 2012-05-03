@@ -14,7 +14,7 @@ class HouseholdLocationChoiceModelBySubmarkets(HouseholdLocationChoiceModel):
         dataset_pool = SessionConfiguration().get_dataset_pool()
         submarket_set = dataset_pool.get_dataset('submarket')
         building_set = dataset_pool.get_dataset('building')
-        building_set.add_attribute(name='submarket', data=building_set.compute_variables('honolulu_parcel.building.submarket_id'))
+        building_set.add_attribute(name='submarket', data=building_set.compute_variables('bayarea.building.submarket_id'))
 
         if agents_index is None:
             agents_index = arange(agent_set.size())
