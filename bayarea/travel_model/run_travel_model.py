@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     for f in delfiles:
         print "Removing " + f
-        server.cmd_or_fail("rm -rf " + f)
+        server.cmd("rm -rf " + f)
 
     print "Setting up M drive on server..."
     server.cmd("subst /D M:")
