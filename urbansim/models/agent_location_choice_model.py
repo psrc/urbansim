@@ -59,20 +59,21 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
 
-        agents_included = zeros(agent_set.size(), dtype='b')
-        if agents_index is not None:
-            agents_included[agents_index] = True
-
+        bindex = zeros(agent_set.size(), dtype='b')
         if agents_filter is not None:
-            filter_condition = agent_set.compute_variables(agents_filter, 
-                                                           dataset_pool=self.dataset_pool)
-            agents_included[filter_condition] = True
+            bfilter = agent_set.compute_variables(agents_filter, 
+                                                  dataset_pool=self.dataset_pool)
 
-        if agents_filter is None and agents_index is None:
-            ## if neither is specified, include all agents
-            agents_index = arange(agent_set.size())
+            if agents_index is not None:
+                bindex[agents_index] = True
+                agents_index = where(bindex * bfilter)[0]
+            else:
+                agents_index = where(bfilter)[0]
         else:
-            agents_index = where(agents_included)[0]
+            if agents_index is not None:
+                agents_index = agents_index
+            else:
+                agents_index = arange(agent_set.size())
 
         if not isinstance(agents_index, ndarray):
             try:

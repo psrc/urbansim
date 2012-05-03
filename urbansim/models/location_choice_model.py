@@ -57,15 +57,17 @@ class LocationChoiceModel(ChoiceModel):
         """
 
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
-        ChoiceModel.__init__(self, choice_set=location_set, 
-                             dataset_pool=self.dataset_pool, 
-                             *args, **kwargs)
-        
-        self.filter = filter
         self.location_id_string = location_id_string
         if self.location_id_string is not None:
             self.location_id_string = VariableName(self.location_id_string)
             #self.location_id_string.set_alias(location_set.get_id_name()[0])
+
+        ChoiceModel.__init__(self, choice_set=location_set, 
+                             dataset_pool=self.dataset_pool, 
+                             choice_attribute_name=location_id_string,
+                             *args, **kwargs)
+        
+        self.filter = filter
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, chunk_specification=None,

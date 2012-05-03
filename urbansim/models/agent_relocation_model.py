@@ -9,6 +9,7 @@ from opus_core.resources import Resources, merge_resources_if_not_None
 from opus_core.model import Model
 from numpy import where, array, concatenate, asarray, resize
 from urbansim.models.rate_based_model import RateBasedModel
+from opus_core.variables.variable_name import VariableName
 
 class AgentRelocationModel(RateBasedModel):
     """Chooses agents for relocation (according to probabilities computed by the probabilities class),
@@ -32,6 +33,10 @@ class AgentRelocationModel(RateBasedModel):
         movers_indices = RateBasedModel.run(self, agent_set, **kwargs)
         if (agent_set.size() > 0) and append_unplaced_agents_index:
             # add unplaced agents
+            vn = VariableName(self.location_id_name).get_alias()
+            if vn not in agent_set.get_known_attribute_names():
+                agent_set.compute_variables(self.location_id_name)
+                self.location_id_name = vn
             unplaced_agents = where(agent_set.get_attribute(self.location_id_name) <= 0)[0]
             movers_indices = unique(concatenate((movers_indices, unplaced_agents)))
         
