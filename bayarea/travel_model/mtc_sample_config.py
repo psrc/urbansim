@@ -32,6 +32,3 @@ class MTCConfig:
     netdrive = "\\\\detroit.urbansim.org\\cube"
     netuser = "cube"
     netpw = "********"
-
-    # This is the directory under M: from which the model is currently running
-    modeldir = "2020_studio"

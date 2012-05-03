@@ -9,17 +9,27 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-y", "--yes", dest="yesmode", action="store_true",
                       help="Answer yes to everything (i.e., non-interactive mode)")
+    parser.add_option("-s", "--scenario", dest="scenario", action="store",
+                      help="Specify the scenario and year directory (e.g., 2020_studio")
     (options, args) = parser.parse_args()
 
     config = mtc_config.MTCConfig()
 
+    if options.scenario == None:
+        print "ERROR: Please specify a scenario with -s"
+        sys.exit(1)
+
     # Set up the server.
     print "Setting up proper directory structure..."
     server_admin = winssh.winssh(config.server_admin)
+    abs_modeldir = "/cygdrive/c/Users/cube/" + options.scenario
+    if server_admin.cmd("test -e " + abs_modeldir)[0] != 0:
+        print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
+        sys.exit(1)
     server_admin.cmd("subst /D M:")
     server_admin.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
     server_admin.cmd('cmd /c "rmdir M:\\\\commpath"')
-    server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + config.modeldir + '"')
+    server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + options.scenario + '"')
 
     server = winssh.winssh(config.server)
 
@@ -31,7 +41,6 @@ if __name__ == "__main__":
     server.cmd('cmd /c "call taskkill /im java.exe /F"')
 
     print "Removing stale model outputs..."
-    abs_modeldir = "/cygdrive/c/Users/cube/" + config.modeldir
     delfiles = server.cmd("find " + abs_modeldir + " -maxdepth 1 -not -wholename " + abs_modeldir)[1].split("\r\n")
     for f in map(lambda s: abs_modeldir + '/' + s, ("RunModel.bat", "CTRAMP", "INPUT", "README.txt", "urbansim")):
         try:
