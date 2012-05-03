@@ -40,7 +40,7 @@ class DeveloperModel(Model):
     pass
 
   def run(my):
-    global parcel_set, z, node_set, submarket, isr
+    global parcel_set, z, node_set, submarket, esubmarket, isr
 
     '''
     if 0:
@@ -72,6 +72,7 @@ class DeveloperModel(Model):
     node_set = dataset_pool.get_dataset('node')
     unit_set = dataset_pool.get_dataset('residential_unit')
     submarket = dataset_pool.get_dataset('submarket')
+    esubmarket = dataset_pool.get_dataset('employment_submarket')
     #print numpy.array(unit_set['rent'] > 0).size
     #for i in range(unit_set.size()):
     #    print unit_set['unit_price'][i], unit_set['unit_sqft'][i]
@@ -119,10 +120,14 @@ class DeveloperModel(Model):
 
     #info used to match from proposal_component to submarket
     parcel_set.compute_variables(["bayarea.parcel.within_half_mile_transit", 
-                                  "bayarea.parcel.schooldistrict"])
+                                  "bayarea.parcel.schooldistrict",
+                                  "bayarea.parcel.jurisdiction_id",
+                                 ])
     sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
     rent_absorption = submarket.compute_variables('bayarea.submarket.rent_absorption')
     vacancy_rates = submarket.compute_variables('bayarea.submarket.vacancy_rates')
+    leases_absorption = esubmarket.compute_variables('bayarea.employment_submarket.leases_absorption')
+    nr_vacancy_rates = esubmarket.compute_variables('bayarea.employment_submarket.vacancy_rates')
     #test_parcels = array([i+1 for i in range(parcel_set.size())])
     #test_parcels = test_parcels[:10000]
 
@@ -225,7 +230,7 @@ NOBUILDTYPES = 0
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set, submarket, isr
+        global parcel_set, z, node_set, submarket, esubmarket, isr
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
  
@@ -354,6 +359,7 @@ def process_parcel(parcel):
             bform.set_parking(parking)
 
             #if 1: print btype
+            pjurisdiction = parcel_set['jurisdiction_id'][parcel]
             pschooldistrict = parcel_set['schooldistrict'][parcel]
             ptransit = parcel_set['within_half_mile_transit'][parcel]
             from numpy import logical_and, where
@@ -363,7 +369,16 @@ def process_parcel(parcel):
             submarket_info = {}
             for attr in submarket.get_known_attribute_names():
                 submarket_info[attr] = submarket[attr][sub_idx]
-            X, npv = devmdl_optimize.optimize(bform,prices,submarket_info=submarket_info)
+            esub_idx = where(logical_and(esubmarket['jurisdiction_id'] == pjurisdiction,
+                                        esubmarket['within_half_mile_transit'] == ptransit)
+                           )[0]
+            esubmarket_info = {}
+            for attr in esubmarket.get_known_attribute_names():
+                esubmarket_info[attr] = esubmarket[attr][esub_idx]
+
+            X, npv = devmdl_optimize.optimize(bform,prices,
+                                              submarket_info=submarket_info,
+                                              esubmarket_info=esubmarket_info)
             if DEBUG: print X, npv
             #if npv == -1: return # error code
             if npv > maxnpv:

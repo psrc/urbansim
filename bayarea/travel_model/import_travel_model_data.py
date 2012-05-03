@@ -45,9 +45,10 @@ def import_travel_model_data(config, year):
     tm_config = config['travel_model_configuration']
     data_to_import = tm_config['tm_to_urbansim_variable_mapping'] 
     base_dir = tm_config['travel_model_base_directory']
+    data_dir = tm_config[year]['data_dir']
 
     for dataset_name, skim_file in data_to_import.iteritems():
-        skim_file = os.path.join(base_dir, skim_file)
+        skim_file = os.path.join(base_dir, data_dir, skim_file)
         data = read_csv(skim_file, header=0)
         
         with block("Caching {} to {}".format(dataset_name, out_store_loc)):

@@ -15,7 +15,7 @@ SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0
 
-def setup_dataset_pool(opus=True, submarket_info=None):
+def setup_dataset_pool(opus=True, submarket_info=None, esubmarket_info=None ):
     proforma_inputs = {            
         #'parcel':
         #    {
@@ -75,7 +75,7 @@ def setup_dataset_pool(opus=True, submarket_info=None):
 
             },
     }
-
+    residential_building_types = [1, 2, 3]
     if submarket_info is not None:
         proposal_comp = proforma_inputs['proposal_component']
         for i in xrange(proposal_comp['proposal_component_id'].size):
@@ -84,20 +84,36 @@ def setup_dataset_pool(opus=True, submarket_info=None):
                                                      submarket_info['tenure_id'] == 2)
             submarket_rent_idx = numpy.logical_and( submarket_info['building_type'] == bldg_type,
                                                     submarket_info['tenure_id'] == 1)
+            esubmarket_idx = esubmarket_info['building_type_id'] == bldg_type
+
             if submarket_sales_idx.sum() == 1:
-                v = submarket_info['sales_absorption'][submarket_sales_idx]
-                if v != 0: 
-                    proposal_comp['sales_absorption'][i] = v 
+                v_sales = submarket_info['sales_absorption'][submarket_sales_idx]
+                if v_sales != 0: 
+                    proposal_comp['sales_absorption'][i] = v_sales
             elif submarket_sales_idx.sum() > 1:
                 raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
             #use default if the building_type & tenure isn't in submarket (submarket_sales_idx.size==0)
 
             if submarket_rent_idx.sum() == 1:
-                v = submarket_info['rent_absorption'][submarket_rent_idx]
-                if v != 0: 
-                    proposal_comp['rent_absorption'][i] = round(1 / v)
-                proposal_comp['vacancy_rates'][i] = submarket_info['vacancy_rates'][submarket_rent_idx]
+                v_rent = submarket_info['rent_absorption'][submarket_rent_idx]
+                if v_rent != 0: 
+                    proposal_comp['rent_absorption'][i] = round(1.0 / v_rent)
+                if bldg_type in residential_building_types:
+                    k_rent = submarket_info['vacancy_rates'][submarket_rent_idx]
+                    if k_rent != 0:
+                        proposal_comp['vacancy_rates'][i] = k_rent
             elif submarket_sales_idx.sum() > 1:
+                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+
+            if esubmarket_idx.sum() == 1:
+                v_leases = esubmarket_info['leases_absorption'][esubmarket_idx]
+                if v_leases != 0: 
+                    proposal_comp['leases_absorption'][i] = round(1 / v_leases)
+                if bldg_type not in residential_building_types:
+                    k_leases = esubmarket_info['vacancy_rates'][esubmarket_idx]
+                    if k_leases != 0:
+                        proposal_comp['vacancy_rates'][i] = k_leases
+            elif esubmarket_idx.sum() > 1:
                 raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
             
         ## adjust for quarter/month
@@ -109,6 +125,7 @@ def setup_dataset_pool(opus=True, submarket_info=None):
         #print "sales absorption", proposal_comp['sales_absorption']
         #print "rent absorption", proposal_comp['rent_absorption']
         #print "vacancy rates", proposal_comp['vacancy_rates']
+
     if opus:
         from opus_core.tests.utils import variable_tester
         po=['urbansim_parcel','urbansim']
@@ -231,7 +248,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     if DEBUG > 1: print "NPV=", npv, "\n\n"
     return -1*npv/100000.0
 
-def optimize(bform,prices,submarket_info=None):
+def optimize(bform,prices,submarket_info=None,esubmarket_info=None):
    
     btype = bform.btype
 
@@ -250,7 +267,7 @@ def optimize(bform,prices,submarket_info=None):
     else: nf = 4
     x0 = array([0 for i in range(nf)])
     
-    dataset_pool = setup_dataset_pool(opus=False,submarket_info=submarket_info)
+    dataset_pool = setup_dataset_pool(opus=False,submarket_info=submarket_info,esubmarket_info=esubmarket_info)
     #proposal = dataset_pool.get_dataset('proposal')
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
