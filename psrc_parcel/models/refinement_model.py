@@ -265,21 +265,17 @@ class RefinementModel(Model):
                                               this_refinement.location_expression,
                                               dataset_pool)
         count = bldgs.sum_dataset_over_ids(agent_dataset, constant=agents_indicator)[fit_index]
-
-        if amount > count.sum():
-            logger.log_warning("Refinement requests to subtract %i agents,  but there are %i agents in total satisfying %s;" \
-                               "subtract %i agents instead" % (amount, count.sum(), 
-                                                               ' and '.join( [this_refinement.agent_expression, 
-                                                                            this_refinement.location_expression] ).strip(' and '),
-                                                               count.sum()) )
-            amount = count.sum()
+        amount_from_bldgs = amount
+        if amount_from_bldgs > count.sum():
+            amount_from_bldgs = count.sum()
         
-        if amount == count.sum():
+        if amount_from_bldgs == count.sum():
             bldgs_movers_index = fit_index
         else:
+            # sample buildings until amount reached
             bldgs_movers_index = sample_noreplace(fit_index, 1, return_index=True)
             mask = ones(fit_index.size, dtype='bool8')
-            while count[bldgs_movers_index].sum() < amount:
+            while count[bldgs_movers_index].sum() < amount_from_bldgs:
                 mask[bldgs_movers_index] = False             
                 bldgs_movers_index = concatenate((bldgs_movers_index, sample_noreplace( where(mask)[0], 1 )))
             bldgs_movers_index = fit_index[bldgs_movers_index]
@@ -287,14 +283,36 @@ class RefinementModel(Model):
         agents_index = where(agents_indicator)[0]
         movers_index = agents_index[where(in1d(agent_dataset['building_id'][agents_index], bldgs.get_id_attribute()[bldgs_movers_index]))[0]]
 
-        agents_pool += movers_index.tolist()
         bldgs.remove_elements(bldgs_movers_index)
         logger.log_status("%s buildings removed." % bldgs_movers_index.size)
-                    
+             
+        if amount > amount_from_bldgs:
+            # unplace agents without demolishing buildings
+            fit_index2 = self.get_fit_agents_index(agent_dataset, 
+                                              this_refinement.agent_expression, 
+                                              this_refinement.location_expression,
+                                              dataset_pool)
+            fit_index2 = fit_index2[not in1d(fit_index2, movers_index)]
+            if amount > amount_from_bldgs + fit_index2.size:
+                logger.log_warning("Refinement requests to subtract %i agents,  but there are %i agents in total satisfying %s;" \
+                               "subtract %i agents instead" % (amount, amount_from_bldgs + fit_index2.size, 
+                                                               ' and '.join( [this_refinement.agent_expression, 
+                                                                            this_refinement.location_expression] ).strip(' and '),
+                                                               amount_from_bldgs + fit_index2.size) )
+                amount = amount_from_bldgs + fit_index2.size
+            rest_amount = amount - amount_from_bldgs
+            if rest_amount == fit_index2.size:
+                movers_index2 = fit_index2
+            else:
+                movers_index2 = sample_noreplace( fit_index2, rest_amount )
+            movers_index = concatenate((movers_index, movers_index2))
+            
+        agents_pool += movers_index.tolist()
         agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
                                        -1 * ones( movers_index.size, dtype='int32' ),
                                        index = movers_index
                                        )
+        # remove remaining agents from demolished buildings
         for synch_dataset_name in ['job', 'household']:
             if synch_dataset_name <> agent_dataset.get_dataset_name():
                 synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
@@ -305,7 +323,7 @@ class RefinementModel(Model):
             synch_dataset.modify_attribute('building_id', 
                                        -1 * ones( idx.size, dtype='int32' ),
                                        index = idx)
-            logger.log_status("%s %ss unplaced." % (idx.size, synch_dataset_name))
+            logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, amount_from_bldgs))
             
         self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=movers_index)
         
