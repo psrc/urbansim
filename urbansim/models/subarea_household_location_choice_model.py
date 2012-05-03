@@ -17,7 +17,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         self.subarea_id_name = subarea_id_name
     
     def run(self, specification, coefficients, agent_set, agents_index=None, agents_filter=None, 
-            flush_after_each_subarea=False, **kwargs):
+            flush_after_each_subarea=False, run_no_area=True, **kwargs):
         if agents_index is None:
             if agents_filter is None:
                 agents_index = arange(agent_set.size())
@@ -53,20 +53,21 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                 if flush_after_each_subarea:
                     agent_set.flush_dataset()
                     self.choice_set.flush_dataset()
-        no_region = where(regions[agents_index] <= 0)[0]
-        self.filter = filter0
+
         #potential to add another loop here to handle a secondary higher geography
-        
-        # this loop handles households w/out a subarea
-        if no_region.size > 0: # run the HLCM for housseholds that don't have assigned region
-            #self.filter = None
-            logger.log_status("HLCM for households with no area assigned")
-            choices = HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
+        if run_no_area:
+            no_region = where(regions[agents_index] <= 0)[0]
+            self.filter = filter0
+            # this loop handles households w/out a subarea
+            if no_region.size > 0: # run the HLCM for housseholds that don't have assigned region
+                #self.filter = None
+                logger.log_status("HLCM for households with no area assigned")
+                choices = HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_region], **kwargs)
-            where_valid_choice = where(choices > 0)[0]
-            choices_index = self.choice_set.get_id_index(choices[where_valid_choice])
-            chosen_regions = self.choice_set.get_attribute_by_index(self.subarea_id_name, choices_index)
-            agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
+                where_valid_choice = where(choices > 0)[0]
+                choices_index = self.choice_set.get_id_index(choices[where_valid_choice])
+                chosen_regions = self.choice_set.get_attribute_by_index(self.subarea_id_name, choices_index)
+                agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
                                        index=no_region[where_valid_choice])
 
 from opus_core.tests import opus_unittest
