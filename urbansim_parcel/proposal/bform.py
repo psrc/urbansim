@@ -156,11 +156,12 @@ class BForm:
 
 MAXCOMMERCIALSIZE = 800000.0
 DEMOCOST = 5.0
-NONRESCOSTFACTOR = 1.5
-RESCOSTFACTOR = .85
-SFCOST = 140.0
-SFBUILDEREFFICIENCY = .9
-MFBUILDEREFFICIENCY = .8
+NONRESCOSTFACTOR = 1.0
+RESCOSTFACTOR = .7
+SFCOST = 120.0
+#SFCOST = 140.0
+SFBUILDEREFFICIENCY = 1.0
+MFBUILDEREFFICIENCY = .9
 MFLOWRISE = 140.0
 MFMIDRISE = 140.0*1.2
 MFMID2RISE = 168.00*1.2
@@ -189,6 +190,29 @@ RESLOCALCOST_D = {
 28:115.58*1.7, # napa
 38:123.8*.8, # san fran
 7:112.9*.95, # contra costa
+48:110.5*.7, # solano
+21:115.58*1.45 # marin 
+}
+NONRESLOCALCOST_D = {
+49:115.58*.8, # sonoma
+41:114.6, # san mateo
+1:116.2*.9, # alameda
+43:117.1*1.0, # santa clara
+28:115.58*.8, # napa
+38:123.8*1.1, # san fran
+7:112.9*.9, # contra costa
+48:110.5*.6, # solano
+21:115.58*.9 # marin 
+}
+'''
+RESLOCALCOST_D = {
+49:115.58*.45, # sonoma
+41:114.6*1.05, # san mateo
+1:116.2*.95, # alameda
+43:117.15, # santa clara
+28:115.58*1.7, # napa
+38:123.8*.8, # san fran
+7:112.9*.95, # contra costa
 48:110.5, # solano
 21:115.58*1.45 # marin 
 }
@@ -203,3 +227,4 @@ NONRESLOCALCOST_D = {
 48:110.5*.8, # solano
 21:115.58*.9 # marin 
 }
+'''

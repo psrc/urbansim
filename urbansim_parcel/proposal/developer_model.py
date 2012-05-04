@@ -106,12 +106,15 @@ class DeveloperModel(Model):
     if SCENARIONAME in ['Studio','Transit Priority']: isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
-    res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)*parcel.aggregate(building.building_type_id<4)")
+    res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)")
+    bart_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_1_within_800_meters))")
+    caltrain_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_2_within_800_meters))")
     SAMPLE_RATE = 0
     from opus_core.sampling_toolbox import sample_noreplace
     from numpy import concatenate, where
     sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
-    test_parcels = concatenate((where(empty_parcels)[0], sampled_res_parcels_index))
+    test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index,where(bart_parcels==1)[0],where(caltrain_parcels==1)[0]))
+    test_parcels = sample_noreplace(test_parcels, int(.08 * 154877))
     
     """
     sample = []
@@ -175,6 +178,7 @@ class DeveloperModel(Model):
         outf.write(string.join([str(x) for x in result],sep=',')+'\n')
 
     ##TODO: id of buildings to be demolished
+    
     buildings_to_demolish = []
     idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
     building_set.remove_elements(idx_buildings_to_demolish)
@@ -194,7 +198,7 @@ class DeveloperModel(Model):
         building_set.add_elements(new_buildings, require_all_attributes=False,
                                   change_ids_if_not_unique=True)
         building_set.flush_dataset()
-    
+   
     aggd = {}
     for result in results:
         units = result[-1]
@@ -349,18 +353,21 @@ def process_parcel(parcel):
             if numpy.isinf(of_rent_sqft): of_rent_sqft = 0
             if numpy.isinf(ret_rent_sqft): ret_rent_sqft = 0
             if numpy.isinf(ind_rent_sqft): ind_rent_sqft = 0
+            if of_rent_sqft < 7: of_rent_sqft = 7
+            if ret_rent_sqft < 7: ret_rent_sqft = 7
+            if ind_rent_sqft < 7: ind_rent_sqft = 7
             #if price_per_sqft_mf > 700: price_per_sqft_mf = 700
-            price_per_sqft_mf *= .1
+            price_per_sqft_mf *= .35
             #if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
             #    price_per_sqft_mf = 1.5 * price_per_sqft_sf
             #price_per_sqft_mf = price_per_sqft_sf*.5
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
             if DEBUG > 0: print "of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft
-            prices = (price_per_sqft_sf,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
+            prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
-            if lotsize>10000000: lotsize=10000000
+            if lotsize>20000: lotsize=20000
             if DEBUG > 0: print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 

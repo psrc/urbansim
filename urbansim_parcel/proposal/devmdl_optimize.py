@@ -231,8 +231,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
 
     #print btype, params
     #print "cost", cost
-    proposal['land_cost'] = 100000 #bform.procurement_cost()
-    if proposal['land_cost'] == 0: proposal['land_cost'] = 100000
+    proposal['land_cost'] = max(bform.procurement_cost(),100000)
     proposal['construction_cost'] = cost 
     #print proposal['construction_cost']
     if DEBUG: print "COST:", proposal['construction_cost']
@@ -277,6 +276,10 @@ def optimize(bform,prices,submarket_info=None,esubmarket_info=None):
     
     dataset_pool = setup_dataset_pool(opus=False,btype=btype,submarket_info=submarket_info,esubmarket_info=esubmarket_info)
     #proposal = dataset_pool.get_dataset('proposal')
+
+    if dataset_pool['proposal_component']['vacancy_rates'][0] > .1:
+        return [], -1.0
+
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
     #                            "land_cost = proposal.disaggregate(parcel.land_cost)"], 
