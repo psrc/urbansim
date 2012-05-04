@@ -7,10 +7,12 @@ from optparse import OptionParser
 if __name__ == "__main__":
 
     parser = OptionParser()
-    parser.add_option("-y", "--yes", dest="yesmode", action="store_true",
+    parser.add_option("-n", "--non-interactive", dest="yesmode", action="store_true",
                       help="Answer yes to everything (i.e., non-interactive mode)")
     parser.add_option("-s", "--scenario", dest="scenario", action="store",
-                      help="Specify the scenario and year directory (e.g., 2020_studio")
+                      help="Specify the scenario (e.g., studio")
+    parser.add_option("-y", "--year", dest="year", action="store",
+                      help="Specify the scenario year (e.g., 2020)")
     (options, args) = parser.parse_args()
 
     config = mtc_config.MTCConfig()
@@ -19,17 +21,23 @@ if __name__ == "__main__":
         print "ERROR: Please specify a scenario with -s"
         sys.exit(1)
 
+    if options.year == None:
+        print "ERROR: Please specify a scenario year with -y"
+        sys.exit(1)
+
+
     # Set up the server.
     print "Setting up proper directory structure..."
     server_admin = winssh.winssh(config.server_admin)
-    abs_modeldir = "/cygdrive/c/Users/cube/" + options.scenario
+    modeldir = options.year + "_" + options.scenario
+    abs_modeldir = "/cygdrive/c/Users/cube/" + modeldir
     if server_admin.cmd("test -e " + abs_modeldir)[0] != 0:
         print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
         sys.exit(1)
     server_admin.cmd("subst /D M:")
     server_admin.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
     server_admin.cmd('cmd /c "rmdir M:\\\\commpath"')
-    server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + options.scenario + '"')
+    server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + modeldir + '"')
 
     server = winssh.winssh(config.server)
 
@@ -69,13 +77,19 @@ if __name__ == "__main__":
     print "Setting up M drive on server..."
     server.cmd("subst /D M:")
     server.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
-    server.cmd_or_fail('cd /cygdrive/m/commpath/CTRAMP/runtime')
+
+    # Prepare synthesized population, etc.
+    print "Synthesizing population..."
+    synth_script = "TazAndPopSyn.bat"
+    server.cmd_or_fail('cd /cygdrive/c/Users/cube/land_use_and_synthesizer')
+    server.cmd_or_fail('cmd /c "' + synth_script + ' ' + options.scenario + ' ' + options.year + ' > M:\\\\' + modeldir + '\\\\synthOutput.log"')
 
     print "Launching runMain..."
     # Note here that we just send the line to the server with no regard for the
     # return value.  The reason is that this script starts a bunch of java
     # processes and doesn't return until they terminate.  So we assume success
     # here.  If we wanted to get fancy, we could poll the log file.
+    server.cmd_or_fail('cd /cygdrive/m/commpath/CTRAMP/runtime')
     server.s.sendline('cmd /c "JavaOnly_runMain.cmd > runMainOutput.log"')
 
     nodes = []
