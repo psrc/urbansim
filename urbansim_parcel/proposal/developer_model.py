@@ -32,6 +32,7 @@ from opus_core import paths
 
 DEBUG = 0
 
+devmdltypes = devmdl_optimize.devmdltypes
 class DeveloperModel(Model):
 
   model_name = "Developer Model"
@@ -39,7 +40,7 @@ class DeveloperModel(Model):
   def __init__(my):
     pass
 
-  def run(my):
+  def run(my, cache_dir=None, year=None):
     global parcel_set, z, node_set, submarket, esubmarket, isr
 
     '''
@@ -51,21 +52,24 @@ class DeveloperModel(Model):
         print "Reading db info from jar..."
         z,p = cPickle.load(open(os.path.join(os.environ['OPUS_DATA'],'bay_area_parcel/databaseinfo.jar')))
     '''
-    '''
-    data_path = paths.get_opus_data_path_path()
-    cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_79.2012_05_02_02_44')
-    year = 2011
-    simulation_state = SimulationState()
-    simulation_state.set_current_time(year)
-    SimulationState().set_cache_directory(cache_dir)
-    attribute_cache = AttributeCache()
-    dataset_pool = SessionConfiguration(new_instance=True,
-                         package_order=['bayarea', 'urbansim_parcel',
-                                        'urbansim', 'opus_core'],
-                         in_storage=attribute_cache
-                        ).get_dataset_pool()
-    '''
+
+    ## when developer_model is invoked alone from command line
+    if cache_dir is not None and year is not None:
+        #data_path = paths.get_opus_data_path_path()
+        #cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_79.2012_05_02_02_44')
+        #year = 2011
+        simulation_state = SimulationState()
+        simulation_state.set_current_time(year)
+        SimulationState().set_cache_directory(cache_dir)
+        attribute_cache = AttributeCache()
+        dataset_pool = SessionConfiguration(new_instance=True,
+                             package_order=['bayarea', 'urbansim_parcel',
+                                            'urbansim', 'opus_core'],
+                             in_storage=attribute_cache
+                            ).get_dataset_pool()
+        
     dataset_pool = SessionConfiguration().get_dataset_pool()
+    current_year = SimulationState().get_current_time()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
@@ -104,6 +108,12 @@ class DeveloperModel(Model):
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)*parcel.aggregate(building.building_type_id<4)")
     SAMPLE_RATE = 0
+    from opus_core.sampling_toolbox import sample_noreplace
+    from numpy import concatenate, where
+    sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
+    test_parcels = concatenate((where(empty_parcels)[0], sampled_res_parcels_index))
+    
+    """
     sample = []
     for i in range(parcel_set.size()):
         if empty_parcels[i] == 1:
@@ -111,6 +121,7 @@ class DeveloperModel(Model):
         elif res_parcels[i] == 1 and numpy.random.ranf() < SAMPLE_RATE:
             sample.append(i+1)
     test_parcels = array(sample)
+    """
 
     #test_parcels = numpy.where(empty_parcels==1)[0]
     
@@ -170,7 +181,6 @@ class DeveloperModel(Model):
     column_names = ["parcel_id","county","building_type_id","stories",
                     "building_sqft","residential_sqft","non_residential_sqft",
                     "tenure","year_built","residential_units"]
-    devmdltypes = [1,1,3,12,3,12,4,14,10,10,11,7,8,5]
     buildings_data = copy.deepcopy(results)
     for i in range(len(buildings_data)):
         buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
@@ -179,8 +189,10 @@ class DeveloperModel(Model):
     if buildings_data.size > 0:
         for icol, col_name in enumerate(column_names):
             new_buildings[col_name] = buildings_data[:, icol]
+        ## pid is the index to parcel_set; convert them to actual parcel_id
+        #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
         building_set.add_elements(new_buildings, require_all_attributes=False,
-                                 change_ids_if_not_unique=True)
+                                  change_ids_if_not_unique=True)
         building_set.flush_dataset()
     
     aggd = {}
@@ -408,4 +420,8 @@ def process_parcel(parcel):
         return maxbuilding 
 
 if __name__ == "__main__":
-    DeveloperModel().run()
+    ## Run developer_model alone from command line developer_model.py /workspace/opus/data/bay_area_parcel/runs/run_79.2012_05_02_02_44 2011
+    import sys
+    cache_dir = sys.argv[1]
+    year = int(sys.argv[2])
+    DeveloperModel().run(cache_dir=cache_dir, year=year)
