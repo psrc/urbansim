@@ -13,7 +13,7 @@ class SimpleModel(Model):
     """
 
     def __init__(self, model_name=None, *args, **kwargs):
-        Model.__init__(self, *args, **kargs)
+        Model.__init__(self, *args, **kwargs)
         if model_name is not None:
             self.model_name = model_name
 
