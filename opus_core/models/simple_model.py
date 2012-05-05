@@ -11,6 +11,12 @@ class SimpleModel(Model):
     The model computes a given expression on a dataset and assigns the result to the outcome_attribute. 
     The outcome_attribute is set as primary. If it is missing, the alias of the expression is taken.
     """
+
+    def __init__(self, model_name=None, *args, **kwargs):
+        Model.__init__(self, *args, **kargs)
+        if model_name is not None:
+            self.model_name = model_name
+
     def run(self, dataset, expression, outcome_attribute=None, dataset_filter=None, dataset_pool=None):
         """
         dataset_filter - if it is specified and outcome_attribute exists, only update values for dataset records whose dataset_filter is True
