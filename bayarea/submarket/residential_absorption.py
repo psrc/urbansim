@@ -23,7 +23,7 @@ class residential_absorption(Variable):
         vacant_units = clip(submarket['residential_units'] - submarket['households'], 0, inf)
         results = safe_array_divide( uptake, vacant_units.astype('f') )
         results = clip(results, self.lower_bound, self.upper_bound)
-        resuls[vacant_units==0] = self.upper_bound
+        results[vacant_units==0] = self.upper_bound
 
         return results
 
