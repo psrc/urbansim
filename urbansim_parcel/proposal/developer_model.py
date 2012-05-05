@@ -137,11 +137,6 @@ class DeveloperModel(Model):
                                   "bayarea.parcel.schooldistrict",
                                   "bayarea.parcel.jurisdiction_id",
                                  ])
-    sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
-    rent_absorption = submarket.compute_variables('bayarea.submarket.rent_absorption')
-    vacancy_rates = submarket.compute_variables('bayarea.submarket.vacancy_rates')
-    leases_absorption = esubmarket.compute_variables('bayarea.employment_submarket.leases_absorption')
-    nr_vacancy_rates = esubmarket.compute_variables('bayarea.employment_submarket.vacancy_rates')
     #test_parcels = array([i+1 for i in range(parcel_set.size())])
     #test_parcels = test_parcels[:10000]
 
@@ -173,6 +168,12 @@ class DeveloperModel(Model):
 
     for test_parcels in chunks(test_parcels,1000):
         print "Executing CHUNK"
+
+        sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
+        rent_absorption = submarket.compute_variables('bayarea.submarket.rent_absorption')
+        vacancy_rates = submarket.compute_variables('bayarea.submarket.vacancy_rates')
+        leases_absorption = esubmarket.compute_variables('bayarea.employment_submarket.leases_absorption')
+        nr_vacancy_rates = esubmarket.compute_variables('bayarea.employment_submarket.vacancy_rates')
 
         if HOTSHOT:
             results = []
