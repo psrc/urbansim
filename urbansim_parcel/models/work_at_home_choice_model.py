@@ -145,29 +145,32 @@ class WorkAtHomeChoiceModel(ChoiceModel):
             index = where(agent_set.get_attribute(VariableName(agents_filter).get_alias()) > 0)[0]
         
         return (spec, coeff, index)
+
+    def prepare_for_estimate(self, *args, **kwargs):
+        return prepare_for_estimate(*args, **kwargs)
     
-    def prepare_for_estimate(self, 
-                             household_set=None,
-                             households_for_estimation_table=None,
-                             agents_for_estimation_storage=None,
-                             agents_for_estimation_table=None,
-                             join_datasets=False,
-                             *args, **kwargs):
+def prepare_for_estimate(self, 
+                         household_set=None,
+                         households_for_estimation_table=None,
+                         agents_for_estimation_storage=None,
+                         agents_for_estimation_table=None,
+                         join_datasets=False,
+                         *args, **kwargs):
 
-        hh_estimation_set = None
-        if households_for_estimation_table is not None:
-            hh_estimation_set = Dataset(in_storage = agents_for_estimation_storage, 
-                                     in_table_name=households_for_estimation_table,
-                                     id_name=household_set.get_id_name(), 
-                                     dataset_name=household_set.get_dataset_name())
-            if join_datasets:
-                household_set.join_by_rows(hh_estimation_set, 
-                                           require_all_attributes=False,
-                                           change_ids_if_not_unique=True)
+    hh_estimation_set = None
+    if households_for_estimation_table is not None:
+        hh_estimation_set = Dataset(in_storage = agents_for_estimation_storage, 
+                                 in_table_name=households_for_estimation_table,
+                                 id_name=household_set.get_id_name(), 
+                                 dataset_name=household_set.get_dataset_name())
+        if join_datasets:
+            household_set.join_by_rows(hh_estimation_set, 
+                                       require_all_attributes=False,
+                                       change_ids_if_not_unique=True)
 
-        specification, index =  prepare_for_estimate(agents_for_estimation_storage=agents_for_estimation_storage,
-                                                     agents_for_estimation_table=agents_for_estimation_table,
-                                                     join_datasets=join_datasets,
-                                                     *args, **kwargs)
-        return (specification, index)
+    specification, index =  prepare_for_estimate(agents_for_estimation_storage=agents_for_estimation_storage,
+                                                 agents_for_estimation_table=agents_for_estimation_table,
+                                                 join_datasets=join_datasets,
+                                                 *args, **kwargs)
+    return (specification, index)
 
