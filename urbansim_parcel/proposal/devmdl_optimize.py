@@ -116,7 +116,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
             if esubmarket_idx.sum() == 1:
                 v_leases = esubmarket_info['leases_absorption'][esubmarket_idx]
                 if v_leases != 0: 
-                    proposal_comp['leases_absorption'][i] = round(1 / v_leases)
+                    proposal_comp['leases_absorption'][i] = round(1.0 / v_leases)
                 if bldg_type not in residential_building_types:
                     k_leases = esubmarket_info['vacancy_rates'][esubmarket_idx]
                     proposal_comp['vacancy_rates'][i] = k_leases
@@ -124,9 +124,9 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
                 raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
             
         ## adjust for quarter/month
-        proposal_comp['sales_absorption'] = proposal_comp['sales_absorption']
-        #proposal_comp['rent_absorption'] = 4/proposal_comp['rent_absorption']
-        #proposal_comp['leases_absorption'] = 4/proposal_comp['leases_absorption']
+        proposal_comp['sales_absorption'] = proposal_comp['sales_absorption'] / 4
+        proposal_comp['rent_absorption'] = proposal_comp['rent_absorption'] * 4
+        proposal_comp['leases_absorption'] = proposal_comp['leases_absorption'] * 4
         proposal_comp['vacancy_rates'] = proposal_comp['vacancy_rates'] / 12
 
         #print "sales absorption", proposal_comp['sales_absorption']

@@ -9,6 +9,7 @@ from numpy import clip, inf
 class non_residential_absorption(Variable):
     """"""
     lower_bound = .10
+    upper_bound = 1.0
     def dependencies(self):
         return ['bayarea.employment_submarket.non_residential_sqft', 
                 'bayarea.employment_submarket.occupied_non_residential_sqft', 
@@ -18,10 +19,11 @@ class non_residential_absorption(Variable):
 
     def compute(self, dataset_pool):
         submarket = self.get_dataset()
-        taken_up = clip(submarket['occupied_non_residential_sqft'] - submarket['occupied_non_residential_sqft_lag1'], 0, inf) 
+        uptake = clip(submarket['occupied_non_residential_sqft'] - submarket['occupied_non_residential_sqft_lag1'], 0, inf) 
         vacant_units = clip(submarket['non_residential_sqft'] - submarket['occupied_non_residential_sqft'], 0, inf)
-        results = safe_array_divide( taken_up, vacant_units.astype('f') )
-        results = clip(results, self.lower_bound, 1.0)
+        results = safe_array_divide( uptake, vacant_units.astype('f') )
+        results = clip(results, self.lower_bound, self.upper_bound)
+        resuls[vacant_units==0] = self.upper_bound
 
         return results
 
