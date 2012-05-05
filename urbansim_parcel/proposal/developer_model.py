@@ -56,7 +56,7 @@ class DeveloperModel(Model):
     ## when developer_model is invoked alone from command line
     if cache_dir is not None and year is not None:
         #data_path = paths.get_opus_data_path_path()
-        #cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_79.2012_05_02_02_44')
+        #cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_105.2012_05_03_09')
         #year = 2011
         simulation_state = SimulationState()
         simulation_state.set_current_time(year)
@@ -98,8 +98,8 @@ class DeveloperModel(Model):
     compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
-    SCENARIONAME = 'Studio'
-    #SCENARIONAME = 'Baseline'
+    #SCENARIONAME = 'Studio'
+    SCENARIONAME = 'No Project'
     scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
     z = Zoning(scenario_d[SCENARIONAME],current_year)
     isr = None
@@ -165,52 +165,60 @@ class DeveloperModel(Model):
     outf = open('buildings-%d.csv' % current_year,'w')
     outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
     t1 = time.time()
-    if HOTSHOT:
-        results = []
-        for p in test_parcels: 
-            r = process_parcel(p)
-            if r <> None and r <> -1: results.append(r)
-    else:
-        results = pool.map(process_parcel,test_parcels)
-        results = [list(x) for x in results if x <> None and x <> -1]
-    for result in results:
-        #print result
-        outf.write(string.join([str(x) for x in result],sep=',')+'\n')
+    aggd = {}
 
-    ##TODO: id of buildings to be demolished
+    def chunks(l, n):
+        for i in xrange(0, len(l), n):
+           yield l[i:i+n]
+
+    for test_parcels in chunks(test_parcels,1000):
+        print "Executing CHUNK"
+
+        if HOTSHOT:
+            results = []
+            for p in test_parcels: 
+                r = process_parcel(p)
+                if r <> None and r <> -1: results.append(r)
+        else:
+            results = pool.map(process_parcel,test_parcels)
+            results = [list(x) for x in results if x <> None and x <> -1]
+        for result in results:
+            #print result
+            outf.write(string.join([str(x) for x in result],sep=',')+'\n')
+
+        ##TODO: id of buildings to be demolished
     
-    buildings_to_demolish = []
-    idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
-    building_set.remove_elements(idx_buildings_to_demolish)
-    column_names = ["parcel_id","county","building_type_id","stories",
+        buildings_to_demolish = []
+        idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
+        building_set.remove_elements(idx_buildings_to_demolish)
+        column_names = ["parcel_id","county","building_type_id","stories",
                     "building_sqft","residential_sqft","non_residential_sqft",
                     "tenure","year_built","residential_units"]
-    buildings_data = copy.deepcopy(results)
-    for i in range(len(buildings_data)):
-        buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
-    buildings_data = array(buildings_data)
-    new_buildings = {}
-    if buildings_data.size > 0:
-        for icol, col_name in enumerate(column_names):
-            new_buildings[col_name] = buildings_data[:, icol]
-        ## pid is the index to parcel_set; convert them to actual parcel_id
-        #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
-        building_set.add_elements(new_buildings, require_all_attributes=False,
+        buildings_data = copy.deepcopy(results)
+        for i in range(len(buildings_data)):
+            buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
+        buildings_data = array(buildings_data)
+        new_buildings = {}
+        if buildings_data.size > 0:
+            for icol, col_name in enumerate(column_names):
+                new_buildings[col_name] = buildings_data[:, icol]
+            ## pid is the index to parcel_set; convert them to actual parcel_id
+            #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
+            building_set.add_elements(new_buildings, require_all_attributes=False,
                                   change_ids_if_not_unique=True)
-        building_set.flush_dataset()
+            building_set.flush_dataset()
    
-    aggd = {}
-    for result in results:
-        units = result[-1]
-        nonres_sqft = 1 #result[6]/1000.0
-        county = result[1]
-        btype = result[2]
-        key = (county,btype)
-        aggd.setdefault(key,0)
-        if btype < 7: aggd[key] += units
-        else: aggd[key] += nonres_sqft
-        aggd.setdefault(county,0)
-        aggd[county] += units
+        for result in results:
+            units = result[-1]
+            nonres_sqft = 1 #result[6]/1000.0
+            county = result[1]
+            btype = result[2]
+            key = (county,btype)
+            aggd.setdefault(key,0)
+            if btype < 7: aggd[key] += units
+            else: aggd[key] += nonres_sqft
+            aggd.setdefault(county,0)
+            aggd[county] += units
     
     aggf = open('county_aggregations-%d.csv' % current_year,'w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
