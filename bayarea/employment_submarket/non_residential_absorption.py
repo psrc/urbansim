@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from opus_core.misc import safe_array_divide
-from numpy import clip, inf
+from numpy import clip, inf, logical_and
 
 class non_residential_absorption(Variable):
     """"""
@@ -23,7 +23,8 @@ class non_residential_absorption(Variable):
         vacant_units = clip(submarket['non_residential_sqft'] - submarket['occupied_non_residential_sqft'], 0, inf)
         results = safe_array_divide( uptake, vacant_units.astype('f') )
         results = clip(results, self.lower_bound, self.upper_bound)
-        results[vacant_units==0] = self.upper_bound
+        all_units_occupied = logical_and(vacant_units==0, submarket['occupied_non_residential_sqft'] > 0)
+        results[all_units_occupied] = self.upper_bound
 
         return results
 

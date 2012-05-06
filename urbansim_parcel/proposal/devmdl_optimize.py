@@ -15,6 +15,7 @@ SQFTFACTOR = 300.0
 COMMERCIALTYPES_D = {7:82,8:82,9:79,10:80,11:81,12:83,13:84}
 OBJCNT = 0
 devmdltypes = [1,1,3,12,3,12,4,14,10,10,11,7,8,5]
+residential_building_types = [1, 2, 3]
 
 def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_info=None ):
     proforma_inputs = {            
@@ -78,7 +79,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
 
             },
     }
-    residential_building_types = [1, 2, 3]
+    
     mixed_type = [12]
     if submarket_info is not None:
         bldg_type = devmdltypes[btype-1]
@@ -127,6 +128,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
         proposal_comp['sales_absorption'] = proposal_comp['sales_absorption'] / 4
         proposal_comp['rent_absorption'] = proposal_comp['rent_absorption'] * 4
         proposal_comp['leases_absorption'] = proposal_comp['leases_absorption'] * 4
+        proposal_comp['sales_vacancy_rates'] = proposal_comp['sales_vacancy_rates'] / 12
         proposal_comp['vacancy_rates'] = proposal_comp['vacancy_rates'] / 12
 
         #print "sales absorption", proposal_comp['sales_absorption']
@@ -205,7 +207,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     proposal['rent_revenue'] = proposal_comp['rent_revenue'].sum()
     proposal['leases_revenue'] = proposal_comp['leases_revenue'].sum()
 
-    proposal_comp['sales_absorption'] *= d['sales_revenue']
+    proposal_comp['sales_absorption'] = d['sales_revenue'] * proposal_comp['sales_absorption_ratio']
     #proposal_comp['sales_absorption'] = .25*d['sales_revenue']
     #proposal_comp['rent_absorption'] = array([4 for i in range(5)])
     #proposal_comp['leases_absorption'] = array([4 for i in range(5)])
@@ -276,10 +278,22 @@ def optimize(bform,prices,submarket_info=None,esubmarket_info=None):
     
     dataset_pool = setup_dataset_pool(opus=False,btype=btype,submarket_info=submarket_info,esubmarket_info=esubmarket_info)
     #proposal = dataset_pool.get_dataset('proposal')
+    proposal_comp = dataset_pool['proposal_component']
+    proposal_comp['sales_absorption_ratio'] = copy.copy(proposal_comp['sales_absorption'])
 
-    if dataset_pool['proposal_component']['vacancy_rates'][0] > .1:
+    bldg_type = devmdltypes[btype-1]
+    #throttle development when annual vacancy > 10%
+    #residential vacancy = min(own, rent)
+    max_residential_vacancy = min( proposal_comp['sales_vacancy_rates'][0],
+                                   proposal_comp['vacancy_rates'][0]) * 12
+    non_residential_vacancy = proposal_comp['vacancy_rates'][4] * 12
+    
+    if bldg_type in residential_building_types:
+        if max_residential_vacancy > .1:
+            return [], -1.0
+    elif non_residential_vacancy > .1:
         return [], -1.0
-
+    
     logger.set_verbosity_level(0)
     #proposal.compute_variables(["property_tax = proposal.disaggregate(parcel.property_tax)",
     #                            "land_cost = proposal.disaggregate(parcel.land_cost)"], 
