@@ -38,7 +38,8 @@ class DeveloperModel(Model):
 
   model_name = "Developer Model"
 
-  def __init__(my):
+  def __init__(my,scenario='Baseline'):
+    my.scenario = scenario
     pass
 
   def run(my, cache_dir=None, year=None):
@@ -99,12 +100,10 @@ class DeveloperModel(Model):
     compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
-    #SCENARIONAME = 'Studio'
-    SCENARIONAME = 'No Project'
     scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
-    z = Zoning(scenario_d[SCENARIONAME],current_year)
+    z = Zoning(scenario_d[my.scenario],current_year)
     isr = None
-    if SCENARIONAME in ['Studio','Transit Priority']: isr = ISR()
+    if my.scenario in ['Studio','Transit Priority']: isr = ISR()
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)")
@@ -168,6 +167,7 @@ class DeveloperModel(Model):
            yield l[i:i+n]
 
     for test_chunk in chunks(test_parcels,1000):
+
         print "Executing CHUNK"
 
         sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
@@ -180,7 +180,7 @@ class DeveloperModel(Model):
             results = []
             for p in test_chunk: 
                 r = process_parcel(p)
-                if r <> None and r <> -1: results.append(r)
+                if r <> None and r <> -1: results.append(list(r))
         else:
             if MP:
                 results = pool.map(process_parcel,test_chunk)
