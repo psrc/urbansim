@@ -31,6 +31,7 @@ from opus_core.model import Model
 from opus_core import paths
 
 DEBUG = 0
+MP = 0  #process parcels with multiprocessing?
 
 devmdltypes = devmdl_optimize.devmdltypes
 class DeveloperModel(Model):
@@ -148,9 +149,9 @@ class DeveloperModel(Model):
     import time
 
     HOTSHOT = 0
-
-    from multiprocessing import Pool, Queue
-    pool = Pool(processes=24)
+    if MP:
+        from multiprocessing import Pool, Queue
+        pool = Pool(processes=24)
 
     import hotshot, hotshot.stats#, test.pystone
     if HOTSHOT:
@@ -166,7 +167,7 @@ class DeveloperModel(Model):
         for i in xrange(0, len(l), n):
            yield l[i:i+n]
 
-    for test_parcels in chunks(test_parcels,1000):
+    for test_chunk in chunks(test_parcels,1000):
         print "Executing CHUNK"
 
         sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
@@ -177,11 +178,14 @@ class DeveloperModel(Model):
 
         if HOTSHOT:
             results = []
-            for p in test_parcels: 
+            for p in test_chunk: 
                 r = process_parcel(p)
                 if r <> None and r <> -1: results.append(r)
         else:
-            results = pool.map(process_parcel,test_parcels)
+            if MP:
+                results = pool.map(process_parcel,test_chunk)
+            else:
+                results = [process_parcel(p) for p in test_chunk]
             results = [list(x) for x in results if x <> None and x <> -1]
         for result in results:
             #print result
