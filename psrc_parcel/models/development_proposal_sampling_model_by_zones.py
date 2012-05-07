@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones
+from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones, isinf
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed, unique
 from opus_core.simulation_state import SimulationState
@@ -106,7 +106,12 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             
             logger.log_status("\nDPSM for zone %s" % self.zone)
             for iter in range(maxiter):
-                self.weight[:] = original_weight[:]           
+                self.weight[:] = original_weight[:]
+                if self.weight[idx_zone].sum() <= 0:
+                    logger.log_status("No non-zero weights for zone %s in iteration %s." % (self.zone, iter))
+                    break  
+                while isinf(self.weight[idx_zone].sum()):
+                    self.weight[idx_zone] = self.weight[idx_zone]/10
                 DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
                 if self.type["residential"]:
                     if (len(self.accepted_proposals)<=0) or self.vacancy_rate_met(existing_residential_units[zone_index],
