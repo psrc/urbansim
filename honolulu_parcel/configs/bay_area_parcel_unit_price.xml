@@ -5,6 +5,21 @@
     <project_name hidden="True" type="string">honolulu_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="building.num_floors" type="variable_definition">building.stories</variable>
+      <variable use="both" source="expression" name="building.in_core_area" type="variable_definition">building.disaggregate((zone.council_district_id&gt;3)*(zone.council_district_id&lt;7),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.avg_income_in_neighborhood_board" type="variable_definition">building.disaggregate(neighborhood_board.aggregate(household.income,function=mean,intermediates=[building,parcel]),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.residential_density_in_zone" type="variable_definition">building.disaggregate(safe_array_divide((zone.aggregate(building.residential_units,intermediates=[parcel])),(zone.aggregate(building.land_area,intermediates=[parcel]))))</variable>
+      <variable use="both" source="expression" name="building.built_pre_1940" type="variable_definition">(building.year_built&gt;1849)*(building.year_built&lt;1941)</variable>
+      <variable use="both" source="expression" name="building.parcel_hillshade" type="variable_definition">building.disaggregate(parcel.hillshade)</variable>
+      <variable use="both" source="expression" name="building.parcel_elevation" type="variable_definition">building.disaggregate(parcel.elevation)</variable>
+      <variable use="both" source="expression" name="building.elevation_range_in_zone" type="variable_definition">building.disaggregate(zone.elevation_range,intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.elevation_stdev_in_zone" type="variable_definition">building.disaggregate(zone.elevation_stdev,intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.bus_stop_density" type="variable_definition">building.disaggregate(zone.bus_stops_per_acre,intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="building.distance_to_public_school" type="variable_definition">building.disaggregate(parcel.distance_to_public_school)</variable>
+      <variable use="both" source="expression" name="building.distance_to_park" type="variable_definition">building.disaggregate(parcel.distance_to_park)</variable>
+      <variable use="both" source="expression" name="building.distance_to_the_highway" type="variable_definition">building.disaggregate(parcel.distance_to_highway)</variable>
+      <variable use="both" source="expression" name="building.distance_to_coast" type="variable_definition">building.disaggregate(parcel.distance_to_coast)</variable>
+      <variable use="both" source="expression" name="building.distance_to_bus_stop" type="variable_definition">building.disaggregate(parcel.distance_to_bus_stop)</variable>
       <variable use="both" source="primary attribute" name="building.building_year_built" type="variable_definition">building.year_built</variable>
       <variable use="both" source="expression" name="employment_submarket.non_residential_sqft_esubmarket" type="variable_definition">employment_submarket.aggregate(building.non_residential_sqft)</variable>
       <variable use="both" source="expression" name="submarket.average_income_in_submarket" type="variable_definition">submarket.aggregate(household.income,function=mean)</variable>
@@ -86,15 +101,15 @@
       <variable use="both" source="expression" name="household.workers_per_person" type="variable_definition">safe_array_divide(household.workers * 1.0,household.persons)</variable>
       <variable use="both" source="expression" name="household.avg_edu_hh" type="variable_definition">household.aggregate(person.education, function=mean)</variable>
       <variable use="both" source="expression" name="building.is_central" type="variable_definition">(building.disaggregate((zone.area_type_id&gt;3)*(zone.area_type_id&lt;7)))</variable>
-      <variable use="both" source="expression" name="building.area_type1" type="variable_definition">(building.disaggregate(zone.area_type_id==1))</variable>
-      <variable use="both" source="expression" name="building.area_type2" type="variable_definition">(building.disaggregate(zone.area_type_id==2))</variable>
-      <variable use="both" source="expression" name="building.area_type3" type="variable_definition">(building.disaggregate(zone.area_type_id==3))</variable>
-      <variable use="both" source="expression" name="building.area_type4" type="variable_definition">(building.disaggregate(zone.area_type_id==4))</variable>
-      <variable use="both" source="expression" name="building.area_type5" type="variable_definition">(building.disaggregate(zone.area_type_id==5))</variable>
-      <variable use="both" source="expression" name="building.area_type6" type="variable_definition">(building.disaggregate(zone.area_type_id==6))</variable>
-      <variable use="both" source="expression" name="building.area_type7" type="variable_definition">(building.disaggregate(zone.area_type_id==7))</variable>
-      <variable use="both" source="expression" name="building.area_type8" type="variable_definition">(building.disaggregate(zone.area_type_id==8))</variable>
-      <variable use="both" source="expression" name="building.area_type9" type="variable_definition">(building.disaggregate(zone.area_type_id==9))</variable>
+      <variable use="both" source="expression" name="building.council_district1" type="variable_definition">(building.disaggregate(zone.council_district_id==1))</variable>
+      <variable use="both" source="expression" name="building.council_district2" type="variable_definition">(building.disaggregate(zone.council_district_id==2))</variable>
+      <variable use="both" source="expression" name="building.council_district3" type="variable_definition">(building.disaggregate(zone.council_district_id==3))</variable>
+      <variable use="both" source="expression" name="building.council_district4" type="variable_definition">(building.disaggregate(zone.council_district_id==4))</variable>
+      <variable use="both" source="expression" name="building.council_district5" type="variable_definition">(building.disaggregate(zone.council_district_id==5))</variable>
+      <variable use="both" source="expression" name="building.council_district6" type="variable_definition">(building.disaggregate(zone.council_district_id==6))</variable>
+      <variable use="both" source="expression" name="building.council_district7" type="variable_definition">(building.disaggregate(zone.council_district_id==7))</variable>
+      <variable use="both" source="expression" name="building.council_district8" type="variable_definition">(building.disaggregate(zone.council_district_id==8))</variable>
+      <variable use="both" source="expression" name="building.council_district9" type="variable_definition">(building.disaggregate(zone.council_district_id==9))</variable>
       <variable use="both" source="expression" name="household.area_type_id" type="variable_definition"> household.area_type + 1</variable>
       <variable use="both" source="expression" name="household.typetenurearea_id" type="variable_definition">1*((household.building_type_id==1)*(household.tenure==1)*(household.area_type==1))+2*((household.building_type_id==1)*(household.tenure==2)*(household.area_type==1))+ 3*((household.building_type_id==2)*(household.tenure==1)*(household.area_type==1))+4*((household.building_type_id==2)*(household.tenure==2)*(household.area_type==1))+ 5*((household.building_type_id==3)*(household.tenure==1)*(household.area_type==1))+6*((household.building_type_id==3)*(household.tenure==2)*(household.area_type==1))+ 7*((household.building_type_id==4)*(household.tenure==1)*(household.area_type==1))+8*((household.building_type_id==4)*(household.tenure==2)*(household.area_type==1))+ 9*((household.building_type_id==1)*(household.tenure==1)*(household.area_type==0))+10*((household.building_type_id==1)*(household.tenure==2)*(household.area_type==0))+ 11*((household.building_type_id==2)*(household.tenure==1)*(household.area_type==0))+12*((household.building_type_id==2)*(household.tenure==2)*(household.area_type==0))+ 13*((household.building_type_id==3)*(household.tenure==1)*(household.area_type==0))+14*((household.building_type_id==3)*(household.tenure==2)*(household.area_type==0))+ 15*((household.building_type_id==4)*(household.tenure==1)*(household.area_type==0))+16*((household.building_type_id==4)*(household.tenure==2)*(household.area_type==0))</variable>
       <variable use="both" source="expression" name="zone.zone_proportion_hh_in_apartment" type="variable_definition">safe_array_divide(zone.aggregate(building.aggregate(household.building_type_id==3) + building.aggregate(household.building_type_id==37)),zone.aggregate(building.number_of_agents(household)))</variable>
@@ -320,7 +335,7 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['honolulu_parcel','urbansim_parcel','urbansim','opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type']</available_datasets>
+    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','neighborhood_board']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','faz','gridcell','city','county','node']</spatial_datasets>
   </general>
   <data_manager>
@@ -2667,7 +2682,7 @@
           </run>
           <init type="dictionary">
             <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_improvement_value=ln(building.improvement_value)</argument>
-            <argument convert_blank_to_none="True" name="filter_attribute" type="string" parser_action="quote_string" model_dependency_type="variable">building.improvement_value&gt;100000</argument>
+            <argument convert_blank_to_none="True" name="filter_attribute" type="string" parser_action="quote_string" model_dependency_type="variable">building.building_id&gt;0</argument>
             <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">building_type_id</argument>
             <argument name="dataset_pool" type="string" hidden="True">dataset_pool</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
@@ -2698,7 +2713,7 @@
             <output name="output" type="string" hidden="True">(specification, repm_index)</output>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">price_model_specification</argument>
-            <argument convert_blank_to_none="True" name="filter_variable" type="string" parser_action="quote_string" model_dependency_type="variable">building.improvement_value&gt;0</argument>
+            <argument convert_blank_to_none="True" name="filter_variable" type="string" parser_action="quote_string" model_dependency_type="variable">building.improvement_value&gt;80000</argument>
             <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
             <name name="name" type="string" hidden="True">prepare_for_estimate</name>
           </prepare_for_estimate>
@@ -2707,34 +2722,45 @@
           <submodel hidden="Children" name="sf_detached_own" submodel_id="1" type="submodel">
             <description type="string">sf_detached_own</description>
             <variable_list type="variable_list">
+              <variable_spec name="building.built_pre_1940"/>
               <variable_spec name="constant"/>
-              <variable_spec name="building.ln_avg_hh_income"/>
-              <variable_spec name="building.ln_job_density_zone"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.in_core_area"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
               <variable_spec name="building.ln_land_per_unit"/>
+              <variable_spec name="building.num_floors"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.population_density"/>
               <variable_spec name="building.sqft_per_unit"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="duplex_own" submodel_id="2" type="submodel">
             <description type="string">duplex_own</description>
             <variable_list type="variable_list">
+              <variable_spec name="building.built_pre_1940"/>
               <variable_spec name="constant"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.in_core_area"/>
               <variable_spec name="building.ln_avg_hh_income"/>
-              <variable_spec name="building.ln_job_density_zone"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
               <variable_spec name="building.ln_land_per_unit"/>
-              <variable_spec name="building.sqft_per_unit"/>
+              <variable_spec name="building.num_floors"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="apartment_own" submodel_id="3" type="submodel">
             <description type="string">apartment_own</description>
             <variable_list type="variable_list">
+              <variable_spec name="building.built_pre_1940"/>
               <variable_spec name="constant"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
               <variable_spec name="building.ln_avg_hh_income"/>
-              <variable_spec name="building.ln_job_density_zone"/>
-              <variable_spec name="building.ln_jobs_within_30_min"/>
-              <variable_spec name="building.ln_land_per_unit"/>
-              <variable_spec name="building.sqft_per_unit"/>
+              <variable_spec name="building.num_floors"/>
+              <variable_spec name="building.population_density"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="townhome_own" submodel_id="4" type="submodel">
@@ -2746,6 +2772,15 @@
               <variable_spec name="building.ln_jobs_within_30_min"/>
               <variable_spec name="building.ln_land_per_unit"/>
               <variable_spec name="building.sqft_per_unit"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="hotel" submodel_id="7" type="submodel">
@@ -2754,6 +2789,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.hotel_sqft"/>
               <variable_spec name="building.travel_time_to_waikiki"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial_repair" submodel_id="8" type="submodel">
@@ -2763,6 +2807,15 @@
               <variable_spec name="building.jobs3_foodprocess"/>
               <variable_spec name="building.land_per_nonres_sqft"/>
               <variable_spec name="building.ln_jobs_within_15_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial_manufacture" submodel_id="9" type="submodel">
@@ -2771,6 +2824,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
               <variable_spec name="building.ln_pop_10_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial_research" submodel_id="10" type="submodel">
@@ -2778,6 +2840,15 @@
             <variable_list type="variable_list">
               <variable_spec name="building.cbd_time"/>
               <variable_spec name="constant"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial_entertainment" submodel_id="11" type="submodel">
@@ -2785,6 +2856,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_pop_10_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial_residential_mix" submodel_id="12" type="submodel">
@@ -2792,6 +2872,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_jobs_in_zone"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="utility_with_jobs" submodel_id="13" type="submodel">
@@ -2799,6 +2888,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="warehouse_shipping" submodel_id="15" type="submodel">
@@ -2807,6 +2905,15 @@
               <variable_spec name="building.avg_hh_income_zonal"/>
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="warehouse_residential_mix" submodel_id="16" type="submodel">
@@ -2815,6 +2922,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_inv_far"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="transportation" submodel_id="18" type="submodel">
@@ -2824,6 +2940,15 @@
               <variable_spec name="building.ln_inv_far"/>
               <variable_spec name="building.ln_job_density_zone"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="neighborhood_retail" submodel_id="19" type="submodel">
@@ -2832,6 +2957,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.jobs9_retail"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="regional_retail" submodel_id="20" type="submodel">
@@ -2839,6 +2973,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.jobs9_retail"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="retail_residential_mix" submodel_id="21" type="submodel">
@@ -2849,6 +2992,15 @@
               <variable_spec name="building.ln_inv_far"/>
               <variable_spec name="building.ln_job_density_zone"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="office" submodel_id="22" type="submodel">
@@ -2857,6 +3009,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.jobs10_finance"/>
               <variable_spec name="building.ln_job_density_zone"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="office_residential_mix" submodel_id="23" type="submodel">
@@ -2864,6 +3025,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="service_shops_supplies" submodel_id="24" type="submodel">
@@ -2872,6 +3042,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_avg_hh_income_zonal"/>
               <variable_spec name="building.ln_jobs_within_30_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="service_shops_residential" submodel_id="25" type="submodel">
@@ -2886,6 +3065,15 @@
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
               <variable_spec name="building.ln_pop_10_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="community_facility" submodel_id="28" type="submodel">
@@ -2895,6 +3083,15 @@
               <variable_spec name="building.ln_inv_far"/>
               <variable_spec name="building.ln_job_density_zone"/>
               <variable_spec name="building.ln_pop_10_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="classroom" submodel_id="29" type="submodel">
@@ -2903,6 +3100,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.households_in_zone"/>
               <variable_spec name="building.ln_pop_10_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="hospital" submodel_id="30" type="submodel">
@@ -2911,6 +3117,15 @@
               <variable_spec name="constant"/>
               <variable_spec name="building.jobs15_health"/>
               <variable_spec name="building.ln_jobs_within_15_min"/>
+              <variable_spec name="building.bus_stop_density"/>
+              <variable_spec name="building.parcel_elevation"/>
+              <variable_spec name="building.parcel_hillshade"/>
+              <variable_spec name="building.distance_to_bus_stop"/>
+              <variable_spec name="building.distance_to_coast"/>
+              <variable_spec name="building.distance_to_park"/>
+              <variable_spec name="building.distance_to_public_school"/>
+              <variable_spec name="building.distance_to_the_highway"/>
+              <variable_spec name="building.elevation_stdev_in_zone"/>
             </variable_list>
           </submodel>
         </specification>
