@@ -434,6 +434,8 @@ def process_parcel(parcel):
                 res_sqft = math.floor(res_sqft)
                 nonres_sqft = math.floor(nonres_sqft)
                 res_units = math.floor(res_units)
+                # it's not mixed if the nonres gets optimized out
+                if btype == 12 and nonres_sqft == 0: btype = 3 
                 building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
                 maxbuilding = building
 
