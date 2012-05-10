@@ -12,22 +12,22 @@ class RunOpenamos(AbstractTravelModel):
     """
     """
 
-    def run(self, config, year):
+    def run(self, config, year, iteration, setupCache, backupResults):
         """ 
         """
         
         tm_config = config['travel_model_configuration']
         xml_config = tm_config.get("openamos_configuration")
-        processes = tm_config.get("number_of_processes_to_spawn_for_openamos", 1)
+
         if tm_config.has_key("openamos_module"):
-            python_cmd = "%s -m %s %s %s" % (sys.executable, tm_config["openamos_module"], xml_config, processes)
+            python_cmd = "%s -m %s %s %s %s %s" % (sys.executable, tm_config["openamos_module"], xml_config, iteration, setupCache, backupResults)
         elif tm_config.has_key("openamos_path"):
-            python_cmd = "%s %s %s %s" % (sys.executable, tm_config["openamos_path"], xml_config, processes)
+            python_cmd = "%s %s -file %s -it %s -crca %s -bkup %s" % (sys.executable, tm_config["openamos_path"], xml_config, iteration, setupCache, backupResults)
         else:
             raise ValueError("Either openamos_module or openamos_path needs to be specified in travel_model_configuration.")
             
-        logger.log_status("Start OpenAMOS...")
-        #print python_cmd
+        logger.log_status("Start OpenAMOS...%s" %python_cmd)
+
         try:
             stdout, stderr= subprocess.Popen(python_cmd,
                                              shell = True
@@ -35,12 +35,14 @@ class RunOpenamos(AbstractTravelModel):
         except:
             print "Error occured when running OpenAMOS"
             raise
-        
+
+    
+        """
         if stderr:
             print "Error occured when running OpenAMOS"
             print stderr
             sys.exit(1)
-        
+        """
 if __name__ == "__main__":
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file

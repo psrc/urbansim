@@ -12,28 +12,42 @@ class RunMalta(AbstractTravelModel):
     """
     """
 
-    def run(self, config, year):
+    def run(self, config, year, iteration):
         """ 
         """
         
         tm_config = config['travel_model_configuration']
+
+    # Altering the iteration count in the config file for MALTA
+    fileLoc = tm_config.get("malta_project")
+    fileEntries = []
+    fileMaltaConfig = open(fileLoc, 'r')
+    for line in fileMaltaConfig:
+        fileEntries.append(line)
+    fileMaltaConfig.close()
+
+    fileMaltaConfig = open(fileLoc, 'w')
+    fileMaltaConfig.write(fileEntries[0])
+    fileMaltaConfig.write('%d\n' %(iteration+1))
+    fileMaltaConfig.close()
+    
+
         cmd = "%s %s" % (tm_config["malta_path"], tm_config.get("malta_project"))
-            
         logger.log_status("Start MALTA...")
-        
+    
         try:
-            subprocess.Popen(cmd,
-                            shell = True
-                            ).communicate()
+            stdout, stderr= subprocess.Popen(cmd,
+                                         shell = True
+                                     ).communicate()
         except:
             print "Error occured when running MALTA"
             raise
-        
+        """
         if stderr:
-            print "Error occured when running OpenAMOS"
+            print "Error occured when running MALTA"
             print stderr
             sys.exit(1)
-            
+        """    
 if __name__ == "__main__":
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file
