@@ -13,7 +13,7 @@ fix buildable area
 
 import os, sys, cPickle, traceback, time, string, StringIO, math, copy
 import numpy
-from numpy import array
+from numpy import array, zeros, repeat, arange, round
 
 from devmdl_zoning import *
 import devmdl_optimize
@@ -34,13 +34,15 @@ DEBUG = 0
 MP = 0  #process parcels with multiprocessing?
 
 devmdltypes = devmdl_optimize.devmdltypes
+scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
+
 class DeveloperModel(Model):
 
   model_name = "Developer Model"
 
   def __init__(my,scenario='Baseline'):
     my.scenario = scenario
-    pass
+    assert scenario in scenario_d.keys()
 
   def run(my, cache_dir=None, year=None):
     global parcel_set, z, node_set, submarket, esubmarket, isr
@@ -100,7 +102,6 @@ class DeveloperModel(Model):
     compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
-    scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
     z = Zoning(scenario_d[my.scenario],current_year)
     isr = None
     if my.scenario in ['Studio','Transit Priority']: isr = ISR()
@@ -186,7 +187,11 @@ class DeveloperModel(Model):
                 results = pool.map(process_parcel,test_chunk)
             else:
                 results = [process_parcel(p) for p in test_chunk]
-            results = [list(x) for x in results if x <> None and x <> -1]
+            results_bldg = [list(x[0]) for x in results if x <> None and x[0] <> -1]
+            #each row of units represents number of units of [1, 2, 3, 4] bedrooms
+            units = array([x[1][0] for x in results if x <> None and x[0] <> -1])
+            sqft_per_unit = array([x[1][1] for x in results if x <> None and x[0] <> -1])
+            results = results_bldg
         for result in results:
             #print result
             outf.write(string.join([str(x) for x in result],sep=',')+'\n')
@@ -204,15 +209,47 @@ class DeveloperModel(Model):
             buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
         buildings_data = array(buildings_data)
         new_buildings = {}
+        available_bldg_id = building_set['building_id'].max() + 1
+        new_bldg_ids = arange(available_bldg_id, available_bldg_id+buildings_data.shape[0])
         if buildings_data.size > 0:
             for icol, col_name in enumerate(column_names):
                 new_buildings[col_name] = buildings_data[:, icol]
+
+            new_buildings['building_id'] = new_bldg_ids
+            # recode tenure: 1 - rent, 2 - own from 0 - own, 1 - rent
+            new_buildings['tenure'][new_buildings['tenure']==0] = 2
             ## pid is the index to parcel_set; convert them to actual parcel_id
             #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
             building_set.add_elements(new_buildings, require_all_attributes=False,
                                   change_ids_if_not_unique=True)
             building_set.flush_dataset()
-   
+
+            assert new_bldg_ids.size == units.shape[0] == sqft_per_unit.shape[0]
+            units_bldg_ids = repeat(new_bldg_ids, 4)
+            bedrooms = array([1, 2, 3, 4] * units.size)
+            units = round(units.ravel())
+            sqft_per_unit = sqft_per_unit.ravel()
+            new_units = {'building_id': array([], dtype='i4'),
+                         'bedrooms': array([], dtype='i4'),
+                         'sqft_per_unit': array([], dtype='i4')
+                        }
+            
+            for i_unit, unit in enumerate(units):
+                if unit <= 0:
+                  continue
+                new_units['building_id'] = concatenate((new_units['building_id'],
+                                                        repeat(units_bldg_ids[i_unit], unit))
+                                                       )
+                new_units['bedrooms'] = concatenate((new_units['bedrooms'],
+                                                     repeat(bedrooms[i_unit], unit))
+                                                    )
+                new_units['sqft_per_unit'] = concatenate((new_units['sqft_per_unit'],
+                                                          repeat(sqft_per_unit[i_unit], unit))
+                                                         )
+            unit_set.add_elements(new_units, require_all_attributes=False,
+                                           change_ids_if_not_unique=True)
+            unit_set.flush_dataset()
+
         for result in results:
             units = result[-1]
             nonres_sqft = 1 #result[6]/1000.0
@@ -332,6 +369,9 @@ def process_parcel(parcel):
         if DEBUG > 0: print "DEVMDL BTYPES:", btypes
 
         maxnpv, maxbuilding = 0, -1
+        ## number of units and sqft_per_unit by number of bedrooms (1, 2, 3, 4)
+        units = zeros(4, dtype='i4')
+        sqft_per_unit = zeros(4, dtype='i4')
 
         for btype in btypes:
             
@@ -418,14 +458,20 @@ def process_parcel(parcel):
                 nonres_sqft = bform.nonres_sqft
                 sqft = nonres_sqft # add residential below
                 if btype in [1,2,3,4,5,6]: # RESIDENTIAL
-                    if btype in [1,2]: res_sqft = bform.sf_builtarea()
-                    else: res_sqft = bform.mf_builtarea()
+                    if btype in [1,2]: 
+                        res_sqft = bform.sf_builtarea()
+                        sqft_per_unit = bform.sfunitsizes
+                    else: 
+                        res_sqft = bform.mf_builtarea()
+                        sqft_per_unit = bform.mfunitsizes
                     sqft += res_sqft
                     res_units = sum(bform.num_units)
                 else:
                     res_sqft = 0
                     res_units = 0
                 stories = sqft / bform.buildable_area
+
+                #this is to be recoded tenure: 1 - rent, 2 - own from 0 - own, 1 - rent
                 tenure = 0
                 if btype in [3,4]: tenure = 1
                 year_built = current_year
@@ -438,8 +484,9 @@ def process_parcel(parcel):
                 if btype == 12 and nonres_sqft == 0: btype = 3 
                 building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
                 maxbuilding = building
+                units = bform.num_units
 
-        return maxbuilding 
+        return maxbuilding, (units, sqft_per_unit) 
 
 if __name__ == "__main__":
     ## Run developer_model alone from command line developer_model.py /workspace/opus/data/bay_area_parcel/runs/run_79.2012_05_02_02_44 2011
