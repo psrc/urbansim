@@ -126,7 +126,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             agents_size_unmapped = agents_index.size - agents_size_mapped
             
             logger.log_status("Agent Location Choice Model iteration %s/%s: %s unplaced agents" % \
-                              (run+1, maximum_runs, unplaced.sum))
+                              (run+1, maximum_runs, unplaced.sum()))
             if unplaced.sum() in (0, unplaced_size_before, agents_size_unmapped):
                 logger.log_status("All agents placed or number of unplaced agents doesn't change; exit ALCM.")
                 break
