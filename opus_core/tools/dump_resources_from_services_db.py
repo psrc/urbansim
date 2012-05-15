@@ -5,6 +5,7 @@
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.file_utilities import write_resources_to_file
+import sys
 
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -18,7 +19,12 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_id = int(args[0])
+    try:
+        run_id = int(args[0])
+    except IndexError:
+        parser.error("run_id must be provided.")
+        parser.print_help()
+        sys.exit(1)
     if len(args) == 2: 
         pickle_file = args[1]
     else:

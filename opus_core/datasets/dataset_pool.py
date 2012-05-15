@@ -122,6 +122,12 @@ class DatasetPool(object):
             except:
                 print "unknown size of %s" % name 
 
+    ### some helper methods and shorthands
+    def __getitem__(self, dataset_name):
+        """ enables dataset_pool[dataset_name]
+        """
+        return self.get_dataset(dataset_name)
+
 import os
 from opus_core.tests import opus_unittest
 import tempfile
