@@ -4,7 +4,7 @@
 
 from opus_core.logger import logger, block, log_block
 from optparse import OptionParser
-import os
+import os, sys
 
 travel_model_year_mapping = {2018:2020,
                              2025:2035}
@@ -19,7 +19,8 @@ def invoke_run_travel_model(config, year):
     travel_model_year = travel_model_year_mapping[year]
     my_location = os.path.split(__file__)[0]
     script_filepath = os.path.join(my_location, "run_travel_model.py")
-    cmd = "%s -s %s -y %s -n" % (script_filepath, scenario, travel_model_year)
+    cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
+    logger.log_status("Launching %s" % cmd)
     os.system(cmd)
 
 if __name__ == "__main__":
