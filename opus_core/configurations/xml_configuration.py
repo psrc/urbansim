@@ -52,6 +52,8 @@ def strip_comments(tree_root):
             node.getparent().remove(node)
 
 def load_xml_file(filename):
+    if not os.path.exists(filename):
+        raise IOError("File %s does not exist" % filename)
     tree = ElementTree(file=filename)
     strip_comments(tree.getroot())
     return tree
