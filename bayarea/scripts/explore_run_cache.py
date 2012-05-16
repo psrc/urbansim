@@ -53,8 +53,12 @@ if __name__ == "__main__":
         else:
             cache_directory = _cache_directory
 
-
-    year = int(args[0])
+    try:
+        year = int(args[0])
+    except IndexError:
+        parser.error("year must be provided.")
+        parser.print_help()
+        sys.exit(1)
 
     if package_order is None:
         package_order = eval(options.package_order)
