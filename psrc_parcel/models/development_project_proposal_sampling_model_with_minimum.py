@@ -162,7 +162,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                   self.proposal_set.get_attribute("status_id") == self.proposal_set.id_planned, 
                                                   self.proposal_set.get_attribute("start_year") == year ) 
                                         )[0]
-      
+        logger.log_status("Process planned proposals.")
         self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         
         # consider proposals (in this order: proposed, tentative)
