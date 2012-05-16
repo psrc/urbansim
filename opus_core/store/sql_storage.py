@@ -101,7 +101,7 @@ class sql_storage(Storage):
                     problem_rows_for_column.append(i)
             num_problem_rows_for_column = len(problem_rows_for_column)
             # ignore column if it contains more than 50% NULL values
-            if num_problem_rows_for_column * 2 >= len(column):
+            if num_problem_rows_for_column * 2 > len(column):
                 remove_columns[key] = num_problem_rows_for_column
             elif num_problem_rows_for_column > 0:
                 problem_columns[key] = num_problem_rows_for_column
@@ -679,7 +679,7 @@ else:
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
 
-        def MASKED_test_load_empty_table(self):
+        def test_load_empty_table(self):
             for db, server, storage in self.dbs:
                 try:
 
@@ -691,12 +691,13 @@ else:
                     }
                     db.create_table_from_schema(table_name = 'bar', table_schema = schema)
                             
-                    tbl = db.get_table('bar')        
+                    tbl = db.get_table('bar') #@UnusedVariable
                           
                     expected_data = {
                         'd': array([], dtype='i'),
                         'e': array([], dtype='f'),
                         'f': array([], dtype='S'),
+                        'g': array([], dtype='i'),
                         }
                     
                     actual_data = storage.load_table('bar')
