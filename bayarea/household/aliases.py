@@ -12,10 +12,15 @@
 
 aliases = [
     "income_4 = 1 * (household.income < 25000) +" + \
-                         " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000) +" + \
-                         " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000) +" + \
-                         " 4 * (household.income >= 75000)",
+              " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000) +" + \
+              " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000) +" + \
+              " 4 * (household.income >= 75000)",
     "income_category = bayarea.household.income_4",
+    "income_1989 = bayarea.household.income * .7201",  #base year household.income is in 2000 dollars
+    "income_1989_category = 1 * (bayarea.household.income_1989 < 25000) +" + \
+                         " 2 * numpy.logical_and(bayarea.household.income_1989 >= 25000, bayarea.household.income_1989 < 45000) +" + \
+                         " 3 * numpy.logical_and(bayarea.household.income_1989 >= 45000, bayarea.household.income_1989 < 75000) +" + \
+                         " 4 * (bayarea.household.income_1989 >= 75000)",
     "income_4_person_3 = 1 * (household.income < 25000)*(household.persons < 2) +" + \
                          " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000)*(household.persons < 2) +" + \
                          " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons < 2) +" + \
