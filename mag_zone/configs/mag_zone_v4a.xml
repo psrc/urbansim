@@ -511,10 +511,10 @@
       </scenario_database_configuration>
       <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
       <low_memory_mode type="boolean">False</low_memory_mode>
-      <base_year type="integer" field_identifier="Base Year">2009</base_year>
+      <base_year type="integer" field_identifier="Base Year">2010</base_year>
       <years type="tuple">
-        <firstyear type="integer" field_identifier="Base Year">2009</firstyear>
-        <lastyear type="integer" field_identifier="Base Year">2009</lastyear>
+        <firstyear type="integer" field_identifier="Base Year">2010</firstyear>
+        <lastyear type="integer" field_identifier="Base Year">2010</lastyear>
       </years>
       <seed type="integer">1</seed>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
@@ -567,7 +567,7 @@
         <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
       </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2009</base_year>
+      <base_year type="integer">2010</base_year>
       <years_to_run setexpanded="True" config_name="years" type="tuple">
         <firstyear type="integer">2010</firstyear>
         <lastyear type="integer">2011</lastyear>
