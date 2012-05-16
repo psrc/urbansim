@@ -13,7 +13,7 @@ from opus_core.services.run_server.run_manager import RunManager
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
         GenericOptionGroup.__init__(self, usage="python %prog [-p project_name -r run_id] [-d run_directory] year",
-               description="explore cache. See examples at the end of this script"
+               description="explore cache. See examples at the end of this script")
         self.parser.add_option("-p", "--project-name", dest="project_name", 
                                 default='',help="The project name")
         self.parser.add_option("-r", "--run-id", dest="run_id", 
