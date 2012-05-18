@@ -234,7 +234,11 @@ class XmlController(object):
         if not self.has_selected_item():
             return
         self.model.make_item_local(self.selected_item())
-
+        
+    def rebuild(self):
+        '''rebuild...'''
+        self.model.rebuild_tree()
+        
     def select_item_at(self, point):
         '''
         Select the item at "point" to visualize which item we are working on and

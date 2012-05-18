@@ -59,6 +59,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Initialize empty project
         self.project = OpusProject()
+        self.shows_hidden = False
 
         # Read database connection names
         db_con_file = DatabaseServerConfiguration.get_default_configuration_file_path()
@@ -110,6 +111,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Keyboard shortcuts
         self.actOpenProject.setShortcut('Ctrl+O')
         self.actSaveProject.setShortcut('Ctrl+S')
+        self.actShowHidden.setShortcut('Ctrl+H')
         self.actSaveProjectAs.setShortcut('Ctrl+Shift+S')
         self.actReloadProject.setShortcut('Ctrl+Shift+R')
         self.actCloseProject.setShortcut('Ctrl+W')
@@ -125,6 +127,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         connect(self.actNewProject, self.newProject)
         connect(self.actOpenProject, self.openProject)
         connect(self.actSaveProject, self.saveProject)
+        connect(self.actShowHidden, self.showHidden)
         connect(self.actSaveProjectAs, self.saveProjectAs)
         connect(self.actReloadProject, self.reloadProject)
         connect(self.actCloseProject, self.closeProject)
@@ -231,6 +234,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.show()
         self.updateFontSize()
 
+    def showHidden(self):
+        self.shows_hidden = not self.shows_hidden
+        for manager in self.managers.values():
+            manager.xml_controller.rebuild()
+
     def update_saved_state(self, force_dirty = False):
         '''update the window title to reflect the state of the project
         @param force_dirty makes the project dirty before setting the save state'''
@@ -318,6 +326,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actCloseProject.setEnabled(True)
         self.actSaveProject.setEnabled(True)
         self.actSaveProjectAs.setEnabled(True)
+        self.actShowHidden.setEnabled(True)
         self.actReloadProject.setEnabled(True)
         self.updateFontSize()
 
@@ -432,6 +441,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.actCloseProject.setEnabled(False)
         self.actSaveProject.setEnabled(False)
+        self.actShowHidden.setEnabled(False)
         self.actSaveProjectAs.setEnabled(False)
         self.actReloadProject.setEnabled(False)
 

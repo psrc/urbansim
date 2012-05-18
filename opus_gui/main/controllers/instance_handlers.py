@@ -79,3 +79,8 @@ def update_mainwindow_savestate(force_dirty = False):
     instance = __get_instance()
     if instance is not None:
         instance.update_saved_state(force_dirty)
+
+def shows_hidden():
+    instance = __get_instance()
+    if instance is not None:
+        return instance.shows_hidden

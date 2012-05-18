@@ -4,12 +4,11 @@
 
 from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel
 from PyQt4.QtCore import QString
-from PyQt4.QtGui import QColor, QIcon, QStyle, QMessageBox
+from PyQt4.QtGui import QColor, QFont, QIcon, QStyle, QMessageBox
 from PyQt4.Qt import qApp # For platform specific icons
 from opus_gui.util.icon_library import IconLibrary
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
-from opus_gui.main.controllers.instance_handlers import update_mainwindow_savestate
 
 # What node types we want checkboxes for
 # _CHECKBOX_NODE_TYPES = ('selectable')
@@ -173,6 +172,14 @@ class XmlModel(QAbstractItemModel):
             if node.get('inherited'):
                 return QVariant(QColor(Qt.darkBlue))
             return QVariant() # = default color
+
+        # Font
+        elif role == Qt.FontRole:
+            if item.hidden:
+                font = QFont()
+                font.setItalic(True)
+                return QVariant(font)
+            return QVariant() # = default
 
         # Display
         elif role == Qt.DisplayRole:
