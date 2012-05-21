@@ -1,4 +1,5 @@
 # Opus/UrbanSim urban simulation software.
+
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
@@ -11,7 +12,7 @@ import socket
 import sys
 import tempfile
 
-from numpy import ma, array, ndarray
+from numpy import ma, array, ndarray, divide, seterr
 from inspect import getmembers, ismethod
 from opus_core.logger import logger
 from opus_core.ndimage import sum
@@ -680,12 +681,15 @@ def is_file_in_directory(file, directory):
         return True
     return False
 
-def safe_array_divide(numerator, denominator, return_value_if_denominator_is_zero=0.0, type='float32'):
+def safe_array_divide(numerator, denominator, return_value_if_denominator_is_zero=0.0, type='float32', warning='ignore'):
     """If denominator == 0, return return_value_if_denominator_is_zero.
-        Else return numerator / denominator. numerator and denominator must be numpy arrays."""
-    from numpy import ma
-
-    return ma.filled(numerator/ma.masked_where(denominator == 0, denominator.astype(type)), return_value_if_denominator_is_zero)
+        Else return numerator / denominator. numerator and denominator must be numpy arrays.
+       warning = {'ignore', 'warn', 'raise', 'call', 'print', 'log'}, optional, treatment for division by zero
+    """
+    seterr(divide=warning)
+    results = ma.filled(numerator/ma.masked_where(denominator == 0, denominator.astype(type)),
+                        return_value_if_denominator_is_zero)
+    return results
 
 def try_transformation(data, transformation):
     """Performs 'transformation' on 'data'. Transformation is a character string naming a function
