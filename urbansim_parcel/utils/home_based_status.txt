@@ -27,14 +27,14 @@ SELECT * FROM annual_employment_control_totals a;
 
 alter table annual_employment_control_totals
   add home_based_status int,
-  add number_of_jobs int;
+  add total_number_of_jobs int;
 
 update annual_employment_control_totals
   set home_based_status = 1,
-      number_of_jobs=total_home_based_employment;
+      total_number_of_jobs=total_home_based_employment;
 
 insert into annual_employment_control_totals
-  (year, sector_id, home_based_status, number_of_jobs)
+  (year, sector_id, home_based_status, total_number_of_jobs)
 select year, sector_id, 0, total_non_home_based_employment
   from annual_employment_control_totals;
 
@@ -81,4 +81,6 @@ update annual_household_control_totals t, tmp_household_characteristics_for_ht c
   set t.age_of_head_min = c.`min`, t.age_of_head_max = c.`max`
 where t.age_of_head = c.id and c.characteristic = 'age_of_head';
 
-## repeat the last two sql clauses for other columns
+alter table annual_household_control_totals drop age_of_head;
+
+## repeat the last three sql clauses for other columns
