@@ -10,6 +10,8 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.store.csv_storage import csv_storage
 from opus_core.variables.variable_name import VariableName
 
+flip_urbansim_to_tm_variable_mappling = True
+
 @log_block()
 def export_opus_data(config, year):
     """ 
@@ -40,9 +42,15 @@ def export_opus_data(config, year):
     data_exchange_dir = os.path.join(base_dir, data_exchange_dir)
     out_storage = csv_storage(storage_location=data_exchange_dir)
     for data_fname, variable_mapping in data_to_export.iteritems():
-        col_names = variable_mapping.values()
-        variables_aliases = ["=".join(mapping[::-1]) for mapping in \
-                             variable_mapping.iteritems()]
+        if not flip_urbansim_to_tm_variable_mappling:
+            col_names = variable_mapping.values()
+            variables_aliases = ["=".join(mapping[::-1]) for mapping in \
+                                 variable_mapping.iteritems()]
+        else:
+            col_names = variable_mapping.keys()
+            variables_aliases = ["=".join(mapping) for mapping in \
+                                 variable_mapping.iteritems()]
+
         dataset_name = VariableName(variables_aliases[0]).get_dataset_name()
         dataset = dataset_pool.get_dataset(dataset_name)
         dataset.compute_variables(variables_aliases)
