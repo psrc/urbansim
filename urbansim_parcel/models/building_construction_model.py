@@ -84,6 +84,10 @@ class BuildingConstructionModel(Model):
         component_land_use_types = proposal_component_set.compute_variables([
               'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
                       dataset_pool=dataset_pool)
+        component_is_redevelopment = proposal_component_set.compute_variables([
+              'development_project_proposal_component.disaggregate(development_project_proposal.is_redevelopment)'],
+                      dataset_pool=dataset_pool)
+        
 
         # from the velocity function determine the amount to be built for each component (in %)
         if velocity_function_set is not None:
@@ -170,7 +174,7 @@ class BuildingConstructionModel(Model):
                     new_buildings["improvement_value"] = concatenate((new_buildings["improvement_value"], construction_cost[pidx][idx_to_be_built]))
                     new_buildings["template_id"] = concatenate((new_buildings["template_id"], template_ids[pidx][idx_to_be_built]))
                     number_of_new_buildings[this_building_type] += idx_to_be_built.size
-                    if parcel_is_lut_vacant[parcel_index]:
+                    if parcel_is_lut_vacant[parcel_index] or component_is_redevelopment[pidx][idx_to_be_built][0]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                     # count number of buildings by template ids
                     for icomp in range(idx_to_be_built.size):
