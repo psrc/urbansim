@@ -3,6 +3,6 @@
 # See opus_core/LICENSE 
 
 aliases = [
-    "ciacre_factor = county.aggregate(zone.ciacre_abag_2010) / county.aggregate(bayarea.zone.ciacre_2010)",
-    "resacre_factor = county.aggregate(zone.resacre_abag_2010) / county.aggregate(bayarea.zone.resacre_2010)"
+    "ciacre_factor = safe_array_divide(county.aggregate(zone.ciacre_abag_2010), county.aggregate(bayarea.zone.ciacre_2010))",
+    "resacre_factor = safe_array_divide(county.aggregate(zone.resacre_abag_2010), county.aggregate(bayarea.zone.resacre_2010))"
            ]
