@@ -12,7 +12,7 @@ import socket
 import sys
 import tempfile
 
-from numpy import ma, array, ndarray, divide, seterr
+from numpy import ma, array, ndarray, divide, seterr, inf, allclose
 from inspect import getmembers, ismethod
 from opus_core.logger import logger
 from opus_core.ndimage import sum
@@ -686,7 +686,18 @@ def safe_array_divide(numerator, denominator, return_value_if_denominator_is_zer
         Else return numerator / denominator. numerator and denominator must be numpy arrays.
        warning = {'ignore', 'warn', 'raise', 'call', 'print', 'log'}, optional, treatment for division by zero
     """
-    seterr(divide=warning)
+    seterr(all=warning)
+    results = divide(numerator, denominator.astype(type))
+    #results > inf is there to force broadcasting of denominator
+    results[(results > inf) | (denominator == 0)] = return_value_if_denominator_is_zero  
+    return results
+
+def safe_array_divide_ma(numerator, denominator, return_value_if_denominator_is_zero=0.0, type='float32', warning='ignore'):
+    """If denominator == 0, return return_value_if_denominator_is_zero.
+        Else return numerator / denominator. numerator and denominator must be numpy arrays.
+       warning = {'ignore', 'warn', 'raise', 'call', 'print', 'log'}, optional, treatment for division by zero
+    """
+    seterr(all=warning)
     results = ma.filled(numerator/ma.masked_where(denominator == 0, denominator.astype(type)),
                         return_value_if_denominator_is_zero)
     return results
@@ -1009,6 +1020,11 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         a = array([10, 20, 30, 40])
         b = array([4, 0, 10, 0])
         self.assertEqual(ma.allequal(safe_array_divide(a,b), array([2.5, 0, 3, 0])), True)
+
+    def test_safe_array_divide_broadcast(self):
+        a = array([10, 0, 30, 40])
+        b = array([0])
+        self.assert_(allclose(safe_array_divide(a,b), array([0, 0, 0, 0])))
 
     def test_transformation(self):
         from numpy import array, ma

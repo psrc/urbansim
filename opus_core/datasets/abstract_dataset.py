@@ -1758,7 +1758,7 @@ class AbstractDataset(object):
         """Ensures that the id attribute is loaded, since many of the
         dataset operations require at least one attribute, or specifically
         the id attribute, to be loaded."""
-        if not self.get_attribute_names():
+        if not set(self.get_id_name()) <= set(self.get_attribute_names()):
             self.get_id_attribute()
 
     def determine_stored_attribute_names(self, resources=None, in_storage=None,
