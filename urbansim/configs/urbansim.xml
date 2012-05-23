@@ -41,6 +41,7 @@
             <output name="output" type="string">fm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_fertility_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">fertility_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -66,6 +67,7 @@
             <output name="output" type="string">mm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_mortality_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">mortality_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -91,6 +93,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_edu_exit_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">edu_exit_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -117,6 +120,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_marriage_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">marriage_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -142,6 +146,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_cohabitation_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">cohabitation_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -168,6 +173,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_divorce_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">divorce_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -194,6 +200,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_breakup_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">breakup_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
@@ -220,6 +227,7 @@
             <output name="output" type="string">mem_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string" model_dependency_type="table">annual_child_leaving_home_rates</argument>
+            <argument name="probability_attribute" parser_action="quote_string" type="string">child_leaving_home_probability</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
