@@ -72,6 +72,8 @@ def export_opus_data(config, year):
             os.system("sed 's/:[a-z][0-9]//g' -i %s" % new_fname)
 
 if __name__ == "__main__":
+    try:import wingdbstub
+    except:pass
     from optparse import OptionParser
     from opus_core.resources import Resources
     from opus_core.file_utilities import get_resources_from_file

@@ -1423,7 +1423,7 @@ class TestChoiceModel(StochasticTestCase):
         self.assertEqual(unique(choices[:,0]).size == 100, True)
         rmtree(temp_dir)
 
-    def MASKEDtest_equilibration_choices(self):
+    def test_equilibration_choices(self):
         """
         unittest masked because it doesn't work with the default numpy/scipy version on Ubuntu
         """

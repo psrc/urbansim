@@ -4,10 +4,11 @@
 
 from urbansim.models.rate_based_model import RateBasedModel
 from opus_core.logger import logger
+from opus_core.models.model import Model
 from numpy import where, arange, array, logical_and, zeros, ones, cumsum, searchsorted, exp, sqrt
 from numpy.random import random, uniform, randint, shuffle
 
-class RoommateModel(RateBasedModel):
+class RoommateModel(Model):
     """
     """
     model_name = "Roommate Model"

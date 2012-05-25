@@ -12,9 +12,12 @@ class ChildLeavingHomeModel(RateBasedModel):
     """
     model_name = "Child Leaving Home Model"
 
-    def run(self, person_set, household_set, resources=None):
+    def run(self, person_set, household_set, resources=None, dataset_pool=None):
         person_ds_name, person_id_name = person_set.get_dataset_name(), person_set.get_id_name()[0]
+
         hh_ds_name, hh_id_name = household_set.get_dataset_name(), household_set.get_id_name()[0]
+        household_set.compute_one_variable_with_unknown_package("age_of_head", dataset_pool=dataset_pool)
+        person_set.compute_one_variable_with_unknown_package("head_of_hh", dataset_pool=dataset_pool)
         person_set.add_attribute(name='much_younger_than_head', data=person_set.compute_variables('(person.age) < ((person.disaggregate(household.age_of_head))-18)'))
         person_set.add_attribute(name='same_race_as_head', data=person_set.compute_variables('(person.race) ==(person.disaggregate(household.aggregate(person.head_of_hh * person.race)))'))
         index = RateBasedModel.run(self, person_set, resources=resources)

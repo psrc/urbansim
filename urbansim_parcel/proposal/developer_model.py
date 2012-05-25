@@ -29,6 +29,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.model import Model
 from opus_core import paths
+#from shifters import price_shifters
 
 DEBUG = 0
 MP = 0  #process parcels with multiprocessing?
@@ -411,12 +412,20 @@ def process_parcel(parcel):
             if ind_rent_sqft < 7: ind_rent_sqft = 7
             #if price_per_sqft_mf > 700: price_per_sqft_mf = 700
             price_per_sqft_mf *= .35
+            #price_per_sqft_mf *= price_shifters['price_per_sqft_mf']
             #if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
             #    price_per_sqft_mf = 1.5 * price_per_sqft_sf
             #price_per_sqft_mf = price_per_sqft_sf*.5
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
             if DEBUG > 0: print "of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft
             prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
+            #prices = (price_per_sqft_sf*price_shifters['price_per_sqft_sf'],
+            #          price_per_sqft_mf,
+            #          rent_per_sqft_sf*price_shifters['rent_per_sqft_sf'],
+            #          rent_per_sqft_mf*price_shifters['rent_per_sqft_mf'],
+            #          of_rent_sqft*price_shifters['of_rent_sqft'],
+            #          ret_rent_sqft*price_shifters['ret_rent_sqft'],
+            #          ind_rent_sqft*price_shifters['ind_rent_sqft'])
 
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
