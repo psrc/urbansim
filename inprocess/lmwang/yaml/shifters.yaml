@@ -1,0 +1,38 @@
+price_shifters:
+    price_per_sqft_mf: .35
+    price_per_sqft_sf: 1.2
+    rent_per_sqft_sf: 1.0
+    rent_per_sqft_mf: 2.0
+    of_rent_sqft: 1.85
+    ret_rent_sqft: 1.85
+    ind_rent_sqft: 2.5
+COST:
+    49: &sonoma 115.58      #sonoma
+    41: &sanmateo 114.6     # san mateo
+    1: &alameda 116.2       # alameda
+    43: &santaclara 117.15  # santa clara
+    28: &napa 115.58        # napa
+    38: &sanfrancisco 123.8 # san fran
+    7: &contracosta 112.9   # contra costa
+    48: &solano 110.5       # solano
+    21: &marin 115.58       # marin 
+RESLOCALCOST_D:
+    49: .45    # sonoma
+    41: 1.05   # san mateo
+    1: .95     # alameda
+    43: 1.0 # santa clara
+    28: 1.7 # napa
+    38: .8 # san fran
+    7: .95 # contra costa
+    48: .7 # solano
+    21: 1.45 # marin 
+NONRESLOCALCOST_D: 
+    49: .8 # sonoma
+    41: 1.0 # san mateo
+    1: .9 # alameda
+    43: 1.0 # santa clara
+    28: .8 # napa
+    38: 1.1 # san fran
+    7: .9 # contra costa
+    48: .6 # solano
+    21: .9 # marin 
