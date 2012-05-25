@@ -18,4 +18,6 @@
 aliases = [
     'is_employed = numpy.in1d(person.work_status, (1,2,4,5))',
     'is_child = person.age<18',
+    'gender = person.sex',
+    'head_of_hh = person.relate==1',
            ]
