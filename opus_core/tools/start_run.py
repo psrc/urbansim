@@ -34,13 +34,11 @@ class StartRunOptionGroup(GenericOptionGroup):
                                 help="Turn on code profiling. Output data are in python hotshot format.")
         
 
-if __name__ == "__main__":
-    #try: import wingdbstub
-    #except: pass
-    option_group = StartRunOptionGroup()
-    parser = option_group.parser
-    (options, args) = parser.parse_args()
-    
+def main(option_group=None):
+    if option_group is None:
+        option_group = StartRunOptionGroup()
+    options, args = option_group.parse()
+
     run_manager = RunManager(option_group.get_services_database_configuration(options))
     run_as_multiprocess = not options.run_as_single_process
     
@@ -83,6 +81,18 @@ if __name__ == "__main__":
  
     run_manager.setup_new_run(cache_directory = config['cache_directory'],
                               configuration = config)
+    run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
     run_manager.run_run(config, 
                         scenario_name=options.scenario_name,
                         run_as_multiprocess=run_as_multiprocess)
+
+    return run_id, cache_directory
+
+if __name__ == "__main__":
+    #try: import wingdbstub
+    #except: pass
+    option_group = StartRunOptionGroup()
+    option_group.parse()
+
+    main(option_group)
+
