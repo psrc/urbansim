@@ -7,18 +7,19 @@ import os
 import sys
 import time
 import pickle
+import subprocess
 import numpy as np
 from copy import copy
 from scipy.optimize import *
 from numpy.random import seed
 from numpy import array, arange
 from opus_core.logger import logger, log_block
-from opus_core.tools.start_run import StartRunOptionGroup, main
-from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.session_configuration import SessionConfiguration
 from opus_core.variables.variable_name import VariableName
+from opus_core.tools.start_run import StartRunOptionGroup, main
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -138,9 +139,10 @@ class Calibration(object):
         option_group = StartRunOptionGroup()
         option_group.parser.set_defaults(xml_configuration=self.xml_config,
                                   scenario_name=self.scenario)
-        #run_id, cache_directory = main(option_group)
-        run_id = 275
-        cache_directory = '/home/lmwang/opus/data/paris_zone/runs/run_275.2012_05_26_00_20'
+        run_id, cache_directory = main(option_group)
+        ## good for testing
+        #run_id = 275
+        #cache_directory = '/home/lmwang/opus/data/paris_zone/runs/run_275.2012_05_26_00_20'
         assert run_id is not None
         assert cache_directory is not None
         return run_id, cache_directory
@@ -162,8 +164,8 @@ class Calibration(object):
         cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name} --skip-cache-cleanup'\
                 .format(python=sys.executable, run_id=self.run_id, 
                         project_name=self.project_name, year=self.start_year)
-        import subprocess
-        subprocess.Popen( cmd, shell = True).communicate()        
+        
+        subprocess.Popen(cmd, shell=True).communicate()
         #p = os.popen(cmd)
         #p.read()
         #p.close()
@@ -172,9 +174,8 @@ class Calibration(object):
         dataset_name = VariableName(self.target_expression).get_dataset_name()
         current_year = self.simulation_state.get_current_time()
         self.simulation_state.set_current_time(self.end_year)
-        if self.dataset_pool.has_dataset(dataset_name):
-            #force reload
-            self.dataset_pool._remove_dataset(dataset_name) 
+        #force reload
+        self.dataset_pool.remove_all_datasets()
         dataset = self.dataset_pool[dataset_name]
         ids = dataset.get_id_attribute()
         results = dataset.compute_variables(self.target_expression, 
