@@ -180,6 +180,8 @@ class sql_storage(Storage):
                 table_data[column_name] = [float(cell) for cell in column_data]
             elif column_data.dtype.kind == 'S':
                 table_data[column_name] = [str(cell) for cell in column_data]
+            elif column_data.dtype.kind == 'b':
+                table_data[column_name] = [bool(cell) for cell in column_data]
         
         if db.table_exists(table_name):
             db.drop_table(table_name)
@@ -417,7 +419,8 @@ else:
                         table_data = {
                             'int_data': array([2,1]),
                             'float_data': array([2.2,1.1]),
-                            'string_data': array(['foo', 'bar'])
+                            'string_data': array(['foo', 'bar']),
+                            'boolean_data': array([True, False]),
                             }
                         )
                         
@@ -428,10 +431,10 @@ else:
 #                        expected_results = [(1,Decimal(str(1.1)),'bar'), (2,Decimal(str(2.2)),'foo')]
 #                    else:
 #                        expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
-                    expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
+                    expected_results = [(long(1),1.1,'bar',False), (long(2),2.2,'foo',True)]
                     # Verify the data through a DatabaseServer database connection        
                     tbl = db.get_table('test_write_table')
-                    s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
+                    s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data, tbl.c.boolean_data], order_by = tbl.c.int_data)
                     results = db.execute(s).fetchall()
                     
                     self.assertEqual(expected_results, results)
