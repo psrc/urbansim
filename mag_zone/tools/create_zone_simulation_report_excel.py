@@ -113,7 +113,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total population under age 5 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -123,87 +123,187 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total population ages 5-9 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_10_15')
+        self.worksheet.write(0,self.column_counter, 'pop_age_10_14')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 10-15 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 16' % (self.run_name,year))
+            print 'Computing total population ages 10-14 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_16_18')
+        self.worksheet.write(0,self.column_counter, 'pop_age_15_17')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 16-18 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 15 and age < 19' % (self.run_name,year))
+            print 'Computing total population ages 15-17 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 18 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_19_24')
+        self.worksheet.write(0,self.column_counter, 'pop_age_18_19')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 19-24 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 18 and age < 25' % (self.run_name,year))
+            print 'Computing total population ages 18-19 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 17 and age < 20 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_25_34')
+        self.worksheet.write(0,self.column_counter, 'pop_age_20_24')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 25-34 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 35' % (self.run_name,year))
+            print 'Computing total population ages 20-24 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_35_44')
+        self.worksheet.write(0,self.column_counter, 'pop_age_25_29')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 35-44 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 45' % (self.run_name,year))
+            print 'Computing total population ages 25-29 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_45_54')
+        self.worksheet.write(0,self.column_counter, 'pop_age_30_34')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 45-54 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 55' % (self.run_name,year))
+            print 'Computing total population ages 30-34 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_55_64')
+        self.worksheet.write(0,self.column_counter, 'pop_age_35_39')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 55-64 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 65' % (self.run_name,year))
+            print 'Computing total population ages 35-39 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'pop_age_over_65')
+        self.worksheet.write(0,self.column_counter, 'pop_age_40_44')
         row_counter = 1
         for year in self.years:
-            print 'Computing total population ages 65+ for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64' % (self.run_name,year))
+            print 'Computing total population ages 40-44 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_45_49')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 45-49 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_50_54')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 50-54 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_55_59')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 55-59 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_60_61')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 60-61 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 62 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_62_64')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 62-64 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 61 and age < 65 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_65_69')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 65-69 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_70_74')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 70-74 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_75_79')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 75-79 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_80_84')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 80-84 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and is_seasonal = 0' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'pop_age_over_84')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population ages 85+ for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -915,7 +1015,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 1' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 1 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -925,7 +1025,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 2' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where sex = 2 and is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1147,9 +1247,9 @@ class RegionWideReport():
         for year in self.years:
             print 'Computing total population for year %s' % year
             try:
-                r = self.connection.execute('select sum(persons) from %s_%s_households' % (self.run_name, year))
+                r = self.connection.execute('select sum(persons) from %s_%s_households where is_seasonal = 0' % (self.run_name, year))
             except:
-                r = self.connection.execute('select count(*) from %s_%s_persons' % (self.run_name, year))
+                r = self.connection.execute('select count(*) from %s_%s_persons where is_seasonal = 0' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1

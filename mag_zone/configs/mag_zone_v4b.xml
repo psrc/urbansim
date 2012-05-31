@@ -1,0 +1,50 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string" hidden="True">mag_zone_v4b</project_name>
+    <parent type="file">mag_zone/configs/mag_zone_base.xml</parent>
+  </general>
+  <scenario_manager>
+    <scenario executable="True" name="demographic_evolution_models" type="scenario">
+      <model_system type="string">opus_core.model_coordinators.model_system</model_system>
+      <base_year type="integer">2010</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2011</firstyear>
+        <lastyear type="integer">2011</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
+        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
+        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
+        <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
+        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
+        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
+        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
+        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
+        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
+        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
+        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
+        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
+        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
+        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
+      </models_to_run>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4b/runs</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4b/base_year_data</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="person" type="selectable">True</selectable>
+      </datasets_to_preload>
+    </scenario>
+  </scenario_manager>
+</opus_project>
+
