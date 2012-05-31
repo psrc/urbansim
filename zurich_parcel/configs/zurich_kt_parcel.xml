@@ -798,7 +798,7 @@
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">job.number_of_agents(person)==0</argument>
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
-            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">person.job_id</argument>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">job_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="model_name" parser_action="quote_string" type="string">WorkplaceLocationChoiceModel</argument>
             <argument name="short_name" parser_action="quote_string" type="string">WLCM</argument>
@@ -855,6 +855,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
             <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+            <argument name="agents_filter" parser_action="quote_string" type="string" model_dependency_type="variable">zurich_parcel.person.is_in_labour_market_without_job</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
