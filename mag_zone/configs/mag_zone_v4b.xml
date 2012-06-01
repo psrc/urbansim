@@ -8,7 +8,13 @@
     <templates name="Model Templates" parser_action="skip" hidden="True"/>
 	<estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration" inherited="urbansim_zone">
 	  <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list" inherited="urbansim">
-	    <selectable name="household" type="selectable" inherited="urbansim">False</selectable>
+	    <selectable name="household" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="building" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="job" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="zone" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="development_event_history" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="target_vacancy" type="selectable" inherited="urbansim">True</selectable>
+		<selectable name="building_type" type="selectable" inherited="urbansim">True</selectable>
 	  </datasets_to_preload>
 	  <save_estimation_results type="boolean" inherited="urbansim">False</save_estimation_results>
 	  <estimation_database_configuration type="class" inherited="urbansim">
@@ -19,7 +25,7 @@
 	  <dataset_pool_configuration type="class" inherited="urbansim">
 	    <class_name hidden="True" type="string" inherited="urbansim">DatasetPoolConfiguration</class_name>
 	    <class_module hidden="True" type="string" inherited="urbansim">opus_core.configurations.dataset_pool_configuration</class_module>
-	    <argument name="package_order" type="list" inherited="urbansim">['urbansim', 'opus_core']</argument>
+	    <argument name="package_order" type="list" inherited="urbansim">['mag_zone','urbansim_zone','urbansim','opus_core']</argument>
 	  </dataset_pool_configuration>
 	  <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data" inherited="urbansim_zone">mag_zone_v4b/base_year_data</cache_directory>
 	  <base_year type="integer" field_identifier="Base Year" inherited="urbansim_zone">2010</base_year>
