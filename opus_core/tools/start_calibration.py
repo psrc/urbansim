@@ -161,7 +161,7 @@ class Calibration(object):
 
     def update_prediction(self, est_v, *args, **kwargs):
         self.update_parameters(est_v, *args, **kwargs)
-        cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name} --skip-cache-cleanup'\
+        cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
                 .format(python=sys.executable, run_id=self.run_id, 
                         project_name=self.project_name, year=self.start_year)
         
