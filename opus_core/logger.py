@@ -300,6 +300,11 @@ class _Logger(Singleton):
             message = ' '.join(map(unicode, what_to_log))   
             self._writeln(message)
 
+    def log_debug(self, message='',  **kwargs):
+        l = kwargs.get("verbosity_level", 4)
+        kwargs["verbosity_level"] = l
+        self.log_status(message, **kwargs)
+
     def log_error(self, message=''):
         message = "ERROR: " + str(message)
         self._writeln(message)
