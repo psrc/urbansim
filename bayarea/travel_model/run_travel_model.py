@@ -25,12 +25,14 @@ if __name__ == "__main__":
         print "ERROR: Please specify a scenario year with -y"
         sys.exit(1)
 
+    # TODO: This should really be calculated somehow from travel_model_home.
+    windows_travel_model_home = "E:\\\\mtc_travel_model"
 
     # Set up the server.
     print "Setting up proper directory structure..."
     server_admin = winssh.winssh(config.server_admin)
     modeldir = options.year + "_" + options.scenario
-    abs_modeldir = "/cygdrive/c/Users/cube/" + modeldir
+    abs_modeldir = config.travel_model_home + modeldir
     if server_admin.cmd("test -e " + abs_modeldir)[0] != 0:
         print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
         sys.exit(1)
@@ -76,12 +78,13 @@ if __name__ == "__main__":
 
     print "Setting up M drive on server..."
     server.cmd("subst /D M:")
-    server.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
+
+    server.cmd_or_fail("subst M: " + windows_travel_model_home)
 
     # Prepare synthesized population, etc.
     print "Synthesizing population..."
     synth_script = "TazAndPopSyn.bat"
-    server.cmd_or_fail('cd /cygdrive/c/Users/cube/land_use_and_synthesizer')
+    server.cmd_or_fail('cd ' + config.travel_model_home + 'land_use_and_synthesizer')
     server.cmd_or_fail('cmd /c "' + synth_script + ' ' + options.scenario + ' ' + options.year + ' > M:\\\\' + modeldir + '\\\\synthOutput.log"')
 
     print "Launching runMain..."
@@ -126,7 +129,7 @@ if __name__ == "__main__":
 
     print "Setting up M drive on server..."
     server_model.cmd("subst /D M:")
-    server_model.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
+    server_model.cmd_or_fail("subst M: " + windows_travel_model_home)
     server_model.cmd_or_fail('cd /cygdrive/m/commpath/CTRAMP/runtime')
 
     print "Starting Model"

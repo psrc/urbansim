@@ -29,6 +29,10 @@ class MTCConfig:
     #
     # SECURITY WARNING: This config file contains a password.  It should not be
     # world readable, and no real passwords should be checked in!
-    netdrive = "\\\\detroit.urbansim.org\\cube"
+    netdrive = "\\\\detroit.urbansim.org\\mtc_travel_model"
     netuser = "cube"
     netpw = "********"
+
+    # This is the base directory where all instances of the travel model for
+    # the different scenarios are organized.
+    travel_model_home = "/cygdrive/e/mtc_travel_model/"
