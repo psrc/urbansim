@@ -1,5 +1,6 @@
 import sys
 import pxssh
+from opus_core.logger import logger
 
 # You can test winssh by running python winssh.py.  But you'll have to supply a
 # suitable connect string
@@ -18,16 +19,22 @@ class winssh:
         host = connectspec.split(':')[0].split('@')[1]
         self.s = pxssh.pxssh()
         self.s.force_password = True
-        print "Attempting to login to " + user + "@" + host
+        logger.log_status("Attempting to login to " + user + "@" + host)
         self.s.login(host, user, pw, login_timeout=20)
         self.s.setecho(False)
 
     def cmd(self, c):
         self.s.sendline(c)
         self.s.prompt(timeout=None)
+        logger.log_debug("BEFORE PROMPT")
+        logger.log_debug(repr(self.s.before))
         output = "\r\n".join(self.s.before.split("\r\n")[1:])
+        logger.log_debug("OUTPUT")
+        logger.log_debug(output)
         self.s.sendline("echo $?")
         self.s.prompt()
+        logger.log_debug("BEFORE $? PROMPT")
+        logger.log_debug(repr(self.s.before))
         rc = self.s.before.split("\r\n")[1]
         return (int(rc), output)
 
@@ -35,14 +42,14 @@ class winssh:
         (rc, out) = self.cmd(c)
         if rc != 0:
             if supress_cmd:
-                print "Command Failed",
+                logger.log_status("Command Failed:")
             else:
-                print "Failed to " + c,
-            print "(" + str(rc) + "):"
-            print out
+                logger.log_status("Failed to: " + c)
+            logger.log_status("(" + str(rc) + "):")
+            logger.log_status(out)
             sys.exit(1)
         if not supress_output:
-            print out
+            logger.log_status(out)
 
 if __name__ == '__main__':
     node1 = winssh(CONNECT_STRING)
