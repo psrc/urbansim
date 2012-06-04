@@ -11,14 +11,14 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
+from urbansim.datasets.travel_data_dataset import TravelDataDataset
 
-# this is a test of the expression alias file
-# one of the aliases uses a primary attribute in the expression, the other a variable
-
-aliases = [
-    'mpa_id = job.disaggregate(building.disaggregate(zone.mpa_id))',
-    'raz_id = job.disaggregate(building.disaggregate(zone.raz_id))',
-    'county_id = job.disaggregate(building.disaggregate(zone.county_id))',
-    'is_pub_employment = (job.sector_id == 20)',
-    'tazi03_id = job.disaggregate(building.disaggregate(zone.tazi03_id))'
-           ]
+class TravelDataDataset(TravelDataDataset):
+    """Set of travel data logsums."""
+    
+    id_name_default = []      # use _hidden_id
+    origin_id_name = "from_tazi03_id"
+    destination_id_name = "to_tazi03_id"
+    in_table_name_default = "travel_data"
+    out_table_name_default = "travel_data"
+    dataset_name = "travel_data"
