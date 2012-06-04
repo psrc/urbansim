@@ -37,8 +37,8 @@ if __name__ == "__main__":
         print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
         sys.exit(1)
     server_admin.cmd("subst /D M:")
-    server_admin.cmd_or_fail("subst M: C:\\\\Users\\\\cube")
-    server_admin.cmd('cmd /c "rmdir M:\\\\commpath"')
+    server_admin.cmd_or_fail("subst M: " + windows_travel_model_home)
+    server_admin.cmd('rm /cygdrive/m/commpath')
     server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + modeldir + '"')
 
     server = winssh.winssh(config.server)
