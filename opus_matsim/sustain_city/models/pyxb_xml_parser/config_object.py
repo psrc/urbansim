@@ -16,10 +16,11 @@ class MATSimConfigObject(object):
     def __init__(self, config, year):
         """ Constructor
         """
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         self.config_dictionary = config
         self.sub_config_exists = False
@@ -38,7 +39,8 @@ class MATSimConfigObject(object):
         # controler parameter
         self.first_iteration = first_iteration
         self.last_iteration = matsim_common['last_iteration']
-        self.matsim_configuration = self.__get_file_location( matsim_common['matsim_config'] )
+        self.matsim_configuration = self.__get_external_matsim_config_for_current_year(matsim_common['external_matsim_config'], year)
+        #self.matsim_configuration = self.__get_file_location( matsim_common['matsim_config'] )
         
         # planCalcScoreType
         self.activityType_0                 = activity_type_0
@@ -123,6 +125,18 @@ class MATSimConfigObject(object):
         self.betawalk_ln_travel_cost                = walk_parameter['betawalk_ln_travel_cost']
         
         self.config_destination_location = self.__set_config_destination( self.config_dictionary )
+        
+    def __get_external_matsim_config_for_current_year(self, external_matsim_config, year):
+        
+        if external_matsim_config != None:
+            try:
+                path = external_matsim_config[str(year)]
+                return self.__get_file_location( path )
+            except:
+                logger.log_status("There is no external MATSim configuration set for the current year!")
+        
+        return ""    
+        
     
     def __get_file_location(self, file_path, required=False ):
         ''' checks if a given sub path exists
@@ -135,9 +149,11 @@ class MATSimConfigObject(object):
                 self.sub_config_exists = False
         if self.sub_config_exists:
             self.check_abolute_path( file_path )
-            return paths.get_opus_home_path( file_path )
-        else:
-            return ""
+            path = paths.get_opus_home_path( file_path )
+            if os.path.exists( path ):
+                return path
+
+        return ""
         
         
     def __get_plans_file(self, common_matsim_part, entry):
@@ -167,8 +183,13 @@ class MATSimConfigObject(object):
     
     def ceckAndCreateFolder(self, path):
         if not os.path.exists(path):
-            try: os.mkdir(path)
-            except: pass
+            msg = "Folder %s dosn't exist and is created ..." % (path)
+            try:
+                logger.log_status(msg)
+                os.mkdir(path)
+                logger.log_status("done!")
+            except: 
+                logger.log_error("Folder could not be created!")
             
     def __get_value_as_boolean(self, option, sub_config):
         ''' if a value (option) is listed in the sub_config, than it is marked in the config checkbox'''
@@ -183,7 +204,7 @@ class MATSimConfigObject(object):
         """
 
         # create/maschal matsim config file
-        logger.log_status("Creating MATSim config file in " + self.config_destination_location)
+        logger.log_status("Generating MATSim4UrbanSin configuration at " + self.config_destination_location)
         
         # xml root element
         root = pyxb_matsim_config_parser.matsim_configType.Factory()
@@ -313,7 +334,7 @@ class MATSimConfigObject(object):
         if not file_object.closed:
             file_object.close()
             
-        logger.log_status( "Finished Marschalling" )
+        logger.log_status( "Generating MATSim4UrbanSim configuration done!" )
         
         return self.config_destination_location
         

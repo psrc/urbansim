@@ -51,6 +51,11 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         if not os.path.exists( self.output_directory ):
             try: os.mkdir(self.output_directory)
             except: pass
+            
+        ### TODO building types ??? ###############################
+        
+        # dump out buildings by building type
+        # i.e. for restaurants dump out all buildings (ids) with building type restaurant and the zone id
                 
         ### Jobs ###############################
         
