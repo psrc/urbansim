@@ -53,7 +53,7 @@ class RunTravelModel(AbstractTravelModel):
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZurichTest",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimParcel",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         else:
@@ -62,7 +62,7 @@ class RunTravelModel(AbstractTravelModel):
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZurichTest",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimParcel",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
