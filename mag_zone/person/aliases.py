@@ -16,8 +16,34 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
+    # employment variables:
     'is_employed = numpy.in1d(person.work_status, (1,2,4,5))',
+    'is_student = person.student_status>1'
+    # age related variables:
     'is_child = person.age<18',
+    'is_driving_age = person.age>15',
+    'is_young_adult = person.age>17'
+    'is_adult = person.age>17',
+    'is_senior_citizen = person.age>64',
+    # education variables:
+    'less_than_high_school_diploma = person.education<9',
+    'at_least_high_school_diploma = person.education>8',
+    'at_least_associates_degree = person.education>11',
+    'at_least_bachelors_degree = person.education>12',
+    'at_least_masters_degree = person.education>13'
+    # population by geographies:
+    'tazi03_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.tazi03_id)))',
+    'taz2012_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.taz2012_id)))',
+    'razi03_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.razi03_id)))',
+    'raz2012_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.raz2012_id)))',
+    'mpa_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.mpa_id)))',
+    'zone_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.zone_id)))',
+    'pseudo_blockgroup_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id)))',
+    'census_place_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.census_place_id)))',
+    # other variables:
     'gender = person.sex',
     'head_of_hh = person.relate==1',
+    'is_hispanic = numpy.in1d(person.race_id, (6,7,8,9,10))',
+    'is_not_hispanic = numpy.in1d(person.race_id, (1,2,3,4,5))',
+    'is_married = numpy.in1d(person.marriage_status, (1,2))',
            ]

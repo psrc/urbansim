@@ -16,13 +16,19 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-    'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
-    'raz_id = household.disaggregate(building.disaggregate(zone.raz_id))',
+    # household attributes
     'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
-    'age_of_head = household.aggregate(person.age * (person.relate==1))',
     'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
     'age_of_head = household.aggregate(person.age * person.head_of_hh)',
     'workers = household.aggregate(mag_zone.person.is_employed)',
-    'income = household.aggregate(person.income)',
-    'children = household.aggregate(mag_zone.person.is_child)'
+    'children = household.aggregate(mag_zone.person.is_child)',
+    # households by geographies:
+    'tazi03_id = household.disaggregate(building.disaggregate(zone.tazi03_id))',
+    'razi03_id = household.disaggregate(building.disaggregate(zone.razi03_id))',
+    'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
+    'taz2012_id = household.disaggregate(building.disaggregate(zone.taz2012_id))',
+    'raz2012_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',
+    'zone_id = household.disaggregate(building.disaggregate(zone.zone_id))',
+    'pseudo_blockgroup_id = household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
+    'census_place_id = household.disaggregate(building.disaggregate(zone.census_place_id))',
            ]

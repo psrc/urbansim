@@ -16,13 +16,5 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-    'zone_id = job.disaggregate(building.disaggregate(zone.zone_id))',
-    'taz2012_id = job.disaggregate(building.disaggregate(zone.taz2012_id))',
-    'mpa_id = job.disaggregate(building.disaggregate(zone.mpa_id))',
-    'raz_id = job.disaggregate(building.disaggregate(zone.raz_id))',
-    'raz2012_id = job.disaggregate(building.disaggregate(zone.raz2012_id))',
-    'county_id = job.disaggregate(building.disaggregate(zone.county_id))',
-    'tazi03_id = job.disaggregate(building.disaggregate(zone.tazi03_id))',
-    'pseudo_blockgroup_id = job.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
-    'census_place_id = job.disaggregate(building.disaggregate(zone.census_place_id))',
            ]
+
