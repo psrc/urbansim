@@ -18,7 +18,7 @@
 aliases = [
     # employment variables:
     'is_employed = numpy.in1d(person.work_status, (1,2,4,5))',
-    'is_student = person.student_status>1'
+    'is_student = person.student_status>1',
     # age related variables:
     'is_child = person.age<18',
     'is_driving_age = person.age>15',
@@ -30,7 +30,7 @@ aliases = [
     'at_least_high_school_diploma = person.education>8',
     'at_least_associates_degree = person.education>11',
     'at_least_bachelors_degree = person.education>12',
-    'at_least_masters_degree = person.education>13'
+    'at_least_masters_degree = person.education>13',
     # population by geographies:
     'tazi03_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.tazi03_id)))',
     'taz2012_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.taz2012_id)))',
