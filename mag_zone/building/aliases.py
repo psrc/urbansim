@@ -12,7 +12,7 @@ aliases = [
     "is_developing_type = (building.building_type_id==1)+(building.building_type_id==2)+(building.building_type_id==3)+(building.building_type_id==4)+(building.building_type_id==6)+(building.building_type_id==7)+(building.building_type_id==8)+(building.building_type_id==9)+(building.building_type_id==10)",
     "bldg_sqft_constructed_this_year = (building.non_residential_sqft - building.non_residential_sqft_lag1)+((building.residential_units*building.sqft_per_unit)-(building.residential_units_lag1*building.sqft_per_unit))",
     "mpa_id = building.disaggregate(zone.mpa_id)",
-    "raz_id = building.disaggregate(zone.raz2012_id)",
+    "raz2012_id = building.disaggregate(zone.raz2012_id)",
     "is_building_type_rsf = urbansim_zone.building.is_building_type_rsf",
     "is_building_type_rmf = urbansim_zone.building.is_building_type_rmf",
     "is_building_type_retl = urbansim_zone.building.is_building_type_retl",
