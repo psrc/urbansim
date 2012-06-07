@@ -17,5 +17,7 @@
 
 aliases = [
     'county_jobs_5 = county.aggregate(job.sector_id==5)',
-    'county_total_jobs = county.number_of_agents(job)'
+    'total_jobs = county.number_of_agents(job)',
+    'total_households = county.number_of_agents(household)',
+    'total_population = county.number_of_agents(person)',
            ]

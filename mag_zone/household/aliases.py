@@ -18,10 +18,16 @@
 aliases = [
     # household attributes
     'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
-    'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
     'age_of_head = household.aggregate(person.age * person.head_of_hh)',
-    'workers = household.aggregate(mag_zone.person.is_employed)',
     'children = household.aggregate(mag_zone.person.is_child)',
+    'income_greater_than_100k = household.income>99999',
+    'income_greater_than_200k = household.income>199999',
+    'income_greater_than_500k = household.income>499999',
+    'is_seasonal = household.is_seasonal==1',
+    'is_seasonal_and_all_pp_over_55 = numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_the_youngest>54)',
+    'is_seasonal_and_hh_head_over_55 = numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_head>54)',
+    'all_pp_over_55 = mag_zone.household.age_of_the_youngest>54',
+    'hh_head_over_55 = mag_zone.household.age_of_head>54',
     # households by geographies:
     'tazi03_id = household.disaggregate(building.disaggregate(zone.tazi03_id))',
     'razi03_id = household.disaggregate(building.disaggregate(zone.razi03_id))',
@@ -31,5 +37,6 @@ aliases = [
     'zone_id = household.disaggregate(building.disaggregate(zone.zone_id))',
     'pseudo_blockgroup_id = household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
     'census_place_id = household.disaggregate(building.disaggregate(zone.census_place_id))',
-    'raz_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',    
+    'raz_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',
+    'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
            ]

@@ -5,6 +5,7 @@
     <description type="string">MAG Zone Base Project</description>
     <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
     <expression_library type="dictionary">
+<!-- Variables generated in GUI  -->
       <variable use="both" source="expression" name="tazi03.zonal_tazi03_pct_high_income_hhlds_within_15_offpeak_sov" type="variable_definition">ln(100*safe_array_divide(mag_zone.tazi03.number_of_high_income_households_within_15_offpeak_sov_tt_threshold, mag_zone.tazi03.number_of_households_within_15_offpeak_sov_tt_threshold))</variable>
       <variable use="both" source="expression" name="tazi03.zonal_tazi03_pct_mid_income_hhlds_within_15_offpeak_sov" type="variable_definition">ln(100*safe_array_divide(mag_zone.tazi03.number_of_mid_income_households_within_15_offpeak_sov_tt_threshold, mag_zone.tazi03.number_of_households_within_15_offpeak_sov_tt_threshold))</variable>
       <variable use="both" source="expression" name="tazi03.zonal_tazi03_pct_low_income_hhlds_within_15_offpeak_sov" type="variable_definition">ln(100*safe_array_divide(mag_zone.tazi03.number_of_low_income_households_within_15_offpeak_sov_tt_threshold, mag_zone.tazi03.number_of_households_within_15_offpeak_sov_tt_threshold))</variable>
@@ -255,6 +256,288 @@
       <variable use="both" source="expression" name="building.zonal_num_jobs" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(job)))</variable>
       <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
       <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
+<!-- Variables generated from script  -->
+	<variable use="both" source="expression" name="building.skyharbor_enplanement_capacity" type="variable_definition">(building.other_spaces_name=='skyharbor_enplanement_capacity')*(building.other_spaces)</variable>
+	<variable use="both" source="expression" name="building.williamsgateway_enplanement_capacity" type="variable_definition">(building.other_spaces_name=='williamsgateway_enplanement_capacity')*(building.other_spaces)</variable>
+	<variable use="both" source="expression" name="building.hotel_motel_rooms" type="variable_definition">(building.other_spaces_name=='hotel_motel_rooms')*(building.other_spaces)</variable>
+	<variable use="both" source="expression" name="building.is_developing_type" type="variable_definition">(building.building_type_id==1)+(building.building_type_id==2)+(building.building_type_id==3)+(building.building_type_id==4)+(building.building_type_id==6)+(building.building_type_id==7)+(building.building_type_id==8)+(building.building_type_id==9)+(building.building_type_id==10)</variable>
+	<variable use="both" source="expression" name="building.bldg_sqft_constructed_this_year" type="variable_definition">(building.non_residential_sqft - building.non_residential_sqft_lag1)+((building.residential_units*building.sqft_per_unit)-(building.residential_units_lag1*building.sqft_per_unit))</variable>
+	<variable use="both" source="expression" name="building.mpa_id" type="variable_definition">building.disaggregate(zone.mpa_id)</variable>
+	<variable use="both" source="expression" name="building.raz2012_id" type="variable_definition">building.disaggregate(zone.raz2012_id)</variable>
+	<variable use="both" source="expression" name="building.is_building_type_rsf" type="variable_definition">urbansim_zone.building.is_building_type_rsf</variable>
+	<variable use="both" source="expression" name="building.is_building_type_rmf" type="variable_definition">urbansim_zone.building.is_building_type_rmf</variable>
+	<variable use="both" source="expression" name="building.is_building_type_retl" type="variable_definition">urbansim_zone.building.is_building_type_retl</variable>
+	<variable use="both" source="expression" name="building.is_building_type_ind" type="variable_definition">urbansim_zone.building.is_building_type_ind</variable>
+	<variable use="both" source="expression" name="building.is_building_type_off" type="variable_definition">urbansim_zone.building.is_building_type_off</variable>
+	<variable use="both" source="expression" name="building.is_building_type_hot" type="variable_definition">urbansim_zone.building.is_building_type_hot</variable>
+	<variable use="both" source="expression" name="building.occupied_hot_units_col" type="variable_definition">urbansim_zone.building.is_building_type_hot * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+	<variable use="both" source="expression" name="building.total_hot_units_col" type="variable_definition">urbansim_zone.building.is_building_type_hot * building.non_residential_sqft</variable>
+	<variable use="both" source="expression" name="building.occupied_off_units_col" type="variable_definition">urbansim_zone.building.is_building_type_off * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+	<variable use="both" source="expression" name="building.total_off_units_col" type="variable_definition">urbansim_zone.building.is_building_type_off * building.non_residential_sqft</variable>
+	<variable use="both" source="expression" name="building.occupied_ind_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ind * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+	<variable use="both" source="expression" name="building.total_ind_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ind * building.non_residential_sqft</variable>
+	<variable use="both" source="expression" name="building.occupied_retl_units_col" type="variable_definition">urbansim_zone.building.is_building_type_retl * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+	<variable use="both" source="expression" name="building.total_retl_units_col" type="variable_definition">urbansim_zone.building.is_building_type_retl * building.non_residential_sqft</variable>
+	<variable use="both" source="expression" name="building.occupied_rsf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rsf * urbansim_zone.building.number_of_households</variable>
+	<variable use="both" source="expression" name="building.total_rsf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rsf * building.residential_units</variable>
+	<variable use="both" source="expression" name="building.occupied_rmf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rmf * urbansim_zone.building.number_of_households</variable>
+	<variable use="both" source="expression" name="building.total_rmf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rmf * building.residential_units</variable>
+	<variable use="both" source="expression" name="building.num_of_pub_jobs" type="variable_definition">building.aggregate(job.sector_id == 21)</variable>
+	<variable use="both" source="expression" name="building.num_of_pub_local_jobs" type="variable_definition">building.aggregate(job.sector_id == 22)</variable>
+	<variable use="both" source="expression" name="building.is_building_type_pub" type="variable_definition">(building.building_type_id == 14)</variable>
+	<variable use="both" source="expression" name="building.is_building_type_pub_local" type="variable_definition">(building.building_type_id == 16)</variable>
+	<variable use="both" source="expression" name="building.weight_for_pub_local_jobs" type="variable_definition">mag_zone.building.num_of_pub_local_jobs + (numpy.logical_and(building.building_type_id == 16, mag_zone.building.num_of_pub_local_jobs == 0)*(building.non_residential_sqft/50)).astype(int32)</variable>
+	<variable use="both" source="expression" name="building.wah_capacity" type="variable_definition">building.residential_units * 3</variable>
+	<variable use="both" source="expression" name="building.mpa_population" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.aggregate(household.persons)))</variable>
+	<variable use="both" source="expression" name="building.mpa_city_jobs" type="variable_definition">building.disaggregate(mpa.aggregate(mag_zone.building.num_of_pub_jobs))</variable>
+	<variable use="both" source="expression" name="building.vacant_residential_units_with_negatives" type="variable_definition">building.residential_units - urbansim_zone.building.number_of_households</variable>
+	<variable use="both" source="expression" name="building.vacant_non_home_based_job_spaces_with_negatives" type="variable_definition">urbansim_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs</variable>
+	<variable use="both" source="expression" name="building.vacant_home_based_job_spaces_with_negatives" type="variable_definition">urbansim_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs</variable>
+	<variable use="both" source="expression" name="business.mpa_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.mpa_id))</variable>
+	<variable use="both" source="expression" name="business.raz_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.raz_id))</variable>
+	<variable use="both" source="expression" name="business.county_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.county_id))</variable>
+	<variable use="both" source="expression" name="county.county_jobs_5" type="variable_definition">county.aggregate(job.sector_id==5)</variable>
+	<variable use="both" source="expression" name="county.total_jobs" type="variable_definition">county.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="county.total_households" type="variable_definition">county.number_of_agents(household)</variable>
+	<variable use="both" source="expression" name="county.total_population" type="variable_definition">county.number_of_agents(person)</variable>
+	<variable use="both" source="expression" name="household.age_of_the_youngest" type="variable_definition">household.aggregate(person.age, function=minimum)</variable>
+	<variable use="both" source="expression" name="household.age_of_head" type="variable_definition">household.aggregate(person.age * person.head_of_hh)</variable>
+	<variable use="both" source="expression" name="household.children" type="variable_definition">household.aggregate(mag_zone.person.is_child)</variable>
+	<variable use="both" source="expression" name="household.income_greater_than_100k" type="variable_definition">household.income&gt;99999</variable>
+	<variable use="both" source="expression" name="household.income_greater_than_200k" type="variable_definition">household.income&gt;199999</variable>
+	<variable use="both" source="expression" name="household.income_greater_than_500k" type="variable_definition">household.income&gt;499999</variable>
+	<variable use="both" source="expression" name="household.is_seasonal" type="variable_definition">household.is_seasonal==1</variable>
+	<variable use="both" source="expression" name="household.is_seasonal_and_all_pp_over_55" type="variable_definition">numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_the_youngest&gt;54)</variable>
+	<variable use="both" source="expression" name="household.is_seasonal_and_hh_head_over_55" type="variable_definition">numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_head&gt;54)</variable>
+	<variable use="both" source="expression" name="household.all_pp_over_55" type="variable_definition">mag_zone.household.age_of_the_youngest&gt;54</variable>
+	<variable use="both" source="expression" name="household.hh_head_over_55" type="variable_definition">mag_zone.household.age_of_head&gt;54</variable>
+	<variable use="both" source="expression" name="household.tazi03_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.tazi03_id))</variable>
+	<variable use="both" source="expression" name="household.razi03_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.razi03_id))</variable>
+	<variable use="both" source="expression" name="household.mpa_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.mpa_id))</variable>
+	<variable use="both" source="expression" name="household.taz2012_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.taz2012_id))</variable>
+	<variable use="both" source="expression" name="household.raz2012_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.raz2012_id))</variable>
+	<variable use="both" source="expression" name="household.zone_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.zone_id))</variable>
+	<variable use="both" source="expression" name="household.pseudo_blockgroup_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))</variable>
+	<variable use="both" source="expression" name="household.census_place_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.census_place_id))</variable>
+	<variable use="both" source="expression" name="household.raz_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.raz2012_id))</variable>
+	<variable use="both" source="expression" name="household.county_id" type="variable_definition">household.disaggregate(building.disaggregate(zone.county_id))</variable>
+	<variable use="both" source="expression" name="job.zone_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.zone_id))</variable>
+	<variable use="both" source="expression" name="job.taz2012_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.taz2012_id))</variable>
+	<variable use="both" source="expression" name="job.mpa_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.mpa_id))</variable>
+	<variable use="both" source="expression" name="job.raz_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.raz_id))</variable>
+	<variable use="both" source="expression" name="job.raz2012_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.raz2012_id))</variable>
+	<variable use="both" source="expression" name="job.county_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.county_id))</variable>
+	<variable use="both" source="expression" name="job.tazi03_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.tazi03_id))</variable>
+	<variable use="both" source="expression" name="job.pseudo_blockgroup_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))</variable>
+	<variable use="both" source="expression" name="job.census_place_id" type="variable_definition">job.disaggregate(building.disaggregate(zone.census_place_id))</variable>
+	<variable use="both" source="expression" name="job.is_public_job" type="variable_definition">numpy.in1d(job.sector_id, (21,22))</variable>
+	<variable use="both" source="expression" name="job.is_industrial_job" type="variable_definition">numpy.in1d(job.sector_id, (2,5,6,8))</variable>
+	<variable use="both" source="expression" name="job.is_entertainment_job" type="variable_definition">numpy.in1d(job.sector_id, (7,18,19))</variable>
+	<variable use="both" source="expression" name="job.is_office_job" type="variable_definition">numpy.in1d(job.sector_id, (9,10,11,12,13))</variable>
+	<variable use="both" source="expression" name="job.is_homebased_job" type="variable_definition">job.home_based==1</variable>
+	<variable use="both" source="expression" name="job.is_agricultural_job" type="variable_definition">job.sector_id==1</variable>
+	<variable use="both" source="expression" name="job.is_mining_job" type="variable_definition">job.sector_id==2</variable>
+	<variable use="both" source="expression" name="job.is_utilities_job" type="variable_definition">job.sector_id==3</variable>
+	<variable use="both" source="expression" name="job.is_construction_job" type="variable_definition">job.sector_id==4</variable>
+	<variable use="both" source="expression" name="job.is_manufacturing_job" type="variable_definition">job.sector_id==5</variable>
+	<variable use="both" source="expression" name="job.is_wholesale_job" type="variable_definition">job.sector_id==6</variable>
+	<variable use="both" source="expression" name="job.is_retail_job" type="variable_definition">job.sector_id==7</variable>
+	<variable use="both" source="expression" name="job.is_transportation_job" type="variable_definition">job.sector_id==8</variable>
+	<variable use="both" source="expression" name="job.is_information_job" type="variable_definition">job.sector_id==9</variable>
+	<variable use="both" source="expression" name="job.is_finance_job" type="variable_definition">job.sector_id==10</variable>
+	<variable use="both" source="expression" name="job.is_realestate_job" type="variable_definition">job.sector_id==11</variable>
+	<variable use="both" source="expression" name="job.is_professional_job" type="variable_definition">job.sector_id==12</variable>
+	<variable use="both" source="expression" name="job.is_healthcare_job" type="variable_definition">job.sector_id==16</variable>
+	<variable use="both" source="expression" name="job.is_accomodation_job" type="variable_definition">job.sector_id==18</variable>
+	<variable use="both" source="expression" name="job.is_foodservice_job" type="variable_definition">job.sector_id==19</variable>
+	<variable use="both" source="expression" name="job.is_pubfedstate_job" type="variable_definition">job.sector_id==21</variable>
+	<variable use="both" source="expression" name="job.is_publocal_job" type="variable_definition">job.sector_id==22</variable>
+	<variable use="both" source="expression" name="job.is_pub_employment" type="variable_definition">(job.sector_id == 20)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_jobs" type="variable_definition">mpa.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_public_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_public_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_industrial_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_industrial_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_entertainment_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_entertainment_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_homebased_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_homebased_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_office_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_office_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_agricultural_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_agricultural_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_mining_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_mining_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_utilities_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_utilities_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_construction_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_construction_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_manufacturing_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_manufacturing_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_wholesale_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_wholesale_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_retail_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_retail_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_transportation_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_transportation_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_information_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_information_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_finance_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_finance_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_realestate_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_realestate_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_professional_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_professional_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_healthcare_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_healthcare_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_accomodation_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_accomodation_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_foodservice_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_foodservice_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_pubfedstate_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_pubfedstate_job)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_publocal_jobs" type="variable_definition">mpa.aggregate(mag_zone.job.is_publocal_job)</variable>
+	<variable use="both" source="expression" name="mpa.population" type="variable_definition">mpa.number_of_agents(person)</variable>
+	<variable use="both" source="expression" name="mpa.average_population_age" type="variable_definition">mpa.aggregate(person.age, function=mean)</variable>
+	<variable use="both" source="expression" name="mpa.median_population_age" type="variable_definition">mpa.aggregate(person.age, function=median)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_children" type="variable_definition">mpa.aggregate(where(person.age &lt; 17, 1,0))</variable>
+	<variable use="both" source="expression" name="mpa.population_with_less_than_high_school_diploma" type="variable_definition">mpa.aggregate(mag_zone.person.less_than_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="mpa.population_with_at_least_high_school_diploma" type="variable_definition">mpa.aggregate(mag_zone.person.at_least_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="mpa.population_with_at_least_associates_degree" type="variable_definition">mpa.aggregate(mag_zone.person.at_least_associates_degree)</variable>
+	<variable use="both" source="expression" name="mpa.population_with_at_least_bachelors_degree" type="variable_definition">mpa.aggregate(mag_zone.person.at_least_bachelors_degree)</variable>
+	<variable use="both" source="expression" name="mpa.population_with_at_least_masters_degree" type="variable_definition">mpa.aggregate(mag_zone.person.at_least_masters_degree)</variable>
+	<variable use="both" source="expression" name="mpa.average_adult_education" type="variable_definition">mpa.aggregate(mag_zone.person.is_adult*person.education, function=mean)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_hh_age_of_head_over_55" type="variable_definition">mpa.aggregate(mag_zone.household.hh_head_over_55)</variable>
+	<variable use="both" source="expression" name="mpa.average_household_income" type="variable_definition">mpa.aggregate(household.income, function=mean)</variable>
+	<variable use="both" source="expression" name="mpa.median_household_income" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
+	<variable use="both" source="expression" name="mpa.number_of_households" type="variable_definition">mpa.number_of_agents(household)</variable>
+	<variable use="both" source="expression" name="mpa.percent_hh_age_of_head_over_55" type="variable_definition">mpa.aggregate(safe_array_divide(mag_zone.mpa.number_of_hh_age_of_head_over_55, mag_zone.mpa.number_of_households))</variable>
+	<variable use="both" source="expression" name="mpa.mpa_residential_units" type="variable_definition">mpa.aggregate(building.residential_units)</variable>
+	<variable use="both" source="expression" name="mpa.mpa_jobs_5" type="variable_definition">mpa.aggregate(job.sector_id==5)</variable>
+	<variable use="both" source="expression" name="mpa.mpa_total_jobs" type="variable_definition">mpa.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="mpa.mpa_county_jobs_5" type="variable_definition">mpa.disaggregate(county.county_jobs_5)</variable>
+	<variable use="both" source="expression" name="mpa.mpa_county_total_jobs" type="variable_definition">mpa.disaggregate(county.total_jobs)</variable>
+	<variable use="both" source="expression" name="mpa.lq5" type="variable_definition">safe_array_divide((safe_array_divide(mag_zone.mpa.mpa_jobs_5,mag_zone.mpa.mpa_total_jobs)),                                  (safe_array_divide(mag_zone.mpa.mpa_county_jobs_5,mag_zone.mpa.mpa_county_total_jobs)))</variable>
+	<variable use="both" source="expression" name="person.is_child" type="variable_definition">person.age&lt;18</variable>
+	<variable use="both" source="expression" name="person.is_driving_age" type="variable_definition">person.age&gt;15</variable>
+	<variable use="both" source="expression" name="person.is_young_adult" type="variable_definition">numpy.logical_and(person.age&gt;17, person.age&lt;36)</variable>
+	<variable use="both" source="expression" name="person.is_adult" type="variable_definition">person.age&gt;17</variable>
+	<variable use="both" source="expression" name="person.is_senior_citizen" type="variable_definition">person.age&gt;64</variable>
+	<variable use="both" source="expression" name="person.is_over_55" type="variable_definition">person.age&gt;54</variable>
+	<variable use="both" source="expression" name="person.is_student" type="variable_definition">person.student_status&gt;1</variable>
+	<variable use="both" source="expression" name="person.is_college_student" type="variable_definition">numpy.logical_and(mag_zone.person.is_student, person.education&gt;8)</variable>
+	<variable use="both" source="expression" name="person.less_than_high_school_diploma" type="variable_definition">person.education&lt;9</variable>
+	<variable use="both" source="expression" name="person.at_least_high_school_diploma" type="variable_definition">person.education&gt;8</variable>
+	<variable use="both" source="expression" name="person.at_least_associates_degree" type="variable_definition">person.education&gt;11</variable>
+	<variable use="both" source="expression" name="person.at_least_bachelors_degree" type="variable_definition">person.education&gt;12</variable>
+	<variable use="both" source="expression" name="person.at_least_masters_degree" type="variable_definition">person.education&gt;13</variable>
+	<variable use="both" source="expression" name="person.tazi03_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.tazi03_id)))</variable>
+	<variable use="both" source="expression" name="person.taz2012_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.taz2012_id)))</variable>
+	<variable use="both" source="expression" name="person.razi03_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.razi03_id)))</variable>
+	<variable use="both" source="expression" name="person.raz2012_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.raz2012_id)))</variable>
+	<variable use="both" source="expression" name="person.mpa_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.mpa_id)))</variable>
+	<variable use="both" source="expression" name="person.zone_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.zone_id)))</variable>
+	<variable use="both" source="expression" name="person.pseudo_blockgroup_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id)))</variable>
+	<variable use="both" source="expression" name="person.census_place_id" type="variable_definition">person.disaggregate(household.disaggregate(building.disaggregate(zone.census_place_id)))</variable>
+	<variable use="both" source="expression" name="person.gender" type="variable_definition">person.sex</variable>
+	<variable use="both" source="expression" name="person.head_of_hh" type="variable_definition">person.relate==1</variable>
+	<variable use="both" source="expression" name="person.is_hispanic" type="variable_definition">numpy.in1d(person.race_id, (6,7,8,9,10))</variable>
+	<variable use="both" source="expression" name="person.is_not_hispanic" type="variable_definition">numpy.in1d(person.race_id, (1,2,3,4,5))</variable>
+	<variable use="both" source="expression" name="person.is_married" type="variable_definition">numpy.in1d(person.marriage_status, (1,2))</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_jobs" type="variable_definition">raz2012.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_public_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_public_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_industrial_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_industrial_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_entertainment_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_entertainment_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_homebased_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_homebased_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_office_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_office_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_agricultural_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_agricultural_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_mining_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_mining_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_utilities_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_utilities_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_construction_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_construction_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_manufacturing_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_manufacturing_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_wholesale_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_wholesale_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_retail_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_retail_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_transportation_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_transportation_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_information_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_information_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_finance_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_finance_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_realestate_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_realestate_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_professional_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_professional_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_healthcare_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_healthcare_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_accomodation_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_accomodation_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_foodservice_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_foodservice_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_pubfedstate_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_pubfedstate_job)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_publocal_jobs" type="variable_definition">raz2012.aggregate(mag_zone.job.is_publocal_job)</variable>
+	<variable use="both" source="expression" name="raz2012.population" type="variable_definition">raz2012.number_of_agents(person)</variable>
+	<variable use="both" source="expression" name="raz2012.average_population_age" type="variable_definition">raz2012.aggregate(person.age, function=mean)</variable>
+	<variable use="both" source="expression" name="raz2012.median_population_age" type="variable_definition">raz2012.aggregate(person.age, function=median)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_children" type="variable_definition">raz2012.aggregate(where(person.age &lt; 17, 1,0))</variable>
+	<variable use="both" source="expression" name="raz2012.population_with_less_than_high_school_diploma" type="variable_definition">raz2012.aggregate(mag_zone.person.less_than_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="raz2012.population_with_at_least_high_school_diploma" type="variable_definition">raz2012.aggregate(mag_zone.person.at_least_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="raz2012.population_with_at_least_associates_degree" type="variable_definition">raz2012.aggregate(mag_zone.person.at_least_associates_degree)</variable>
+	<variable use="both" source="expression" name="raz2012.population_with_at_least_bachelors_degree" type="variable_definition">raz2012.aggregate(mag_zone.person.at_least_bachelors_degree)</variable>
+	<variable use="both" source="expression" name="raz2012.population_with_at_least_masters_degree" type="variable_definition">raz2012.aggregate(mag_zone.person.at_least_masters_degree)</variable>
+	<variable use="both" source="expression" name="raz2012.average_adult_education" type="variable_definition">raz2012.aggregate(mag_zone.person.is_adult*person.education, function=mean)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_hh_age_of_head_over_55" type="variable_definition">raz2012.aggregate(mag_zone.household.hh_head_over_55)</variable>
+	<variable use="both" source="expression" name="raz2012.average_household_income" type="variable_definition">raz2012.aggregate(household.income, function=mean)</variable>
+	<variable use="both" source="expression" name="raz2012.median_household_income" type="variable_definition">raz2012.aggregate(household.income, function=median)</variable>
+	<variable use="both" source="expression" name="raz2012.number_of_households" type="variable_definition">raz2012.number_of_agents(household)</variable>
+	<variable use="both" source="expression" name="raz2012.percent_hh_age_of_head_over_55" type="variable_definition">raz2012.aggregate(safe_array_divide(mag_zone.raz2012.number_of_hh_age_of_head_over_55, mag_zone.raz2012.number_of_households))</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_jobs" type="variable_definition">taz2012.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_public_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_public_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_industrial_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_industrial_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_entertainment_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_entertainment_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_homebased_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_homebased_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_office_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_office_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_agricultural_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_agricultural_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_mining_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_mining_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_utilities_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_utilities_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_construction_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_construction_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_manufacturing_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_manufacturing_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_wholesale_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_wholesale_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_retail_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_retail_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_transportation_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_transportation_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_information_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_information_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_finance_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_finance_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_realestate_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_realestate_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_professional_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_professional_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_healthcare_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_healthcare_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_accomodation_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_accomodation_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_foodservice_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_foodservice_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_pubfedstate_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_pubfedstate_job)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_publocal_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_publocal_job)</variable>
+	<variable use="both" source="expression" name="taz2012.population" type="variable_definition">taz2012.number_of_agents(person)</variable>
+	<variable use="both" source="expression" name="taz2012.average_population_age" type="variable_definition">taz2012.aggregate(person.age, function=mean)</variable>
+	<variable use="both" source="expression" name="taz2012.median_population_age" type="variable_definition">taz2012.aggregate(person.age, function=median)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_children" type="variable_definition">taz2012.aggregate(where(person.age &lt; 17, 1,0))</variable>
+	<variable use="both" source="expression" name="taz2012.population_with_less_than_high_school_diploma" type="variable_definition">taz2012.aggregate(mag_zone.person.less_than_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="taz2012.population_with_at_least_high_school_diploma" type="variable_definition">taz2012.aggregate(mag_zone.person.at_least_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="taz2012.population_with_at_least_associates_degree" type="variable_definition">taz2012.aggregate(mag_zone.person.at_least_associates_degree)</variable>
+	<variable use="both" source="expression" name="taz2012.population_with_at_least_bachelors_degree" type="variable_definition">taz2012.aggregate(mag_zone.person.at_least_bachelors_degree)</variable>
+	<variable use="both" source="expression" name="taz2012.population_with_at_least_masters_degree" type="variable_definition">taz2012.aggregate(mag_zone.person.at_least_masters_degree)</variable>
+	<variable use="both" source="expression" name="taz2012.average_adult_education" type="variable_definition">taz2012.aggregate(mag_zone.person.is_adult*person.education, function=mean)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_hh_age_of_head_over_55" type="variable_definition">taz2012.aggregate(mag_zone.household.hh_head_over_55)</variable>
+	<variable use="both" source="expression" name="taz2012.average_household_income" type="variable_definition">taz2012.aggregate(household.income, function=mean)</variable>
+	<variable use="both" source="expression" name="taz2012.median_household_income" type="variable_definition">taz2012.aggregate(household.income, function=median)</variable>
+	<variable use="both" source="expression" name="taz2012.number_of_households" type="variable_definition">taz2012.number_of_agents(household)</variable>
+	<variable use="both" source="expression" name="taz2012.percent_hh_age_of_head_over_55" type="variable_definition">taz2012.aggregate(safe_array_divide(mag_zone.taz2012.number_of_hh_age_of_head_over_55, mag_zone.taz2012.number_of_households))</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_jobs" type="variable_definition">tazi03.number_of_agents(job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_public_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_public_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_industrial_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_industrial_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_entertainment_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_entertainment_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_homebased_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_homebased_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_office_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_office_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_agricultural_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_agricultural_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_mining_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_mining_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_utilities_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_utilities_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_construction_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_construction_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_manufacturing_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_manufacturing_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_wholesale_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_wholesale_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_retail_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_retail_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_transportation_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_transportation_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_information_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_information_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_finance_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_finance_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_realestate_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_realestate_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_professional_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_professional_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_healthcare_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_healthcare_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_accomodation_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_accomodation_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_foodservice_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_foodservice_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_pubfedstate_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_pubfedstate_job)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_publocal_jobs" type="variable_definition">tazi03.aggregate(mag_zone.job.is_publocal_job)</variable>
+	<variable use="both" source="expression" name="tazi03.population" type="variable_definition">tazi03.number_of_agents(person)</variable>
+	<variable use="both" source="expression" name="tazi03.average_population_age" type="variable_definition">tazi03.aggregate(person.age, function=mean)</variable>
+	<variable use="both" source="expression" name="tazi03.median_population_age" type="variable_definition">tazi03.aggregate(person.age, function=median)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_children" type="variable_definition">tazi03.aggregate(where(person.age &lt; 17, 1,0))</variable>
+	<variable use="both" source="expression" name="tazi03.population_with_less_than_high_school_diploma" type="variable_definition">tazi03.aggregate(mag_zone.person.less_than_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="tazi03.population_with_at_least_high_school_diploma" type="variable_definition">tazi03.aggregate(mag_zone.person.at_least_high_school_diploma)</variable>
+	<variable use="both" source="expression" name="tazi03.population_with_at_least_associates_degree" type="variable_definition">tazi03.aggregate(mag_zone.person.at_least_associates_degree)</variable>
+	<variable use="both" source="expression" name="tazi03.population_with_at_least_bachelors_degree" type="variable_definition">tazi03.aggregate(mag_zone.person.at_least_bachelors_degree)</variable>
+	<variable use="both" source="expression" name="tazi03.population_with_at_least_masters_degree" type="variable_definition">tazi03.aggregate(mag_zone.person.at_least_masters_degree)</variable>
+	<variable use="both" source="expression" name="tazi03.average_adult_education" type="variable_definition">tazi03.aggregate(mag_zone.person.is_adult*person.education, function=mean)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_hh_age_of_head_over_55" type="variable_definition">tazi03.aggregate(mag_zone.household.hh_head_over_55)</variable>
+	<variable use="both" source="expression" name="tazi03.average_household_income" type="variable_definition">tazi03.aggregate(household.income, function=mean)</variable>
+	<variable use="both" source="expression" name="tazi03.median_household_income" type="variable_definition">tazi03.aggregate(household.income, function=median)</variable>
+	<variable use="both" source="expression" name="tazi03.number_of_households" type="variable_definition">tazi03.number_of_agents(household)</variable>
+	<variable use="both" source="expression" name="tazi03.percent_hh_age_of_head_over_55" type="variable_definition">tazi03.aggregate(safe_array_divide(mag_zone.tazi03.number_of_hh_age_of_head_over_55, mag_zone.tazi03.number_of_households))</variable>
+	<variable use="both" source="expression" name="zone.number_of_households" type="variable_definition">zone.number_of_agents(household)</variable>
 
 	</expression_library>    
 	  <dataset_pool_configuration type="class">
@@ -262,7 +545,7 @@
       <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['mag_zone','urbansim_zone','urbansim','opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['zone','building','household','person','job','raz2011','razi03','mpa','mpa2011','mpai03','county','taz2011','tazi03','blockgroup_2010','blockgroup_2000','travel_data','active_development','household_x_building','development_project','alldata','development_event_history','target_vacancy','building_type','building_sqft_per_job']</available_datasets>
+    <available_datasets type="list">['zone','building','household','person','job','raz2011','raz2012','razi03','mpa','mpa2011','mpai03','county','taz2011','taz2012','tazi03','blockgroup_2010','blockgroup_2000','travel_data','active_development','household_x_building','development_project','alldata','development_event_history','target_vacancy','building_type','building_sqft_per_job','census_place','pseudo_block_group']</available_datasets>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
