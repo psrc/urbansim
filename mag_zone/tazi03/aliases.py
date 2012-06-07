@@ -46,6 +46,7 @@ aliases = [
         "number_of_children = tazi03.aggregate(where(person.age < 17, 1,0))",        
         # specific population totals:
         "number_of_persons_with_at_least_high_school_diploma = tazi03.aggregate(mag_zone.person.at_least_high_school_diploma)",
+        "number_of_persons_with_at_least_bachelors_degree = tazi03.aggregate(mag_zone.person.at_least_bachelors_degree)",        
         "number_of_office_jobs = tazi03.aggregate(job.sector_id == 9) + tazi03.aggregate(job.sector_id == 10) + tazi03.aggregate(job.sector_id == 11) + tazi03.aggregate(job.sector_id == 13)",
         
            ]
