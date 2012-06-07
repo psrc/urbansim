@@ -45,10 +45,10 @@ if __name__ == "__main__":
 
     # Clean house before proceeding
     print "Killing old processes..."
-    server.cmd('cmd /c "call Taskkill/IM Cluster.exe /F"')
-    server.cmd('cmd /c "call Taskkill/IM Voyager.exe /F"')
-    server.cmd('cmd /c "call Taskkill/IM runtpp.exe /F"')
-    server.cmd('cmd /c "call taskkill /im java.exe /F"')
+    server.cmd('Taskkill /IM Cluster.exe /F')
+    server.cmd('Taskkill /IM Voyager.exe /F')
+    server.cmd('Taskkill /IM runtpp.exe /F')
+    server.cmd('taskkill /im java.exe /F')
 
     print "Removing stale model outputs..."
     delfiles = server.cmd("find " + abs_modeldir + " -maxdepth 1 -not -wholename " + abs_modeldir)[1].split("\r\n")
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         # Mount the M: drive on each node.  Start cleanly by killing any java
         # processes and unmount the M drive
-        w.cmd('cmd /c "call taskkill /im java.exe /F"')
+        w.cmd('taskkill /im java.exe /F')
         w.cmd("net use M: /delete")
 
         mount_cmd = "net use M: "
