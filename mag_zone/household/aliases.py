@@ -31,4 +31,5 @@ aliases = [
     'zone_id = household.disaggregate(building.disaggregate(zone.zone_id))',
     'pseudo_blockgroup_id = household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
     'census_place_id = household.disaggregate(building.disaggregate(zone.census_place_id))',
+    'raz_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',    
            ]
