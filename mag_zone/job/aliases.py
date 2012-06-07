@@ -25,4 +25,5 @@ aliases = [
     'tazi03_id = job.disaggregate(building.disaggregate(zone.tazi03_id))',
     'pseudo_blockgroup_id = job.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
     'census_place_id = job.disaggregate(building.disaggregate(zone.census_place_id))',
+    'is_pub_employment = (job.sector_id == 20)',
            ]
