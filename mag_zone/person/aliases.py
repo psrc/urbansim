@@ -22,7 +22,7 @@ aliases = [
     # age related variables:
     'is_child = person.age<18',
     'is_driving_age = person.age>15',
-    'is_young_adult = person.age>17'
+    'is_young_adult = person.age>17',
     'is_adult = person.age>17',
     'is_senior_citizen = person.age>64',
     # education variables:
