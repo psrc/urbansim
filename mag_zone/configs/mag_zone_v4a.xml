@@ -538,19 +538,6 @@
   <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">
-        <selectable name="real_estate_price_model" type="selectable">False</selectable>
-        <selectable name="development_project_transition_model" type="selectable">False</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
-        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
-        <selectable name="household_transition_model" type="selectable">False</selectable>
-        <selectable name="employment_transition_model" type="selectable">False</selectable>
-        <selectable name="household_relocation_model" type="selectable">False</selectable>
-        <selectable name="household_location_choice_model" type="selectable">False</selectable>
-        <selectable name="employment_relocation_model" type="selectable">False</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
-        </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
         <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
         <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
         <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
@@ -559,13 +546,24 @@
         <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
         <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
         <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="child_leaving_home_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="roommate_model" type="selectable" name="breakup_model_1">True</selectable>
+        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
+        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
         <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
         <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
         <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
         <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
-      </models_to_run>
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="development_project_transition_model" type="selectable">True</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">True</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
+        </selectable>      </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
       <base_year type="integer">2010</base_year>
       <years_to_run setexpanded="True" config_name="years" type="tuple">
