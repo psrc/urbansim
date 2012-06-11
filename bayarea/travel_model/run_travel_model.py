@@ -10,9 +10,11 @@ if __name__ == "__main__":
     parser.add_option("-n", "--non-interactive", dest="yesmode", action="store_true",
                       help="Answer yes to everything (i.e., non-interactive mode)")
     parser.add_option("-s", "--scenario", dest="scenario", action="store",
-                      help="Specify the scenario (e.g., studio")
+                      help="Specify the scenario (e.g., studio)")
     parser.add_option("-y", "--year", dest="year", action="store",
                       help="Specify the scenario year (e.g., 2020)")
+    parser.add_option("-p", "--skip-popsyn", dest="skippopsyn", action="store_true",
+                      help="Skips population synthesis step")
     (options, args) = parser.parse_args()
 
     config = mtc_config.MTCConfig()
@@ -81,11 +83,15 @@ if __name__ == "__main__":
 
     server.cmd_or_fail("subst M: " + windows_travel_model_home)
 
-    # Prepare synthesized population, etc.
-    print "Synthesizing population..."
-    synth_script = "TazAndPopSyn.bat"
-    server.cmd_or_fail('cd ' + config.travel_model_home + 'land_use_and_synthesizer')
-    server.cmd_or_fail('cmd /c "' + synth_script + ' ' + options.scenario + ' ' + options.year + ' > M:\\\\' + modeldir + '\\\\synthOutput.log"')
+    # Prepare synthesized population or skip if option supplied
+    if not options.skippopsyn:
+        print "Synthesizing population..."
+        synth_script = "TazAndPopSyn.bat"
+        server.cmd_or_fail('cd ' + config.travel_model_home + 'land_use_and_synthesizer')
+        server.cmd_or_fail('cmd /c "' + synth_script + ' ' + options.scenario + ' ' + options.year + ' > M:\\\\' + modeldir + '\\\\synthOutput.log"')
+    else:
+        print "Skipping population synthesis."
+        server.cmd_or_fail('cmd /c "echo Skipped population synthesis > M:\\\\' + modeldir + '\\\\synthOutput.log"')
 
     print "Launching runMain..."
     # Note here that we just send the line to the server with no regard for the
