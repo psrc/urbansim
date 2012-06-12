@@ -14,5 +14,7 @@ aliases = [
        "remaining_residential_units_capacity = parcel.residential_units_capacity - parcel.aggregate(building.residential_units)",
        
        "households_per_parcel = parcel.number_of_agents(household)",
-       "number_of_buildings = parcel.number_of_agents(building)"
+       "number_of_buildings = parcel.number_of_agents(building)",
+       "built_area = parcel.aggregate(building.land_area, intermediates=[parcel])",
+       "area_capacity = parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])",
            ]
