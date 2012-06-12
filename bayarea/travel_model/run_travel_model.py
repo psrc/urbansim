@@ -140,4 +140,4 @@ if __name__ == "__main__":
 
     print "Starting Model"
     server_model.cmd_or_fail('cd /cygdrive/m/commpath/')
-    print server_model.cmd_or_fail("cmd /c 'RunModel.bat > RunModelOutput.log'")
+    server_model.cmd_or_fail("cmd /c 'RunModel.bat' | tee RunModelOutput.log", supress_output=False, pipe_position=0)

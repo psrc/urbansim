@@ -23,23 +23,45 @@ class winssh:
         self.s.login(host, user, pw, login_timeout=20)
         self.s.setecho(False)
 
-    def cmd(self, c):
+    def cmd(self, c, supress_output=True, pipe_position=None):
+        """
+        send command c
+
+        supress_output keeps things silent
+
+        pipe_position alters where we look for the exit code.  Usually, None is
+        fine and we just echo $? to get the return code.  But in some cases,
+        like if you say 'myprogram -a -b | tee foo.log', you really want the
+        exit code of myprogram.  In this case you set pipe_position to 0.  If
+        you wanted the exit code of tee, you'd set it to 1.
+        """
         self.s.sendline(c)
-        self.s.prompt(timeout=None)
+        if supress_output:
+            self.s.prompt(timeout=None)
+        else:
+            while not self.s.prompt(timeout=1):
+                if self.s.before in (None, ""):
+                    continue
+                logger.log_status("\r\n".join(self.s.before.split("\r\n")[1:]))
+                self.s.before = ""
+                self.s.buffer = ""
         logger.log_debug("BEFORE PROMPT")
         logger.log_debug(repr(self.s.before))
         output = "\r\n".join(self.s.before.split("\r\n")[1:])
         logger.log_debug("OUTPUT")
         logger.log_debug(output)
-        self.s.sendline("echo $?")
+        if pipe_position == None:
+            self.s.sendline("echo $?")
+        else:
+            self.s.sendline('echo ${PIPESTATUS[' + str(pipe_position) + ']}')
         self.s.prompt()
         logger.log_debug("BEFORE $? PROMPT")
         logger.log_debug(repr(self.s.before))
         rc = self.s.before.split("\r\n")[1]
         return (int(rc), output)
 
-    def cmd_or_fail(self, c, supress_cmd=False, supress_output=True):
-        (rc, out) = self.cmd(c)
+    def cmd_or_fail(self, c, supress_cmd=False, supress_output=True, pipe_position=None):
+        (rc, out) = self.cmd(c, supress_output, pipe_position)
         if rc != 0:
             if supress_cmd:
                 logger.log_status("Command Failed:")
