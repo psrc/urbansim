@@ -587,7 +587,7 @@
             <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
             <argument name="append_to_realestate_dataset" type="string">True</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="sample_filter" type="string">""</argument>
+            <argument name="sample_filter" type="string">"numpy.logical_and(building.year_built &gt; 1990, building.building_type_id&lt;&gt;7)"</argument>
             <argument name="resources" type="string">model_resources</argument>
           </run>
         </structure>
@@ -991,7 +991,6 @@
           </selectable>
           <selectable name="travel_data" type="selectable">False</selectable>
         </datasets_to_preload>
-        <run_in_same_process type="boolean">True</run_in_same_process>
       </advanced>
       <cache_directory name="" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
@@ -1022,6 +1021,8 @@
         <selectable return_value="employment_location_choice_model" type="selectable" name="employment_location_choice_model_1">False</selectable>
         <selectable return_value="Copy of SC_workplace_location_chocie" type="selectable" name="Copy of SC_workplace_location_chocie_1">False</selectable>
         <selectable return_value="LAST of SC_workplace_location_choice" type="selectable" name="LAST of SC_workplace_location_choice_1">True</selectable>
+        <selectable return_value="SC_real_estate_price_model" type="selectable" name="SC_real_estate_price_model_1">True</selectable>
+        <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">False</selectable>
       </models_to_run>
     </scenario>
     <scenario name="urbansim_parcel_baseline" type="scenario" executable="True">
