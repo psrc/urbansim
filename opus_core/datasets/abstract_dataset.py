@@ -669,7 +669,7 @@ class AbstractDataset(object):
         errors = []
         def _format_error(full_variable_name):
             return formatPlainTextExceptionInfoWithoutLog("When trying to compute variable '%s':"  
-                                                          % full_variable_name)
+                                                          % full_variable_name, maxTBlevel=10)
             
         if len(package_order) == 0:
             full_variable_name = "%s.%s" % (self.get_dataset_name(), variable_name)
