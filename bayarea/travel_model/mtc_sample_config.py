@@ -16,10 +16,10 @@ class MTCConfig:
     # This is the list of subordinate nodes to which the travel model delegates
     # jobs.
     nodes = [
-        "Gue@169.229.154.17:********",
-        "Gue@169.229.154.19:********",
-        "Gue@169.229.154.21:********",
-        "Gue@169.229.154.23:********",
+        "Gue@169.229.154.102:********",
+        "Gue@169.229.154.103:********",
+        "Gue@169.229.154.104:********",
+        "Gue@169.229.154.105:********",
     ]
 
     # The subordinate notes mount a share from the server as a network drive in
