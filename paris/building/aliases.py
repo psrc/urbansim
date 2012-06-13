@@ -9,4 +9,5 @@ aliases = [
         "occupied_residential_spaces = urbansim_zone.building.is_residential * urbansim_zone.building.number_of_households",
         "occupied_non_residential_spaces = numpy.logical_not(urbansim_zone.building.is_residential) * paris.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job",
         "occupied_spaces = paris.building.occupied_residential_spaces + paris.building.occupied_non_residential_spaces",
+        "vacant_res_units = ((building.residential_units - building.number_of_agents(household))>0)*(building.residential_units - building.number_of_agents(household)) +  ((building.residential_units - building.number_of_agents(household))<1)"
            ]
