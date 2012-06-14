@@ -456,6 +456,16 @@ class XmlModel(QAbstractItemModel):
         if not self.project: return
         self.project.make_local(item.node)
 
+    def copy_to_parent(self, index):
+        if not self.project: return
+        item = index.internalPointer()
+        self.project.copy_to_parent(item.node)
+
+    def move_to_parent(self, index):
+        if not self.project: return
+        item = index.internalPointer()
+        self.project.move_to_parent(item.node)
+
     def insertRow(self, row, parent_index, node, reinserting = False):
         '''
         Insert a row into the data model
