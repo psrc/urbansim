@@ -1707,17 +1707,17 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_parent_no_parent(self):
         f = os.path.join(self.test_configs, 'parent1.xml')
         config = XMLConfiguration(f)
-        self.assertIs(config.get_first_writable_parent_file(), None, 'No parent')
+        self.assert_(config.get_first_writable_parent_file() is None, 'No parent')
         
     def test_get_parent_one_parent(self):
         f = os.path.join(self.test_configs, 'child2.xml')
         config = XMLConfiguration(f)
-        self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*parent1\.xml$', 'One parent')
+        self.assert_(re.match(r'.*parent1\.xml$', config.get_first_writable_parent_file()), 'One parent')
         
     def test_get_parent_two_parents(self):
         f = os.path.join(self.test_configs, 'grandchild1.xml')
         config = XMLConfiguration(f)
-        self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*child1\.xml$', 'Second parent')
+        self.assert_(re.match(r'.*child1\.xml$', config.get_first_writable_parent_file()), 'First parent')
 
     def test_get_parent_two_parents_first_not_writable(self):
         f = os.path.join(self.test_configs, 'grandchild1.xml')
@@ -1727,7 +1727,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             old_os_access = os.access
             os.access = lambda f, m: False if m == os.W_OK and re.match(r'.*child1\.xml$', f) else old_os_access(f, m)
             config = XMLConfiguration(f)
-            self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*child2\.xml$', 'Second parent')
+            self.assert_(re.match(r'.*child2\.xml$', config.get_first_writable_parent_file()), 'Second parent')
         finally:
             os.access = old_os_access
 
