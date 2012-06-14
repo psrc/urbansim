@@ -99,18 +99,7 @@ class XMLConfiguration(object):
         the Opus code is stored.  If is_parent is true, mark all of the nodes as inherited
         (either from this configuration or a grandparent).
         If filename is not given, the configuration is initalized to an empty tree."""
-        self.full_filename = None
-        if filename is not None:
-            if default_directory is not None:
-                f = os.path.join(default_directory, filename)
-                if os.path.exists(f):
-                    self.full_filename = f
-            if self.full_filename is None:
-                opus_core_dir = __import__('opus_core').__path__[0]
-                workspace_dir = os.path.split(opus_core_dir)[0]
-                self.full_filename = os.path.join(workspace_dir, filename)
-        else:
-            self.full_filename = ''
+        self.full_filename = self._find_parent_file(filename, default_directory)
         # if self.full_filename doesn't exist, ElementTree will raise an IOError
         # self.tree is the xml tree (without any inherited nodes);
         # self.full_tree is the xml tree with all the inherited nodes as well
@@ -130,6 +119,21 @@ class XMLConfiguration(object):
         else:
             minimum_tree = ElementTree(Element('opus_project'))
             self._initialize(minimum_tree, is_parent)
+
+    def _find_parent_file(self, filename, default_directory):
+        full_filename = None
+        if filename is not None:
+            if default_directory is not None:
+                f = os.path.join(default_directory, filename)
+                if os.path.exists(f):
+                    full_filename = f
+            if full_filename is None:
+                opus_core_dir = __import__('opus_core').__path__[0]
+                workspace_dir = os.path.split(opus_core_dir)[0]
+                full_filename = os.path.join(workspace_dir, filename)
+        else:
+            full_filename = ''
+        return full_filename
 
     def initialize_from_xml_file(self, is_parent=False):
         """initialize (or re-initialize) the contents of this configuration from the xml file.
