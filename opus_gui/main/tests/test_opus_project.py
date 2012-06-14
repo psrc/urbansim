@@ -5,26 +5,53 @@
 from opus_gui.main.opus_project import *
 
 from opus_core.tests import opus_unittest
-from lxml.etree import Element, SubElement
+from lxml.etree import Element
+import shutil
 
-class TestOpusProject(opus_unittest.OpusTestCase):
-    ''' Test suite for Opus Project '''
+class OpusProjectTestCase(opus_unittest.OpusTestCase):
+    TESTDATA = 'testdata'
+    
+    def _get_data_path(self, testdata):
+        testdatapath = os.path.split(__file__)[0]
+        testdatapath = os.path.join(testdatapath, testdata)
+        return testdatapath
 
-    def setUp(self):
+    def setUp(self, testdata=TESTDATA):
         # Validate that the test data is present
-        self.testdatapath = os.path.split(__file__)[0]
-        self.testdatapath = os.path.join(self.testdatapath, 'testdata')
+        self.testdatapath = self._get_data_path(testdata)
         self.testfile_valid = os.path.join(self.testdatapath, 'project_valid.xml')
         self.testfile_invalid = os.path.join(self.testdatapath, 'project_invalid.xml')
         self.p = OpusProject()
 
+
+    def _get_file_path(self, fn):
+        return os.path.join(self.testdatapath, fn)
+
     def _open(self, fn):
-        fn = os.path.join(self.testdatapath, fn)
+        fn = self._get_file_path(fn)
         ok, msg = self.p.open(fn)
         if not ok:
             print msg
         self.assertTrue(self.p.is_open(), 'Project file could not be opened')
         return self.p
+
+class OpusProjectModifyingTestCase(OpusProjectTestCase):
+    TESTDATA_TMP = 'testdata.tmp'
+
+    def setUp(self):
+        testdatapath = self._get_data_path(self.TESTDATA)
+        testdatapath_tmp = self._get_data_path(self.TESTDATA_TMP)
+        if os.path.exists(testdatapath_tmp):
+            shutil.rmtree(testdatapath_tmp, False)
+        shutil.copytree(testdatapath, testdatapath_tmp)
+        OpusProjectTestCase.setUp(self, testdatapath_tmp)
+
+    def tearDown(self):
+        shutil.rmtree(self.testdatapath, False)
+        OpusProjectTestCase.tearDown(self)
+
+class TestOpusProject(OpusProjectTestCase):
+    ''' Test suite for Opus Project '''
 
     def project_is_closed(self, instance):
         '''
@@ -390,6 +417,24 @@ class TestOpusProject(opus_unittest.OpusTestCase):
         self.assertEqual(collected_template_keys, expected_keys)
 
 
+class TestOpusProjectWithSave(OpusProjectModifyingTestCase):
+    def test_copy_to_parent(self):
+        p = self._open('templated_project_nodes_multi_level.xml')
+
+        id_strings = (
+                      '/results_manager:/copy_this_to_parent:',
+                      '/results_manager:/add_this_to_parent:/copy_this_to_parent:',
+                      '/results_manager:/deep_copy_this_to_parent:',
+                      '/results_manager:/merge_this_with_parent:/copy_this_to_parent:',
+                      '/results_manager:/overwrite_this_in_parent:/already_in_parent:',
+                      )
+        for id_string in id_strings:
+            n = p.find_by_id_string(id_string)
+            p.copy_to_parent(n)
+        
+        self.assertEqual(file(self._get_file_path('templated_project_nodes_multi_level_parent.xml')).read(),
+                         file(self._get_file_path('templated_project_nodes_multi_level_parent_after_copy.xml')).read(),
+                         'Merge works as expected')
 
 if __name__ == '__main__':
     opus_unittest.main()
