@@ -251,6 +251,17 @@ class OpusProject(object):
         localize_children(node)
         if node.tag == 'specification' or node.tag == 'submodel':
             node.set('inherit_parent_values', "False")
+    
+    IMMUTABLE_NODE_IDS = ('/general:/description:', '/general:/parent:')
+    
+    def can_copy_to_parent(self, node):
+        if not self.get_first_writable_parent_file():
+            return False
+        if node.get('inherited'):
+            return False
+        if node_identity_string(node) in self.IMMUTABLE_NODE_IDS:
+            return False
+        return True
 
     def copy_to_parent(self, node):
         '''
@@ -261,7 +272,7 @@ class OpusProject(object):
         
         # Never copy description and parent nodes to parent
         def delete_immutable():
-            id_strings = ('/general:/description:', '/general:/parent:')
+            id_strings = self.IMMUTABLE_NODE_IDS
             for id_string in id_strings:
                 n = self.find_by_id_string(id_string, clone)
                 if n is not None:

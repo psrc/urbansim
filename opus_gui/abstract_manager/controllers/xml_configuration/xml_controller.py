@@ -21,6 +21,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import
 from opus_gui.util.convenience import create_qt_action
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_editor import XML_Editor_Gui
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 # List node types that are removable (which also makes them rename-able)
 _REMOVABLE_NODE_TYPES = (
@@ -75,6 +76,8 @@ class XmlController(object):
         self.actExportXMLToFile_all_without_inherited = self.create_action('export_all_without_inherited', 'Export all XML Nodes To File', self.export_without_inherited)
         self.act_edit = self.create_action('inspect', 'Edit as XML', self.edit)
         self.act_edit_all = self.create_action('inspect_all', 'Edit all as XML', self.edit)
+        self.act_copy_to_parent = self.create_action('copy_to_parent', 'Copy to parent', self.copy_selected_to_parent)
+        self.act_move_to_parent = self.create_action('move_to_parent', 'Move to parent', self.move_selected_to_parent)
 
     def add_model_view_delegate(self):
         '''
@@ -239,6 +242,29 @@ class XmlController(object):
         '''rebuild...'''
         self.model.rebuild_tree()
         
+    def copy_selected_to_parent(self):
+        '''
+        Copy the selected item to the first parent configuration
+        '''
+        if not self.has_selected_item():
+            return
+        if not get_mainwindow_instance().okToCloseProject('copying the node to the parent configuration (reload required)'):
+            return
+        self.model.copy_to_parent(self.selected_index())
+        get_mainwindow_instance().reloadProject()
+
+    def move_selected_to_parent(self):
+        '''
+        Move the selected item to the first parent configuration
+        '''
+        if not self.has_selected_item():
+            return
+        if not get_mainwindow_instance().okToCloseProject('moving the node to the parent configuration (reload required)'):
+            return
+        self.model.move_to_parent(self.selected_index())
+        self.project.save()
+        get_mainwindow_instance().reloadProject()
+    
     def select_item_at(self, point):
         '''
         Select the item at "point" to visualize which item we are working on and
@@ -412,16 +438,23 @@ class XmlController(object):
             added_actions.append(self.act_revert)
         elif node.get('type') in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
             added_actions.append(self.act_remove_selected)
+        # insert separator
+        if added_actions:
+            added_actions.append(None)
         added_actions.append(self.actExportXMLToFile)
         added_actions.append(self.actExportXMLToFile_without_inherited)
         added_actions.append(self.actImportXMLFromFile)
         if not node.get('inherited'):
             added_actions.append(self.act_edit)
+        # Ask project if node can be copied to the parent configuration
+        if self.project.can_copy_to_parent(node):
+            added_actions.append(self.act_copy_to_parent)
+            added_actions.append(self.act_move_to_parent)
 
         # Separate from other items
         if added_actions and not menu.isEmpty():
             menu.addSeparator()
-        map(lambda x: menu.addAction(x), added_actions)
+        map(lambda x: menu.addAction(x) if x is not None else menu.addSeparator(), added_actions)
         
     def add_default_menu_items_for_widget(self, menu):
         menu.addAction(self.actExportXMLToFile_all)
