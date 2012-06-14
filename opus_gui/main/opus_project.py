@@ -139,6 +139,9 @@ class OpusProject(object):
         if inherited_node is not None:
             self._shadowing_nodes[node] = inherited_node
 
+    def get_first_writable_parent_file(self):
+        return self.xml_config.get_first_writable_parent_file()
+
     def insert_node(self, node, parent_node, row = 0):
         '''
         Insert a node into the XML DOM tree. Can only insert nodes that are not already in the

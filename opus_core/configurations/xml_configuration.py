@@ -11,6 +11,7 @@ from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 from opus_core.variables.variable_name import VariableName
 from opus_core.misc import directory_path_from_opus_path
+import re
 
 def element_id(node):
     '''
@@ -109,6 +110,7 @@ class XMLConfiguration(object):
         self.full_tree = None
         self.inherited_tree = None
         self.parent_map = None
+        self.first_writable_parent_file = None
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
         self.xml_version = XMLVersion()
@@ -419,6 +421,21 @@ class XMLConfiguration(object):
             return n
         else:
             return tostring(n)
+        
+    def _init_first_writable_parent_file(self):
+        """Stores the location of the first writable parent of the configuration file in self.first_writable_parent_file.
+        Stores None if a configuration does NOT have a parent"""
+        self.first_writable_parent_file = None
+        parent_nodes = self.full_tree.getroot().findall('general/parent')
+        for p in parent_nodes:
+            first_parent_file = self._find_parent_file(p.text, self._get_default_dir())
+            if first_parent_file:
+                if os.access(first_parent_file, os.W_OK):
+                    self.first_writable_parent_file = first_parent_file
+                    return
+        
+    def get_first_writable_parent_file(self):
+        return self.first_writable_parent_file
 
     def get_opus_data_path(self):
         """return the path to the opus_data directory.  This is found in the environment variable
@@ -476,6 +493,8 @@ class XMLConfiguration(object):
                     n.set('inherited', self.name)
         # Parent map... can be used for working back up the XML tree
         self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)
+        
+        self._init_first_writable_parent_file()
 
     def _indent(self, element, level=0):
         '''
@@ -1685,6 +1704,33 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                      'dataset': ['parcel', 'building', 'household']}
         self.assertDictsEqual(depall, should_be)
         
+    def test_get_parent_no_parent(self):
+        f = os.path.join(self.test_configs, 'parent1.xml')
+        config = XMLConfiguration(f)
+        self.assertIs(config.get_first_writable_parent_file(), None, 'No parent')
+        
+    def test_get_parent_one_parent(self):
+        f = os.path.join(self.test_configs, 'child2.xml')
+        config = XMLConfiguration(f)
+        self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*parent1\.xml$', 'One parent')
+        
+    def test_get_parent_two_parents(self):
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
+        config = XMLConfiguration(f)
+        self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*child1\.xml$', 'Second parent')
+
+    def test_get_parent_two_parents_first_not_writable(self):
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
+        
+        # Use a simple mockup: Simulate no write access for child1.xml
+        try:
+            old_os_access = os.access
+            os.access = lambda f, m: False if m == os.W_OK and re.match(r'.*child1\.xml$', f) else old_os_access(f, m)
+            config = XMLConfiguration(f)
+            self.assertRegexpMatches(config.get_first_writable_parent_file(), r'.*child2\.xml$', 'Second parent')
+        finally:
+            os.access = old_os_access
+
 if __name__ == '__main__':
     opus_unittest.main()
 
