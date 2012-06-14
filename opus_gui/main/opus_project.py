@@ -252,6 +252,76 @@ class OpusProject(object):
         if node.tag == 'specification' or node.tag == 'submodel':
             node.set('inherit_parent_values', "False")
 
+    def copy_to_parent(self, node):
+        '''
+        Copies a local node to the parent configuration without deleting it. 
+        @node (Element) to copy to parent
+        '''
+        # Helper routines:
+        
+        # Never copy description and parent nodes to parent
+        def delete_immutable():
+            id_strings = ('/general:/description:', '/general:/parent:')
+            for id_string in id_strings:
+                n = self.find_by_id_string(id_string, clone)
+                if n is not None:
+                    n.getparent().remove(n)
+    
+        # Find deepest parent node of to-be-inserted node that is also in the parent config
+        def get_insert_node(merge_node, nodes):
+            nodes.append(merge_node)
+            ins_node = self.find_by_id_string(node_identity_string(merge_node), parent_root) 
+            if ins_node is not None:
+                return ins_node
+            merge_node = merge_node.getparent()
+            return get_insert_node(merge_node, nodes)
+
+        # Remove all children for all nodes in the nodes list
+        def strip_children(nodes):
+            for n in nodes[:-1]:
+                for subelement in n.getparent().getchildren():
+                    if subelement is not n:
+                        n.getparent().remove(subelement)
+        
+        # Remove "inherited" attribute from all nodes below tree_node
+        def clear_inherited_attribute(tree_node):
+            for node in tree_node.iter():
+                if node.get('inherited') is not None:
+                    del node.attrib['inherited']
+
+        #work on clone_node
+        id_string = node_identity_string(node)
+        clone = copy.deepcopy(self.root_node())
+        node = self.find_by_id_string(id_string, clone)
+        
+        #get parent project   
+        parent_file = self.get_first_writable_parent_file()
+        parent_project = OpusProject()
+        parent_project.open(parent_file)
+        parent_root = parent_project.xml_config.tree.getroot()
+        
+        delete_immutable()
+  
+        parents_to_insert = []
+        if node is not clone:
+            insert_node = get_insert_node(node, parents_to_insert)
+
+        node = parents_to_insert[-1]
+        strip_children(parents_to_insert)
+        clear_inherited_attribute(node)
+        
+        XMLConfiguration._merge_nodes(insert_node, node)
+        
+        insert_parent = insert_node.getparent()
+        insert_parent.replace(insert_node, node)
+
+        # using parent_project.save() adds unnecessary attributes for some reason.
+        parent_project.xml_config.save_as(parent_file)
+    
+    def move_to_parent(self, node):    
+        self.copy_to_parent(node)
+        self.delete_node(node)
+        
     def same_node_id(self, node1, node2, only_nodes = False):
         '''
         Checks the two nodes node1 and node2 are the same by identity (tag+name are identical for
