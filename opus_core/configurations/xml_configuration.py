@@ -459,11 +459,11 @@ class XMLConfiguration(object):
             if inherited_configs is None:
                 inherited_configs = XMLConfiguration()
             inherited_root = inherited_configs.full_tree.getroot()
-            inherited_configs._merge_nodes(root_of_a_parent, inherited_root)
+            XMLConfiguration._merge_nodes(root_of_a_parent, inherited_root)
         # step 2 - merge any inherited trees into this config
         if inherited_configs:
             self.inherited_tree = copy.deepcopy(inherited_configs.full_tree.getroot())
-            self._merge_nodes(inherited_configs.full_tree.getroot(), self.full_tree.getroot())
+            XMLConfiguration._merge_nodes(inherited_configs.full_tree.getroot(), self.full_tree.getroot())
 
         # keep track of where we inherited nodes
         if is_parent:
@@ -543,7 +543,8 @@ class XMLConfiguration(object):
                   self.xml_version, os.path.basename(self.full_filename)))
         return parent_trees
 
-    def _merge_nodes(self, parent_node, local_node):
+    @staticmethod
+    def _merge_nodes(parent_node, local_node):
         # the merging assumes that the two nodes have the same node_path, no check is performed
         # merging is done by copying all attributes from the parent_node if they don't already
         # exist in the local node. The attribute 'inherited' is a special case and is never copied.
@@ -551,7 +552,7 @@ class XMLConfiguration(object):
         # also merged. Other child nodes are added to the local_node.
         # print 'merging nodes (p>c): %s -> %s' %(parent_node, local_node)
         if local_node.get('inherit_parent_values') == 'False': # or \
-           #parent_node.get('inherit_parent_values') == 'False':
+            #parent_node.get('inherit_parent_values') == 'False':
             ## allow parent to specify nodes that are not supposed to be inherited
             return
         for name, value in parent_node.items():
@@ -568,7 +569,7 @@ class XMLConfiguration(object):
             if id_ in local_child_nodes:
                 # the local node already has this node, merge the two
                 local_child_node = local_child_nodes[id_]
-                self._merge_nodes(parent_child_node, local_child_node)
+                XMLConfiguration._merge_nodes(parent_child_node, local_child_node)
                 # default next position to insert is after this node
                 node_index = local_node.getchildren().index(local_child_node)+1
             else:

@@ -217,7 +217,7 @@ class OpusProject(object):
         
         if inherited_node is not None:
             assert new_node is not None
-            self.xml_config._merge_nodes(inherited_node, new_node)
+            XMLConfiguration._merge_nodes(inherited_node, new_node)
         if new_node is not None:
             self._add_shadowing_nodes(new_node, node_id)
         if reinserted_node is not None:
