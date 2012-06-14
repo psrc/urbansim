@@ -522,8 +522,11 @@ class XMLConfiguration(object):
         # return all or the first match
         return matching_nodes if get_all else matching_nodes[0]
 
+    def _get_default_dir(self):
+        return os.path.split(self.full_filename)[0]
+
     def _get_parent_trees(self):
-        default_dir = os.path.split(self.full_filename)[0]
+        default_dir = self._get_default_dir()
         parent_nodes = self.full_tree.getroot().findall('general/parent')
         parent_trees = []
         for p in parent_nodes:
