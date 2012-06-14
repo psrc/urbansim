@@ -400,10 +400,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                                'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage)
 
-    def reloadProject(self):
-        self.openProject(self.project.filename)
+    def reloadProject(self, text='reloading the project'):
+        self.openProject(self.project.filename, text=text)
     
-    def okToCloseProject(self, text = None):
+    def okToCloseProject(self, text='closing the project'):
         '''
         Called before an operation that causes this project to close.
         If the project contains changes; ask if the user wants to save them,
@@ -411,9 +411,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         @return: True if the user wishes to proceed with the closing operation.
         '''
         if not self.project.dirty: return True
-        if text is None:
-            text = 'closing'
-        question = 'Do you want to save your changes before '+ text +' the project?'
+        question = 'Do you want to save your changes before %s?' % text
         user_answer = common_dialogs.save_before_close(question)
         if user_answer == common_dialogs.YES:
             ok_flag, msg = self.project.save() # cancels on failed save
