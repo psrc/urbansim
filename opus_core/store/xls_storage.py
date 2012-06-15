@@ -83,7 +83,8 @@ else:
             except IndexError:
                 return None
 
-        def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
+        def write_table(self, table_name, table_data, mode = Storage.OVERWRITE,
+                        fixed_column_order = None):
             """
             raises a NameError if the table_name is more than 31 chars.  This
             is a limitation of the xls format.
@@ -102,8 +103,15 @@ else:
             if sheet == None:
                 sheet = self.workbook.add_sheet(sheet_name, cell_overwrite_ok=True)
 
+            column_size, column_names = self._get_column_size_and_names(table_data)
+            if fixed_column_order is None:
+                column_names.sort()
+            else:
+                column_names = fixed_column_order
+
             c = 0
-            for column,data in table_data.iteritems():
+            for column in column_names:
+                data = table_data[column]
                 sheet.write(0, c, column)
                 if data[0].dtype.kind == 'f':
                     pass
