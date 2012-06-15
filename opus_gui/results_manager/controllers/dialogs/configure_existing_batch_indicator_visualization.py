@@ -49,13 +49,13 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             specs = self._process_xml_stored_list_of_strings(value = fixed_field_specification)
             self._set_column(column = 1, values = specs)
             self.leOption1.setText(QString(id_format))
-        elif prev_output_type == 'esri':
+        elif prev_output_type in ('esri'):
             storage_location = viz_spec['storage_location'] or ''
             self.leOption1.setText(QString(storage_location))
         elif prev_output_type == 'sql':
             database_name = viz_spec['database_name'] or ''
             self.leOption1.setText(QString(database_name))
-        elif prev_output_type == 'tab':
+        elif prev_output_type in ('tab', 'xls'):
             try:
                 prev_output_style = int(str(viz_spec['output_style'] or ''))
             except: pass
@@ -66,6 +66,10 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                     self.rbTablePerIndicator.setChecked(True)
                 else:
                     self.rbTablePerYear.setChecked(True)
+            if prev_output_type == 'xls':
+                storage_location = viz_spec['storage_location'] or ''
+                self.leOption1.setText(QString(storage_location))
+
         elif prev_output_type == 'mapnik_map' or prev_output_type == 'mapnik_animated_map':
             self.mapnik_options['mapnik_bucket_ranges'] = viz_spec['mapnik_bucket_ranges']
             self.mapnik_options['mapnik_bucket_colors'] = viz_spec['mapnik_bucket_colors']

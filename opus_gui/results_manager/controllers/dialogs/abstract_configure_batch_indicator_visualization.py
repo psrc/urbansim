@@ -143,7 +143,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     #            'Comma separated':'csv',
                 'ESRI database':'esri',
                 'Export to SQL database':'sql',
-                'Fixed field file (.dat)':'fixed_field'
+                'Fixed field file (.dat)':'fixed_field',
+                'Excel (.xls)':'xls'
             }
         elif str(viz_type) == 'Map':
             available_output_types = {
@@ -330,15 +331,16 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             vals['database_name'] = self.leOption1.text()
         elif output_type == 'esri':
             vals['storage_location'] = self.leOption1.text()
-        elif output_type == 'tab':
+        elif output_type == ('tab', 'xls'):
             if self.rbSingleTable.isChecked():
                 output_style = Table.ALL
             elif self.rbTablePerIndicator.isChecked():
                 output_style = Table.PER_ATTRIBUTE
             elif self.rbTablePerYear.isChecked():
                 output_style = Table.PER_YEAR
-
             vals['output_style'] = QString(str(output_style))
+            if output_type == 'xls':
+                vals['storage_location'] = self.leOption1.text()
 
         return vals
 
@@ -373,18 +375,27 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.mapnikOptions.hide()
         elif output_type == 'Mapnik map (.png)' or output_type == 'Animated Mapnik map (.gif)':
             self.mapnikOptions.show()
+        elif output_type == 'Tab delimited file (.tab)':
+            self.lblOption1.show()
+            self.leOption1.show()
+            self.rbSingleTable.show()
+            self.rbTablePerIndicator.show()
+            self.rbTablePerYear.show()
+            self.mapnikOptions.hide()
+        elif output_type == 'Excel (.xls)':
+            self.lblOption1.show()
+            self.leOption1.show()
+            self.leOption1.activateWindow()
+            self.rbSingleTable.show()
+            self.rbTablePerIndicator.show()
+            self.rbTablePerYear.show()
+            self.mapnikOptions.hide()
         else:
             self.lblOption1.hide()
             self.leOption1.hide()
-            if output_type == 'Tab delimited file (.tab)':
-                self.rbSingleTable.show()
-                self.rbTablePerIndicator.show()
-                self.rbTablePerYear.show()
-                self.mapnikOptions.hide()
-            else:
-                self.rbSingleTable.hide()
-                self.rbTablePerIndicator.hide()
-                self.rbTablePerYear.hide()
+            self.rbSingleTable.hide()
+            self.rbTablePerIndicator.hide()
+            self.rbTablePerYear.hide()
 
 
         if output_type == 'Fixed field file (.dat)':
@@ -407,6 +418,9 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         elif output_type == 'ESRI database':
             self.lblOption1.setText(QString('Path:'))
             self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))
+        elif output_type == 'Excel (.xls)':
+            self.lblOption1.setText(QString('Filename:'))
+            self.lblOption1.setToolTip(QString('The location on disk of the xls file'))
 
     @pyqtSlot()
     def on_pbn_set_storage_location_released(self):
