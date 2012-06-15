@@ -33,8 +33,8 @@ class Table(Visualization):
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise Exception("If Table output_type is %s, storage_location must be a path to the output directory"%output_type)
-        elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri', 'fixed_field']:
-            raise Exception("Table output_type must be either dbf, csv, tab, sql, esri, fixed_field, not %s"%output_type)
+        elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri', 'fixed_field', 'xls']:
+            raise Exception("Table output_type must be either dbf, csv, tab, sql, esri, fixed_field, xls, not %s"%output_type)
 
         if output_type == "fixed_field" and not fixed_field_format:
             raise ValueError("If Table output_type is 'fixed_field', an XML format string must be passed as fixed_field_format.")
@@ -59,6 +59,12 @@ class Table(Visualization):
                 server.create_database(database_name = storage_location.database_name)
             storage_location = server.get_database(
                                    database_name = storage_location.database_name)
+        elif output_type == 'xls':
+            # TODO: the filename should come from the xml somehow
+            storage_location = os.path.join(storage_location, "indicators.xls")
+            # We want clean output.  So remove the file if it exists
+            if os.path.exists(storage_location):
+                os.remove(storage_location)
         self.storage_location = storage_location
 
         self.output_storage = StorageFactory().get_storage(
@@ -107,10 +113,11 @@ class Table(Visualization):
             dataset_name = computed_indicator.indicator.dataset_name
             if dataset_name not in dataset_to_attribute_map:
                 dataset_to_attribute_map[dataset_name] = []
-            dataset_to_attribute_map[dataset_name].append(name)
+            dataset_to_attribute_map[dataset_name].append(computed_indicator)
 
-        for dataset_name, indicator_names in dataset_to_attribute_map.items():
+        for dataset_name, indicators in dataset_to_attribute_map.items():
             visualization_representations = []
+            indicator_names = map(lambda x: x.get_file_name(suppress_extension_addition=True), indicators)
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]
             example_indicator = computed_indicators[indicator_names[0]]
@@ -192,7 +199,9 @@ class Table(Visualization):
             years = years)
 
         viz_metadata = []
-        for name, data_subset in per_attribute_data.items():
+        for name, data_subset, computed_indicator in zip(per_attribute_data.keys(),
+                                                         per_attribute_data.values(),
+                                                         computed_indicators.values()):
             if self.name is not None:
                 table_name = self.name + '_%s'%name
             else:
@@ -201,6 +210,8 @@ class Table(Visualization):
                     years = years,
                     attribute_names = [name])
 
+            if self.output_type == 'xls' and computed_indicator.indicator.terse_name:
+                table_name = computed_indicator.indicator.terse_name
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,

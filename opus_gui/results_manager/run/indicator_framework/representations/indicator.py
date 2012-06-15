@@ -6,14 +6,14 @@ from opus_core.variables.variable_name import VariableName
 import os
 
 class Indicator:
-    def __init__(self, dataset_name, attribute, name = None):
+    def __init__(self, dataset_name, attribute, name = None, terse_name = None):
 
         self.dataset_name = dataset_name 
         self.attribute = attribute
         self.name = name
         self.name = self.get_indicator_name(year = None)
         self.date_computed = None
-                    
+        self.terse_name = terse_name
         #TODO: write this method
         #self._check_integrity()
         

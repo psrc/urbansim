@@ -59,26 +59,35 @@ def load_xml_file(filename):
     strip_comments(tree.getroot())
     return tree
 
-def get_variable_dataset_and_name(variable_node):
-    ''' extract the dataset and the variable name from a node.
-    if the node has an attribute 'dataset', the dataset is taken from there ande the whole name
-    attribute is used for the name. Otherwise the word before the first period in the name attribute
-    is assumed the be the dataset '''
+def get_variable_parts(variable_node):
+    '''
+    Return a tuple of (dataset, name, terse_name)
+    '''
+    terse_name = variable_node.get('terse_name')
+
     # this is to maintain support for variables specified in pre-2.0 XML
     name = variable_node.get('name')
     if variable_node.get('dataset') is not None:
-        return (variable_node.get('dataset'), name)
+        return (variable_node.get('dataset'), name, terse_name)
     # TODO not sure on how to deal with constants -- any suggestions?
     if name == 'constant':
-        return (None, name)
+        return (None, name, terse_name)
     if name.startswith('__'):
-        return (None, name)
+        return (None, name, terse_name)
     splitted_name = name.split('.')
     if len(splitted_name) < 2:
         raise SyntaxError('Variable does not have dataset attribute nor give the dataset in the '
                           'name attribute "%s"' % name)
     dataset, name = splitted_name[0], ''.join(splitted_name[1:])
-    return (dataset.strip(), name.strip())
+    return (dataset.strip(), name.strip(), terse_name)
+
+def get_variable_dataset_and_name(variable_node):
+    ''' extract the dataset and the variable name from a node.
+    if the node has an attribute 'dataset', the dataset is taken from there ande the whole name
+    attribute is used for the name. Otherwise the word before the first period in the name attribute
+    is assumed the be the dataset '''
+    dataset, name, terse_name = get_variable_parts(variable_node)
+    return (dataset, name)
 
 def get_variable_name(variable_node):
     ''' short convenience method for getting just the variable name '''

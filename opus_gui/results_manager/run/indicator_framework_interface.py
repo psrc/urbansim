@@ -9,7 +9,7 @@ from opus_gui.results_manager.run.indicator_framework.representations.computed_i
 from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
+from opus_core.configurations.xml_configuration import get_variable_parts
 
 from opus_core.variables.variable_name import VariableName, is_anonymous_autogen_name
 
@@ -53,15 +53,17 @@ class IndicatorFrameworkInterface:
 
     def get_indicator(self, indicator_name, dataset_name, indicator_definition = None):
 
+        terse_name = None
         if indicator_definition is not None:
             attribute, source = indicator_definition
         else:
             indicator_nodes = get_available_indicator_nodes(self.project)
             for indicator_node in indicator_nodes:
-                dataset, name = get_variable_dataset_and_name(indicator_node)
+                dataset, name, tn = get_variable_parts(indicator_node)
                 if name == indicator_name and dataset == dataset_name:
                     attribute = (indicator_node.text or '').strip()
                     source = indicator_node.get('source')
+                    terse_name = tn
                     break
             else:
                 raise Exception('Could not find an indicator %s for dataset %s'\
@@ -75,7 +77,8 @@ class IndicatorFrameworkInterface:
 
         new_indicator = Indicator(name = indicator_name,
                                   dataset_name = dataset_name,
-                                  attribute = attribute)
+                                  attribute = attribute,
+                                  terse_name = terse_name)
         return new_indicator
 
     def get_computed_indicator(self, indicator, source_data, dataset_name):
