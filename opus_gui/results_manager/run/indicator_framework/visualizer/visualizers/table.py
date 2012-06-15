@@ -29,7 +29,7 @@ class Table(Visualization):
 
         if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
             raise Exception("If Table output_type is 'sql', a Database object must be passed as storage_location.")
-        elif output_type in ['dbf', 'csv', 'tab', 'esri', 'fixed_field'] and \
+        elif output_type in ['dbf', 'csv', 'tab', 'esri', 'fixed_field', 'xls'] and \
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise Exception("If Table output_type is %s, storage_location must be a path to the output directory"%output_type)
@@ -60,8 +60,7 @@ class Table(Visualization):
             storage_location = server.get_database(
                                    database_name = storage_location.database_name)
         elif output_type == 'xls':
-            # TODO: the filename should come from the xml somehow
-            storage_location = os.path.join(storage_location, "indicators.xls")
+            storage_location = os.path.join(indicator_directory, storage_location)
             # We want clean output.  So remove the file if it exists
             if os.path.exists(storage_location):
                 os.remove(storage_location)

@@ -70,6 +70,10 @@ class BatchProcessor(object):
             elif output_type == 'tab':
                 if 'output_style' in params:
                     args['output_style'] = int(str(params['output_style']))
+            elif output_type == 'xls':
+                if 'output_style' in params:
+                    args['output_style'] = int(str(params['output_style']))
+                args['storage_location'] = str(params['storage_location'])
 
         elif visualization_type == 'mapnik_map' or visualization_type == 'mapnik_animated_map' :
             try:
