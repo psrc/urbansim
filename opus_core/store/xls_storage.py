@@ -33,6 +33,10 @@ else:
         The storage_location is a path to a .xls file.  Each sheet in the .xls
         file is treated as a separate table with a single header row and any
         number of data rows.  If the file does not exist, it will be created.
+
+        The table_to_sheet kwarg is a mapping from arbitrarily long table names
+        to 31-char sheet names.  table names not specified in this mapping that
+        exceed 31 chars will be truncated when the table is written.
         """
 
         def __init__(self, storage_location, *args, **kwargs):
@@ -43,6 +47,7 @@ else:
             else:
                 self.workbook = xlwt.Workbook()
                 self.rwb = None
+            self.table_to_sheet = kwargs.get('table_to_sheet', {})
 
         def get_storage_location(self):
             return storage_location
@@ -53,7 +58,9 @@ else:
         def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
             if self.rwb == None:
                 raise NameError("Table '%s' could not be found." % table_name)
-            sheet = self.rwb.sheet_by_name(table_name)
+
+            sheet_name = self.table_to_sheet.get(table_name, table_name)
+            sheet = self.rwb.sheet_by_name(sheet_name)
             if sheet == None:
                 raise NameError("Table '%s' could not be found." % table_name)
             if column_names != Storage.ALL_COLUMNS:
@@ -81,16 +88,17 @@ else:
             raises a NameError if the table_name is more than 31 chars.  This
             is a limitation of the xls format.
             """
-            if len(table_name) > 31:
+            sheet_name = self.table_to_sheet.get(table_name, table_name)
+            if len(sheet_name) > 31:
                 # Dumbly truncate table name
-                logger.log_warning("xls_storage: Truncating " + table_name +
+                logger.log_warning("xls_storage: Truncating " + sheet_name +
                                    " to 31 chars")
-                table_name = table_name[0:30]
+                sheet_name = sheet_name[0:30]
 
             self._get_column_size_and_names(table_data)
 
             # TODO: respect mode argument
-            sheet = self._get_sheet_by_name(table_name)
+            sheet = self._get_sheet_by_name(sheet_name)
             if sheet == None:
                 sheet = self.workbook.add_sheet(sheet_name, cell_overwrite_ok=True)
 
@@ -153,6 +161,32 @@ else:
                 table_data = self.expected
                 )
             actual = self.storage.load_table(table_name='thistablenameislongerthanthirt')
+            self.assertDictsEqual(self.expected, actual)
+
+    class TestXlsStorageWithTableMapping(TestStorageInterface):
+
+        def setUp(self):
+            self.temp_dir = mkdtemp(prefix='opus_core_test_xls_storage')
+            storage_location = os.path.join(self.temp_dir, "fib.xls")
+            self.storage = xls_storage(storage_location,
+                table_to_sheet = {
+                    'thisisasheetwithfibonaccinumbers':'fibnac',
+                })
+            self.expected = {
+                'fib': array([1.0, 1.0, 2.0, 3.0, 5.0]),
+                'fib2': array([8.0, 13.0, 21.0, 34.0, 55.0]),
+                }
+
+        def tearDown(self):
+            if os.path.exists(self.temp_dir):
+                rmtree(self.temp_dir)
+
+        def test_sheet_mapping(self):
+            self.storage.write_table(
+                table_name = 'thisisasheetwithfibonaccinumbers',
+                table_data = self.expected
+                )
+            actual = self.storage.load_table(table_name='thisisasheetwithfibonaccinumbers')
             self.assertDictsEqual(self.expected, actual)
 
 if __name__ == '__main__':
