@@ -10,6 +10,7 @@ import pickle
 import subprocess
 import numpy as np
 from copy import copy
+from psa import panneal
 from scipy.optimize import *
 from numpy.random import seed
 from numpy import array, arange
@@ -69,6 +70,7 @@ class Calibration(object):
                                   ).get_dataset_pool()
 
         self.calib_datasets = {}
+        print "calib_datasets",calib_datasets
         #{dataset_name: [DataSet, 'attribute', index]}
         for dataset_name, calib_attr in calib_datasets.iteritems():
             dataset = self.dataset_pool.get_dataset(dataset_name, 
@@ -88,7 +90,7 @@ class Calibration(object):
             self.calib_datasets[dataset_name] = [dataset, calib_attr, index] 
 
     @log_block("Start Calibration")
-    def run(self, optimizer='bfgs', results_pickle_prefix="calib"):
+    def run(self, optimizer='panneal', results_pickle_prefix="calib"):
         ''' Call specifized optimizer to calibrate
         
         Arguments:
@@ -119,6 +121,13 @@ class Calibration(object):
                              T0=None, Tf=1e-12, maxeval=None, maxaccept=None, maxiter=400, 
                              boltzmann=1.0, learn_rate=0.5, feps=1e-06, quench=1.0, m=1.0, 
                              n=1.0, lower=-1, upper=1, dwell=50, disp=True)
+                             
+        elif optimizer=='panneal':
+            results = panneal(self.target_func, copy(init_v), schedule='fast', full_output=1, 
+                             T0=None, Tf=1e-12, maxeval=None, maxaccept=None, maxiter=400, 
+                             boltzmann=1.0, learn_rate=0.5, feps=1e-08, quench=1.0, m=1.0, 
+                             n=1.0, lower=-1, upper=1, dwell=50, disp=True,
+                             cores=24, interv=20)
         else:
             raise ValueError, "Unrecognized optimizer {}".format(optimizer)
 
@@ -161,6 +170,10 @@ class Calibration(object):
 
     def update_prediction(self, est_v, *args, **kwargs):
         self.update_parameters(est_v, *args, **kwargs)
+#        cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name} --skip-cache-cleanup'\
+#                .format(python=sys.executable, run_id=self.run_id, 
+#                        project_name=self.project_name, year=self.start_year)
+# TEST
         cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
                 .format(python=sys.executable, run_id=self.run_id, 
                         project_name=self.project_name, year=self.start_year)
@@ -266,14 +279,19 @@ if __name__ == "__main__":
     python /home/lmwang/opus/src/opus_core/tools/start_calibration.py -x /home/atschirhar/opus/project_configs/paris_zone.xml -s paris_zone_calibration2 -d establishment_location_choice_model_coefficients -a estimate --subset-attr=coefficient_name --subset-patterns=*_celcm -t "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])" -f /workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp06.csv
     """
     
-    xml_config = '/home/atschirhar/opus/project_configs/paris_zone.xml'
-    scenario = 'paris_zone_calibration'
+    # TODO: temp :
+    # os.environ["OPUS_DATA_PATH"] = "/home/atschirhar/opus/data"
+    
+    xml_config = '/home/atschirhar/opus/project_configs/paris_zone_calibration.xml'
+    scenario = 'paris_zone_calibration2'
     calib_datasets = {'establishment_location_choice_model_coefficients': 'estimate'}
     subset = None
     subset_patterns = {'establishment_location_choice_model_coefficients':['coefficient_name', '_celcm$']}
     target_expression = "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])"
-    target_file = '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp06.csv'
+    target_file = '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp00.csv' # for year 2000! TODO -- REMEMBER
 
+
+    
     calib = Calibration(xml_config=xml_config, 
                         scenario=scenario, 
                         calib_datasets=calib_datasets, 
@@ -283,4 +301,4 @@ if __name__ == "__main__":
                         subset_patterns=subset_patterns
                        )
     calib.run(results_pickle_prefix='calib')
-
+    
