@@ -17,6 +17,7 @@
 
 aliases = [
     # household attributes
+    'persons = household.number_of_agents(person)',
     'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
     'age_of_head = household.aggregate(person.age * person.head_of_hh)',
     'children = household.aggregate(mag_zone.person.is_child)',

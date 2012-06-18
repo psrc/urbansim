@@ -7,79 +7,6 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
-      <model name="income_regression_model2" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.income_regression_model</class_module>
-            <class_name type="string">IncomeRegressionModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string">IncomeRegressionModel</name>
-            <argument name="regression_procedure" parser_action="quote_string" type="string">opus_core.linear_regression</argument>
-            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
-            <argument convert_blank_to_none="True" name="run_config" type="string"/>
-            <argument convert_blank_to_none="True" name="estimate_config" type="string"/>
-            <argument name="debuglevel" type="integer">0</argument>
-            <argument name="dataset_pool" type="string">dataset_pool</argument>
-          </init>
-          <run type="dictionary">
-            <argument name="specification" type="string">specification</argument>
-            <argument name="coefficients" type="string">coefficients</argument>
-            <argument name="dataset" type="string">household</argument>
-            <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-          </run>
-          <prepare_for_run type="dictionary">
-            <name name="name" type="string">prepare_for_run</name>
-            <argument convert_blank_to_none="True" name="dataset" type="string"/>
-            <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string"/>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">income_regression_model2_specification</argument>
-            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">income_regression_model2_coefficients</argument>
-            <argument name="cache_storage" type="string">base_cache_storage</argument>
-            <argument name="sample_coefficients" type="boolean">False</argument>
-            <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
-            <argument name="multiplicator" type="integer">1</argument>
-            <output name="output" type="string">(specification, coefficients, rm_index)</output>
-          </prepare_for_run>
-          <estimate type="dictionary">
-            <argument name="specification" type="string">specification</argument>
-            <argument name="dataset" type="string">household</argument>
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">household.income</argument>
-            <argument convert_blank_to_none="True" name="index" type="string">rm_index</argument>
-            <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <output name="output" type="string">(coefficients, dummy)</output>
-          </estimate>
-          <prepare_for_estimate type="dictionary">
-            <name name="name" type="string">prepare_for_estimate</name>
-            <argument convert_blank_to_none="True" name="dataset" type="string">household</argument>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">regression_model_template_specification</argument>
-            <argument convert_blank_to_none="True" name="dataset_for_estimation_table" parser_action="quote_string" type="string">households_sipp</argument>
-            <argument convert_blank_to_none="True" name="dataset_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="join_datasets" type="boolean">True</argument>
-            <output name="output" type="string">(specification, rm_index)</output>
-          </prepare_for_estimate>
-        </structure>
-        <specification type="dictionary">
-          <submodel hidden="Children" name="Submodel" submodel_id="-2" type="submodel">
-            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
-            <variable_list type="variable_list">
-              <variable_spec name="household.age_of_head"/>
-              <variable_spec name="constant"/>
-              <variable_spec name="household.hh_children"/>
-              <variable_spec name="household.hh_oldhead"/>
-              <variable_spec name="household.hh_persons"/>
-              <variable_spec name="household.hh_workers"/>
-            </variable_list>
-          </submodel>
-        </specification>
-        <estimation_config name="Estimation Configuration" parser_action="skip">
-          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
-        </estimation_config>
-      </model>
       <model name="household_transition_model_with_growth_threshold" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -113,20 +40,6 @@
             <argument name="sampling_threshold" type="string">10000</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
             <argument name="sync_dataset" type="string">person</argument>
-          </run>
-        </structure>
-      </model>
-      <model name="test_model" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.test_model</class_module>
-            <class_name type="string">TestModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string">TestModel</name>
-            <argument name="model_name" parser_action="quote_string" type="string">Test Model</argument>
-          </init>
-          <run type="dictionary">
           </run>
         </structure>
       </model>

@@ -586,7 +586,7 @@
       <model name="zeroworker_income_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.zeroworker_income_model</class_module>
+            <class_module type="string">urbansim.models.zeroworker_income_model</class_module>
             <class_name type="string">ZeroworkerIncomeModel</class_name>
           </import>
           <init type="dictionary">
@@ -628,7 +628,7 @@
       <model name="household_workers_init_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.household_workers_init_model</class_module>
+            <class_module type="string">urbansim.models.household_workers_init_model</class_module>
             <class_name type="string">HouseholdWorkersInitChoiceModel</class_name>
           </import>
           <init type="dictionary">
@@ -743,7 +743,7 @@
       <model name="household_workers_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.household_workers_choice_model</class_module>
+            <class_module type="string">urbansim.models.household_workers_choice_model</class_module>
             <class_name type="string">HouseholdWorkersChoiceModel</class_name>
           </import>
           <init type="dictionary">
@@ -808,12 +808,11 @@
       <model name="education_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.education_model</class_module>
+            <class_module>urbansim.models.education_model</class_module>
             <class_name>EducationModel</class_name>
           </import>
           <init type="dictionary">
-            <argument name="probabilities" parser_action="quote_string" type="string">mag_zone.models.edu_exit_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">EducationModel</name>
           </init>
@@ -834,7 +833,7 @@
       <model name="income_regression_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.income_regression_model</class_module>
+            <class_module type="string">urbansim.models.income_regression_model</class_module>
             <class_name type="string">IncomeRegressionModel</class_name>
           </import>
           <init type="dictionary">
@@ -907,7 +906,7 @@
       <model name="income_regression_model2" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.income_regression_model</class_module>
+            <class_module type="string">urbansim.models.income_regression_model</class_module>
             <class_name type="string">IncomeRegressionModel</class_name>
           </import>
           <init type="dictionary">
@@ -980,12 +979,11 @@
       <model name="marriage_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.marriage_model</class_module>
+            <class_module>urbansim.models.marriage_model</class_module>
             <class_name>MarriageModel</class_name>
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">MarriageModel</name>
           </init>
@@ -1007,12 +1005,11 @@
       <model name="cohabitation_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.cohabitation_model</class_module>
+            <class_module>urbansim.models.cohabitation_model</class_module>
             <class_name>CohabitationModel</class_name>
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">CohabitationModel</name>
           </init>
@@ -1034,12 +1031,11 @@
       <model name="divorce_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.divorce_model</class_module>
+            <class_module>urbansim.models.divorce_model</class_module>
             <class_name>DivorceModel</class_name>
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">DivorceModel</name>
           </init>
@@ -1061,12 +1057,11 @@
       <model name="breakup_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>mag_zone.models.breakup_model</class_module>
+            <class_module>urbansim.models.breakup_model</class_module>
             <class_name>BreakupModel</class_name>
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">BreakupModel</name>
           </init>
