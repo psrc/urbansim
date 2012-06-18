@@ -243,23 +243,23 @@ class RoommateModel(Model):
                 household_set.modify_attribute('age_of_head', age_of_head)
             ##Initialize income of households with newly-assigned household_ids (should be only 1-person households) as -1
             if 'income' in household_set.get_primary_attribute_names():
-                new_hhsize1_ids = household_set.compute_variables('(household.household_id > %s)*(household.persons==1)' % (max_hh_id1))
+                new_hhsize1_ids = household_set.compute_variables('(household.household_id > %s)*(household.number_of_agents(person)==1)' % (max_hh_id1))
                 initialize_income_hhsize1 = where(new_hhsize1_ids == 1)[0]
                 if initialize_income_hhsize1.size > 0:
                     household_set.modify_attribute('income', array(initialize_income_hhsize1.size*[-1]), initialize_income_hhsize1)
-                new_hhsize2_ids = household_set.compute_variables('(household.household_id > %s)*(household.persons==2)' % (max_hh_id1))
+                new_hhsize2_ids = household_set.compute_variables('(household.household_id > %s)*(household.number_of_agents(person)==2)' % (max_hh_id1))
                 initialize_income_hhsize2 = where(new_hhsize2_ids == 1)[0]
                 if initialize_income_hhsize2.size > 0:
                     household_set.modify_attribute('income', array(initialize_income_hhsize2.size*[-2]), initialize_income_hhsize2)
-                new_hhsize3_ids = household_set.compute_variables('(household.household_id > %s)*(household.persons==3)' % (max_hh_id1))
+                new_hhsize3_ids = household_set.compute_variables('(household.household_id > %s)*(household.number_of_agents(person)==3)' % (max_hh_id1))
                 initialize_income_hhsize3 = where(new_hhsize3_ids == 1)[0]
                 if initialize_income_hhsize3.size > 0:
                     household_set.modify_attribute('income', array(initialize_income_hhsize3.size*[-3]), initialize_income_hhsize3)
-                new_hhsize4_ids = household_set.compute_variables('(household.household_id > %s)*(household.persons==4)' % (max_hh_id1))
+                new_hhsize4_ids = household_set.compute_variables('(household.household_id > %s)*(household.number_of_agents(person)==4)' % (max_hh_id1))
                 initialize_income_hhsize4 = where(new_hhsize4_ids == 1)[0]
                 if initialize_income_hhsize4.size > 0:
                     household_set.modify_attribute('income', array(initialize_income_hhsize4.size*[-4]), initialize_income_hhsize4)
-                new_hhsize5_ids = household_set.compute_variables('(household.household_id > %s)*(household.persons==5)' % (max_hh_id1))
+                new_hhsize5_ids = household_set.compute_variables('(household.household_id > %s)*(household.number_of_agents(person)==5)' % (max_hh_id1))
                 initialize_income_hhsize5 = where(new_hhsize5_ids == 1)[0]
                 if initialize_income_hhsize5.size > 0:
                     household_set.modify_attribute('income', array(initialize_income_hhsize5.size*[-5]), initialize_income_hhsize5)
