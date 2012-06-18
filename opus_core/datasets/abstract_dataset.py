@@ -1832,7 +1832,7 @@ class AbstractDataset(object):
     def update_size(self):
         """Modify self.n according to the size of the id-attribute.
         """
-        self.n = self.get_id_attribute().shape[0]
+        self.n = int(self.get_id_attribute().shape[0])
 
     def _do_flush_attribute(self, name):
         raise NotImplementedError('_do_flush_attribute')
