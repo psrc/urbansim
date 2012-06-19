@@ -58,5 +58,11 @@ aliases = [
         'median_household_income = tazi03.aggregate(household.income, function=median)',
         'number_of_households = tazi03.number_of_agents(household)',
         'percent_hh_age_of_head_over_55 = tazi03.aggregate(safe_array_divide(mag_zone.tazi03.number_of_hh_age_of_head_over_55,mag_zone.tazi03.number_of_households))',
+        # building related:
+        'developable_sf_units_capacity = tazi03.aggregate(where(building.building_type_id == 1,urbansim_zone.building.developable_residential_units_capacity,0))',
+        'developable_mf_units_capacity = tazi03.aggregate(where(building.building_type_id == 2,urbansim_zone.building.developable_residential_units_capacity,0))',
+        'developable_non_res_capacity = tazi03.aggregate(where(building.building_type_id > 3,urbansim_zone.building.developable_non_residential_sqft_capacity,0))',
+        'vacant_res_units = tazi03.aggregate(urbansim_zone.building.vacant_residential_units)',
+        'vacant_job_spaces = tazi03.aggregate(urbansim_zone.building.vacant_job_spaces)',                
         ]
 
