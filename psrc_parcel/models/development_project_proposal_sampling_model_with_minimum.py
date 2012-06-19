@@ -9,7 +9,11 @@ from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue
-from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate
+from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d
+from scipy.ndimage import minimum as ndimage_min
+from scipy.ndimage import maximum as ndimage_max
+from scipy.ndimage import mean as ndimage_mean
+from scipy.ndimage import maximum_position
 from gc import collect
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
@@ -24,7 +28,11 @@ from collections import defaultdict
 class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSamplingModel):
     """The model takes into account an additional column of the target vacancy table (called "minimum_spaces" by default).
     It stops building if both conditions are true: enough space as defined by vacancy rate, 
-    AND at least "minimum_spaces" units were built."""
+    AND at least "minimum_spaces" units were built.
+    It also implements the sampling in two phases:
+    1. Selecting one proposal within each parcel and building type, in order not to give too much advantage to parcels with a large amount of proposals. 
+    2. Between parcel sampling - the same as the parent model.
+    """
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,
@@ -162,8 +170,14 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                   self.proposal_set.get_attribute("status_id") == self.proposal_set.id_planned, 
                                                   self.proposal_set.get_attribute("start_year") == year ) 
                                         )[0]
-        logger.log_status("Process planned proposals.")
+        
+        logger.start_block("Processing planned proposals")
         self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        logger.end_block()
+        
+        logger.start_block("Selecting proposals within parcels")
+        self.select_proposals_within_parcels()
+        logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
         for status in [self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
@@ -235,3 +249,47 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                          accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
+
+    def select_proposals_within_parcels(self):
+        # Allow only one proposal per parcel in order to not disadvantage parcels with small amount of proposals.
+        #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
+        parcel_set = self.dataset_pool.get_dataset('parcel')
+        self.proposal_set.id_eliminated_in_within_parcel_sampling = 44
+        egligible = logical_and(self.weight > 0, 
+                                in1d(self.proposal_set['status_id'], array([self.proposal_set.id_proposed, self.proposal_set.id_tentative])))
+        wegligible = where(egligible)[0]
+        parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible])
+        #min_type = {}
+        #egligible_proposals = {}
+
+        for key in self.column_names:
+            mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+                                            index=self.proposal_set.get_id_attribute())
+            #min_type[key] = ndimage_min(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+            #                                index=self.proposal_set['proposal_id'])
+#            max_type = ndimage_max(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+#                                            index=self.proposal_set['proposal_id'])
+#            egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
+            utypes = unique(mean_type)
+            for value in utypes:
+                chosen_prop = maximum_position(self.weight[wegligible], 
+                                        labels=(self.proposal_set['parcel_id'][wegligible])*(mean_type[wegligible]==value), 
+                                        index=parcels_with_proposals)
+                egligible[wegligible][chosen_prop] = 0
+        self.proposal_set['status_id'][egligible] = self.proposal_set.id_eliminated_in_within_parcel_sampling
+        
+#        for pclid in parcels_with_proposals:
+#            for key in self.column_names:
+#                propind = logical_and(self.proposal_set['parcel_id'] == pclid, egligible_proposals[key])
+#                propidx = where(propind)[0]
+#                #compidx = where(in1d(self.proposal_component_set['proposal_id'], self.proposal_set['proposal_id'][propidx]))[0]
+#                #type_values = unique(self.proposal_component_set[key][compidx])
+#                for value, tmp in self.accounting.iteritems():
+#                    proptypeidx = where(min_type[key][propidx] == value)[0]
+#                    if proptypeidx.size <= 0:
+#                        continue
+#                    chosen_prop = probsample_noreplace(proptypeidx, 1, self.weight[propidx[proptypeidx]])
+#                    propind[propidx[chosen_prop]] = 0
+#                self.proposal_set['status_id'][propind] = self.proposal_set.id_eliminated_in_within_parcel_sampling
+        
+        
