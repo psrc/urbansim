@@ -22,6 +22,9 @@ from opus_core.tools.start_run import StartRunOptionGroup, main
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
+from opus_core.configurations.config_calibration import *
+import pdb
+
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
     
@@ -281,24 +284,20 @@ if __name__ == "__main__":
     
     # TODO: temp :
     # os.environ["OPUS_DATA_PATH"] = "/home/atschirhar/opus/data"
-    
-    xml_config = '/home/atschirhar/opus/project_configs/paris_zone_calibration.xml'
-    scenario = 'paris_zone_calibration2'
-    calib_datasets = {'establishment_location_choice_model_coefficients': 'estimate'}
-    subset = None
-    subset_patterns = {'establishment_location_choice_model_coefficients':['coefficient_name', '_celcm$']}
-    target_expression = "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])"
-    target_file = '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp00.csv' # for year 2000! TODO -- REMEMBER
-
-
-    
-    calib = Calibration(xml_config=xml_config, 
-                        scenario=scenario, 
-                        calib_datasets=calib_datasets, 
-                        target_expression=target_expression,
-                        target_file=target_file,
-                        subset=subset,
-                        subset_patterns=subset_patterns
+ 
+    try:
+        calib_config = eval('calibration_{}'.format(sys.argv[1]))
+    except NameError:
+        sys.exit("Wrong argument '{}'".format(sys.argv[1]))
+   
+    calib = Calibration(xml_config        = calib_config['xml_config'],
+                        scenario          = calib_config['scenario'],
+                        calib_datasets    = calib_config['calib_datasets'],
+                        target_expression = calib_config['target_expression'],
+                        target_file       = calib_config['target_file'],
+                        subset            = calib_config['subset'],
+                        subset_patterns   = {'establishment_location_choice_model_coefficients': ['coefficient_name', '_celcm$']}
                        )
+   
     calib.run(results_pickle_prefix='calib')
     
