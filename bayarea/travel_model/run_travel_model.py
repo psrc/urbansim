@@ -1,7 +1,7 @@
 import mtc_config
 import pxssh
 import winssh
-import sys
+import sys, os
 from optparse import OptionParser
 
 if __name__ == "__main__":
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     # Set up the server.
     print "Setting up proper directory structure..."
-    server_admin = winssh.winssh(config.server_admin)
+    server_admin = winssh.winssh(config.server_admin, "OPUS_MTC_SERVER_ADMIN_PASSWD")
     modeldir = options.year + "_" + options.scenario
     abs_modeldir = config.travel_model_home + modeldir
     if server_admin.cmd("test -e " + abs_modeldir)[0] != 0:
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     server_admin.cmd('rm /cygdrive/m/commpath')
     server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + modeldir + '"')
 
-    server = winssh.winssh(config.server)
+    server = winssh.winssh(config.server, "OPUS_MTC_SERVER_PASSWD")
 
     # Clean house before proceeding
     print "Killing old processes..."
@@ -102,10 +102,10 @@ if __name__ == "__main__":
     server.s.sendline('cmd /c "JavaOnly_runMain.cmd > runMainOutput.log"')
 
     nodes = []
-    nodenum = 1
+    nodenum = 0
     for n in config.nodes:
-        print "Preparing node " + str(nodenum)
-        w = winssh.winssh(n)
+        print "Preparing node " + str(nodenum + 1)
+        w = winssh.winssh(n, "OPUS_MTC_NODE_" + str(nodenum) + "_PASSWD")
 
         # Mount the M: drive on each node.  Start cleanly by killing any java
         # processes and unmount the M drive
@@ -114,7 +114,14 @@ if __name__ == "__main__":
 
         mount_cmd = "net use M: "
         mount_cmd += "'" + config.netdrive + "' /user:" + config.netuser
-        mount_cmd += " '" +config.netpw + "' /persistent:no"
+        if config.netpw:
+            pw = config.netpw
+        else:
+            pw = os.getenv("OPUS_MTC_NET_PASSWD")
+            if not pw:
+                raise ValueError("No password found for network mount")
+
+        mount_cmd += " '" + pw + "' /persistent:no"
         w.cmd_or_fail(mount_cmd, supress_cmd=True)
 
         # For some reason, we're not allowed to navigate symlinks unless we
@@ -125,13 +132,13 @@ if __name__ == "__main__":
 
         # Like the server's java processes, the node java processes will block
         # this cmd shell too.
-        w.s.sendline('cmd /c "JavaOnly_runNode' + str(nodenum) + '.cmd > runNode' + str(nodenum) + '.log"')
+        w.s.sendline('cmd /c "JavaOnly_runNode' + str(nodenum + 1) + '.cmd > runNode' + str(nodenum + 1) + '.log"')
         nodenum = nodenum + 1
         nodes.append(w)
 
     # Start the model.  We need a new winssh here because the existing one is
     # blocking on the java processes.
-    server_model = winssh.winssh(config.server)
+    server_model = winssh.winssh(config.server, "OPUS_MTC_SERVER_PASSWD")
 
     print "Setting up M drive on server..."
     server_model.cmd("subst /D M:")

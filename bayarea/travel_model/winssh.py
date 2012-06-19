@@ -1,6 +1,7 @@
 import sys
 import pxssh
 from opus_core.logger import logger
+import os
 
 # You can test winssh by running python winssh.py.  But you'll have to supply a
 # suitable connect string
@@ -8,15 +9,23 @@ CONNECT_STRING = "cube@detroit.urbansim.org:********"
 
 class winssh:
 
-    def __init__(self, connectspec):
+    def __init__(self, connectspec, passwd_env=None):
         """
         Initialize an ssh terminal connection
         connectspec: a connection specification such as user@host:pw
         """
         self.s = None
-        pw = connectspec.split(':')[1]
-        user = connectspec.split(':')[0].split('@')[0]
-        host = connectspec.split(':')[0].split('@')[1]
+        connectparts = connectspec.split(':')
+        if len(connectparts) == 2:
+            pw = connectparts[1]
+        elif passwd_env:
+            pw = os.getenv(passwd_env)
+            if not pw:
+                raise ValueError("No password found in environment variable " + passwd_env)
+        else:
+            raise ValueError("No password found in connectspec or environment")
+        user = connectparts[0].split('@')[0]
+        host = connectparts[0].split('@')[1]
         self.s = pxssh.pxssh()
         self.s.force_password = True
         logger.log_status("Attempting to login to " + user + "@" + host)
