@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE 
+
 calibration_paris = {
     'xml_config' : '/home/atschirhar/opus/project_configs/paris_zone.xml',
     'scenario' : 'paris_zone_calibration2',
