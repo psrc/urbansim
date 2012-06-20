@@ -4,6 +4,7 @@
 
 aliases = [
     "zone_id = building.disaggregate(parcel.zone_id)",
+    "county_id =  building.disaggregate(parcel.county_id)",
     "superdistrict_id = building.disaggregate(parcel.superdistrict_id)",
     "schooldistrict = building.disaggregate(bayarea.parcel.schooldistrict)",
     "neighborhood_type = building.disaggregate(bayarea.parcel.neighborhood_type)",
