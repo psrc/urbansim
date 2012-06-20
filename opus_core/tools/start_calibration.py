@@ -18,7 +18,8 @@ from opus_core.logger import logger, log_block
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
-from opus_core.tools.start_run import StartRunOptionGroup, main
+from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
+from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_run
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
@@ -151,7 +152,7 @@ class Calibration(object):
         option_group = StartRunOptionGroup()
         option_group.parser.set_defaults(xml_configuration=self.xml_config,
                                   scenario_name=self.scenario)
-        run_id, cache_directory = main(option_group)
+        run_id, cache_directory = start_run(option_group)
         ## good for testing
         #run_id = 275
         #cache_directory = '/home/lmwang/opus/data/paris_zone/runs/run_275.2012_05_26_00_20'
@@ -180,8 +181,15 @@ class Calibration(object):
         cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
                 .format(python=sys.executable, run_id=self.run_id, 
                         project_name=self.project_name, year=self.start_year)
-        
         subprocess.Popen(cmd, shell=True).communicate()
+
+        option_group = RestartRunOptionGroup()
+        option_group.parser.set_defaults(project_name=self.project_name,
+                                         run_id=self.run_id,
+                                         start_year=self.start_year,
+                                         skip_cache_cleanup=False)
+        restart_run(option_group)
+        
         #p = os.popen(cmd)
         #p.read()
         #p.close()
@@ -288,7 +296,7 @@ if __name__ == "__main__":
     try:
         calib_config = eval('calibration_{}'.format(sys.argv[1]))
     except NameError:
-        sys.exit("Wrong argument '{}'".format(sys.argv[1]))
+        sys.exit("Wrong argument '{}'. This calibration's configuration doesn't exist.".format(sys.argv[1]))
    
     calib = Calibration(xml_config        = calib_config['xml_config'],
                         scenario          = calib_config['scenario'],
@@ -296,7 +304,7 @@ if __name__ == "__main__":
                         target_expression = calib_config['target_expression'],
                         target_file       = calib_config['target_file'],
                         subset            = calib_config['subset'],
-                        subset_patterns   = {'establishment_location_choice_model_coefficients': ['coefficient_name', '_celcm$']}
+                        subset_patterns   = calib_config['subset_pattern']
                        )
    
     calib.run(results_pickle_prefix='calib')
