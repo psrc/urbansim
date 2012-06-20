@@ -12,6 +12,5 @@ aliases = [
     "jurisdiction_id = building.disaggregate(parcel.jurisdiction_id)",
     "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id",
-    "within_half_mile_transit = building.disaggregate(bayarea.parcel.within_half_mile_transit)",
-    "calibration_building_type_id = 1*(building.building_type_id<3) + ((building.building_type_id)*(building.building_type_id>2))"
+    "within_half_mile_transit = building.disaggregate(bayarea.parcel.within_half_mile_transit)"
            ]
