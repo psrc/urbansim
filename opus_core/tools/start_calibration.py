@@ -178,17 +178,16 @@ class Calibration(object):
 #                .format(python=sys.executable, run_id=self.run_id, 
 #                        project_name=self.project_name, year=self.start_year)
 # TEST
-        cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
-                .format(python=sys.executable, run_id=self.run_id, 
-                        project_name=self.project_name, year=self.start_year)
-        subprocess.Popen(cmd, shell=True).communicate()
+#       cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
+#               .format(python=sys.executable, run_id=self.run_id, 
+#                       project_name=self.project_name, year=self.start_year)
+#       subprocess.Popen(cmd, shell=True).communicate()
 
         option_group = RestartRunOptionGroup()
         option_group.parser.set_defaults(project_name=self.project_name,
-                                         run_id=self.run_id,
-                                         start_year=self.start_year,
                                          skip_cache_cleanup=False)
-        restart_run(option_group)
+        restart_run(option_group=option_group, 
+                    args=[self.run_id, self.start_year])
         
         #p = os.popen(cmd)
         #p.read()
@@ -304,7 +303,7 @@ if __name__ == "__main__":
                         target_expression = calib_config['target_expression'],
                         target_file       = calib_config['target_file'],
                         subset            = calib_config['subset'],
-                        subset_patterns   = calib_config['subset_pattern']
+                        subset_patterns   = calib_config['subset_patterns']
                        )
    
     calib.run(results_pickle_prefix='calib')
