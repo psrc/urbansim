@@ -31,7 +31,7 @@ class Calibration(object):
     
     '''
     def __init__(self, xml_config, scenario, calib_datasets, target_expression, target_file,
-                 subset=None, subset_patterns=None):
+                 subset=None, subset_patterns=None, skip_cache_cleanup=False):
         """
         - xml_config: xml configuration file, for ex '/home/atschirhar/opus/project_configs/paris_zone.xml'
         - scenario: name of scenario to run for calibration, where models_to_run and simulation years are specified
@@ -52,6 +52,7 @@ class Calibration(object):
 
         self.xml_config = xml_config
         self.scenario = scenario
+        self.skip_cache_cleanup = skip_cache_cleanup
         self.run_id, self.cache_directory = self.init_run()
 
         log_file = os.path.join(self.cache_directory, "calibration.log")
@@ -174,24 +175,12 @@ class Calibration(object):
 
     def update_prediction(self, est_v, *args, **kwargs):
         self.update_parameters(est_v, *args, **kwargs)
-#        cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name} --skip-cache-cleanup'\
-#                .format(python=sys.executable, run_id=self.run_id, 
-#                        project_name=self.project_name, year=self.start_year)
-# TEST
-#       cmd = '{python} -m opus_core.tools.restart_run {run_id} {year} -p {project_name}'\
-#               .format(python=sys.executable, run_id=self.run_id, 
-#                       project_name=self.project_name, year=self.start_year)
-#       subprocess.Popen(cmd, shell=True).communicate()
 
         option_group = RestartRunOptionGroup()
         option_group.parser.set_defaults(project_name=self.project_name,
-                                         skip_cache_cleanup=False)
+                                         skip_cache_cleanup=self.skip_cache_cleanup)
         restart_run(option_group=option_group, 
                     args=[self.run_id, self.start_year])
-        
-        #p = os.popen(cmd)
-        #p.read()
-        #p.close()
 
     def summarize_prediction(self):
         dataset_name = VariableName(self.target_expression).get_dataset_name()
@@ -303,7 +292,8 @@ if __name__ == "__main__":
                         target_expression = calib_config['target_expression'],
                         target_file       = calib_config['target_file'],
                         subset            = calib_config['subset'],
-                        subset_patterns   = calib_config['subset_patterns']
+                        subset_patterns   = calib_config['subset_patterns'],
+                        skip_cache_cleanup= calib_config.get('skip_cache_cleanup', False)
                        )
    
     calib.run(results_pickle_prefix='calib')
