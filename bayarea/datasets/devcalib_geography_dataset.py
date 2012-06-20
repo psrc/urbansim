@@ -13,7 +13,7 @@ class DevcalibGeographyDataset(SubgroupDataset):
     in_table_name_default = "devcalib_geography"
     out_table_name_default = "devcalib_geography"
     dataset_name = "devcalib_geography"
-    subgroup_definition = ['bayarea.building.county_id', 'building.building_type_id']
+    subgroup_definition = ['bayarea.building.county_id', 'bayarea.calibration_building_type_id']
     
 from opus_core.tests import opus_unittest
 class TestSubmarketDataset(opus_unittest.OpusTestCase):
