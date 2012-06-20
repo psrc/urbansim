@@ -9,7 +9,7 @@ from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
-from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, int32, concatenate, inf
+from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, int32, concatenate, inf, in1d
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
 import re
@@ -102,8 +102,11 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 existing_proposal_set_parent.add_attribute(units_proposed, "units_proposed", AttributeType.PRIMARY)
             
             #load proposals whose status_id are not of id_tentative or id_not_available
-            available_idx = where(logical_and(existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_tentative,
-                                              existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_not_available))[0]
+            available_idx = where(in1d(existing_proposal_set_parent.get_attribute("status_id"), 
+                                       array([DevelopmentProjectProposalDataset.id_active,
+                                              DevelopmentProjectProposalDataset.id_proposed,
+                                              DevelopmentProjectProposalDataset.id_planned,
+                                              DevelopmentProjectProposalDataset.id_with_velocity])))[0]
             existing_proposal_set = DatasetSubset(existing_proposal_set_parent, available_idx)
             # Code updated by Hanyi Li, MAG 6/8/2010
             # Replacing the cached 'development_project_proposal' dataset with
