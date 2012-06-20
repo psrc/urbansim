@@ -37,6 +37,7 @@ class StartRunOptionGroup(GenericOptionGroup):
 def main(option_group=None):
     if option_group is None:
         option_group = StartRunOptionGroup()
+    parser = option_group.parser
     options, args = option_group.parse()
 
     run_manager = RunManager(option_group.get_services_database_configuration(options))

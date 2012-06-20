@@ -26,12 +26,15 @@ class RestartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False,
                                action="store_true",  
                                 help="Determines if multiple processes may be used.")
-                                
-if __name__ == "__main__":
-    option_group = RestartRunOptionGroup()
-    parser = option_group.parser
-    (options, args) = parser.parse_args()
 
+def main(option_group=None, args=None):
+    if option_group is None:
+        option_group = RestartRunOptionGroup()
+    parser = option_group.parser
+    if args is None:
+        options, args = option_group.parse()
+    else: 
+        options, _args = option_group.parse()
     run_manager = RunManager(option_group.get_services_database_configuration(options))
     run_as_multiprocess = not options.run_as_single_process
     
@@ -49,4 +52,7 @@ if __name__ == "__main__":
                                 skip_cache_cleanup=options.skip_cache_cleanup,
                                 run_as_multiprocess=run_as_multiprocess
                                 )
-                                  
+
+if __name__ == "__main__":
+    main()
+
