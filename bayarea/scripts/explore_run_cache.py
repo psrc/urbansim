@@ -54,7 +54,7 @@ if __name__ == "__main__":
             cache_directory = _cache_directory
 
     try:
-        year = int(args[0])
+        year = int(options.year)
     except IndexError:
         parser.error("year must be provided.")
         parser.print_help()
