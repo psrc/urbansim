@@ -1,10 +1,12 @@
 #! /bin/sh
 
+set -e
+
 # Simple stupid backup for travel model on detroit
 # Expects detroit to be mounted in /mnt
 DATE_STRING=$(date +%Y%m%d)
 
-cd /var/backups
+cd /var/backups/mtc_travel_model_backups/
 tar czf travel_model_$DATE_STRING.tar.gz "/mnt"
 
 #Remove backup older than 4 weeks
