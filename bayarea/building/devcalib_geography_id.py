@@ -5,7 +5,7 @@
 from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from numpy import zeros
-from bayarea.datasets.submarket_dataset import DevcalibGeographyDataset, generate_unique_ids
+from bayarea.datasets.devcalib_geography_dataset import DevcalibGeographyDataset, generate_unique_ids
 
 class devcalib_geography_id(Variable):
     """ Return the devcalib_geography_id of building, as defined in the datasets/devcalib_geography_dataset.py
