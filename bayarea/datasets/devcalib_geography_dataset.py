@@ -7,7 +7,7 @@ from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.subgroup_dataset import SubgroupDataset, generate_unique_ids
 from numpy import array, allclose 
 
-class EmploymentSubmarketDataset(SubgroupDataset):
+class DevcalibGeographyDataset(SubgroupDataset):
     
     id_name_default = 'devcalib_geography_id'
     in_table_name_default = "devcalib_geography"
