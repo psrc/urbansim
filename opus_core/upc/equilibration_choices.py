@@ -21,7 +21,7 @@ class equilibration_choices(lottery_choices):
             capacity=None,
             resources=None):
         """
-        yet to support sampling of alternatives
+        ##TODO: to support sampling of alternatives
         """
 
         resources.check_obligatory_keys(['price_coef_name', 'utilities', 'index'])
@@ -52,7 +52,14 @@ class equilibration_choices(lottery_choices):
         price_init = copy(self.price)
         bounds0 = None
         kwargs = {'factr': 1e14, 'iprint':10}
-        kwargs.update(resources.get('bfgs_kwargs', {}))
+        user_kwargs = eval(resources.get('bfgs_kwargs', '{}')) ##HACK
+        kwargs.update(user_kwargs)  
+
+        def rmse(price):
+            m = self.target_func(price, self.capacity)/nalts
+            return np.sqrt(m)
+
+        logger.log_status("init RMSE={}".format(rmse(price_init)))
         results = fmin_l_bfgs_b(self.target_func, price_init, 
                                 fprime=self.fprime, args=(self.capacity, self.beta), 
                                 bounds=bounds0,
@@ -60,6 +67,7 @@ class equilibration_choices(lottery_choices):
 
         price_converged = results[0]
         resources.merge({'price_converged': price_converged})
+        logger.log_status("end RMSE={}".format(rmse(price_converged)))
         demand, prob = self.update_demand(price_converged)
         return lottery_choices.run(self, probability=prob,
                                    resources=resources)
