@@ -16,6 +16,7 @@ from numpy.random import seed
 from numpy import array, arange
 from opus_core.logger import logger, log_block
 from opus_core.simulation_state import SimulationState
+from opus_core.configurations.config_calibration import *
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
 from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
@@ -23,8 +24,6 @@ from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_r
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
-from opus_core.configurations.config_calibration import *
-import pdb
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -293,7 +292,7 @@ if __name__ == "__main__":
                         target_file       = calib_config['target_file'],
                         subset            = calib_config['subset'],
                         subset_patterns   = calib_config['subset_patterns'],
-                        skip_cache_cleanup= calib_config.get('skip_cache_cleanup', False)
+                        skip_cache_cleanup= calib_config['skip_cache_cleanup'],
                        )
    
     calib.run(results_pickle_prefix='calib')
