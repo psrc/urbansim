@@ -21,7 +21,7 @@ calibration_bayarea_developer = {
     'subset_patterns' : None,
     'target_expression' : "devcalib_geography.aggregate((building.residential_units*(building.building_type_id<4)) + (building.nonresidential_sqft*(building.building_type_id>3)))",
     'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_development2011.csv',
-    'skip_cache_cleanup': False
+    'skip_cache_cleanup': True
 }
 
 calibration_bayarea_hlcm = {
