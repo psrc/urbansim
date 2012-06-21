@@ -20,4 +20,6 @@ calibration_bayarea_developer = {
     'subset' : None,
     'subset_patterns' : None,
     'target_expression' : "county.aggregate(building.residential_units,intermediates=[parcel]",
-    'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_resunits2011.csv'}
+    'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_resunits2011.csv',
+    'skip_cache_cleanup': False
+}
