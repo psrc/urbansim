@@ -9,7 +9,9 @@ calibration_paris = {
     'subset' : None,
     'subset_patterns' : {'establishment_location_choice_model_coefficients':['coefficient_name', '_celcm$']},
     'target_expression' : "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])",
-    'target_file' : '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp00.csv'}
+    'target_file' : '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp00.csv',
+    'skip_cache_cleanup': True
+}
     
 calibration_bayarea_developer = {
     'xml_config' : '/workspace/opus/project_configs/bay_area_parcel_unit_price.xml',
