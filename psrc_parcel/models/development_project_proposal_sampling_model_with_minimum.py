@@ -265,6 +265,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         for key in self.column_names:
             mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
                                             index=self.proposal_set.get_id_attribute())
+            if(isinstance(mean_type, list)):
+                mean_type = array(mean_type)
             #min_type[key] = ndimage_min(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
             #                                index=self.proposal_set['proposal_id'])
 #            max_type = ndimage_max(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
