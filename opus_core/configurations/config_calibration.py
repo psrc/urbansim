@@ -25,12 +25,12 @@ calibration_bayarea_developer = {
 }
 
 calibration_bayarea_hlcm = {
-    'xml_config' = '/workspace/opus/project_configs/bay_area_parcel_unit_price.xml',
-    'scenario' = 'hlcm_calibration',
-    'calib_datasets' = {'submarket_household_location_choice_model_owner_coefficients': 'estimate','submarket_household_location_choice_model_renter_coefficients': 'estimate'},
-    'subset' = None,
-    'subset_patterns' = {'submarket_household_location_choice_model_owner_coefficients':['coefficient_name', '_calib$'],'submarket_household_location_choice_model_renter_coefficients':['coefficient_name', '_calib$']},
-    'target_expression' = "county.aggregate(submarket.number_of_agents(household))",
-    'target_file' = '/workspace/opus/data/bay_area_parcel/calibration_targets/county_hh2011.csv',
+    'xml_config' : '/workspace/opus/project_configs/bay_area_parcel_unit_price.xml',
+    'scenario' : 'hlcm_calibration',
+    'calib_datasets' : {'submarket_household_location_choice_model_owner_coefficients': 'estimate','submarket_household_location_choice_model_renter_coefficients': 'estimate'},
+    'subset' : None,
+    'subset_patterns' : {'submarket_household_location_choice_model_owner_coefficients':['coefficient_name', '_calib$'],'submarket_household_location_choice_model_renter_coefficients':['coefficient_name', '_calib$']},
+    'target_expression' : "county.aggregate(submarket.number_of_agents(household))",
+    'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_hh2011.csv',
     'skip_cache_cleanup': False
 }
