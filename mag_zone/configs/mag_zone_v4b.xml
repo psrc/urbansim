@@ -69,6 +69,127 @@
           </run>
         </structure>
       </model>
+      <model name="employment_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <group_by_attribute type="list">('home_based_status', 'name')</group_by_attribute>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string">"mag_zone.building.total_SSS_job_spaces"</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">mag_zone.building.vacant_SSS_job_spaces</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string">mag_zone.building.total_SSS_job_spaces</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string">mag_zone.building.number_of_non_seasonal_household</argument>
+            <argument name="estimation_size_agents" type="float">1.0</argument>
+            <argument name="sample_size_locations" type="integer">10</argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <argument name="portion_to_unplace" type="float">0.0833333333</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="join_datasets" type="boolean">False</argument>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary" inherit_parent_values="False">
+          <submodel_group name="home_based" type="submodel_group">
+            <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+              <description type="string">No submodel</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_avg_hh_income"/>
+                <variable_spec name="building.zonal_bldg_wah_capacity"/>
+                <variable_spec name="building.zonal_num_jobs"/>
+                <variable_spec name="building.zonal_num_pop"/>
+                <variable_spec name="building.zonal_raz_sf_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_tazi03_num_jobs_within_25mins_peak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_pop_within_20mins_peak_sov"/>
+              </variable_list>
+            </submodel>
+          </submodel_group>
+          <submodel_group name="non_home_based" type="submodel_group">
+            <submodel hidden="Children" name="sector_1" submodel_id="1" type="submodel" inherit_parent_values="False">
+              <description type="string">Agriculture, Forestry, Fishing and Hunting</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_is_agriculture"/>
+                <variable_spec name="building.zonal_bldg_is_retail"/>
+                <variable_spec name="building.zonal_bldg_toal_job_spaces_per_acre"/>
+                <variable_spec name="building.zonal_raz_retl_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_sector_1_fraction"/>
+                <variable_spec name="building.zonal_tazi03_num_construction_jobs_within_20mins_peak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_jobs_within_15mins_offpeak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_kids_within_30mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_num_retail_jobs_within_20mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_pct_high_income_hhlds_within_15_offpeak_sov"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_2" submodel_id="2" type="submodel" inherit_parent_values="False">
+              <description type="string">Mining</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_lrstop"/>
+                <variable_spec name="building.zonal_num_jobs_2"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_3" submodel_id="3" type="submodel" inherit_parent_values="False">
+              <description type="string">Utilities</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_major"/>
+                <variable_spec name="building.zonal_bldg_is_office"/>
+                <variable_spec name="building.zonal_bldg_toal_job_spaces_per_acre"/>
+                <variable_spec name="building.zonal_num_jobs"/>
+                <variable_spec name="building.zonal_raz_sf_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_raz_ware_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_tazi03_num_construction_jobs_within_20mins_peak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_kids_within_30mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_num_office_jobs_within_10mins_offpeak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_retail_jobs_within_20mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_pct_high_income_hhlds_within_15_offpeak_sov"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_9" submodel_id="9" type="submodel" inherit_parent_values="False">
+              <description type="string">Information</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_major"/>
+                <variable_spec name="building.zonal_ln_average_value_per_unit"/>
+                <variable_spec name="building.zonal_num_jobs_9"/>
+                <variable_spec name="building.zonal_raz_ind_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_tazi03_num_construction_jobs_within_20mins_peak_sov"/>
+                <variable_spec name="building.zonal_tazi03_num_hotel_jobs_within_20mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_num_kids_within_30mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_num_retail_jobs_within_20mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_pct_low_income_hhlds_within_15_offpeak_sov"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_13" submodel_id="13" type="submodel" inherit_parent_values="False">
+              <description type="string">Management of Companies and Enterprises</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_major"/>
+                <variable_spec name="building.zonal_num_jobs_13"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_17" submodel_id="17" type="submodel" inherit_parent_values="False">
+              <description type="string">Arts, Entertainment, and Recreation</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_hwy"/>
+                <variable_spec name="building.zonal_bldg_dist_to_major"/>
+                <variable_spec name="building.zonal_bldg_toal_job_spaces_per_acre"/>
+                <variable_spec name="building.zonal_num_jobs_17"/>
+                <variable_spec name="building.zonal_raz_ware_avg_unit_price_2"/>
+                <variable_spec name="building.zonal_tazi03_num_industrial_jobs_within_20mins_transit_combined"/>
+                <variable_spec name="building.zonal_tazi03_num_retail_jobs_within_20mins_transit_combined"/>
+              </variable_list>
+            </submodel>
+            <submodel hidden="Children" name="sector_18" submodel_id="18" type="submodel" inherit_parent_values="False">
+              <description type="string">Accommodation and Food Services</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.zonal_bldg_dist_to_major"/>
+                <variable_spec name="building.zonal_bldg_hotel_unit_price"/>
+                <variable_spec name="building.zonal_bldg_is_hotel"/>
+                <variable_spec name="building.zonal_bldg_toal_job_spaces_per_acre"/>
+                <variable_spec name="building.zonal_num_jobs_18"/>
+                <variable_spec name="building.zonal_tazi03_num_hotel_jobs_within_20mins_transit_combined"/>
+              </variable_list>
+            </submodel>
+          </submodel_group>
+        </specification>
+      </model>	  
       <model name="household_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
