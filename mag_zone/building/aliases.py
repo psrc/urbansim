@@ -38,11 +38,12 @@ aliases = [
     "is_building_type_pub = (building.building_type_id == 14)",
     "is_building_type_pub_local = (building.building_type_id == 16)",
     "weight_for_pub_local_jobs = mag_zone.building.num_of_pub_local_jobs + (numpy.logical_and(building.building_type_id == 16, mag_zone.building.num_of_pub_local_jobs == 0)*(building.non_residential_sqft/50)).astype(int32)",
-    "wah_capacity = building.residential_units * 3",
+    "wah_capacity = numpy.minimum(building.aggregate(household.workers), 3) - building.aggregate(job.home_based_status == 1)",
     "mpa_population = building.disaggregate(zone.disaggregate(mpa.aggregate(household.persons)))",
     "mpa_city_jobs = building.disaggregate(mpa.aggregate(mag_zone.building.num_of_pub_jobs))",
     "vacant_residential_units_with_negatives = building.residential_units - urbansim_zone.building.number_of_households",
     "vacant_non_home_based_job_spaces_with_negatives = urbansim_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs",
     "vacant_home_based_job_spaces_with_negatives = urbansim_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs",
+    "number_of_non_seasonal_household = building.aggregate(household.is_seasonal == 0)",
            ]
 
