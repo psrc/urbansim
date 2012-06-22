@@ -1086,6 +1086,7 @@
         </dataset_pool_configuration>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
           <selectable name="zone" type="selectable">False</selectable>
+          <selectable name="target_vacancy" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
           <selectable name="buildings_for_estimation" type="selectable">False</selectable>
@@ -1101,7 +1102,7 @@
           <selectable name="building_type" type="selectable">True<package_name type="string">zurich_parcel</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">False</selectable>
-          <selectable name="development_event_history" type="selectable">False</selectable>
+          <selectable name="development_event_history" type="selectable">True</selectable>
         </datasets_to_preload>
         <run_in_same_process type="boolean">False</run_in_same_process>
       </advanced>
@@ -1124,7 +1125,9 @@
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="SC_real_estate_price_model" type="selectable" name="SC_real_estate_price_model_1">False</selectable>
-        <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">False</selectable>
+        <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
+        <selectable return_value="SC_RBLCM_from_template" type="selectable" name="SC_RBLCM_from_template_1">True</selectable>
+        <selectable return_value="SC_NRBLCM_from_template" type="selectable" name="SC_NRBLCM_from_template_1">True</selectable>
         <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">False</selectable>
         <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">False</selectable>
         <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">False</selectable>
