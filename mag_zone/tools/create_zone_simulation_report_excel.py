@@ -2459,7 +2459,7 @@ def main():
     
     # other setup variables
     query_fields = ['Base Year','Years','Run Name','Excel Output Path','Subarea']
-    query_default_values = ['2009',chosen_years,run_name,'c:/working/excel_outputs',chosen_subarea]
+    query_default_values = ['2010',chosen_years,run_name,'c:/working/excel_outputs',chosen_subarea]
     query_variables = multenterbox('Confirm and/or update values','Report setup values',query_fields,query_default_values)
     if not query_variables:
         print 'User cancelled, ending script.'
@@ -2588,7 +2588,7 @@ if __name__ == "__main__":
     # database connection variables   
     # get values from gui
     db_connection_fields = ['Username','Password','Server Name','Database Name']
-    db_connection_default_values = ['AZSMARTExport','thebigone','MAG1113','AZSMART_V3_zone']
+    db_connection_default_values = ['AZSMARTExport','thebigone','MAG1113','AZSMART_V4_zone']
     db_connection_values = multenterbox('Enter SQL connection values:','SQL Connection',db_connection_fields,db_connection_default_values)
     if not db_connection_values:
         print 'User cancelled, ending script.'
@@ -2613,9 +2613,11 @@ if __name__ == "__main__":
 # some of these queries were designed to be run w/ a full simulation uploaded to SQL (every year) instead of
 #      a partial run (e.g. 2005,2010,2015).  Generalization of the code to handle these cases would be good
 
+# - correct get_total_households_in_SFR_by_year (pop and MFR/SFR) not adding up to total
+
 # queries TODO:
 # - avg age by subarea
-# - 
+# - total MH dus (MF+SF dont add up to total)
 # - 
 # - hh by hh size by subarea
 # - pp per hh by subarea

@@ -1080,7 +1080,7 @@
           </run>
         </structure>
       </model>
-      <model name="aging_model" type="model">
+      <model name="aging_model_exclude_seasonal" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module type="string">opus_core.simple_model</class_module>
@@ -1092,6 +1092,24 @@
           <run type="dictionary">
             <argument name="dataset" type="string">person</argument>
             <argument name="expression" parser_action="quote_string" type="string">(person.is_seasonal==0)*(person.age+1)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">age</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="aging_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">person</argument>
+            <argument name="expression" parser_action="quote_string" type="string">person.age+1</argument>
             <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">age</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
           </run>
