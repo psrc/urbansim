@@ -223,7 +223,7 @@
   </data_manager>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
-      <model name="new_employment_transition_model" type="model">
+      <model name="SC_employment_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module>urbansim.models.transition_model</class_module>
@@ -980,7 +980,85 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model>
-      <model name="SC_real_estate_price_model" type="model">
+      <model name="SC_real_estate_price_model_new" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.regression_model</class_module>
+            <class_name type="string">RegressionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">RegressionModel</name>
+            <argument name="regression_procedure" parser_action="quote_string" type="string">opus_core.linear_regression</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" type="string" model_dependency_type="variable"/>
+            <argument convert_blank_to_none="True" name="run_config" type="string">Resources({'exclude_outliers_from_initial_error': False, 'outlier_is_less_than':3, 'outlier_is_greater_than': 7})</argument>
+            <argument convert_blank_to_none="True" name="estimate_config" type="string">Resources({'save_predicted_values_and_errors':True})</argument>
+            <argument name="debuglevel" type="integer">0</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <output hidden="False" name="output" type="string">rent_price_unit</output>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument convert_blank_to_none="True" name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_real_estate_price_model_specification</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_real_estate_price_model_coefficients</argument>
+            <argument name="cache_storage" type="string">base_cache_storage</argument>
+            <argument name="sample_coefficients" type="boolean">False</argument>
+            <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+            <argument name="multiplicator" type="integer">1</argument>
+            <output name="output" type="string">(specification, coefficients, rm_index)</output>
+          </prepare_for_run>
+          <estimate type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="dataset" type="string" model_dependency_type="dataset">building_x_parcel</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">faz.number_of_households</argument>
+            <argument convert_blank_to_none="True" name="index" type="string">rm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <output name="output" type="string">(coefficients, dummy)</output>
+          </estimate>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <argument convert_blank_to_none="True" name="dataset" type="string" model_dependency_type="dataset"/>
+            <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">regression_model_template_specification</argument>
+            <output name="output" type="string">(specification, rm_index)</output>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="all" submodel_id="-2" type="submodel">
+            <description type="string">Rent price model according to diss of Loechl</description>
+            <variable_list type="variable_list">
+              <variable_spec name="building.SC_acc_pt"/>
+              <variable_spec name="building.SC_building_built21to30"/>
+              <variable_spec name="building.SC_building_built81to90"/>
+              <variable_spec name="building.SC_building_built91to05"/>
+              <variable_spec name="building.SC_building_is_pre_1921"/>
+              <variable_spec name="building.SC_highway_within_100m"/>
+              <variable_spec name="building.SC_is_house"/>
+              <variable_spec name="building.SC_ln_sqm_per_unit"/>
+              <variable_spec name="building.SC_ln_taxlevel"/>
+              <variable_spec name="building.SC_logit_foreigners_within_56_of_building"/>
+              <variable_spec name="building.SC_logit_slope"/>
+              <variable_spec name="building.SC_pop_ha_per_building"/>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="SC_real_estate_price_model" type="model" hidden="True">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
             <class_module type="string">urbansim.models.real_estate_price_model</class_module>
@@ -989,7 +1067,7 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">RealEstatePriceModel</name>
             <argument name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">building_type_id</argument>
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln(zurich_parcel.building.building_cost)</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string" model_dependency_type="variable">ln_rent_price_unit = ln(rent_price_unit)</argument>
             <argument name="filter_attribute" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_or(zurich_parcel.building.is_building_type_1, zurich_parcel.building.is_building_type_5)</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="estimate_config" type="string">Resources({'save_predicted_values_and_errors':True})</argument>
@@ -1050,6 +1128,25 @@
             </variable_list>
           </submodel>
         </specification>
+      </model>
+      <model name="SC_postprocess_real_estate_price_model" type="model">
+        <dependencies type="list">['SC_real_estate_price_model_new']</dependencies>
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">exp(rent_price_unit)</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">unit_price</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
       </model>
     </models>
     <estimation_config name="Estimation Configuration" config_name="estimation_config" type="dictionary">
@@ -1132,7 +1229,7 @@
         <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">False</selectable>
         <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">False</selectable>
         <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">False</selectable>
-        <selectable return_value="new_employment_transition_model" type="selectable" name="new_employment_transition_model_1">True</selectable>
+        <selectable return_value="SC_employment_transition_model" type="selectable" name="new_employment_transition_model_1">True</selectable>
         <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model">True</selectable>
         <selectable name="employment_location_choice_model" type="selectable">True
           <group_members type="string">non_home_based</group_members>
