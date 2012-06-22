@@ -141,7 +141,7 @@
       <variable use="model variable" source="expression" name="building.SC_logit_foreigners_within_56_of_building" type="variable_definition">building.disaggregate(ln(zurich_parcel.parcel.households_foreign_within_56_of_parcel) - ln(1 - zurich_parcel.parcel.households_foreign_within_56_of_parcel))</variable>
       <variable use="both" source="expression" name="building.SC_pop_ha_per_building" type="variable_definition">building.disaggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
       <variable use="both" source="expression" name="parcel.SC_is_unbuilt" type="variable_definition">zurich_parcel.parcel.number_of_buildings == 0</variable>
-      <variable use="both" source="expression" name="building_x_parcel.SC_building_fit_parcel" type="variable_definition">building.land_area - parcel.parcel_sqft</variable>
+      <variable use="both" source="expression" name="building_x_parcel.SC_building_fit_parcel" type="variable_definition">numpy.abs(building.land_area - parcel.parcel_sqft)</variable>
       <variable use="both" source="expression" name="parcel.SC_plan_type_id_smaller_7000" type="variable_definition">parcel.plan_type_id &lt; 7000</variable>
       <variable use="both" source="expression" name="parcel.SC_ln_jobs_within_56" type="variable_definition">ln(urbansim_parcel.parcel.jobs_within_56_of_parcel)</variable>
       <variable use="both" source="Python class" name="parcel.SC_jobs_within_56" type="variable_definition">urbansim_parcel.parcel.jobs_within_56_of_parcel</variable>
@@ -149,6 +149,17 @@
       <variable use="both" source="expression" name="parcel.SC_dist_to_station" type="variable_definition">parcel.dist_to_station</variable>
       <variable use="both" source="primary attribute" name="parcel.SC_slope" type="variable_definition">parcel.slope</variable>
       <variable use="both" source="primary attribute" name="parcel.SC_dist_to_zh_cbd" type="variable_definition">parcel.dist_to_zh_cbd</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_acc_pt" type="variable_definition">parcel.acc_pt</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_acc_car" type="variable_definition">parcel.acc_car</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_taxlevel_parcel" type="variable_definition">parcel.municipal_taxindex</variable>
+      <variable use="both" source="expression" name="building.SC_building_type_id_bigger_1" type="variable_definition">building.building_type_id &gt; 1</variable>
+      <variable use="both" source="expression" name="building.SC_is_Nebengebaeude" type="variable_definition">building.building_type_id == 7</variable>
+      <variable use="both" source="expression" name="building.SC_is_Verwaltung" type="variable_definition">building.building_type_id == 0</variable>
+      <variable use="both" source="expression" name="development_event_history.SC_is_non_residential_development" type="variable_definition">numpy.logical_and(development_event_history.building_type_id == 0, development_event_history.building_type_id &gt; 1)</variable>
+      <variable use="both" source="expression" name="building.SC_is_non_residential_building" type="variable_definition">numpy.logical_or(building.building_type_id == 0,building.building_type_id &gt; 1)</variable>
+      <variable use="both" source="expression" name="building.SC_is_residential_building" type="variable_definition">building.building_type_id == 1</variable>
+      <variable use="both" source="expression" name="parcel.SC_plan_type_id_between_2999_and_7000" type="variable_definition">numpy.logical_and(parcel.plan_type_id &gt; 2999, parcel.plan_type_id &lt; 7000)</variable>
+      <variable use="both" source="expression" name="parcel.SC_plan_type_id_smaller_3000" type="variable_definition">parcel.plan_type_id &lt; 3000</variable>
     </expression_library>
     <available_datasets type="list">['building_x_parcel','building','parcel','household','business','household_x_building','zone','tract','district14','district24','alldata','pdist','buildings_for_estimation', 'development_event_history', 'job_x_building']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
