@@ -45,5 +45,9 @@ aliases = [
     "vacant_non_home_based_job_spaces_with_negatives = urbansim_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs",
     "vacant_home_based_job_spaces_with_negatives = urbansim_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs",
     "number_of_non_seasonal_household = building.aggregate(household.is_seasonal == 0)",
+    "total_non_home_based_job_spaces = numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))",
+    "total_home_based_job_spaces = numpy.minimum(building.aggregate(household.workers), 3)",     
+    "vacant_non_home_based_job_spaces = clip_to_zero(mag_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)",
+    "vacant_home_based_job_spaces = clip_to_zero(mag_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs)",      
            ]
 
