@@ -2,11 +2,12 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import h5py
 from opus_core.models.model import Model
 from opus_core.simulation_state import SimulationState
+from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 from numpy import ones, in1d, array, allclose, sort
-from pandas import HDFStore, DataFrame
 
 class ExternalDemographicModel(Model):
     """ A model that updates households with external demographic data; 
@@ -48,28 +49,43 @@ class ExternalDemographicModel(Model):
                                 See unittest for example.
         dataset_pool: opus DatasetPool object, optional
         """
+        if dataset_pool is None:
+            dataset_pool = SessionConfiguration().get_dataset_pool()
+
         hh_ds = household_dataset
         if year is None:
             year = SimulationState().get_current_time()
         ## this relies on the order of household_id in
         ## households data and persons attributes summarized 
         ## by household_id is the same
-        dmgh_data = HDFStore(demographic_data_file)
-        households = dmgh_data['households'].ix[year]
-        persons = dmgh_data['persons'].ix[year]
-        n_hhs = len(households)
-        hh_ids = sort(households.index.values)
+        fh = h5py.File(demographic_data_file, 'r')
+        hh_dmgh = fh['households']
+        ps_dmgh = fh['persons']
+        hh_dmgh_current = hh_dmgh[hh_dmgh[:,'year'] == year]
+        ps_dmgh_current = ps_dmgh[ps_dmgh[:,'year'] == year]
+
+        hhs_new = compound_array_to_dataset(hh_dmgh_current,
+                                        table_name='households',
+                                        id_name=hh_ds.get_id_name(),
+                                        dataset_name=hh_ds.dataset_name)
+        ps = compound_array_to_dataset(ps_dmgh_current,
+                                       table_name='persons',
+                                       id_name='person_id',
+                                       dataset_name='person')
+
+        dataset_pool.replace_dataset(hh_ds.dataset_name, hhs_new)
+        dataset_pool.replace_dataset('person', ps)
+       
+        hh_ids = hhs_new['household_id']
+        n_hhs = hh_ids.size
         results = {}
         results['household_id'] = hh_ids
         for k, v in demographic_attributes.iteritems():
-            results[k] = eval(v)
-            results[k] = results[k][hh_ids].values
-            assert results[k].size == n_hhs
+            results[k] = hhs_new.compute_variables(v)
 
-        logger.log_status( ('Loaded demographic characteristics %s for %s ' +\
-                          'households from external file %s.') % \
-                           ( demographic_attributes.keys(), 
-                            n_hhs, 
+        logger.log_status( ('Loaded demographic characteristics {} for {} ' +\
+                            'households from external file {}.').format(
+                            demographic_attributes.keys(), n_hhs, 
                             demographic_data_file) )
 
         is_existing = in1d(hh_ids, hh_ds['household_id'])
@@ -96,6 +112,20 @@ class ExternalDemographicModel(Model):
                                          household_dataset)
         return household_dataset
 
+def compound_array_to_dataset(nparray, table_name, **dataset_kwargs):
+    ds_dict = {}
+    for name in nparray.dtype.names:
+        ds_dict[name] = nparray[name]
+
+    storage = StorageFactory().get_storage('dict_storage')
+    storage.write_table(table_name=table_name,
+                        table_data=ds_dict)
+
+    ds = Dataset(in_storage=storage, 
+                 in_table_name=table_name,
+                 **dataset_kwargs)
+    return ds
+
 import os        
 import tempfile
 import shutil
@@ -103,7 +133,6 @@ from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.session_configuration import SessionConfiguration
 
 class Tests(opus_unittest.OpusTestCase):
     """unittest"""        
@@ -140,28 +169,47 @@ class Tests(opus_unittest.OpusTestCase):
         self.dmgh_data_dir = tempfile.mkdtemp(prefix='urbansim_tmp')
         self.dmgh_data_file = os.path.join(self.dmgh_data_dir, 
                                            'demographic_data.h5')
-        store = HDFStore(self.dmgh_data_file)
-        ## order should not matter
-        hh = {
-            'year':         array([ 0, 0, 0, 0, 1])+2000,
-            'household_id': array([ 5, 1, 2, 3, 1]),
-            'income':       array([65,61,62,63,71])*1000,
-        }
-        ps = {
-            'year':         array([0, 0, 0, 0, 0, 0, 0, 0, 
-                                   0, 0, 0, 1, 1, 1, 1, 1])+2000,
-            'person_id':    array([1, 2, 3, 4, 5, 6, 9,10, 
-                                   7, 8,81, 1, 2, 3, 4, 31]),
-            'household_id': array([1, 1, 1, 2, 2, 2, 5, 5, 
-                                   3, 3, 3, 1, 1, 1, 1, 1]),
-        }
-        hh = DataFrame(hh) 
-        hh.set_index(['year', 'household_id'], inplace=True)
-        ps = DataFrame(ps)
-        ps.set_index(['year', 'person_id'], inplace=True)
-        store['households'] = hh
-        store['persons'] = ps
-        store.close()
+        
+        out_fh = h5py.File(self.dmgh_data_file, 'w')
+
+        n_hhs = 5
+        hh_dtype = {'names':['year', 'household_id', 'income', 'head_person_id'],
+                 'formats':['i4', 'i4', 'f8', 'i4']}
+        hhdata = out_fh.create_dataset('households', shape=(n_hhs, ), dtype=hh_dtype, 
+                                       compression='gzip', compression_opts=9)
+        
+        hhs = [(2000, 5, 65000.0, 9),
+               (2000, 1, 61000.0, 3),
+               (2000, 2, 62000.0, 4),
+               (2000, 3, 63000.0, 7),
+               (2001, 1, 71000.0, 3)]
+        hhdata[:] = array(hhs, dtype=hh_dtype)
+
+        n_ps = 16
+        ps_dtype = {'names':['year', 'person_id', 'household_id', 'age'],
+                    'formats':['i4', 'i4', 'i4', 'i4']}
+        psdata = out_fh.create_dataset('persons', shape=(n_ps, ), dtype=ps_dtype, 
+                                       compression='gzip', compression_opts=9)
+        
+        ps =  [(2000, 1, 1, 76),
+               (2000, 2, 1, 72),
+               (2000, 3, 1, 30),
+               (2000, 4, 2, -1),
+               (2000, 5, 2, 57),
+               (2000, 6, 2, 17),
+               (2000, 9, 5, 67),
+               (2000,10, 5, 71),
+               (2000, 7, 3, 23),
+               (2000, 8, 3, 21),
+               (2000,81, 3, 2),
+               (2001, 1, 1, 77),
+               (2001, 2, 1, 73),
+               (2001, 3, 1, 31),
+               (2001, 4, 1, 35),
+               (2001,31, 1, 1)]
+        psdata[:] = array(ps, dtype=ps_dtype)
+
+        out_fh.close()
 
     def tearDown(self):
         shutil.rmtree(self.dmgh_data_dir)        
@@ -170,18 +218,36 @@ class Tests(opus_unittest.OpusTestCase):
 
     def test_run1(self):
         model = ExternalDemographicModel()
+        attrs_mapping = {'income': "household.income",
+                          'size': "household.number_of_agents(person)",
+                   'age_of_head': "household.aggregate(person.age * (person.disaggregate(household.head_person_id)==person.person_id))"
+                     }
         new_hh_ds = model.run(self.dmgh_data_file, self.hh_ds,
                   year=2000, 
                   keep_attributes=['building_id', 'keep'],
-                  demographic_attributes={'income': "households.income",
-                          'size'  : "persons.groupby('household_id').size()" }
+                  demographic_attributes=attrs_mapping,
+                  dataset_pool=self.dataset_pool)
+
+        assert allclose(new_hh_ds['household_id'], array([ 5, 1,  2,  3]))
+        assert allclose(new_hh_ds['building_id'],  array([-1, 11, 22, 33]))
+        assert allclose(new_hh_ds['keep'],         array([-1,4.1, 4.2, 4.3]))
+        assert allclose(new_hh_ds['income'],       array([65, 61, 62, 63])*1000.0)
+        assert allclose(new_hh_ds['size'],         array([ 2, 3,  3,  3]))
+        assert allclose(new_hh_ds['age_of_head'],  array([67, 30, -1, 23]))
+
+        new_hh_ds = model.run(self.dmgh_data_file, self.hh_ds,
+                  year=2001, 
+                  keep_attributes=['building_id', 'keep'],
+                  demographic_attributes=attrs_mapping,
                  )
 
-        assert allclose(new_hh_ds['household_id'], array([ 1,  2,  3,  5]))
-        assert allclose(new_hh_ds['building_id'],  array([11, 22, 33, -1]))
-        assert allclose(new_hh_ds['keep'],         array([4.1, 4.2, 4.3, -1]))
-        assert allclose(new_hh_ds['income'],       array([61, 62, 63, 65])*1000)
-        assert allclose(new_hh_ds['size'],         array([ 3,  3,  3,  2]))
+        assert allclose(new_hh_ds['household_id'], array([ 1]))
+        assert allclose(new_hh_ds['building_id'],  array([11]))
+        assert allclose(new_hh_ds['keep'],         array([4.1]))
+        assert allclose(new_hh_ds['income'],       array([71])*1000.0)
+        assert allclose(new_hh_ds['size'],         array([ 5]))
+        assert allclose(new_hh_ds['age_of_head'],  array([31]))
+
         
 if __name__ == '__main__':
     opus_unittest.main()
