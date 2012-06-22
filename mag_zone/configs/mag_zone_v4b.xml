@@ -79,7 +79,7 @@
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string">"mag_zone.building.total_SSS_job_spaces"</argument>
             <argument name="capacity_string" parser_action="quote_string" type="string">mag_zone.building.vacant_SSS_job_spaces</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string">mag_zone.building.total_SSS_job_spaces</argument>
-            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string">mag_zone.building.number_of_non_seasonal_household</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string"></argument>
             <argument name="estimation_size_agents" type="float">1.0</argument>
             <argument name="sample_size_locations" type="integer">10</argument>
           </init>
