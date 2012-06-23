@@ -166,7 +166,8 @@ class Calibration(object):
         self.simulation_state.set_current_time(self.base_year)
         for dataset_name, calib in self.calib_datasets.iteritems():
             dataset, calib_attr, index = calib
-            dataset[calib_attr][index] = est_v[i_est_v:i_est_v+index.size]
+            dtype = dataset[calib_attr].dtype
+            dataset[calib_attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
             #flush dataset
             dataset.flush_dataset()
             i_est_v += index.size
@@ -209,10 +210,13 @@ class Calibration(object):
 
         self.update_prediction(est_v, *args, **kwargs)
         prediction = self.summarize_prediction()
-        ## every key in target should appear in prediction
-        assert np.all( np.in1d(self.target.keys(), prediction.keys()) )
+        ## allow keys in target not appearing in prediction
+        ## assuming their values to be 0
+        ### every key in target should appear in prediction
+        #assert np.all( np.in1d(self.target.keys(), prediction.keys()) )
         target = np.array(self.target.values())
-        predct = np.array([prediction[k] for k in self.target.keys()])
+        predct = np.array([prediction[k] if prediction.has_key(k) else 0 \
+                           for k in self.target.keys() ])
         results = func(predct, target)
 
         return results
