@@ -10,7 +10,8 @@ calibration_paris = {
     'subset_patterns' : {'establishment_location_choice_model_coefficients':['coefficient_name', '_celcm$']},
     'target_expression' : "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])",
     'target_file' : '/workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp00.csv',
-    'skip_cache_cleanup': True
+    'skip_cache_cleanup': True,
+    'optimization' : 'bfgs'
 }
     
 calibration_bayarea_developer = {
@@ -21,7 +22,8 @@ calibration_bayarea_developer = {
     'subset_patterns' : None,
     'target_expression' : "devcalib_geography.aggregate((building.residential_units*(building.building_type_id<4)) + (building.nonresidential_sqft*(building.building_type_id>3)))",
     'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_development2011.csv',
-    'skip_cache_cleanup': True
+    'skip_cache_cleanup': True,
+    'optimization' : 'bfgs'
 }
 
 calibration_bayarea_hlcm = {
@@ -32,5 +34,6 @@ calibration_bayarea_hlcm = {
     'subset_patterns' : {'submarket_household_location_choice_model_owner_coefficients':['coefficient_name', '_calib$'],'submarket_household_location_choice_model_renter_coefficients':['coefficient_name', '_calib$']},
     'target_expression' : "county.aggregate(submarket.number_of_agents(household))",
     'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_hh2011.csv',
-    'skip_cache_cleanup': False
+    'skip_cache_cleanup': False,
+    'optimization' : 'bfgs'
 }
