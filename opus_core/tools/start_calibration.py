@@ -94,7 +94,7 @@ class Calibration(object):
             self.calib_datasets[dataset_name] = [dataset, calib_attr, index] 
 
     @log_block("Start Calibration")
-    def run(self, optimizer='panneal', results_pickle_prefix="calib"):
+    def run(self, optimizer='lbfgsb', results_pickle_prefix="calib"):
         ''' Call specifized optimizer to calibrate
         
         Arguments:
@@ -114,12 +114,14 @@ class Calibration(object):
 
         t0 = time.time()
 
+        set_parallel(True)
+
         if optimizer=='bfgs':
             results = fmin_bfgs(self.target_func, copy(init_v), fprime=None, epsilon=1e-08, 
                                 maxiter=None, full_output=1, disp=1, retall=0, callback=None)
         elif optimizer=='lbfgsb':
             results = fmin_l_bfgs_b(self.target_func, copy(init_v), fprime=None, approx_grad=True, 
-                                    epsilon=1e-8, bounds=None, factr=1e16, iprint=1)
+                                    epsilon=1e-1, bounds=None, factr=1e12, iprint=1)
         elif optimizer=='anneal':
             results = anneal(self.target_func, copy(init_v), schedule='fast', full_output=1, 
                              T0=None, Tf=1e-12, maxeval=None, maxaccept=None, maxiter=400, 
@@ -140,6 +142,8 @@ class Calibration(object):
             pickle_file = "{}_{}.pickle".format(results_pickle_prefix, optimizer)
             pickle_file = os.path.join(self.cache_directory, pickle_file)
             pickle.dump(results, open(pickle_file, "wb"))
+
+        set_parallel(False)
 
         logger.log_status('init target_func: {}'.format(self.target_func(init_v)))
         logger.log_status('end target_func: {}'.format(results[:])) #which one?
