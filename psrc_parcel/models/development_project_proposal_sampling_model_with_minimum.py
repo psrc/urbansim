@@ -274,7 +274,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 #            egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
             utypes = unique(mean_type[wegligible])
             for value in utypes:
-                parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible][mean_type[wegligible]==value])
+                parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][mean_type[wegligible]==value])).astype(int32)
                 chosen_prop = array(maximum_position(self.weight[wegligible], 
                                         labels=(self.proposal_set['parcel_id'][wegligible])*(mean_type[wegligible]==value), 
                                         index=parcels_with_proposals)).flatten().astype(int32)
