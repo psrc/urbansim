@@ -76,6 +76,8 @@ class Calibration(object):
         self.calib_datasets = {}
         print "calib_datasets",calib_datasets
         #{dataset_name: [DataSet, 'attribute', index]}
+        #or
+        #{dataset_name: [DataSet, ['attribute1', 'attribute2'], index]}
         for dataset_name, calib_attr in calib_datasets.iteritems():
             dataset = self.dataset_pool.get_dataset(dataset_name, 
                                                     dataset_arguments={'id_name':[]})
@@ -110,7 +112,13 @@ class Calibration(object):
         init_v = array([], dtype='f8')
         for dataset_name, calib in self.calib_datasets.iteritems():
             dataset, calib_attr, index = calib
-            init_v = np.concatenate((init_v, dataset[calib_attr][index]))
+            if type(calib_attr) == str:
+                init_v = np.concatenate((init_v, dataset[calib_attr][index]))
+            elif type(calib_attr) in (list, tuple):
+                for attr in calib_attr:
+                    init_v = np.concatenate((init_v, dataset[attr][index]))
+            else:
+                raise TypeError, "Unrecongized data type in calib_datasets"
 
         t0 = time.time()
 
@@ -168,13 +176,26 @@ class Calibration(object):
         i_est_v = 0
         current_year = self.simulation_state.get_current_time()
         self.simulation_state.set_current_time(self.base_year)
+
         for dataset_name, calib in self.calib_datasets.iteritems():
             dataset, calib_attr, index = calib
-            dtype = dataset[calib_attr].dtype
-            dataset[calib_attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
+            if type(calib_attr) == str:
+                dtype = dataset[calib_attr].dtype
+                dataset[calib_attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
+                i_est_v += index.size
+            elif type(calib_attr) in (list, tuple):
+                for attr in calib_attr:
+                    dtype = dataset[attr].dtype
+                    dataset[attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
+                    i_est_v += index.size
+            else:
+                raise TypeError, "Unrecongized data type in calib_datasets"
+           
+            #dtype = dataset[calib_attr].dtype
+            #dataset[calib_attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
             #flush dataset
             dataset.flush_dataset()
-            i_est_v += index.size
+            #i_est_v += index.size
         self.simulation_state.set_current_time(current_year)
 
     def update_prediction(self, est_v, *args, **kwargs):
