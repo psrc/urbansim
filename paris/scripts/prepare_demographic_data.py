@@ -118,7 +118,8 @@ if __name__ == '__main__':
             group = fh.create_group(year_str)
 
         is_year = fh[dataset_name][:, 'year'] == year
-        group.create_dataset(dataset_name, data=fh[dataset_name][is_year])
+        group.create_dataset(dataset_name, data=fh[dataset_name][is_year],
+                             compression='gzip', compression_opts=9)
 
     #del fh[dataset_name]
     fh.close()
