@@ -17,10 +17,10 @@ calibration_paris = {
 calibration_bayarea_developer = {
     'xml_config' : '/workspace/opus/project_configs/bay_area_parcel_unit_price.xml',
     'scenario' : 'developer_calibration',
-    'calib_datasets' : {'cost_shifter': 'residential_shifter', 'cost_shifter': 'non_residential_shifter', 'price_shifter': 'estimate'},
+    'calib_datasets' : {'cost_shifter': ['residential_shifter', 'non_residential_shifter'], 'price_shifter': 'estimate'},
     'subset' : None,
     'subset_patterns' : None,
-    'target_expression' : "devcalib_geography.aggregate((building.residential_units*(building.building_type_id<4)) + (building.nonresidential_sqft*(building.building_type_id>3)))",
+    'target_expression' : "devcalib_geography.aggregate((building.residential_units*(building.building_type_id<4)) + (building.non_residential_sqft*(building.building_type_id>3)))",
     'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_development2011.csv',
     'skip_cache_cleanup': True,
     'optimization' : 'bfgs'
