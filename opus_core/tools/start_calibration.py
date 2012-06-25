@@ -24,6 +24,10 @@ from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_r
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
+try:
+    is_parallelizable=is_parallelizable
+except NameError:
+    is_parallelizable = False
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -122,7 +126,7 @@ class Calibration(object):
 
         t0 = time.time()
 
-        set_parallel(True)
+        if is_parallelizable==True: set_parallel(True)
 
         if optimizer=='bfgs':
             results = fmin_bfgs(self.target_func, copy(init_v), fprime=None, epsilon=1e-08, 
@@ -151,7 +155,7 @@ class Calibration(object):
             pickle_file = os.path.join(self.cache_directory, pickle_file)
             pickle.dump(results, open(pickle_file, "wb"))
 
-        set_parallel(False)
+        if is_parallelizable == True: set_parallel(False)
 
         logger.log_status('init target_func: {}'.format(self.target_func(init_v)))
         logger.log_status('end target_func: {}'.format(results[:])) #which one?
