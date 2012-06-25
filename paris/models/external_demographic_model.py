@@ -7,7 +7,7 @@ from opus_core.models.model import Model
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
-from numpy import ones, in1d, array, allclose, sort
+from numpy import ones, in1d, array, allclose, sort, unique
 
 class ExternalDemographicModel(Model):
     """ A model that updates households with external demographic data; 
@@ -59,16 +59,18 @@ class ExternalDemographicModel(Model):
         ## households data and persons attributes summarized 
         ## by household_id is the same
         fh = h5py.File(demographic_data_file, 'r')
-        hh_dmgh = fh['households']
-        ps_dmgh = fh['persons']
-        hh_dmgh_current = hh_dmgh[hh_dmgh[:,'year'] == year]
-        ps_dmgh_current = ps_dmgh[ps_dmgh[:,'year'] == year]
+        year_str = str(year)
+        dmgh_current = fh[year_str]
+        #hh_dmgh = fh['household']
+        #ps_dmgh = fh['person']
+        #hh_dmgh_current = hh_dmgh[hh_dmgh[:,'year'] == year]
+        #ps_dmgh_current = ps_dmgh[ps_dmgh[:,'year'] == year]
 
-        hhs_new = compound_array_to_dataset(hh_dmgh_current,
+        hhs_new = compound_array_to_dataset(dmgh_current['household'],
                                         table_name='households',
                                         id_name=hh_ds.get_id_name(),
                                         dataset_name=hh_ds.dataset_name)
-        ps = compound_array_to_dataset(ps_dmgh_current,
+        ps = compound_array_to_dataset(dmgh_current['person'],
                                        table_name='persons',
                                        id_name='person_id',
                                        dataset_name='person')
@@ -175,7 +177,7 @@ class Tests(opus_unittest.OpusTestCase):
         n_hhs = 5
         hh_dtype = {'names':['year', 'household_id', 'income', 'head_person_id'],
                  'formats':['i4', 'i4', 'f8', 'i4']}
-        hhdata = out_fh.create_dataset('households', shape=(n_hhs, ), dtype=hh_dtype, 
+        hhdata = out_fh.create_dataset('household', shape=(n_hhs, ), dtype=hh_dtype, 
                                        compression='gzip', compression_opts=9)
         
         hhs = [(2000, 5, 65000.0, 9),
@@ -188,7 +190,7 @@ class Tests(opus_unittest.OpusTestCase):
         n_ps = 16
         ps_dtype = {'names':['year', 'person_id', 'household_id', 'age'],
                     'formats':['i4', 'i4', 'i4', 'i4']}
-        psdata = out_fh.create_dataset('persons', shape=(n_ps, ), dtype=ps_dtype, 
+        psdata = out_fh.create_dataset('person', shape=(n_ps, ), dtype=ps_dtype, 
                                        compression='gzip', compression_opts=9)
         
         ps =  [(2000, 1, 1, 76),
@@ -209,6 +211,18 @@ class Tests(opus_unittest.OpusTestCase):
                (2001,31, 1, 1)]
         psdata[:] = array(ps, dtype=ps_dtype)
 
+        dataset_names = ['household', 'person']
+        for dataset_name in dataset_names:
+            for year in unique(out_fh[dataset_name][:, 'year']):
+                year_str = str(year)
+                group = out_fh.get(year_str, None)
+                if group is None:
+                    group = out_fh.create_group(year_str)
+
+                is_year = out_fh[dataset_name][:, 'year'] == year
+                group.create_dataset(dataset_name, data=out_fh[dataset_name][is_year])
+
+            del out_fh[dataset_name]
         out_fh.close()
 
     def tearDown(self):

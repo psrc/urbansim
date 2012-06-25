@@ -6,133 +6,119 @@
 read 30-year demographic data prepared by INED
 """
 
+import h5py
 import sys, os
 import numpy as np
+from subprocess import check_output
 
+def read_header(in_fname, rename_attrs=None, dtypes=None):
+    in_fh = file(in_fname)
+    header = in_fh.readline().strip().split(",")
+    names = [v.lower() for v in header]
+    if rename_attrs is not None:
+        for org_attr, new_attr in rename_attrs.iteritems():
+            names[names.index(org_attr)] = new_attr
+    if dtypes is None:
+        formats = ['i4'] * len(names)
+    else:
+        assert len(dtypes) == len(names)
+        formats = dtypes
+    dtype = {'names': names, 'formats':formats}
+    return names, dtype
+
+def determine_dims(in_fname):
+    names, dtype = read_header(in_fname)
+    ncols = len(names)
+    nrows = int(check_output(["wc", "-l", in_fname]).split()[0]) 
+    ## exclude header
+    nrows = nrows - 1
+    return nrows, ncols
+
+def read_csv_native(in_fname, skiprows=1, delimiter=",", comments="#"):
+    names, dtype = read_header(in_fname)
+    shape = determine_dims(in_fname)
+    ## this may produce a MemoryError
+    data = np.empty(shape=shape, dtype=dtype)
+    with open(in_fname, 'U') as fh:
+        for irow, row in enumerate(fh.readline()):
+            if irow < skiprows: continue
+            row = row.split(comments)[0].strip()
+            vals = [int(val) for val in row.split(delimiter)]
+            data[irow, ] = vals
+    return data
+
+ 
 ## read csv with np.loadtxt
 def read_csv_with_numpy(in_fname):
-    import numpy as np
-    f = file(in_fname)
-    header = f.readline().strip().split(",")
-    f.close()
-    names = [v.lower() for v in header]
-    formats = ['i4'] * len(names)
-    dtype = {'names': names, 'formats':formats}
+    _, dtype = read_header(in_fname)
     data = np.loadtxt(in_fname, dtype=dtype,
                       skiprows=1, delimiter=",")
     return data
 
-## read csv with pandas.read_csv
-## supposedly this would work, but it takes too much memory
-#from pandas import read_csv, DataFrame, HDFStore
-def read_csv_with_pandas(in_fname):
-    from pandas import read_csv
-    data = read_csv(in_fname, sep=",", index_col=[0,1])
-    columns = [c.lower() for c in data.columns]
-    data.columns = columns
-    #data.set_index(['year', 'id'])
-    return data
+def read_native_write_h5py(in_fname, out_fname, dataset_name, 
+                           skiprows=1, delimiter=",", comments="#",
+                          rename_attrs=None):
+    if rename_attrs is not None:
+        rename_attrs = rename_attrs.get(dataset_name, None)
+    names, dtype = read_header(in_fname, rename_attrs=rename_attrs)
+    shape = determine_dims(in_fname)
 
+    out_fh = h5py.File(out_fname)
+    h5data = out_fh.create_dataset(dataset_name, shape=(shape[0],), dtype=dtype, 
+                                   compression='gzip', compression_opts=9)
 
-#df = DataFrame(data=data, dtype='int32')
-#df.set_index(['year', 'id'])
-def write_data_with_pandas(data, out_fname, dataset_name, *args, **kwargs):
-    from pandas import HDFStore
-    #store = HDFStore(out_fname, complib=complib, complevel=complevel)
-    store = HDFStore(out_fname, *args, **kwargs)
-    store[dataset_name] = data
-    store.close()
-
-"""
-##read
-#store = HDFStore(out_fname)
-#df = store[dataset_name]
-#store.close()
-"""
-
-## numpy file
-#npy_fname = 'households.npy'
-def write_data_with_numpy(data, out_fname, *args, **kwargs):
-    import numpy as np
-    np.save(out_fname, data)
-
-"""
-#data = np.load(npy_fname)
-"""
-
-## memmap isn't able to store dtype information with data
-#memp_fname = 'households.memp'
-def write_data_with_memmap(data, out_fname, *args, **kwargs):
-    import numpy as np
-    fp = np.memmap(memp_fname, dtype=data.dtype, mode='w+', shape=data.shape)
-    fp[:] = data[:]
-    fp.close()
-
-"""
-mp = np.memmap(memp_fname, dtype=dtype)
-"""
-
-## pytables
-def write_data_with_pytables(data, out_fname, *args, **kwargs):
-    import tables as tb
-    ft = tb.openFile(out_fname, "w")
-    #descr = dict([(n, tb.Col.from_dtype(np.dtype(t))) for n, t in zip(names, formats)])
-
-    ## this does not work, as pytables doesn't support compound dtype
-    atom = tb.Atom.from_dtype(np.dtype(dtype))
-    filters = tb.Filters(complib=complib, complevel=complevel)
-    hh = ft.createCArray(f.root, "households", 
-                         atom=atom, 
-                         shape=data.shape, 
-                         filters=filters)
-    hh[:] = data[:]
-    ft.close()
-
-"""
-#read
-ft = tb.File(out_fname, 'r')
-hh = ft['households']
-data = hh[:]
-"""
-
-## h5py
-def write_data_with_h5py(data, out_fname, *args, **kwargs):
-    import h5py
-    #write
-    fh = h5py.File(out_fname, 'w')
-    hh = fh.create_dataset(dataset_name, shape=data.shape, dtype=data.dtype, 
-                           #compression='gzip', compression_opts=9,
-                           *args, **kwargs
-                          )
-    hh[:] = data[:]
-    fh.close()
-
-"""
-#read
-fh = h5py.File(out_fname, 'r')
-hh = fh['households']
-"""
+    with open(in_fname, 'U') as fh:
+        for irow, row in enumerate(fh):
+            if irow < skiprows: continue
+            row = row.split(comments)[0].strip()
+            if row == '': continue
+            vals = [int(val) for val in row.split(delimiter)]
+            h5data[irow-1] = np.array([tuple(vals)], dtype=dtype)
+    out_fh.close()
+    return h5data
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print "Usage: python %s.py in_fname out_fname households" % sys.argv[0]
+        print "Usage: python %s.py in_fname out_fname <household | person>" % sys.argv[0]
         sys.exit(0)
 
     in_fname, out_fname = sys.argv[1], sys.argv[2]
     dataset_name = sys.argv[3]
-
+    assert dataset_name in ('person', 'household')
     #in_fname = 'HouseholdCensus.csv'
     #out_fname = 'households.h5'
-    #dataset_name = 'households'
+    #dataset_name = 'household'
 
+    ## pre-process
     ## remove the last "," from input file
-    os.system("sed 's/,\r/\r/g' -i %s" % in_fname)
+    #os.system("sed 's/,\r/\r/g' -i %s" % in_fname)
+    ## replace '<' with '_lt'
+    #os.system("sed 's/</_lt/' -i %s" % in_fname)
+    ## replace MS-DOS ctrl-Z, ie \x1a
+    #os.system("sed 's/\x1a/\x20/g' -i %s" % in_fname)
+    rename_attrs = {'household': {'id':'household_id'},
+                    'person':{'id':'person_id', 
+                              'hh_id':'household_id'}
+                    }
 
-    data = read_csv_with_numpy(in_fname) 
-    from pandas import DataFrame
-    df = DataFrame(data=data, dtype='int32')
-    df.set_index(['year', 'id'], inplace=True)
-    complib, complevel = 'blosc', 9
-    write_data_with_pandas(df, out_fname, dataset_name, 
-                           complib=complib, complevel=complevel)
+    ## read
+    #data = read_csv_with_numpy(in_fname) 
+    #data = read_csv_native(in_fname) 
+    data = read_native_write_h5py(in_fname, out_fname, dataset_name,
+                                  rename_attrs=rename_attrs)
 
+    ## post-write process
+    fh = h5py.File(out_fname)
+    ## re-organize hdf5 file into /<year>/household & /<year>/person
+    #dataset_names = ['household', 'person']
+    for year in np.unique(fh[dataset_name][:, 'year']):
+        year_str = str(year)
+        group = fh.get(year_str, None)
+        if group is None:
+            group = fh.create_group(year_str)
+
+        is_year = fh[dataset_name][:, 'year'] == year
+        group.create_dataset(dataset_name, data=fh[dataset_name][is_year])
+
+    #del fh[dataset_name]
+    fh.close()
