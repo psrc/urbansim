@@ -10,7 +10,6 @@ import pickle
 import subprocess
 import numpy as np
 from copy import copy
-from psa import panneal
 from scipy.optimize import *
 from numpy.random import seed
 from numpy import array, arange
