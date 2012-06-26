@@ -31,7 +31,24 @@ class MakeIndicatorsOptionGroup(GenericOptionGroup):
                                 help="")
         self.parser.add_option("-y", "--years", dest="years", 
                                 help="List of years to make indicators for.")
-        
+
+
+def run(xml_configuration, indicator_batch, run_name, cache_directory, years):
+    from opus_gui.results_manager.run.batch_processor import BatchProcessor
+    project = OpusProject()
+    project.open(xml_configuration)
+    bp = BatchProcessor(project)
+    visualizations = get_batch_configuration(project = project,
+                                             batch_name = indicator_batch)
+
+    bp.set_data(visualizations=visualizations,
+                source_data_name = run_name,
+                cache_directory = cache_directory,
+                years = eval(years),
+                )
+    bp.errorCallback = lambda x: x     ##
+    bp.finishedCallback = lambda x: x  ## hack to work around BatchProcessor
+    bp.run()
 
 if __name__ == "__main__":
     try: import wingdbstub
@@ -48,19 +65,9 @@ if __name__ == "__main__":
             ):
         parser.print_help()
         sys.exit(0)
-    
-    from opus_gui.results_manager.run.batch_processor import BatchProcessor
-    project = OpusProject()
-    project.open(options.xml_configuration)
-    bp = BatchProcessor(project)
-    visualizations = get_batch_configuration(project = project,
-                                             batch_name = options.indicator_batch)
-    
-    bp.set_data(visualizations=visualizations,
-                source_data_name = options.run_name,
-                cache_directory = options.cache_directory,
-                years = eval(options.years),
-                )
-    bp.errorCallback = lambda x: x     ## 
-    bp.finishedCallback = lambda x: x  ## hack to work around BatchProcessor
-    bp.run()
+
+    run(options.xml_configuration,
+        options.indicator_batch,
+        options.run_name,
+        options.cache_directory,
+        options.years)
