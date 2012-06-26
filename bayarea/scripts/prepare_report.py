@@ -7,8 +7,7 @@ import shutil
 from lxml import etree
 import textwrap
 
-if __name__ == '__main__':
-
+def main():
     parser = OptionParser()
     parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None,
                       help="File name of xml configuration")
@@ -73,3 +72,10 @@ cached data: %s
                                        cache_directory,
                                        options.years)
     shutil.copy(os.path.join(cache_directory, "indicators", "regional_indicators.xls"), options.output)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except:
+        print "report generation failed"
+        sys.exit(1)
