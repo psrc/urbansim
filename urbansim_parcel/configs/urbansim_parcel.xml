@@ -690,8 +690,6 @@
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
-              <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
-              <key name="sample_size_locations" type="integer">30</key>
               <key name="weights_for_estimation_string" type="string" model_dependency_type="variable">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="capacity_string" type="string" model_dependency_type="variable">urbansim_parcel.job.is_untaken_non_home_based_job</key>
