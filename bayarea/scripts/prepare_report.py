@@ -43,7 +43,9 @@ if __name__ == '__main__':
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
         c.execute("SELECT max(date_time), cache_directory, scenario_name FROM run_activity")
-        cache_directory = c.fetchone()[1]
+        results = c.fetchone()
+        cache_directory = results[1]
+        scenario = results[2]
     else:
         print "Couldn't figure out scenario and cache directory"
         sys.exit(1)
