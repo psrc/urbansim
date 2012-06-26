@@ -3,6 +3,7 @@
 # See opus_core/LICENSE
 
 import gc
+import re
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.datasets.interaction_dataset import InteractionDataset
@@ -439,12 +440,7 @@ class ChoiceModel(ChunkModel):
         index = self.model_interaction.get_choice_index()
         self.coefficients = create_coefficient_from_specification(specification)
         self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])
-        if hasattr(self, "availability") and self.availability is not None:
-            availability = self.model_interaction.interaction_dataset.compute_variables(self.availability)
-            short_name = VariableName(self.availability).get_alias()
-            if short_name != 'availability':                
-                self.model_interaction.interaction_dataset.compute_variables('availability=%s' % short_name)
-            #self.estimate_config['availability'] = self.model_interaction.interaction_dataset['availability']
+        self.model_interaction.compute_availabilities(submodels)
         #run estimation
         result = self.estimate_step()
         return (self.coefficients, result)
@@ -494,12 +490,10 @@ class ChoiceModel(ChunkModel):
             self.model_interaction.prepare_data_for_estimation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)            
             self.coefficient_names[submodel] = self.model_interaction.get_coefficient_names(submodel)
-            if self.model_interaction.is_there_data(submodel):   # observations for this submodel available
-                self.estimate_config['index'] = self.model_interaction.get_choice_index_for_submodel(submodel)
-                #if index <> None:
-                    #    self.estimate_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
+            if self.model_interaction.is_there_data(submodel):   # observations for this submodel available                
                 # remove not used choices
                 is_submodel_chosen_choice = self.model_interaction.set_chosen_choice_for_submodel_and_update_data(submodel)
+                self.estimate_config['index'] = self.model_interaction.get_choice_index_for_submodel(submodel)
                 self.estimate_config["chosen_choice"] = is_submodel_chosen_choice
                 self.estimate_config.merge({"coefficient_names":self.coefficient_names[submodel]})
                 self.estimate_config.merge({"specified_coefficients": coef[submodel]})
@@ -507,9 +501,10 @@ class ChoiceModel(ChunkModel):
                 self.estimate_config.merge({"fixed_values": self.model_interaction.get_coefficient_fixed_values(submodel)})
                 self.estimate_config.merge({"submodel": submodel})
                 self.estimate_config.merge({"_model_":self})
-                ids = self.model_interaction.interaction_dataset
-                if "availability" in ids.get_known_attribute_names():
-                    self.estimate_config['availability'] = ids['availability'][self.observations_mapping[submodel],:]
+                #ids = self.model_interaction.interaction_dataset
+                #if "availability" in ids.get_known_attribute_names():
+                    #self.estimate_config['availability'] = ids['availability'][self.observations_mapping[submodel],:]
+                self.estimate_config['availability'] = self.model_interaction.get_availability(submodel)
                 result[submodel] = self.estimate_submodel(self.get_all_data(submodel), submodel)
                 if "estimators" in result[submodel].keys():
                     coef[submodel].set_beta_alt(result[submodel]["estimators"])
@@ -644,7 +639,8 @@ class ChoiceModel(ChunkModel):
         probs = probs[order_idx,:]
         choice_ids = choice_ids[order_idx,:]
         return (probs, choice_ids)
-
+                                
+                
     def export_probabilities(self, probabilities, file_name):
         """Export the current probabilities into a file.
         """
@@ -892,6 +888,7 @@ class ModelInteraction:
         self.chosen_choice = None
         self.chosen_choice_per_submodel = {}
         self.submodel_coefficients = {}
+        self.data_include_rows = {}
         
     def set_agent_set(self, agent_set):
         self.agent_set = agent_set
@@ -925,7 +922,10 @@ class ModelInteraction:
     def get_choice_index_for_submodel(self, submodel):
         index = self.get_choice_index()
         if index is not None:
-            return take(index, self.model.observations_mapping[submodel], axis=0)
+            index = take(index, self.model.observations_mapping[submodel], axis=0)
+            if submodel in self.data_include_rows.keys():
+                index = compress(self.data_include_rows[submodel], index, axis=0)
+        return index
 
     def get_choice_ids_for_submodel(self, submodel):
         index = self.get_choice_index_for_submodel(submodel)
@@ -1065,6 +1065,7 @@ class ModelInteraction:
         if False in where_not_remove:
             is_submodel_chosen_choice = compress(where_not_remove, is_submodel_chosen_choice, axis=0)
             self.remove_rows_from_data(where_not_remove, submodel)
+            self.data_include_rows[submodel] = where_not_remove
         self.chosen_choice_per_submodel[submodel] = is_submodel_chosen_choice
         return is_submodel_chosen_choice
     
@@ -1088,6 +1089,35 @@ class ModelInteraction:
             return False
         return True
     
+    def compute_availabilities(self, submodels=[]):
+        availability_string = self.model.availability
+        if not hasattr(self.model, "availability") or availability_string is None:
+            return
+        
+        if len(submodels) == 0 or re.search('SUBMODEL', availability_string) is None:
+            self.interaction_dataset.compute_variables(availability_string)
+            short_name = VariableName(availability_string).get_alias()
+            if short_name != 'availability':                
+                self.interaction_dataset.compute_variables('availability=%s' % short_name)
+        
+        for submodel in submodels:
+            availability_string_subm = re.sub('SUBMODEL', str(submodel), availability_string)
+            self.interaction_dataset.compute_variables(availability_string_subm)
+            short_name = VariableName(availability_string_subm).get_alias()
+            if short_name != 'availability_%s' % submodel:
+                self.interaction_dataset.compute_variables('availability_%s=%s' % (submodel,short_name))
+                
+    def get_availability(self, submodel):
+        availability_string = 'availability_%s' % submodel
+        availability = None
+        if availability_string in self.interaction_dataset.get_known_attribute_names():
+            availability = self.interaction_dataset[availability_string][self.model.observations_mapping[submodel],:]
+        if 'availability' in self.interaction_dataset.get_known_attribute_names():
+            availability = self.interaction_dataset['availability'][self.model.observations_mapping[submodel],:]
+        if availability is not None and submodel in self.data_include_rows.keys():
+            return compress(self.data_include_rows[submodel], availability, axis=0)
+        return availability
+        
 import os
 import tempfile
 from shutil import rmtree
