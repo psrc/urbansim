@@ -918,7 +918,9 @@ class ModelInteraction:
                                               index1=agents_index, index2=choice_set_index, debug=self.model.debug)
 
     def get_choice_index(self):
-            return self.interaction_dataset.get_2d_index()
+        if self.interaction_dataset is None:
+            return array([])
+        return self.interaction_dataset.get_2d_index()
 
     def get_choice_index_for_submodel(self, submodel):
         index = self.get_choice_index()
