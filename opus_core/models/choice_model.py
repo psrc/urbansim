@@ -311,6 +311,7 @@ class ChoiceModel(ChunkModel):
                                    'price_beta': price_coef_val,
                                    'utilities': utilities})
         self.upc_sequence.utilities = utilities[self.observations_mapping['mapped_index'],:]
+        self.run_config["index"] = index[self.observations_mapping['mapped_index'],:]
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
