@@ -243,7 +243,9 @@ class ChoiceModel(ChunkModel):
         # simulate
         choice_indices = self.simulate_chunk()
         choice_set_ids = self.choice_set.get_id_attribute()
-        choices = where(choice_indices < 0, -1, choice_set_ids[choice_indices])
+        allchoice_ind = (zeros(agents_index.size) - 1).astype(int32)
+        allchoice_ind[self.observations_mapping['mapped_index']] = choice_indices
+        choices = where(allchoice_ind < 0, -1, choice_set_ids[allchoice_ind])
 
         #modify choices
         agent_set.set_values_of_one_attribute(self.choice_set.get_id_name()[0], choices, agents_index)
@@ -308,7 +310,7 @@ class ChoiceModel(ChunkModel):
             self.run_config.merge({'price': price, 
                                    'price_beta': price_coef_val,
                                    'utilities': utilities})
-        self.upc_sequence.utilities = utilities
+        self.upc_sequence.utilities = utilities[self.observations_mapping['mapped_index'],:]
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
