@@ -96,10 +96,9 @@ class SimpleModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(self.dataset.get_attribute('iniattr'), array(10*[-1])), True)
         self.assertEqual('iniattr' in self.dataset.get_primary_attribute_names(), True)
         # run with filter
-        #m.run(self.dataset,  outcome_attribute='rangeattr', outcome_values=arange(10)+1, dataset_filter='dataset.attribute>1000')
-        #expected = array([1, 2, 0, 0, 0, 0, 7, 0, 0, 0])
-        #print self.dataset.get_attribute('rangeattr')
-        #self.assertEqual(ma.allclose(self.dataset.get_attribute('rangeattr'), expected), True)
+        m.run(self.dataset,  outcome_attribute='iniattr', outcome_values=arange(10)+1, dataset_filter='dataset.attribute>1000')
+        expected = array([1, 2, -1, -1, -1, -1, 7, -1, -1, -1])
+        self.assertEqual(ma.allclose(self.dataset.get_attribute('iniattr'), expected), True)
         
                                
 if __name__=="__main__":
