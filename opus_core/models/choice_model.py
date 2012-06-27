@@ -237,11 +237,7 @@ class ChoiceModel(ChunkModel):
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
         self.run_config.merge({"index":index})
-        if hasattr(self, "availability") and self.availability is not None:
-            availability = self.model_interaction.interaction_dataset.compute_variables(self.availability)
-            self.run_config['availability'] = self.model_interaction.interaction_dataset['availability']
-
-
+        self.model_interaction.compute_availabilities(submodels)
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         
         # simulate
@@ -302,7 +298,7 @@ class ChoiceModel(ChunkModel):
                     data = nan_to_num(data)
                     logger.log_warning("Inf is returned from variable %s; it is replaced with %s." % (vnames[inf_var_index], nan_to_num(inf)))                    
                     #raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
-
+                self.run_config['availability'] = self.model_interaction.get_availability(submodel)
                 utilities[self.observations_mapping[submodel], :] = self.upc_sequence.compute_utilities(data, coef_vals, resources=self.run_config)
                 if price_coef_name is not None:
                     ##assume the price coef doesn't vary by equation (alternative)
@@ -501,9 +497,6 @@ class ChoiceModel(ChunkModel):
                 self.estimate_config.merge({"fixed_values": self.model_interaction.get_coefficient_fixed_values(submodel)})
                 self.estimate_config.merge({"submodel": submodel})
                 self.estimate_config.merge({"_model_":self})
-                #ids = self.model_interaction.interaction_dataset
-                #if "availability" in ids.get_known_attribute_names():
-                    #self.estimate_config['availability'] = ids['availability'][self.observations_mapping[submodel],:]
                 self.estimate_config['availability'] = self.model_interaction.get_availability(submodel)
                 result[submodel] = self.estimate_submodel(self.get_all_data(submodel), submodel)
                 if "estimators" in result[submodel].keys():
