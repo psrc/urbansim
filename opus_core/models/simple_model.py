@@ -8,7 +8,7 @@ from numpy import ndarray, ones_like, where
 
 class SimpleModel(Model):
     """
-    The model computes a given expression on a dataset and assigns the result to the outcome_attribute. 
+    The model computes a given expression on a dataset (or a value array) and assigns the result to the outcome_attribute. 
     The outcome_attribute is set as primary. If it is missing, the alias of the expression is taken.
     """
 
@@ -17,12 +17,20 @@ class SimpleModel(Model):
         if model_name is not None:
             self.model_name = model_name
 
-    def run(self, dataset, expression, outcome_attribute=None, dataset_filter=None, dataset_pool=None):
+    def run(self, dataset, expression=None, outcome_attribute=None, outcome_values=None, 
+            dataset_filter=None, dataset_pool=None):
         """
-        dataset_filter - if it is specified and outcome_attribute exists, only update values for dataset records whose dataset_filter is True
+        dataset_filter - if it is specified and outcome_attribute exists, only update values for dataset records whose dataset_filter is True.
+        outcome_values - if expression is None and outcome_values is an numpy array of the same size as dataset, 
+                        the outcome_values are assigned to outcome_attribute.
         """
-        
-        values = dataset.compute_variables([expression], dataset_pool=dataset_pool)
+        if expression is None:
+            if isinstance(outcome_values, ndarray) and outcome_values.size == dataset.size():
+                values = outcome_values
+            else:
+                raise StandardError, "If expression is None, outcome values must be an ndarray of the same size as dataset."
+        else:
+            values = dataset.compute_variables([expression], dataset_pool=dataset_pool)
 
         outcome = values
         if outcome_attribute is None:
@@ -81,6 +89,18 @@ class SimpleModelTest(opus_unittest.OpusTestCase):
         m.run(self.dataset, 'lattr = ln(dataset.attribute)')
         self.assertEqual(ma.allclose(self.dataset.get_attribute('lattr'), log(self.data['attribute'])), True)
         self.assertEqual('lattr' in self.dataset.get_primary_attribute_names(), True)
-                                     
+        
+    def test_simple_model_with_outcome_values(self):
+        m = SimpleModel()
+        m.run(self.dataset,  outcome_attribute='iniattr', outcome_values=zeros(10)-1)
+        self.assertEqual(ma.allclose(self.dataset.get_attribute('iniattr'), array(10*[-1])), True)
+        self.assertEqual('iniattr' in self.dataset.get_primary_attribute_names(), True)
+        # run with filter
+        #m.run(self.dataset,  outcome_attribute='rangeattr', outcome_values=arange(10)+1, dataset_filter='dataset.attribute>1000')
+        #expected = array([1, 2, 0, 0, 0, 0, 7, 0, 0, 0])
+        #print self.dataset.get_attribute('rangeattr')
+        #self.assertEqual(ma.allclose(self.dataset.get_attribute('rangeattr'), expected), True)
+        
+                               
 if __name__=="__main__":
     opus_unittest.main()
