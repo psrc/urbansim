@@ -1,7 +1,7 @@
 Common subdirectories: optimize_old//benchmarks and optimize_para//benchmarks
 diff -Nu optimize_old//__init__.py optimize_para//__init__.py
 --- optimize_old//__init__.py	2012-06-22 19:21:18.699016376 -0700
-+++ optimize_para//__init__.py	2012-06-24 23:50:50.536806258 -0700
++++ optimize_para//__init__.py	2012-06-28 13:20:36.110691606 -0700
 @@ -143,6 +143,7 @@
  from minpack import *
  from zeros import *
@@ -12,8 +12,8 @@ diff -Nu optimize_old//__init__.py optimize_para//__init__.py
  from cobyla import fmin_cobyla
 diff -Nu optimize_old//optimize.py optimize_para//optimize.py
 --- optimize_old//optimize.py	2012-06-22 19:21:18.699016376 -0700
-+++ optimize_para//optimize.py	2012-06-24 23:28:10.824850944 -0700
-@@ -18,9 +18,11 @@
++++ optimize_para//optimize.py	2012-06-28 13:20:10.070692462 -0700
+@@ -18,17 +18,21 @@
  __all__ = ['fmin', 'fmin_powell', 'fmin_bfgs', 'fmin_ncg', 'fmin_cg',
             'fminbound', 'brent', 'golden', 'bracket', 'rosen', 'rosen_der',
             'rosen_hess', 'rosen_hess_prod', 'brute', 'approx_fprime',
@@ -24,20 +24,20 @@ diff -Nu optimize_old//optimize.py optimize_para//optimize.py
 +_parallelized_approx_gradient = [False]
 +is_parallelizable = True
  
++import sys
  import numpy
  from numpy import atleast_1d, eye, mgrid, argmin, zeros, shape, \
-@@ -28,7 +30,9 @@
+      squeeze, vectorize, asarray, absolute, sqrt, Inf, asfarray, isinf
  from linesearch import \
       line_search_BFGS, line_search_wolfe1, line_search_wolfe2, \
       line_search_wolfe2 as line_search
 -
-+import threading
-+import Queue
++import threading, Queue
 +from copy import copy
  
  # standard status messages of optimizers
  _status_message = {'success': 'Optimization terminated successfully.',
-@@ -493,71 +497,106 @@
+@@ -493,71 +497,111 @@
      else:
          return x
  
@@ -129,6 +129,7 @@ diff -Nu optimize_old//optimize.py optimize_para//optimize.py
 +        self.input_q = input_q
 +        self.result_q = result_q
 +        self.stoprequest = threading.Event()
++        self.daemon = True # when the main thread receives the KeyboardInterrupt, if it doesn't catch it or catches it but decided to terminate anyway, the whole process will terminate
 +
 +    def run(self):
 +        # As long as we weren't asked to stop, try to take new tasks from the
@@ -139,8 +140,12 @@ diff -Nu optimize_old//optimize.py optimize_para//optimize.py
 +        while not self.stoprequest.isSet():
 +            try:
 +                inp = self.input_q.get(True, 0.05)
-+                res = self.f(*inp[1])
-+                self.result_q.put([inp[0],res])
++                try:
++                    res = self.f(*inp[1])
++                    self.result_q.put([inp[0],res])
++                except:
++                    print '----- ERROR ----- :', str(sys.exc_info()[0]).split('exceptions.')[1].replace("'>","")
++                    sys.exit(0)
 +            except Queue.Empty:
 +                continue
 +
@@ -203,7 +208,7 @@ diff -Nu optimize_old//optimize.py optimize_para//optimize.py
  def check_grad(func, grad, x0, *args):
 diff -Nu optimize_old//psa.py optimize_para//psa.py
 --- optimize_old//psa.py	1969-12-31 16:00:00.000000000 -0800
-+++ optimize_para//psa.py	2012-06-22 19:29:21.423000515 -0700
++++ optimize_para//psa.py	2012-06-28 13:20:28.534691855 -0700
 @@ -0,0 +1,582 @@
 +# Original Author: Anthony Tschirhard 2012 -- UC BERKELEY
 +# Bug-fixes in 2012
