@@ -18,10 +18,11 @@ from opus_core.simulation_state import SimulationState
 from opus_core.configurations.config_calibration import *
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
-from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
-from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_run
+from opus_core.services.run_server.run_manager import RunManager
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
+from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_run
 
 try:
     is_parallelizable=is_parallelizable
@@ -33,7 +34,7 @@ class Calibration(object):
     
     '''
     def __init__(self, xml_config, scenario, calib_datasets, target_expression, target_file,
-                 subset=None, subset_patterns=None, skip_cache_cleanup=False):
+                 subset=None, subset_patterns=None, skip_cache_cleanup=False, log_directory=None):
         """
         - xml_config: xml configuration file, for ex '/home/atschirhar/opus/project_configs/paris_zone.xml'
         - scenario: name of scenario to run for calibration, where models_to_run and simulation years are specified
@@ -55,9 +56,13 @@ class Calibration(object):
         self.xml_config = xml_config
         self.scenario = scenario
         self.skip_cache_cleanup = skip_cache_cleanup
-        self.run_id, self.cache_directory = self.init_run()
+        run_id, cache_directory = self.init_run()
+        self.run_ids = [run_id]  #allow starting of multiple runs for parallel optimization
+        self.log_directory = log_directory
+        if self.log_directory is None:
+            self.log_directory = cache_directory #legacy
 
-        log_file = os.path.join(self.cache_directory, "calibration.log")
+        log_file = os.path.join(self.log_directory, "calibration.log")
         logger.enable_file_logging(log_file)
 
         dict_config = XMLConfiguration(self.xml_config).get_run_configuration(self.scenario)
@@ -69,7 +74,7 @@ class Calibration(object):
             
         self.simulation_state = SimulationState()
         self.simulation_state.set_current_time(self.base_year)
-        self.simulation_state.set_cache_directory(self.cache_directory)
+        self.simulation_state.set_cache_directory(cache_directory)
         attribute_cache = AttributeCache()
         self.dataset_pool = SessionConfiguration(new_instance=True,
                                   package_order=package_order,
@@ -151,7 +156,7 @@ class Calibration(object):
         duration = time.time() - t0
         if results_pickle_prefix is not None:
             pickle_file = "{}_{}.pickle".format(results_pickle_prefix, optimizer)
-            pickle_file = os.path.join(self.cache_directory, pickle_file)
+            pickle_file = os.path.join(self.log_directory, pickle_file)
             pickle.dump(results, open(pickle_file, "wb"))
 
         if is_parallelizable == True: set_parallel(False)
@@ -175,10 +180,11 @@ class Calibration(object):
         assert cache_directory is not None
         return run_id, cache_directory
 
-    def update_parameters(self, est_v, *args, **kwargs):
+    def update_parameters(self, est_v, cache_directory, *args, **kwargs):
         i_est_v = 0
         current_year = self.simulation_state.get_current_time()
         self.simulation_state.set_current_time(self.base_year)
+        self.simulation_state.set_cache_directory(cache_directory)
 
         for dataset_name, calib in self.calib_datasets.iteritems():
             dataset, calib_attr, index = calib
@@ -202,18 +208,34 @@ class Calibration(object):
         self.simulation_state.set_current_time(current_year)
 
     def update_prediction(self, est_v, *args, **kwargs):
-        self.update_parameters(est_v, *args, **kwargs)
-
         option_group = RestartRunOptionGroup()
         option_group.parser.set_defaults(project_name=self.project_name,
                                          skip_cache_cleanup=self.skip_cache_cleanup)
-        restart_run(option_group=option_group, 
-                    args=[self.run_id, self.start_year])
 
-    def summarize_prediction(self):
+        options, args = option_group.parse()
+        run_manager = RunManager(option_group.get_services_database_configuration(options))
+        
+        ## query runs available for re-use
+        runs_done = run_manager.get_run_info(run_ids=self.run_ids, status='done') 
+        if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
+            run_id, cache_directory = self.init_run()
+            self.run_ids.append(run_id)
+        else:
+            run_id = runs_done[0].run_id ##take the first 'done' run_id
+            cache_directory = run_manager.get_cache_directory(run_id)
+
+        self.update_parameters(est_v, cache_directory, *args, **kwargs)
+        restart_run(option_group=option_group, 
+                    args=[run_id, self.start_year])
+
+        prediction = self.summarize_prediction(cache_directory)
+        return prediction
+
+    def summarize_prediction(self, cache_directory):
         dataset_name = VariableName(self.target_expression).get_dataset_name()
         current_year = self.simulation_state.get_current_time()
         self.simulation_state.set_current_time(self.end_year)
+        self.simulation_state.set_cache_directory(cache_directory)
         #force reload
         self.dataset_pool.remove_all_datasets()
         dataset = self.dataset_pool[dataset_name]
@@ -236,8 +258,7 @@ class Calibration(object):
     def target_func(self, est_v, func=lambda x,y: np.sum(np.abs(x-y)), *args, **kwargs):
         ''' Target function.'''
 
-        self.update_prediction(est_v, *args, **kwargs)
-        prediction = self.summarize_prediction()
+        prediction = self.update_prediction(est_v, *args, **kwargs)
         ## allow keys in target not appearing in prediction
         ## assuming their values to be 0
         ### every key in target should appear in prediction
