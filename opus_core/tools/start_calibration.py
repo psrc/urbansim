@@ -23,6 +23,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
 from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_run
+from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 
 try:
     is_parallelizable=is_parallelizable
@@ -166,13 +167,27 @@ class Calibration(object):
         logger.log_status('outputs from optimizer: {}'.format(results))
         logger.log_status('Execution time: {}'.format(duration))
 
-    def init_run(self):
+    def init_run(self, create_baseyear_cache=True):
         ''' init run, get run_id & cache_directory. '''
         ##avoid invoking start_run from cmd line - 
         option_group = StartRunOptionGroup()
         option_group.parser.set_defaults(xml_configuration=self.xml_config,
-                                  scenario_name=self.scenario)
-        run_id, cache_directory = start_run(option_group)
+                                         scenario_name=self.scenario)
+        #run_id, cache_directory = start_run(option_group)
+
+        options, args = option_group.parse()
+        run_manager = RunManager(option_group.get_services_database_configuration(options))
+
+        resources = XMLConfiguration(self.xml_config).get_run_configuration(self.scenario)
+        insert_auto_generated_cache_directory_if_needed(resources)
+        cache_directory = resources['cache_directory']
+        run_manager.setup_new_run(cache_directory, resources)
+        run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
+        run_manager.add_row_to_history(run_id, resources, "done")
+
+        if create_baseyear_cache:
+            run_manager.create_baseyear_cache(resources)
+
         ## good for testing
         #run_id = 275
         #cache_directory = '/home/lmwang/opus/data/paris_zone/runs/run_275.2012_05_26_00_20'
@@ -216,13 +231,25 @@ class Calibration(object):
         run_manager = RunManager(option_group.get_services_database_configuration(options))
         
         ## query runs available for re-use
+        
+        #start lock 
         runs_done = run_manager.get_run_info(run_ids=self.run_ids, status='done') 
+        create_baseyear_cache = False
         if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
-            run_id, cache_directory = self.init_run()
+            run_id, cache_directory = self.init_run(create_baseyear_cache=False)
             self.run_ids.append(run_id)
+            create_baseyear_cache = True
         else:
             run_id = runs_done[0].run_id ##take the first 'done' run_id
             cache_directory = run_manager.get_cache_directory(run_id)
+
+        resources = run_manager.get_resources_for_run_id_from_history(run_id, 
+                                                                  filter_by_status=False)
+        run_manager.add_row_to_history(run_id, resources, "taken")
+        #end lock
+
+        if create_baseyear_cache:
+            run_manager.create_baseyear_cache(resources)
 
         self.update_parameters(est_v, cache_directory, *args, **kwargs)
         restart_run(option_group=option_group, 
