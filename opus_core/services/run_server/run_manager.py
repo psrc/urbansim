@@ -79,6 +79,10 @@ class RunManager(AbstractService):
         self.add_row_to_history(self.run_id, run_resources, "started", 
                                 run_name=run_name, scenario_name=scenario_name)
 
+        run_resources['run_id'] = self.run_id
+        if scenario_name is not None:
+            run_resources['scenario_name'] = scenario_name
+
         try:
             # Test pre-conditions
             model_system_class_path = run_resources.get('model_system', None)
