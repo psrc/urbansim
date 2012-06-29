@@ -24,7 +24,7 @@ class SimpleModel(Model):
         outcome_values - if expression is None and outcome_values is an numpy array of the same size as dataset, 
                         the outcome_values are assigned to outcome_attribute.
         """
-        if expression is None:
+        if not expression:
             if isinstance(outcome_values, ndarray) and outcome_values.size == dataset.size():
                 values = outcome_values
             else:
