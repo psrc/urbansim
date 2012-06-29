@@ -74,7 +74,6 @@
       <variable use="model variable" source="expression" name="building.RH_distance_to_PT" type="variable_definition"> building.disaggregate(parcel.dist_to_station)</variable>
       <variable use="model variable" source="expression" name="building.RH_zonal_income" type="variable_definition"> building.disaggregate(zone.aggregate(household.income, function=mean))</variable>
       <variable use="model variable" source="expression" name="building.RH_pop_dens" type="variable_definition">  building.disaggregate(urbansim_parcel.zone.population_per_acre)</variable>
-      <variable use="model variable" source="expression" name="building.RH_ln_surf" type="variable_definition">ln(building.non_residential_sqft)</variable>
       <variable use="model variable" source="expression" name="zone.RH_zone_jobs" type="variable_definition">(zone.number_of_agents(job))</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_zone_jobs_1" type="variable_definition">building.disaggregate(zone.aggregate(parcel.aggregate(building.aggregate(job.sector_id==1))))</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_zone_jobs_same" type="variable_definition">urbansim_parcel.job_x_building.same_sector_employment_in_zone</variable>
@@ -88,6 +87,7 @@
       <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type7" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_7)</variable>
       <variable use="model variable" source="expression" name="zone.RH_zone_jobs_type8" type="variable_definition">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_8)</variable>
       <variable use="model variable" source="expression" name="building.RH_ln_surf" type="variable_definition">ln(building.non_residential_sqft)</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_gastro_within_1km" type="variable_definition">parcel.bz05_h_1km</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_indust" type="variable_definition">(((job.sector_id == 1) + (job.sector_id == 2) + (job.sector_id == 6))&gt;0) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_wtrade" type="variable_definition">(job.sector_id == 3) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_distance_to_CBD_trade" type="variable_definition">(job.sector_id == 4) * building.disaggregate(parcel.dist_to_zh_cbd)</variable>
@@ -160,6 +160,8 @@
       <variable use="both" source="expression" name="building.SC_is_residential_building" type="variable_definition">building.building_type_id == 1</variable>
       <variable use="both" source="expression" name="parcel.SC_plan_type_id_between_2999_and_7000" type="variable_definition">numpy.logical_and(parcel.plan_type_id &gt; 2999, parcel.plan_type_id &lt; 7000)</variable>
       <variable use="both" source="expression" name="parcel.SC_plan_type_id_smaller_3000" type="variable_definition">parcel.plan_type_id &lt; 3000</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_retail_whithin_1km" type="variable_definition">parcel.bz05_g52_1km</variable>
+      <variable use="both" source="primary attribute" name="parcel.SC_dist_to_school" type="variable_definition">parcel.dist_to_school</variable>
     </expression_library>
     <available_datasets type="list">['building_x_parcel','building','parcel','household','business','household_x_building','zone','tract','district14','district24','alldata','pdist','buildings_for_estimation', 'development_event_history', 'job_x_building']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
@@ -462,7 +464,11 @@
             <variable_list type="variable_list">
               <variable_spec name="parcel.SC_acc_car"/>
               <variable_spec name="building_x_parcel.SC_building_fit_parcel"/>
+              <variable_spec name="parcel.SC_dist_to_school"/>
               <variable_spec name="parcel.SC_dist_to_station"/>
+              <variable_spec name="parcel.SC_gastro_within_1km"/>
+              <variable_spec name="parcel.SC_noise"/>
+              <variable_spec name="parcel.SC_retail_whithin_1km"/>
               <variable_spec name="parcel.SC_slope"/>
               <variable_spec name="parcel.SC_taxlevel_parcel"/>
             </variable_list>
