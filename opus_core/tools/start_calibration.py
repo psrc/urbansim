@@ -26,9 +26,11 @@ from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_r
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 
 try:
-    is_parallelizable=is_parallelizable
+    is_parallelizable = is_parallelizable
+    lock = lock
 except NameError:
     is_parallelizable = False
+    lock = None
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -232,7 +234,7 @@ class Calibration(object):
         
         ## query runs available for re-use
         
-        #start lock 
+        if lock!=None: lock.acquire()
         runs_done = run_manager.get_run_info(run_ids=self.run_ids, status='done') 
         create_baseyear_cache = False
         if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
@@ -246,7 +248,7 @@ class Calibration(object):
         resources = run_manager.get_resources_for_run_id_from_history(run_id, 
                                                                   filter_by_status=False)
         run_manager.add_row_to_history(run_id, resources, "taken")
-        #end lock
+        if lock!=None: lock.release()
 
         if create_baseyear_cache:
             run_manager.create_baseyear_cache(resources)
