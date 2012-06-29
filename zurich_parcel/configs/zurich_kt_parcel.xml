@@ -1007,7 +1007,7 @@
             <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
             <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <output hidden="False" name="output" type="string">rent_price_unit</output>
+            <output hidden="False" name="output" type="string">rent_price</output>
           </run>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
@@ -1147,9 +1147,10 @@
           </init>
           <run type="dictionary">
             <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
-            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">exp(rent_price_unit)</argument>
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">unit_price</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable"/>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">rent_price_total</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="outcome_values" type="string">rent_price</argument>
           </run>
         </structure>
         <specification type="dictionary"/>
