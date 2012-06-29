@@ -113,7 +113,7 @@ class ActiveDevelopmentsModel(Model):
         #building_types_dataset_attribute_names = building_types_dataset.get_attribute_names()
 
         # get only the developing building types
-        developing_types_index = where(building_types_dataset.get_attribute('is_developing_type')==1)[0]
+        developing_types_index = where(building_types_dataset.get_attribute('is_developing')==1)[0]
         developing_building_types_dataset = DatasetSubset(building_types_dataset, developing_types_index)
         # calculate active development capacity this simulation_year
         developing_building_type_ids = developing_building_types_dataset.get_attribute('building_type_id')
@@ -394,7 +394,7 @@ class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
                     'building_type_id' : array([1,2,3,4]),
                     'building_type_name' : array(['rsf','rmf','ret','ind']),
                     'is_residential' : array([1,1,0,0]),
-                    'is_developing_type' : array([1,1,1,1]),
+                    'is_developing' : array([1,1,1,1]),
                                }
         target_vacacy_data = {
                     'target_vacancy_id' : array([1,2,3,4]),

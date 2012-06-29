@@ -49,6 +49,16 @@ aliases = [
     "total_home_based_job_spaces = numpy.minimum(building.aggregate(household.workers), 3)",     
     "vacant_non_home_based_job_spaces = clip_to_zero(mag_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)",
 #    "vacant_home_based_job_spaces = clip_to_zero(mag_zone.building.total_home_based_job_spaces - urbansim_zone.building.number_of_home_based_jobs)",
-    "vacant_home_based_job_spaces = clip_to_zero(mag_zone.building.wah_capacity)",      
+    "vacant_home_based_job_spaces = clip_to_zero(mag_zone.building.wah_capacity)",
+    "number_SFR_DUs = building.building_type_id==1*building.residential_units",
+    "number_MFR_DUs = building.building_type_id==2*building.residential_units",
+    "number_MH_DUs = building.building_type_id==3*building.residential_units",
+    "number_SFR_DU_inclMH = mag_zone.building.number_SFR_DU + mag_zone.building.number_MH_DU",
+    "occupied_ware_units_col = urbansim_zone.building.is_building_type_ware * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)",
+    "total_ware_units_col = urbansim_zone.building.is_building_type_ware * building.non_residential_sqft",
+    "occupied_med_units_col = urbansim_zone.building.is_building_type_med * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)",
+    "total_med_units_col = urbansim_zone.building.is_building_type_med * building.non_residential_sqft",
+    "is_building_type_ware = urbansim_zone.building.is_building_type_ware",      
+      
            ]
 

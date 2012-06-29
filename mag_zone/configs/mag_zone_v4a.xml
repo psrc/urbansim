@@ -18,6 +18,7 @@
             <argument name="dataset" type="string">household</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
             <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+			<argument name="dataset_accounting_attribute"  parser_action="quote_string" type="string">persons</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
@@ -26,7 +27,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" parser_action="quote_string" type="string">(mag_zone.control_total.households - mag_zone.control_total.households_lag1) &gt; 0 </argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>

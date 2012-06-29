@@ -9,6 +9,9 @@
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
+          <init type="dictionary">
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
+          </init>
           <run type="dictionary">
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" type="string">10000</argument>
