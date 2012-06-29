@@ -17,7 +17,15 @@ require("reshape")
 library(gridExtra)
 library(RGraphics) # support of the "R graphics" book, on CRAN
 
-
+#wrap cmd-line arguments
+cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) {
+  pth <<- a
+  yrStart <<- as.integer(b)
+  yrEnd <<- as.integer(c)
+}
+#call to assign cmd line args to proper names. Probably more elegant ways to encapsulate cmd-line args exist.
+cmdArgs(a=args[1],b=args[2],c=args[3])
+setwd(pth)
 #viewport function
 my.vp <- function(just="topright"){
   
@@ -39,33 +47,29 @@ split <- strsplit(args[1],"/")[[1]]
 pos <- length(split)-2  #this assumes we are two up from the indicators dir--a regex would be better.
 runid <- split[pos]
 
-#  select folder with indicator files
-pth <- args[1]
-yrStart <- as.integer(args[2])
-yrEnd <- as.integer(args[3])
-setwd(pth)
+#  select folder with indicator files, only look for ones beginning with "county"
 filist = list.files(path=pth, pattern="^[county]")
-#nfiles = length(filist)
 
 #  "loop" construct, create dataframe, chart for each
 dat<-lapply(filist,read.csv,header=T,sep = "\t")
 
+#store each file in a dataframe, process as we go.
 for(i in 1:length(dat)) {
   sim_start_end <- as.data.frame(dat[i])
   
   #subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   sim_start_end <- sim_start_end[sim_start_end$county_id.i8 %in% c(49,48,43,41,38,28,21,7,1),  ]
   
-  #convert id to factor levels
+  #convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
   sim_start_end$county_id.i8 <-factor(sim_start_end$county_id.i8, labels=c('ala','cnc','mar','nap','sfr','smt','scl','sol','son'))
   
   #rename col names, retaining only year part, extract column name to use in chart name later
   library("stringr")
-  regexp <- "([[:digit:]]{4})"
+  regexp <- "([[:digit:]]{4})"  #each column has year embedded
   maxCol <- length(sim_start_end)
   years <-str_extract(names(sim_start_end)[2:maxCol],regexp)
   pos <- regexpr(pattern = regexp, text = names(sim_start_end)[2:maxCol])  #where does year start in col name?
-  title <- substr(names(sim_start_end)[2],1,pos-2)                   #extract field name for use in chart
+  title <- substr(names(sim_start_end)[2],1,pos-2)                   #extract field name representing variable for use in chart
   filenameout=sprintf("/home/aksel/plot_run139_index_%s.pdf",title)
   print(filenameout)
   yrNames <- c('county',years)
@@ -82,10 +86,11 @@ for(i in 1:length(dat)) {
   # call index function to convert absolutes to indices (2010= index 100)
   sim_start_end.i <-indx(sim_start_end, 1)
   sim_start_end.i <- replace(sim_start_end.i, is.na(sim_start_end.i), 0)
+  rownames(sim_start_end.i) <- yrNames[2:maxCol]
   attach(sim_start_end.i)
   
-  #plotting object
-  pdf(filenameout,height=6, width=9)
+  #plotting object pdf target
+  pdf(filenameout,height=8.5, width=11)
   
   #   convert to long format for ggplot
   sim_start_end.i$year <- as.integer(rownames(sim_start_end.i))
@@ -98,8 +103,7 @@ for(i in 1:length(dat)) {
   rangeMean <- tapply(g_range, c(1,1),mean)
   
   #make table object for use as annotation on plot
-  tb <- tableGrob(sim_start_end[1,1:9],  show.rownames = TRUE,
-                  gpar.corefill = gpar(fill="white"))
+  #tb <- tableGrob(sim_start_end[1,1:9],  show.rownames = TRUE,gpar.corefill = gpar(fill="white"))
   
   #plot function
   library(RGraphics)
@@ -125,10 +129,11 @@ for(i in 1:length(dat)) {
                                         size = 1)   +       # points
                                           opts(title=paste(title,"\n",runid))+
                                           xlab("Year") + 
-                                          ylab(paste("Indexed Value (Rel. to ",yrStart,")"))
+                                          ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + opts(axis.text.x=theme_text(angle=90, hjust=0))
+
   
   #combine in grid, send to print() function
-  out <- grid.arrange(g1, g3, ncol=1, main=title)
+  out <- grid.arrange(g1, g3, ncol=1, main=paste("\n",title))
   print(out)
   dev.off()  
   
