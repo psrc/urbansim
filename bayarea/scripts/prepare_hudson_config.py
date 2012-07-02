@@ -7,8 +7,11 @@
 
 # HUDSON_SCENARIO: The scenario to which the environment variables will be
 # applied.
-# HUDSON_FIRSTYEAR: The year to start running the model
-# HUDSON_LASTYEAR: The year to which the model should be run
+# HUDSON_BASE_YEAR: The base year of the model
+# HUDSON_FIRST_YEAR: The year to start running the model
+# HUDSON_LAST_YEAR: The year to which the model should be run
+# HUDSON_TRAVEL_MODEL: A boolean value that specifies whether the travel model
+# should be run.
 
 import sys, os
 from optparse import OptionParser
@@ -58,6 +61,12 @@ if __name__ == "__main__":
     scenario.append(parent)
 
     # Apply the overriden years to run:
+    base_year = os.getenv("HUDSON_BASE_YEAR")
+    if base_year:
+        base = etree.Element("base_year", type="integer")
+        base.text = base_year
+        scenario.append(base)
+
     first_year = os.getenv("HUDSON_FIRST_YEAR")
     last_year = os.getenv("HUDSON_LAST_YEAR")
     ytr = etree.Element("years_to_run", config_name="years", type="tuple")
