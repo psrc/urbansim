@@ -88,7 +88,7 @@ if __name__ == "__main__":
     # to nothing.  We enable by inheriting the models to run from the parent
     # scenario.
     land_use = os.getenv("HUDSON_LAND_USE_MODEL")
-    if land_use and land_use == "0":
+    if land_use and land_use == "false":
         lu = etree.Element("models_to_run", config_name="models", type="selectable_list")
         scenario.append(lu)
 
