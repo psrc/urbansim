@@ -181,7 +181,7 @@
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-          	<argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="location_set" type="string">building</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
@@ -261,7 +261,7 @@
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-          	<argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="location_set" type="string">building</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
@@ -400,7 +400,7 @@
     </models>
   </model_manager>
   <results_manager>
-    </results_manager>
+  </results_manager>
   <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">

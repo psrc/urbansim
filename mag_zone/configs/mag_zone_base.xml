@@ -253,13 +253,9 @@
       <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
       <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
 <!-- Variables generated from script  -->
-<variable use="both" source="expression" name="building.number_SFR_DUs" type="variable_definition">building.building_type_id==1*building.residential_units</variable>
-<variable use="both" source="expression" name="building.number_MFR_DUs" type="variable_definition">building.building_type_id==2*building.residential_units</variable>
-<variable use="both" source="expression" name="building.number_MH_DUs" type="variable_definition">building.building_type_id==3*building.residential_units</variable>
-<variable use="both" source="expression" name="building.number_SFR_DU_inclMH" type="variable_definition">mag_zone.building.number_SFR_DU + mag_zone.building.number_MH_DU</variable>
-<variable use="both" source="expression" name="building.skyharbor_enplanement_capacity" type="variable_definition">(building.other_spaces_name=='skyharbor_enplanement_capacity')*(building.other_spaces)</variable>
-<variable use="both" source="expression" name="building.williamsgateway_enplanement_capacity" type="variable_definition">(building.other_spaces_name=='williamsgateway_enplanement_capacity')*(building.other_spaces)</variable>
-<variable use="both" source="expression" name="building.hotel_motel_rooms" type="variable_definition">(building.other_spaces_name=='hotel_motel_rooms')*(building.other_spaces)</variable>
+<variable use="both" source="expression" name="building.skyharbor_enplanement_capacity" type="variable_definition">(building.other_space_name=='skyharbor')*(building.other_spaces)</variable>
+<variable use="both" source="expression" name="building.williamsgateway_enplanement_capacity" type="variable_definition">(building.other_space_name=='williamsgateway')*(building.other_spaces)</variable>
+<variable use="both" source="expression" name="building.hotel_motel_rooms" type="variable_definition">(building.other_space_name=='hotel_motel_rooms')*(building.other_spaces)</variable>
 <variable use="both" source="expression" name="building.is_developing_type" type="variable_definition">(building.building_type_id==1)+(building.building_type_id==2)+(building.building_type_id==3)+(building.building_type_id==4)+(building.building_type_id==6)+(building.building_type_id==7)+(building.building_type_id==8)+(building.building_type_id==9)+(building.building_type_id==10)</variable>
 <variable use="both" source="expression" name="building.bldg_sqft_constructed_this_year" type="variable_definition">(building.non_residential_sqft - building.non_residential_sqft_lag1)+((building.residential_units*building.sqft_per_unit)-(building.residential_units_lag1*building.sqft_per_unit))</variable>
 <variable use="both" source="expression" name="building.mpa_id" type="variable_definition">building.disaggregate(zone.mpa_id)</variable>
@@ -280,14 +276,6 @@
 <variable use="both" source="expression" name="building.total_ind_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ind * building.non_residential_sqft</variable>
 <variable use="both" source="expression" name="building.occupied_retl_units_col" type="variable_definition">urbansim_zone.building.is_building_type_retl * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
 <variable use="both" source="expression" name="building.total_retl_units_col" type="variable_definition">urbansim_zone.building.is_building_type_retl * building.non_residential_sqft</variable>
-
-<variable use="both" source="expression" name="building.occupied_ware_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ware * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
-<variable use="both" source="expression" name="building.total_ware_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ware * building.non_residential_sqft</variable>
-
-<variable use="both" source="expression" name="building.occupied_med_units_col" type="variable_definition">urbansim_zone.building.is_building_type_med * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
-<variable use="both" source="expression" name="building.total_med_units_col" type="variable_definition">urbansim_zone.building.is_building_type_med * building.non_residential_sqft</variable>
-
-
 <variable use="both" source="expression" name="building.occupied_rsf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rsf * urbansim_zone.building.number_of_households</variable>
 <variable use="both" source="expression" name="building.total_rsf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rsf * building.residential_units</variable>
 <variable use="both" source="expression" name="building.occupied_rmf_units_col" type="variable_definition">urbansim_zone.building.is_building_type_rmf * urbansim_zone.building.number_of_households</variable>
@@ -308,6 +296,15 @@
 <variable use="both" source="expression" name="building.total_home_based_job_spaces" type="variable_definition">numpy.minimum(building.aggregate(household.workers), 3)</variable>
 <variable use="both" source="expression" name="building.vacant_non_home_based_job_spaces" type="variable_definition">clip_to_zero(mag_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)</variable>
 <variable use="both" source="expression" name="building.vacant_home_based_job_spaces" type="variable_definition">clip_to_zero(mag_zone.building.wah_capacity)</variable>
+<variable use="both" source="expression" name="building.number_sfr_dus" type="variable_definition">building.building_type_id==1*building.residential_units</variable>
+<variable use="both" source="expression" name="building.number_mfr_dus" type="variable_definition">building.building_type_id==2*building.residential_units</variable>
+<variable use="both" source="expression" name="building.number_mh_dus" type="variable_definition">building.building_type_id==3*building.residential_units</variable>
+<variable use="both" source="expression" name="building.number_sfr_du_inclmh" type="variable_definition">mag_zone.building.number_sfr_du + mag_zone.building.number_mh_du</variable>
+<variable use="both" source="expression" name="building.occupied_ware_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ware * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+<variable use="both" source="expression" name="building.total_ware_units_col" type="variable_definition">urbansim_zone.building.is_building_type_ware * building.non_residential_sqft</variable>
+<variable use="both" source="expression" name="building.occupied_med_units_col" type="variable_definition">urbansim_zone.building.is_building_type_med * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)</variable>
+<variable use="both" source="expression" name="building.total_med_units_col" type="variable_definition">urbansim_zone.building.is_building_type_med * building.non_residential_sqft</variable>
+<variable use="both" source="expression" name="building.is_building_type_ware" type="variable_definition">urbansim_zone.building.is_building_type_ware</variable>
 <variable use="both" source="expression" name="business.mpa_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.mpa_id))</variable>
 <variable use="both" source="expression" name="business.raz_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.raz_id))</variable>
 <variable use="both" source="expression" name="business.county_id" type="variable_definition">business.disaggregate(building.disaggregate(zone.county_id))</variable>
@@ -423,11 +420,17 @@
 <variable use="both" source="expression" name="mpa.number_of_hh_3up_workers" type="variable_definition">mpa.aggregate(household.workers&gt;2)</variable>
 <variable use="both" source="expression" name="mpa.average_household_income" type="variable_definition">mpa.aggregate(household.income, function=mean)</variable>
 <variable use="both" source="expression" name="mpa.median_household_income" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
-<variable use="both" source="expression" name="mpa.total_DUs" type="variable_definition">mpa.aggregate(building.residential_units)</variable>
-<variable use="both" source="expression" name="mpa.total_SFR_DUs" type="variable_definition">mpa.aggregate(mag_zone.building.number_SFR_DUs)</variable>
-<variable use="both" source="expression" name="mpa.total_MFR_DUs" type="variable_definition">mpa.aggregate(mag_zone.building.number_MFR_DUs)</variable>
-<variable use="both" source="expression" name="mpa.total_MH_DUs" type="variable_definition">mpa.aggregate(mag_zone.building.number_MH_DUs)</variable>
-<variable use="both" source="expression" name="mpa.percent_DUs_built" type="variable_definition">safe_array_divide(mag_zone.mpa.total_DUs, mpa.aggregate(building.residential_units_capacity))</variable>
+<variable use="both" source="expression" name="mpa.total_dus" type="variable_definition">mpa.aggregate(building.residential_units)</variable>
+<variable use="both" source="expression" name="mpa.total_sfr_dus" type="variable_definition">mpa.aggregate(mag_zone.building.number_sfr_dus)</variable>
+<variable use="both" source="expression" name="mpa.total_mfr_dus" type="variable_definition">mpa.aggregate(mag_zone.building.number_mfr_dus)</variable>
+<variable use="both" source="expression" name="mpa.total_mh_dus" type="variable_definition">mpa.aggregate(mag_zone.building.number_mh_dus)</variable>
+<variable use="both" source="expression" name="mpa.percent_dus_built" type="variable_definition">safe_array_divide(mag_zone.mpa.total_dus, mpa.aggregate(building.residential_units_capacity))</variable>
+<variable use="both" source="expression" name="mpa.percent_sfr_dus" type="variable_definition">safe_array_divide(mag_zone.mpa.total_sfr_dus, mag_zone.mpa.total_dus)</variable>
+<variable use="both" source="expression" name="mpa.percent_sfr_mh_dus" type="variable_definition">safe_array_divide((mag_zone.mpa.total_sfr_dus+mag_zone.mpa.total_mh_dus), mag_zone.mpa.total_dus)</variable>
+<variable use="both" source="expression" name="mpa.percent_mfr_dus" type="variable_definition">safe_array_divide(mag_zone.mpa.total_mfr_dus, mag_zone.mpa.total_dus)</variable>
+<variable use="both" source="expression" name="mpa.percent_mh_dus" type="variable_definition">safe_array_divide(mag_zone.mpa.total_mh_dus, mag_zone.mpa.total_dus)</variable>
+<variable use="both" source="expression" name="mpa.jobs_housing_ratio" type="variable_definition">safe_array_divide(mag_zone.mpa.number_of_jobs, mag_zone.mpa.total_dus)</variable>
+<variable use="both" source="expression" name="mpa.occupancy_rate" type="variable_definition">safe_array_divide(mag_zone.mpa.number_of_households, mag_zone.mpa.total_dus)</variable>
 <variable use="both" source="expression" name="mpa.mpa_residential_units" type="variable_definition">mpa.aggregate(building.residential_units)</variable>
 <variable use="both" source="expression" name="mpa.mpa_jobs_5" type="variable_definition">mpa.aggregate(job.sector_id==5)</variable>
 <variable use="both" source="expression" name="mpa.mpa_total_jobs" type="variable_definition">mpa.number_of_agents(job)</variable>
@@ -1239,9 +1242,33 @@
   </model_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
-      <indicator_batch name="population">
-        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_population">
+      <indicator_batch name="mpa_total_jobs">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_jobs">
+          <indicators>['number_of_jobs']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_total_population">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_population">
           <indicators>['population']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_total_residential_units">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_residential_units">
+          <indicators>['mpa_residential_units']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_total_households">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_households">
+          <indicators>['number_of_households']</indicators>
           <output_type>tab</output_type>
           <dataset_name>mpa</dataset_name>
           <visualization_type>tab</visualization_type>

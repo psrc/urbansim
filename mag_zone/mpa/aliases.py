@@ -75,11 +75,18 @@ aliases = [
         'average_household_income = mpa.aggregate(household.income, function=mean)',
         'median_household_income = mpa.aggregate(household.income, function=median)',
         # DU related
-        'total_DUs = mpa.aggregate(building.residential_units)',
-        'total_SFR_DUs = mpa.aggregate(mag_zone.building.number_SFR_DUs)',
-        'total_MFR_DUs = mpa.aggregate(mag_zone.building.number_MFR_DUs)',
-        'total_MH_DUs = mpa.aggregate(mag_zone.building.number_MH_DUs)',
-        'percent_DUs_built = safe_array_divide(mag_zone.mpa.total_DUs, mpa.aggregate(building.residential_units_capacity))',
+        'total_dus = mpa.aggregate(building.residential_units)',
+        'total_sfr_dus = mpa.aggregate(mag_zone.building.number_sfr_dus)',
+        'total_mfr_dus = mpa.aggregate(mag_zone.building.number_mfr_dus)',
+        'total_mh_dus = mpa.aggregate(mag_zone.building.number_mh_dus)',
+        'percent_dus_built = safe_array_divide(mag_zone.mpa.total_dus, mpa.aggregate(building.residential_units_capacity))',
+        'percent_sfr_dus = safe_array_divide(mag_zone.mpa.total_sfr_dus, mag_zone.mpa.total_dus)',
+        'percent_sfr_mh_dus = safe_array_divide((mag_zone.mpa.total_sfr_dus+mag_zone.mpa.total_mh_dus), mag_zone.mpa.total_dus)',
+        'percent_mfr_dus = safe_array_divide(mag_zone.mpa.total_mfr_dus, mag_zone.mpa.total_dus)',
+        'percent_mh_dus = safe_array_divide(mag_zone.mpa.total_mh_dus, mag_zone.mpa.total_dus)',
+        # other indicators
+        'jobs_housing_ratio = safe_array_divide(mag_zone.mpa.number_of_jobs, mag_zone.mpa.total_dus)',
+        'occupancy_rate = safe_array_divide(mag_zone.mpa.number_of_households, mag_zone.mpa.total_dus)',
         # older v3x expressions:
         'mpa_residential_units = mpa.aggregate(building.residential_units)',
         'mpa_jobs_5 = mpa.aggregate(job.sector_id==5)',

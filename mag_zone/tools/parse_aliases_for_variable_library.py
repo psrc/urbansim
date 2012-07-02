@@ -7,6 +7,7 @@
 # The XML generated can be copied and pasted into the expression library part of an XML configuration file
 # TODO: write this directly into the expression library rather than temp file
 # TODO: add error checking
+# TODO: generalize
 
 # datasets to loop over and create XML for
 datasets = ['building',
@@ -42,6 +43,6 @@ def run(full_path_to_temp_file):
 
 
 if __name__=="__main__":
-    full_path_to_temp_file = 'c:/temp/testing.txt'
+    full_path_to_temp_file = 'c:/temp/xml_indicators_output.txt'
     run(full_path_to_temp_file)
     print 'XML written to %s' % full_path_to_temp_file
