@@ -226,6 +226,9 @@ class ChoiceModel(ChunkModel):
         submodels = specification.get_distinct_submodels()
         self.map_agents_to_submodels(submodels, self.submodel_string, agent_set, agents_index,
                                       dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
+        if self.observations_mapping['mapped_index'].size == 0:
+            logger.log_status("No agents mapped to submodels.")
+            return array(agents_index.size*[-1], dtype="int32")
         
         self.create_interaction_datasets(agent_set, agents_index, self.run_config, submodels=submodels)
         ## move Choice set size log after compute_variables so it is not buried in compute_variable msg
