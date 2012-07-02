@@ -12,6 +12,9 @@
 # HUDSON_LAST_YEAR: The year to which the model should be run
 # HUDSON_TRAVEL_MODEL: A boolean value that specifies whether the travel model
 # should be run.
+# HUDSON_LAND_USE_MODEL: A boolean value that specifies whether the land-use
+# model should be run.  Typically, this is 1.  But for testing purposes, we
+# might want to turn it off.
 
 import sys, os
 from optparse import OptionParser
@@ -80,5 +83,13 @@ if __name__ == "__main__":
         ytr.append(ly)
     if first_year or last_year:
         scenario.append(ytr)
+
+    # Enable/disable land use model.  We disable by setting the list of models
+    # to nothing.  We enable by inheriting the models to run from the parent
+    # scenario.
+    land_use = os.getenv("HUDSON_LAND_USE_MODEL")
+    if land_use and land_use == "0":
+        lu = etree.Element("models_to_run", config_name="models", type="selectable_list")
+        scenario.append(lu)
 
     print etree.tostring(project, pretty_print=True)
