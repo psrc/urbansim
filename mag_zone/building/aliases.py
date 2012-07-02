@@ -59,6 +59,8 @@ aliases = [
     "occupied_med_units_col = urbansim_zone.building.is_building_type_med * (urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job)",
     "total_med_units_col = urbansim_zone.building.is_building_type_med * building.non_residential_sqft",
     "is_building_type_ware = urbansim_zone.building.is_building_type_ware",      
-      
+    "num_of_pub_federal_state_jobs = building.aggregate(job.sector_id == 21)",
+    "is_building_type_pub_fs = (building.building_type_id == 14)",
+    "weight_for_pub_federal_state_jobs = mag_zone.building.num_of_pub_federal_state_jobs",         
            ]
 
