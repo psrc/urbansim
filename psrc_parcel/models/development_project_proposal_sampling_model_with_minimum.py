@@ -279,6 +279,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 mean_type_is_value_ind = mean_type[wegligible]==value
                 for i in range(nmax):
                     parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
+                    if parcels_with_proposals.size <= 0:
+                        continue
                     labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
                     chosen_prop = array(maximum_position(self.weight[wegligible], 
                                         labels=labels, 
