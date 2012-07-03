@@ -9,6 +9,9 @@ import os, sys
 travel_model_year_mapping = {2018:2020,
                              2025:2035}
 
+class TravelModelError(Exception):
+    pass
+
 @log_block()
 def invoke_run_travel_model(config, year):
     """ 
@@ -21,7 +24,8 @@ def invoke_run_travel_model(config, year):
     script_filepath = os.path.join(my_location, "run_travel_model.py")
     cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
     logger.log_status("Launching %s" % cmd)
-    os.system(cmd)
+    if os.system(cmd) != 0:
+        raise TravelModelError
 
 if __name__ == "__main__":
     from optparse import OptionParser

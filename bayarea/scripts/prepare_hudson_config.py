@@ -92,4 +92,20 @@ if __name__ == "__main__":
         lu = etree.Element("models_to_run", config_name="models", type="selectable_list")
         scenario.append(lu)
 
+    # apply the travel model specification
+    tmc = etree.Element("travel_model_configuration", type="dictionary")
+    models = etree.Element("models", type="selectable_list")
+    tmc.append(models)
+    selectable = etree.Element("selectable_list",
+                               name="bayarea.travel_model.invoke_run_travel_model",
+                               type="selectable")
+    travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
+    if travel_model:
+        if travel_model == "true":
+            selectable.text = "True"
+        else:
+            selectable.text = "False"
+        models.append(selectable)
+        scenario.append(tmc)
+
     print etree.tostring(project, pretty_print=True)
