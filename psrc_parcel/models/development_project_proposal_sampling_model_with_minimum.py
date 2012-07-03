@@ -176,7 +176,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         logger.end_block()
         
         logger.start_block("Selecting proposals within parcels")
-        self.select_proposals_within_parcels()
+        self.select_proposals_within_parcels(nmax=2)
         logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -250,18 +250,19 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
 
-    def select_proposals_within_parcels(self):
-        # Allow only one proposal per parcel in order to not disadvantage parcels with small amount of proposals.
+    def select_proposals_within_parcels(self, nmax=2):
+        # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
+        # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
         #parcel_set = self.dataset_pool.get_dataset('parcel')
-        self.proposal_set.id_eliminated_in_within_parcel_sampling = 44
+        self.proposal_set.id_eliminated_in_within_parcel_selection = 44
         egligible = logical_and(self.weight > 0, 
                                 self.proposal_set['status_id'] == self.proposal_set.id_tentative)
         wegligible = where(egligible)[0]
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible])
         #min_type = {}
         #egligible_proposals = {}
-
+        tobechosen_ind = ones(wegligible.size).astype('bool8')
         for key in self.column_names:
             mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
                                             index=self.proposal_set.get_id_attribute())
@@ -273,13 +274,19 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 #                                            index=self.proposal_set['proposal_id'])
 #            egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
             utypes = unique(mean_type[wegligible])
+            
             for value in utypes:
-                parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][mean_type[wegligible]==value])).astype(int32)
-                chosen_prop = array(maximum_position(self.weight[wegligible], 
-                                        labels=(self.proposal_set['parcel_id'][wegligible])*(mean_type[wegligible]==value), 
-                                        index=parcels_with_proposals)).flatten().astype(int32)
-                egligible[wegligible[chosen_prop]] = False
-        self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_sampling
+                mean_type_is_value_ind = mean_type[wegligible]==value
+                for i in range(nmax):
+                    parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
+                    labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
+                    chosen_prop = array(maximum_position(self.weight[wegligible], 
+                                        labels=labels, 
+                                        index=parcels_with_proposals)).flatten().astype(int32)               
+                    egligible[wegligible[chosen_prop]] = False
+                    mean_type_is_value_ind[chosen_prop] = False
+                    
+        self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
         
 #        for pclid in parcels_with_proposals:
 #            for key in self.column_names:
