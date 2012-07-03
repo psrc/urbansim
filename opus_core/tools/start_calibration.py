@@ -230,11 +230,10 @@ class Calibration(object):
                                          skip_cache_cleanup=self.skip_cache_cleanup)
 
         options, args = option_group.parse()
+        if lock!=None: lock.acquire()
         run_manager = RunManager(option_group.get_services_database_configuration(options))
         
         ## query runs available for re-use
-        
-        if lock!=None: lock.acquire()
         runs_done = run_manager.get_run_info(run_ids=self.run_ids, status='done') 
         create_baseyear_cache = False
         if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
