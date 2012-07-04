@@ -149,8 +149,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
     def prepare_for_estimate(self, *args, **kwargs):
         return prepare_for_estimate(*args, **kwargs)
     
-def prepare_for_estimate(self, 
-                         household_set=None,
+def prepare_for_estimate(household_set=None,
                          households_for_estimation_table=None,
                          agents_for_estimation_storage=None,
                          agents_for_estimation_table=None,
@@ -168,7 +167,7 @@ def prepare_for_estimate(self,
                                        require_all_attributes=False,
                                        change_ids_if_not_unique=True)
 
-    specification, index =  prepare_for_estimate(agents_for_estimation_storage=agents_for_estimation_storage,
+    specification, index =  default_prepare_for_estimate(agents_for_estimation_storage=agents_for_estimation_storage,
                                                  agents_for_estimation_table=agents_for_estimation_table,
                                                  join_datasets=join_datasets,
                                                  *args, **kwargs)
