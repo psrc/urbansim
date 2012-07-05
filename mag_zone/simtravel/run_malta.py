@@ -29,6 +29,8 @@ class RunMalta(AbstractTravelModel):
         fileMaltaConfig = open(fileLoc, 'w')
         fileMaltaConfig.write(fileEntries[0])
         fileMaltaConfig.write('%d\n' %(iteration+1))
+        fileMaltaConfig.write('-99\n')
+        fileMaltaConfig.write('-99\n')
         fileMaltaConfig.close()
         
     

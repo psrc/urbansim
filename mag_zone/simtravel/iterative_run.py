@@ -10,7 +10,7 @@ import subprocess, sys, os, copy, shutil
 from mag_zone.simtravel.run_openamos import RunOpenamos
 from mag_zone.simtravel.run_malta import RunMalta
 
-MAX_ITERATION = 1
+#MAX_ITERATION = 1
 class IterativeRun(AbstractTravelModel):
     """
     """
@@ -38,8 +38,15 @@ class IterativeRun(AbstractTravelModel):
         openamosAfterConfig = copy.deepcopy(tm_config['openamos_configuration_after_iterations'])
 
 
-        iteration = 0
-        while (not (self._is_converged(openamos_convergence_file) and self._is_converged(malta_convergence_file)) ) and iteration <= MAX_ITERATION:
+        iteration = 1
+	max_iterations = tm_config['max_iterations']
+	print 'type', type(max_iterations), 'value',max_iterations
+
+	print 'Starting iteration count - ', iteration
+
+        while (not (self._is_converged(openamos_convergence_file) and self._is_converged(malta_convergence_file)) ) and iteration <= max_iterations:
+	    print 'Travel model iteration -', iteration
+
             #if iteration == 1:  # switch configuration file for openamos for second and later iterations, 
             #                    # only need to do it once
 
@@ -48,9 +55,9 @@ class IterativeRun(AbstractTravelModel):
             config['travel_model_configuration'] = tm_config
             setupCache = 1
             backupResults = 0
-            RunOpenamos().run(config, year, iteration+1, setupCache, backupResults)
+            #RunOpenamos().run(config, year, iteration, setupCache, backupResults)
 
-            RunMalta().run(config, year, iteration+1)
+            RunMalta().run(config, year, iteration)
 
 
             # Run the models for post processing the outputs ... 
@@ -58,21 +65,19 @@ class IterativeRun(AbstractTravelModel):
             config['travel_model_configuration'] = tm_config
             setupCache = 0
             backupResults = 1
-            RunOpenamos().run(config, year, iteration+1, setupCache, backupResults)
+            RunOpenamos().run(config, year, iteration, setupCache, backupResults)
 
+            # Copy the malta generated files including link travel times file, dynustudio files, distance files
+	    maltaFiles = ["output_linkTrvTime.dat", "tmp_output_arrVeh.txt", 
+			  "OutAccuVol.dat", "OutLinkSpeedAll.dat", "VehTrajectory.dat",
+			  "output_vmtVHT_%d.dat"%(iteration+1)]
 
-            # Copy the link travel times file
-            loc = os.path.split(tm_config["malta_path"])[0]
-            fileLocLinkTimes = os.path.join(loc, "output_linkTrvTime.dat")
-            projectLoc = tm_config.get("project_path")
-            copyLinkTimesToLoc = os.path.join(projectLoc, "iteration_%d" %(iteration+1), "output_linkTrvTime.dat")
-            shutil.copyfile(fileLocLinkTimes, copyLinkTimesToLoc)
-        
-            # Copy the travel distances file
-            fileLocTrvDist = os.path.join(loc, "tmp_output_arrVeh.txt")
-            copyTrvDistToLoc = os.path.join(projectLoc, "iteration_%d" %(iteration+1), "tmp_output_arrVeh.txt")
-            shutil.copyfile(fileLocTrvDist, copyTrvDistToLoc)
-
+	    for file in maltaFiles:
+		loc = os.path.split(tm_config["malta_path"])[0]
+            	fileLoc = os.path.join(loc, file)
+            	projectLoc = tm_config.get("project_path")
+            	copyToLoc = os.path.join(projectLoc, "year_%d" %(year), "iteration_%d" %(iteration), file)
+            	shutil.copyfile(fileLoc, copyToLoc)
             iteration += 1
             
     def _is_converged(self, convergence_file):
