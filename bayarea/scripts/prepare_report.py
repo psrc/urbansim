@@ -73,16 +73,21 @@ project: %s
 scenario: %s
 cached data: %s
 """ % (project, scenario, os.sep.join(cache_directory.split(os.sep)[-3:]))
+    comment = os.getenv("HUDSON_COMMENT")
+    if comment:
+        text += "\n".join(textwrap.wrap("comment: " + comment)) + "\n"
     f.write(text.replace("\n", "\r\n"))
     f.close()
 
     # prepare the indicators
     shutil.rmtree(os.path.join(output_dir, "indicators"), True)
-    urbansim.tools.make_indicators.run(options.xml_configuration,
-                                       "regional_indicators",
-                                       None,
-                                       cache_directory,
-                                       options.years)
+    for indicator_batch in ["regional_indicators", "county_indicators",
+                            "diagnostic_indicators", "zone_data"]:
+        urbansim.tools.make_indicators.run(options.xml_configuration,
+                                           indicator_batch,
+                                           None,
+                                           cache_directory,
+                                           options.years)
     shutil.copytree(os.path.join(cache_directory, "indicators"),
                     os.path.join(output_dir, "indicators"),
                     ignore=shutil.ignore_patterns("*_stored_data*", "*.log"))
