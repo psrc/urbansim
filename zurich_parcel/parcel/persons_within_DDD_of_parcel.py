@@ -9,6 +9,10 @@ from numpy import array
 from scipy.spatial import KDTree
 from numpy import column_stack
 from opus_core.logger import logger
+from opus_core.simulation_state import SimulationState
+
+import pickle
+import os.path
 
 class persons_within_DDD_of_parcel(Variable):
     """total number of persons within radius DDD of parcel"""
@@ -16,6 +20,7 @@ class persons_within_DDD_of_parcel(Variable):
 
     def __init__(self, radius):
         self.radius = radius
+        self.cache_file_name = os.path.join(SimulationState().get_cache_directory(), 'persons_%s.pkl' % radius)
         Variable.__init__(self)
     
     def dependencies(self):
@@ -28,29 +33,58 @@ class persons_within_DDD_of_parcel(Variable):
     def compute(self, dataset_pool):
         logger.start_block(name="compute variable persons_within_DDD_of_parcel with DDD=%s" % self.radius, verbose=False)
 
+        results = None
+        try:
+            logger.start_block(name="trying to read cache file %s" % self.cache_file_name, verbose=False)
+
+            results = self._load_results()
+        except IOError:
+            logger.log_warning("Cache file could not be loaded")
+        finally:
+            logger.end_block()
+
         logger.start_block(name="initialize datasets", verbose=False)
         parcels = self.get_dataset()
         arr = self.get_dataset().sum_dataset_over_ids(dataset_pool.get_dataset('household'), attribute_name="persons")
-        coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         logger.end_block()
 
-        logger.start_block(name="build KDTree", verbose=False)
-        kd_tree = KDTree(coords, 100)
-        logger.end_block()
+        if not results:
+            logger.start_block(name="initialize coords", verbose=False)
+            coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
+            logger.end_block()
+    
+            logger.start_block(name="build KDTree", verbose=False)
+            kd_tree = KDTree(coords, 100)
+            logger.end_block()
+    
+            logger.start_block(name="compute")
+            results = kd_tree.query_ball_tree(kd_tree, self.radius)
+            logger.end_block()
 
-        logger.start_block(name="compute")
-        results = kd_tree.query_ball_tree(kd_tree, self.radius)
-        logger.end_block()
-
+            logger.start_block(name="cache")
+            self._cache_results(results)
+            logger.end_block()
+        
         logger.start_block(name="sum results", verbose=False)
         return_values = array(map(lambda l: arr[l].sum(), results))
         logger.end_block()
-
-        logger.end_block()
+        
         return return_values
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
+
+    def _cache_results(self, results): 
+        filename = self.cache_file_name
+        my_file = open(filename, 'w')
+        pickle.dump(results, my_file)
+        my_file.close()
+
+    def _load_results(self):
+        filename = self.cache_file_name
+        my_file = open(filename, 'r')
+        return pickle.load(my_file)
+
         
 
 from opus_core.tests import opus_unittest
