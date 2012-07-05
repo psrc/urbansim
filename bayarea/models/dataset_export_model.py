@@ -60,15 +60,18 @@ class DatasetExportModel(object):
                                                in_storage=in_storage, 
                                                out_storage=self.out_storage,
                                                out_dataset_name=out_table_name)        
-        self.post_run(kwargs['scenario_name'])
+        self.post_run(kwargs['scenario_name'], years)
 
-    def post_run(self, scenario_name):
+    def post_run(self, scenario_name, years):
         """call stored_procedure to post-process exported tables"""
         db = self.out_storage._get_db()
         scenario_name = re.sub('_', ' ', scenario_name).lower()
         query_scen_id = "select id from scenario where lower(name)='{}'".format(scenario_name)
         scenario_id = db.execute(query_scen_id).fetchone()[0]
-        query_st = "select create_urbansim_buildings({})".format(scenario_id)
+        min_year, max_year = min(years), max(years)
+        query_st = "select create_urbansim_buildings({}, {}, {})".format(scenario_id,
+                                                                        min_year,
+                                                                        max_year)
         db.execute(query_st)
 
     def prepare_for_run(self, database_configuration, database_name):
