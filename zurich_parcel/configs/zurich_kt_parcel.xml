@@ -1214,34 +1214,36 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_li_parcel/runs</argument>
+        <argument name="cache_directory_root" config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">zurich_kt_parcel/runs</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_li_parcel/base_year_data</argument>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">zurich_kt_parcel/base_year_data</argument>
         </argument>
       </creating_baseyear_cache_configuration>
       <base_year name="" type="integer" field_identifier="Base Year">2000</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear name="" type="integer" field_identifier="First Year of Simulation">2001</firstyear>
-        <lastyear name="" type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
+        <lastyear name="" type="integer" field_identifier="Last Year of Simulation">2010</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
+        <selectable return_value="SC_real_estate_price_model_new" type="selectable" name="SC_real_estate_price_model_new_1">True</selectable>
+        <selectable return_value="SC_postprocess_real_estate_price_model" type="selectable" name="SC_postprocess_real_estate_price_model_1">True</selectable>
         <selectable return_value="SC_real_estate_price_model" type="selectable" name="SC_real_estate_price_model_1">False</selectable>
         <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
         <selectable return_value="SC_RBLCM_from_template" type="selectable" name="SC_RBLCM_from_template_1">True</selectable>
         <selectable return_value="SC_NRBLCM_from_template" type="selectable" name="SC_NRBLCM_from_template_1">True</selectable>
         <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">False</selectable>
-        <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">False</selectable>
-        <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">False</selectable>
-        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">False</selectable>
+        <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">True</selectable>
+        <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">True</selectable>
+        <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">True</selectable>
         <selectable return_value="SC_employment_transition_model" type="selectable" name="new_employment_transition_model_1">True</selectable>
         <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model">True</selectable>
         <selectable name="employment_location_choice_model" type="selectable">True
           <group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">False</selectable>
+        <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">True</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
