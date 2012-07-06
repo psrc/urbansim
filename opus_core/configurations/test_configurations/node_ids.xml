@@ -4,15 +4,19 @@
         <project_name type="string">test_project</project_name>
     </general>
     <node name="parent">
+        <!--some comment-->
         <node name="sib1">
             <node name="child"/>
+            <!--some comment-->
             <node name="child"/>
             <node name="child2"/>
             <child name="child"/>
+            <!--some comment-->
         </node>
     </node>
     <opus_project>
         <node name="parent">
+            <!--some comment-->
             <node name="sib1"/>
         </node>
     </opus_project>

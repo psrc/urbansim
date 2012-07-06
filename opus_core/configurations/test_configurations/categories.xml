@@ -1,25 +1,31 @@
 <opus_project>
+  <!--some comment-->
   <xml_version>2.0</xml_version><general>
-    <project_name type="string">test_project</project_name>
+    <!--some comment-->
+    <project_name type="string">test_project<!--some comment--></project_name>
   </general>
   <scenario_manager>
     <scenario type="scenario" name="test_scenario">
       <description type="string">category test</description>
       <gui_name config_name="real_name" type="string">config name test</gui_name>
       <advanced type="category">
-        <precache choices="True|False" type="boolean">True</precache>
-        <chunksize type="integer">12</chunksize>
+        <!--some comment-->
+        <precache choices="True|False" type="boolean">True<!--some comment--></precache>
+        <chunksize type="integer">12<!--some comment--></chunksize>
       </advanced>
       <years type="tuple">
         <firstyear type="integer">1980</firstyear>
+        <!--some comment-->
         <lastyear type="integer">1981</lastyear>
       </years>
       <nested_advanced type="category">
-        <bool2 choices="True|False" type="boolean">False</bool2>
+        <bool2 choices="True|False" type="boolean">False<!--some comment--></bool2>
         <inner_advanced type="category">
-          <int2 type="integer">13</int2>
+          <int2 type="integer">13<!--some comment--></int2>
+          <!--some comment-->
         </inner_advanced>
       </nested_advanced>
     </scenario>
   </scenario_manager>
+  <!--some comment-->
 </opus_project>

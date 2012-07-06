@@ -1,11 +1,13 @@
 <opus_project>
   <xml_version>2.0</xml_version><general>
     <parent type="file">child1.xml</parent>
-    <parent type="file">child2.xml</parent>
+    <parent type="file">child2.xml<!--some comment--></parent>
     <expression_library type="dictionary">
       <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)+100</variable>
+      <!--some comment-->
     </expression_library>
-    <test_node type="string">still testing attribute inheritance</test_node>
-    <project_name type="string">test_project</project_name>
+    <test_node type="string">still testing attribute inheritance<!--some comment--></test_node>
+    <project_name type="string">test_project<!--some comment--></project_name>
+    <!--some comment-->
   </general>
 </opus_project>

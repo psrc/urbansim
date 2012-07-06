@@ -2,11 +2,14 @@
   <xml_version>2.0</xml_version><general>
     <parent type="file">child_scenarios.xml</parent>
     <project_name type="string">test_project</project_name>
+    <!--some comment-->
   </general>  
   <scenario_manager>
     <scenario type="scenario" name="grandchild">
       <parent type="scenario_name">child_scenario</parent>
-      <description type="string">this is the grandchild</description>
+      <!--some comment-->
+      <description type="string">this is the grandchild<!--some comment--></description>
     </scenario>
+    <!--some comment-->
   </scenario_manager>
 </opus_project>

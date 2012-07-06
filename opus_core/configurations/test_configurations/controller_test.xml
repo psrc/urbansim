@@ -3,21 +3,29 @@
   <general>
     <project_name type="string">test_project</project_name>
   </general>
+  <!--some comment-->
   <model_manager>
     <models hidden="False" name="Models">
+      <!--some comment-->
       <model name="real_estate_price_model" type="model">
         <structure>
+          <!--some comment-->
           <prepare_for_run type="dictionary">
             <name type="string" name="name">prepare_for_run</name>
+            <!--some comment-->
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" type="string">real_estate_price_model_specification</argument>
+            <argument name="specification_table" type="string">real_estate_price_model_specification<!--some comment--></argument>
           </prepare_for_run>
+          <!--some comment-->
         </structure>
       </model>
     </models>
+    <!--some comment-->
   </model_manager>
+  <!--some comment-->
   <scenario_manager>
     <scenario type="scenario" name="baseline">
+      <!--some comment-->
     </scenario>
   </scenario_manager>
 </opus_project>

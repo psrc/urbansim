@@ -13,6 +13,17 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.misc import directory_path_from_opus_path
 import re
 
+def is_comment(node):
+    return isinstance(node, _Comment)
+
+def is_no_comment(node):
+    return not is_comment(node)
+
+def only_no_comment(nodes):
+    for node in nodes:
+        if is_no_comment(node):
+            yield node
+
 def element_id(node):
     '''
     Get an id string for a given element
@@ -21,7 +32,8 @@ def element_id(node):
     '''
     if node is None:
         return ''
-    return '/%s:%s' % (node.tag, node.get('name') or '')
+    return '/%s:%s' % (node.tag if is_no_comment(node) else hash(node),
+                       node.get('name') or '')
 
 def node_identity_string(node):
     '''
@@ -43,20 +55,11 @@ def node_identity_string(node):
         return ''
     return node_identity_string(node.getparent()) + element_id(node)
 
-def strip_comments(tree_root):
-    ''' Strip a tree of all comment nodes '''
-    # lxml includes comments when iterating over child nodes, so in order to avoid having
-    # to constantly check if an item is a comment or an element we strip all comments.
-    # This means that any manually added comments are removed upon saving the file. 
-    for node in tree_root.getiterator():
-        if isinstance(node, _Comment):
-            node.getparent().remove(node)
-
 def load_xml_file(filename):
     if not os.path.exists(filename):
         raise IOError("File %s does not exist" % filename)
     tree = ElementTree(file=filename)
-    strip_comments(tree.getroot())
+    # don't strip comments anymore
     return tree
 
 def get_variable_parts(variable_node):
@@ -161,7 +164,7 @@ class XMLConfiguration(object):
         # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
-        strip_comments(etree.getroot())
+        # don't strip comments anymore
         # remove any old followers nodes
         for n in self.full_tree.getiterator():
             if n.get('followers') is not None:
@@ -366,12 +369,12 @@ class XMLConfiguration(object):
                     for equation_node in equation_nodes:
                         equation_id = int(equation_node.get('equation_id'))
                         variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
-                        dataset_names += map(get_variable_dataset, equation_node.find('variable_list'))
+                        dataset_names += map(get_variable_dataset, only_no_comment(equation_node.find('variable_list')))
                         submodel_equations[equation_id] = variable_list
                     thisres = submodel_equations
                 else:
                     thisres = self._convert_node_to_data(node.find('variable_list'))
-                    dataset_names += map(get_variable_dataset, node.find('variable_list'))
+                    dataset_names += map(get_variable_dataset, only_no_comment(node.find('variable_list')))
                 if nest_nodes:
                     nest_id = int(node.get('nest_id'))
                     res[nest_id] = thisres
@@ -497,7 +500,7 @@ class XMLConfiguration(object):
 
         # keep track of where we inherited nodes
         if is_parent:
-            for n in full_root.getiterator():
+            for n in full_root.getiterator(tag=Element):
                 if n.get('inherited') is None:
                     n.set('inherited', self.name)
         # Parent map... can be used for working back up the XML tree
@@ -642,6 +645,8 @@ class XMLConfiguration(object):
         # when merging in inherited nodes to put them in the right place.)
         children = tree.getchildren()
         for i, n in enumerate(children):
+            if is_comment(n):
+                continue
             if n.get('inherited') is None:
                 is_new = True
                 if path== '':
@@ -684,7 +689,7 @@ class XMLConfiguration(object):
 
     def _node_to_config(self, node):
         config = {}
-        for child in node:
+        for child in node.iterchildren(tag=Element):
             self._add_to_dict(child, config)
         return config
 
@@ -698,7 +703,7 @@ class XMLConfiguration(object):
         action = node.get('parser_action', '')
         if action=='include':
             included = self._find_node(node.text)
-            for child in included:
+            for child in included.iterchildren(tag=Element):
                 self._add_to_dict(child, result_dict)
         # some nodes should not end up in the dict
         elif action in ['only_for_includes', 'skip']:
@@ -826,7 +831,7 @@ class XMLConfiguration(object):
         return resulting_string
 
     def _convert_list_to_data(self, node):
-        r = map(lambda n: self._convert_node_to_data(n), node)
+        r = map(lambda n: self._convert_node_to_data(n), node.iterchildren(tag=Element))
         result_list = filter(lambda n: n is not None, r)
         if node.get('parser_action', '') == 'list_to_dictionary':
             result_dict = {}
@@ -861,10 +866,10 @@ class XMLConfiguration(object):
                 return (name, coeff_name)
             return name
         f = lambda x: x.get('ignore') != 'True'
-        return map(name_or_tuple, filter(f, variable_list_node))
+        return map(name_or_tuple, filter(f, variable_list_node.iterchildren(tag=Element)))
 
     def _convert_tuple_to_data(self, node):
-        r = map(lambda n: self._convert_node_to_data(n), node)
+        r = map(lambda n: self._convert_node_to_data(n), node.iterchildren(tag=Element))
         return tuple(r)
 
     def _convert_file_or_directory_to_data(self, node):
@@ -877,7 +882,7 @@ class XMLConfiguration(object):
 
     def _convert_dictionary_to_data(self, node):
         result_dict = {}
-        for child in node:
+        for child in node.iterchildren(tag=Element):
             self._add_to_dict(child, result_dict)
         return result_dict
 
@@ -885,15 +890,15 @@ class XMLConfiguration(object):
         '''translate from xml structure to dictionary configuration.'''
         structure_node = node.find('structure')
         if structure_node is None:
-            structure_node = []
+            structure_node = Element('zzyxy')
         model_dict = {}
-        for subnode in structure_node:
+        for subnode in structure_node.iterchildren(tag=Element):
             # append 'arguments' to some nodes
             if subnode.tag in ['init', 'run', 'prepare_for_run',
                                'estimate', 'prepare_for_estimate']:
                 subnode_struct = {'arguments':{}}
                 # everything but 'name' and 'output' should be under arguments
-                for arg_node in subnode:
+                for arg_node in subnode.iterchildren(tag=Element):
                     if not arg_node.tag in ['name', 'output']:
                         self._add_to_dict(arg_node, subnode_struct['arguments'])
                     else:
@@ -922,7 +927,7 @@ class XMLConfiguration(object):
         key_name = node.get('key_name')
         key_value = node.get('key_value', 'UnlIkElY_nAmE')
         result = {}
-        for child in node:
+        for child in node.iterchildren(tag=Element):
             d = self._convert_node_to_data(child)
             k = d[key_name]
             del d[key_name]
@@ -989,27 +994,21 @@ class XMLConfiguration(object):
         if node.text.strip() != 'True':
             return None
         result_name = node.get('return_value') or node.get('name')
-        if node.getchildren():
-            subdict = {}
-            for child_node in node:
-                self._add_to_dict(child_node, subdict)
-            result_dict = {result_name: subdict}
-            return result_dict
-        return result_name
+
+        subdict = {}
+        for child_node in node.iterchildren(tag=Element):
+            self._add_to_dict(child_node, subdict)
+        return {result_name: subdict} if subdict else result_name
 
     def _convert_custom_type_to_data(self, node, skip):
         # skip is a string that is the value when this node should be skipped
         if node.text==skip:
             return None
         name = node.tag
-        children = node.getchildren()
-        if len(children)==0:
-            return name
-        else:
-            subdict = {}
-            for child in children:
-                self._add_to_dict(child, subdict)
-            return {name: subdict}
+        subdict = {}
+        for child in node.iterchildren(tag=Element):
+            self._add_to_dict(child, subdict)
+        return {name: subdict} if subdict else name
 
     def _insert_expression_library(self, config):
         # insert the expression library into config, if it isn't empty
@@ -1026,16 +1025,18 @@ class XMLConfiguration(object):
         def get_dependencies(node):
             children = node.getchildren()
             for child in children:
-                if len(child.getchildren()) > 0:
-                    get_dependencies(child)
-                else:
-                    dependency_type = child.get('model_dependency_type')
-                    if dependency_type is None:
-                        continue
-                    if dependency_type not in result.keys():
-                        result[dependency_type] = []
-                    if child.text not in result[dependency_type] and child.text is not None:
-                        result[dependency_type].append(child.text)
+                # We now can have both children...
+                get_dependencies(child)
+                
+                # and dependencies due to comments.
+                dependency_type = child.get('model_dependency_type')
+                if dependency_type is None:
+                    continue
+                if dependency_type not in result.keys():
+                    result[dependency_type] = []
+                if child.text not in result[dependency_type] and child.text is not None:
+                    result[dependency_type].append(child.text)
+                
         result = {}
         if model_name is None:
             model_nodes = self._find_node('model_manager/models/model', get_all = True)
@@ -1587,7 +1588,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'followers_test_child.xml')
         config = XMLConfiguration(f)
         mydict = config.full_tree.find('general/mydict')
-        child_names = map(lambda n: n.tag, mydict.getchildren())
+        child_names = map(lambda n: n.tag, mydict.iterchildren(tag=Element))
         self.assertEqual(child_names, ['a', 'b', 'x', 'c', 'd'])
         # Now update the configuration with a new xml tree, in which x is after c and
         # there is also a new node e

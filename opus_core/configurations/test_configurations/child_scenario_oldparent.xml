@@ -1,16 +1,21 @@
 <opus_project>
   <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
+    <!--some comment-->
   </general>
   <scenario_manager>
+    <!--some comment-->
     <scenario type="scenario" name="test_scenario">
+      <!--some comment-->
       <parent_old_format type="dictionary">
-        <Class_name type="string">OldStyleConfiguration</Class_name>
-        <Class_path type="string">opus_core.configurations.test_configurations.old_style_configuration</Class_path>
+        <Class_name type="string">OldStyleConfiguration<!--some comment--></Class_name>
+        <!--some comment-->
+        <Class_path type="string">opus_core.configurations.test_configurations.old_style_configuration<!--some comment--></Class_path>
       </parent_old_format>
       <years type="tuple">
         <firstyear type="integer">1980</firstyear>
         <lastyear type="integer">1981</lastyear>
+        <!--some comment-->
       </years>
       <squidcount type="integer">12</squidcount>
     </scenario>

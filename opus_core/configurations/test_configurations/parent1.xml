@@ -3,12 +3,13 @@
   <general>
     <expression_library type="dictionary">
       <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)</variable>
-      <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable>
+      <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units<!--some comment--></variable>
     </expression_library>
-    <project_name type="string">test_project</project_name>
+    <!--some comment-->
+    <project_name type="string">test_project<!--some comment--></project_name>
     <test_node oceanic_attribute="squid" test_attribute="parent1_value" type="string">this is just to test attribute inheritance</test_node>
     <years_to_run type="tuple">
-      <firstyear type="integer">1981</firstyear>
+      <firstyear type="integer">1981<!--some comment--></firstyear>
       <lastyear type="integer">1984</lastyear>
     </years_to_run>
   </general>

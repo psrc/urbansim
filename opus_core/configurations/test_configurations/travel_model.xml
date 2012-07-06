@@ -4,26 +4,28 @@
   </general>
   <model_manager>
     <travel_model_configuration type="dictionary">
-      <travel_model_base_directory type="string">base1</travel_model_base_directory>
+      <travel_model_base_directory type="string">base1<!--some comment--></travel_model_base_directory>
       <years_to_run key_name="year" type="category_with_special_keys">
+        <!--some comment-->
         <run_description type="dictionary">
-		  <year type="integer">2000</year>
-		  <bank type="list">['2000_06']</bank>
-		  <emme2_batch_file_name convert_blank_to_none="True" type="string"/>
-		</run_description>
+    		  <year type="integer">2000</year>
+    		  <bank type="list">['2000_06']<!--some comment--></bank>
+    		  <emme2_batch_file_name convert_blank_to_none="True" type="string"/>
+    		</run_description>
       </years_to_run>
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
     <scenario type="scenario" name="child_scenario">
-      <parent type="scenario_name">parent_scenario</parent>
+      <parent type="scenario_name">parent_scenario<!--some comment--></parent>
       <travel_model_configuration type="dictionary">
         <travel_model_base_directory type="string">base3</travel_model_base_directory>
       </travel_model_configuration>
     </scenario>
     <scenario type="scenario" name="parent_scenario">
       <travel_model_configuration type="dictionary">
-        <travel_model_base_directory type="string">base2</travel_model_base_directory>
+        <!--some comment-->
+        <travel_model_base_directory type="string">base2<!--some comment--></travel_model_base_directory>
 	    <emme2_batch_file_name convert_blank_to_none="True" type="string">QUICKRUN.bat</emme2_batch_file_name>
       </travel_model_configuration>
     </scenario>

@@ -10,14 +10,19 @@
   <model_manager>
     <models hidden="False" name="Models">
       <model name="choice_model_with_equations_template" type="model">
+        <!--some comment-->
         <specification>
+          <!--some comment-->
           <submodel type="submodel" name="No submodel" submodel_id="-2">
             <description type="string">No submodel</description>
+            <!--some comment-->
             <equation name="choice_1" equation_id="1">
               <variable_list type="variable_list">
+                <!--some comment-->
                 <variable_spec name="constant" />
               </variable_list>
             </equation>
+            <!--some comment-->
             <equation name="choice_2" equation_id="2">
               <variable_list type="variable_list">
                 <variable_spec name=".var1" />
@@ -25,9 +30,12 @@
             </equation>
           </submodel>
         </specification>
+        <!--some comment-->
       </model>
     </models>
     <templates hidden="True" />
+    <!--some comment-->
   </model_manager>
+  <!--some comment-->
   <scenario_manager />
 </opus_project>

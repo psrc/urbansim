@@ -1,58 +1,81 @@
 <opus_project>
   <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
+    <!--some comment-->
   </general>
   <test_section>
-    <description type="string">a test configuration</description>
-    <quotedthing type="string" parser_action='quote_string'>test\test</quotedthing>
-    <quotedthing2 type="string" parser_action='quote_string'>'test\test'</quotedthing2>
-    <quotedthing3 type="string" parser_action='quote_string'>"test\test"</quotedthing3>
+    <!--some comment-->
+    <description type="string">a test configuration<!--some comment--></description>
+    <!--some comment-->
+    <quotedthing type="string" parser_action='quote_string'>test\test<!--some comment--></quotedthing>
+    <quotedthing2 type="string" parser_action='quote_string'>'test\test'<!--some comment--></quotedthing2>
+    <quotedthing3 type="string" parser_action='quote_string'>"test\test"<!--some comment--></quotedthing3>
     <empty1 type="string"/>
     <empty2 convert_blank_to_none="True" type="string"/>
     <emptypassword convert_blank_to_none="True" type="password"/>
-    <year type="integer">1980</year>
-    <mybool choices="True|False" type="boolean">True</mybool>
-    <ten type="float">10.0</ten>
+    <year type="integer">1980<!--some comment--></year>
+    <mybool choices="True|False" type="boolean">True<!--some comment--></mybool>
+    <!--some comment-->
+    <ten type="float">10.0<!--some comment--></ten>
     <emptyint convert_blank_to_none="True" type="integer"/>
     <emptyfloat convert_blank_to_none="True" type="float"/>
+    <!--some comment-->
     <years type="tuple">
-      <firstyear type="integer">1980</firstyear>
+      <!--some comment-->
+      <firstyear type="integer">1980<!--some comment--></firstyear>
       <lastyear type="integer">1981</lastyear>
+      <!--some comment-->
     </years>
-    <list_test type="list">[10, 20, 30]</list_test>
+    <list_test type="list">[10, 20, 30]<!--some comment--></list_test>
+    <!--some comment-->
     <vars type="variable_list">
      <variable_spec name="gridcell.grid_variable" />
+     <!--some comment-->
      <variable_spec name="constant" />
      <variable_spec name="constant" coefficient_name="constant_coeff"/>
      <variable_spec name="ignore_me" ignore="True" />
+     <!--some comment-->
      <variable_spec name="gridcell.var_with_coeff" coefficient_name="the_coeff" />
+     <!--some comment-->
     </vars>
     <dicttest type="dictionary">
-      <str1 type="string">squid</str1>
+      <!--some comment-->
+      <str1 type="string">squid<!--some comment--></str1>
+      <!--some comment-->
       <str2 type="string">clam</str2>
+      <!--some comment-->
     </dicttest>
     <selectable_list name="the selectables" type="selectable_list">
-     <a name='res1' type="selectable">True</a>
+     <a name='res1' type="selectable">True<!--some comment--></a>
      <a name='use return_value' return_value='res2' type="selectable">True</a>
      <a name='dict' type="selectable">True
       <five type="integer">5</five>
-      <string type="string">string</string>
+      <string type="string">string<!--some comment--></string>
      </a>
-     <a name="don't choose me" type="selectable">False</a>
+     <a name="don't choose me" type="selectable">False<!--some comment--></a>
     </selectable_list>
+    <!--some comment-->
     <models_to_run type="selectable_list">
-      <selectable type="model_choice" name="real_estate_price_model">True</selectable>
+      <selectable type="model_choice" name="real_estate_price_model">True<!--some comment--></selectable>
+      <!--some comment-->
       <selectable type="model_choice" name="airplane_model">False</selectable>
+      <!--some comment-->
     </models_to_run>
     <mytables type="selectable_list">
-      <selectable type="selectable" name="gridcells">True</selectable>
+      <selectable type="selectable" name="gridcells">True<!--some comment--></selectable>
       <selectable type="selectable" name="zones">False</selectable>
+      <!--some comment-->
       <selectable type="selectable" name="jobs">True</selectable>
+      <!--some comment-->
     </mytables>
     <mydatasets type="selectable_list">
+    <!--some comment-->
       <selectable type="selectable" name="gridcell">True</selectable>
+      <!--some comment-->
       <selectable type="selectable" name="zone">False</selectable>
-      <selectable type="selectable" name="job">True</selectable>
+      <selectable type="selectable" name="job">True<!--some comment--></selectable>
     </mydatasets>
+    <!--some comment-->
   </test_section>'
+  <!--some comment-->
 </opus_project>

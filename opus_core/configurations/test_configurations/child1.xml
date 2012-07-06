@@ -1,14 +1,20 @@
 <opus_project>
+  <!--some comment-->
   <xml_version>2.0</xml_version><general>
-    <parent type="file">parent1.xml</parent>
+    <parent type="file">parent1.xml<!--some comment--></parent>
+    <!--some comment-->
     <expression_library type="dictionary">
       <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)+10</variable>
-      <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="tax">urbansim_parcel.parcel.tax</variable>
+      <!--some comment-->
+      <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="tax">urbansim_parcel.parcel.tax<!--some comment--></variable>
     </expression_library>
     <project_name type="string">test_project</project_name>
-    <test_node test_attribute="child1_value" type="string">still testing attribute inheritance</test_node>
+    <!--some comment-->
+    <test_node test_attribute="child1_value" type="string"><!--some comment-->still testing attribute inheritance</test_node>
     <years_to_run type="tuple">
+      <!--some comment-->
       <lastyear type="integer">2000</lastyear>
     </years_to_run>
   </general>
+  <!--some comment-->
 </opus_project>

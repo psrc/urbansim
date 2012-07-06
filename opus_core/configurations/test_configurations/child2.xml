@@ -1,10 +1,18 @@
+<!--some comment-->
 <opus_project>
-  <xml_version>2.0</xml_version><general>
+  <!--some comment-->
+  <xml_version>2.0<!--some comment--></xml_version><general>
+    <!--some comment-->
+    <!--some comment-->
     <parent type="file">parent1.xml</parent>
     <expression_library type="dictionary">
-      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="tax">urbansim_parcel.parcel.tax+300</variable>
-      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="extratax">urbansim_parcel.parcel.extratax</variable>
+      <!--some comment-->
+      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="tax"><!--some comment-->urbansim_parcel.parcel.tax+300</variable>
+      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="extratax">urbansim_parcel.parcel.extratax<!--some comment--></variable>
     </expression_library>
-    <project_name type="string">test_project</project_name>
+    <!--some comment-->
+    <project_name type="string">test_project<!--some comment--></project_name>
+    <!--some comment-->
   </general>
+  <!--some comment-->
 </opus_project>

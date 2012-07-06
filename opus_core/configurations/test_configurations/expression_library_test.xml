@@ -6,17 +6,21 @@
       <variable source="primary attribute" type="variable_definition" use="model variable" name="test_agent.income">income</variable>
       <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.income_times_2"> opus_core.test_agent.income_times_2</variable>
       <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.i2"> opus_core.test_agent.income_times_2</variable>
-      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10"> 5*opus_core.test_agent.income_times_2</variable>
+      <!--some comment-->
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10"> 5*opus_core.test_agent.income_times_2<!--some comment--></variable>
       <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_ds_qualified"> 5*test_agent.income_times_2</variable>
       <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_using_primary"> 10*test_agent.income</variable>
-      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_20_using_lib"> 2*test_agent.income_times_10_using_primary</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_20_using_lib"> 2*test_agent.income_times_10_using_primary<!--some comment--></variable>
+      <!--some comment-->
       <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_less_than">def income_less_than(i): return test_agent.income&lt;i</variable>
     </expression_library>
+    <!--some comment-->
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
     <scenario type="scenario" name="test_scenario">
       <year type="integer">1980</year>
+      <!--some comment-->
     </scenario>
   </scenario_manager>
 </opus_project>

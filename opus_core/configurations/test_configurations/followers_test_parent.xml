@@ -2,10 +2,12 @@
   <xml_version>2.0</xml_version><general>
     <mydict type="dictionary">
       <a type="string">atest</a>
-      <b type="string">btest</b>
+      <!--some comment-->
+      <b type="string">btest<!--some comment--></b>
       <c type="string">ctest</c>
-      <d type="string">dtest</d>
+      <d type="string">dtest<!--some comment--></d>
     </mydict>
     <project_name type="string">test_project</project_name>
+    <!--some comment-->
   </general>
 </opus_project>

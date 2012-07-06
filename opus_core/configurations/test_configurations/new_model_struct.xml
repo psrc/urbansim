@@ -12,7 +12,8 @@
         <structure type="dictionary">
           <import type="dictionary" name="import">
             <class_module type="string">opus_core.regression_model</class_module>
-            <class_name type="string">RegressionModel</class_name>
+            <!--some comment-->
+            <class_name type="string">RegressionModel<!--some comment--></class_name>
           </import>
           <init type="dictionary">
             <name type="string" name="name">RegressionModel</name>
@@ -21,15 +22,16 @@
             <argument parser_action="blank_to_None" type="string" name="run_config"/>
             <argument parser_action="blank_to_None" type="string" name="estimate_config"/>
             <argument type="integer" name="debuglevel">0</argument>
-            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="dataset_pool">dataset_pool<!--some comment--></argument>
+            <!--some comment-->
           </init>
           <run type="dictionary">
-            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="specification">specification<!--some comment--></argument>
             <argument type="string" name="coefficients">coefficients</argument>
-            <argument type="string" name="dataset">fill in</argument>
+            <argument type="string" name="dataset">fill in<!--some comment--></argument>
             <argument parser_action="blank_to_None" type="string" name="index">rm_index</argument>
             <argument parser_action="blank_to_None" type="string" name="chunk_specification"/>
-            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="data_objects">datasets<!--some comment--></argument>
           </run>
           <prepare_for_run type="dictionary">
             <name type="string" name="name">prepare_for_run</name>
@@ -40,9 +42,11 @@
             <argument type="string" name="coefficients_storage">base_cache_storage</argument>
             <argument type="quoted_string" name="coefficients_table">regression_model_template_coefficients</argument>
             <argument type="string" name="cache_storage">base_cache_storage</argument>
+            <!--some comment-->
             <argument type="boolean" name="sample_coefficients">False</argument>
             <argument type="quoted_string" name="distribution">normal</argument>
-            <argument type="integer" name="multiplicator">1</argument>
+            <!--some comment-->
+            <argument type="integer" name="multiplicator">1<!--some comment--></argument>
             <output type="string" name="output">(specification, coefficients, rm_index)</output>
           </prepare_for_run>
           <estimate type="dictionary">
@@ -50,20 +54,25 @@
             <argument type="string" name="dataset">fill in</argument>
             <argument config_name="outcome_attribute" type="quoted_string" name="dependent_variable">fill in</argument>
             <argument parser_action="blank_to_None" type="string" name="index">rm_index</argument>
-            <argument type="quoted_string" name="procedure">opus_core.estimate_linear_regression</argument>
+            <argument type="quoted_string" name="procedure">opus_core.estimate_linear_regression<!--some comment--></argument>
             <argument type="string" name="data_objects">datasets</argument>
+            <!--some comment-->
             <output type="string" name="output">(coefficients, dummy)</output>
           </estimate>
           <prepare_for_estimate type="dictionary">
             <name type="string" name="name">prepare_for_estimate</name>
             <argument parser_action="blank_to_None" type="string" name="dataset"/>
             <argument parser_action="blank_to_None" type="quoted_string" name="dataset_filter"/>
-            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="specification_storage">base_cache_storage<!--some comment--></argument>
             <argument type="quoted_string" name="specification_table">regression_model_template_specification</argument>
-            <output type="string" name="output">(specification, rm_index)</output>
+            <!--some comment-->
+            <!--some comment-->
+            <output type="string" name="output">(specification, rm_index)<!--some comment--></output>
+            <!--some comment-->
           </prepare_for_estimate>
         </structure>
       </model>
+      <!--some comment-->
     </models><templates hidden="True"/></model_manager>
   
 </opus_project>

@@ -2,15 +2,15 @@
   <xml_version>2.0</xml_version>
   <general>
     <expression_library type="dictionary">
-      <variable dataset="dataset" source="expression" type="variable_definition" use="model variable" name="var1">package.dataset.some_variable_or_expression</variable>
+      <variable dataset="dataset" source="expression" type="variable_definition" use="model variable" name="var1">package.dataset.some_variable_or_expression<!--some comment--></variable>
     </expression_library>
-    <project_name type="string">test_project
-    </project_name>
+    <project_name type="string">test_project<!--some comment--></project_name>
   </general>
   <model_manager>
     <models hidden="False" name="Models">
       <model name="model with starting_values" type="model">
         <specification>
+          <!--some comment-->
           <submodel type="submodel" name="No submodel" submodel_id="-2">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
@@ -18,15 +18,19 @@
                   <variable_spec name=".non_fixed_with_starting_value" starting_value="42.0" keep_fixed="False" />
                   <variable_spec name=".different name from coeff name" coefficient_name="guppy" starting_value="12.5" />
                   <variable_spec name=".normal"/>
+                  <!--some comment-->
                   <variable_spec name=".ignored" ignore="True"/>
               </variable_list>
           </submodel>
         </specification>
       </model>
+      <!--some comment-->
     </models>
     <templates hidden="True" />
+    <!--some comment-->
     <estimation_config type="dictionary" />
   </model_manager>
+  <!--some comment-->
   <scenario_manager />
 </opus_project>
 

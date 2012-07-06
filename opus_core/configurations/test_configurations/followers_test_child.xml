@@ -1,8 +1,11 @@
 <opus_project>
   <xml_version>2.0</xml_version><general>
     <parent type="file">followers_test_parent.xml</parent>
+    <!--some comment-->
     <mydict type="dictionary">
-      <x followers="c,d" type="string">xtest</x>
+      <x followers="c,d" type="string">xtest<!--some comment--></x>
+      <!--some comment-->
     </mydict>
     <project_name type="string">test_project</project_name>
+    <!--some comment-->
   </general></opus_project>

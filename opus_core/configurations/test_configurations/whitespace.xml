@@ -4,8 +4,10 @@
 		<project_name type="string">test_project</project_name>
 	</general>
 	<scenario_manager>
+	  <!--some comment-->
 		<scenario type="scenario" name="test_scenario">
-			<description type="string">a test configuration</description>
+			<description type="string">a test configuration<!--some comment--></description>
 		</scenario>
 	</scenario_manager>
+	<!--some comment-->
 </opus_project>
