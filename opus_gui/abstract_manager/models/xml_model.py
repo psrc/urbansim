@@ -9,6 +9,7 @@ from PyQt4.Qt import qApp # For platform specific icons
 from opus_gui.util.icon_library import IconLibrary
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
+from opus_core.configurations.xml_configuration import is_no_comment
 
 # What node types we want checkboxes for
 # _CHECKBOX_NODE_TYPES = ('selectable')
@@ -234,7 +235,7 @@ class XmlModel(QAbstractItemModel):
 
         # Icons
         elif role == Qt.DecorationRole:
-            if index.column() == 0:
+            if index.column() == 0 and is_no_comment(node):
                 return QVariant(IconLibrary.icon_for_type(node.tag))
 
         # Checkboxes

@@ -3,6 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_gui.main.controllers.instance_handlers import shows_hidden
+from opus_core.configurations.xml_configuration import is_comment
 
 class XmlItem(object):
     '''
@@ -57,8 +58,8 @@ class XmlItem(object):
                 return
 
             for node in self.node:
-                # In addition, we hide a child if the "hidden" attribute is set
-                hidden = hide_children or (node.get('hidden') == 'True')
+                # In addition, we hide a child if the "hidden" attribute is set or if it is a comment
+                hidden = hide_children or (node.get('hidden') == 'True') or is_comment(node)
                 
                 # Yield the new XmlItem if necessary
                 if not _is_removed(hidden):
