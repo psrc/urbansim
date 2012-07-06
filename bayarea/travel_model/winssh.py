@@ -82,7 +82,11 @@ class winssh:
         if not supress_output:
             logger.log_status(out)
 
+    def logout(self):
+        self.s.logout()
+
 if __name__ == '__main__':
     node1 = winssh(CONNECT_STRING)
     assert(node1.cmd("echo 12345")[1] == "12345\r\n")
     assert(node1.cmd("false")[0] == 1)
+    node1.logout()
