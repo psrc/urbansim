@@ -641,9 +641,7 @@ class XMLConfiguration(object):
         # comma-separated list of names of inherited nodes that follow n.  (This is used
         # when merging in inherited nodes to put them in the right place.)
         children = tree.getchildren()
-        i = 0
-        while i < len(children):
-            n = children[i]
+        for i, n in enumerate(children):
             if n.get('inherited') is None:
                 is_new = True
                 if path== '':
@@ -661,7 +659,6 @@ class XMLConfiguration(object):
                         s = ','.join(followers)
                         n.set('followers', s)
                 self._set_followers(n, parent_trees, extended_path)
-            i = i+1
 
     def _merge_controllers(self, config):
         '''
