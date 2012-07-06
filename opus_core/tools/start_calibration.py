@@ -56,6 +56,7 @@ class Calibration(object):
         self.target_expression = target_expression
         self.target = self.read_target(target_file)
 
+	self.run_manager = None
         self.xml_config = xml_config
         self.scenario = scenario
         self.skip_cache_cleanup = skip_cache_cleanup
@@ -178,17 +179,17 @@ class Calibration(object):
         #run_id, cache_directory = start_run(option_group)
 
         options, args = option_group.parse()
-        run_manager = RunManager(option_group.get_services_database_configuration(options))
+        self.run_manager = RunManager(option_group.get_services_database_configuration(options))
 
         resources = XMLConfiguration(self.xml_config).get_run_configuration(self.scenario)
         insert_auto_generated_cache_directory_if_needed(resources)
         cache_directory = resources['cache_directory']
-        run_manager.setup_new_run(cache_directory, resources)
-        run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
-        run_manager.add_row_to_history(run_id, resources, "done")
+        self.run_manager.setup_new_run(cache_directory, resources)
+        run_id, cache_directory = self.run_manager.run_id, self.run_manager.get_current_cache_directory() 
+        self.run_manager.add_row_to_history(run_id, resources, "done")
 
         if create_baseyear_cache:
-            run_manager.create_baseyear_cache(resources)
+            self.run_manager.create_baseyear_cache(resources)
 
         ## good for testing
         #run_id = 275
@@ -230,11 +231,13 @@ class Calibration(object):
                                          skip_cache_cleanup=self.skip_cache_cleanup)
 
         options, args = option_group.parse()
+	if self.run_manager is None: 
+	    self.run_manager = RunManager(option_group.get_services_database_configuration(options))
+
         if lock!=None: lock.acquire()
-        run_manager = RunManager(option_group.get_services_database_configuration(options))
         
         ## query runs available for re-use
-        runs_done = run_manager.get_run_info(run_ids=self.run_ids, status='done') 
+        runs_done = self.run_manager.get_run_info(run_ids=self.run_ids, status='done') 
         create_baseyear_cache = False
         if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
             run_id, cache_directory = self.init_run(create_baseyear_cache=False)
@@ -242,15 +245,15 @@ class Calibration(object):
             create_baseyear_cache = True
         else:
             run_id = runs_done[0].run_id ##take the first 'done' run_id
-            cache_directory = run_manager.get_cache_directory(run_id)
+            cache_directory = self.run_manager.get_cache_directory(run_id)
 
-        resources = run_manager.get_resources_for_run_id_from_history(run_id, 
+        resources = self.run_manager.get_resources_for_run_id_from_history(run_id, 
                                                                   filter_by_status=False)
-        run_manager.add_row_to_history(run_id, resources, "taken")
+        self.run_manager.add_row_to_history(run_id, resources, "taken")
         if lock!=None: lock.release()
 
         if create_baseyear_cache:
-            run_manager.create_baseyear_cache(resources)
+            self.run_manager.create_baseyear_cache(resources)
 
         self.update_parameters(est_v, cache_directory, *args, **kwargs)
         restart_run(option_group=option_group, 
