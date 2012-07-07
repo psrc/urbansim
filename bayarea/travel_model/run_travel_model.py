@@ -151,12 +151,10 @@ if __name__ == "__main__":
 
     # Leave the machine idle and be sure to logout.  This should probably be a
     # finally block
-    server.cmd('Taskkill /IM Cluster.exe /F')
-    server.cmd('Taskkill /IM Voyager.exe /F')
-    server.cmd('Taskkill /IM runtpp.exe /F')
-    server.cmd('taskkill /im java.exe /F')
+    server_model.cmd('Taskkill /IM Cluster.exe /F')
+    server_model.cmd('Taskkill /IM Voyager.exe /F')
+    server_model.cmd('Taskkill /IM runtpp.exe /F')
+    server_model.cmd('taskkill /im java.exe /F')
     server_model.logout()
     server.logout()
     server_admin.logout()
-    for n in nodes:
-        n.logout()
