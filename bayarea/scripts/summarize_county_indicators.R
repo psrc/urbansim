@@ -9,23 +9,30 @@
 #USAGE: Rscript /home/aksel/Documents/Scripts/r/county_indicator_plots_index_ggplotfinal_arg.R "/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035" 2010 2035
 #TODO: clean so that select counties can be toggled on/off. Now this is MANUALLY set. 
 
-# Load the ggplot2 library
 args <- commandArgs(TRUE)
 #options(error=utils::recover)
-library("stringr")
-library(ggplot2)
+require("stringr")
+require("ggplot2")
 require("reshape")
-library(gridExtra)
-library(RGraphics) # support of the "R graphics" book, on CRAN
+require("gridExtra")
+require("RGraphics") 
 
-#wrap cmd-line arguments
-cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) {
+#declare index function
+indx <- function(dat, baseRow = 1)
+{
+  require(plyr)   
+  divisors <- dat[baseRow ,]
+  adply(dat, 1, function(x) x / divisors)
+}
+
+#wrap cmd-line arguments to assign to proper names
+cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
+{
   pth <<- a
   yrStart <<- as.integer(b)
   yrEnd <<- as.integer(c)
 }
 
-#call to assign cmd line args to proper names. Probably more elegant ways to encapsulate cmd-line args exist.
 cmdArgs(a=args[1],b=args[2],c=args[3])
 setwd(pth)
 
@@ -39,25 +46,21 @@ setwd(pth)
 #  
 #}
 
-#declare index function for later use
-indx <- function(dat, baseRow = 1){
-  require(plyr)   
-  divisors <- dat[baseRow ,]
-  adply(dat, 1, function(x) x / divisors)
-}
-#runid <- "run_139.2012_05_15_21_23"
+#parse path to get runid
 split <- strsplit(args[1],"/")[[1]]
 pos <- length(split)-2  #this assumes we are two up from the indicators dir--a regex would be better.
 runid <- split[pos]
 
-#  select folder with indicator files, only look for ones beginning with "county"
-fileList = list.files(path=pth, pattern="^[county]")
+#  select folder with indicator files, fetch all beginning with "county..." having proper years in name
+ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
+fileList = list.files(path=pth, pattern=ptrn)
 
 #  "loop" construct, create dataframe, chart for each tab file
 dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 
-#store each file in a dataframe, process as we go.
-for(i in 1:length(dat)) {
+#store each file in a dataframe, process and plot as we go.
+for(i in 1:length(dat)) 
+{
   sim_start_end <- as.data.frame(dat[i])  #technically redundant; could just use dat list object
   
   #subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
@@ -66,48 +69,53 @@ for(i in 1:length(dat)) {
   #convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
   sim_start_end$county_id.i8 <-factor(sim_start_end$county_id.i8, labels=c('ala','cnc','mar','nap','sfr','smt','scl','sol','son'))
   
-  #rename col names, retaining only year part, extract column name to use in chart name later
-  regexp <- "([[:digit:]]{4})"  #each column has year embedded
+  #rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
+  regexp <- "([[:digit:]]{4})"  
   maxCol <- length(sim_start_end)
-  years <-str_extract(names(sim_start_end)[2:maxCol],regexp) #this effectively overrides years passed as args--which is better?
+  years <-str_extract(names(sim_start_end)[2:maxCol],regexp) 
   pos <- regexpr(pattern = regexp, text = names(sim_start_end)[2:maxCol])  #where does year start in col name?
-  title <- substr(names(sim_start_end)[2],1,pos-2)                   #extract field name representing variable for use in chart
+  yrEnd <-max(as.integer(years))  #overwrites passed years and uses actual outer years in tab files 
+  yrStart <- min(as.integer(years))
+  
+  #extract field name representing variable for use in chart
+  title <- substr(names(sim_start_end)[2],1,pos-2)
   fp <- file.path(pth, fsep = .Platform$file.sep)
   fileNameOutChart=sprintf("%s/plot_%s_indexChart_%s.pdf",fp,runid,title)
   fileNameOutTable=sprintf("%s/plot_%s_indexTable_%s.pdf",fp,runid,title)
   
   yrNames <- c('county',years)
-  names(sim_start_end) <-yrNames                                  #assign new names
+  #assign new colunn names
+  names(sim_start_end) <-yrNames
   
-  # Transpose table so cols are county series, rows are years
+  # Transpose frame so cols are county series, rows are years
   sim_start_end.t <- t(sim_start_end[,2:ncol(sim_start_end)])
   
-  # Set column headings as just year portion of variable
+  # Set column headings as counties
   colnames(sim_start_end.t) <- sim_start_end[,1]
   sim_start_end.t <-as.data.frame(sim_start_end.t)
-  #sim_start_end.t$region <- 1
+  
+  #add regional total
   sim_start_end.t$region <- rowSums(sim_start_end.t,na.rm = FALSE, dims = 1)
   
-  # call index function to convert absolutes to indices (2010= index 100)
+  # call index function to convert absolutes to indices (2010= index 100), replace NAs
   sim_start_end.i <-indx(sim_start_end.t, 1)
-  sim_start_end.i <- replace(sim_start_end.i, is.na(sim_start_end.i), 0) #replace NAs
+  sim_start_end.i <- replace(sim_start_end.i, is.na(sim_start_end.i), 0) 
+  
+  #add two digit years for easier plotting
   rownames(sim_start_end.i) <- yrNames[2:maxCol]
   attach(sim_start_end.i)
-  
-  #plotting object pdf target
-  pdf(fileNameOutChart,height=8.5, width=11)
   
   #   convert to long format for ggplot
   sim_start_end.i$year <- as.integer(rownames(sim_start_end.i))
   sim_start_end_long <- melt(sim_start_end.i,id="year",variable_name = "county")
   
-  yrEnd <-max(as.integer(years))  #overwrites passed years and uses actual outer years in tab files 
-  yrStart <- min(as.integer(years))
+  #plotting object pdf target
+  pdf(fileNameOutChart,height=8.5, width=11)
   ticks <- as.factor(seq(yrStart,yrEnd,1)) 
   
   #determine range for plot
-  g_range <- range(min(ala,cnc,mar,nap,sfr,smt,scl,sol,son), ala,cnc,mar,nap,sfr,smt,scl,sol,son)
-  rangeMean <- tapply(g_range, c(1,1),mean)
+  #g_range <- range(min(ala,cnc,mar,nap,sfr,smt,scl,sol,son), ala,cnc,mar,nap,sfr,smt,scl,sol,son)
+  #rangeMean <- tapply(g_range, c(1,1),mean)
   
   #make table object for use as annotation on plot
   #tb <- tableGrob(sim_start_end[1,1:9],  show.rownames = TRUE,gpar.corefill = gpar(fill="white"))
@@ -122,10 +130,10 @@ for(i in 1:length(dat)) {
                    gpar.rowfill = gpar(fill=NA,col=NA), 
                    h.even.alpha = 0
                    )
-  string <- "
-  placeholder for possible annotation
-  "
-  g2 <- splitTextGrob(string)
+  #string <- "
+  #placeholder for possible annotation
+  #"
+  #g2 <- splitTextGrob(string)
   #theme_set(theme_bw()); 
   
   #plot object
