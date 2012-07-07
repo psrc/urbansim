@@ -26,9 +26,11 @@ from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_r
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 
 try:
+    print "-------------- parallel --------------"
     is_parallelizable = is_parallelizable
     lock = lock
 except NameError:
+    print "-------------- non parallel --------------"
     is_parallelizable = False
     lock = None
 
@@ -56,7 +58,7 @@ class Calibration(object):
         self.target_expression = target_expression
         self.target = self.read_target(target_file)
 
-	self.run_manager = None
+        self.run_manager = None
         self.xml_config = xml_config
         self.scenario = scenario
         self.skip_cache_cleanup = skip_cache_cleanup
@@ -231,8 +233,8 @@ class Calibration(object):
                                          skip_cache_cleanup=self.skip_cache_cleanup)
 
         options, args = option_group.parse()
-	if self.run_manager is None: 
-	    self.run_manager = RunManager(option_group.get_services_database_configuration(options))
+        if self.run_manager is None: 
+           self.run_manager = RunManager(option_group.get_services_database_configuration(options))
 
         if lock!=None: lock.acquire()
         
