@@ -8,6 +8,8 @@ from opus_core.misc import ncumsum, unique
 from numpy.random import random
 from numpy import searchsorted, where, ones, allclose
 from opus_core.sampling_toolbox import normalize
+from opus_core.variables.variable_name import VariableName
+from opus_core.session_configuration import SessionConfiguration
                 
 class MonteCarloAssignmentModel(Model):
     """Assign individuals from one geography (dataset1) to another (dataset2) with
@@ -20,15 +22,29 @@ class MonteCarloAssignmentModel(Model):
     model_name = "Monte Carlo Assignment Model"
     model_short_name = "MCAM"
 
+    def __init__(self, model_name=None, model_short_name=None):
+        if model_name:
+            self.model_name = model_name
+        if model_short_name:
+            self.model_short_name = model_short_name
+
     def run(self, individual_dataset, fraction_dataset, id_name1='blockgroup_id', 
-            id_name2='zone_id', fraction_attribute_name='fraction'):
+            id_name2='zone_id', fraction_attribute_name='fraction', dataset_pool=None):
         
         """
         """
+        if dataset_pool is None:
+            dataset_pool = SessionConfiguration().get_dataset_pool()
+        if isinstance(individual_dataset, str):
+            individual_dataset = dataset_pool[individual_dataset]
+        if isinstance(fraction_dataset, str):
+            fraction_dataset = dataset_pool[fraction_dataset]
+
         assert id_name1 in individual_dataset.get_known_attribute_names()
-        if id_name2 not in individual_dataset.get_known_attribute_names():           
-            individual_dataset.add_primary_attribute(-1*ones(individual_dataset.size(), dtype=fraction_dataset.get_attribute(id_name2).dtype), 
-                                                     id_name2)
+        if id_name2 not in individual_dataset.get_known_attribute_names():
+            dtype = fraction_dataset.get_attribute(id_name2).dtype
+            default_values = -1*ones(individual_dataset.size(), dtype=dtype)
+            individual_dataset.add_primary_attribute(default_values, id_name2)
         fraction_id1 = fraction_dataset.get_attribute(id_name1)
         individual_id1 = individual_dataset.get_attribute(id_name1)
         unique_ids = unique(fraction_id1)
@@ -40,7 +56,7 @@ class MonteCarloAssignmentModel(Model):
             if n > 0:
                 fractions = fraction_dataset.get_attribute(fraction_attribute_name)[fraction_id1==id1]
                 id2 = fraction_dataset.get_attribute(id_name2)[fraction_id1==id1]
-                ## ignore households in geography with sum of fractions less than 1.0e-6
+                ## ignore individuals in geography with sum of fractions less than 1.0e-2
                 if fractions.sum() < 1.0e-2:
                     continue
                 if not allclose(fractions.sum(), 1.0, rtol=1.e-2):
@@ -50,9 +66,18 @@ class MonteCarloAssignmentModel(Model):
                 index = searchsorted(fractions_cumsum, R)
                 individual_dataset.modify_attribute(id_name2, id2[index], index=individual_of_id1)
                 
-        #individual_dataset.flush_dataset()
+        individual_dataset.flush_dataset()
 
-            
+    def prepare_for_run(self, expressions_to_compute=None, dataset_pool=None):
+        if expressions_to_compute is not None:
+            if dataset_pool is None:
+                dataset_pool = SessionConfiguration().get_dataset_pool()
+            for expression in expressions_to_compute:
+                vn = VariableName(expression)
+                dataset_name = vn.get_dataset_name()
+                dataset = dataset_pool[dataset_name]
+                dataset.compute_variables(expression)
+
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
