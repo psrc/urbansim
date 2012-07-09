@@ -36,8 +36,7 @@ def export_opus_data(config, year):
 
     tm_config = config['travel_model_configuration']
     data_to_export = tm_config['urbansim_to_tm_variable_mapping'] 
-    #base_dir = tm_config['travel_model_base_directory']
-    base_dir = os.path.join(cache_directory, 'travel_model')
+    base_dir = tm_config['travel_model_base_directory']
     data_exchange_dir = tm_config[year]['data_exchange_dir']
     data_exchange_dir = os.path.join(base_dir, data_exchange_dir)
     out_storage = csv_storage(storage_location=data_exchange_dir)
