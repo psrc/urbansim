@@ -27,9 +27,6 @@ if __name__ == "__main__":
         print "ERROR: Please specify a scenario year with -y"
         sys.exit(1)
 
-    # TODO: This should really be calculated somehow from travel_model_home.
-    windows_travel_model_home = "E:\\\\mtc_travel_model"
-
     # Set up the server.
     print "Setting up proper directory structure..."
     server_admin = winssh.winssh(config.server_admin, "OPUS_MTC_SERVER_ADMIN_PASSWD")
@@ -39,10 +36,11 @@ if __name__ == "__main__":
         print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
         sys.exit(1)
     server_admin.cmd("subst /D M:")
+    (rc, windows_travel_model_home) = server_admin.cmd("cygpath -w " + config.travel_model_home)
+    windows_travel_model_home = "'" + windows_travel_model_home.replace('\r\n','')[:-1] + "'"
     server_admin.cmd_or_fail("subst M: " + windows_travel_model_home)
     server_admin.cmd('rm /cygdrive/m/commpath')
     server_admin.cmd_or_fail('cmd /c "mklink /D M:\\\\commpath M:\\\\' + modeldir + '"')
-
     server = winssh.winssh(config.server, "OPUS_MTC_SERVER_PASSWD")
 
     # Clean house before proceeding
