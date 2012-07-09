@@ -88,6 +88,18 @@ cached data: %s
                                            None,
                                            cache_directory,
                                            options.years)
+
+    my_location = os.path.split(__file__)[0]
+    pdf_script = os.path.join(my_location, "summarize_county_indicators.R")
+    years = eval(options.years)
+    cmd = "Rscript %s %s %d %d" % (pdf_script,
+                                   os.path.join(cache_directory, "indicators"),
+                                   years[0], years[-1])
+    print "Summarizing county indicators: " + cmd
+    if os.system(cmd) != 0:
+        print "ERROR: Failed to generate county indicators"
+        sys.exit(1)
+
     shutil.copytree(os.path.join(cache_directory, "indicators"),
                     os.path.join(output_dir, "indicators"),
                     ignore=shutil.ignore_patterns("*_stored_data*", "*.log"))
