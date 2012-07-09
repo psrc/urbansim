@@ -44,7 +44,7 @@ DEBUG = 0
 MP = 0  #process parcels with multiprocessing?
 
 devmdltypes = devmdl_optimize.devmdltypes
-scenario_d = {'Baseline': 1, 'No Project': 4, 'Transit Priority': 5, 'Studio': 3}
+scenario_d = {'Baseline': 1, 'No Project': 4, 'No Project V1': 11, 'Transit Priority': 5, 'Studio': 3}
 
 class DeveloperModel(Model):
 
