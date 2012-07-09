@@ -7,7 +7,10 @@ from optparse import OptionParser
 import os, sys
 
 travel_model_year_mapping = {2018:2020,
-                             2025:2035}
+                             2025:2035,
+                             2035:2035,
+                             2040:2040,
+                             }
 
 class TravelModelError(Exception):
     pass
