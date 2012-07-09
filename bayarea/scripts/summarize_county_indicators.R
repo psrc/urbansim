@@ -54,6 +54,10 @@ runid <- split[pos]
 #  select folder with indicator files, fetch all beginning with "county..." having proper years in name
 ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
 fileList = list.files(path=pth, pattern=ptrn)
+if (length(fileList) == 0)
+{
+  stop(sprintf("Failed to find any county indicators in %s", pth))
+}
 
 #  "loop" construct, create dataframe, chart for each tab file
 dat<-lapply(fileList,read.csv,header=T,sep = "\t")
