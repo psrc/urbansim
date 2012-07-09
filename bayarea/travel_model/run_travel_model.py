@@ -4,6 +4,32 @@ import winssh
 import sys, os
 from optparse import OptionParser
 
+def confirm_delete(yesmode, sshterm, delfiles):
+    try:
+        delfiles.remove("")
+    except ValueError:
+        pass
+    if delfiles == []:
+        return
+    if not yesmode:
+        print "\r\n".join(delfiles)
+        print "Can I rm -rf all of the files above? [y/n] "
+        y = ""
+        while True:
+            y = sys.stdin.read(1)
+            if y == "\n":
+                continue
+            elif y != "y" and y != "n":
+                print "Please enter y or n"
+            else:
+                break
+        if y != 'y':
+            sys.exit(0)
+
+    for f in delfiles:
+        print "Removing " + f
+        sshterm.cmd("rm -rf " + f)
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -15,6 +41,9 @@ if __name__ == "__main__":
                       help="Specify the scenario year (e.g., 2020)")
     parser.add_option("-p", "--skip-popsyn", dest="skippopsyn", action="store_true",
                       help="Skips population synthesis step")
+    parser.add_option("-o", "--output-dir", dest="outdir", action="store",
+                      help="Optional output directory for travel model output data " +
+                      "(relative to travel_model_home)")
     (options, args) = parser.parse_args()
 
     config = mtc_config.MTCConfig()
@@ -57,24 +86,7 @@ if __name__ == "__main__":
             delfiles.remove(f)
         except ValueError:
             continue
-    if not options.yesmode:
-        print "\r\n".join(delfiles)
-        print "Can I rm -rf all of the files above? [y/n] "
-        y = ""
-        while True:
-            y = sys.stdin.read(1)
-            if y == "\n":
-                continue
-            elif y != "y" and y != "n":
-                print "Please enter y or n"
-            else:
-                break
-        if y != 'y':
-            sys.exit(0)
-
-    for f in delfiles:
-        print "Removing " + f
-        server.cmd("rm -rf " + f)
+    confirm_delete(options.yesmode, server, delfiles)
 
     print "Setting up M drive on server..."
     server.cmd("subst /D M:")
@@ -146,6 +158,16 @@ if __name__ == "__main__":
     print "Starting Model"
     server_model.cmd_or_fail('cd /cygdrive/m/commpath/')
     server_model.cmd_or_fail("cmd /c 'RunModel.bat' | tee RunModelOutput.log", supress_output=False, pipe_position=0)
+
+    if options.outdir:
+        outdir = config.travel_model_home + options.outdir
+        server_model.cmd_or_fail("mkdir -p " + outdir)
+        delfiles = server_model.cmd("find " + outdir + " -maxdepth 1 -not -wholename " + outdir)[1].split("\r\n")
+        confirm_delete(options.yesmode, server_model, delfiles)
+        for d in ["database", "hwy", "logs", "main", "nonres", "skims", "trn"]:
+            d = abs_modeldir + "/" + d
+            print "Preserving output " + d + " to " + outdir
+            server_model.cmd_or_fail("cp -r " + d + " " + outdir)
 
     # Leave the machine idle and be sure to logout.  This should probably be a
     # finally block
