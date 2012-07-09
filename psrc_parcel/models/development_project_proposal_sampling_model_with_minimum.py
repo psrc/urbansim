@@ -40,6 +40,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             total_spaces_variable="total_spaces",
             minimum_spaces_attribute="minimum_spaces",
             within_parcel_selection_weight_string=None,
+            within_parcel_selection_n=0,
             run_config=None,
             debuglevel=0):
         """
@@ -173,12 +174,13 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing planned proposals")
-        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
-        logger.start_block("Selecting proposals within parcels")
-        self.select_proposals_within_parcels(nmax=2, weight_string=within_parcel_selection_weight_string)
-        logger.end_block()
+        if within_parcel_selection_n > 0:
+            logger.start_block("Selecting proposals within parcels (%s proposals per parcel)" % within_parcel_selection_n)
+            self.select_proposals_within_parcels(nmax=within_parcel_selection_n, weight_string=within_parcel_selection_weight_string)
+            logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
         for status in [self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
