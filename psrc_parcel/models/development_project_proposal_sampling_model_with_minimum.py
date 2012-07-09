@@ -39,6 +39,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             occupied_spaces_variable="occupied_spaces",
             total_spaces_variable="total_spaces",
             minimum_spaces_attribute="minimum_spaces",
+            within_parcel_selection_weight_string=None,
             run_config=None,
             debuglevel=0):
         """
@@ -172,11 +173,11 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing planned proposals")
-        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         logger.start_block("Selecting proposals within parcels")
-        self.select_proposals_within_parcels(nmax=2)
+        self.select_proposals_within_parcels(nmax=2, weight_string=within_parcel_selection_weight_string)
         logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -250,11 +251,15 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
 
-    def select_proposals_within_parcels(self, nmax=2):
+    def select_proposals_within_parcels(self, nmax=2, weight_string=None):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
         #parcel_set = self.dataset_pool.get_dataset('parcel')
+        if weight_string is not None:
+            within_parcel_weights = self.proposal_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
+        else:
+            within_parcel_weights = self.weight
         self.proposal_set.id_eliminated_in_within_parcel_selection = 44
         egligible = logical_and(self.weight > 0, 
                                 self.proposal_set['status_id'] == self.proposal_set.id_tentative)
@@ -282,7 +287,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                     if parcels_with_proposals.size <= 0:
                         continue
                     labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
-                    chosen_prop = array(maximum_position(self.weight[wegligible], 
+                    chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                         labels=labels, 
                                         index=parcels_with_proposals)).flatten().astype(int32)               
                     egligible[wegligible[chosen_prop]] = False
