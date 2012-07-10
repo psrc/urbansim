@@ -11,7 +11,7 @@ from numpy import column_stack
 from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 
-import pickle
+import cPickle as pickle
 import os.path
 
 class persons_within_DDD_of_parcel(Variable):
