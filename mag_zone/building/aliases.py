@@ -61,6 +61,12 @@ aliases = [
     "is_building_type_ware = urbansim_zone.building.is_building_type_ware",      
     "num_of_pub_federal_state_jobs = building.aggregate(job.sector_id == 21)",
     "is_building_type_pub_fs = (building.building_type_id == 14)",
-    "weight_for_pub_federal_state_jobs = mag_zone.building.num_of_pub_federal_state_jobs",         
+    "weight_for_pub_federal_state_jobs = mag_zone.building.num_of_pub_federal_state_jobs",  
+    "weight_for_gq_other_non_institutional = building.gq_pop_in_other_noninst",
+    "weight_for_gq_other_institutional = building.gq_pop_in_other_inst",  
+    "weight_for_gq_nursing_homes = building.gq_pop_in_nursing_homes",  
+    "weight_for_gq_juvenile_prisons = building.gq_pop_in_juvenile_prisons",  
+    "weight_for_gq_prisons = building.gq_pop_in_prisons", 
+    "weight_for_gq_dorms = building.gq_pop_in_dorms",         
            ]
 
