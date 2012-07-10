@@ -10,6 +10,7 @@
 #TODO: clean so that select counties can be toggled on/off. Now this is MANUALLY set. 
 
 args <- commandArgs(TRUE)
+options(warn=-1) 
 #options(error=utils::recover)
 require("stringr")
 require("ggplot2")
@@ -34,24 +35,28 @@ cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21
 }
 
 cmdArgs(a=args[1],b=args[2],c=args[3])
-
 setwd(pth)
 
 #viewport function--not needed right now
-#my.vp <- function(just="topright"){
-#  
-#switch(just,
-#         "topright" = viewport(x=1,y=1,width=1/2,height=1/2,just=c("right","top")),
-#         "botleft" = viewport(x=0,y=0,width=1/2,height=1/2,just=c("left","bottom")),
-#         viewport(x=1,y=1,width=1/2,height=1/2,just=c("right","top")))
-#  
-#}
+my.vp <- function(just="topright"){
+ 
+switch(just,
+        "topright" = viewport(x=1,y=1,width=1/2,height=1/2,just=c("right","top")),
+        "botleft" = viewport(x=0,y=0,width=1/2,height=1/2,just=c("left","bottom")),
+        viewport(x=1,y=1,width=1/2,height=1/2,just=c("right","top")))
+ 
+}
 
 #parse path to get runid
 split <- strsplit(args[1],"/")[[1]]
 pos <- length(split)-2  #this assumes we are two up from the indicators dir--a regex would be better.
 runid <- split[pos]
-
+periodPosition <- regexpr("\\.",runid)[[1]]
+tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
+id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
+datetime <-sprintf("%s/%s/%s %s:%s:00",tm[[1]][2],tm[[1]][3],tm[[1]][1],tm[[1]][4],tm[[1]][5]) #get from runid string
+runDate <- strptime(datetime, "%m/%d/%Y %H:%M:%S")
+                                                                                           
 #  select folder with indicator files, fetch all beginning with "county..." having proper years in name
 ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
 fileList = list.files(path=pth, pattern=ptrn)
@@ -66,7 +71,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 #start pdf object to store all charts
 fp <- file.path(pth, fsep = .Platform$file.sep)
 fileNameOut=sprintf("%s/plot_%s_indexChart.pdf",fp,runid)
-print(fileNameOut)
+#print(fileNameOut)
 pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 
 #store each file in a dataframe, process and plot as we go.
@@ -113,7 +118,7 @@ for(i in 1:length(dat))
   
   #add two digit years for easier plotting
   rownames(sim_start_end.i) <- yrNames[2:maxCol]
-  attach(sim_start_end.i)
+  #attach(sim_start_end.i)
   
   #   convert to long format for ggplot
   sim_start_end.i$year <- as.integer(rownames(sim_start_end.i))
@@ -155,29 +160,32 @@ for(i in 1:length(dat))
                  geom_line(aes(linetype=county), # Line type depends on county
                            size = .5) +       # Thin line
                              geom_point(aes(shape=county) ,   # Shape depends on county
-                                        size = 1)   +       # points
-                                          opts(title=paste(runid))+
+                                        size = 1)   +       
+                                          opts(title=title)+
                                           xlab("Year") + 
                                           ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + opts(axis.text.x=theme_text(angle=90, hjust=0))
 
   
   #combine in grid, send to print() function, chart
-  stamp <- sprintf("Report generated on %s",format(Sys.time(), "%a %b %d %T %Z"))
-  out <- grid.arrange(g3, ncol=1, main=paste("\n",title))
+  stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
+  
+  grid.newpage()
+  pushViewport(viewport(height=unit(0.85, "npc"), width=unit(0.85, "npc"), x=0.5, y=0.5, name="vp")) 
+  upViewport() 
+  print(g3, vp="vp")
+  #out <- grid.arrange(g3, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold")))
   print(sprintf("Outputting Chart %s to PDF",title))
-  grid.text(stamp,x=unit(0.5,"npc"),y=unit(0.1,"npc"),gp=gpar(fontsize=7)) 
-  print(out)
+  grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic"))
+  #print(out)
   #dev.off()  
   
   #combine in grid, send to print() function, table
   #plotting object pdf target
   #pdf(fileNameOutTable,height=8.5, width=11)
   
-  #pdf("/home/aksel/allinoneTable.pdf",height=8.5, width=11,onefile=TRUE)
-  out <- grid.arrange(g1, ncol=1, main=paste("\n",title),sub=stamp)
+  out <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
   print(sprintf("Outputting Table %s to PDF",title))
-  grid.text(stamp,x=unit(0.1,"npc"),y=unit(0.2,"npc"),gp=gpar(fontsize=7)) 
-  #mtext(sprintf("Report generated on %s",format(Sys.time(), "%a %b %d %T %Z")))
+  grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
   print(out)
   #dev.off()  
   
