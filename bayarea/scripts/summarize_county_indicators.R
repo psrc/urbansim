@@ -34,6 +34,7 @@ cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21
 }
 
 cmdArgs(a=args[1],b=args[2],c=args[3])
+
 setwd(pth)
 
 #viewport function--not needed right now
@@ -62,6 +63,12 @@ if (length(fileList) == 0)
 #  "loop" construct, create dataframe, chart for each tab file
 dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 
+#start pdf object to store all charts
+fp <- file.path(pth, fsep = .Platform$file.sep)
+fileNameOut=sprintf("%s/plot_%s_indexChart.pdf",fp,runid)
+print(fileNameOut)
+pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
+
 #store each file in a dataframe, process and plot as we go.
 for(i in 1:length(dat)) 
 {
@@ -83,7 +90,6 @@ for(i in 1:length(dat))
   
   #extract field name representing variable for use in chart
   title <- substr(names(sim_start_end)[2],1,pos-2)
-  fp <- file.path(pth, fsep = .Platform$file.sep)
   fileNameOutChart=sprintf("%s/plot_%s_indexChart_%s.pdf",fp,runid,title)
   fileNameOutTable=sprintf("%s/plot_%s_indexTable_%s.pdf",fp,runid,title)
   
@@ -114,7 +120,8 @@ for(i in 1:length(dat))
   sim_start_end_long <- melt(sim_start_end.i,id="year",variable_name = "county")
   
   #plotting object pdf target
-  pdf(fileNameOutChart,height=8.5, width=11)
+  #pdf(fileNameOutChart,height=8.5, width=11)
+  #pdf("/home/aksel/allinonechart.pdf",height=8.5, width=11,onefile=TRUE)
   ticks <- as.factor(seq(yrStart,yrEnd,1)) 
   
   #determine range for plot
@@ -149,25 +156,36 @@ for(i in 1:length(dat))
                            size = .5) +       # Thin line
                              geom_point(aes(shape=county) ,   # Shape depends on county
                                         size = 1)   +       # points
-                                          opts(title=paste(title,"\n",runid))+
+                                          opts(title=paste(runid))+
                                           xlab("Year") + 
                                           ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + opts(axis.text.x=theme_text(angle=90, hjust=0))
 
   
   #combine in grid, send to print() function, chart
+  stamp <- sprintf("Report generated on %s",format(Sys.time(), "%a %b %d %T %Z"))
   out <- grid.arrange(g3, ncol=1, main=paste("\n",title))
+  print(sprintf("Outputting Chart %s to PDF",title))
+  grid.text(stamp,x=unit(0.5,"npc"),y=unit(0.1,"npc"),gp=gpar(fontsize=7)) 
   print(out)
-  dev.off()  
+  #dev.off()  
   
   #combine in grid, send to print() function, table
   #plotting object pdf target
-  pdf(fileNameOutTable,height=8.5, width=11)
-  out <- grid.arrange(g1, ncol=1, main=paste("\n",title))
+  #pdf(fileNameOutTable,height=8.5, width=11)
+  
+  #pdf("/home/aksel/allinoneTable.pdf",height=8.5, width=11,onefile=TRUE)
+  out <- grid.arrange(g1, ncol=1, main=paste("\n",title),sub=stamp)
+  print(sprintf("Outputting Table %s to PDF",title))
+  grid.text(stamp,x=unit(0.1,"npc"),y=unit(0.2,"npc"),gp=gpar(fontsize=7)) 
+  #mtext(sprintf("Report generated on %s",format(Sys.time(), "%a %b %d %T %Z")))
   print(out)
-  dev.off()  
+  #dev.off()  
   
 }
+#pstamp(pwd=TRUE, time=TRUE)
 
+dev.off()
+warnings()
 ###
 #1  Alameda  ala
 #7  Contra Costa  cnc
@@ -179,3 +197,5 @@ for(i in 1:length(dat))
 #48	Solano	sol
 #49	Sonoma	son
 ###
+
+

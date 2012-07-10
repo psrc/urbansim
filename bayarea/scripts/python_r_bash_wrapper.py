@@ -7,10 +7,12 @@ import subprocess, os, sys
 #placeholders for cmd-line args; in actuality these are parsed from xml config
 #TODO: replace with live values 
 yrStart=2010
-yrEnd=2026
+yrEnd=2035
 duration = yrEnd - yrStart
 argFlag=True
-rScriptPath=r'/home/aksel/Documents/Scripts/r'   
+#rScriptPath=r'/var/hudson/workspace/MTC_Model/src/bayarea/scripts/summarize_county_indicators.R'
+#tab_directory=r'/workspace/opus/data/bay_area_parcel/runs/run_139.2012_05_15_21_23/indicators/'
+rScriptPath=r'/home/aksel/workspace/urbanvisionBayArea/bayarea/scripts'
 tab_directory=r'/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035'
 
 if duration<=10:
@@ -20,14 +22,14 @@ if duration<=10:
 if argFlag: #distinction for testing purposes only 
     #command-line arg string
     arg ="%s %s %s" % ((os.sep.join(tab_directory.split(os.sep))),yrStart,yrEnd)
-    command="Rscript %s" %(os.path.join(rScriptPath,'county_indicator_plots_index_ggplotfinal_arg_table.R'))
+    command="Rscript %s" %(os.path.join(rScriptPath,'summarize_county_indicators.R'))
     bashCmd="%s %s" %(command, arg)
 else:
     #command string
-    command="Rscript %s" %(os.path.join(rScriptPath,'county_indicator_plots_index_ggplotfinal.R'))
+    command="Rscript %s" %(os.path.join(rScriptPath,'summarize_county_indicators.R'))
     bashCmd=command
 
-
+print bashCmd
 #call bash process as subprocess
 process = subprocess.Popen(bashCmd.split(), stdout=subprocess.PIPE)
 output = process.communicate()[0]
