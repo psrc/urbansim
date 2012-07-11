@@ -26,13 +26,13 @@ from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_r
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 
 try:
-    print "-------------- parallel --------------"
     is_parallelizable = is_parallelizable
     lock = lock
+    print "-------------- parallel --------------"
 except NameError:
-    print "-------------- non parallel --------------"
     is_parallelizable = False
     lock = None
+    print "-------------- non parallel --------------"
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -237,7 +237,6 @@ class Calibration(object):
            self.run_manager = RunManager(option_group.get_services_database_configuration(options))
 
         if lock!=None: lock.acquire()
-        
         ## query runs available for re-use
         runs_done = self.run_manager.get_run_info(run_ids=self.run_ids, status='done') 
         create_baseyear_cache = False
@@ -245,10 +244,11 @@ class Calibration(object):
             run_id, cache_directory = self.init_run(create_baseyear_cache=False)
             self.run_ids.append(run_id)
             create_baseyear_cache = True
+            logger.log_status('Initializing new run with id ' + str(run_id))
         else:
             run_id = runs_done[0].run_id ##take the first 'done' run_id
             cache_directory = self.run_manager.get_cache_directory(run_id)
-
+            logger.log_status('Using old run with id ' + str(run_id))
         resources = self.run_manager.get_resources_for_run_id_from_history(run_id, 
                                                                   filter_by_status=False)
         self.run_manager.add_row_to_history(run_id, resources, "taken")
