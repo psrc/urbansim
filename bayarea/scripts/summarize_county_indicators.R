@@ -150,7 +150,7 @@ for(i in 1:length(dat))
                    equal.width = TRUE,
                    show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
                    )
-            )
+            
                    
   #string <- "
   #placeholder for possible annotation
