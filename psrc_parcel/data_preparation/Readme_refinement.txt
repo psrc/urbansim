@@ -5,6 +5,9 @@ Instructions for Running Refinement in 2010:
 - Remove all *.computed sub-directories from 2000 and 2010
 - Copy all *_specification and *_coefficients tables from 2000 to 2010
 - Get an input table of refinements into 2010 cache
+- In project_configs/psrc_parcel_refinement.xml:
+	o make sure it inherits from the right parent,
+	o put the name of your cache directory into the scenario nodes existing_cache_to_copy and cache_directory.
 - run a simulation:
 python ~/workspace/src/opus_core/tools/start_run.py -x ~/workspace/project_configs/psrc_parcel_refinement.xml -s '2010_refinement'
 
