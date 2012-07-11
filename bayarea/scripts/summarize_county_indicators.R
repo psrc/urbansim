@@ -1,12 +1,16 @@
+#!/usr/bin/r
+
 #script goes to folder with indicator-output county-level files (must be in one file per variable)
 #In steps, this is the sequence:
-#1) Gets all tab files starting with county in folder
+#1) Gets all tab files starting with county in folder, matching passed years (e.g. county_table-3_2010-2035_...)
 #2) Loops through data files
 #3) --keeps only 9 relevant counties
 #4) --transforms dataframe so years are rows, counties columns
-#5) --plots chart, writes to pdf file
+#5) --plots chart, writes to global pdf file
 
-#USAGE: Rscript /home/aksel/Documents/Scripts/r/county_indicator_plots_index_ggplotfinal_arg.R "/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035" 2010 2035
+#USAGE: Rscript summarize_county_indicators.R \
+            /var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_66.2012_07_07_15_50/indicators \ 
+            2010 2035
 
 args <- commandArgs(TRUE)
 options(warn=-1) 
@@ -47,7 +51,7 @@ TitleCase <- function(string="test string")
 
 #parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]
-pos <- length(split)-2  #this assumes we are two up from the indicators dir--a regex would be better.
+pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
 runid <- split[pos]
 periodPosition <- regexpr("\\.",runid)[[1]]
 tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
@@ -69,7 +73,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 #start pdf object to store all charts
 fp <- file.path(pth, fsep = .Platform$file.sep)
 fileNameOut=sprintf("%s/plot_%s_indexChart.pdf",fp,runid)
-#print(fileNameOut)
+sprintf("Preparing file %s for charts and figures...", fileNameOut)
 pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 
 #store each file in a dataframe, process and plot as we go.
@@ -161,13 +165,18 @@ for(i in 1:length(dat))
 
   #plot object
   g3 <- ggplot(data=sim_start_end_long,
-               aes(x=as.factor(year), y=value, group=county,colour=county)) +
+               aes(x=as.factor(year), 
+                   y=value, 
+                   group=county,
+                   colour=county)) +
                #geom_line()+
                #scale_x_discrete(breaks=seq(2010,2035,5), labels=seq(2010,2035,5)) + 
-               geom_line(aes(linetype=county), # Line type depends on county
-               size = .5) +       # Thin line
-               geom_point(aes(shape=county) ,   # Shape depends on county
-               size = 2)   +       
+               geom_line(
+                 aes(
+                   linetype=county), size = .65) +       # Thin line, varies by county
+               geom_point(
+                 aes(
+                   shape=county) ,  size = 2.5)   +       
                opts(title=title)+
                xlab("Year") + 
                ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
@@ -193,9 +202,11 @@ for(i in 1:length(dat))
   
 }
 
-dev.off()
+garbage <- dev.off()
+sprintf("File is ready: %s", fileNameOut)
 #warnings()
-###
+
+##county ids used in data
 #1  Alameda  ala
 #7  Contra Costa  cnc
 #21	Marin	mar
