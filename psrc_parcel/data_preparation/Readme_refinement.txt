@@ -8,6 +8,10 @@ Instructions for Running Refinement in 2010:
 - run a simulation:
 python ~/workspace/src/opus_core/tools/start_run.py -x ~/workspace/project_configs/psrc_parcel_refinement.xml -s '2010_refinement'
 
+Postprocessing:
+- In the created run cache, delete all *.computed directories, households/zone_id, jobs/zone_id, jobs/transaction_id, and jobs/refinement_id.
+- Replace tables households, persons, jobs, buildings, parcels in the 2010 cache of the 'refined' run by the tables from the newly created 2011 cache.
+
 Description of the Refinement Process:
 =====================================
 Goal is to create a spacial distribution of households and jobs that corresponds to observed distribution. 
