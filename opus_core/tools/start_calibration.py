@@ -25,14 +25,21 @@ from opus_core.tools.start_run import StartRunOptionGroup, main as start_run
 from opus_core.tools.restart_run import RestartRunOptionGroup, main as restart_run
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+WARNING = '\033[93m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+
 try:
     is_parallelizable = is_parallelizable
     lock = lock
-    print "-------------- parallel --------------"
+    print HEADER+"-------------- parallel --------------"+ENDC
 except NameError:
     is_parallelizable = False
     lock = None
-    print "-------------- non parallel --------------"
+    print HEADER+"-------------- non parallel --------------"+ENDC
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -138,8 +145,8 @@ class Calibration(object):
 
         if is_parallelizable==True: set_parallel(True)
 
-        print "optimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)
-        print "-------------------------------------------------------"
+        print OKBLUE+"\noptimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)+ENDC
+        print OKBLUE+"-------------------------------------------------------\n"+ENDC
         if optimizer=='bfgs':
             results = fmin_bfgs(self.target_func, copy(init_v), fprime=None, epsilon=1e-08, 
                                 maxiter=None, full_output=1, disp=1, retall=0, callback=None)
