@@ -138,6 +138,8 @@ class Calibration(object):
 
         if is_parallelizable==True: set_parallel(True)
 
+        print "optimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)
+        print "-------------------------------------------------------"
         if optimizer=='bfgs':
             results = fmin_bfgs(self.target_func, copy(init_v), fprime=None, epsilon=1e-08, 
                                 maxiter=None, full_output=1, disp=1, retall=0, callback=None)
@@ -363,13 +365,13 @@ if __name__ == "__main__":
     python /home/lmwang/opus/src/opus_core/tools/start_calibration.py -x /home/atschirhar/opus/project_configs/paris_zone.xml -s paris_zone_calibration2 -d establishment_location_choice_model_coefficients -a estimate --subset-attr=coefficient_name --subset-patterns=*_celcm -t "zgpgroup.aggregate((establishment.employment)*(establishment.disappeared==0),intermediates=[building,zone,zgp])" -f /workspace/opus/data/paris_zone/temp_data/zgpgroup_totemp06.csv
     """
     
-    # TODO: temp :
-    # os.environ["OPUS_DATA_PATH"] = "/home/atschirhar/opus/data"
+
  
     try:
         calib_config = eval('calibration_{}'.format(sys.argv[1]))
     except NameError:
         sys.exit("Wrong argument '{}'. This calibration's configuration doesn't exist.".format(sys.argv[1]))
+
    
     calib = Calibration(xml_config        = calib_config['xml_config'],
                         scenario          = calib_config['scenario'],
@@ -381,5 +383,5 @@ if __name__ == "__main__":
                         skip_cache_cleanup= calib_config['skip_cache_cleanup'],
                        )
    
-    calib.run(results_pickle_prefix='calib')
+    calib.run(optimizer=calib_config['optimization'],results_pickle_prefix='calib')
     
