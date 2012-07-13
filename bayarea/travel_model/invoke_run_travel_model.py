@@ -5,6 +5,8 @@
 from opus_core.logger import logger, block, log_block
 from optparse import OptionParser
 import os, sys
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration 
+from opus_core.services.run_server.run_manager import RunManager
 
 travel_model_year_mapping = {2018:2020,
                              2025:2035,
@@ -22,10 +24,33 @@ def invoke_run_travel_model(config, year):
 
     tm_config = config['travel_model_configuration']
     scenario = tm_config['travel_model_scenario'] 
-    travel_model_year = travel_model_year_mapping[year]
+    try:
+        travel_model_year = travel_model_year_mapping[year]
+    except KeyError:
+        logger.log_warning("no travel model year mapping for %d." % year)
+        travel_model_year = year
     my_location = os.path.split(__file__)[0]
     script_filepath = os.path.join(my_location, "run_travel_model.py")
     cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
+
+    try:
+        # form the desired output dir for the travel model data.  Make it look
+        # like the urbansim run cache for easy association.  Note that we
+        # explicitly use the forward slash instead of os.sep and friends
+        # because the travel model is managed via ssh on a cygwin machine, not
+        # run on the local machine.
+        services_db_config = ServicesDatabaseConfiguration(
+            database_name = 'services',
+            database_configuration = 'services_database_server'
+            )
+        rm = RunManager(services_db_config)
+        outdir = "runs/" + rm.get_current_cache_directory().split(os.sep)[-1]
+        outdir = outdir + "/%d_%s" % (year, scenario)
+        cmd = cmd + " -o " + outdir
+    except:
+        # If we launch from the command line instead of an actual run, we get
+        # an exception.  In this case, we just don't specify an output dir.
+        pass
     logger.log_status("Launching %s" % cmd)
     if os.system(cmd) != 0:
         raise TravelModelError
