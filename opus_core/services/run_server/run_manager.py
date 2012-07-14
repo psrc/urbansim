@@ -293,7 +293,8 @@ class RunManager(AbstractService):
         try:
             config = Configuration(pickle.loads(str(run_resources[0])))
         except:
-            raise Exception('Could not create the configuration file for run %i'%run_id)
+            logger.log_error('Could not create the configuration file for run %i'%run_id)
+            raise
 
         return config
 
