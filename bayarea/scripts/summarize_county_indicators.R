@@ -8,9 +8,9 @@
 #4) --transforms dataframe so years are rows, counties columns
 #5) --plots chart, writes to global pdf file
 
-#USAGE: Rscript summarize_county_indicators.R \
-            /var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_66.2012_07_07_15_50/indicators \ 
-            2010 2035
+##USAGE: Rscript summarize_county_indicators.R \
+##            /var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_66.2012_07_07_15_50/indicators \ 
+##            2010 2035
 
 args <- commandArgs(TRUE)
 options(warn=-1) 
