@@ -35,6 +35,10 @@ class BForm:
             localcost2 = NONRESLOCALCOST_D[county]
         my.F = RESCOSTFACTOR * localcost/100.0
         my.F2 = NONRESCOSTFACTOR * localcost2/100.0
+        if county in MAXNONRESSIZE_D:
+            my.maxnonressize = MAXNONRESSIZE_D[county]
+        else:
+            my.maxnonressize = MAXNONRESSIZE
         my.isr = isr
         my.taz = taz
 
@@ -86,7 +90,7 @@ class BForm:
         return Y
 
     def commercial_bounds(my,X,*args):
-        cons = min(my.max_floor_area,MAXCOMMERCIALSIZE) - X[0]*devmdl_optimize.SQFTFACTOR
+        cons = min(my.max_floor_area,my.maxnonressize) - X[0]*devmdl_optimize.SQFTFACTOR
         #print "cons", cons
         #print "FA", my.max_floor_area
         return array([X[0],cons])
@@ -154,7 +158,7 @@ class BForm:
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F2
         return cost
 
-MAXCOMMERCIALSIZE = 800000.0
+MAXNONRESSIZE = 800000.0
 DEMOCOST = 5.0
 NONRESCOSTFACTOR = 1.0
 RESCOSTFACTOR = .7
@@ -206,7 +210,6 @@ NONRESLOCALCOST_D = {
 48:110.5*.6, # solano
 21:115.58*.9 # marin 
 }
-#===
 RESLOCALCOST_D = {
 49:115.58*.45, # sonoma
 41:114.6*1.05, # san mateo
@@ -230,3 +233,15 @@ NONRESLOCALCOST_D = {
 21:115.58*.9 # marin 
 }
 '''
+# we're setting a fairly arbitray max size on non-res sqft = ave+10*stddev per county
+MAXNONRESSIZE_D = {
+49: 79000, # sonoma
+41: 122000, # san mateo
+1: 210000, # alameda
+43: 157000, # santa clara
+28: 164000, # napa
+38: 262000, # san fran
+7: 94000, # contra costa
+48: 67000, # solano
+21: 55000 # marin 
+}
