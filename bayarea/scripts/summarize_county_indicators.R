@@ -117,9 +117,9 @@ for(i in 1:length(dat))
   sim_start_end.t <-as.data.frame(sim_start_end.t)
   
   #add regional total
-  sim_start_end.t$Region <- rowSums(sim_start_end.t,na.rm = FALSE, dims = 1)
   sim_start_end.t$year <- as.integer(rownames(sim_start_end.t))
   sim_start_end_long_abs <- melt(sim_start_end.t,id="year",variable_name = "county")
+  sim_start_end.t$Region <- rowSums(sim_start_end.t,na.rm = FALSE, dims = 1)
   
   # call index function to convert absolutes to indices (2010= index 100), replace NAs
   sim_start_end.i <-indx(sim_start_end.t, 1)
@@ -149,7 +149,7 @@ for(i in 1:length(dat))
   
   g1 <- tableGrob(
             format(
-                   sim_start_end.t[seq(1,end,step),1:10], 
+                   sim_start_end.t[seq(1,end,step),c(1:9,11)], 
                    digits = 2,big.mark = ","), 
                    gpar.colfill = gpar(fill=NA,col=NA), 
                    gpar.rowfill = gpar(fill=NA,col=NA), 
