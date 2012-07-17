@@ -1328,6 +1328,372 @@
           </run>
         </structure>
       </model>	  
+      <model name="construction_jobs_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">zone</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">bldg_sqft_constructed_this_year</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_construction_jobs_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="non_site_based_jobs_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">zone</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">non_site_jobs</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">total_households_and_jobs</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">total_nonsite_based_jobs</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_non_site_based_jobs_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="williamsgateway_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">williamsgateway_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">williamsgateway_enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_williamsgateway_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="skyharbor_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">skyharbor_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">skyharbor_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">skyharbor_enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_skyharbor_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_other_non_institutional_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_other_noninst</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_other_non_institutional</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_other_noninst_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_other_non_inst_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_other_institutional_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_other_inst</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_other_institutional</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_other_inst_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_other_institutional_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_nursing_homes_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_nursing_homes</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_nursing_homes</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_nursinghome_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_nursing_homes_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_juvenile_prisons_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_juvenile_prisons</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_juvenile_prisons</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_juvenile_prison_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_juvenile_prisons_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_prisons_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_prisons</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_prisons</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_prison_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_prisons_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="gq_dorms_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">gq_pop_in_dorms</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">weight_for_gq_dorms</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">gq_dorm_pop</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="add_quantity" type="boolean">True</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_gq_dorms_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="transient_households_in_residential_units_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_households</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">zonal_bldg_num_hhlds</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">avg_transient_in_hh_hh</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_residential_units_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="transient_households_in_hotels_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_hotels</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">zonal_bldg_hotel_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">avg_transient_in_hotels_hh</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_hotels_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
     </models>
   </model_manager>
   <results_manager>
