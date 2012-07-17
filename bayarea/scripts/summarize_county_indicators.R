@@ -118,6 +118,8 @@ for(i in 1:length(dat))
   
   #add regional total
   sim_start_end.t$Region <- rowSums(sim_start_end.t,na.rm = FALSE, dims = 1)
+  sim_start_end.t$year <- as.integer(rownames(sim_start_end.t))
+  sim_start_end_long_abs <- melt(sim_start_end.t,id="year",variable_name = "county")
   
   # call index function to convert absolutes to indices (2010= index 100), replace NAs
   sim_start_end.i <-indx(sim_start_end.t, 1)
@@ -131,8 +133,10 @@ for(i in 1:length(dat))
   sim_start_end.i$year <- as.integer(rownames(sim_start_end.i))
   sim_start_end_long <- melt(sim_start_end.i,id="year",variable_name = "county")
   
+  
+  
   #plotting object pdf target
-  ticks <- as.factor(seq(yrStart,yrEnd,1)) 
+  #ticks <- as.factor(seq(yrStart,yrEnd,1)) 
   
   #table object prep for chart
   end <- yrEnd - yrStart + 1
@@ -164,36 +168,59 @@ for(i in 1:length(dat))
   #theme_set(theme_bw());
 
   #plot object
+  stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
+  #first send line chart to pdf...
+  
   g3 <- ggplot(data=sim_start_end_long,
                aes(x=as.factor(year), 
                    y=value, 
                    group=county,
                    colour=county)) +
-               #geom_line()+
-               #scale_x_discrete(breaks=seq(2010,2035,5), labels=seq(2010,2035,5)) + 
-               geom_line(
-                 aes(
-                   linetype=county), size = .65) +       # Thin line, varies by county
-               geom_point(
-                 aes(
-                   shape=county) ,  size = 2.5)   +       
-               opts(title=title)+
-               xlab("Year") + 
-               ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
-               opts(axis.text.x=theme_text(angle=90, hjust=0))
-
-  #combine in grid, send to print() function, chart
-  stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
+                     geom_line(
+                       aes(
+                         linetype=county), size = .65) +       # Thin line, varies by county
+                           scale_fill_brewer(palette="Paired") +
+                           geom_point(
+                             aes(
+                               shape=county) ,  size = 2.5)   +       
+                                 scale_fill_brewer(palette="Paired")+
+                                 opts(title=title)+
+                                 xlab("Year") + 
+                                 ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
+                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
   
+  
+  #out <- grid.arrange(g3, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold")))
   grid.newpage()
   pushViewport(viewport(height=unit(0.9, "npc"), width=unit(0.95, "npc"), x=0.5, y=0.5, name="vp")) 
   upViewport() 
   print(g3, vp="vp")
-  #out <- grid.arrange(g3, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold")))
   print(sprintf("Outputting Chart %s to PDF",title))
   grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic"))
   
-  #combine in grid, send to print() function, table  
+  #second send area chart to pdf...
+  g4 <- ggplot(data=sim_start_end_long_abs,
+               aes(x=(year), y=value)) +
+                 geom_area(aes(fill=county, group = county), position='stack', alpha=.5) + scale_fill_brewer(palette="Paired")+ # scale_fill_hue(l=40) #scale_fill_brewer() +
+                 opts(title=title)+
+                 xlab("Year") + 
+                 #ylab(paste("Count")) + 
+                 opts(axis.text.x=theme_text(angle=90, hjust=0)) + #guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+                 #opts(panel.border  = theme_rect(colour = 'black')) + 
+                 #opts(panel.grid.major = theme_line(colour = 'grey', size = .25, linetype = 'solid')) +
+                 #opts(panel.grid.minor = theme_line(colour = 'grey', size = .1, linetype = 'dashed')) +
+                 guides(fill = guide_legend(reverse = TRUE)) 
+                 #scale_y_continuous(labels="comma")
+                 
+  
+  grid.newpage()
+  pushViewport(viewport(height=unit(0.9, "npc"), width=unit(0.95, "npc"), x=0.5, y=0.5, name="vp")) 
+  upViewport() 
+  print(g4, vp="vp")
+  print(sprintf("Outputting Area Chart %s to PDF",title))
+  grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic"))
+  
+  #third, send table to pdf  
   out <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
   print(sprintf("Outputting Table %s to PDF",title))
   grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
