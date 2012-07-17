@@ -24,7 +24,7 @@ class MortalityModel(RateBasedModel):
 
         #identify such households
         person_set.compute_variables('is_adult = person.age > 17')
-        household_set.compute_variables('adults = household.aggregate(person.is_adult)')
+        household_set.compute_variables('adults = (household.aggregate(person.age>17))')
         person_set.compute_variables("adult_death = person.mortality_flag * person.is_adult")
         household_set.compute_variables("adult_deaths = household.aggregate(person.adult_death)")
         full_adult_mortality = household_set.compute_variables("death_of_all_adults = numpy.logical_and(household.adult_deaths>=1, " + 

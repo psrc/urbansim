@@ -943,6 +943,59 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+    def get_total_households_by_number_of_vehicles(self):
+        # Get total households by number of workers
+        self.worksheet.write(0,self.column_counter,'hh_0_vehicles')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 0 vehicles for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where number_of_vehicles < 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_1_vehicle')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 1 vehicle for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where number_of_vehicles = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_2_vehicles')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 2 vehicles for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where number_of_vehicles = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_3_vehicles')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 3 vehicles for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where number_of_vehicles = 3' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+        self.worksheet.write(0,self.column_counter,'hh_4up_vehicles')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households with 4+ vehicles for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_households where number_of_vehicles > 3' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter +=1
+
     def get_total_households_by_number_of_workers(self):
         # Get total households by number of workers
         self.worksheet.write(0,self.column_counter,'hh_0_workers')
@@ -2517,6 +2570,7 @@ def main():
                         , 'get_mean_age_by_race_and_year'
                         , 'get_mean_persons_per_household_by_year'
                         , 'get_mean_persons_per_household_by_race_of_hh_head_and_year'
+                        , 'get_total_households_by_number_of_vehicles'
                         ]
         
         # Add subarea query choices if subarea was specified

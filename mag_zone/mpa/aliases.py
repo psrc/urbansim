@@ -72,6 +72,11 @@ aliases = [
         'number_of_hh_1_workers = mpa.aggregate(household.workers==1)',
         'number_of_hh_2_workers = mpa.aggregate(household.workers==2)',
         'number_of_hh_3up_workers = mpa.aggregate(household.workers>2)',
+        'number_of_hh_0_vehicles = mpa.aggregate(mag_zone.household.number_of_vehicles0)',
+        'number_of_hh_1_vehicles = mpa.aggregate(mag_zone.household.number_of_vehicles1)',
+        'number_of_hh_2_vehicles = mpa.aggregate(mag_zone.household.number_of_vehicles2)',
+        'number_of_hh_3_vehicles = mpa.aggregate(mag_zone.household.number_of_vehicles3)',
+        'number_of_hh_4up_vehicles = mpa.aggregate(mag_zone.household.number_of_vehicles4up)',
         'average_household_income = mpa.aggregate(household.income, function=mean)',
         'median_household_income = mpa.aggregate(household.income, function=median)',
         # DU related

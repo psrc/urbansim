@@ -253,6 +253,7 @@
       <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
       <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
 <!-- Variables generated from script  -->
+
 <variable use="both" source="expression" name="building.skyharbor_enplanement_capacity" type="variable_definition">(building.other_space_name=='skyharbor')*(building.other_spaces)</variable>
 <variable use="both" source="expression" name="building.williamsgateway_enplanement_capacity" type="variable_definition">(building.other_space_name=='williamsgateway')*(building.other_spaces)</variable>
 <variable use="both" source="expression" name="building.hotel_motel_rooms" type="variable_definition">(building.other_space_name=='hotel_motel_rooms')*(building.other_spaces)</variable>
@@ -314,11 +315,16 @@
 <variable use="both" source="expression" name="county.total_population" type="variable_definition">county.number_of_agents(person)</variable>
 <variable use="both" source="expression" name="household.persons" type="variable_definition">household.number_of_agents(person)</variable>
 <variable use="both" source="expression" name="household.age_of_the_youngest" type="variable_definition">household.aggregate(person.age, function=minimum)</variable>
-<variable use="both" source="expression" name="household.age_of_head" type="variable_definition">household.aggregate(person.age * person.head_of_hh)</variable>
+<variable use="both" source="expression" name="household.age_of_head" type="variable_definition">household.aggregate(person.age * mag_zone.person.head_of_hh)</variable>
 <variable use="both" source="expression" name="household.children" type="variable_definition">household.aggregate(mag_zone.person.is_child)</variable>
 <variable use="both" source="expression" name="household.income_greater_than_100k" type="variable_definition">household.income&gt;99999</variable>
 <variable use="both" source="expression" name="household.income_greater_than_200k" type="variable_definition">household.income&gt;199999</variable>
 <variable use="both" source="expression" name="household.income_greater_than_500k" type="variable_definition">household.income&gt;499999</variable>
+<variable use="both" source="expression" name="household.number_of_vehicles0" type="variable_definition">household.number_of_vehicles==0</variable>
+<variable use="both" source="expression" name="household.number_of_vehicles1" type="variable_definition">household.number_of_vehicles==1</variable>
+<variable use="both" source="expression" name="household.number_of_vehicles2" type="variable_definition">household.number_of_vehicles==2</variable>
+<variable use="both" source="expression" name="household.number_of_vehicles3" type="variable_definition">household.number_of_vehicles==3</variable>
+<variable use="both" source="expression" name="household.number_of_vehicles4up" type="variable_definition">household.number_of_vehicles&gt;3</variable>
 <variable use="both" source="expression" name="household.is_seasonal" type="variable_definition">household.is_seasonal==1</variable>
 <variable use="both" source="expression" name="household.is_seasonal_and_all_pp_over_55" type="variable_definition">numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_the_youngest&gt;54)</variable>
 <variable use="both" source="expression" name="household.is_seasonal_and_hh_head_over_55" type="variable_definition">numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_head&gt;54)</variable>
@@ -418,6 +424,11 @@
 <variable use="both" source="expression" name="mpa.number_of_hh_1_workers" type="variable_definition">mpa.aggregate(household.workers==1)</variable>
 <variable use="both" source="expression" name="mpa.number_of_hh_2_workers" type="variable_definition">mpa.aggregate(household.workers==2)</variable>
 <variable use="both" source="expression" name="mpa.number_of_hh_3up_workers" type="variable_definition">mpa.aggregate(household.workers&gt;2)</variable>
+<variable use="both" source="expression" name="mpa.number_of_hh_0_vehicles" type="variable_definition">mpa.aggregate(mag_zone.household.number_of_vehicles0)</variable>
+<variable use="both" source="expression" name="mpa.number_of_hh_1_vehicles" type="variable_definition">mpa.aggregate(mag_zone.household.number_of_vehicles1)</variable>
+<variable use="both" source="expression" name="mpa.number_of_hh_2_vehicles" type="variable_definition">mpa.aggregate(mag_zone.household.number_of_vehicles2)</variable>
+<variable use="both" source="expression" name="mpa.number_of_hh_3_vehicles" type="variable_definition">mpa.aggregate(mag_zone.household.number_of_vehicles3)</variable>
+<variable use="both" source="expression" name="mpa.number_of_hh_4up_vehicles" type="variable_definition">mpa.aggregate(mag_zone.household.number_of_vehicles4up)</variable>
 <variable use="both" source="expression" name="mpa.average_household_income" type="variable_definition">mpa.aggregate(household.income, function=mean)</variable>
 <variable use="both" source="expression" name="mpa.median_household_income" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
 <variable use="both" source="expression" name="mpa.total_dus" type="variable_definition">mpa.aggregate(building.residential_units)</variable>
@@ -584,6 +595,10 @@
 <variable use="both" source="expression" name="tazi03.vacant_res_units" type="variable_definition">tazi03.aggregate(urbansim_zone.building.vacant_residential_units)</variable>
 <variable use="both" source="expression" name="tazi03.vacant_job_spaces" type="variable_definition">tazi03.aggregate(urbansim_zone.building.vacant_job_spaces)</variable>
 <variable use="both" source="expression" name="zone.number_of_households" type="variable_definition">zone.number_of_agents(household)</variable>
+<variable use="both" source="expression" name="zone.number_of_jobs" type="variable_definition">zone.number_of_agents(job)</variable>
+<variable use="both" source="expression" name="zone.total_households_and_jobs" type="variable_definition">mag_zone.zone.number_of_households + mag_zone.zone.number_of_jobs</variable>
+<variable use="both" source="expression" name="zone.bldg_sqft_constructed_this_year" type="variable_definition">clip_to_zero(zone.aggregate(mag_zone.building.bldg_sqft_constructed_this_year))</variable>
+
 
 	</expression_library>    
 	  <dataset_pool_configuration type="class">
@@ -595,6 +610,39 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="planned_redevelopment_residual_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.planned_redevelopment_residual_model</class_module>
+            <class_name type="string">PlannedRedevelopmentResidualModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">PlannedRedevelopmentResidualModel</name>
+          </init>
+          <run type="dictionary"/>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="public_capacity_location_model" type="model">
+      	<structure type="dictionary">
+      		<import name="import" type="dictionary">
+	            <class_module>urbansim.models.capacity_location_model</class_module>
+	            <class_name>CapacityLocationModel</class_name>      			
+      		</import>
+			<init type="dictionary">
+				<name name="name" type="string">CapacityLocationModel</name>
+				<argument name="capacity_attribute" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
+				<argument name="number_of_agents_attribute" convert_blank_to_none="True" parser_action="quote_string" type="string">mag_zone.buliding.aggregate(mag_zone.job.is_public_job)</argument>
+				<argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
+				<argument name="agents_filter" convert_blank_to_none="True" parser_action="quote_string" type="string">(job.building_id&lt;1)*(mag_zone.job.is_public_job)</argument>
+				<argument name="dataset_pool" type="string">dataset_pool</argument>
+			</init>
+			<run type="dictionary">
+				<argument name="location_set" type="string" model_dependency_type="dataset">building</argument>
+				<argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
+			</run>
+      	</structure>
+      </model>
       <model name="child_leaving_home_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -1232,7 +1280,7 @@
 			<argument name="debuglevel" type="integer">0</argument>
           </init>
           <run type="dictionary">
-          	<argument name="percent_active_development" type="integer">20</argument>
+          	<argument name="percent_active_development" type="integer">85</argument>
 			<argument name="build_minimum_units" type="boolean">False</argument>
           </run>
         </structure>

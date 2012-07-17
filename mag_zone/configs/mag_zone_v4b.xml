@@ -9,13 +9,29 @@
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
           <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
+            <argument name="dataset_accounting_attribute" parser_action="quote_string" type="string">persons</argument>
           </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
           <run type="dictionary">
+            <argument name="year" type="string">year</argument>
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" type="string">10000</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
             <argument name="sync_dataset" type="string">person</argument>
           </run>
         </structure>
@@ -400,6 +416,48 @@
     </models>
   </model_manager>
   <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="mpa_hh_by_vehicle_availability">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_hh_by_vehicle_availability">
+          <indicators>['number_of_hh_0_vehicles', 'number_of_hh_1_vehicles', 'number_of_hh_2_vehicles', 'number_of_hh_3_vehicles', 'number_of_hh_4up_vehicles']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_total_dus_by_type">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_dus_by_type">
+          <indicators>['total_dus', 'total_sfr_dus', 'total_mfr_dus', 'total_mh_dus']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_percent_dus_built">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_percent_dus_built">
+          <indicators>['percent_dus_built', 'percent_sfr_dus', 'percent_sfr_mh_dus', 'percent_mfr_dus', 'percent_mh_dus']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_occupancy_rate">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_occupancy_rate">
+          <indicators>['occupancy_rate']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_job_housing_ratio">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_job_housing_ratio">
+          <indicators>['jobs_housing_ratio']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+    </indicator_batches>
   </results_manager>
   <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
