@@ -32,13 +32,12 @@ class CreateBaseyearCache(object):
 
 if __name__ == "__main__":
     
-    parser = OptionParser(usage="python %prog [options] configuration", 
-                          description="Create baseyear cache. Argument 'configuration' is a "
-                          "python module containing dictionary called 'run_configuration'"
-                          " or a class with the CamelCase version of the module name.")
+    parser = OptionParser(usage="python %prog [options]", 
+                          description="Create baseyear cache. Its configuration is given either in the -c option "
+                          "or in the -x and -s options.")
 
     parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
-                            help="Opus path to Python module defining run_configuration.")        
+                            help="Opus path to Python module defining either 'run_configuration' (python dictionary) or the CamelCase version of the module name.")        
     parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
                             help="file name of xml configuration (must also provide a scenario name using -s)")
     parser.add_option("-s", "--scenario_name", dest="scenario_name", default=None, 
