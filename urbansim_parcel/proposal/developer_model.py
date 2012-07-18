@@ -170,6 +170,8 @@ class DeveloperModel(Model):
 
     outf = open('buildings-%d.csv' % current_year,'w')
     outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
+    debugf = open('proforma-debug-%d.csv' % current_year,'w')
+    debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind\n')
     t1 = time.time()
     aggd = {}
 
@@ -201,6 +203,8 @@ class DeveloperModel(Model):
             #each row of units represents number of units of [1, 2, 3, 4] bedrooms
             units = array([x[1][0] for x in results if x <> None and x[0] <> -1])
             sqft_per_unit = array([x[1][1] for x in results if x <> None and x[0] <> -1])
+            for x in results: debugf.write(x[2])
+
             results = results_bldg
         for result in results:
             #print result
@@ -271,7 +275,7 @@ class DeveloperModel(Model):
             else: aggd[key] += nonres_sqft
             aggd.setdefault(county,0)
             aggd[county] += units
-    
+   
     aggf = open('county_aggregations-%d.csv' % current_year,'w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
     btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC',7:'OF',8:'MXO',9:'CHOOD',10:'CAUTO',11:'CBOX',12:'MANU',13:'WHE'}
@@ -309,6 +313,8 @@ def process_parcel(parcel):
         global parcel_set, z, node_set, submarket, esubmarket, isr
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
+
+        debugoutput = ''
  
         current_year = SimulationState().get_current_time()
         pid = parcel_set['parcel_id'][parcel]
@@ -469,6 +475,9 @@ def process_parcel(parcel):
                                               submarket_info=submarket_info,
                                               esubmarket_info=esubmarket_info)
             if DEBUG: print X, npv
+
+            debugoutput += string.join([str(x) for x in [pid,btype,npv]+prices]
+,sep=',')+'\n'
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv
@@ -503,7 +512,7 @@ def process_parcel(parcel):
                 maxbuilding = building
                 units = bform.num_units
 
-        return maxbuilding, (units, sqft_per_unit) 
+        return maxbuilding, (units, sqft_per_unit), debugoutput
 
 if __name__ == "__main__":
     ## Run developer_model alone from command line developer_model.py /workspace/opus/data/bay_area_parcel/runs/run_79.2012_05_02_02_44 2011
