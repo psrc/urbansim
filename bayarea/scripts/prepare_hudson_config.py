@@ -15,10 +15,14 @@
 # HUDSON_LAND_USE_MODEL: A boolean value that specifies whether the land-use
 # model should be run.  Typically, this is 1.  But for testing purposes, we
 # might want to turn it off.
+#
+# HUDSON_PRICE_EQUILIBRATION: Whether or not to enable price equilibration in
+# the location choice models
 
 import sys, os
 from optparse import OptionParser
 from lxml import etree
+from copy import deepcopy
 
 if __name__ == "__main__":
 
@@ -50,6 +54,38 @@ if __name__ == "__main__":
     parent = etree.Element("parent", type="file")
     parent.text = options.xml_configuration
     general.append(parent)
+
+    # if we enable price equilibration, we do so under the model manager.
+    price_equlibration = os.getenv("HUDSON_PRICE_EQUILIBRATION")
+    if price_equlibration == "true":
+        model_manager = etree.Element("model_manager")
+        project.append(model_manager)
+        models = etree.Element("models", config_name="model_system",
+                               hidden="False", name="Models", setexpanded="True",
+                               type="dictionary")
+        model_manager.append(models)
+
+        # prepare common init/argument node
+        init = etree.Element("init", type="dictionary")
+        arg = etree.Element("argumnent", name="choices", parser_action="quote_string",
+                            type="string")
+        arg.text = "opus_core.upc.equilibration_choices"
+        init.append(arg)
+
+        blcm = etree.Element("model", name="business_location_choice_model",
+                             type="model")
+        blcm.append(init)
+        models.append(blcm)
+        hlcm_owner = etree.Element("model",
+                                   name="submarket_household_location_choice_model_owner",
+                                   type="model")
+        hlcm_owner.append(deepcopy(init))
+        models.append(hlcm_owner)
+        hlcm_renter = etree.Element("model",
+                                    name="submarket_household_location_choice_model_renter",
+                                    type="model")
+        hlcm_renter.append(deepcopy(init))
+        models.append(hlcm_renter)
 
     # Now we create a child scenario of HUDSON_SCENARIO that we can use to
     # override some options.
