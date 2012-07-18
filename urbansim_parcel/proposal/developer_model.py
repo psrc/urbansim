@@ -476,7 +476,7 @@ def process_parcel(parcel):
                                               esubmarket_info=esubmarket_info)
             if DEBUG: print X, npv
 
-            debugoutput += string.join([str(x) for x in [pid,btype,npv]+prices]
+            debugoutput += string.join([str(x) for x in [pid,btype,npv]+list(prices)]
 ,sep=',')+'\n'
             #if npv == -1: return # error code
             if npv > maxnpv:
