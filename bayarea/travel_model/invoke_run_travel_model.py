@@ -33,24 +33,15 @@ def invoke_run_travel_model(config, year):
     script_filepath = os.path.join(my_location, "run_travel_model.py")
     cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
 
-    try:
-        # form the desired output dir for the travel model data.  Make it look
-        # like the urbansim run cache for easy association.  Note that we
-        # explicitly use the forward slash instead of os.sep and friends
-        # because the travel model is managed via ssh on a cygwin machine, not
-        # run on the local machine.
-        services_db_config = ServicesDatabaseConfiguration(
-            database_name = 'services',
-            database_configuration = 'services_database_server'
-            )
-        rm = RunManager(services_db_config)
-        outdir = "runs/" + rm.get_current_cache_directory().split(os.sep)[-1]
-        outdir = outdir + "/%d_%s" % (year, scenario)
-        cmd = cmd + " -o " + outdir
-    except:
-        # If we launch from the command line instead of an actual run, we get
-        # an exception.  In this case, we just don't specify an output dir.
-        pass
+    # form the desired output dir for the travel model data.  Make it look
+    # like the urbansim run cache for easy association.  Note that we
+    # explicitly use the forward slash instead of os.sep and friends
+    # because the travel model is managed via ssh on a cygwin machine, not
+    # run on the local machine.
+    outdir = "runs/" + config['cache_directory'].split(os.sep)[-1]
+    outdir = outdir + "/%d_%s" % (year, scenario)
+    cmd = cmd + " -o " + outdir
+
     logger.log_status("Launching %s" % cmd)
     if os.system(cmd) != 0:
         raise TravelModelError
