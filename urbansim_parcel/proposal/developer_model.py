@@ -203,7 +203,8 @@ class DeveloperModel(Model):
             #each row of units represents number of units of [1, 2, 3, 4] bedrooms
             units = array([x[1][0] for x in results if x <> None and x[0] <> -1])
             sqft_per_unit = array([x[1][1] for x in results if x <> None and x[0] <> -1])
-            for x in results: debugf.write(x[2])
+            for x in results if x <> None: 
+                debugf.write(x[2])
 
             results = results_bldg
         for result in results:
