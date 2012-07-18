@@ -52,9 +52,9 @@ class OpusDatabase(object):
             if clear:
                 self.metadata.clear()
             if self.protocol_manager.uses_schemas:
-                self.metadata.reflect(bind = self.engine, schema = self.database_name)
+                self.metadata.reflect(bind=self.engine, schema=self.database_name, views=True)
             else:
-                self.metadata.reflect(bind = self.engine)
+                self.metadata.reflect(bind=self.engine, views=True)
         except:            
             if recurse:
                 self.close()
