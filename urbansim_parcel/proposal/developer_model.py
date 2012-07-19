@@ -226,7 +226,8 @@ class DeveloperModel(Model):
         buildings_data = array(buildings_data)
         new_buildings = {}
         available_bldg_id = building_set['building_id'].max() + 1
-        new_bldg_ids = arange(available_bldg_id, available_bldg_id+buildings_data.shape[0])
+        new_bldg_ids = arange(available_bldg_id, available_bldg_id+buildings_data.shape[0],
+                              dtype=building_set['building_id'].dtype)
         if buildings_data.size > 0:
             for icol, col_name in enumerate(column_names):
                 new_buildings[col_name] = buildings_data[:, icol]
@@ -237,7 +238,7 @@ class DeveloperModel(Model):
             ## pid is the index to parcel_set; convert them to actual parcel_id
             #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
             building_set.add_elements(new_buildings, require_all_attributes=False,
-                                  change_ids_if_not_unique=True)
+                                      change_ids_if_not_unique=True)
             building_set.flush_dataset()
 
             assert new_bldg_ids.size == units.shape[0] == sqft_per_unit.shape[0]
