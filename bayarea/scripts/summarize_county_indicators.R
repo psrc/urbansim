@@ -23,6 +23,12 @@ require("reshape")
 require("gridExtra")
 require("RGraphics") 
 
+annot <- function(){
+  annotate("text", x = Inf, y = -Inf, label = "DRAFT",
+           hjust=0, vjust=-8, col="darkgrey", cex=20,
+           fontface = "bold", alpha = 0.8, angle=45)
+}
+
 #declare index function
 indx <- function(dat, baseRow = 1)
 {
@@ -31,6 +37,13 @@ indx <- function(dat, baseRow = 1)
   adply(dat, 1, function(x) x / divisors*100)
 }
 
+viewPortFunc <- function(printObject=printObject){
+  grid.newpage()
+  pushViewport(viewport(height=unit(0.9, "npc"), width=unit(0.95, "npc"), x=0.5, y=0.5, name="vp")) 
+  upViewport() 
+  print(printObject, vp="vp")
+  #print(sprintf("Outputting Chart %s to PDF",title))
+}
 #wrap cmd-line arguments to assign to proper names
 #cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
 #{
@@ -48,19 +61,19 @@ yrEnd <- as.integer(args[3])
 setwd(pth)
 
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
-returnMatrix <- function(inputData=inputData,tableName=tamebleName) {
+returnMatrix <- function(inputData=inputData,tableName=tableName) {
   if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
     print("avg")
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData,id="year",variable_name = "county")
-    }
+  }
   else #if (grep("average",fName,ignore.case=FALSE, fixed=T))
   {
     print("not avg")
     inputData$Region <- rowSums(inputData,na.rm = FALSE, dims = 1)
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData[,c(1:9,11)],id="year",variable_name = "county")
-    }
+  }
   return(list(wide=inputData,long=meltedInputData))
 }
 
@@ -82,7 +95,7 @@ tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
 id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
 datetime <-sprintf("%s/%s/%s %s:%s:00",tm[[1]][2],tm[[1]][3],tm[[1]][1],tm[[1]][4],tm[[1]][5]) #get from runid string
 runDate <- strptime(datetime, "%m/%d/%Y %H:%M:%S")
-                                                                                           
+
 ##  select folder with indicator files, fetch all beginning with "county..." having proper years in name
 ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
 fileList = list.files(path=pth, pattern=ptrn)
@@ -140,9 +153,9 @@ for(i in 1:length(dat))
   colnames(simulation.t) <- simulation[,1]
   simulation.t <-as.data.frame(simulation.t)
   
-  ## add regional total
+  ## add regional total for non-average tables
   ## get matrices; chck if average in name. if so, treat total differently.
-  returnMatrices <- returnMatrix(simulation.t,title)
+  returnMatrices <- returnMatrix(simulation.t,title_prelim)
   simulation.t <- returnMatrices$wide 
   simulation_long_abs <- returnMatrices$long
   
@@ -167,27 +180,27 @@ for(i in 1:length(dat))
   else {
     step <- 1
   }
-
+  
   g1 <- tableGrob(
-            format(
-                   simulation.t[seq(1,end,step),1:length(names(simulation.t))-1], 
-                   digits = 2,big.mark = ","), 
-                   gpar.colfill = gpar(fill=NA,col=NA), 
-                   gpar.rowfill = gpar(fill=NA,col=NA), 
-                   h.even.alpha = 0,
-                   gpar.rowtext = gpar(col="black", cex=0.8,
-                   equal.width = TRUE,
-                   show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
-                   )
-            
-                   
+    format(
+      simulation.t[seq(1,end,step),1:length(names(simulation.t))-1], 
+      digits = 2,big.mark = ","), 
+    gpar.colfill = gpar(fill=NA,col=NA), 
+    gpar.rowfill = gpar(fill=NA,col=NA), 
+    h.even.alpha = 0,
+    gpar.rowtext = gpar(col="black", cex=0.8,
+                        equal.width = TRUE,
+                        show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
+    )
+  
+  
   #string <- "
   #placeholder for possible annotation
   #"
   #g2 <- splitTextGrob(string)
   theme_set(theme_grey()); 
   #theme_set(theme_bw());
-
+  
   ## plot object
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
@@ -209,13 +222,38 @@ for(i in 1:length(dat))
                                  xlab("Year") + 
                                  ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
                                  opts(axis.text.x=theme_text(angle=90, hjust=0))
+                                 
   
-  
+   g4 <- ggplot(data=simulation_long_abs,
+                aes(x=as.factor(year), 
+                    y=value, 
+                    group=county,
+                    colour=county)) +
+                      geom_line(
+                        aes(
+                          linetype=county), size = .65) +       # Thin line, varies by county
+                            scale_fill_brewer(palette="Paired") +
+                            geom_point(
+                              aes(
+                                shape=county) ,  size = 2.5)   +       
+                                  scale_fill_brewer(palette="Paired")+
+                                  opts(title=title)+
+                                  xlab("Year") + 
+                                  ylab(paste("Value")) + 
+                                  opts(axis.text.x=theme_text(angle=90, hjust=0))                                  
+
+  if(Sys.getenv("HUDSON_DRAFT_RESULTS")=='true') {
+    g3 <- g3 + annot()  +opts(title=paste("TEST RUN ",title))
+    g4 <- g4 + annot()  +opts(title=paste("TEST RUN ",title))
+    tblOut <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n","TEST RUN ", title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
+  }
+  else
+  {
+    tblOut <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n", title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
+  }
+
   #out <- grid.arrange(g3, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold")))
-  grid.newpage()
-  pushViewport(viewport(height=unit(0.9, "npc"), width=unit(0.95, "npc"), x=0.5, y=0.5, name="vp")) 
-  upViewport() 
-  print(g3, vp="vp")
+  viewPortFunc(g3)
   print(sprintf("Outputting Chart %s to PDF",title))
   grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic"))
   
@@ -225,45 +263,24 @@ for(i in 1:length(dat))
   #               geom_area(aes(fill=county, group = county), position='stack', alpha=.5) + scale_fill_brewer(palette="Paired")+ # scale_fill_hue(l=40) #scale_fill_brewer() +
   #               opts(title=title)+
   #               xlab("Year") + 
-                 #ylab(paste("Count")) + 
+  #ylab(paste("Count")) + 
   #               opts(axis.text.x=theme_text(angle=90, hjust=0)) + #guides(colour = guide_legend(override.aes = list(alpha = 1))) +
-                 #opts(panel.border  = theme_rect(colour = 'black')) + 
-                 #opts(panel.grid.major = theme_line(colour = 'grey', size = .25, linetype = 'solid')) +
-                 #opts(panel.grid.minor = theme_line(colour = 'grey', size = .1, linetype = 'dashed')) +
-   #              guides(fill = guide_legend(reverse = TRUE)) 
-                 #scale_y_continuous(labels="comma")
- 
-  g4 <- ggplot(data=simulation_long_abs,
-               aes(x=as.factor(year), 
-                   y=value, 
-                   group=county,
-                   colour=county)) +
-                     geom_line(
-                       aes(
-                         linetype=county), size = .65) +       # Thin line, varies by county
-                           scale_fill_brewer(palette="Paired") +
-                           geom_point(
-                             aes(
-                               shape=county) ,  size = 2.5)   +       
-                                 scale_fill_brewer(palette="Paired")+
-                                 opts(title=title)+
-                                 xlab("Year") + 
-                                 ylab(paste("Value")) + 
-                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
+  #opts(panel.border  = theme_rect(colour = 'black')) + 
+  #opts(panel.grid.major = theme_line(colour = 'grey', size = .25, linetype = 'solid')) +
+  #opts(panel.grid.minor = theme_line(colour = 'grey', size = .1, linetype = 'dashed')) +
+  #              guides(fill = guide_legend(reverse = TRUE)) 
+  #scale_y_continuous(labels="comma")
   
   
-  grid.newpage()
-  pushViewport(viewport(height=unit(0.9, "npc"), width=unit(0.95, "npc"), x=0.5, y=0.5, name="vp")) 
-  upViewport() 
-  print(g4, vp="vp")
+  viewPortFunc(g4)
   print(sprintf("Outputting Area Chart %s to PDF",title))
   grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic"))
   
   ## third, send table to pdf  
-  out <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
+  #out <- grid.arrange(g1, ncol=1, main=textGrob(paste("\n",title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
   print(sprintf("Outputting Table %s to PDF",title))
   grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
-  print(out)
+  print(tblOut)
   #dev.off()  
   
 }
@@ -275,7 +292,7 @@ sprintf("File is ready: %s", fileNameOut)
 ##county ids used in data
 #1  Alameda  ala
 #7  Contra Costa  cnc
-#21	Marin	mar
+#21  Marin	mar
 #28	Napa	nap
 #38	San Francisco	sfr
 #41	San Mateo	smt
