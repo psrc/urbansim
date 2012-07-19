@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         # prepare common init/argument node
         init = etree.Element("init", type="dictionary")
-        arg = etree.Element("argumnent", name="choices", parser_action="quote_string",
+        arg = etree.Element("argument", name="choices", parser_action="quote_string",
                             type="string")
         arg.text = "opus_core.upc.equilibration_choices"
         init.append(arg)
