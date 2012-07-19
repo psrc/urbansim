@@ -65,26 +65,28 @@ if __name__ == "__main__":
                                type="dictionary")
         model_manager.append(models)
 
-        # prepare common init/argument node
+        # prepare common structure/init/argument node
+        structure = etree.Element("structure", type="dictionary")
         init = etree.Element("init", type="dictionary")
         arg = etree.Element("argument", name="choices", parser_action="quote_string",
                             type="string")
         arg.text = "opus_core.upc.equilibration_choices"
         init.append(arg)
+        structure.append(init)
 
         blcm = etree.Element("model", name="business_location_choice_model",
                              type="model")
-        blcm.append(init)
+        blcm.append(structure)
         models.append(blcm)
         hlcm_owner = etree.Element("model",
                                    name="submarket_household_location_choice_model_owner",
                                    type="model")
-        hlcm_owner.append(deepcopy(init))
+        hlcm_owner.append(deepcopy(structure))
         models.append(hlcm_owner)
         hlcm_renter = etree.Element("model",
                                     name="submarket_household_location_choice_model_renter",
                                     type="model")
-        hlcm_renter.append(deepcopy(init))
+        hlcm_renter.append(deepcopy(structure))
         models.append(hlcm_renter)
 
     # Now we create a child scenario of HUDSON_SCENARIO that we can use to
