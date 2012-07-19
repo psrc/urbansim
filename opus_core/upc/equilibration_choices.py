@@ -51,7 +51,7 @@ class equilibration_choices(lottery_choices):
         self.U_cached = utilities - np.dot(self.beta, self.price)
         price_init = copy(self.price)
         bounds0 = None
-        kwargs = {'factr': 1e14, 'iprint':10}
+        kwargs = {'factr': 2e13, 'iprint':10}
         user_kwargs = eval(resources.get('bfgs_kwargs', '{}')) ##HACK
         kwargs.update(user_kwargs)  
 
