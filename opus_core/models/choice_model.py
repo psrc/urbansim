@@ -1487,7 +1487,7 @@ class TestChoiceModel(StochasticTestCase):
                          sampler=None)
         resources = Resources({"price_coef_name": 'price',
                                "capacity": locations['capacity'],
-                               "bfgs_kwargs": {'pgtol': 1e-12},
+                               "bfgs_kwargs": "{'pgtol': 1e-12}",
                                "lottery_max_iterations": 10
                                })
         choices = cm.run(specification, coef, agent_set=households,
