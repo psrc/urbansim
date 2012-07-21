@@ -32,11 +32,13 @@ class SimpleModel(Model):
         else:
             values = dataset.compute_variables([expression], dataset_pool=dataset_pool)
 
-        outcome = values
+        #outcome = values
+        ddtype = values.dtype  #default dtype
         if outcome_attribute is None:
             outcome_attribute = VariableName(expression).get_alias()
         elif outcome_attribute in dataset.get_known_attribute_names():
             outcome = dataset[outcome_attribute]
+            ddtype = outcome.dtype  #default dtype
                     
         if dataset_filter is not None:
             if type(dataset_filter)==str:
@@ -44,9 +46,9 @@ class SimpleModel(Model):
                                                                dataset_pool=dataset_pool))[0]
             elif isinstance(dataset_filter, ndarray):
                 filter_index = dataset_filter
-            outcome[filter_index] = values[filter_index]
+            outcome[filter_index] = (values[filter_index]).astype(ddtype)
         else:
-            outcome = values
+            outcome = values.astype(ddtype)
             
         #if outcome_attribute in dataset.get_known_attribute_names():
         #    dataset.delete_one_attribute(outcome_attribute)

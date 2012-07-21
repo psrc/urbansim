@@ -8,6 +8,8 @@ from urbansim.models.household_location_choice_model import HouseholdLocationCho
 from opus_core.session_configuration import SessionConfiguration
 
 class EstablishmentLocationChoiceModelBySubmarkets(HouseholdLocationChoiceModel):
+    model_name = "EstablishmentAllocationtoBuildingModel"
+    model_short_name = "EATBM"
         
     def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
 

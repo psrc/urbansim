@@ -51,23 +51,27 @@ class equilibration_choices(lottery_choices):
         self.U_cached = utilities - np.dot(self.beta, self.price)
         price_init = copy(self.price)
         bounds0 = None
-        kwargs = {'factr': 2e13, 'iprint':10}
-        user_kwargs = eval(resources.get('bfgs_kwargs', '{}')) ##HACK
-        kwargs.update(user_kwargs)  
+        kwargs = {'factr': 1e12, 'iprint':10}
+        ##HACK because run_config converts dictionary to string
+        user_kwargs = eval(resources.get('bfgs_kwargs', '{}'))  
+        kwargs.update(user_kwargs)
+        epsmch = np.finfo(np.array([0.0]).dtype).eps
+        logger.log_status("FACTR={factr}".format(**kwargs))
+        logger.log_status("EPSMCH={}; FACTR*EPSMCH={}".format(epsmch, epsmch*kwargs['factr']))
 
         def rmse(price):
             m = self.target_func(price, self.capacity)/nalts
             return np.sqrt(m)
 
-        logger.log_status("init RMSE={}".format(rmse(price_init)))
         results = fmin_l_bfgs_b(self.target_func, price_init, 
                                 fprime=self.fprime, args=(self.capacity, self.beta), 
                                 bounds=bounds0,
                                 **kwargs)
 
         price_converged = results[0]
+        logger.log_status("init RMSE={}".format(rmse(price_init)))
+        logger.log_status("end  RMSE={}".format(rmse(price_converged)))
         resources.merge({'price_converged': price_converged})
-        logger.log_status("end RMSE={}".format(rmse(price_converged)))
         demand, prob = self.update_demand(price_converged)
         return lottery_choices.run(self, probability=prob,
                                    resources=resources)
