@@ -34,5 +34,6 @@ aliases = [
                          " 11 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons > 2) +" + \
                          " 12 * (household.income >= 75000)*(household.persons > 2)",
     "submarket_id = household.disaggregate(bayarea.building.submarket_id)",
-
+    "building_type_coded = 1*(household.building_type_id<3) + 2*(household.building_type_id>2)",
+    "persons_topcode = household.persons*(household.persons<5) + 5*(household.persons>4)"
            ]
