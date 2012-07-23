@@ -55,7 +55,8 @@
       <variable use="both" source="expression" name="building.zonal_raz_sf_avg_unit_price_2" type="variable_definition">ln(building.disaggregate(safe_array_divide(raz2012.aggregate(where(building.building_type_id==1,building.average_value_per_unit,0)), raz2012.aggregate(where(building.building_type_id ==1, 1, 0))))) </variable>
       <variable use="both" source="expression" name="building.zonal_raz_sf_avg_unit_price_1" type="variable_definition">ln(building.disaggregate(raz2012.aggregate(where(building.building_type_id==1,building.average_value_per_unit,0), intermediates = [zone],function = mean)))</variable>
       <variable use="both" source="expression" name="building.zonal_raz_sf_avg_unit_price" type="variable_definition">ln(building.disaggregate(raz2012.aggregate(where(building.building_type_id==1,building.average_value_per_unit,0), function = mean)))</variable>
-      <variable use="both" source="expression" name="building.zonal_bldg_is_public_local" type="variable_definition">building.building_type_id == 16</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_hotel_capacity" type="variable_definition">(building.other_space_name=='hotel')*(building.other_spaces)</variable>      
+	  <variable use="both" source="expression" name="building.zonal_bldg_is_public_local" type="variable_definition">building.building_type_id == 16</variable>
       <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_20" type="variable_definition">ln(building.aggregate(job.sector_id==20))</variable>
       <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_22" type="variable_definition">ln(building.aggregate(job.sector_id==22))</variable>
       <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_21" type="variable_definition">ln(building.aggregate(job.sector_id==21))</variable>
