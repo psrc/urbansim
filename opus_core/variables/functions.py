@@ -10,6 +10,8 @@ import numpy, scipy
 import opus_core.misc
 from pkg_resources import parse_version
 from opus_core.misc import ismember as misc_ismember
+import scipy.stats as stats
+
 try:
     if parse_version(scipy.__version__) <= parse_version('0.7.0'):
         from scipy.stats.stats import zs as scipy_zscore
@@ -85,6 +87,9 @@ def ismember(v, member_list):
     """
     return misc_ismember(v, member_list)
 
+def scoreatpercentile(v, percentile):
+    return stats.scoreatpercentile(v, percentile)
+
 # unit tests for all the functions
 
 from opus_core.tests import opus_unittest
@@ -150,6 +155,14 @@ class Tests(opus_unittest.OpusTestCase):
         self.function_tester('expfin', np.array([1000, 8, 700, 10, 0], dtype='int32'), 
                                         [np.finfo(type).max, 2980.9579870417283, 1.0142320547350045e+304,
                                          22026.465794806718, 1.0])
+
+    def test_scoreatpercentile(self):
+        import numpy as np
+        numbers = np.random.permutation(100) + 1
+        self.assert_( scoreatpercentile(numbers, 0), 0)
+        self.assert_( scoreatpercentile(numbers, 5), 5)
+        self.assert_( scoreatpercentile(numbers, 21), 21)
+        self.assert_( scoreatpercentile(numbers, 100), 100)
        
     # the function_tester is just set up for unary functions, and safe_array_divide takes two numpy arguments,
     # so it is tested separately
