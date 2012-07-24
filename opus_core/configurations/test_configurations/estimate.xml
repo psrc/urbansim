@@ -5,6 +5,7 @@
       <variable source="expression" type="variable_definition" use="model variable" name="parcel.ln_cost">ln(psrc.parcel.cost)</variable>
       <variable source="Python class" type="variable_definition" use="model variable" name="parcel.existing_units">urbansim_parcel.parcel.existing_units<!--some comment--></variable>
       <variable source="Python class" type="variable_definition" use="model variable" name="parcel.bsqft">urbansim_parcel.parcel.building_sqft</variable>
+      <!-- <variable source="Python class" type="variable_definition" use="model variable" name="parcel.bsqft">urbansim_parcel.parcel.building_sqft</variable> -->
     </expression_library>
     <project_name type="string">test_project</project_name>
     <!--some comment-->
