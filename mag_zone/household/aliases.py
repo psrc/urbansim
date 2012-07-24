@@ -45,4 +45,5 @@ aliases = [
     'census_place_id = household.disaggregate(building.disaggregate(zone.census_place_id))',
     'raz_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',
     'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
+    'synthetic_household_id = household.household_id',
            ]

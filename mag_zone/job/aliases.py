@@ -51,6 +51,8 @@ aliases = [
         "is_publocal_job = job.sector_id==22",
         # aliases for older v3x configurations
         'is_pub_employment = (job.sector_id == 20)',
+
+        'sector_group = job.disaggregate(employment_sector.sector_group)',
            ]
 
 

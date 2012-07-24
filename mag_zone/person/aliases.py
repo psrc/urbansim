@@ -49,5 +49,7 @@ aliases = [
     'is_hispanic = numpy.in1d(person.race_id, (6,7,8,9,10))',
     'is_not_hispanic = numpy.in1d(person.race_id, (1,2,3,4,5))',
     'is_married = numpy.in1d(person.marriage_status, (1,2))',
-    'wtaz_new = (person.work_outside_region ==0)* person.disaggregate(mag_zone.job.zone_id) + (person.work_outside_region==1)*(person.wtaz)',
+    'wtaz = (person.work_outside_region==0)*person.disaggregate(mag_zone.job.zone_id) + (person.work_outside_region==1)*(person.wtaz0)',
+    'synthetic_person_id = person.person_id',
+    'tmtowrk = (person.work_outside_region==0)*(mag_zone.person.travel_time_from_home_to_work) + (person.work_outside_region==1)*person.disaggregate(synthetic_person.tmtowrk)',
            ]

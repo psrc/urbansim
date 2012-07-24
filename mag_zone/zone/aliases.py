@@ -20,4 +20,5 @@ aliases = [
     'number_of_jobs = zone.number_of_agents(job)',    
     'total_households_and_jobs = mag_zone.zone.number_of_households + mag_zone.zone.number_of_jobs',
     'bldg_sqft_constructed_this_year = clip_to_zero(zone.aggregate(mag_zone.building.bldg_sqft_constructed_this_year))',
+    'locationid = zone.zone_id - 100',
            ]

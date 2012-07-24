@@ -39,13 +39,13 @@ class IterativeRun(AbstractTravelModel):
 
 
         iteration = 1
-	max_iterations = tm_config['max_iterations']
-	print 'type', type(max_iterations), 'value',max_iterations
+        max_iterations = tm_config['max_iterations']
+        print 'type', type(max_iterations), 'value',max_iterations
 
-	print 'Starting iteration count - ', iteration
+        print 'Starting iteration count - ', iteration
 
         while (not (self._is_converged(openamos_convergence_file) and self._is_converged(malta_convergence_file)) ) and iteration <= max_iterations:
-	    print 'Travel model iteration -', iteration
+            print 'Travel model iteration -', iteration
 
             #if iteration == 1:  # switch configuration file for openamos for second and later iterations, 
             #                    # only need to do it once
@@ -57,7 +57,7 @@ class IterativeRun(AbstractTravelModel):
             backupResults = 0
             #RunOpenamos().run(config, year, iteration, setupCache, backupResults)
 
-            RunMalta().run(config, year, iteration)
+            #RunMalta().run(config, year, iteration)
 
 
             # Run the models for post processing the outputs ... 
@@ -68,16 +68,16 @@ class IterativeRun(AbstractTravelModel):
             RunOpenamos().run(config, year, iteration, setupCache, backupResults)
 
             # Copy the malta generated files including link travel times file, dynustudio files, distance files
-	    maltaFiles = ["output_linkTrvTime.dat", "tmp_output_arrVeh.txt", 
-			  "OutAccuVol.dat", "OutLinkSpeedAll.dat", "VehTrajectory.dat",
-			  "output_vmtVHT_%d.dat"%(iteration+1)]
+            maltaFiles = ["output_linkTrvTime.dat", "tmp_output_arrVeh.txt", 
+                          "OutAccuVol.dat", "OutLinkSpeedAll.dat", "VehTrajectory.dat",
+                          "output_vmtVHT_%d.dat"%(iteration+1)]
 
-	    for file in maltaFiles:
-		loc = os.path.split(tm_config["malta_path"])[0]
-            	fileLoc = os.path.join(loc, file)
-            	projectLoc = tm_config.get("project_path")
-            	copyToLoc = os.path.join(projectLoc, "year_%d" %(year), "iteration_%d" %(iteration), file)
-            	shutil.copyfile(fileLoc, copyToLoc)
+            for file in maltaFiles:
+                loc = os.path.split(tm_config["malta_path"])[0]
+                fileLoc = os.path.join(loc, file)
+                projectLoc = tm_config.get("project_path")
+                copyToLoc = os.path.join(projectLoc, "year_%d" %(year), "iteration_%d" %(iteration), file)
+                shutil.copyfile(fileLoc, copyToLoc)
             iteration += 1
             
     def _is_converged(self, convergence_file):

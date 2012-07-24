@@ -43,7 +43,9 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                                                          database_configuration = database_server_config
                                                          )
                                                          )
+
         if not db_server.has_database(database_name): 
+            print "Db doesn't exist creating one"
             db_server.create_database(database_name)
         db = db_server.get_database(database_name) 
         output_storage = sql_storage(storage_location = db)
@@ -51,20 +53,21 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         logger.start_block('Compute and export data to openAMOS...')
         hh = dataset_pool.get_dataset('household')
         syn_hh = dataset_pool.get_dataset('synthetic_household')
-        hh_variables = ['household.houseid',
+
+        hh_variables = ['houseid=household.household_id',
                         'one=household.disaggregate(synthetic_household.one)',
-                        'homeown=household.disaggregate(synthetic_household.homeown)',
-                        'urb=household.disaggregate(synthetic_household.urb)',
-                        'nwrkcnt=household.disaggregate(synthetic_household.nwrkcnt)',
-                        'numadlts=household.disaggregate(synthetic_household.numadlts)',
+                        'household.homeown',
+                        'household.urb',
+                        'household.nwrkcnt',
+                        'numadlts=household.numadlt',
                         'lifcycge2=household.disaggregate(synthetic_household.lifcycge2)',
-                        'numwrkr=household.disaggregate(synthetic_household.numwrkr)',
-                        'rur=household.disaggregate(synthetic_household.rur)',
-                        'inclt35k=household.disaggregate(synthetic_household.inclt35k)',
-                        'incge35k=household.disaggregate(synthetic_household.incge35k)',
-                        'incge75k=household.disaggregate(synthetic_household.incge75k)',
-                        'incge100=household.disaggregate(synthetic_household.incge100)',
-                        'drvrcnt=household.disaggregate(synthetic_household.drvrcnt)',
+                        'numwrkr=household.workers',
+                        'household.rur',
+                        'household.inclt35k',
+                        'household.incge35k',
+                        'household.incge75k',
+                        'household.incge100k',
+                        'household.drvrcnt',
                         'vdratio=household.disaggregate(synthetic_household.vdratio)',
                         'htaz = household.disaggregate(building.zone_id)'                        
                         ]
@@ -72,24 +75,31 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         hh_variables_short_name = unique([VariableName(v).get_alias() for v in hh_variables]).tolist()
         for attr in hh_variables_short_name:
             hh.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
+
+        print 'persons variable names', hh_variables_short_name
+        print 'Output storage - ', output_storage
+        print 'database name - ', database_name
+
+
         hh.write_dataset(attributes=hh_variables_short_name,
                          out_storage=output_storage)
         dataset_pool._remove_dataset(hh.dataset_name)
-        
         persons = dataset_pool.get_dataset('person')
         syn_persons = dataset_pool.get_dataset('synthetic_person')
         persons_variables = ['person.personid',
                              'one=person.disaggregate(synthetic_person.one)',
-                             'wrkr=person.disaggregate(synthetic_person.wrkr)',
+                             'person.wrkr',
+                             #'tmtowrk=mag_zone.person.travel_time_from_home_to_work',
+                             #'mag_zone.person.tmtowrk',
                              'tmtowrk=person.disaggregate(synthetic_person.tmtowrk)',
-                             'ag11t14=person.disaggregate(synthetic_person.ag11t14)',
-                             'agge15=person.disaggregate(synthetic_person.agge15)',
-                             'hisp=person.disaggregate(synthetic_person.hisp)',
-                             'fulltim=person.disaggregate(synthetic_person.fulltim)',
-                             'partim=person.disaggregate(synthetic_person.partim)',
+                             'person.ag11t14',
+                             'person.agge15',
+                             'person.hispanic',
+                             'person.fulltim',
+                             'person.parttim',
                              'selfemp=person.disaggregate(synthetic_person.selfemp)',
                              'wkhome=person.disaggregate(synthetic_person.wkhome)',
-                             'person.wtaz',
+                             'mag_zone.person.wtaz',
                              'person.schtaz'
                              ]
         
@@ -97,10 +107,57 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons_variables_short_name = unique([VariableName(v).get_alias() for v in persons_variables]).tolist()
         for attr in persons_variables_short_name:
             persons.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
+
+        print 'persons variable names', persons_variables_short_name
+        print 'Output storage - ', output_storage
+        print 'database name - ', database_name
+
                         
         persons.write_dataset(attributes=persons_variables_short_name,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
+
+        locations = dataset_pool.get_dataset('zone')
+        locations_variables = [
+                             'retail_employment=zone.aggregate(mag_zone.job.sector_group=="retail")',
+                             'public_employment=zone.aggregate(mag_zone.job.sector_group=="public")',
+                             'office_employment=zone.aggregate(mag_zone.job.sector_group=="office")',
+                             'industrial_employment=zone.aggregate(mag_zone.job.sector_group=="individual")',
+                             'other_employment=zone.aggregate(mag_zone.job.sector_group=="other")',
+
+                             'retail_employment_density=zone.aggregate(mag_zone.job.sector_group=="retail")/zone.acres',
+                             'public_employment_density=zone.aggregate(mag_zone.job.sector_group=="public")/zone.acres',
+                             'office_employment_density=zone.aggregate(mag_zone.job.sector_group=="office")/zone.acres',
+                             'industrial_employment_density=zone.aggregate(mag_zone.job.sector_group=="individual")/zone.acres',
+                             'other_employment=zone.aggregate(mag_zone.job.sector_group=="other")/zone.acres',
+
+                             'total_area=zone.acres',
+
+                             'lowest_income=zone.aggregate(household.income < scoreatpercentile(household.income, 20))',
+                             'low_income=zone.aggregate(household.income < scoreatpercentile(household.income, 40))',
+                             'high_income=zone.aggregate(household.income > scoreatpercentile(household.income, 80))',
+
+                             'institutional_population=zone.disaggregate(locations.institutional_population)',
+                             'groupquarter_households=zone.disaggregate(locations.groupquarter_households)',
+
+                             'residential_households=zone.number_of_agents(household)',
+
+                             'locationid=zone.zone_id - 100',
+                             ]
+        
+        locations.compute_variables(locations_variables)
+        locations_variables_short_name = unique([VariableName(v).get_alias() for v in locations_variables]).tolist()
+        for attr in locations_variables_short_name:
+            locations.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
+
+        print 'locations variable names', locations_variables_short_name
+        print 'Output storage - ', output_storage
+        print 'database name - ', database_name
+
+        locations.write_dataset(attributes=locations_variables_short_name,
+                              out_storage=output_storage)
+        dataset_pool._remove_dataset(locations.dataset_name)
+
         logger.end_block()
         
 if __name__ == "__main__":
