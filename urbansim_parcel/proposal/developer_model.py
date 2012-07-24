@@ -271,7 +271,7 @@ class DeveloperModel(Model):
 
             ##force dtype conversion to the same dtype as unit_set
             for col_name in ['building_id', 'bedrooms', 'sqft_per_unit']:
-                if col_name in new_units.get_known_attribute_names():
+                if col_name in unit_set.get_known_attribute_names():
                     new_units[col_name] = new_units[col_name].astype(unit_set[col_name].dtype)
 
             unit_set.add_elements(new_units, require_all_attributes=False,
