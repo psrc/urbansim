@@ -4,4 +4,5 @@
 
 aliases = [
     "employment_submarket_id = establishment.disaggregate(bayarea.building.employment_submarket_id)",
+    "county_id = establishment.disaggregate(bayarea.building.county_id)",
            ]
