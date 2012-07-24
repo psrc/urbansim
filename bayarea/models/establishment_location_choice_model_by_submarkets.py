@@ -26,12 +26,13 @@ class EstablishmentLocationChoiceModelBySubmarkets(HouseholdLocationChoiceModel)
         agents_submarkets = agent_set.get_attribute(submarket_set.get_id_name()[0])
         for submarket_id in submarket_ids:
             new_index = where(logical_and(cond_array, agents_submarkets == submarket_id))[0]
-            self.filter = "building.employment_submarket == %s" % submarket_id
-            logger.log_status("BLCM for employment_submarket %s" % submarket_id)
-            HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
-                                             agents_index=new_index, **kwargs)
-            agent_set.flush_dataset()
-            #self.choice_set.flush_dataset() # this (after a while) slows down the simulation considerably
+            if new_index.size > 0:
+                self.filter = "building.employment_submarket == %s" % submarket_id
+                logger.log_status("%s for employment_submarket %s" % (self.model_short_name, submarket_id))
+                HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
+                                                 agents_index=new_index, **kwargs)
+                agent_set.flush_dataset()
+                #self.choice_set.flush_dataset() # this (after a while) slows down the simulation considerably
             
         # set the right parcels
         #parcels = agent_set.compute_variables(["household.disaggregate(building.parcel_id)"],
