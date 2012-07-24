@@ -4,6 +4,7 @@
 
 aliases = [
    "average_income = zone.aggregate(urbansim_parcel.household.income, function=mean)",
+   "households_of_lowest_income_quartile = zone.aggregate(household.income < scoreatpercentile(household.income, 25))",
    "employment = zone.number_of_agents(job)",
    "number_of_jobs = zone.number_of_agents(job)",
    "number_of_households = zone.number_of_agents(household)",
