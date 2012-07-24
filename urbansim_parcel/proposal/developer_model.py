@@ -230,8 +230,12 @@ class DeveloperModel(Model):
                               dtype=building_set['building_id'].dtype)
         if buildings_data.size > 0:
             for icol, col_name in enumerate(column_names):
-                ddtype = building_set[col_name].dtype
-                new_buildings[col_name] = (buildings_data[:, icol]).astype(ddtype)
+                if col_name in building_set.get_known_attribute_names():
+                    ddtype = building_set[col_name].dtype
+                    new_buildings[col_name] = (buildings_data[:, icol]).astype(ddtype)
+                else:
+                    #if the col_name is not in dataset, it will be discarded anyway
+                    pass
 
             new_buildings['building_id'] = new_bldg_ids
             # recode tenure: 1 - rent, 2 - own from 0 - own, 1 - rent
@@ -270,7 +274,7 @@ class DeveloperModel(Model):
                 new_units[col_name] = new_units[col_name].astype(unit_set[col_name].dtype)
 
             unit_set.add_elements(new_units, require_all_attributes=False,
-                                           change_ids_if_not_unique=True)
+                                  change_ids_if_not_unique=True)
             unit_set.flush_dataset()
 
         for result in results:
