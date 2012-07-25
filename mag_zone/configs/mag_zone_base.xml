@@ -619,6 +619,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">PlannedRedevelopmentResidualModel</name>
+            <argument name="debuglevel" type="integer">1</argument>
           </init>
           <run type="dictionary"/>
         </structure>
@@ -1693,6 +1694,45 @@
             <argument name="control_totals_id_name" type="list">['year']</argument>
             <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
           </prepare_for_run>
+        </structure>
+      </model>
+      <model name="compute_household_income_quintiles" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">mag_zone.household.income_quintiles</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">income_quintiles</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="seasonal_household_location_choice_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.capacity_location_model</class_module>
+            <class_name>CapacityLocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">CapacityLocationModel</name>
+            <argument hidden="False" name="capacity_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">urbansim_zone.building.vacant_residential_units</argument>
+            <argument hidden="False" name="number_of_agents_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True"/>
+            <argument name="filter" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.building.is_residential</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.household.is_seasonal</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="location_set" type="string">building</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument hidden="False" name="agents_index" type="string" convert_blank_to_none="True">hrm_index</argument>
+          </run>
         </structure>
       </model>
     </models>

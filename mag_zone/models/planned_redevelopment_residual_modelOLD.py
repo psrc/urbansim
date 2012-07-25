@@ -9,7 +9,7 @@ from opus_core.misc import DebugPrinter
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.logger import logger
-from numpy import where, bincount, unique, around, concatenate, zeros, array
+from numpy import where, bincount, unique, around, concatenate, zeros
 from prettytable import PrettyTable
 
 class PlannedRedevelopmentResidualModel(Model):
@@ -119,7 +119,14 @@ class PlannedRedevelopmentResidualModel(Model):
         total_non_residential_sqft_to_remove_sum = total_non_residential_sqft_to_remove_this_year.sum()
         logger.log_status("Total Non-Res sqft demolished: %s" % total_non_residential_sqft_to_remove_sum)
 
-        redev_ids_to_actually_do_something_with = []     
+        #if total_dus_to_remove_sum==0 and total_non_residential_sqft_to_remove_sum==0:
+        #    logger.log_status('No Redevelopment')
+        #    return
+        
+        
+        from numpy import array
+        redev_ids_to_actually_do_something_with = []
+        #if self.debuglevel > 0:        
         # set up a table to log into
         unit_log = PrettyTable()
         unit_log.set_field_names(["building_id","DUs demolished","NonRes Sqft demolished"])
@@ -145,6 +152,15 @@ class PlannedRedevelopmentResidualModel(Model):
         self.buildings_dataset.set_values_of_one_attribute('residential_units', new_residential_units, unique_redevelopment_building_ids_index)
         self.buildings_dataset.set_values_of_one_attribute('non_residential_sqft', new_non_residential_sqft, unique_redevelopment_building_ids_index)
 
+        #jesse testing
+        print '\n####################################\n'
+        print 'total_dus_to_remove_this_year = %s' % total_dus_to_remove_this_year
+        print 'total_non_residential_sqft_to_remove_this_year = %s' % total_non_residential_sqft_to_remove_this_year
+        print 'redev_ids_to_actually_do_something_with = %s' % redev_ids_to_actually_do_something_with
+        print 'redev_ids_to_actually_do_something_with_index = %s' % redev_ids_to_actually_do_something_with_index
+        print 'unique_redevelopment_building_ids_index = %s' % unique_redevelopment_building_ids_index
+        print '\n####################################\n'
+
         ### Unplace building occupants
         # compute variables
         vacant_residential_units_with_negatives = \
@@ -152,14 +168,45 @@ class PlannedRedevelopmentResidualModel(Model):
         vacant_non_home_based_job_spaces_with_negatives = \
             self.buildings_dataset.compute_variables('mag_zone.building.vacant_non_home_based_job_spaces_with_negatives', dataset_pool=dataset_pool)
 
+#        # jesse testing
+#        print '\n*****************************\n'
+#        print vacant_residential_units_with_negatives[unique_redevelopment_building_ids_index]
+#        print '\n-----------------------------\n'
+#        print type(unique_redevelopment_building_ids_index)
+#        print len(unique_redevelopment_building_ids_index)
+#        print unique_redevelopment_building_ids_index
+#        print '\n-----------------------------\n'
+#        print type(vacant_residential_units_with_negatives)
+#        print len(vacant_residential_units_with_negatives)
+#        print vacant_residential_units_with_negatives
+#        print '\n-----------------------------\n'
+#        print type(vacant_non_home_based_job_spaces_with_negatives)
+#        print len(vacant_non_home_based_job_spaces_with_negatives)
+#        print vacant_non_home_based_job_spaces_with_negatives
+#        print '\n*****************************\n'
+
         # Get jobs and households datasets
         self.jobs_dataset = dataset_pool.get_dataset('job')
         self.households_dataset = dataset_pool.get_dataset('household')
 
         # a list of tuples containing the computed space variables (including overfilled) and the dataset
         # of the occupants which may be overfilling the space
+        #Jesse testing begin
+        # old 2 lines 7/25:
+        #check_for_overfilled = [(vacant_residential_units_with_negatives[unique_redevelopment_building_ids_index], self.households_dataset),
+        #                        (vacant_non_home_based_job_spaces_with_negatives[unique_redevelopment_building_ids_index], self.jobs_dataset),]
+        #new 2 lines 7/25:
         check_for_overfilled = [(vacant_residential_units_with_negatives[redev_ids_to_actually_do_something_with_index], self.households_dataset),
                                 (vacant_non_home_based_job_spaces_with_negatives[redev_ids_to_actually_do_something_with_index], self.jobs_dataset),]
+        #Jesse testing end
+        #OLD CODE:
+#        check_for_overfilled = [(vacant_residential_units_with_negatives[unique_redevelopment_building_ids_index], self.households_dataset),
+#                                (vacant_non_home_based_job_spaces_with_negatives[unique_redevelopment_building_ids_index], self.jobs_dataset),]
+
+        #print '\n(((((((((((((((((((((((((((((((((((((((((((\n'
+        #print vacant_residential_units_with_negatives[unique_redevelopment_building_ids_index]
+        #print vacant_non_home_based_job_spaces_with_negatives[unique_redevelopment_building_ids_index]
+        #print '\n(((((((((((((((((((((((((((((((((((((((((((\n'
         
         
         # check for negative spaces (indicating overfilled buildings), if negatives are found, then 
@@ -191,21 +238,41 @@ class PlannedRedevelopmentResidualModel(Model):
             - spaces_with_negatives is an array of vacant residential or job spaces that includes negative values (overfilled)
             - dataset is the dataset of agents overfilling the spaces specified in spaces_with_negatives
         """
-
+        
+        # jesse testing
+        print '\n[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[\n'
+        print spaces_with_negatives
+        print unique_redevelopment_building_ids_index
+        print index_overfilled_spaces
+        
         # set up table for logging unplaced building occupants
         occupants_log = PrettyTable()
         occupants_log.set_field_names(["building_id","HH unplaced","Jobs unplaced","HB Jobs unplaced"])
+
+        #index_overfilled_spaces = where(spaces_with_negatives<0)[0]
+        #print '\n+++++++++++++++++++++++++++\n'
+        #print '\nindex_overfilled_spaces = %s' % index_overfilled_spaces
+        #print type(index_overfilled_spaces)
         number_of_overfilled_spaces = abs(spaces_with_negatives[index_overfilled_spaces].astype('int'))
+        #print '\nnumber_of_overfilled_spaces = %s' % number_of_overfilled_spaces
+        #print type(number_of_overfilled_spaces)
         overfilled_spaces_building_ids = self.buildings_dataset.get_id_attribute()[unique_redevelopment_building_ids_index]
         overfilled_spaces_building_ids = overfilled_spaces_building_ids[index_overfilled_spaces]
+        print '\n0000000000000000000000000000000000'
+        print '\noverfilled_spaces_building_ids = %s' % overfilled_spaces_building_ids
+        print type(overfilled_spaces_building_ids)
         look_for_home_based_jobs = False
         dataset_name = dataset.get_dataset_name()
+        #print '\ndataset_name = %s' % dataset_name
         if 'household' in dataset_name:
             look_for_home_based_jobs = True
         for building_id, number_of_agents_to_unplace in zip(overfilled_spaces_building_ids, number_of_overfilled_spaces):
+            #print '\nbuilding_id = %s' % building_id
+            #print '\nnumber_of_agents_to_unplace = %s\n' % number_of_agents_to_unplace
             occupants_log_line = []
             occupants_log_line.append(building_id)
             index_of_agents_to_sample_from = dataset.get_filtered_index('%s.building_id==%s' % (dataset_name,building_id))
+            #print '\nsize of index_of_agents_to_sample_from = %s\n' % len(index_of_agents_to_sample_from)
             sample_of_agents_to_unplace = sample_noreplace(index_of_agents_to_sample_from, number_of_agents_to_unplace)
             dataset.set_values_of_one_attribute('building_id', array([-1]), sample_of_agents_to_unplace)
             if look_for_home_based_jobs:
@@ -218,6 +285,7 @@ class PlannedRedevelopmentResidualModel(Model):
                 occupants_log_line.append(number_of_agents_to_unplace)
                 occupants_log_line.append(0)
             occupants_log.add_row(occupants_log_line)
+        #print '\n+++++++++++++++++++++++++++\n'
         return occupants_log
 
     def unplace_home_based_jobs(self, building_id):
@@ -288,7 +356,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -336,7 +404,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -383,7 +451,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -428,7 +496,10 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        #jesse testing
+        print '\n\nBEGIN TEST 03\n\n'
+        #end jesse testing
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -437,6 +508,10 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         # check that there are 63 unplaced households
         households_dataset = self.dataset_pool.get_dataset('household')
         total_unplaced_households = where(households_dataset.get_attribute('building_id')<0)[0].size
+        #jesse testing
+        print '\n-----------------\ntotal_unplaced_households: %s' % total_unplaced_households
+        print '\n\nEND TEST 03\n\n'
+        #end jesse testing
         self.assertEqual(total_unplaced_households==63,True)
 
     def test_case04(self):
@@ -477,7 +552,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -524,7 +599,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -572,7 +647,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -619,7 +694,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that there are appropriate numbers of dus and sqft
         buildings_dataset = self.dataset_pool.get_dataset('building')
@@ -628,6 +703,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         # check that there are 6 placed jobs
         jobs_dataset = self.dataset_pool.get_dataset('job')
         unplaced_jobs = where(jobs_dataset.get_attribute('building_id')<1)[0].size
+        print '\nunplaced_jobs = %s\n' % unplaced_jobs
         self.assertEqual(unplaced_jobs==4, True)
         # check that there are 40 unplaced households
         households_dataset = self.dataset_pool.get_dataset('household')
@@ -672,7 +748,7 @@ class PlannedRedevelopmentResidualModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name='jobs', table_data=jobs_data)
         storage.write_table(table_name='building_sqft_per_job', table_data=building_sqft_per_job_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['mag_zone','urbansim_zone','urbansim','opus_core'])
-        model = PlannedRedevelopmentResidualModel(debuglevel=1)
+        model = PlannedRedevelopmentResidualModel(debuglevel=0)
         model.run(dataset_pool=self.dataset_pool)
         # check that total residential units == 60
         buildings_dataset = self.dataset_pool.get_dataset('building')

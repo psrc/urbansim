@@ -28,8 +28,8 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
-            <argument name="sampling_threshold" type="string">10000</argument>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"></argument>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"></argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
             <argument name="sync_dataset" type="string">person</argument>
