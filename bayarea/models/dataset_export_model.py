@@ -36,7 +36,7 @@ class DatasetExportModel(object):
                 self.out_storage = out_storage
         sim_state = SimulationState()
         if sim_state.get_current_time() == 0:
-           sim_state.set_current_time(9999) 
+            sim_state.set_current_time(9999) 
         if cache_directory is None:
             cache_directory = sim_state.get_cache_directory()
         
