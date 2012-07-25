@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import sys, gc
-
+from pkg_resources import parse_version
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
                              Numeric, Float, \
@@ -11,6 +11,11 @@ from sqlalchemy.types import Integer, SmallInteger, \
                              Boolean, DateTime
 from sqlalchemy import create_engine
 from opus_core.database_management.engine_handlers.engine_factory import DatabaseEngineManagerFactory
+
+import sqlalchemy
+sqlalchemy_supports_view = True
+if parse_version(sqlalchemy.__version__) < parse_version('0.7.0'):
+    sqlalchemy_supports_view = False
 
 class OpusDatabase(object):
     """Represents a connection a database, administered through sqlalchemy."""
@@ -48,13 +53,17 @@ class OpusDatabase(object):
         self.reflect(recurse = False)
     
     def reflect(self, clear = True, recurse = True):
+        kwargs = {}
+        if sqlalchemy_supports_view:
+            kwargs.update({"views": True})
+
         try:
             if clear:
                 self.metadata.clear()
             if self.protocol_manager.uses_schemas:
-                self.metadata.reflect(bind=self.engine, schema=self.database_name, views=True)
+                self.metadata.reflect(bind=self.engine, schema=self.database_name, **kwargs)
             else:
-                self.metadata.reflect(bind=self.engine, views=True)
+                self.metadata.reflect(bind=self.engine, **kwargs)
         except:            
             if recurse:
                 self.close()
