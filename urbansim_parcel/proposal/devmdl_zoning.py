@@ -93,8 +93,15 @@ class Zoning():
     my.zoning = d
     my.zoningfnames = dict(zip(fnames,range(len(fnames))))
 
+    s = "select id from scenario where name = %s" % scenario
+    print s
+    cursor.execute(s)
+    records = cursor.fetchall()
+    assert len(records) == 1
+    scenarioid = records[0]
+
     # then relate to parcels
-    s = "select * from zoning_for_parcels(%d,'%d-01-01 00:00:00')" % (scenario,year)
+    s = "select * from zoning_for_parcels(%d,'%d-01-01 00:00:00')" % (scenarioid,year)
     print s
     cursor.execute(s)
     records = cursor.fetchall()

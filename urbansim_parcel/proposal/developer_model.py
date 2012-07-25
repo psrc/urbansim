@@ -52,7 +52,7 @@ class DeveloperModel(Model):
 
   def __init__(my,scenario='Baseline'):
     my.scenario = scenario
-    assert scenario in scenario_d.keys()
+    #assert scenario in scenario_d.keys()
 
   def run(my, cache_dir=None, year=None):
     global parcel_set, z, node_set, submarket, esubmarket, isr
@@ -112,7 +112,7 @@ class DeveloperModel(Model):
     compute_devmdl_accvars(node_set) 
 
     current_year = SimulationState().get_current_time()
-    z = Zoning(scenario_d[my.scenario],current_year)
+    z = Zoning(my.scenario,current_year)
     isr = None
     if my.scenario in ['Studio','Transit Priority']: isr = ISR()
 
