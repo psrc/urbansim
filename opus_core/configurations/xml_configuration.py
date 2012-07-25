@@ -314,7 +314,7 @@ class XMLConfiguration(object):
         # all_vars is the list of variables from the expression library
         all_vars = []
         lib_node = self._find_node('general/expression_library')
-        for v in lib_node:
+        for v in lib_node.iterchildren(tag=Element):
             var_name = get_variable_name(v)
             var_def = v.text
             # If the variable is defined as an expression, make an alias.
