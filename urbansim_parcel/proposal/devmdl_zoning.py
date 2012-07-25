@@ -93,7 +93,7 @@ class Zoning():
     my.zoning = d
     my.zoningfnames = dict(zip(fnames,range(len(fnames))))
 
-    s = "select id from scenario where name = %s" % scenario
+    s = "select id from scenario where name = '%s'" % scenario
     print s
     cursor.execute(s)
     records = cursor.fetchall()
