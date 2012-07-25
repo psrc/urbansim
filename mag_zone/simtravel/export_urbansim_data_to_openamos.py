@@ -27,7 +27,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         """
         
         tm_config = config['travel_model_configuration']
-        database_server_config = tm_config.get("database_server_configuration", 'postgres_test_database_server')
+        database_server_config = tm_config.get("database_server_configuration", 'simtravel_database_server')
         database_name = tm_config.get("database_name", 'mag_zone_baseyear')
         
         cache_directory = config['cache_directory']
@@ -43,7 +43,6 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                                                          database_configuration = database_server_config
                                                          )
                                                          )
-
         if not db_server.has_database(database_name): 
             print "Db doesn't exist creating one"
             db_server.create_database(database_name)
@@ -52,7 +51,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                                                             
         logger.start_block('Compute and export data to openAMOS...')
         hh = dataset_pool.get_dataset('household')
-        syn_hh = dataset_pool.get_dataset('synthetic_household')
+        hh_recs = dataset_pool.get_dataset('households_recs')
+        #syn_hh = dataset_pool.get_dataset('synthetic_household')
 
         hh_variables = ['houseid=household.household_id',
                         'one=household.disaggregate(synthetic_household.one)',
@@ -69,23 +69,23 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'household.incge100k',
                         'household.drvrcnt',
                         'vdratio=household.disaggregate(synthetic_household.vdratio)',
-                        'htaz = household.disaggregate(building.zone_id)'                        
+                        'htaz = household.disaggregate(building.zone_id)',
+                        "withchild = (household.aggregate(person.age<18)>0).astype('i')",
+                        "hinc=household.income",
                         ]
-        hh.compute_variables(hh_variables)
-        hh_variables_short_name = unique([VariableName(v).get_alias() for v in hh_variables]).tolist()
-        for attr in hh_variables_short_name:
-            hh.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
 
-        print 'persons variable names', hh_variables_short_name
+        self.prepare_attributes(hh, hh_variables)
+        attrs_to_export = hh_recs.get_known_attribute_names()
+        print 'households variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-
-
-        hh.write_dataset(attributes=hh_variables_short_name,
+        hh.write_dataset(attributes=attrs_to_export,
                          out_storage=output_storage)
         dataset_pool._remove_dataset(hh.dataset_name)
+
         persons = dataset_pool.get_dataset('person')
-        syn_persons = dataset_pool.get_dataset('synthetic_person')
+        persons_recs = dataset_pool.get_dataset('persons_recs')
+        #syn_persons = dataset_pool.get_dataset('synthetic_person')
         persons_variables = ['person.personid',
                              'one=person.disaggregate(synthetic_person.one)',
                              'person.wrkr',
@@ -103,62 +103,67 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'person.schtaz'
                              ]
         
-        persons.compute_variables(persons_variables)
-        persons_variables_short_name = unique([VariableName(v).get_alias() for v in persons_variables]).tolist()
-        for attr in persons_variables_short_name:
-            persons.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
-
-        print 'persons variable names', persons_variables_short_name
+        self.prepare_attributes(persons, persons_variables)
+        attrs_to_export = persons_recs.get_known_attribute_names()
+        print 'persons variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-
-                        
-        persons.write_dataset(attributes=persons_variables_short_name,
+        persons.write_dataset(attributes=attrs_to_export,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
 
-        locations = dataset_pool.get_dataset('zone')
-        locations_variables = [
-                             'retail_employment=zone.aggregate(mag_zone.job.sector_group=="retail")',
-                             'public_employment=zone.aggregate(mag_zone.job.sector_group=="public")',
-                             'office_employment=zone.aggregate(mag_zone.job.sector_group=="office")',
-                             'industrial_employment=zone.aggregate(mag_zone.job.sector_group=="individual")',
-                             'other_employment=zone.aggregate(mag_zone.job.sector_group=="other")',
+        zones = dataset_pool.get_dataset('zone')
+        zones_variables = [
+                             "retail_employment=zone.aggregate(mag_zone.job.sector_group=='retail')",
+                             "public_employment=zone.aggregate(mag_zone.job.sector_group=='public')",
+                             "office_employment=zone.aggregate(mag_zone.job.sector_group=='office')",
+                             "industrial_employment=zone.aggregate(mag_zone.job.sector_group=='individual')",
+                             "other_employment=zone.aggregate(mag_zone.job.sector_group=='other')",
 
-                             'retail_employment_density=zone.aggregate(mag_zone.job.sector_group=="retail")/zone.acres',
-                             'public_employment_density=zone.aggregate(mag_zone.job.sector_group=="public")/zone.acres',
-                             'office_employment_density=zone.aggregate(mag_zone.job.sector_group=="office")/zone.acres',
-                             'industrial_employment_density=zone.aggregate(mag_zone.job.sector_group=="individual")/zone.acres',
-                             'other_employment=zone.aggregate(mag_zone.job.sector_group=="other")/zone.acres',
+                             "retail_employment_density=zone.aggregate(mag_zone.job.sector_group=='retail')/zone.acres",
+                             "public_employment_density=zone.aggregate(mag_zone.job.sector_group=='public')/zone.acres",
+                             "office_employment_density=zone.aggregate(mag_zone.job.sector_group=='office')/zone.acres",
+                             "industrial_employment_density=zone.aggregate(mag_zone.job.sector_group=='individual')/zone.acres",
+                             "other_employment_density=zone.aggregate(mag_zone.job.sector_group=='other')/zone.acres",
 
-                             'total_area=zone.acres',
+                             "total_area=zone.acres",
 
-                             'lowest_income=zone.aggregate(household.income < scoreatpercentile(household.income, 20))',
-                             'low_income=zone.aggregate(household.income < scoreatpercentile(household.income, 40))',
-                             'high_income=zone.aggregate(household.income > scoreatpercentile(household.income, 80))',
+                             "lowest_income=zone.aggregate(household.income < scoreatpercentile(household.income, 20))",
+                             "low_income=zone.aggregate(household.income < scoreatpercentile(household.income, 40))",
+                             "high_income=zone.aggregate(household.income > scoreatpercentile(household.income, 80))",
 
-                             'institutional_population=zone.disaggregate(locations.institutional_population)',
-                             'groupquarter_households=zone.disaggregate(locations.groupquarter_households)',
+                             #"institutional_population=zone.disaggregate(locations.institutional_population)",
+                             #"groupquarter_households=zone.disaggregate(locations.groupquarter_households)",
 
-                             'residential_households=zone.number_of_agents(household)',
+                             "residential_households=zone.number_of_agents(household)",
 
-                             'locationid=zone.zone_id - 100',
+                             "locationid=zone.zone_id - 100",
                              ]
         
-        locations.compute_variables(locations_variables)
-        locations_variables_short_name = unique([VariableName(v).get_alias() for v in locations_variables]).tolist()
-        for attr in locations_variables_short_name:
-            locations.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
-
-        print 'locations variable names', locations_variables_short_name
+        locations = dataset_pool['locations']
+        self.prepare_attributes(zones, zones_variables, dataset2=locations)
+        attrs_to_export = locations.get_known_attribute_names()
+        print 'locations variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-
-        locations.write_dataset(attributes=locations_variables_short_name,
-                              out_storage=output_storage)
+        locations.write_dataset(attributes=attrs_to_export,
+                                out_storage=output_storage)
         dataset_pool._remove_dataset(locations.dataset_name)
 
         logger.end_block()
+
+    def prepare_attributes(self, dataset1, variables_to_compute, dataset2=None):
+        dataset1.compute_variables(variables_to_compute)
+        variables_short_name = unique([VariableName(v).get_alias() for v in variables_to_compute]).tolist()
+        if dataset2 is None:
+            # dataset1 is the one to be exported
+            for attr in variables_short_name:
+                dataset1.attribute_boxes[attr].set_type(AttributeType.PRIMARY)
+        else:
+            # dataset2 is the one to be exported
+            dataset2_index = dataset2.get_id_index(dataset1.get_id_attribute())
+            for attr in variables_short_name:
+                dataset2.modify_attribute(attr, dataset1[attr], dataset2_index)
         
 if __name__ == "__main__":
 
