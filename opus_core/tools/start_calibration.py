@@ -117,7 +117,7 @@ class Calibration(object):
             self.calib_datasets[dataset_name] = [dataset, calib_attr, index] 
 
     @log_block("Start Calibration")
-    def run(self, optimizer='lbfgsb', results_pickle_prefix="calib"):
+    def run(self, optimizer='lbfgsb', results_pickle_prefix="calib", optimizer_kwargs={}):
         ''' Call specifized optimizer to calibrate
         
         Arguments:
@@ -148,25 +148,66 @@ class Calibration(object):
         print OKBLUE+"\noptimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)+ENDC
         print OKBLUE+"-------------------------------------------------------\n"+ENDC
         if optimizer=='bfgs':
-            results = fmin_bfgs(self.target_func, copy(init_v), fprime=None, epsilon=1e-08, 
-                                maxiter=None, full_output=1, disp=1, retall=0, callback=None)
+            default_kwargs = {'fprime': None, 
+                      'epsilon': 1e-08,
+                      'maxiter': None, 
+                      'full_output': 1, 
+                      'disp': 1, 
+                      'retall': 0, 
+                      'callback': None
+                     }
+            optimizer_func = fmin_bfgs
         elif optimizer=='lbfgsb':
-            results = fmin_l_bfgs_b(self.target_func, copy(init_v), fprime=None, approx_grad=True, 
-                                    epsilon=1e-1, bounds=None, factr=1e12, iprint=1)
+            default_kwargs = {'fprime': None, 
+                              'approx_grad': True,
+                              'bounds': None,
+                              'factr': 1e12,
+                              'iprint': 1
+                             }
+            
+            optimizer_func = fmin_l_bfgs_b
         elif optimizer=='anneal':
-            results = anneal(self.target_func, copy(init_v), schedule='fast', full_output=1, 
-                             T0=None, Tf=1e-12, maxeval=None, maxaccept=None, maxiter=400, 
-                             boltzmann=1.0, learn_rate=0.5, feps=1e-06, quench=1.0, m=1.0, 
-                             n=1.0, lower=-1, upper=1, dwell=50, disp=True)
-                             
+            default_kwargs = {'schedule': 'fast', 
+                              'full_output': 1, 
+                              'T0': None, 
+                              'Tf': 1e-12, 
+                              'maxeval': None, 
+                              'maxaccept': None, 
+                              'maxiter': 400, 
+                              'boltzmann': 1.0, 
+                              'learn_rate': 0.5, 
+                              'feps': 1e-06, 
+                              'quench': 1.0, 
+                              'm': 1.0, 'n': 1.0, 
+                              'lower': -1, 'upper': 1, 
+                              'dwell': 50, 'disp': True
+                             }
+
+            optimizer_func = anneal
         elif optimizer=='panneal':
-            results = panneal(self.target_func, copy(init_v), schedule='fast', full_output=1, 
-                             T0=None, Tf=1e-12, maxeval=None, maxaccept=None, maxiter=400, 
-                             boltzmann=1.0, learn_rate=0.5, feps=1e-08, quench=1.0, m=1.0, 
-                             n=1.0, lower=-1, upper=1, dwell=50, disp=True,
-                             cores=24, interv=20)
+            default_kwargs = {'schedule': 'fast', 
+                              'full_output': 1, 
+                              'T0': None, 
+                              'Tf': 1e-12, 
+                              'maxeval': None, 
+                              'maxaccept': None, 
+                              'maxiter': 400, 
+                              'boltzmann': 1.0, 
+                              'learn_rate': 0.5, 
+                              'feps': 1e-06, 
+                              'quench': 1.0, 
+                              'm': 1.0, 'n': 1.0, 
+                              'lower': -1, 'upper': 1, 
+                              'dwell': 50, 'disp': True,
+                              'cores': 24, 'interv': 20
+                             }
+
+            optimizer_func = panneal
         else:
             raise ValueError, "Unrecognized optimizer {}".format(optimizer)
+
+        default_kwargs.update(optimizer_kwargs)
+        results = optimizer_func(self.target_func, copy(init_v), **default_kwargs)
 
         duration = time.time() - t0
         if results_pickle_prefix is not None:
@@ -214,7 +255,6 @@ class Calibration(object):
         current_year = self.simulation_state.get_current_time()
         self.simulation_state.set_current_time(self.base_year)
         self.simulation_state.set_cache_directory(cache_directory)
-
         for dataset_name, calib in self.calib_datasets.iteritems():
             dataset, calib_attr, index = calib
             if type(calib_attr) == str:
@@ -390,5 +430,6 @@ if __name__ == "__main__":
                         skip_cache_cleanup= calib_config['skip_cache_cleanup'],
                        )
    
-    calib.run(optimizer=calib_config['optimization'],results_pickle_prefix='calib')
+    calib.run(optimizer=calib_config['optimizer'], results_pickle_prefix='calib', 
+              optimizer_kwargs=calib_config.get('optimizer_kwargs', {}))
     
