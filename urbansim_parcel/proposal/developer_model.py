@@ -54,6 +54,11 @@ class DeveloperModel(Model):
     my.scenario = scenario
     #assert scenario in scenario_d.keys()
 
+  def post_run(self):
+    dataset_pool = SessionConfiguration().get_dataset_pool()
+    dataset_pool._remove_dataset('price_shifter')
+    dataset_pool._remove_dataset('cost_shifter')
+
   def run(my, cache_dir=None, year=None):
     global parcel_set, z, node_set, submarket, esubmarket, isr
 
@@ -310,6 +315,8 @@ class DeveloperModel(Model):
     print "Did not find zoning for parcel %d times" % NOZONINGCNT
     print "Did not find building types for parcel %d times" % NOBUILDTYPES
     print "DONE"
+
+    my.post_run() #remove price_shifter & cost_shifter to avoid them being cached
 
     if HOTSHOT:
         prof.stop()
