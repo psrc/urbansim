@@ -124,14 +124,12 @@ input=args[1]
 output=args[2]
 shp=args[3]
 
-
-## testing on my laptop
-input="/Users/yujiangmou/Desktop/input"
-output="/Users/yujiangmou/Desktop/output"
-shp="/Users/yujiangmou/Desktop/input"
-
+## create output dir if it does not exist
+if (!file.exists(output)){
+    dir.create(output)
+}
 ## read in the shapefile data
-zones=readOGR(shp,"zones_paris")## read in the shapefile data 
+zones=readOGR(shp,"zones")## read in the shapefile data 
 
 ## invoke the main function, zone_growth
 filist=list.files(path=input,pattern="zone.tab")
