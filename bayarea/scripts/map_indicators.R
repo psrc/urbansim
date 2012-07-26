@@ -1,4 +1,4 @@
-######################## Script  Descriptions ########################
+#################  Script  Descriptions ###########
 
 ### This scirpt can generate zone level indicators for urbansim model outputs, in form of maps and data histograms; 
 
@@ -19,6 +19,7 @@ library(RColorBrewer)
 library(classInt)
 require("rgdal")
 
+
 ####################################################
 ### Self coded function that generate zone indicators
 zone_growth=function(Tabfilename,input,output,zones)
@@ -26,6 +27,7 @@ zone_growth=function(Tabfilename,input,output,zones)
 
 ## read in the urbansim data and calculate growth rate
 	setwd(input)
+	#Tabfilename=filist[13]
 	urbansim_raw=read.table(Tabfilename,header=T,sep="\t")
 	n=length(urbansim_raw)
 	index=is.na(urbansim_raw[n])|urbansim_raw[n]==Inf
@@ -48,6 +50,21 @@ zone_growth=function(Tabfilename,input,output,zones)
 	min_g=min(zones_temp@data$growth)
 	max_g=max(zones_temp@data$growth)
 	
+	## print the file name and do not return maps when the growth values are all 0
+	if (length(zones_temp@data$growth[zones_temp@data$growth!=0])<=10) 
+	{
+		print(paste(Tabfilename," cannot be mapped because there are less than 10 growth values other than 0",sep=""))
+		return()
+	}
+	if (min_g==max_g) 
+	{
+		print(paste(Tabfilename," cannot be mapped because all the growth values are all constants",sep=""))
+		return()
+	}
+
+
+
+
 	if (min_g==0) 
 	{
 		g=seq(0,n-2,by=1)
@@ -67,7 +84,7 @@ zone_growth=function(Tabfilename,input,output,zones)
 		interval=(max_g-min_g)/(n-2)
 		breaks=round(interval*g)
 	}	
-	if (breaks[n-1]<max_g){breaks[n-1]=round(max_g+1)}
+	if (breaks[n-1]<=max_g){breaks[n-1]=round(max_g+1)}
 	brks=classIntervals(zones_temp@data$growth,style="fixed", fixedBreaks=breaks)
 	brks=brks$brks
 	colors=brewer.pal(length(brks)-1,"Reds")
@@ -97,7 +114,10 @@ zone_growth=function(Tabfilename,input,output,zones)
 	dev.off()	
 }
 
-####################################################
+#################################################################
+
+
+
 ### command line parameters
 args <- commandArgs(trailingOnly=TRUE)
 input=args[1]
@@ -106,9 +126,9 @@ shp=args[3]
 
 
 ## testing on my laptop
-#input="/Users/yujiangmou/Desktop/input"
-#output="/Users/yujiangmou/Desktop/output"
-#shp="/Users/yujiangmou/Desktop/input"
+input="/Users/yujiangmou/Desktop/input"
+output="/Users/yujiangmou/Desktop/output"
+shp="/Users/yujiangmou/Desktop/input"
 
 ## read in the shapefile data
 zones=readOGR(shp,"zones_paris")## read in the shapefile data 
