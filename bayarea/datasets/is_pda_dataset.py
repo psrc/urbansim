@@ -7,12 +7,12 @@ from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class IsPdaDataset(UrbansimDataset):
-    id_name_default = "is_pda"
+    id_name_default = "is_pda_id"
     in_table_name_default = "is_pda"
     out_table_name_default = "is_pda"
     dataset_name = "is_pda"
 
-    def __init__(self, id_values=array([1,2],dtype='i4'), **kwargs):
+    def __init__(self, id_values=array([0,1],dtype='i4'), **kwargs):
         storage = StorageFactory().get_storage('dict_storage')
 
         storage.write_table(table_name=self.in_table_name_default,
