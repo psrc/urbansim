@@ -7,4 +7,6 @@ aliases = [
     "neighborhood_type = (parcel.neighborhood_type + 1)*(parcel.neighborhood_type>-1)+ 6*(parcel.neighborhood_type<0)",
     "within_half_mile_transit = parcel.disaggregate(bayarea.node.transit_within_800_meters)",
     "parcel_acre = parcel.shape_area * 0.000247105381",
+    "is_pda = (parcel.pda_id > 0).astype('i')" ,
+    "is_tpp = (tpp_id > 0).astype('i') ",
            ]
