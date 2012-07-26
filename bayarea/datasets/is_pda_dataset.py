@@ -12,7 +12,7 @@ class IsPdaDataset(UrbansimDataset):
     out_table_name_default = "is_pda"
     dataset_name = "is_pda"
 
-    def __init__(self, id_values=array([1,2],dtype='i4'), **kwargs):
+    def __init__(self, id_values=array([2,1],dtype='i4'), **kwargs):
         storage = StorageFactory().get_storage('dict_storage')
 
         storage.write_table(table_name=self.in_table_name_default,
