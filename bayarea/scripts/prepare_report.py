@@ -106,12 +106,21 @@ cached data: %s
                                    years[0], years[-1])
     print "Summarizing county indicators: " + cmd
     if os.system(cmd) != 0:
-        print "ERROR: Failed to generate county indicators"
-        sys.exit(1)
+        print "WARNING: Failed to generate county indicators"
 
     shutil.copytree(os.path.join(cache_directory, "indicators"),
                     os.path.join(output_dir, "indicators"),
                     ignore=shutil.ignore_patterns("*_stored_data*", "*.log"))
+
+    # prepare zonal indicator maps
+    map_script = os.path.join(my_location, "map_indicators.R")
+    shp_path = os.path.join(os.getenv("OPUS_HOME"), "data", "bay_area_parcel", "shapefiles")
+    cmd = "Rscript %s %s %s %s" % (map_script,
+                                   os.path.join(cache_directory, "indicators"),
+                                   os.path.join(output_dir, "maps"),
+                                   shp_path)
+    if os.system(cmd) != 0:
+        print "WARNING: Failed to generate county indicators"
 
 if __name__ == '__main__':
     try:
