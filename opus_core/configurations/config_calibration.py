@@ -38,3 +38,15 @@ calibration_bayarea_hlcm = {
     'skip_cache_cleanup': False,
     'optimizer' : 'bfgs',
 }
+
+calibration_bayarea_elcm_priceeq = {
+    'xml_config' : '/workspace/opus/project_configs/bay_area_parcel_unit_price_priceeq.xml',
+    'scenario' : 'elcm_calibration_w_priceeq',
+    'calib_datasets' : {'business_location_choice_model_coefficients': 'estimate'},
+    'subset' : None,
+    'subset_patterns' : {'business_location_choice_model_coefficients': ['coefficient_name', 'ln_avg_nonres_rent']},
+    'target_expression' : "empcalib_group.aggregate(establishment.employees)",
+    'target_file' : '/workspace/opus/data/bay_area_parcel/calibration_targets/county_employment_2011.csv',
+    'skip_cache_cleanup': False,
+    'optimizer' : 'bfgs'
+}
