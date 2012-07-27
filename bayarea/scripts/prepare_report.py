@@ -92,7 +92,8 @@ cached data: %s
     # prepare the indicators
     shutil.rmtree(os.path.join(output_dir, "indicators"), True)
     for indicator_batch in ["regional_indicators", "county_indicators",
-                            "diagnostic_indicators", "zone_data"]:
+                            "diagnostic_indicators", "zone_data",
+                            "superdistrict_indicators"]:
         urbansim.tools.make_indicators.run(options.xml_configuration,
                                            indicator_batch,
                                            None,
