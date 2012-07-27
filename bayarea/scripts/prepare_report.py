@@ -3,10 +3,11 @@ from optparse import OptionParser
 import sqlite3
 import sys, os
 import urbansim.tools.make_indicators
-import shutil
+import shutil, glob
 from lxml import etree
 import textwrap
 import traceback
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
 def main():
     parser = OptionParser()
@@ -37,6 +38,8 @@ def main():
             print "ERROR: cache directory and scenario must both be specified"
             sys.exit(1)
         try:
+            if cache_directory[-1] == os.sep:
+                cache_directory = cache_directory[0:-1]
             run_id = cache_directory.split(os.sep)[-1].split('.')[0].split('_')[1]
         except:
             print "Failed to parse run ID from cache directory name"
@@ -122,6 +125,18 @@ cached data: %s
                                    shp_path)
     if os.system(cmd) != 0:
         print "WARNING: Failed to generate county indicators"
+
+    # add the travel model EMFAC output to the web report
+    config = XMLConfiguration(options.xml_configuration).get_run_configuration(scenario)
+    travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
+    if travel_model and travel_model == "true":
+        print "Copying over travel model output"
+        tm_config = config['travel_model_configuration']
+        tm_base_dir = tm_config['travel_model_base_directory']
+        tm_dir = os.path.join(tm_base_dir, "runs", cache_directory.split(os.sep)[-1])
+        for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.xls')):
+            shutil.copy(f, output_dir)
+        sys.exit(0)
 
 if __name__ == '__main__':
     try:
