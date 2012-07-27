@@ -55,23 +55,30 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         #syn_hh = dataset_pool.get_dataset('synthetic_household')
 
         hh_variables = ['houseid=household.household_id',
-                        'one=household.disaggregate(synthetic_household.one)',
-                        'household.homeown',
-                        'household.urb',
-                        'household.nwrkcnt',
-                        'numadlts=household.numadlt',
-                        'lifcycge2=household.disaggregate(synthetic_household.lifcycge2)',
-                        'numwrkr=household.workers',
-                        'household.rur',
-                        'household.inclt35k',
-                        'household.incge35k',
-                        'household.incge75k',
-                        'household.incge100k',
-                        'household.drvrcnt',
-                        'vdratio=household.disaggregate(synthetic_household.vdratio)',
+                        "hhsize=household.number_of_agents(person)",
+                        "one=(household.household_id>0).astype('i')",
+                        "inclt35k=(household.income<35000).astype('i')",
+                        "incge35k=(household.income>=35000).astype('i')",
+                        "incge50k=(household.income>=50000).astype('i')",
+                        "incge75k=(household.income>=75000).astype('i')",
+                        "incge100k=(household.income>=100000).astype('i')",
+                        "inc35t50=((household.income>=35000) & (household.income<50000)).astype('i')",
+                        "inc50t75=((household.income>=50000) & (household.income<75000)).astype('i')",
+                        "inc75t100=((household.income>=75000) & (household.income<100000)).astype('i')",
                         'htaz = household.disaggregate(building.zone_id)',
                         "withchild = (household.aggregate(person.age<18)>0).astype('i')",
+                        "noc = household.aggregate(person.age<18)",
+                        "numadlt = household.aggregate(person.age>=18)",
                         "hinc=household.income",
+                        "wif=household.workers",
+                        #"wif=household.aggregate(mag_zone.person.is_employed)",
+                        'numwrkr=household.workers',
+                        #'numwrkr=household.aggregate(mag_zone.person.is_employed)',
+                        'nwrkcnt=household.number_of_agents(person) - household.workers',
+                        #'nwrkcnt=household.number_of_agents(person) - household.aggregate(mag_zone.person.is_employed)',
+
+                        'yrbuilt=household.disaggregate(building.year_built)',
+                        'value=household.disaggregate(building.average_value_per_unit)',
                         ]
 
         self.prepare_attributes(hh, hh_variables)
@@ -86,21 +93,47 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons = dataset_pool.get_dataset('person')
         persons_recs = dataset_pool.get_dataset('persons_recs')
         #syn_persons = dataset_pool.get_dataset('synthetic_person')
-        persons_variables = ['person.personid',
-                             'one=person.disaggregate(synthetic_person.one)',
-                             'person.wrkr',
-                             #'tmtowrk=mag_zone.person.travel_time_from_home_to_work',
+        persons_variables = ['personid=person.member_id',
+                             'personuniqueid=person.personid',
+                             'houseid=person.household_id',
+                             "one=(person.person_id>0).astype('i')",
+                             'trvtime=mag_zone.person.travel_time_from_home_to_work',
+                             'timetowk=mag_zone.person.travel_time_from_home_to_work',
                              #'mag_zone.person.tmtowrk',
-                             'tmtowrk=person.disaggregate(synthetic_person.tmtowrk)',
-                             'person.ag11t14',
-                             'person.agge15',
+                             #'tmtowrk=person.disaggregate(synthetic_person.tmtowrk)',
+                             "ag5t10=((person.age>=5) & (person.age<=10)).astype('i')",
+                             "ag11t14=((person.age>=11) & (person.age<=14)).astype('i')",
+                             "ag15t17=((person.age>=15) & (person.age<=17)).astype('i')",
+                             "ag18t24=((person.age>=18) & (person.age<=24)).astype('i')",
+                             "ag25t34=((person.age>=25) & (person.age<=34)).astype('i')",
+                             "ag35t44=((person.age>=35) & (person.age<=44)).astype('i')",
+                             "ag45t54=((person.age>=45) & (person.age<=54)).astype('i')",
+                             "ag55t64=((person.age>=55) & (person.age<=64)).astype('i')",
+                             "agge65=(person.age>=65).astype('i')",
+
+                             "ag12t17=((person.age>=12) & (person.age<=17)).astype('i')",
+                             "ag5t14=((person.age>=5) & (person.age<=14)).astype('i')",
+                             "agge15=(person.age>=15).astype('i')",
+
+                             'person.wrkr',
                              'person.hispanic',
                              'person.fulltim',
                              'person.parttim',
-                             'selfemp=person.disaggregate(synthetic_person.selfemp)',
-                             'wkhome=person.disaggregate(synthetic_person.wkhome)',
+                             'person.schtaz',
+
                              'mag_zone.person.wtaz',
-                             'person.schtaz'
+                             'marstat = person.marriage_status',
+
+                             'enroll = person.student_status',
+                             'grade = person.student_status & person.education',
+                             'educ = person.education',
+                             'male = person.sex==1',
+                             'female = person.sex==2',
+
+                             "presch = (person.age <= 5).astype('i')",
+                             "coled = (person.education >= 10).astype('i')",
+
+                             'htaz = person.disaggregate(building.zone_id, intermediates=[household])',
                              ]
         
         self.prepare_attributes(persons, persons_variables)
