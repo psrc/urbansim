@@ -1,16 +1,19 @@
 #!/usr/bin/r
 
-#script goes to folder with indicator-output county-level files (must be in one file per variable)
+#script goes to folder with indicator-output geo-level files (must be in one file per variable)
 #In steps, this is the sequence:
-#1) Gets all tab files starting with county in folder, matching passed years (e.g. county_table-3_2010-2035_...)
+#1) Gets all tab files starting with geoname in folder, matching passed years (e.g. county_table-3_2010-2035_...)
 #2) Loops through data files
 #3) --keeps only 9 relevant counties
 #4) --transforms dataframe so years are rows, counties columns
-#5) --plots chart, writes to global pdf file
+#5) --plots charts, writes to global pdf file
 
-##USAGE: Rscript summarize_county_indicators.R \
-##            /var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_66.2012_07_07_15_50/indicators \ 
-##            2010 2035
+##USAGE: Rscript /home/aksel/workspace/src/bayarea/scripts/summarize_county_indicators_map_general.R \
+##            /home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators  \
+##            2012 2020  \
+##            /home/aksel/Documents/Data/GIS superdistricts.shp \
+##            No_Project  \
+##            superdistrict 
 
 args <- commandArgs(TRUE)
 options(warn=-1) 
@@ -30,6 +33,7 @@ gpclibPermit()
 library(RColorBrewer)
 library(directlabels)
 
+##adds little stamp with date/run information
 annot <- function(){
   annotate("text", x = Inf, y = -Inf, label = "DRAFT",
            hjust=0, vjust=-8, col="darkgrey", cex=20,
@@ -44,6 +48,7 @@ indx <- function(dat, baseRow = 1)
   adply(dat, 1, function(x) x / divisors*100)
 }
 
+##prep viewport function to plot ggplot objects
 viewPortFunc <- function(printObject=printObject,newPage=T){
   if(newPage==T){
     grid.newpage()
@@ -54,6 +59,7 @@ viewPortFunc <- function(printObject=printObject,newPage=T){
   #print(sprintf("Outputting Chart %s to PDF",title))
 }
 
+##enable more colors than colorbrewer can handle
 manyColors <- function(n) {
   black <- "#000000"
   if (n <= 9) {
@@ -64,6 +70,7 @@ manyColors <- function(n) {
   }
 }
 
+##map call--WATCH OUT that id arguments match actual shapefile id
 mapStuff <- function(data,shapefile){
   simulation.m <- data
   geography_sp1 <- shapefile
@@ -96,30 +103,6 @@ mapStuff <- function(data,shapefile){
   return(g5)
 }  
 
-#wrap cmd-line arguments to assign to proper names
-#cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
-#{
-#  pth <<- a
-#  yrStart <<- as.integer(b)
-#  yrEnd <<- as.integer(c)
-#  return(1)
-#}
-#cmdArgs(a=args[1],b=args[2],c=args[3])
-
-## grab arguments
-scenario<-args[6]
-geo<-args[7]
-pth <-args[1]
-yrStart <- as.integer(args[2])
-yrEnd <- as.integer(args[3])
-setwd(pth)
-shp_file <- args[5]
-shp_path <- args[4]
-qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
-lyr <- strsplit(shp_file,"\\.")[[1]][1]
-geography_sp1 <- readShapeSpatial(qual_shp_file)
-correspondence<- as.data.frame((geography_sp1@data[,c(2,ncol(geography_sp1@data))]))  #use for column names of matrix later
-
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
 returnMatrix <- function(inputData=inputData,tableName=tableName) {
   if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
@@ -147,6 +130,23 @@ TitleCase <- function(string="test string")
   fString <- sprintf("%s%s",first,rest)
   return(fString)
 }
+
+###############################################################################
+## Start main processsing
+
+##grab arguments
+scenario<-args[6]
+geo<-args[7]
+pth <-args[1]
+yrStart <- as.integer(args[2])
+yrEnd <- as.integer(args[3])
+setwd(pth)
+shp_file <- args[5]
+shp_path <- args[4]
+qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
+lyr <- strsplit(shp_file,"\\.")[[1]][1]
+geography_sp1 <- readShapeSpatial(qual_shp_file)
+correspondence<- as.data.frame((geography_sp1@data[,c(2,ncol(geography_sp1@data))]))  #use for column names of matrix later
 
 ## parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]
@@ -184,7 +184,11 @@ for(i in 1:length(dat))
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   if(geo=="county"){
     simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]  
-  }
+    ## convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
+    #geogr_name <- c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
+    #geogr_name <-  c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
+    #simulation[,1] <-factor(simulation[,1], labels=geogr_name)
+    }
   else if(geo=="superdistrict")  {
     ##posstible subsetting
     #simulation <- simulation[simulation[,1] %in% seq(1:25),  ] 
@@ -202,11 +206,6 @@ for(i in 1:length(dat))
   simulation.m[is.na(simulation.m)] <- 0
   #simulation.m[simulation.m[n]==Inf] <- 0
   names(simulation.m)=c("geography_id","growth")
-  
-  ## convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
-  #geogr_name <- c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
-  #geogr_name <-  c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
-  #simulation[,1] <-factor(simulation[,1], labels=geogr_name)
   
   ## rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
   regexp <- "([[:digit:]]{4})"  
@@ -440,3 +439,14 @@ sprintf("File is ready: %s", fileNameOut)
 #          "darkturquoise","green1","yellow4","yellow3",
 #          "darkorange4","brown")
 # pie(rep(1,25), col=c25)
+
+
+#wrap cmd-line arguments to assign to proper names
+#cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
+#{
+#  pth <<- a
+#  yrStart <<- as.integer(b)
+#  yrEnd <<- as.integer(c)
+#  return(1)
+#}
+#cmdArgs(a=args[1],b=args[2],c=args[3])
