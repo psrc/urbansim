@@ -8,7 +8,7 @@
 #4) --transforms dataframe so years are rows, counties columns
 #5) --plots charts, writes to global pdf file
 
-##USAGE: Rscript /home/aksel/workspace/src/bayarea/scripts/summarize_county_indicators_map_general.R \
+##USAGE: Rscript /home/aksel/workspace/src/bayarea/scripts/summarize_county_indicators_map_general.R 
 ##            /home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators  \
 ##            2012 2020  \
 ##            /home/aksel/Documents/Data/GIS superdistricts.shp \
@@ -20,6 +20,7 @@ options(warn=-1)
 traceback()
 
 #options(error=utils::recover)
+library(OpenStreetMap)
 require("stringr")
 require("ggplot2")
 require("reshape")
@@ -29,9 +30,10 @@ library(maptools)
 library(RColorBrewer)
 library(classInt)
 require("rgdal")
-gpclibPermit() 
+#gpclibPermit() 
 library(RColorBrewer)
 library(directlabels)
+library(rgeos)
 
 ##adds little stamp with date/run information
 annot <- function(){
@@ -59,19 +61,22 @@ viewPortFunc <- function(printObject=printObject,newPage=T){
   #print(sprintf("Outputting Chart %s to PDF",title))
 }
 
-##enable more colors than colorbrewer can handle
+##enable more colors than colorbrewer can handle out of the box
 manyColors <- function(n) {
   black <- "#000000"
   if (n <= 9) {
-    c(black,brewer.pal(n-1, "Set2"))
+    out <- c(brewer.pal(n-1, "Set2"),black)
   } else {
-    c(black,hcl(h=seq(0,(n-2)/(n-1),
-                      length=n-1)*360,c=100,l=65,fixup=TRUE))
+    out <- c(hcl(h=seq(0,(n-2)/(n-1),length=n-1)*360,c=100,l=65,fixup=TRUE),black)
   }
+  return((out))
 }
-
+#manyColors <- function(n){
+#  colorRampPalette(brewer.pal(name = 'Set3',n=35))
+#}
 ##map call--WATCH OUT that id arguments match actual shapefile id
 mapStuff <- function(data,shapefile){
+  #mp <- openmap(c(69.2,9.303711), c(54,24.433594), zoom=6, type="osm")
   simulation.m <- data
   geography_sp1 <- shapefile
   
@@ -86,20 +91,25 @@ mapStuff <- function(data,shapefile){
   }
   geography_ftfy <- fortify(geography_sp1, region="gid")
   geography_sp_data <- merge(geography_ftfy,simulation.m,by.y="geography_id", by.x="id",all.x=TRUE)
-  
+  #print(names(geography_sp_data))
   ##prep ggplot object
-  g5 <-  ggplot(geography_sp_data, aes(map_id = id)) +
+  g5 <-  ggplot(geography_sp_data,aes(long, lat,map_id = id)) +
+    #fl <- cut(geography_sp_data$growth, 5)
     geom_map(aes(fill=growth, group=growth),map =geography_sp_data) + #aes(alpha = growth),
+    geom_text(data=coords, hjust=0.5, vjust=-0.5, aes(x=lat, y=long, label=geo)) +
     scale_x_continuous() + 
-    scale_fill_gradient(low = "white", high = "black" , guide = "colorbar") + 
+    #scale_colour_brewer("clarity") +
+    #guides(fill = guide_colorbar(colours = topo.colors(10)))+
+    scale_fill_gradient(low = "lightsteelblue1", high = "steelblue4" , guide = "colorbar") + 
+    #scale_colour_brewer(type="seq") +
     opts(title=paste("Pct. Growth, ",title))+
-    #guides(fill = guide_colorbar(colours = topo.colors(10))) +
+    #scale_colour_gradientn(colour = terrain.colors(10))
+    #scale_colour_manual(values = rev(brewer.pal(3,"BuPu")))+
     #opts(legend.position = "right")+
-    opts(panel.background = theme_rect(fill = "lightskyblue3"))+
-    #geom_polygon(aes(x = geography_ftfy$long, y = geography_ftfy$lat,group=id), 
-    #             fill = NA, colour = 'darkgrey', data = geography_sp_data) +
-    #               scale_fill_gradient(low = "antiquewhite", high = "darkred") #+
-    expand_limits(x = geography_ftfy$long, y = geography_ftfy$lat)
+    opts(panel.background = theme_rect(fill = "grey95"))+
+    expand_limits(x = geography_ftfy$long, y = geography_ftfy$lat) 
+  #text(centroids$long, centroids$lat, rownames(centroids), offset=0, cex=0.4)
+    
   return(g5)
 }  
 
@@ -147,6 +157,9 @@ qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
 geography_sp1 <- readShapeSpatial(qual_shp_file)
 correspondence<- as.data.frame((geography_sp1@data[,c(2,ncol(geography_sp1@data))]))  #use for column names of matrix later
+correspondence$dist_county <- do.call(paste, c(correspondence[c(2,1)], sep = ""))
+coords<-data.frame(coordinates(geography_sp1),correspondence[3]) #use for labeling map
+names(coords) <- c("lat","long","geo")
 
 ## parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]
@@ -180,7 +193,7 @@ pdf(fileNameOut,height=11, width=17,onefile=TRUE)
 for(i in 1:length(dat)) 
 {
   simulation <- as.data.frame(dat[i])  #technically redundant; could just use dat list object
-  #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators/superdistrict_table-3_2012-2020_superdistrict__superdistrict_urbanized_acres.tab",header=T,sep = "\t")  
+  #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators/superdistrict_table-3_2012-2020_superdistrict__superdistrict_households.tab",header=T,sep = "\t")  
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   if(geo=="county"){
     simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]  
@@ -305,57 +318,56 @@ for(i in 1:length(dat))
   #this projection is characterized by xyz...
   #"
   #g2 <- splitTextGrob(string)
-  theme_set(theme_grey()); 
+  #theme_set(theme_grey()); 
   #theme_set(theme_bw());
   
   ## plot object
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
+  #lty_possible<-letters[1:12] #linetypes are aliased with letters
+  #lty_choices <- lty_possible[sample(1:12, 34,replace=T)]
   
+  lty <- setNames(sample(1:12,35,T), levels(simulation_long_index$geography))
   g3 <- ggplot(data=simulation_long_index,
                aes(
-                 x=as.factor(year), 
+                 x=year, 
                  y=value, 
                  colour=geography,
-                 group=geography)) +
-                     geom_line(size=.65) + 
-                       scale_colour_manual(values=manyColors(cols)) +
-#                        aes(
-#                          linetype=geography), size = .65) +       # Thin line, varies by 
-#                            scale_fill_brewer(palette="Paired") +
-                            geom_point(size=2.5) +
-                              scale_colour_manual(values=manyColors(cols)) +
-#                                shape=geography) ,  size = 2.5)   +       
-#                                  scale_fill_brewer(palette="Paired")+
-                                 opts(title=title)+
-                                 xlab("Year") + 
-                                 ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
-                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
-#                                  
-  g3 <- direct.label(g3, list(last.bumpup, hjust = 0.7, vjust = 1))
-   #g3 <- qplot(data=simulation_long_index, aes(x=year,y=value, colour=geography)) + geom_line() 
+                 group=geography,
+                 linetype = geography))+
+                   geom_line(size=.65) + 
+                   scale_colour_manual(values=manyColors(35)) +
+                   geom_point(size=1.8) +
+                   opts(title=title)+
+                   xlab("Year") + 
+                   ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
+                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                   opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty)      +
+                   opts(legend.position="none")
+   g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1))
                      
    g4 <- ggplot(data=simulation_long_abs,
-               aes(
-                 x=as.factor(year), 
-                 y=value, 
-                 colour=geography,
-                 group=geography)) +
-                   geom_line(size=.65) + 
-                     scale_colour_manual(values=manyColors(cols)) +
-#                        aes(
-#                          linetype=geography), size = .65) +       # Thin line, varies by 
-#                            scale_fill_brewer(palette="Paired") +
-                                 geom_point(size=2.5) +
-                                 scale_colour_manual(values=manyColors(cols)) +
-#                                shape=geography) ,  size = 2.5)   +       
-#                                  scale_fill_brewer(palette="Paired")+
-                                 opts(title=title)+
-                                 xlab("Year") + 
-                                 ylab(paste("Value")) + 
-                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
-  g4 <- direct.label(g4, list(last.bumpup, hjust = 0.7, vjust = 1))
+                aes(
+                  x=year, 
+                  y=value, 
+                  colour=geography,
+                  group=geography,
+                  linetype = geography))+
+                    geom_line(size=.65) + 
+                    scale_colour_manual(values=manyColors(35)) +
+                    geom_point(size=1.5) +
+                    opts(title=title)+
+                    xlab("Year") + 
+                    ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
+                    opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                    opts(legend.key.width = unit(1, "cm")) +
+                    scale_linetype_manual(values = lty) +
+                    opts(legend.position="none")
+  #g4 <- uselegend.ggplot(g4)
+  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1))
   
+
   ##non-ggplot mapping
   #county_sp=readOGR(dsn=shp_path,layer=lyr)
   #county_sp@data=merge(county_sp@data,simulation.m,by.x="county_id",by.y="county_id",all.x=TRUE,sort=F)
@@ -369,7 +381,7 @@ for(i in 1:length(dat))
     g3 <- g3 + annot()  +opts(title=paste("TEST RUN ",title))
     g4 <- g4 + annot()  +opts(title=paste("TEST RUN ",title))
     g5 <- g5 + annot()  +opts(title=paste("TEST RUN ",title))
-    tblOut <- grid.arrange(g1,g2, nrow=2, main=textGrob(paste("\n","TEST RUN ", title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
+    tblOut <- grid.arrange(g1,g2, nrow=2, main=textGrob(paste("\n\n","TEST RUN ", title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
     grid.text(stamp,x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
     #tblOut2 <- grid.arrange(g2, ncol=1, main=textGrob(paste("\n","TEST RUN ", title),gp=gpar(fontsize=14,fontface="bold"))) #,sub=stamp)
   }
