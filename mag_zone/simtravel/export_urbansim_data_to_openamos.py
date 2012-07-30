@@ -81,6 +81,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'mag_zone.household.sparent',
                         'mag_zone.household.rur',
                         'mag_zone.household.urb',
+                        'zonetidi4 = household.disaggregate(building.zone_id) - 100',
                         ]
 
         self.prepare_attributes(hh, hh_variables)
