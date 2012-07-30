@@ -65,7 +65,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         "inc35t50=((household.income>=35000) & (household.income<50000)).astype('i')",
                         "inc50t75=((household.income>=50000) & (household.income<75000)).astype('i')",
                         "inc75t100=((household.income>=75000) & (household.income<100000)).astype('i')",
-                        'htaz = household.disaggregate(building.zone_id)',
+                        'htaz = household.disaggregate(building.zone_id) - 100',
                         "withchild = (household.aggregate(person.age<18)>0).astype('i')",
                         "noc = household.aggregate(person.age<18)",
                         "numadlt = household.aggregate(person.age>=18)",
@@ -77,8 +77,10 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'nwrkcnt=household.number_of_agents(person) - household.workers',
                         #'nwrkcnt=household.number_of_agents(person) - household.aggregate(mag_zone.person.is_employed)',
 
-                        'yrbuilt=household.disaggregate(building.year_built)',
-                        'value=household.disaggregate(building.average_value_per_unit)',
+                        'yrbuilt=mag_zone.household.yrbuilt',
+                        'mag_zone.household.sparent',
+                        'mag_zone.household.rur',
+                        'mag_zone.household.urb',
                         ]
 
         self.prepare_attributes(hh, hh_variables)
@@ -86,8 +88,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         print 'households variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-        hh.write_dataset(attributes=attrs_to_export,
-                         out_storage=output_storage)
+        #hh.write_dataset(attributes=attrs_to_export,
+        #                 out_storage=output_storage)
         dataset_pool._remove_dataset(hh.dataset_name)
 
         persons = dataset_pool.get_dataset('person')
@@ -119,9 +121,9 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'person.hispanic',
                              'person.fulltim',
                              'person.parttim',
-                             'person.schtaz',
+                             'person.schtaz - 100',
 
-                             'mag_zone.person.wtaz',
+                             'wtaz = mag_zone.person.wtaz - 100',
                              'marstat = person.marriage_status',
 
                              'enroll = person.student_status',
@@ -133,7 +135,10 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              "presch = (person.age <= 5).astype('i')",
                              "coled = (person.education >= 10).astype('i')",
 
-                             'htaz = person.disaggregate(building.zone_id, intermediates=[household])',
+                             'htaz = person.disaggregate(building.zone_id, intermediates=[household]) - 100',
+
+                             'race1 = person.race',
+                             'white = person.race == 1',
                              ]
         
         self.prepare_attributes(persons, persons_variables)
@@ -141,8 +146,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         print 'persons variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-        persons.write_dataset(attributes=attrs_to_export,
-                              out_storage=output_storage)
+        #persons.write_dataset(attributes=attrs_to_export,
+        #                      out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
 
         zones = dataset_pool.get_dataset('zone')
@@ -179,8 +184,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         print 'locations variable names', attrs_to_export
         print 'Output storage - ', output_storage
         print 'database name - ', database_name
-        locations.write_dataset(attributes=attrs_to_export,
-                                out_storage=output_storage)
+        #locations.write_dataset(attributes=attrs_to_export,
+        #                        out_storage=output_storage)
         dataset_pool._remove_dataset(locations.dataset_name)
 
         logger.end_block()

@@ -46,4 +46,20 @@ aliases = [
     'raz_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',
     'county_id = household.disaggregate(building.disaggregate(zone.county_id))',
     'synthetic_household_id = household.household_id',
+    'year_built = household.disaggregate(building.year_built)',
+    'yrbuilt = 0 * (household.household_id>0) + ' + \
+              '1 * (1999 <= mag_zone.household.year_built) + ' + \
+              '2 * ((1995 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1998)) + ' + \
+              '3 * ((1990 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1994)) + ' + \
+              '4 * ((1980 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1989)) + ' + \
+              '5 * ((1970 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1979)) + ' + \
+              '6 * ((1960 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1969)) + ' + \
+              '7 * ((1950 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1959)) + ' + \
+              '8 * ((1940 <= mag_zone.household.year_built) & (mag_zone.household.year_built <= 1949)) + ' + \
+              '9 * (mag_zone.household.year_built <= 1939)',
+
+    'sparent = ((mag_zone.household.persons - mag_zone.household.children) == 1) & (household.aggregate(numpy.in1d(person.relate, (1, 2)))==1) & (mag_zone.household.children >= 1)',
+    'mpa_abbr = household.disaggregate(mpa.mpa_abbreviation, intermediates=[zone, building])',
+    "rur = numpy.in1d(mag_zone.household.mpa_abbr, ('GI', 'QC')).astype('i')",
+    "urb = numpy.in1d(mag_zone.household.mpa_abbr, ('CH')).astype('i')",
            ]
