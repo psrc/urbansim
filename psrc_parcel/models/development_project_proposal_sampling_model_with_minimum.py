@@ -162,9 +162,15 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             self.accounting[column_value] = accounting
             
             if self._is_target_reached(column_value):
-                proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
-                single_component_indexes = where(self.proposal_set["number_of_components"]==1)[0]
-                self.weight[intersect1d(proposal_indexes, single_component_indexes)] = 0.0
+                proposal_indexes = self.proposal_set.get_id_index(unique(self.proposal_component_set['proposal_id'][component_indexes]))
+                if n_column == 1:
+                    comp_indexes = where(ndimage.sum(self.proposal_component_set[self.column_names[0]]==column_value[0], 
+                                    labels=self.proposal_component_set['proposal_id'], 
+                                    index=self.proposal_set.get_id_attribute()
+                                    ) == self.proposal_set["number_of_components"])[0]
+                else:
+                    comp_indexes = where(self.proposal_set["number_of_components"]==1)[0]
+                self.weight[intersect1d(proposal_indexes, comp_indexes)] = 0.0
                 
         ## handle planned proposals: all proposals with status_id == is_planned 
         ## and start_year == year are accepted
@@ -173,7 +179,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                   self.proposal_set.get_attribute("start_year") == year ) 
                                         )[0]
         
-        logger.start_block("Processing planned proposals")
+        logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
         self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
