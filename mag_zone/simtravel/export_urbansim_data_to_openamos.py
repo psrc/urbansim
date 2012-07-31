@@ -118,10 +118,10 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              "ag5t14=((person.age>=5) & (person.age<=14)).astype('i')",
                              "agge15=(person.age>=15).astype('i')",
 
-                             'person.wrkr',
-                             'person.hispanic',
-                             'person.fulltim',
-                             'person.parttim',
+                             "wrkr=(person.employment_status==1).astype('i')",
+                             "isemploy=(person.employment_status==1).astype('i')",
+                             "fulltim=(mag_zone.person.full_time==1).astype('i')",
+                             'parttim=mag_zone.person.part_time',
                              'person.schtaz - 100',
 
                              'wtaz = mag_zone.person.wtaz - 100',
@@ -140,6 +140,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
 
                              'race1 = person.race',
                              'white = person.race == 1',
+                             'person.hispanic',
                              ]
         
         self.prepare_attributes(persons, persons_variables)
