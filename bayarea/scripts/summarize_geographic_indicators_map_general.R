@@ -71,9 +71,7 @@ manyColors <- function(n) {
   }
   return((out))
 }
-#manyColors <- function(n){
-#  colorRampPalette(brewer.pal(name = 'Set3',n=35))
-#}
+
 ##map call--WATCH OUT that id arguments match actual shapefile id
 mapStuff <- function(data,shapefile){
   #mp <- openmap(c(69.2,9.303711), c(54,24.433594), zoom=6, type="osm")
@@ -109,7 +107,7 @@ mapStuff <- function(data,shapefile){
     opts(panel.background = theme_rect(fill = "grey95"))+
     expand_limits(x = geography_ftfy$long, y = geography_ftfy$lat) 
   #text(centroids$long, centroids$lat, rownames(centroids), offset=0, cex=0.4)
-    
+
   return(g5)
 }  
 
@@ -245,7 +243,7 @@ for(i in 1:length(dat))
   simulation.t <- t(simulation[,2:ncol(simulation)])
   ## Set column headings as counties
   
-  colnames(simulation.t) <- paste(correspondence[,2],"_",simulation[,1],sep="")
+  colnames(simulation.t) <- correspondence[with(correspondence, order(superdistr)), ][,3] ##paste(correspondence[,2],"_",correspondence[,1],sep="")
   simulation.t <-as.data.frame(simulation.t)
   ## add regional total for non-average tables
   ## get matrices; chck if average in name. if so, treat total differently.
@@ -301,7 +299,7 @@ for(i in 1:length(dat))
     g2 <- tableGrob(
     
     format(
-      simulation.t[seq(1,end,step),(2+endCol):length(names(simulation.t))], 
+      simulation.t[seq(1,end,step),(1+endCol):length(names(simulation.t))], 
       digits = 2,big.mark = ","), 
       gpar.colfill = gpar(fill=NA,col=NA), 
       gpar.rowfill = gpar(fill=NA,col=NA), 
@@ -335,17 +333,18 @@ for(i in 1:length(dat))
                  colour=geography,
                  group=geography,
                  linetype = geography))+
-                   geom_line(size=.65) + 
+                   geom_line(size=.75) + 
                    scale_colour_manual(values=manyColors(35)) +
                    geom_point(size=1.8) +
                    opts(title=title)+
                    xlab("Year") + 
                    ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
                    opts(axis.text.x=theme_text(angle=90, hjust=0)) +
-                   opts(legend.key.width = unit(1, "cm")) +
-                   scale_linetype_manual(values = lty)      +
-                   opts(legend.position="none")
-   g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1))
+                   #opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty)  #    +
+                   opts(legend.position="none") #+
+                   opts(panel.background = theme_rect(fill = "grey50"))
+   g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
                      
    g4 <- ggplot(data=simulation_long_abs,
                 aes(
@@ -354,14 +353,14 @@ for(i in 1:length(dat))
                   colour=geography,
                   group=geography,
                   linetype = geography))+
-                    geom_line(size=.65) + 
+                    geom_line(size=.75) + 
                     scale_colour_manual(values=manyColors(35)) +
                     geom_point(size=1.5) +
                     opts(title=title)+
                     xlab("Year") + 
-                    ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
+                    ylab("Value") +
                     opts(axis.text.x=theme_text(angle=90, hjust=0)) +
-                    opts(legend.key.width = unit(1, "cm")) +
+                    #opts(legend.key.width = unit(1, "cm")) +
                     scale_linetype_manual(values = lty) +
                     opts(legend.position="none")
   #g4 <- uselegend.ggplot(g4)
