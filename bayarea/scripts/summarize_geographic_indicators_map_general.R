@@ -75,12 +75,16 @@ manyColors <- function(n) {
 ##map call--WATCH OUT that id arguments match actual shapefile id
 mapStuff <- function(data,shapefile){
   #mp <- openmap(c(69.2,9.303711), c(54,24.433594), zoom=6, type="osm")
+  #proj4string(geography_sp1) <- CRS("+proj=utm +zone=10 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+  #proj = CRS("+proj=tmerc +lon_0=-84 +lat_0=0 +x_0=500000 +k=0.9999+datum=WGS84")
+  #newProj = spTransform(geography_sp1, CRS=proj)
+  
   simulation.m <- data
   geography_sp1 <- shapefile
   
   if(range(simulation.m$growth>0, na.rm = TRUE))
   {
-    brks=classIntervals(simulation.m$growth,n=6, style="jenks")
+    brks=classIntervals(simulation.m$growth,n=6, style="quantile")
     brks=brks$brks
   }
   else 
@@ -95,10 +99,13 @@ mapStuff <- function(data,shapefile){
     #fl <- cut(geography_sp_data$growth, 5)
     geom_map(aes(fill=growth, group=growth),map =geography_sp_data) + #aes(alpha = growth),
     geom_text(data=coords, hjust=0.5, vjust=-0.5, aes(x=lat, y=long, label=geo)) +
-    scale_x_continuous() + 
+    scale_x_continuous(name="Longitude") + 
+    scale_y_continuous(name="Latitude") + 
     #scale_colour_brewer("clarity") +
     #guides(fill = guide_colorbar(colours = topo.colors(10)))+
-    scale_fill_gradient(low = "lightsteelblue1", high = "steelblue4" , guide = "colorbar") + 
+    scale_fill_continuous(low = "lightblue", high = "steelblue4" , guide = "colorbar", breaks=brks) + 
+    #scale_fill_gradient(low = "lightsteelblue1", high = "steelblue4" , guide = "colorbar", breaks=brks) + 
+    #scale_fill_discrete("Bins", breaks=c(.25,.5,.75), labels=c(.25,.5,.75))+
     #scale_colour_brewer(type="seq") +
     opts(title=paste("Pct. Growth, ",title))+
     #scale_colour_gradientn(colour = terrain.colors(10))
@@ -341,9 +348,9 @@ for(i in 1:length(dat))
                    ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
                    opts(axis.text.x=theme_text(angle=90, hjust=0)) +
                    #opts(legend.key.width = unit(1, "cm")) +
-                   scale_linetype_manual(values = lty)  #    +
+                   scale_linetype_manual(values = lty) +
                    opts(legend.position="none") #+
-                   opts(panel.background = theme_rect(fill = "grey50"))
+                   #opts(panel.background = theme_rect(fill = "grey50"))
    g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
                      
    g4 <- ggplot(data=simulation_long_abs,
@@ -364,7 +371,7 @@ for(i in 1:length(dat))
                     scale_linetype_manual(values = lty) +
                     opts(legend.position="none")
   #g4 <- uselegend.ggplot(g4)
-  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1))
+  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1, fontsize=12))
   
 
   ##non-ggplot mapping
