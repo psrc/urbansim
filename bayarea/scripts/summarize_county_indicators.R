@@ -22,6 +22,8 @@ require("ggplot2")
 require("reshape")
 require("gridExtra")
 require("RGraphics") 
+library(directlabels)
+library(RColorBrewer)
 
 annot <- function(){
   annotate("text", x = Inf, y = -Inf, label = "DRAFT",
@@ -86,6 +88,10 @@ TitleCase <- function(string="test string")
   return(fString)
 }
 
+manyColors <- function(n){
+  colorRampPalette(brewer.pal(name = 'Set3',n=n))
+}
+manyColors(4)
 ## parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]
 pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
@@ -204,44 +210,48 @@ for(i in 1:length(dat))
   ## plot object
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
-  
+  lty <- setNames(sample(1:12,10,T), levels(simulation_long_index$county))
   g3 <- ggplot(data=simulation_long_index,
-               aes(x=as.factor(year), 
-                   y=value, 
-                   group=county,
-                   colour=county)) +
-                     geom_line(
-                       aes(
-                         linetype=county), size = .65) +       # Thin line, varies by county
-                           scale_fill_brewer(palette="Paired") +
-                           geom_point(
-                             aes(
-                               shape=county) ,  size = 2.5)   +       
-                                 scale_fill_brewer(palette="Paired")+
-                                 opts(title=title)+
-                                 xlab("Year") + 
-                                 ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
-                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
-                                 
+               aes(
+                 x=year, 
+                 y=value, 
+                 colour=county,
+                 group=county,
+                 linetype = county))+
+                   geom_line(size=.75) + 
+                   scale_colour_manual(values=manyColors(35)) +
+                   geom_point(size=1.8) +
+                   opts(title=title)+
+                   xlab("Year") + 
+                   ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
+                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                   opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty)      +
+                   opts(legend.position="none") #+
+  #opts(panel.background = theme_rect(fill = "grey50"))
+  g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
   
-   g4 <- ggplot(data=simulation_long_abs,
-                aes(x=as.factor(year), 
-                    y=value, 
-                    group=county,
-                    colour=county)) +
-                      geom_line(
-                        aes(
-                          linetype=county), size = .65) +       # Thin line, varies by county
-                            scale_fill_brewer(palette="Paired") +
-                            geom_point(
-                              aes(
-                                shape=county) ,  size = 2.5)   +       
-                                  scale_fill_brewer(palette="Paired")+
-                                  opts(title=title)+
-                                  xlab("Year") + 
-                                  ylab(paste("Value")) + 
-                                  opts(axis.text.x=theme_text(angle=90, hjust=0))                                  
-
+  
+  g4 <- ggplot(data=simulation_long_abs,
+               aes(
+                 x=year, 
+                 y=value, 
+                 colour=county,
+                 group=county,
+                 linetype = county))+
+                   geom_line(size=.75) + 
+                   scale_colour_manual(values=manyColors(35)) +
+                   geom_point(size=1.5) +
+                   opts(title=title)+
+                   xlab("Year") + 
+                   ylab("Value") +
+                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                   opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty) +
+                   opts(legend.position="none")
+  #g4 <- uselegend.ggplot(g4)
+  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1))
+  
   if(Sys.getenv("HUDSON_DRAFT_RESULTS")=='true') {
     g3 <- g3 + annot()  +opts(title=paste("TEST RUN ",title))
     g4 <- g4 + annot()  +opts(title=paste("TEST RUN ",title))

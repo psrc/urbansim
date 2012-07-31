@@ -27,7 +27,7 @@ library(RColorBrewer)
 library(classInt)
 require("rgdal")
 gpclibPermit() 
-
+library(directlabels)
 annot <- function(){
   annotate("text", x = Inf, y = -Inf, label = "DRAFT",
            hjust=0, vjust=-8, col="darkgrey", cex=20,
@@ -49,6 +49,7 @@ viewPortFunc <- function(printObject=printObject){
   print(printObject, vp="vp")
   #print(sprintf("Outputting Chart %s to PDF",title))
 }
+manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 #wrap cmd-line arguments to assign to proper names
 #cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
 #{
@@ -110,7 +111,7 @@ ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
 fileList = list.files(path=pth, pattern=ptrn)
 if (length(fileList) == 0)
 {
-  stop(sprintf("Failed to find any county indicators in %s", pth))
+  stop(sprintf("Failed to find any county indicators for years %s to %s in %s", yrStart, yrEnd, pth))
 }
 
 ##  "loop" construct, create dataframe, chart for each tab file
@@ -128,28 +129,32 @@ for(i in 1:length(dat))
   simulation <- as.data.frame(dat[i])  #technically redundant; could just use dat list object
   #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035/county_table-3_2010-2035_county__county_population.tab",header=T,sep = "\t")  
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
-  simulation <- simulation[simulation$county_id.i8 %in% c(49,48,43,41,38,28,21,7,1),  ]
+  simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
   #print(simulation[1:2,1:3])
   
-  ##keep for mapping
+  ##keep minimal data frame for mapping
   strYrStart<-sprintf("yr_%s",yrStart)
   strYrEnd<-sprintf("yr_%s",yrEnd)
   simulation.m <- simulation[c(1,2,length(names(simulation)))]
   #colnames(simulation.m) <- c("county_id",strYrStart,strYrEnd)
   n=length(simulation.m)
-  index=is.na(simulation.m[n])|simulation.m[n]==Inf
-  simulation.m[n][index]=0
-  index=is.na(simulation.m[2])|simulation.m[2]==Inf 
-  simulation.m[2][index]=0
+  #index=is.na(simulation.m[n])|simulation.m[n]==Inf
+  #simulation.m[n][index]=0
+  #index=is.na(simulation.m[2])|simulation.m[2]==Inf 
+  #simulation.m[2][index]=0
   
   simulation.m$growth=(simulation.m[n]-simulation.m[2])/simulation.m[2]
   simulation.m=data.frame(simulation.m[1],simulation.m$growth)
+  #replace(simulation.m, simulation.m[n]==Inf, 0)
+  simulation.m[is.na(simulation.m)] <- 0
+  #simulation.m[simulation.m[n]==Inf] <- 0
+  
   names(simulation.m)=c("county_id","growth")
   
   ## convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
   #cnty <- c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
   cnty <-  c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
-  simulation$county_id.i8 <-factor(simulation$county_id.i8, labels=cnty)
+  simulation[,1] <-factor(simulation[,1], labels=cnty)
   
   ## rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
   regexp <- "([[:digit:]]{4})"  
@@ -230,49 +235,64 @@ for(i in 1:length(dat))
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
   
+  lty <- setNames(sample(1:12,10,T), levels(simulation_long_index$county))
   g3 <- ggplot(data=simulation_long_index,
-               aes(x=as.factor(year), 
-                   y=value, 
-                   group=county,
-                   colour=county)) +
-                     geom_line(
-                       aes(
-                         linetype=county), size = .65) +       # Thin line, varies by county
-                           scale_fill_brewer(palette="Paired") +
-                           geom_point(
-                             aes(
-                               shape=county) ,  size = 2.5)   +       
-                                 scale_fill_brewer(palette="Paired")+
-                                 opts(title=title)+
-                                 xlab("Year") + 
-                                 ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + 
-                                 opts(axis.text.x=theme_text(angle=90, hjust=0))
-                                 
+               aes(
+                 x=year, 
+                 y=value, 
+                 colour=county,
+                 group=county,
+                 linetype = county))+
+                   geom_line(size=.75) + 
+                   scale_colour_manual(values=manyColors(12)) +
+                   geom_point(size=1.8) +
+                   opts(title=title)+
+                   xlab("Year") + 
+                   ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
+                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                   opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty)      +
+                   opts(legend.position="none") #+
+  #opts(panel.background = theme_rect(fill = "grey50"))
+  g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
   
-   g4 <- ggplot(data=simulation_long_abs,
-                aes(x=as.factor(year), 
-                    y=value, 
-                    group=county,
-                    colour=county)) +
-                      geom_line(
-                        aes(
-                          linetype=county), size = .65) +       # Thin line, varies by county
-                            scale_fill_brewer(palette="Paired") +
-                            geom_point(
-                              aes(
-                                shape=county) ,  size = 2.5)   +       
-                                  scale_fill_brewer(palette="Paired")+
-                                  opts(title=title)+
-                                  xlab("Year") + 
-                                  ylab(paste("Value")) + 
-                                  opts(axis.text.x=theme_text(angle=90, hjust=0))                                  
-
+  
+  g4 <- ggplot(data=simulation_long_abs,
+               aes(
+                 x=year, 
+                 y=value, 
+                 colour=county,
+                 group=county,
+                 linetype = county))+
+                   geom_line(size=.75) + 
+                   scale_colour_manual(values=manyColors(12)) +
+                   geom_point(size=1.5) +
+                   opts(title=title)+
+                   xlab("Year") + 
+                   ylab("Value") +
+                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                   opts(legend.key.width = unit(1, "cm")) +
+                   scale_linetype_manual(values = lty) +
+                   opts(legend.position="none")
+  #g4 <- uselegend.ggplot(g4)
+  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1))
+  
   ##regular mapping
   #county_sp=readOGR(dsn=shp_path,layer=lyr)
   #county_sp@data=merge(county_sp@data,simulation.m,by.x="county_id",by.y="county_id",all.x=TRUE,sort=F)
   #print(county_sp@data)
-  brks=classIntervals(simulation.m$growth,n=2, style="jenks")
-  brks=brks$brks
+  
+  if(range(simulation.m$growth>0, na.rm = TRUE))
+    {
+    brks=classIntervals(simulation.m$growth,n=6, style="jenks")
+    brks=brks$brks
+    }
+  else 
+    {
+    brks=rep(0,6)
+    }
+  #print(simulation.m$growth)
+  
   #colors=brewer.pal(length(brks)-1,"Blues")
   #label=rep(0,length(brks)-1)
   #for (i in 1:length(brks)-1)
@@ -297,11 +317,11 @@ for(i in 1:length(dat))
   g5 <-  ggplot(county_sp_data, aes(map_id = id)) +
     geom_map(aes(fill=growth, group=growth),map =county_sp_data) + #aes(alpha = growth),
     scale_x_continuous() + 
-    scale_fill_gradient(low = "white", high = "black" , guide = "colorbar") + 
+    scale_fill_continuous(low = "lightsteelblue1", high = "steelblue4" , guide = "colorbar",breaks=brks) + 
     opts(title=paste("Pct. Growth, ",title))+
     #guides(fill = guide_colorbar(colours = topo.colors(10))) +
     #opts(legend.position = "right")+
-    #opts(panel.background = theme_rect(fill = "lightgrey"))+
+    opts(panel.background = theme_rect(fill = "grey95"))+
     #geom_polygon(aes(x = county_ftfy$long, y = county_ftfy$lat,group=id), 
     #             fill = NA, colour = 'darkgrey', data = county_sp_data) +
     #               scale_fill_gradient(low = "antiquewhite", high = "darkred") #+
