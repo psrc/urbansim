@@ -35,7 +35,6 @@ class EmploymentStatusSyncModel(Model):
         indices = where(diff != 0)[0]
         
         eligible = person.compute_variables(work_eligible)
-        import pdb; pdb.set_trace()
         logger.log_status('Updating employment_status for {} workers in {} households'.format(abs(diff).sum(), indices.size))
         for index in indices:
             in_hh = person['household_id'] == household['household_id'][index]
