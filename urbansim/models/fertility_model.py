@@ -32,8 +32,8 @@ class FertilityModel(RateBasedModel):
             new_born['person_no'] = person_set.compute_variables("person.disaggregate(household.aggregate(person.person_no, function=maximum)) + 1")[index]
         #assign new-born the race of the mother
         new_born['race'] = person_set['race'][index]
-        if 'hisp' in person_set.get_known_attribute_names():
-            new_born['hisp'] = person_set['hisp'][index]
+        if 'hispanic' in person_set.get_known_attribute_names():
+            new_born['hispanic'] = person_set['hispanic'][index]
         new_born['age'] = zeros(index.size, dtype="int32")
         if 'gender' in person_set.get_known_attribute_names():
             new_born['gender'] = randint(1, 3, size=index.size)
