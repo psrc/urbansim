@@ -69,11 +69,11 @@ class Calibration(object):
         self.xml_config = xml_config
         self.scenario = scenario
         self.skip_cache_cleanup = skip_cache_cleanup
-        run_id, cache_directory = self.init_run()
-        self.run_ids = [run_id]  #allow starting of multiple runs for parallel optimization
+        self.run_id, self.cache_directory = self.init_run()
+        self.run_ids = [self.run_id]  #allow starting of multiple runs for parallel optimization
         self.log_directory = log_directory
         if self.log_directory is None:
-            self.log_directory = cache_directory #legacy
+            self.log_directory = self.cache_directory #legacy
 
         log_file = os.path.join(self.log_directory, "calibration.log")
         logger.enable_file_logging(log_file)
@@ -83,38 +83,8 @@ class Calibration(object):
         self.base_year = dict_config['base_year']
         self.start_year, self.end_year = dict_config['years']
         self.project_name = dict_config['project_name']
-        package_order = dict_config['dataset_pool_configuration'].package_order
-            
-        self.simulation_state = SimulationState()
-        self.simulation_state.set_current_time(self.base_year)
-        self.simulation_state.set_cache_directory(cache_directory)
-        attribute_cache = AttributeCache()
-        self.dataset_pool = SessionConfiguration(new_instance=True,
-                                  package_order=package_order,
-                                  in_storage=attribute_cache
-                                  ).get_dataset_pool()
-
-        self.calib_datasets = {}
-        print "calib_datasets",calib_datasets
-        #{dataset_name: [DataSet, 'attribute', index]}
-        #or
-        #{dataset_name: [DataSet, ['attribute1', 'attribute2'], index]}
-        for dataset_name, calib_attr in calib_datasets.iteritems():
-            dataset = self.dataset_pool.get_dataset(dataset_name, 
-                                                    dataset_arguments={'id_name':[]})
-            assert subset is None or subset.get(dataset_name, None) is None or \
-                   subset_patterns is None or subset_patterns.get(dataset_name, None) is None
-            if subset is not None and subset.get(dataset_name, None) is not None:
-                subset_attr, subset_cond = subset.get(dataset_name) 
-                index = np.in1d(dataset[subset_attr], subset_cond)
-            elif subset_patterns is not None and subset_patterns.get(dataset_name, None) is not None:
-                subset_attr, subset_pattern = subset_patterns.get(dataset_name)
-                index = array([ True if re.search(subset_pattern, attr_v) else False 
-                                for attr_v in dataset[subset_attr] ])
-            else:
-                index = arange(dataset.size(), dtype='i')
-
-            self.calib_datasets[dataset_name] = [dataset, calib_attr, index] 
+        self.package_order = dict_config['dataset_pool_configuration'].package_order
+        
 
     @log_block("Start Calibration")
     def run(self, optimizer='lbfgsb', results_pickle_prefix="calib", optimizer_kwargs={}):
@@ -130,8 +100,35 @@ class Calibration(object):
         
         '''
 
+        simulation_state = SimulationState()
+        simulation_state.set_current_time(self.base_year)
+        simulation_state.set_cache_directory(self.cache_directory)
+        attribute_cache = AttributeCache()
+        dataset_pool = SessionConfiguration(new_instance=True,
+                                  package_order=self.package_order,
+                                  in_storage=attribute_cache
+                                  ).get_dataset_pool()
+
+        calib_datasets = {}
+        for dataset_name, calib_attr in calib_datasets.iteritems():
+            dataset = dataset_pool.get_dataset(dataset_name, 
+                                                    dataset_arguments={'id_name':[]})
+            assert subset is None or subset.get(dataset_name, None) is None or \
+                   subset_patterns is None or subset_patterns.get(dataset_name, None) is None
+            if subset is not None and subset.get(dataset_name, None) is not None:
+                subset_attr, subset_cond = subset.get(dataset_name) 
+                index = np.in1d(dataset[subset_attr], subset_cond)
+            elif subset_patterns is not None and subset_patterns.get(dataset_name, None) is not None:
+                subset_attr, subset_pattern = subset_patterns.get(dataset_name)
+                index = array([ True if re.search(subset_pattern, attr_v) else False 
+                                for attr_v in dataset[subset_attr] ])
+            else:
+                index = arange(dataset.size(), dtype='i')
+
+            calib_datasets[dataset_name] = [dataset, calib_attr, index]
+
         init_v = array([], dtype='f8')
-        for dataset_name, calib in self.calib_datasets.iteritems():
+        for dataset_name, calib in calib_datasets.iteritems():
             dataset, calib_attr, index = calib
             if type(calib_attr) == str:
                 init_v = np.concatenate((init_v, dataset[calib_attr][index]))
@@ -250,12 +247,13 @@ class Calibration(object):
         assert cache_directory is not None
         return run_id, cache_directory
 
-    def update_parameters(self, est_v, cache_directory, *args, **kwargs):
+    def update_parameters(self, est_v, cache_directory, simulation_state, dataset_pool, calib_datasets, *args, **kwargs):
         i_est_v = 0
-        current_year = self.simulation_state.get_current_time()
-        self.simulation_state.set_current_time(self.base_year)
-        self.simulation_state.set_cache_directory(cache_directory)
-        for dataset_name, calib in self.calib_datasets.iteritems():
+        current_year = simulation_state.get_current_time()
+        simulation_state.set_current_time(self.base_year)
+        simulation_state.set_cache_directory(cache_directory)
+
+        for dataset_name, calib in calib_datasets.iteritems():
             dataset, calib_attr, index = calib
             if type(calib_attr) == str:
                 dtype = dataset[calib_attr].dtype
@@ -274,9 +272,9 @@ class Calibration(object):
             #flush dataset
             dataset.flush_dataset()
             #i_est_v += index.size
-        self.simulation_state.set_current_time(current_year)
+        simulation_state.set_current_time(current_year)
 
-    def update_prediction(self, est_v, *args, **kwargs):
+    def update_prediction(self, est_v, simulation_state, dataset_pool, calib_datasets, *args, **kwargs):
         option_group = RestartRunOptionGroup()
         option_group.parser.set_defaults(project_name=self.project_name,
                                          skip_cache_cleanup=self.skip_cache_cleanup)
@@ -289,6 +287,8 @@ class Calibration(object):
         ## query runs available for re-use
         runs_done = self.run_manager.get_run_info(run_ids=self.run_ids, status='done') 
         create_baseyear_cache = False
+        import pdb
+        pdb.set_trace()
         if len(runs_done) == 0:  ##there is no re-usable run directory, init a new run
             run_id, cache_directory = self.init_run(create_baseyear_cache=False)
             self.run_ids.append(run_id)
@@ -306,25 +306,25 @@ class Calibration(object):
         if create_baseyear_cache:
             self.run_manager.create_baseyear_cache(resources)
 
-        self.update_parameters(est_v, cache_directory, *args, **kwargs)
+        self.update_parameters(est_v, cache_directory, simulation_state, dataset_pool, calib_datasets, *args, **kwargs)
         restart_run(option_group=option_group, 
                     args=[run_id, self.start_year])
 
-        prediction = self.summarize_prediction(cache_directory)
+        prediction = self.summarize_prediction(cache_directory, simulation_state, dataset_pool, calib_datasets)
         return prediction
 
-    def summarize_prediction(self, cache_directory):
+    def summarize_prediction(self, cache_directory, simulation_state, dataset_pool, calib_datasets):
         dataset_name = VariableName(self.target_expression).get_dataset_name()
-        current_year = self.simulation_state.get_current_time()
-        self.simulation_state.set_current_time(self.end_year)
-        self.simulation_state.set_cache_directory(cache_directory)
+        current_year = simulation_state.get_current_time()
+        simulation_state.set_current_time(self.end_year)
+        simulation_state.set_cache_directory(cache_directory)
         #force reload
-        self.dataset_pool.remove_all_datasets()
-        dataset = self.dataset_pool[dataset_name]
+        dataset_pool.remove_all_datasets()
+        dataset = dataset_pool[dataset_name]
         ids = dataset.get_id_attribute()
         results = dataset.compute_variables(self.target_expression, 
-                                            dataset_pool=self.dataset_pool)
-        self.simulation_state.set_current_time(current_year)
+                                            dataset_pool=dataset_pool)
+        simulation_state.set_current_time(current_year)
         return dict(zip(ids, results))
 
     def read_target(self, target_file):
@@ -337,10 +337,37 @@ class Calibration(object):
 
         return target
 
-    def target_func(self, est_v, func=lambda x,y: np.sum(np.abs(x-y)), *args, **kwargs):
+    def target_func(self, est_v, func=lambda x,y: np.sum(np.abs(x-y)), **kwargs):
         ''' Target function.'''
 
-        prediction = self.update_prediction(est_v, *args, **kwargs)
+        simulation_state = SimulationState()
+        simulation_state.set_current_time(self.base_year)
+        simulation_state.set_cache_directory(self.cache_directory)
+        attribute_cache = AttributeCache()
+        dataset_pool = SessionConfiguration(new_instance=True,
+                                  package_order=self.package_order,
+                                  in_storage=attribute_cache
+                                  ).get_dataset_pool()
+
+        calib_datasets = {}
+        for dataset_name, calib_attr in calib_datasets.iteritems():
+            dataset = dataset_pool.get_dataset(dataset_name, 
+                                                    dataset_arguments={'id_name':[]})
+            assert subset is None or subset.get(dataset_name, None) is None or \
+                   subset_patterns is None or subset_patterns.get(dataset_name, None) is None
+            if subset is not None and subset.get(dataset_name, None) is not None:
+                subset_attr, subset_cond = subset.get(dataset_name) 
+                index = np.in1d(dataset[subset_attr], subset_cond)
+            elif subset_patterns is not None and subset_patterns.get(dataset_name, None) is not None:
+                subset_attr, subset_pattern = subset_patterns.get(dataset_name)
+                index = array([ True if re.search(subset_pattern, attr_v) else False 
+                                for attr_v in dataset[subset_attr] ])
+            else:
+                index = arange(dataset.size(), dtype='i')
+
+            calib_datasets[dataset_name] = [dataset, calib_attr, index]
+
+        prediction = self.update_prediction(est_v, simulation_state, dataset_pool, calib_datasets, **kwargs)
         ## allow keys in target not appearing in prediction
         ## assuming their values to be 0
         ### every key in target should appear in prediction
