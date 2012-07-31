@@ -25,6 +25,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         if (type is None) or (type == 'non_residential'):
             self.type["non_residential"] = True
 
+        self.proposal_set.id_planned = 99999 # to switch processing of planned proposals of
+        
         target_vacancies = self.dataset_pool.get_dataset('target_vacancy')
         tv_building_types = unique(target_vacancies.get_attribute('building_type_id'))
         
@@ -53,7 +55,6 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + hhdistr[ibt]*to_be_placed_households
-            maxiter = 20
         if self.type["non_residential"]:    
             zones.compute_variables(["number_of_all_nhb_jobs = zone.aggregate(job.home_based_status==0)",
                                      "number_of_placed_nhb_jobs = zone.aggregate(psrc_parcel.building.number_of_non_home_based_jobs)"],
@@ -78,7 +79,6 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + to_be_placed_jobs * sqft_lookup[zones['zone_id'],bt] * job_building_type_distribution[ibt]
-            maxiter = 1
                              
         existing_residential_units = zones.get_attribute("existing_residential_units") - self.do_not_count_residential_units
         existing_job_spaces = zones.get_attribute("existing_job_spaces")
@@ -128,21 +128,13 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposed_units_from_previous_iterations = {}
             
             logger.log_status("\nDPSM for zone %s" % self.zone)
-            for iter in range(maxiter):
-                self.weight[:] = original_weight[:]
-                if self.weight[idx_zone].sum() <= 0:
-                    logger.log_status("No non-zero weights for zone %s in iteration %s." % (self.zone, iter))
-                    break  
-                while isinf(self.weight[idx_zone].sum()):
-                    self.weight[idx_zone] = self.weight[idx_zone]/10
-                self.first_pass = True
-                DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
-                if self.type["residential"]:
-                    if (len(self.accepted_proposals)<=0) or self.vacancy_rate_met(existing_residential_units[zone_index],
-                                                                              occupied_residential_units[zone_index]):
-                        break
-                    #print "ratio:", self.existing_to_occupied_ratio_residential
-                
+            self.weight[:] = original_weight[:]
+            if self.weight[idx_zone].sum() <= 0:
+                logger.log_status("No non-zero weights for zone %s." % self.zone)
+            while isinf(self.weight[idx_zone].sum()):
+                self.weight[idx_zone] = self.weight[idx_zone]/10
+            self.second_pass = {}
+            DevelopmentProjectProposalSamplingModel.run(self, **kwargs)                
             status = self.proposal_set.get_attribute("status_id")
             where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
@@ -153,44 +145,15 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         self.proposal_set.set_values_of_one_attribute("status_id", self.proposal_set.id_not_available, where(status != self.proposal_set.id_active)[0])
         return (self.proposal_set, [])
     
-    def vacancy_rate_met(self, existing, occupied):
-        if self.type["non_residential"] or not self.build_in_zone["residential"]: 
-            return True
-        # applies only to residential case
-        is_residential = self.current_target_vacancy.get_attribute("is_residential")
-        type_ids = self.current_target_vacancy.get_attribute("building_type_id")
-        avg_tv = 0.0
-        demolished = 0
-        proposed_total = 0
-        for index in arange(self.current_target_vacancy.size())[where(is_residential)]:
-            type_id = type_ids[index]
-            avg_tv += self.target_vacancies[type_id]
-            demolished += self.demolished_units[type_id]
-            if type_id not in self.proposed_units_from_previous_iterations.keys():
-                self.proposed_units_from_previous_iterations[type_id] = 0
-            self.proposed_units_from_previous_iterations[type_id] += self.proposed_units[type_id]
-            proposed_total += self.proposed_units_from_previous_iterations[type_id]
-            
-        avg_tv = avg_tv/float(is_residential.sum())
-        units_stock = existing - demolished + proposed_total
-        current_vr = (units_stock - occupied) / float(max(units_stock,1))
-        logger.log_status("Current overall vacancy rate: %s, average vacancy rate: %s" % (current_vr, avg_tv))
-        #print "units_stock:", units_stock
-        #print "occupied:", occupied
-        if current_vr >= avg_tv:
-            return True
-        logger.log_status("Current overall vacancy rate: %s, average vacancy rate: %s" % (current_vr, avg_tv))
-        self.existing_to_occupied_ratio_residential = max(units_stock,1) / float(occupied)
-        return False
-    
     def _is_target_reached(self, column_value=()):
-        if self.first_pass:
-            self.first_pass = False
-            # set occupied spaces and target spaces
-            for column_value, accounting in self.accounting.items():
-                self.accounting[column_value]["occupied_spaces"] = self.occuppied_estimate[column_value][self.zone_index]
-                self.accounting[column_value]["target_spaces"] = int( round( self.accounting[column_value]["occupied_spaces"] /\
-                                                     (1 - accounting["target_vacancy"])))
+        if column_value and not self.second_pass.has_key(column_value):
+            self.second_pass[column_value] = True
+            # set total spaces, occupied spaces and target spaces
+            realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
+                                       self.realestate_dataset['zone_id'] == self.zone))
+            self.accounting[column_value]["total_spaces"] = self.realestate_dataset.total_spaces[realestate_indexes].sum()
+            self.accounting[column_value]["occupied_spaces"] = self.occuppied_estimate[column_value][self.zone_index]
+            self.accounting[column_value]["target_spaces"] = int(round(self.accounting[column_value]["occupied_spaces"]))
                 
         if column_value:
             if self.accounting.has_key(column_value):
@@ -267,47 +230,3 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         building_type_ids = building_type_dataset.get_id_attribute()
         return (sqft_lookup[:,building_type_ids] * job_building_type_distribution).sum(axis=1)
         
-    def check_vacancy_rates(self, target_vacancy):
-        self.current_target_vacancy = target_vacancy
-        type_ids = target_vacancy.get_attribute("building_type_id")
-        is_residential = target_vacancy.get_attribute("is_residential")
-        buildings = self.dataset_pool.get_dataset("building")
-        building_type_ids = buildings.get_attribute("building_type_id")
-        building_zone_ids = buildings.get_attribute("zone_id")
-        for index in arange(target_vacancy.size()):
-            ##TODO allow target vacancies to vary across zones/sub region geographies
-            #zone_id = target_vacancy.get_attribute_by_index("zone_id", index)
-            #if zone_id != self.zone: continue
-            type_id = type_ids[index]
-            target = self.target_vacancies[type_id]
-            is_matched_type = building_type_ids == type_id
-            unit_name = self.unit_name[is_residential[index]]
-            is_in_right_zone = building_zone_ids == self.zone 
-            self.proposed_units[type_id] = 0
-            self.demolished_units[type_id] = 0
-            self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone].astype("float32").sum()
-            self.existing_units[type_id] += self.proposed_units_from_previous_iterations.get(type_id, 0)
-            self.occupied_units[type_id] = 0
-            if is_residential[index]:
-                if self.type["residential"] and self.build_in_zone["residential"]:
-                    self.occupied_units[type_id] = int(max(self.existing_units[type_id],1)/self.existing_to_occupied_ratio_residential)
-                    vr = max(self.existing_units[type_id] - self.occupied_units[type_id], 0) / float(max(self.existing_units[type_id],1))
-                else:
-                    vr=1.0
-            else:
-                if self.type["non_residential"] and self.build_in_zone["non_residential"]:
-                    already_occupied = buildings.get_attribute("occupied_building_sqft_by_non_home_based_jobs")[is_matched_type*is_in_right_zone].sum()
-                    remaining_existing_units = clip_to_zero_if_needed(self.existing_units[type_id] - already_occupied)
-                    self.occupied_units[type_id] = int(remaining_existing_units/self.existing_to_occupied_ratio_non_residential)
-                    vr = max(self.existing_units[type_id] - (self.occupied_units[type_id]+already_occupied), 1) / float(max(self.existing_units[type_id],1))
-                    self.existing_units[type_id] = remaining_existing_units
-                else:
-                    #vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(max(self.existing_units[type_id],1))
-                    vr = 1.0
-            #print 'vacancy_rates:', type_id, vr
-            if is_residential[index]:
-                self.accepting_proposals[type_id] = self.build_in_zone["residential"] and vr < target
-            else:
-                self.accepting_proposals[type_id] = self.build_in_zone["non_residential"] and vr < target
-
-                
