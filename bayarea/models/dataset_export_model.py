@@ -27,7 +27,6 @@ class DatasetExportModel(object):
 
         table_name_pattern: For example '{table_name}_{scenario_name}_{year}'
         """
-
         if not hasattr(self, 'out_storage'):
             if out_storage is None:
                 raise ValueError, "Either out_storage argument needs to be specified or " + \
@@ -69,10 +68,12 @@ class DatasetExportModel(object):
         query_scen_id = "select id from scenario where name='{}'".format(scenario_name)
         scenario_id = db.execute(query_scen_id).fetchone()[0]
         min_year, max_year = min(years), max(years)
-        query_st = "select create_urbansim_buildings({}, {}, {})".format(scenario_id,
+        query_st = "select create_urbansim_buildings({}, {}, {}); commit;".format(scenario_id,
                                                                         min_year,
                                                                         max_year)
+        print query_st
         db.execute(query_st)
+        db.close()
 
     def prepare_for_run(self, database_configuration, database_name):
         ## sql protocol, hostname, username and password are set in 
