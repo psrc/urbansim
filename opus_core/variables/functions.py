@@ -90,6 +90,12 @@ def ismember(v, member_list):
 def scoreatpercentile(v, percentile):
     return stats.scoreatpercentile(v, percentile)
 
+def ones_like(v):
+    return numpy.ones_like(v)
+
+def zeros_like(v):
+    return numpy.zeros_like(v)
+
 # unit tests for all the functions
 
 from opus_core.tests import opus_unittest
@@ -191,6 +197,24 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([1, 100, 0, 3])
         self.assert_(ma.allclose(result, array(should_be), rtol=1e-6), "Error in safe_array_divide")
     
+    def test_ones_like(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='dataset',
+            table_data={"attr1": array([5, 10, 0, 3]), "attr2": array([5.0, 0.0, 8.0, 1.1]), "id": arange(4)}
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
+        expr1 = 'ones_like(attr1)'
+        result = dataset.compute_variables([expr1])
+        should_be = array([1, 1, 1, 1])
+        self.assert_(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
+        self.assert_(result.dtype==should_be.dtype, "Error in ones_like")
+
+        expr2 = 'ones_like(attr1)'
+        result = dataset.compute_variables([expr2])
+        should_be = array([1, 1, 1, 1])
+        self.assert_(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
+        self.assertEqual(result.dtype, should_be.dtype, "Error in ones_like")
         
 if __name__=='__main__':
     opus_unittest.main()
