@@ -96,6 +96,10 @@ def ones_like(v):
 def zeros_like(v):
     return numpy.zeros_like(v)
 
+def random_like(v):
+    return numpy.random.random(v.size)
+
+
 # unit tests for all the functions
 
 from opus_core.tests import opus_unittest

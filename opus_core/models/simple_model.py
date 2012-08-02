@@ -39,7 +39,13 @@ class SimpleModel(Model):
         elif outcome_attribute in dataset.get_known_attribute_names():
             outcome = dataset[outcome_attribute]
             ddtype = outcome.dtype  #default dtype
-                    
+        else:
+            try:
+                outcome = dataset.compute_variables(outcome_attribute, dataset_pool=dataset_pool)
+                ddtype = outcome.dtype  #default dtype
+            except LookupError:
+                outcome=values
+
         if dataset_filter is not None:
             if type(dataset_filter)==str:
                 filter_index = where(dataset.compute_variables([dataset_filter], 
@@ -54,7 +60,7 @@ class SimpleModel(Model):
         #    dataset.delete_one_attribute(outcome_attribute)
         dataset.add_primary_attribute(data=outcome, name=outcome_attribute)
             
-        return values
+        return outcome
     
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
@@ -85,6 +91,19 @@ class SimpleModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(self.dataset.get_attribute('sqrt_outcome'), 
                                      expected), True)
         self.assertEqual('sqrt_outcome' in self.dataset.get_primary_attribute_names(), True)
+
+    def test_simple_model_with_random_filter(self):
+        m = SimpleModel()
+        m.run(self.dataset, 'sqrt(dataset.attribute)', 
+              outcome_attribute='sqrt_outcome', 
+              dataset_filter='(dataset.attribute>=1000) & (random_like(dataset.attribute)<=0.5)',
+             )
+        con_filter = self.dataset['attribute']>=1000
+        results = self.dataset['sqrt_outcome'][con_filter]
+        expected = sqrt(self.data['attribute'])[con_filter]
+        #test half of the elements passing filter are being sqrt
+        self.assertEqual((results==expected).sum(), expected.size/2)
+        self.assertEqual((results!=expected).sum(), expected.size/2)
         
     def test_simple_model_without_outcome_attribute(self):
         m = SimpleModel()
