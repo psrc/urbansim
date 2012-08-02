@@ -92,7 +92,7 @@ class SimpleModelTest(opus_unittest.OpusTestCase):
                                      expected), True)
         self.assertEqual('sqrt_outcome' in self.dataset.get_primary_attribute_names(), True)
 
-    def test_simple_model_with_random_filter(self):
+    def MASKEDtest_simple_model_with_random_filter(self):
         m = SimpleModel()
         m.run(self.dataset, 'sqrt(dataset.attribute)', 
               outcome_attribute='sqrt_outcome', 
