@@ -11,7 +11,7 @@ aliases = [
    "county_id = employment_submarket.aggregate(building.disaggregate(parcel.county_id),function=median)", #hack
    "employees=employment_submarket.aggregate(establishment.employees)",
    "establishments=employment_submarket.number_of_agents(establishment)",
-   "building_sqft_per_employee=employment_submarket.disaggregate(building_sqft_per_employee.building_sqft_per_employee)"
+   "building_sqft_per_employee=employment_submarket.disaggregate(building_sqft_per_employee.building_sqft_per_employee)",
    "total_job_spaces = safe_array_divide(bayarea.employment_submarket.non_residential_sqft, bayarea.employment_submarket.building_sqft_per_employee)",
    "vacant_job_spaces = clip_to_zero(bayarea.employment_submarket.total_job_spaces - bayarea.employment_submarket.employees)",
            ]
