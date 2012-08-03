@@ -14,43 +14,6 @@ from numpy.random import permutation
 
 
 class lottery_choices(Choices):
-    def run_WIP(self, 
-            probability=None, 
-            utilities=None, 
-            capacity=None,
-            resources=None):
-        """ Compute choices according to given probability -- Lottery procedure.
-        'probability' is a 2D numpy array (nobservation x nequations).
-        The returned value is a 1D array of choice indices [0, nequations-1] of the length nobservations.
-        The argument 'resources' must contain an entry 'capacity'. It is 1D array whose number of elements
-        corresponds to the number of choices.
-        Each agent has a certain number of units to occupy the location. This information
-        can be passed in an entry 'agent_units' of 'resources' which is a 1D array
-        of the length of nobservations. If it is missing or is None, it is assumed that all agents occupy
-        1 unit per location.
-        Optional entry 'index' (1D or 2D array) gives indices of the choices.
-        """
-        if probability is not None and probability.ndim < 2:
-            raise StandardError, "Argument 'probability' must be a 2D numpy array."
-
-        #resources.check_obligatory_keys(["capacity"])
-        capacity = resources.get("capacity", capacity)
-        if not isinstance(capacity, ndarray):
-            capacity = array(capacity)
-        ncap = capacity.size
-        nagts, nalts = probability.shape
-
-        agent_size
-        remaining_capacity 
-
-        for iter in xrange(maxiter):
-            choices = random_choices().run(probability, resources)
-            if agent_size.ndim == 2:
-                ## if the size each agent occupies varies by alternative
-                occupancies = agent_size[arange(nagts), choices]
-            else:
-                ## if the size each agent occupies does not vary by alternative
-                occupancies = agent_size
             
     def run(self, 
             probability=None, 

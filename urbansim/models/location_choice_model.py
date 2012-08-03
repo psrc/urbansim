@@ -153,11 +153,10 @@ class LocationChoiceModel(ChoiceModel):
             
         return choices
 
-    def simulate_submodel(self, data, coefficients, submodel):
+    def simulate_chunk(self, *args, **kwargs):
         if self.run_config.get("agent_units_all", None) is not None:
-            self.run_config["agent_units"] = self.run_config["agent_units_all"][self.observations_mapping[submodel]]
-
-        return ChoiceModel.simulate_submodel(self, data, coefficients, submodel)
+            self.run_config["agent_units"] = self.run_config["agent_units_all"][self.observations_mapping['mapped_index']]
+        return ChoiceModel.simulate_chunk(self, *args, **kwargs)
 
     def compute_demand(self, probabilities):
         """sums probabilities for each alternative and adds it to the demand attribute of the choice set.
@@ -394,3 +393,19 @@ class LocationChoiceModel(ChoiceModel):
             capacity_values = capacity
         self.upc_sequence.plot_choice_histograms(capacity=capacity_values, main=main)
         self.upc_sequence.show_plots()
+
+import os
+import tempfile
+from shutil import rmtree
+from opus_core.tests import opus_unittest
+from numpy import ma, alltrue
+from opus_core.ndimage import sum as ndimage_sum
+from opus_core.tests.stochastic_test_case import StochasticTestCase
+from opus_core.simulation_state import SimulationState
+from opus_core.misc import load_table_from_text_file, unique
+
+## TODO: add unittest for capacity check
+class TestChoiceModel(StochasticTestCase):
+    def tearDown(self):
+        SimulationState().remove_base_cache_directory()
+
