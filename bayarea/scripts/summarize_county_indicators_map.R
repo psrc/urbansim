@@ -143,7 +143,7 @@ for(i in 1:length(dat))
   #index=is.na(simulation.m[2])|simulation.m[2]==Inf 
   #simulation.m[2][index]=0
   
-  simulation.m$growth=(simulation.m[n]-simulation.m[2])/simulation.m[2]
+  simulation.m$growth=((simulation.m[n]-simulation.m[2])/simulation.m[2])*100
   simulation.m=data.frame(simulation.m[1],simulation.m$growth)
   #replace(simulation.m, simulation.m[n]==Inf, 0)
   simulation.m[is.na(simulation.m)] <- 0
@@ -309,7 +309,7 @@ for(i in 1:length(dat))
   #viewPortFunc(map)
   #print(names(county_sp))
   
-  ##ggplot map  
+  ##ggplot map --TODO: improve efficiency by putting outside of loop  
   county_sp1 <- readShapeSpatial(qual_shp_file)
   county_ftfy <- fortify(county_sp1, region="id")
   county_sp_data <- merge(county_ftfy,simulation.m,by.x="id", by.y="county_id")
