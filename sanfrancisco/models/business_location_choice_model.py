@@ -4,24 +4,25 @@
 
 from opus_core.resources import Resources
 from urbansim.models.location_choice_model import LocationChoiceModel
+from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 from numpy import arange, where, ones
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.logger import logger
 from opus_core.datasets.dataset import Dataset
 
-class BusinessLocationChoiceModel(LocationChoiceModel):
+class BusinessLocationChoiceModel(AgentLocationChoiceModel):
 
     model_name = "Business Location Choice Model"
     model_short_name = "BLCM"
 
-    def __init__(self, location_set, model_name=None, short_name=None, **kargs):
-        if model_name is not None:
-            self.model_name = model_name
-        if short_name is not None:
-            self.model_short_name = short_name
-
-        LocationChoiceModel.__init__(self, location_set=location_set, **kargs)
-
+#    def __init__(self, location_set, model_name=None, short_name=None, **kargs):
+#        if model_name is not None:
+#            self.model_name = model_name
+#        if short_name is not None:
+#            self.model_short_name = short_name
+#
+#        LocationChoiceModel.__init__(self, location_set=location_set, **kargs)
+#
 #    def run(self, *args, **kargs):
 #        """disable filter for simulation, since it's been handled by get_weights_for_sampling_locations method"""
 #        self.filter = None
