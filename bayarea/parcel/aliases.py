@@ -8,5 +8,6 @@ aliases = [
     "within_half_mile_transit = parcel.disaggregate(bayarea.node.transit_within_800_meters)",
     "parcel_acre = parcel.shape_area * 0.000247105381",
     "is_pda_id = (parcel.pda_id > 0).astype('i')" ,
-    "is_tpp = 1 + (parcel.tpp_id > 0).astype('i')",
+    "is_pda_x_county = (parcel.county_id * (parcel.pda_id > 0)).astype('i')" ,
+    "is_tpp =  (parcel.tpp_id > 0).astype('i')",
            ]
