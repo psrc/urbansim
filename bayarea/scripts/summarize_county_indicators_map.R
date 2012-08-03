@@ -67,6 +67,8 @@ yrEnd <- as.integer(args[3])
 setwd(pth)
 shp_file <- args[5]
 shp_path <- args[4]
+scenario<-args[6]
+geo<-args[7]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
 
@@ -119,7 +121,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 
 ## start pdf object to store all charts
 fp <- file.path(pth, fsep = .Platform$file.sep)
-fileNameOut=sprintf("%s/plot_%s_indexChart.pdf",fp,runid)
+fileNameOut=sprintf("%s/%s_plot_%s_indexChart.pdf",fp,geo,runid)
 sprintf("Preparing file %s for charts and figures...", fileNameOut)
 pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 
@@ -284,7 +286,7 @@ for(i in 1:length(dat))
   
   if(range(simulation.m$growth>0, na.rm = TRUE))
     {
-    brks=classIntervals(simulation.m$growth,n=6, style="jenks")
+    brks=classIntervals(simulation.m$growth,n=4, style="jenks")
     brks=brks$brks
     }
   else 
@@ -292,22 +294,6 @@ for(i in 1:length(dat))
     brks=rep(0,6)
     }
   #print(simulation.m$growth)
-  
-  #colors=brewer.pal(length(brks)-1,"Blues")
-  #label=rep(0,length(brks)-1)
-  #for (i in 1:length(brks)-1)
-  #{
-  #  temp=paste(as.character(round(brks[i])),"-",as.character(round(brks[i+1])),sep=" ")
-  #  label[i]=temp
-  #}
-  #interval <- findInterval(county_sp@data$growth, brks,all.inside=T)
-  #col<- colors[interval]
-  #map<-plot(county_sp,col=col, axes=T,lwd=0.1,lty=3)
-  #title(title)
-  #text(y=county_sp@data$lat,x=county_sp@data$long,labels=county_sp@data$growth)
-  #print(sprintf("Outputting Map %s to PDF",title))
-  #viewPortFunc(map)
-  #print(names(county_sp))
   
   ##ggplot map --TODO: improve efficiency by putting outside of loop  
   county_sp1 <- readShapeSpatial(qual_shp_file)
@@ -322,6 +308,8 @@ for(i in 1:length(dat))
     #guides(fill = guide_colorbar(colours = topo.colors(10))) +
     #opts(legend.position = "right")+
     opts(panel.background = theme_rect(fill = "grey95"))+
+    xlab("Longitude") +
+    ylab("Latitude") +
     #geom_polygon(aes(x = county_ftfy$long, y = county_ftfy$lat,group=id), 
     #             fill = NA, colour = 'darkgrey', data = county_sp_data) +
     #               scale_fill_gradient(low = "antiquewhite", high = "darkred") #+

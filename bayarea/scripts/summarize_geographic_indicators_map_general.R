@@ -95,16 +95,17 @@ mapStuff <- function(data,shapefile){
   geography_sp_data <- merge(geography_ftfy,simulation.m,by.y="geography_id", by.x="id",all.x=TRUE)
   #print(names(geography_sp_data))
   ##prep ggplot object
-  g5 <-  ggplot(geography_sp_data,aes(long, lat,map_id = id)) +
+  g5 <-  ggplot(geography_sp_data,aes(x=long, y=lat,map_id = id)) +
     #fl <- cut(geography_sp_data$growth, 5)
     geom_map(aes(fill=growth, group=growth),map =geography_sp_data) + #aes(alpha = growth),
-    geom_text(data=coords, hjust=0.5, vjust=-0.5, aes(x=lat, y=long, label=geo)) +
-    scale_x_continuous(name="Longitude") + 
-    scale_y_continuous(name="Latitude") + 
+    geom_text(data=coords, hjust=0.5, vjust=-0.5, aes(y=lat, x=long, label=geo)) +
+    #scale_x_continuous(name="Longitude") + 
+    #scale_y_continuous(name="Latitude") + 
     #scale_colour_brewer("clarity") +
     #guides(fill = guide_colorbar(colours = topo.colors(10)))+
     scale_fill_continuous(low = "lightblue", high = "steelblue4" , guide = "colorbar", breaks=brks) + 
-    #scale_fill_gradient(low = "lightsteelblue1", high = "steelblue4" , guide = "colorbar", breaks=brks) + 
+    #scale_fill_brewer(pal = 'PuRd') +
+    #scale_fill_gradient(low = "#132B43", high = "#56B1F7", space = "Lab", na.value = "grey50",  breaks=brks) + 
     #scale_fill_discrete("Bins", breaks=c(.25,.5,.75), labels=c(.25,.5,.75))+
     #scale_colour_brewer(type="seq") +
     opts(title=paste("Pct. Growth, ",title))+
@@ -161,10 +162,18 @@ shp_path <- args[4]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
 geography_sp1 <- readShapeSpatial(qual_shp_file)
+
+row.names(as(geography_sp1, "data.frame"))
+geography_sp11 <- spChFIDs(geography_sp1, as.character(geography_sp1$superdistr))
+row.names(as(geography_sp11, "data.frame"))
+geography_sp1 <- geography_sp11
 correspondence<- as.data.frame((geography_sp1@data[,c(2,ncol(geography_sp1@data))]))  #use for column names of matrix later
 correspondence$dist_county <- do.call(paste, c(correspondence[c(2,1)], sep = ""))
-coords<-data.frame(coordinates(geography_sp1),correspondence[3]) #use for labeling map
-names(coords) <- c("lat","long","geo")
+coords<-data.frame(coordinates(geography_sp1),row.names=sapply(slot(geography_sp1, "polygons"), function(x) slot(x, "ID"))) #use for labeling map
+coords$sort_id <- as.integer(row.names(coords))
+coords$sort <- seq(1:34)  ##not sure why THIS key works as opposed to sort_id, but it does.
+coords <- merge(x=coords, y=correspondence, by.x="sort", by.y="superdistr",all.x=TRUE)
+names(coords) <- c("sort","long","lat","sort2","cnty","geo")
 
 ## parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]

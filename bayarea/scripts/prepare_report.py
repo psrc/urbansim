@@ -104,21 +104,33 @@ cached data: %s
                                            options.years)
 
     my_location = os.path.split(__file__)[0]
-    pdf_script = os.path.join(my_location, "summarize_county_indicators.R")
-    cmd = "Rscript %s %s %d %d" % (pdf_script,
+    shp_path = os.path.join(os.getenv("OPUS_HOME"), "data", "bay_area_parcel", "shapefiles")
+    
+    ##county-level summary report
+    pdf_county_script = os.path.join(my_location, "summarize_county_indicators_map.R")
+    cmd = "Rscript %s %s %d %d %s %s %s %s" % (pdf_county_script,
                                    os.path.join(cache_directory, "indicators"),
-                                   years[0], years[-1])
+                                   years[0], years[-1],shp_path,"bayarea_counties.shp", scenario, "county")
     print "Summarizing county indicators: " + cmd
     if os.system(cmd) != 0:
         print "WARNING: Failed to generate county indicators"
+    
+    ##superdistrict-level summary report    
+    pdf_supdist_script = os.path.join(my_location, "summarize_county_indicators_map.R")
+    cmd = "Rscript %s %s %d %d %s %s %s %s" % (pdf_supdist_script,
+                                   os.path.join(cache_directory, "indicators"),
+                                   years[0], years[-1],shp_path,"superdistricts.shp", scenario, "county")
+    print "Summarizing superdistrict indicators: " + cmd
+    if os.system(cmd) != 0:
+        print "WARNING: Failed to generate superdistrict indicators"
 
+    
     shutil.copytree(os.path.join(cache_directory, "indicators"),
                     os.path.join(output_dir, "indicators"),
                     ignore=shutil.ignore_patterns("*_stored_data*", "*.log"))
 
     # prepare zonal indicator maps
     map_script = os.path.join(my_location, "map_indicators.R")
-    shp_path = os.path.join(os.getenv("OPUS_HOME"), "data", "bay_area_parcel", "shapefiles")
     cmd = "Rscript %s %s %s %s" % (map_script,
                                    os.path.join(cache_directory, "indicators"),
                                    os.path.join(output_dir, "maps"),
