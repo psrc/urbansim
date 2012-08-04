@@ -85,7 +85,8 @@ zone_growth=function(Tabfilename,input,output,zones)
 		breaks=round(interval*g)
 	}	
 	if (breaks[n-1]<=max_g){breaks[n-1]=round(max_g+1)}
-	brks=classIntervals(zones_temp@data$growth,style="fixed", fixedBreaks=breaks)
+	brks=classIntervals(zones_temp@data$growth,n=8,style="fixed", fixedBreaks=breaks)
+	
 	brks=brks$brks
 	colors=brewer.pal(length(brks)-1,"Reds")
 	label=rep(0,length(brks)-1)

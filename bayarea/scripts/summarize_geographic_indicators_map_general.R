@@ -84,7 +84,7 @@ mapStuff <- function(data,shapefile){
   
   if(range(simulation.m$growth>0, na.rm = TRUE))
   {
-    brks=classIntervals(simulation.m$growth,n=6, style="quantile")
+    brks=classIntervals(simulation.m$growth,n=10, style="quantile")
     brks=brks$brks
   }
   else 
@@ -103,7 +103,13 @@ mapStuff <- function(data,shapefile){
     #scale_y_continuous(name="Latitude") + 
     #scale_colour_brewer("clarity") +
     #guides(fill = guide_colorbar(colours = topo.colors(10)))+
-    scale_fill_continuous(low = "lightblue", high = "steelblue4" , guide = "colorbar", breaks=brks) + 
+    scale_fill_continuous(breaks=brks) +#low = "lightblue", high = "steelblue4"  ) +#, guide = "colorbar") + 
+    guides(fill = guide_colorbar(
+                                  ticks = FALSE,nbin = 10, 
+                                  barwidth = unit(1.5, "cm"), 
+                                  barheight = unit(6, "cm")),
+                                  theme_text(col="blue"),
+                                  ticks = T)+
     #scale_fill_brewer(pal = 'PuRd') +
     #scale_fill_gradient(low = "#132B43", high = "#56B1F7", space = "Lab", na.value = "grey50",  breaks=brks) + 
     #scale_fill_discrete("Bins", breaks=c(.25,.5,.75), labels=c(.25,.5,.75))+
