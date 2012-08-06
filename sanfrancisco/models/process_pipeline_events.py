@@ -41,6 +41,7 @@ class ProcessPipelineEvents(Model):
             new_buildings[attribute] = scheduled_development_events.get_attribute(attribute)
         
         new_buildings['year_built'] = ones(scheduled_index.size) * year
+        new_buildings['is_development_event'] = ones(scheduled_index.size) * 1
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
 
         return scheduled_development_events
