@@ -12,5 +12,6 @@ aliases = [
     "jurisdiction_id = building.disaggregate(parcel.city_id)",
     "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id",
-    "within_half_mile_transit = building.disaggregate(parcel.dist_rail< 2640)"
+    "within_half_mile_transit = building.disaggregate(parcel.dist_rail< 2640)",
+    "residential_building_type_id = 1*((building.residential_units>0)*(building.building_type_id==1)) + 2*((building.residential_units>0)*(building.building_type_id==2)) + 3*((building.residential_units>0)*(building.building_type_id==3))+ 4*((building.residential_units>0)*(building.building_type_id==4))+ 5*((building.residential_units>0)*(building.building_type_id>4))+ 6*(building.residential_units==0)",
            ]
