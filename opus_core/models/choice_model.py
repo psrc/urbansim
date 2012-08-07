@@ -1093,7 +1093,7 @@ class ModelInteraction:
         if not hasattr(self.model, "availability") or availability_string is None:
             return
         
-        if len(submodels) == 0 or re.search('SUBMODEL', availability_string) is None:
+        if len(submodels) == 0 or (len(submodels) == 1 and submodels[0] < 0) or re.search('SUBMODEL', availability_string) is None:
             self.interaction_dataset.compute_variables(availability_string)
             short_name = VariableName(availability_string).get_alias()
             if short_name != 'availability':                
