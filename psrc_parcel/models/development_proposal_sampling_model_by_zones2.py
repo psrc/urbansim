@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones, isinf
+from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones, isinf, round
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed, unique
 from opus_core.simulation_state import SimulationState
@@ -38,11 +38,10 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         self.bt_do_not_count =  all_building_types[self.bt_do_not_count]
         self.do_not_count_residential_units  = self.get_do_not_count_residential_units(zones)
         
-        zones.compute_variables(["existing_residential_units = zone.aggregate(building.residential_units, [parcel])",
-                                 "existing_job_spaces = zone.aggregate(psrc_parcel.building.total_spaces, [parcel])",
-                                 "placed_households = zone.aggregate(building.number_of_agents(household))"
+        zones.compute_variables(["placed_households = zone.aggregate(building.number_of_agents(household))",
+                                 "occupied_spaces = zone.aggregate(psrc_parcel.building.occupied_spaces, [parcel])"
                                  ], dataset_pool=self.dataset_pool)
-        bldgs.compute_variables(["psrc_parcel.building.occupied_spaces", "urbansim_parcel.building.zone_id"], dataset_pool=self.dataset_pool)
+        bldgs.compute_variables(["urbansim_parcel.building.zone_id"], dataset_pool=self.dataset_pool)
         self.occuppied_estimate = {}
         if self.type["residential"]: 
             occupied_residential_units = zones.compute_variables(["total_number_of_households = zone.number_of_agents(household)",
@@ -54,24 +53,23 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                 if bt in self.bt_do_not_count or not bts['is_residential'][ibt]:
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
-                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + hhdistr[ibt]*to_be_placed_households
+                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(hhdistr[ibt]*to_be_placed_households)
         if self.type["non_residential"]:    
-            zones.compute_variables(["number_of_all_nhb_jobs = zone.aggregate(job.home_based_status==0)",
-                                     "number_of_placed_nhb_jobs = zone.aggregate(psrc_parcel.building.number_of_non_home_based_jobs)"],
+            zones.compute_variables(["number_of_all_nhb_jobs = zone.aggregate(job.home_based_status==0)"],
                                  dataset_pool=self.dataset_pool)
             job_building_type_distribution = self.compute_job_building_type_distribution()
-            to_be_placed_jobs = (zones.get_attribute("number_of_all_nhb_jobs") - 
-                                 zones.get_attribute("number_of_placed_nhb_jobs"))
+            to_be_placed_jobs = zones.get_attribute("number_of_all_nhb_jobs") - zones['occupied_spaces']                                
             for ibt in range(all_building_types.size):
                 bt = all_building_types[ibt]
                 if bt in self.bt_do_not_count or bts['is_residential'][ibt]:
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
-                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + to_be_placed_jobs * job_building_type_distribution[ibt]
-                             
-        existing_residential_units = zones.get_attribute("existing_residential_units") - self.do_not_count_residential_units
-        existing_job_spaces = zones.get_attribute("existing_job_spaces")
-        
+                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(to_be_placed_jobs * job_building_type_distribution[ibt])
+              
+        self.is_residential_bt = {}
+        for ibt in range(all_building_types.size):
+            self.is_residential_bt[(all_building_types[ibt],)] = bts['is_residential'][ibt]
+            
         zone_ids_in_proposals = self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(urbansim_parcel.parcel.zone_id)", 
                                                 dataset_pool=self.dataset_pool)
         zone_ids = zones.get_id_attribute()
@@ -89,14 +87,10 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                 continue
             self.build_in_zone = {"residential": False, "non_residential": False}
             if self.type["residential"]:
-                if occupied_residential_units[zone_index] > 0:
-                    self.existing_to_occupied_ratio_residential =  \
-                            max(existing_residential_units[zone_index],1) / float(occupied_residential_units[zone_index])
+                if to_be_placed_households[zone_index] > 0:
                     self.build_in_zone["residential"] = True
             if self.type["non_residential"]:
-                if to_be_placed_sqft[zone_index] > 0:
-                    self.existing_to_occupied_ratio_non_residential =  \
-                            max(to_be_used_sqft[zone_index],1) / float(to_be_placed_sqft[zone_index])
+                if to_be_placed_jobs[zone_index] > 0:
                     self.build_in_zone["non_residential"] = True
             if not self.build_in_zone["residential"] and not self.build_in_zone["non_residential"]:
                 continue
@@ -145,6 +139,10 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.accounting[column_value]["target_spaces"] = int(round(self.accounting[column_value]["occupied_spaces"]))
                 
         if column_value:
+            if self.is_residential_bt[column_value] and not self.build_in_zone["residential"]:
+                return True
+            if not self.is_residential_bt[column_value] and not self.build_in_zone["non_residential"]:
+                return True
             if self.accounting.has_key(column_value):
                 accounting = self.accounting[column_value]
                 result = (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
