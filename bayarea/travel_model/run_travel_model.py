@@ -166,7 +166,7 @@ if __name__ == "__main__":
         server_model.cmd_or_fail("mkdir -p " + outdir)
         delfiles = server_model.cmd("find " + outdir + " -maxdepth 1 -not -wholename " + outdir)[1].split("\r\n")
         confirm_delete(options.yesmode, server_model, delfiles)
-        for d in ["database", "hwy", "logs", "main", "nonres", "skims", "trn"]:
+        for d in ["database", "hwy", "logs", "main", "nonres", "skims", "trn", "popsyn", "urbansim", "landuse"]:
             d = abs_modeldir + "/" + d
             print "Preserving output " + d + " to " + outdir
             server_model.cmd_or_fail("cp -r " + d + " " + outdir)
