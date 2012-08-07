@@ -116,7 +116,7 @@ cached data: %s
         print "WARNING: Failed to generate county indicators"
     
     ##superdistrict-level summary report --never mind the name of the script; is en route to being generalized   
-    pdf_supdist_script = os.path.join(my_location, "summarize_geographic_indicators_map_general.R")
+    pdf_supdist_script = os.path.join(my_location, "summarize_superdistrict_indicators_map.R")
     cmd = "Rscript %s %s %d %d %s %s %s %s" % (pdf_supdist_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1],shp_path,"superdistricts.shp", scenario, "superdistrict")
