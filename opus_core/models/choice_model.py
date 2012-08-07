@@ -1098,13 +1098,13 @@ class ModelInteraction:
             short_name = VariableName(availability_string).get_alias()
             if short_name != 'availability':                
                 self.interaction_dataset.compute_variables('availability=%s' % short_name)
-        
-        for submodel in submodels:
-            availability_string_subm = re.sub('SUBMODEL', str(submodel), availability_string)
-            self.interaction_dataset.compute_variables(availability_string_subm)
-            short_name = VariableName(availability_string_subm).get_alias()
-            if short_name != 'availability_%s' % submodel:
-                self.interaction_dataset.compute_variables('availability_%s=%s' % (submodel,short_name))
+        else:
+            for submodel in submodels:
+                availability_string_subm = re.sub('SUBMODEL', str(submodel), availability_string)
+                self.interaction_dataset.compute_variables(availability_string_subm)
+                short_name = VariableName(availability_string_subm).get_alias()
+                if short_name != 'availability_%s' % submodel:
+                    self.interaction_dataset.compute_variables('availability_%s=%s' % (submodel,short_name))
                 
     def get_availability(self, submodel):
         availability_string = 'availability_%s' % submodel
