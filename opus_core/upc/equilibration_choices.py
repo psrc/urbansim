@@ -13,6 +13,8 @@ try:
 except:
     ne = None
 
+annual_price_change_rate = 1/2.0
+
 class equilibration_choices(lottery_choices):
 
     def run(self, 
@@ -69,6 +71,9 @@ class equilibration_choices(lottery_choices):
                                 **kwargs)
 
         price_converged = results[0]
+        if annual_price_change_rate != 1.0:
+            price_converged = (price_converged - price_init) * annual_price_change_rate + price_init
+            
         logger.log_status("init RMSE={}".format(rmse(price_init)))
         logger.log_status("end  RMSE={}".format(rmse(price_converged)))
         resources.merge({'price_converged': price_converged})
