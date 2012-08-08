@@ -31,7 +31,7 @@ def invoke_run_travel_model(config, year):
         travel_model_year = year
     my_location = os.path.split(__file__)[0]
     script_filepath = os.path.join(my_location, "run_travel_model.py")
-    cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
+    cmd = "%s %s -s %s -y %s -n -e" % (sys.executable, script_filepath, scenario, travel_model_year)
 
     # form the desired output dir for the travel model data.  Make it look
     # like the urbansim run cache for easy association.  Note that we
