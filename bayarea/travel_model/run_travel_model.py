@@ -184,8 +184,10 @@ if __name__ == "__main__":
             sys.exit(1)
         emfac_windir = emfac_windir.replace('\r', '').replace('\n','')
         server_model.cmd_or_fail('cd ' + config.travel_model_home + 'model_support_files/EMFAC_Files')
-        server_model.cmd_or_fail("cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + " " + options.scenario + "' | tee emfac.log",
-                                 supress_output=False, pipe_position=0)
+        (rc, out) = server_model.cmd("cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + " " + options.scenario + "' | tee emfac.log",
+                                      supress_output=False, pipe_position=0)
+        if rc != 0:
+            print "WARNING: Failed to prepare emfac report"
 
     # Leave the machine idle and be sure to logout.  This should probably be a
     # finally block

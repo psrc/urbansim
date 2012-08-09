@@ -141,9 +141,8 @@ cached data: %s
         tm_config = config['travel_model_configuration']
         tm_base_dir = tm_config['travel_model_base_directory']
         tm_dir = os.path.join(tm_base_dir, "runs", cache_directory.split(os.sep)[-1])
-        for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.xls')):
+        for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.*')):
             shutil.copy(f, output_dir)
-        sys.exit(0)
 
 if __name__ == '__main__':
     try:
