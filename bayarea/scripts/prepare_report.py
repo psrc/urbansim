@@ -1,6 +1,6 @@
 # Prepare an output report
 from optparse import OptionParser
-import sqlite3
+import MySQLdb
 import sys, os
 import urbansim.tools.make_indicators
 import shutil, glob
@@ -44,11 +44,9 @@ def main():
         except:
             print "Failed to parse run ID from cache directory name"
             sys.exit(1)
-    elif os.getenv("OPUS_HOME"):
-        # Start by opening up the sqlite db
-        db_path = os.getenv("OPUS_HOME")
-        db_path = os.path.join(db_path, "local_databases", project, "services.txt")
-        conn = sqlite3.connect(db_path)
+    else:
+        # Start by opening up the mysql db
+        conn = MySQLdb.connect('paris.urbansim.org', 'hudson', os.getenv('HUDSON_DBPASS'), 'services');
         c = conn.cursor()
         c.execute("SELECT max(date_time), cache_directory, scenario_name, run_id FROM run_activity where status='done'")
         results = c.fetchone()
@@ -58,9 +56,6 @@ def main():
         # it's present.
         scenario = scenario.replace("_hudson", "")
         run_id = str(results[3])
-    else:
-        print "Couldn't figure out scenario and cache directory"
-        sys.exit(1)
 
     # prepare the report staging directory
     output_dir = os.path.join(options.output, scenario, "run_" + run_id)
