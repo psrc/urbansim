@@ -121,16 +121,18 @@ class BForm:
         height = my.get_height()
         F2 = my.F2
         cost = 0
+        MULT = 1.0
+        if btype in [9,10,11,12,13] and height > 14: MULT = 2.5
         if btype == 7 or btype == 8:
             if height < 25: cost += sqft*OFFICELOWRISE*F2
             elif height < 45: cost += sqft*OFFICEMIDRISE*F2
             elif height < 85: cost += sqft*OFFICEMID2RISE*F2
             elif height < 120: cost += sqft*OFFICEHIGHRISE*F2
-        elif btype == 9: cost += sqft*NEIGHBORHOODRETAIL*F2
-        elif btype == 10: cost += sqft*AUTORETAIL*F2
-        elif btype == 11: cost += sqft*BIGBOXRETAIL*F2
-        elif btype == 12: cost += sqft*INDUSTRIAL*F2
-        elif btype == 13: cost += sqft*WAREHOUSE*F2
+        elif btype == 9: cost += sqft*NEIGHBORHOODRETAIL*F2*MULT
+        elif btype == 10: cost += sqft*AUTORETAIL*F2*MULT
+        elif btype == 11: cost += sqft*BIGBOXRETAIL*F2*MULT
+        elif btype == 12: cost += sqft*INDUSTRIAL*F2*MULT
+        elif btype == 13: cost += sqft*WAREHOUSE*F2*MULT
         elif btype == 14: cost += sqft*LODGING*F2
         else: assert 0
 
