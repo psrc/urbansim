@@ -1,0 +1,38 @@
+<!-- This file is a template from which hudson's db server config is generated. -->
+<database_server_configurations>
+  <xml_version>4.2.0</xml_version>
+
+  <services_database_server setexpanded="True">
+    <protocol type="string" choices="postgres|mssql|mysql|sqlite">mysql</protocol>
+    <host_name type="string">paris.urbansim.org</host_name>
+    <user_name type="string">hudson</user_name>
+    <password type="password">Urb0MTC</password>
+  </services_database_server>
+  <urbanvision setexpanded="True">
+    <protocol type="string" choices="postgres|mssql|mysql|sqlite">postgres</protocol>
+    <host_name type="string">paris.urbansim.org/bayarea</host_name>
+    <user_name type="string">urbanvision</user_name>
+    <password type="password"></password>
+  </urbanvision>
+
+  <!-- These seem to be required but are not used.  Hmm. -->
+  <scenario_database_server setexpanded="True">
+    <protocol type="string" choices="postgres|mssql|mysql|sqlite">mysql</protocol>
+    <host_name type="string">localhost</host_name>
+    <user_name type="string">urbansim</user_name>
+    <password type="password"/>
+  </scenario_database_server>
+  <estimation_database_server setexpanded="True">
+    <protocol type="string" choices="postgres|mssql|mysql|sqlite">mysql</protocol>
+    <host_name type="string">localhost</host_name>
+    <user_name type="string">urbansim</user_name>
+    <password type="password"/>
+  </estimation_database_server>
+  <indicators_database_server setexpanded="True">
+    <protocol type="string" choices="postgres|mssql|mysql|sqlite">mysql</protocol>
+    <host_name type="string">localhost</host_name>
+    <user_name type="string">urbansim</user_name>
+    <password type="password"/>
+  </indicators_database_server>
+
+</database_server_configurations>

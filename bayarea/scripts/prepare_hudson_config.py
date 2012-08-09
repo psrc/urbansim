@@ -2,8 +2,9 @@
 # a build.  The parameters are passed in the environment, and many of them must
 # be set in the project xml file.  So we have this utility to create a wrapper
 # xml file based on the environment variables.  The wrapper goes around a
-# specified parent xml file specified with the -x option.  What follows is a
-# descrption of the environment variables:
+# specified parent xml file specified with the -x option.  We also must prepare
+# a suitable database config, and the passwords for this come from the
+# environment too.  What follows is a descrption of the environment variables:
 
 # HUDSON_SCENARIO: The scenario to which the environment variables will be
 # applied.
@@ -18,11 +19,16 @@
 #
 # HUDSON_PRICE_EQUILIBRATION: Whether or not to enable price equilibration in
 # the location choice models
+#
+# OPUS_DBPASS: This is the database password used by the developer model
+# HUDSON_DBPASS: This is the databse password used by hudson for the urbansim
+# services db.
 
 import sys, os
 from optparse import OptionParser
 from lxml import etree
 from copy import deepcopy
+from StringIO import StringIO
 
 if __name__ == "__main__":
 
@@ -31,6 +37,8 @@ if __name__ == "__main__":
                            help="file name of xml configuration (must also provide a scenario name using -s)")
     parser.add_option("-o", "--output", dest="xml_output", default=None, 
                            help="file name for output xml config file")
+    parser.add_option("-d", "--dbfile", dest="db_output", default=None,
+                           help="file name for database config file")
     (options, args) = parser.parse_args()
 
     if options.xml_configuration == None:
@@ -159,3 +167,26 @@ if __name__ == "__main__":
         scenario.append(tmc)
 
     print etree.tostring(project, pretty_print=True)
+
+    if options.db_output:
+        # Start by reading in the template:
+        db_template = os.path.split(__file__)[0]
+        db_template = os.path.join(db_template, "hudson_db_config.xml")
+        f = open(db_template)
+        xml = f.read()
+        f.close()
+        tree = etree.parse(StringIO(xml))
+        pw = os.getenv("OPUS_DBPASS")
+        if pw:
+            tree.xpath("/database_server_configurations/urbanvision/password")[0].text = pw
+        else:
+            sys.stderr.write("WARNING: OPUS_DBPASS was not set\n")
+        pw = os.getenv("HUDSON_DBPASS")
+        if pw:
+            tree.xpath("/database_server_configurations/services_database_server/password")[0].text = pw
+        else:
+            sys.stderr.write("WARNING: HUDSON_DBPASS was not set\n")
+
+        f = open(options.db_output, "w")
+        f.write(etree.tostring(tree, pretty_print=True))
+        f.close()
