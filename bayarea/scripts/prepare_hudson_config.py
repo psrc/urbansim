@@ -169,7 +169,7 @@ if __name__ == "__main__":
             invoke_tm.text = "True"
             import_tm.text = "True"
         else:
-            export_tm.text = "False"
+            export_tm.text = "True"
             invoke_tm.text = "False"
             import_tm.text = "False"
         models.append(export_tm)

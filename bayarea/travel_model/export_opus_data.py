@@ -34,12 +34,13 @@ def export_opus_data(config, year):
                                         in_storage=attribute_cache
                                        ).get_dataset_pool()
 
+    out_dir = os.path.join(cache_directory, "mtc_data")
     tm_config = config['travel_model_configuration']
     data_to_export = tm_config['urbansim_to_tm_variable_mapping'] 
     base_dir = tm_config['travel_model_base_directory']
     data_exchange_dir = tm_config[year]['data_exchange_dir']
     data_exchange_dir = os.path.join(base_dir, data_exchange_dir)
-    out_storage = csv_storage(storage_location=data_exchange_dir)
+    out_storage = csv_storage(storage_location=out_dir)
     for data_fname, variable_mapping in data_to_export.iteritems():
         if not flip_urbansim_to_tm_variable_mappling:
             col_names = variable_mapping.values()
@@ -54,12 +55,12 @@ def export_opus_data(config, year):
         dataset = dataset_pool.get_dataset(dataset_name)
         dataset.compute_variables(variables_aliases)
         #data = {} 
-        #data_file = os.path.join(data_exchange_dir, data_fname)
+        #data_file = os.path.join(out_dir, data_fname)
         #for col_name, variable in zip(col_names, variables):
             #    data[col_name] = dataset[variable]
 
-        org_fname = os.path.join(data_exchange_dir, "%s.computed.csv" % data_fname)
-        new_fname = os.path.join(data_exchange_dir, "%s%s.csv" % (year,data_fname))
+        org_fname = os.path.join(out_dir, "%s.computed.csv" % data_fname)
+        new_fname = os.path.join(out_dir, "%s%s.csv" % (year,data_fname))
         block_msg = "Writing {} for travel model to {}".format(data_fname,
                                                                new_fname)
         with block(block_msg):
@@ -69,6 +70,8 @@ def export_opus_data(config, year):
             #rename & process header
             shutil.move(org_fname, new_fname)
             os.system("sed 's/:[a-z][0-9]//g' -i %s" % new_fname)
+
+        shutil.copy(new_fname, data_exchange_dir)
 
 if __name__ == "__main__":
     try:import wingdbstub
