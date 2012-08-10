@@ -20,6 +20,10 @@
 # HUDSON_PRICE_EQUILIBRATION: Whether or not to enable price equilibration in
 # the location choice models
 #
+# HUDSON_TRAVEL_MODEL_HOME: override the travel model base directory with this
+# variable if it is set.  This enables the caller to mount the travel model
+# directory however s/he wishes.
+#
 # OPUS_DBPASS: This is the database password used by the developer model
 # HUDSON_DBPASS: This is the databse password used by hudson for the urbansim
 # services db.
@@ -140,6 +144,13 @@ if __name__ == "__main__":
 
     # apply the travel model specification
     tmc = etree.Element("travel_model_configuration", type="dictionary")
+
+    # set up a project-specific travel model base directory if necessary.
+    tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
+    if tm_home:
+        tmbd = etree.Element("travel_model_base_directory", type="string")
+        tmbd.text = tm_home
+        tmc.append(tmbd)
     models = etree.Element("models", type="selectable_list")
     tmc.append(models)
     export_tm = etree.Element("selectable",
