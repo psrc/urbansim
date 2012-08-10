@@ -45,12 +45,14 @@ create or replace view urbansim.scheduled_development_events as
 	COALESCE(non_residential_sqft, (0)) AS non_residential_sqft,
 	COALESCE(residential_units, (0)) AS residential_units,
 	COALESCE(residential_sqft, (0)) AS residential_sqft,
-	case when tenure='rent' then 1 else 2 end,
+	case when tenure='rent' then 1 else 2 end as tenure,
 	COALESCE(non_residential_rent, (0)) AS non_residential_rent,
 	COALESCE(stories, (1)) AS stories,
 	COALESCE(bedrooms, (0)) AS bedrooms,
 	COALESCE(rent, (0)) AS rent,
 	COALESCE(sale_price, (0)) AS sale_price,
 	COALESCE(unit_sqft, (0)) AS unit_sqft 
-	from public.scheduled_development_events s inner join scenario on s.scenario_id=scenario.id;
+	from public.scheduled_development_events s inner join scenario on s.scenario_id=scenario.id
+  WHERE s.building_type_id IS NOT NULL;
+
 

@@ -21,7 +21,7 @@ class ProcessPipelineEvents(Model):
         known_attributes = scheduled_events.get_known_attribute_names()
 
         is_matched_scenario = ones(scheduled_events.size(), dtype='bool')
-        if scenario_name is not None:
+        if scenario_name is None and resources is not None:
             scenario_name = resources.get('scenario_name', None)
         if 'scenario_name' in known_attributes and scenario_name is not None:
             is_matched_scenario = scheduled_events['scenario_name'] == scenario_name
@@ -34,7 +34,7 @@ class ProcessPipelineEvents(Model):
         if event_filter is not None:
             passes_filter = scheduled_events.compute_variables(event_filter)
 
-        indicator = is_matched_scenario & is_matched_scenario & passes_filter 
+        indicator = is_matched_scenario & is_matched_year & passes_filter 
         
         if indicator.sum() == 0:
             logger.log_status('No scheduled developments.')
