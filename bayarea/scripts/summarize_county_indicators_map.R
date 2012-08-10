@@ -12,6 +12,7 @@
 ##            /var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_66.2012_07_07_15_50/indicators \ 
 ##            2010 2035
 
+################################################################################
 args <- commandArgs(TRUE)
 options(warn=-1) 
 traceback()
@@ -34,6 +35,7 @@ annot <- function(){
            fontface = "bold", alpha = 0.8, angle=45)
 }
 
+################################################################################
 ##declare index function
 indx <- function(dat, baseRow = 1)
 {
@@ -49,6 +51,8 @@ viewPortFunc <- function(printObject=printObject){
   print(printObject, vp="vp")
   #print(sprintf("Outputting Chart %s to PDF",title))
 }
+
+################################################################################
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 #wrap cmd-line arguments to assign to proper names
 #cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
@@ -60,6 +64,34 @@ manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 #}
 #cmdArgs(a=args[1],b=args[2],c=args[3])
 
+################################################################################
+## function to render a matrix WITH a regional total if absolute values, otherwise no total
+returnMatrix <- function(inputData=inputData,tableName=tableName) {
+  if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
+    print("avg")
+    inputData$year <- as.integer(rownames(inputData))
+    meltedInputData <- melt(inputData,id="year",variable_name = "county")
+  }
+  else #if (grep("average",fName,ignore.case=FALSE, fixed=T))
+  {
+    print("not avg")
+    inputData$Region <- rowSums(inputData,na.rm = FALSE, dims = 1)
+    inputData$year <- as.integer(rownames(inputData))
+    meltedInputData <- melt(inputData[,c(1:9,11)],id="year",variable_name = "county")
+  }
+  return(list(wide=inputData,long=meltedInputData))
+}
+################################################################################
+## function for formating chart titles
+TitleCase <- function(string="test string")
+{
+  first <- toupper(substring(string, 1, 1))
+  rest <- tolower(substring(string, 2))
+  fString <- sprintf("%s%s",first,rest)
+  return(fString)
+}
+
+################################################################################
 ## grab arguments
 pth <-args[1]
 yrStart <- as.integer(args[2])
@@ -71,21 +103,13 @@ scenario<-args[6]
 geo<-args[7]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
-histEmployment <-c()
-histPopulation <-c()
-histEmpRes  <-c()
-histHouseholds <-c()
 
+
+##Add historic data to data frame
 #test structure, 9 counties times 4 elements time 3 years
 nCounties <- 9
 nElements <-4
 nYears <- 3
-
-##data
-emplData <-c()
-hhData <- c()
-popData <- c()
-empResData <- c()
 
 #dput(hh)
 lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
@@ -110,34 +134,8 @@ histData <- structure(dt,
                       .Dimnames = list(lCounties,lYears,lElements))
 
 #histData <- data.frame(histData)
-histData.m <- melt(histData)
-histData.m <- rename(histData.m, c(X1 = "county", X2="variable", X3 = "year"))
-
-## function to render a matrix WITH a regional total if absolute values, otherwise no total
-returnMatrix <- function(inputData=inputData,tableName=tableName) {
-  if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
-    print("avg")
-    inputData$year <- as.integer(rownames(inputData))
-    meltedInputData <- melt(inputData,id="year",variable_name = "county")
-  }
-  else #if (grep("average",fName,ignore.case=FALSE, fixed=T))
-  {
-    print("not avg")
-    inputData$Region <- rowSums(inputData,na.rm = FALSE, dims = 1)
-    inputData$year <- as.integer(rownames(inputData))
-    meltedInputData <- melt(inputData[,c(1:9,11)],id="year",variable_name = "county")
-  }
-  return(list(wide=inputData,long=meltedInputData))
-}
-
-## function for formating chart titles
-TitleCase <- function(string="test string")
-{
-  first <- toupper(substring(string, 1, 1))
-  rest <- tolower(substring(string, 2))
-  fString <- sprintf("%s%s",first,rest)
-  return(fString)
-}
+#histData.m <- melt(histData)
+#histData.m <- rename(histData.m, c(X1 = "county", X2="variable", X3 = "year"))
 
 ## parse path to get runid, run date
 split <- strsplit(args[1],"/")[[1]]
