@@ -22,7 +22,7 @@ if localFlag:
 else:
     ##remote paths
     tab_directory=r'/var/hudson/workspace/MTC_Model/data/bay_area_parcel/runs/run_107.2012_07_26_21_39/indicators' #raw_input()
-    rScriptPath=r'/var/hudson/workspace/MTC_Model/src/bayarea/scripts/summarize_county_indicators.R'
+    rScriptPath=r'/var/hudson/workspace/MTC_Model/src/bayarea/scripts'
     shp_path=r'/var/hudson/workspace/MTC_Model/data/bay_area_parcel/shapefiles'
 
 """

@@ -71,6 +71,47 @@ scenario<-args[6]
 geo<-args[7]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
+histEmployment <-c()
+histPopulation <-c()
+histEmpRes  <-c()
+histHouseholds <-c()
+
+#test structure, 9 counties times 4 elements time 3 years
+nCounties <- 9
+nElements <-4
+nYears <- 3
+
+##data
+emplData <-c()
+hhData <- c()
+popData <- c()
+empResData <- c()
+
+#dput(hh)
+lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
+lElements <- c('population','households','employed residents','employment')
+lYears <- c('1980','1990','2000')
+
+##data
+dt<-c(1105379, 656380, 222568, 99199, 678974, 587329, 1295071, 
+      235203, 299681, 1279182, 803732, 230096, 110765, 723959, 649623, 
+      1497577, 340421, 388222, 1443741, 948816, 247289, 124279, 776733, 
+      707161, 1682585, 394542, 458614,427372, 241418, 88702, 36667, 299867, 225330, 458914, 
+      80602, 115008, 480079, 301087, 95233, 41185, 305984, 242348, 
+      522040, 113637, 149382, 523366, 344129, 100650, 45402, 329700, 
+      254103, 565863, 130403, 172403,514727, 305313, 116810, 42988, 342484, 313558, 661063, 
+      90279, 130089, 635840, 406507, 125886, 52533, 386530, 352964, 
+      806917, 151310, 193296, 692833, 451357, 128855, 58501, 427823, 
+      361640, 843912, 172355, 229227,
+      rep(100000,27))
+
+histData <- structure(dt, 
+                      dim = c(9,3,4),
+                      .Dimnames = list(lCounties,lYears,lElements))
+
+#histData <- data.frame(histData)
+histData.m <- melt(histData)
+histData.m <- rename(histData.m, c(X1 = "county", X2="variable", X3 = "year"))
 
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
 returnMatrix <- function(inputData=inputData,tableName=tableName) {
@@ -129,7 +170,7 @@ pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 for(i in 1:length(dat)) 
 {
   simulation <- as.data.frame(dat[i])  #technically redundant; could just use dat list object
-  #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035/county_table-3_2010-2035_county__county_population.tab",header=T,sep = "\t")  
+  #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators/county_table-3_2012-2020_county__county_employed_residents.tab",header=T,sep = "\t")  
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
   #print(simulation[1:2,1:3])
@@ -155,8 +196,7 @@ for(i in 1:length(dat))
   
   ## convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
   #cnty <- c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
-  cnty <-  c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
-  simulation[,1] <-factor(simulation[,1], labels=cnty)
+  simulation[,1] <-factor(simulation[,1], labels=lCounties)
   
   ## rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
   regexp <- "([[:digit:]]{4})"  
@@ -169,14 +209,27 @@ for(i in 1:length(dat))
   ## extract field name representing variable for use in chart
   title_prelim <- substr(names(simulation)[2],1,pos-2)
   title_split <- strsplit(title_prelim,"_")
+  title_less_first<-paste(title_split[[1]][2:length(title_split[[1]])], sep=" ", collapse = " ")
   title_proper <- lapply(title_split,TitleCase)
   title <- paste(title_proper[[1]], sep=" ", collapse = " ")
   #fileNameOutChart=sprintf("%s/plot_%s_indexChart_%s.pdf",fp,runid,title)
   #fileNameOutTable=sprintf("%s/plot_%s_indexTable_%s.pdf",fp,runid,title)
   
-  yrNames <- c('county',years)
   ## assign new colunn names
+  yrNames <- c('county',years)
   names(simulation) <-yrNames
+  
+  ##check for a few select variables for merging with historic data
+  containTest <- title_less_first %in% lElements
+  extra=F
+  if (T %in% containTest){
+    histData[,,title_less_first]
+    simulation <- cbind(county=simulation[,1],histData[,,title_less_first],simulation[,2:maxCol])
+    extra=T
+  }
+  #1) check if one of the values empres, jobs etc are in title_split
+  #1a) if so add columns with cbind before start (years still in columns)
+  #2# updated data frame is processed, transformed as any other
   
   ## Transpose frame so cols are county series, rows are years
   simulation.t <- t(simulation[,2:ncol(simulation)])
@@ -196,7 +249,13 @@ for(i in 1:length(dat))
   simulation.i <- replace(simulation.i, is.na(simulation.i), 0) 
   
   ##add two digit years for easier plotting
-  rownames(simulation.i) <- yrNames[2:maxCol]
+  if(extra==T){
+    yrNames <- c('county',1980,1990,2000,years)
+    rownames(simulation.i) <- yrNames[seq(2,maxCol+3)]
+  }
+  else {
+    rownames(simulation.i) <- yrNames[2:maxCol]
+  }
   #attach(simulation.i)
   
   ##   convert to long format for ggplot
@@ -237,6 +296,8 @@ for(i in 1:length(dat))
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
   
+  ##possibly segment chart to have solid lines before 2010
+  #simulation_long_abs[simulation_long_abs$year>2010,]
   lty <- setNames(sample(1:12,10,T), levels(simulation_long_index$county))
   g3 <- ggplot(data=simulation_long_index,
                aes(
