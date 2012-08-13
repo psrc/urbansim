@@ -9,6 +9,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.store.csv_storage import csv_storage
 from opus_core.variables.variable_name import VariableName
+import mtc_common
 
 flip_urbansim_to_tm_variable_mappling = True
 
@@ -37,9 +38,7 @@ def export_opus_data(config, year):
     out_dir = os.path.join(cache_directory, "mtc_data")
     tm_config = config['travel_model_configuration']
     data_to_export = tm_config['urbansim_to_tm_variable_mapping'] 
-    base_dir = tm_config['travel_model_base_directory']
-    data_exchange_dir = tm_config[year]['data_exchange_dir']
-    data_exchange_dir = os.path.join(base_dir, data_exchange_dir)
+    data_exchange_dir = mtc_common.tm_get_data_exchange_dir(config, year)
     out_storage = csv_storage(storage_location=out_dir)
     for data_fname, variable_mapping in data_to_export.iteritems():
         if not flip_urbansim_to_tm_variable_mappling:

@@ -24,6 +24,10 @@
 # variable if it is set.  This enables the caller to mount the travel model
 # directory however s/he wishes.
 #
+# HUDSON_TRAVEL_MODEL_SSHFS: urbansim can use sshfs to mount the travel model
+# directory.  Set this variable to the ssh connect_string (e.g.,
+# cube@detroit.urbansim.org:/cygdrive/e/mtc_travel_model) to use this feature
+#
 # OPUS_DBPASS: This is the database password used by the developer model
 # HUDSON_DBPASS: This is the databse password used by hudson for the urbansim
 # services db.
@@ -148,9 +152,19 @@ if __name__ == "__main__":
     # set up a project-specific travel model base directory if necessary.
     tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
     if tm_home:
-        tmbd = etree.Element("travel_model_base_directory", type="string")
+        tmh = etree.Element("travel_model_home", type="dictionary")
+        tmbd = etree.Element("directory", type="string")
         tmbd.text = tm_home
-        tmc.append(tmbd)
+        tmh.append(tmbd)
+        tm_sshfs = os.getenv("HUDSON_TRAVEL_MODEL_SSHFS")
+        if tm_sshfs:
+            tmproto = etree.Element("proto", type="string")
+            tmproto.text = "sshfs"
+            tmconnect = etree.Element("connect_string", type="string")
+            tmconnect.text = tm_sshfs
+            tmh.append(tmproto)
+            tmh.append(tmconnect)
+        tmc.append(tmh)
     models = etree.Element("models", type="selectable_list")
     tmc.append(models)
     export_tm = etree.Element("selectable",
