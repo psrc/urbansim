@@ -50,6 +50,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         output_storage = sql_storage(storage_location = db)
                                                             
         logger.start_block('Compute and export data to openAMOS...')
+
         hh = dataset_pool.get_dataset('household')
         hh_recs = dataset_pool.get_dataset('households_recs')
         #syn_hh = dataset_pool.get_dataset('synthetic_household')
@@ -65,7 +66,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         "inc35t50=((household.income>=35000) & (household.income<50000)).astype('i')",
                         "inc50t75=((household.income>=50000) & (household.income<75000)).astype('i')",
                         "inc75t100=((household.income>=75000) & (household.income<100000)).astype('i')",
-                        'htaz = household.disaggregate(building.zone_id) - 100',
+                        'htaz = (houseid>0)*(household.disaggregate(building.zone_id) - 100)',
                         "withchild = (household.aggregate(person.age<18)>0).astype('i')",
                         "noc = household.aggregate(person.age<18)",
                         "numadlt = household.aggregate(person.age>=18)",
@@ -83,21 +84,33 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'mag_zone.household.urb',
                         'zonetidi4 = household.disaggregate(building.zone_id) - 100',
                         ]
-
+        
         self.prepare_attributes(hh, hh_variables)
         attrs_to_export = hh_recs.get_known_attribute_names()
-        print 'households variable names', attrs_to_export
-        print 'Output storage - ', output_storage
-        print 'database name - ', database_name
+
         hh.write_dataset(attributes=attrs_to_export,
                          out_storage=output_storage)
         dataset_pool._remove_dataset(hh.dataset_name)
 
         persons = dataset_pool.get_dataset('person')
+
+        # Recoding invalid work and school locations to some random valid values
         persons_recs = dataset_pool.get_dataset('persons_recs')
+        persons_recs.add_attribute(persons['person_id'],"personuniqueid")
+        persons_recs.add_attribute(persons['marriage_status'],"marstat")
+        persons_recs.add_attribute(persons['student_status'],"schstat")
+        persons_recs.add_attribute(persons['wtaz0'],"htaz_act")
+        persons_recs.add_attribute(persons['wtaz0'],"wtaz_rec")
+        persons_recs.add_attribute(persons['wtaz0'],"wtaz1")
+        persons_recs.add_attribute(persons['student_status'],"schstat")
+
+        persons_recs.add_attribute(0,"htaz")
+
+        persons_recs.flush_dataset()
+
         #syn_persons = dataset_pool.get_dataset('synthetic_person')
-        persons_variables = ['personid=person.member_id',
-                             'personuniqueid=person.personid',
+        persons_variables = ['personid=mag_zone.person.unique_member_id',
+                             'personuniqueid=person.person_id',
                              'houseid=person.household_id',
                              "one=(person.person_id>0).astype('i')",
                              'trvtime=mag_zone.person.travel_time_from_home_to_work',
@@ -123,10 +136,18 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              "fulltim=(mag_zone.person.full_time==1).astype('i')",
                              'parttim=mag_zone.person.part_time',
                              'person.schtaz - 100',
+                             
+                             'htaz_act = (houseid>0)*(person.disaggregate(building.zone_id, intermediates=[household]))',
 
-                             'wtaz = mag_zone.person.wtaz - 100',
+                             'wtaz_rec=0*(mag_zone.person.wtaz == -1) + mag_zone.person.wtaz*(mag_zone.person.wtaz <> -1)',
+                             'wtaz1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>100)) + (htaz_act-100)*((person.employment_status == 1) & (wtaz_rec==0)) + 0*(person.employment_status == 0)',
+                       
+
+                             'htaz = (houseid>0)*(htaz_act - 100)',
+
+                             'wtaz = wtaz1',
                              'marstat = person.marriage_status',
-
+                             'schstat = person.student_status',
                              'enroll = person.student_status',
                              'grade = person.student_status & person.education',
                              'educ = person.education',
@@ -136,21 +157,19 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              "presch = (person.age <= 5).astype('i')",
                              "coled = (person.education >= 10).astype('i')",
 
-                             'htaz = person.disaggregate(building.zone_id, intermediates=[household]) - 100',
-
                              'race1 = person.race',
                              'white = person.race == 1',
                              'person.hispanic',
                              ]
         
         self.prepare_attributes(persons, persons_variables)
+
         attrs_to_export = persons_recs.get_known_attribute_names()
-        print 'persons variable names', attrs_to_export
-        print 'Output storage - ', output_storage
-        print 'database name - ', database_name
+
         persons.write_dataset(attributes=attrs_to_export,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
+        #raw_input("check tables for consistency")
 
         zones = dataset_pool.get_dataset('zone')
         zones_variables = [
@@ -177,24 +196,24 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
 
                              "residential_households=zone.number_of_agents(household)",
 
-                             "locationid=zone.zone_id - 100",
+                             "locationid=zone.zone_id",
                              ]
         
         locations = dataset_pool['locations']
         self.prepare_attributes(zones, zones_variables, dataset2=locations)
         attrs_to_export = locations.get_known_attribute_names()
-        print 'locations variable names', attrs_to_export
-        print 'Output storage - ', output_storage
-        print 'database name - ', database_name
+
         locations.write_dataset(attributes=attrs_to_export,
                                 out_storage=output_storage)
         dataset_pool._remove_dataset(locations.dataset_name)
+        #raw_input("check location block")
 
         logger.end_block()
 
     def prepare_attributes(self, dataset1, variables_to_compute, dataset2=None):
         dataset1.compute_variables(variables_to_compute)
         variables_short_name = unique([VariableName(v).get_alias() for v in variables_to_compute]).tolist()
+
         if dataset2 is None:
             # dataset1 is the one to be exported
             for attr in variables_short_name:
