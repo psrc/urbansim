@@ -7,6 +7,7 @@
     <host_name type="string">paris.urbansim.org</host_name>
     <user_name type="string">hudson</user_name>
     <password type="password">Urb0MTC</password>
+    <blob_compression type="boolean">True</blob_compression>
   </services_database_server>
   <urbanvision setexpanded="True">
     <protocol type="string" choices="postgres|mssql|mysql|sqlite">postgres</protocol>
