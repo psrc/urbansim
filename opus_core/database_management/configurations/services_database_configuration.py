@@ -14,7 +14,8 @@ class ServicesDatabaseConfiguration(DatabaseConfiguration):
                  user_name = None,
                  password = None,
                  database_name = None,
-                 database_configuration = None):
+                 database_configuration = None,
+                 blob_compression = False):
         if database_name is None:
             database_name = 'services'
         DatabaseConfiguration.__init__(self,
@@ -23,7 +24,8 @@ class ServicesDatabaseConfiguration(DatabaseConfiguration):
                               user_name = user_name,
                               password = password,
                               database_name = database_name,
-                              database_configuration = database_configuration)
+                              database_configuration = database_configuration,
+                              blob_compression = False)
         
     def _database_configuration_node(self):
         return 'services_database_server'   

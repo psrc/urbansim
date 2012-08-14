@@ -55,6 +55,7 @@ class DatabaseServerConfiguration(object):
     HOST_NAME_TAG = 'host_name'
     USER_NAME_TAG = 'user_name'
     PASSWORD_TAG = 'password'
+    BLOB_COMPRESSION_TAG = 'blob_compression'
     
     DEFAULT_FILE_NAME = 'database_server_configurations.xml'
     
@@ -66,7 +67,8 @@ class DatabaseServerConfiguration(object):
                  database_configuration = None,
                  test = False,
                  database_server_configuration_file_path = None,
-                 sqlite_db_path = None):
+                 sqlite_db_path = None,
+                 blob_compression = False):
         
         if database_server_configuration_file_path is None:
             database_server_configuration_file_path = paths.get_opus_home_path('settings', 'database_server_configurations.xml')
@@ -85,7 +87,12 @@ class DatabaseServerConfiguration(object):
             self.host_name = database_configuration.find(self.HOST_NAME_TAG).text
             self.user_name = database_configuration.find(self.USER_NAME_TAG).text
             self.password = database_configuration.find(self.PASSWORD_TAG).text
-    
+            blob_compression = database_configuration.find(self.BLOB_COMPRESSION_TAG)
+            if blob_compression != None and blob_compression.text == "True":
+                blob_compression = True
+            else:
+                blob_compression = False
+
         else:
             if protocol is None:
                 self.protocol = get_default_database_engine()
@@ -113,6 +120,7 @@ class DatabaseServerConfiguration(object):
             self.password = os.environ['SQLPASSWORD']
 
         self.sqlite_db_path = sqlite_db_path
+        self.blob_compression = blob_compression
 
     @classmethod
     def get_default_configuration_file_path(cls):

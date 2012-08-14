@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import os, pickle, shutil, datetime
+import os, pickle, shutil, datetime, zlib
 from time import localtime, strftime
 from numpy import array
 from numpy.random import seed, randint
@@ -291,7 +291,11 @@ class RunManager(AbstractService):
             raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
 
         try:
-            config = Configuration(pickle.loads(str(run_resources[0])))
+            if self.server_config.blob_compression:
+                r = pickle.loads(zlib.decompress(str(run_resources[0])))
+            else:
+                r = pickle.loads(str(run_resources[0]))
+            config = Configuration(r)
         except:
             logger.log_error('Could not create the configuration file for run %i'%run_id)
             raise
@@ -368,7 +372,10 @@ class RunManager(AbstractService):
         rs = self.services_db.execute(query)
         if resources:
             for row in rs:
-                row_resources = pickle.loads(str(rs.resources))
+                if self.server_config.blob_compression:
+                    row_resources = pickle.loads(zlib.decompress(str(rs.resources)))
+                else:
+                    row_resources = pickle.loads(str(rs.resources))
                 if isinstance(row_resources, XMLConfiguration) and 'scenario_name' in rs.c:
                     row.resources = row_resources.get_run_configuration(row.scenario_name)
                 else:
@@ -404,7 +411,10 @@ class RunManager(AbstractService):
             results = []
             for run_id, run_name, run_description, processor_name, run_resources in self.services_db.execute(query).fetchall():
                 try:
-                    config = pickle.loads(str(run_resources))
+                    if self.server_config.blob_compression:
+                        config = pickle.loads(zlib.decompress(str(run_resources)))
+                    else:
+                        config = pickle.loads(str(run_resources))
                     results.append((run_id, run_name, run_description, processor_name,config))
                 except:
                     if not soft_fail: raise
@@ -438,7 +448,10 @@ class RunManager(AbstractService):
 
         self.update_environment_variables(run_resources = resources)
         resources['run_id'] = run_id
-        pickled_resources = pickle.dumps(resources)
+        if self.server_config.blob_compression:
+            pickled_resources = zlib.compress(pickle.dumps(resources), 9)
+        else:
+            pickled_resources = pickle.dumps(resources)
         description = resources.get('description', 'No description')
         if run_name is None:
             run_name = description
@@ -556,8 +569,13 @@ class RunManager(AbstractService):
 
         resources['years_run'] = years_cached
 
+        if self.server_config.blob_compression:
+            pickled_resources = zlib.compress(pickle.dumps(resources), 9)
+        else:
+            pickled_resources = pickle.dumps(resources)
+
         values = {
-                'resources':pickle.dumps(resources),
+                'resources':pickled_resources,
                 'status':'partial'
         }
 
