@@ -55,9 +55,9 @@ class IterativeRun(AbstractTravelModel):
             config['travel_model_configuration'] = tm_config
             setupCache = 1
             backupResults = 0
-            #RunOpenamos().run(config, year, iteration, setupCache, backupResults)
+            RunOpenamos().run(config, year, iteration, setupCache, backupResults)
 
-            #RunMalta().run(config, year, iteration)
+            RunMalta().run(config, year, iteration)
 
 
             # Run the models for post processing the outputs ... 

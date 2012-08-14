@@ -53,6 +53,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
 
         hh = dataset_pool.get_dataset('household')
         hh_recs = dataset_pool.get_dataset('households_recs')
+        hh_recs.add_attribute(0,"htaz1")
+        hh_recs.flush_dataset()
         #syn_hh = dataset_pool.get_dataset('synthetic_household')
 
         hh_variables = ['houseid=household.household_id',
@@ -66,7 +68,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         "inc35t50=((household.income>=35000) & (household.income<50000)).astype('i')",
                         "inc50t75=((household.income>=50000) & (household.income<75000)).astype('i')",
                         "inc75t100=((household.income>=75000) & (household.income<100000)).astype('i')",
-                        'htaz = (houseid>0)*(household.disaggregate(building.zone_id) - 100)',
+                        'htaz1 = (houseid>0)*(household.disaggregate(building.zone_id))',
+                        'htaz = ((houseid>0) & (htaz1>100))*(htaz1-100)+((houseid>0) & (htaz1==-1))*1122',
                         "withchild = (household.aggregate(person.age<18)>0).astype('i')",
                         "noc = household.aggregate(person.age<18)",
                         "numadlt = household.aggregate(person.age>=18)",
@@ -143,7 +146,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'wtaz1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>100)) + (htaz_act-100)*((person.employment_status == 1) & (wtaz_rec==0)) + 0*(person.employment_status == 0)',
                        
 
-                             'htaz = (houseid>0)*(htaz_act - 100)',
+                             'htaz = ((houseid>0) & (htaz_act>100))*(htaz_act - 100)+((houseid>0) & (htaz_act==-1))*1122',
 
                              'wtaz = wtaz1',
                              'marstat = person.marriage_status',

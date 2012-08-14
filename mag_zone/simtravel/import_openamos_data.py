@@ -57,13 +57,17 @@ def to_opus_dataset(df, out_store, table_name):
     return opus_ds
 
 @log_block()
-def import_openamos_data(config, year, zone_set):
+def import_openamos_data(config, year, zone_set=None):
     tm_config = config['travel_model_configuration']
-    openamos_dir = tm_config[year]
+    projectLoc = tm_config.get("project_path")
+
+    #openamos_dir = tm_config[year]
     #skim_dir = "/workspace/workdata/SimTRAVEL_data/base_scenario/skims/bootstrap/"
-    skim_dir = os.path.join(openamos_dir, "skims/bootstrap")
+    print "--->", projectLoc
+    skim_dir = os.path.join(projectLoc, "skimOutput/dynamic")
     logger.log_status('Reading skims from {}'.format(skim_dir))
     skim_files = glob.glob(os.path.join(skim_dir, "skim*.dat"))
+    print skim_files
     skims = None
     """
     for skim_file in skim_files:
@@ -146,4 +150,19 @@ class Tests(opus_unittest.OpusTestCase):
         #shutil.rmtree(tmp_dir)
 
 if __name__ == '__main__':
-    opus_unittest.main()
+    #opus_unittest.main()
+    from optparse import OptionParser
+    from opus_core.file_utilities import get_resources_from_file
+    from opus_core.resources import Resources
+
+    parser = OptionParser()
+    parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
+                      help="Name of file containing resources")
+    parser.add_option("-y", "--year", dest="year", action="store", type="int",
+                      help="Year in which to 'run' the travel model")
+    (options, args) = parser.parse_args()
+
+    resources = Resources(get_resources_from_file(options.resources_file_name))
+
+    logger.enable_memory_logging()
+    import_openamos_data(resources, options.year)
