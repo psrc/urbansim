@@ -283,6 +283,12 @@ class RoommateModel(Model):
             cum_match_prob = cumsum(match_score / match_score.sum())
             r = uniform(0,1)
             the_lucky_person = searchsorted(cum_match_prob, r)
+
+            if available_mates.shape[0] == 0:
+                print 'No more available mates remain'
+                continue
+
+
             if person_set['unmatched'][available_mates[the_lucky_person]] > 0:
                 person_set['unmatched'][available_mates[the_lucky_person]] = False
                 person_set['unmatched'][chooser] = False
@@ -309,6 +315,12 @@ class RoommateModel(Model):
             cum_match_prob = cumsum(match_score / match_score.sum())
             r = uniform(0,1)
             the_lucky_person = searchsorted(cum_match_prob, r)
+
+            if available_mates.shape[0] == 0:
+                print 'No more available mates remain'
+                continue
+
+
             if person_set['unmatched'][available_mates[the_lucky_person]] > 0:
                 person_set['unmatched'][available_mates[the_lucky_person]] = False
                 person_set['roommate_counter'][chooser] += 1
