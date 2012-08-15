@@ -7,7 +7,8 @@
 import os
 import gc
 from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate
-from numpy import round_, argsort, resize, average, ndarray
+from numpy import round_, argsort, resize, average, ndarray, sqrt, newaxis
+from scipy.stats import norm
 from opus_core import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
@@ -355,14 +356,18 @@ class BayesianMelding(MultipleRuns):
     def get_weight_components(self):
         return self.weight_components
     
-    def set_propagation_factor(self, year, factor=1, no_propagation=True):
+    def set_propagation_factor(self, year, factor=1, no_propagation=True, additive=False):
         """factor is used to multiply the number of years between calibration and projection.
             If no_propagation is True, no bias and variance propagation is used. 
         """
+        self.additive_propagation = additive
         if no_propagation:
-            self.propagation_factor = 1
+            self.propagation_factor = int(not additive) # zero if not additive, otherwise one
         else:
-            self.propagation_factor = factor*(year - self.get_base_year())/float(self.get_calibration_year() - self.get_base_year())
+            if not additive:
+                self.propagation_factor = factor*(year - self.get_base_year())/float(self.get_calibration_year() - self.get_base_year())
+            else:
+                self.propagation_factor = factor*(year - self.get_calibration_year())
 
     def get_propagation_factor(self):
         return self.propagation_factor
@@ -387,9 +392,17 @@ class BayesianMelding(MultipleRuns):
 
 
     def get_posterior_component_mean(self):
-        return self.get_bias_for_quantity()*self.get_propagation_factor() + self.get_predicted_values()
+        if self.omit_bias:
+            bias = 0
+        elif self.additive_propagation:
+            bias = self.get_bias_for_quantity()  + self.get_propagation_factor()
+        else:
+            bias = self.get_bias_for_quantity()*self.get_propagation_factor()
+        return bias + self.get_predicted_values()
 
     def get_posterior_component_variance(self):
+        if self.additive_propagation:
+            return self.get_variance_for_quantity()+self.get_propagation_factor()
         return self.get_variance_for_quantity()*self.get_propagation_factor()
 
     def get_bias_and_variance_from_files(self):
@@ -417,14 +430,15 @@ class BayesianMelding(MultipleRuns):
 
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
                                         use_bias_and_variance_from=None, transformed_back=True, aggregate_to=None,
-                                        intermediates=[], propagation_factor=1, no_propagation=True, omit_bias=False, **kwargs):
+                                        intermediates=[], propagation_factor=1, no_propagation=True, additive_propagation=False,
+                                        omit_bias=False, **kwargs):
         """
         'quantity_of_interest' is a variable name about which we want to get the posterior distribution.
         If there is multiple known_output, it must be made clear from which one the bias and variance
         is to be used (argument use_bias_and_variance_from). If it is None, the first known output is used.
         """
         self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from, propagation_factor=propagation_factor,
-                           no_propagation=no_propagation, omit_bias=omit_bias)
+                           no_propagation=no_propagation, additive_propagation=additive_propagation, omit_bias=omit_bias)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
@@ -456,8 +470,9 @@ class BayesianMelding(MultipleRuns):
             
             
     def set_posterior(self, year, quantity_of_interest, use_bias_and_variance_from=None, propagation_factor=1,
-                      no_propagation=True, omit_bias=False):
-        self.set_propagation_factor(year, factor=propagation_factor, no_propagation=no_propagation)
+                      no_propagation=True, additive_propagation=False, omit_bias=False):
+        self.set_propagation_factor(year, factor=propagation_factor, no_propagation=no_propagation, 
+                                    additive=additive_propagation)
         if self.weights is None:
             self.weights = self.get_weights_from_file()
         if not self.ahat or not self.v:
@@ -475,6 +490,7 @@ class BayesianMelding(MultipleRuns):
 #        D=(self.mu[self.use_bias_and_variance_index]**2).sum()+self.v[self.use_bias_and_variance_index]*K-C
 #        tmp = sqrt((2*self.mu[self.use_bias_and_variance_index].sum())**2 - 4*K*D)
         #self.ahat[self.use_bias_and_variance_index] = -2*self.mu[self.use_bias_and_variance_index].sum()
+        self.omit_bias = omit_bias
         if omit_bias:
             self.ahat[self.use_bias_and_variance_index] = 0
         self.transformation_pair_for_prediction = self.observed_data.get_quantity_object_by_index(self.use_bias_and_variance_index).get_transformation_pair()
@@ -523,11 +539,9 @@ class BayesianMelding(MultipleRuns):
         write_table_to_text_file(filename, weight_matrix)
         
     def export_weights_posterior_mean_and_variance(self, years, quantity_of_interest, directory, filename=None, 
-                                                     use_bias_and_variance_from=None, ids = None, propagation_factor=1,
-                                                     omit_bias=False):
+                                                     use_bias_and_variance_from=None, ids = None, **kwargs):
         for year in years:
-            self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from, 
-                               propagation_factor=propagation_factor, omit_bias=omit_bias)
+            self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from, **kwargs)
             if filename is None:
                 filename = quantity_of_interest
             file = os.path.join(directory, str(year) + '_' + filename)
@@ -605,13 +619,32 @@ class BayesianMelding(MultipleRuns):
             result[:,i] = sorted_values[:, int(n * quantiles[i])]
         return result
 
-    def get_probability_interval(self, interval):
+    def get_probability_interval(self, interval, exact=True, **kwargs):
         """Returns an array with two columns. First column contains the lower bound, the second column contains the 
         upper bound of the given probability interval.
+        If exact is False, the quantiles are derived from simulated values, i.e. the generate_posterior_distribution method
+        has to be called prior to this. Otherwise the set_posterior method is required prior to this call, 
+        in order to get exact intervals for the right settings.
         """
-        self._check_simulated_values()
-        tmp = (1-interval/100.0)/2.0
-        return self.get_quantiles([tmp, 1-tmp])
+        alpha = (1-interval/100.0)/2.0
+        if not exact:
+            self._check_simulated_values()
+            return self.get_quantiles([alpha, 1-alpha])
+        return concatenate((self.get_exact_quantile(alpha, **kwargs)[:,newaxis], self.get_exact_quantile(1-alpha, **kwargs)[:,newaxis]), axis=1)
+        
+    def get_exact_quantile(self, alpha, transformed_back=True, **kwargs):
+        vars = self.get_posterior_component_variance()
+        means = self.get_posterior_component_mean()
+        weights = self.get_weights()
+        sig = sqrt(vars)
+        res = zeros(means.size)
+        for i in range(means.size):
+            res[i] = bmaquant(alpha, weights, means[i], sig, **kwargs)
+        if transformed_back and (self.transformation_pair_for_prediction[0] is not None): 
+            res = try_transformation(res, self.transformation_pair_for_prediction[1])
+        return res
+    
+
         
     def export_confidence_intervals(self, confidence_levels, filename, delimiter='\t'):
         """Export confidence intervals into a file. 
@@ -693,6 +726,27 @@ class BayesianMelding(MultipleRuns):
                     
         if filename is not None:
             r.dev_off()
+      
+def bmaquant(alpha, weights, means, sigma, niter=14):
+    def bmacdf(x, w, m, s):
+        return (w * norm.cdf(x*ones(m.size), m, s)).sum()
+   
+    # initialize lower and upper bound
+    lower = (means - 3*sigma).min()
+    upper = (means + 3*sigma).max()
+    Flower = bmacdf(lower, weights, means, sigma)
+    Fupper = bmacdf(upper, weights, means, sigma)
+    if Flower > alpha or Fupper < alpha:
+        raise ValueError, 'Something wrong with means and variances.'
+    # Bisection method
+    for iter in range(niter):
+        mid = (lower+upper)/2.
+        Fmid = bmacdf(mid, weights, means, sigma)
+        if Fmid > alpha:
+            upper = mid
+        else:
+            lower = mid
+    return mid
         
 class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
@@ -737,7 +791,8 @@ class BayesianMeldingFromFile(BayesianMelding):
     def generate_posterior_distribution(self, year, quantity_of_interest, cache_directory=None, values=None, ids=None, 
                                         procedure="opus_core.bm_normal_posterior", use_bias_and_variance_from=None, 
                                         transformed_back=True, transformation_pair = (None, None), aggregate_to=None,
-                                        intermediates=[], propagation_factor=1, no_propagation=True, omit_bias=False, **kwargs):
+                                        intermediates=[], propagation_factor=1, no_propagation=True, additive_propagation=False, 
+                                        omit_bias=False, **kwargs):
         if cache_directory is not None:
             self.cache_set = array([cache_directory])
             #self.set_cache_attributes(cache_directory)
@@ -747,7 +802,7 @@ class BayesianMeldingFromFile(BayesianMelding):
             
         self.set_posterior(year, quantity_of_interest, values=values, ids=ids, use_bias_and_variance_from=use_bias_and_variance_from, 
                            transformation_pair=transformation_pair, propagation_factor=propagation_factor, 
-                           no_propagation=no_propagation, omit_bias=omit_bias)
+                           no_propagation=no_propagation, additive_propagation=additive_propagation, omit_bias=omit_bias)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
@@ -761,12 +816,14 @@ class BayesianMeldingFromFile(BayesianMelding):
         return self.simulated_values
         
     def set_posterior(self, year, quantity_of_interest, values=None, ids=None, use_bias_and_variance_from=None, 
-                      transformation_pair = (None, None), propagation_factor=1, no_propagation=True, omit_bias=False):
-        self.set_propagation_factor(year, factor=propagation_factor, no_propagation=no_propagation)
+                      transformation_pair = (None, None), propagation_factor=1, no_propagation=True, 
+                      additive_propagation=False, omit_bias=False):
+        self.set_propagation_factor(year, factor=propagation_factor, no_propagation=no_propagation, additive=additive_propagation)
         if use_bias_and_variance_from is None:
             use_bias_and_variance_from = quantity_of_interest
             
         self.use_bias_and_variance_index = self.get_index_for_quantity(use_bias_and_variance_from)
+        self.omit_bias = omit_bias
         if omit_bias:
             self.ahat[self.use_bias_and_variance_index] = 0
         self.transformation_pair_for_prediction = transformation_pair
@@ -802,4 +859,5 @@ class BayesianMeldingFromFile(BayesianMelding):
             
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, dummy=None):
         return MultipleRuns._compute_variable_for_one_run(self, run_index, variable, dataset_name, year)
+
 
