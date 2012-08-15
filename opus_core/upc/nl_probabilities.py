@@ -70,7 +70,7 @@ class nl_probabilities(Probabilities):
         sampling_rate = resources.get('sampling_rate', None)
         if correct_for_sampling and sampling_rate is None:
             raise StandardError, "If correct_for_sampling is True, sampling_rate must be given."
-        
+        availability = resources.get('availability', None)
         # compute logsum and conditional probability
         logsum = zeros((N,M), dtype="float64")
         Pnm = zeros((utils.shape), dtype="float64")
@@ -78,6 +78,8 @@ class nl_probabilities(Probabilities):
             for nest in range(M):
                 altsidx = where(leaves[nest,:])[0]
                 exponentiated_utility = exp(utils[:,altsidx]/mu[nest])
+                if availability is not None:
+                    exponentiated_utility = exponentiated_utility *(availability[:,altsidx]).astype('b')
                 sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
                 if any(sum_exponentiated_utility<=0) or any(sum_exponentiated_utility == inf):
                     return zeros(utils.shape)
@@ -99,6 +101,8 @@ class nl_probabilities(Probabilities):
                 altsidx = where(leaves[:,nest,:])
                 neleminnest = where(leaves[0,nest,:])[0].size
                 exponentiated_utility = reshape(exp(utils[altsidx]/mu[nest]), (N, neleminnest))
+                if availability is not None:
+                    exponentiated_utility = exponentiated_utility *(availability[:,altsidx]).astype('b')
                 sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
                 if any(sum_exponentiated_utility<=0) or any(sum_exponentiated_utility == inf):
                     return zeros(utils.shape)
