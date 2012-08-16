@@ -81,7 +81,6 @@ def prepare_run_manager(option_group=None):
  
     run_manager.setup_new_run(cache_directory = config['cache_directory'],
                               configuration = config)
-    run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
 
     return options, config, run_manager
 
@@ -90,6 +89,8 @@ def main(option_group=None):
     run_manager.run_run(config, 
                         scenario_name=options.scenario_name,
                         run_as_multiprocess=not options.run_as_single_process)
+
+    run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
 
     return run_id, cache_directory
 
