@@ -12,10 +12,17 @@ if __name__ == "__main__":
     # Dump the cache_directory before we launch the run so that if the run
     # fails, we can still know the cache directory and can run the report.
     ws = os.getenv("WORKSPACE")
+    cache_directory = run_manager.get_current_cache_directory()
     if ws:
-        cache_directory = run_manager.get_current_cache_directory()
         f = open(os.path.join(ws, "current_cache_dir.txt"), "w")
         f.write(cache_directory)
+        f.close()
+
+        # Dump the environment to the cache dir so that if we need to debug this on
+        # the command line it's trivial to set up
+        f = open(os.path.join(ws, "hudson.env"), "w")
+        for k,v in os.environ.iteritems():
+            f.write('export ' + k + '="' + v + '"\n')
         f.close()
 
     run_manager.run_run(config,
