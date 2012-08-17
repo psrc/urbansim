@@ -2,7 +2,7 @@
 library(plyr)
 library(ggplot2)
 library(reshape)
-library('plyr')
+library(plyr)
 require(scales)
 library(RColorBrewer)
 
@@ -10,7 +10,8 @@ pth <-"/home/aksel/Documents/Data/Urbansim/run_134/2010/scheduled_development_ev
 setwd(pth)
 fileList = list.files(path=pth)#, pattern=ptrn)
 
-##transform unwieldy list to get filetypes
+##get list with file types to enable proper loading of binary.
+##then transform unwieldy list to get filetypes
   fileAndTypes<- lapply(fileList,function(x) strsplit(x,"\\."))
   fileAndTypes2 = lapply(fileAndTypes, ldply)
   fileTypesClean = ldply(fileAndTypes2)[,1:2]
@@ -25,10 +26,10 @@ fileList = list.files(path=pth)#, pattern=ptrn)
   dat<-lapply(fileTypesClean[2:nrow(fileTypesClean),3],
               function(x) {
               readBin(x, 
-                      endian = "big",                    
+                      endian = "little",                    
                       what=typeMapping[gsub(pattern="\\d",
                                                replacement="",strsplit
-                                           (fileList[2],"\\.")[[1]][[2]])][[1]],n=200)})
+                                           (fileList[2],"\\.")[[1]][[2]])][[1]],n=100)})
 ##throw in data frame, shape properly for ggplot
   dt <-as.data.frame(t(ldply(dat)))
   colnames(dt) <- fileTypesClean[2:nrow(fileTypesClean),1]
@@ -40,9 +41,9 @@ fileList = list.files(path=pth)#, pattern=ptrn)
 ##generate histogram w density
   ggplot(dt.m2, aes(x=value)) + 
     geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                   binwidth=100000,
+                   binwidth=125000,
                    colour="black", fill="white") +
-                     geom_density(alpha=.2, fill="#FF6666") +
+                     geom_density(alpha=.2, fill="orange") +
                      xlab("square feet") +
                      opts(title="Dev Events Size Distribution") 
                      #scale_y_continuous(labels=percent) 
