@@ -183,9 +183,13 @@ if __name__ == "__main__":
             print "Failed to find windows path for emfac dir " + emfacdir
             sys.exit(1)
         emfac_windir = emfac_windir.replace('\r', '').replace('\n','')
-        server_model.cmd_or_fail('cd ' + config.travel_model_home + 'model_support_files/EMFAC_Files')
-        (rc, out) = server_model.cmd("cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + " " + options.scenario + "' | tee emfac.log",
-                                      supress_output=False, pipe_position=0)
+        print "Attempting to generate EMFAC report..."
+        cmd = 'cd ' + config.travel_model_home + 'model_support_files/EMFAC_Files'
+        print cmd
+        server_model.cmd_or_fail(cmd)
+        cmd = "cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + " " + options.scenario + "' | tee emfac.log"
+        print cmd
+        (rc, out) = server_model.cmd(cmd, supress_output=False, pipe_position=0)
         if rc != 0:
             print "WARNING: Failed to prepare emfac report"
 
