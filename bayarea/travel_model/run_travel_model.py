@@ -44,8 +44,6 @@ if __name__ == "__main__":
     parser.add_option("-o", "--output-dir", dest="outdir", action="store",
                       help="Optional output directory for travel model output data " +
                       "(relative to travel_model_home)")
-    parser.add_option("-e","--emfac-model", dest="emfac", action="store_true",
-					  help="Run EMFAC emissions model after travel model completion")
     (options, args) = parser.parse_args()
 
     config = mtc_config.MTCConfig()
@@ -170,28 +168,6 @@ if __name__ == "__main__":
             d = abs_modeldir + "/" + d
             print "Preserving output " + d + " to " + outdir
             server_model.cmd_or_fail("cp -r " + d + " " + outdir)
-
-    # Use the output directory if given
-    # If not, be stupid and use the year/scenario
-    if options.emfac:
-        if options.outdir:
-            emfacdir = options.outdir
-        else:
-            emfacdir = modeldir
-        (rc, emfac_windir) = server_model.cmd("cygpath -w " + emfacdir)
-        if rc != 0:
-            print "Failed to find windows path for emfac dir " + emfacdir
-            sys.exit(1)
-        emfac_windir = emfac_windir.replace('\r', '').replace('\n','')
-        print "Attempting to generate EMFAC report..."
-        cmd = 'cd ' + config.travel_model_home + 'model_support_files/EMFAC_Files'
-        print cmd
-        server_model.cmd_or_fail(cmd)
-        cmd = "cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + "' | tee emfac.log"
-        print cmd
-        (rc, out) = server_model.cmd(cmd, supress_output=False, pipe_position=0)
-        if rc != 0:
-            print "WARNING: Failed to prepare emfac report"
 
     # Leave the machine idle and be sure to logout.  This should probably be a
     # finally block

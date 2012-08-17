@@ -7,6 +7,7 @@ from optparse import OptionParser
 import os, sys
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration 
 from opus_core.services.run_server.run_manager import RunManager
+import winssh
 
 travel_model_year_mapping = {2018:2020,
                              2025:2035,
@@ -31,7 +32,7 @@ def invoke_run_travel_model(config, year):
         travel_model_year = year
     my_location = os.path.split(__file__)[0]
     script_filepath = os.path.join(my_location, "run_travel_model.py")
-    cmd = "%s %s -s %s -y %s -n -e" % (sys.executable, script_filepath, scenario, travel_model_year)
+    cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)
 
     # form the desired output dir for the travel model data.  Make it look
     # like the urbansim run cache for easy association.  Note that we
@@ -43,8 +44,32 @@ def invoke_run_travel_model(config, year):
     cmd = cmd + " -o " + outdir
 
     logger.log_status("Launching %s" % cmd)
-    if os.system(cmd) != 0:
-        raise TravelModelError
+    #if os.system(cmd) != 0:
+    #    raise TravelModelError
+
+    # Run the emfac report
+
+    # TODO: the travel model server should come from the configuration.  But
+    # for this we must migrate the configuration from mtc_config.py to the
+    # top-level xml.  So for now we just hard-code it :-/ Same for
+    # travel_model_home.
+    tm_server = "cube@detroit.urbansim.org"
+    travel_model_home = "/cygdrive/e/mtc_travel_model/"
+    server_model = winssh.winssh(tm_server, "OPUS_MTC_SERVER_PASSWD")
+    (rc, emfac_windir) = server_model.cmd("cygpath -w " + outdir)
+    if rc != 0:
+        logger.log_error("Failed to find windows path for emfac dir " + outdir)
+        sys.exit(1)
+    emfac_windir = emfac_windir.replace('\r', '').replace('\n','')
+    logger.log_status("Attempting to generate EMFAC report...")
+    cmd = 'cd ' + travel_model_home + 'model_support_files/EMFAC_Files'
+    logger.log_status(cmd)
+    server_model.cmd_or_fail(cmd)
+    cmd = "cmd /c 'RunEmfac.bat " + emfac_windir + " " + str(year) + "' | tee emfac.log"
+    logger.log_status(cmd)
+    (rc, out) = server_model.cmd(cmd, supress_output=False, pipe_position=0)
+    if rc != 0:
+        logger.log_warning("WARNING: Failed to prepare emfac report")
 
 if __name__ == "__main__":
     from optparse import OptionParser
