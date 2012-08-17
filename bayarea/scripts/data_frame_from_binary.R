@@ -1,4 +1,5 @@
 ##example of connecting with numpy binary files, constructing data frame, generating basic plots
+args <- commandArgs(TRUE)
 library(plyr)
 library(ggplot2)
 library(reshape)
@@ -6,7 +7,9 @@ library(plyr)
 require(scales)
 library(RColorBrewer)
 
-pth <-"/home/aksel/Documents/Data/Urbansim/run_134/2010/scheduled_development_events"
+pth <-args[1]
+outPth <- args[2]
+#pth <-"/home/aksel/Documents/Data/Urbansim/run_134/2010/scheduled_development_events"
 setwd(pth)
 fileList = list.files(path=pth)#, pattern=ptrn)
 
@@ -33,19 +36,23 @@ fileList = list.files(path=pth)#, pattern=ptrn)
 ##throw in data frame, shape properly for ggplot
   dt <-as.data.frame(t(ldply(dat)))
   colnames(dt) <- fileTypesClean[2:nrow(fileTypesClean),1]
+  names(dt)
   dt.m <- melt(dt[,c(1,2,12)], id=c("scheduled_year","building_type_id"),direction = "long")
   dt.m <- cast(dt.m,scheduled_year + building_type_id ~ variable, sum)
   dt.m2 <- melt(dt[,c(1,2)], id=c("building_type_id"),direction = "long")
 
 
 ##generate histogram w density
+  setwd(outPth)
+  pdf("testChart.pdf",height=8.5, width=11,onefile=TRUE)
   ggplot(dt.m2, aes(x=value)) + 
     geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
                    binwidth=125000,
                    colour="black", fill="white") +
                      geom_density(alpha=.2, fill="orange") +
                      xlab("square feet") +
-                     opts(title="Dev Events Size Distribution") 
+                     opts(title="Dev Events Size Distribution") +
+                     opts(legend.position=c(.24, .95), legend.justification = c(1, 1))
                      #scale_y_continuous(labels=percent) 
                      #scale_x_continuous(limits=c(0, 3000))
 
@@ -58,3 +65,4 @@ fileList = list.files(path=pth)#, pattern=ptrn)
                   opts(title = "Sqft by year by type") +
                   labs(x = "Year", y = "Square Feet",
                        fill = NULL)
+  dev.off()
