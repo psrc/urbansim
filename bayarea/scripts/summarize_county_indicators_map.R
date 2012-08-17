@@ -104,7 +104,6 @@ geo<-args[7]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
 
-
 ##Add historic data to data frame
 #test structure, 9 counties times 4 elements time 3 years
 nCounties <- 9
@@ -174,7 +173,6 @@ for(i in 1:length(dat))
   #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators/county_table-3_2012-2020_county__county_employed_residents.tab",header=T,sep = "\t")  
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
-  #print(simulation[1:2,1:3])
   
   ##keep minimal data frame for mapping
   strYrStart<-sprintf("yr_%s",yrStart)
@@ -213,8 +211,6 @@ for(i in 1:length(dat))
   title_less_first<-paste(title_split[[1]][2:length(title_split[[1]])], sep=" ", collapse = " ")
   title_proper <- lapply(title_split,TitleCase)
   title <- paste(title_proper[[1]], sep=" ", collapse = " ")
-  #fileNameOutChart=sprintf("%s/plot_%s_indexChart_%s.pdf",fp,runid,title)
-  #fileNameOutTable=sprintf("%s/plot_%s_indexTable_%s.pdf",fp,runid,title)
   
   ## assign new colunn names
   yrNames <- c('county',years)
@@ -228,9 +224,6 @@ for(i in 1:length(dat))
     simulation <- cbind(county=simulation[,1],histData[,,title_less_first],simulation[,2:maxCol])
     extra=T
   }
-  #1) check if one of the values empres, jobs etc are in title_split
-  #1a) if so add columns with cbind before start (years still in columns)
-  #2# updated data frame is processed, transformed as any other
   
   ## Transpose frame so cols are county series, rows are years
   simulation.t <- t(simulation[,2:ncol(simulation)])

@@ -25,7 +25,7 @@ fileList = list.files(path=pth)#, pattern=ptrn)
   dat<-lapply(fileTypesClean[2:nrow(fileTypesClean),3],
               function(x) {
               readBin(x, 
-                      endian = "little",                    
+                      endian = "big",                    
                       what=typeMapping[gsub(pattern="\\d",
                                                replacement="",strsplit
                                            (fileList[2],"\\.")[[1]][[2]])][[1]],n=200)})
