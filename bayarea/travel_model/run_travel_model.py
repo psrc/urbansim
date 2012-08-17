@@ -187,7 +187,7 @@ if __name__ == "__main__":
         cmd = 'cd ' + config.travel_model_home + 'model_support_files/EMFAC_Files'
         print cmd
         server_model.cmd_or_fail(cmd)
-        cmd = "cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + " " + options.scenario + "' | tee emfac.log"
+        cmd = "cmd /c 'RunEmfac.bat " + emfac_windir + " " + options.year + "' | tee emfac.log"
         print cmd
         (rc, out) = server_model.cmd(cmd, supress_output=False, pipe_position=0)
         if rc != 0:
