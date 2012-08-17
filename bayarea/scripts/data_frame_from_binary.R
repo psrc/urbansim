@@ -1,5 +1,5 @@
 ##example of connecting with numpy binary files, constructing data frame, generating basic plots
-args <- commandArgs(TRUE)
+#args <- commandArgs(TRUE)
 library(plyr)
 library(ggplot2)
 library(reshape)
@@ -7,9 +7,9 @@ library(plyr)
 require(scales)
 library(RColorBrewer)
 
-pth <-args[1]
-outPth <- args[2]
-#pth <-"/home/aksel/Documents/Data/Urbansim/run_134/2010/scheduled_development_events"
+#pth <-args[1]
+#outPth <- args[2]
+pth <-"/home/aksel/Documents/Data/Urbansim/run_134/2010/scheduled_development_events"
 setwd(pth)
 fileList = list.files(path=pth)#, pattern=ptrn)
 
@@ -32,7 +32,8 @@ fileList = list.files(path=pth)#, pattern=ptrn)
                       endian = "little",                    
                       what=typeMapping[gsub(pattern="\\d",
                                                replacement="",strsplit
-                                           (fileList[2],"\\.")[[1]][[2]])][[1]],n=100)})
+                                           (fileList[2],"\\.")[[1]][[2]])][[1]],n=100)})#, 
+                      #size=sub(".*?(\\d)", "\\1", x, perl=TRUE))}) #last argument gets byte-size from filename
 ##throw in data frame, shape properly for ggplot
   dt <-as.data.frame(t(ldply(dat)))
   colnames(dt) <- fileTypesClean[2:nrow(fileTypesClean),1]
