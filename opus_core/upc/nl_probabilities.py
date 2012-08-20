@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 #
-from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf
+from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf, isnan
 from opus_core.misc import unique
 from opus_core.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
@@ -96,10 +96,6 @@ class nl_probabilities(Probabilities):
                 Pnm[:, altsidx] = exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))
                 if any(sum_exponentiated_utility_logsum<=0) or any(sum_exponentiated_utility_logsum == inf):
                     logger.log_warning("Sum of exponentiated utility has invalid values.")
-                    zeroidx = where(sum_exponentiated_utility_logsum<=0)[0]
-                    if zeroidx.size > 0:
-                        logsum[zeroidx,nest] = zeros(zeroidx.size).astype(logsum.dtype)
-                        Pnm[zeroidx, altsidx] = zeros((zeroidx.size, altsidx.size)).astype(Pnm.dtype)
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
@@ -125,7 +121,8 @@ class nl_probabilities(Probabilities):
                 Pnm[altsidx] = (exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))).flat
                 if any(sum_exponentiated_utility_logsum<=0):
                     logger.log_warning("Sum of exponentiated utility has invalid values.")
-
+        logsum[isnan(logsum)] = 0
+        Pnm[isnan(Pnm)] = 0
                 
         # compute marginal probability
         nomin = exp(mu*logsum)
