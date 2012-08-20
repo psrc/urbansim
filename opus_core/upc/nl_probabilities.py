@@ -94,8 +94,6 @@ class nl_probabilities(Probabilities):
                     sum_exponentiated_utility_logsum = sum_exponentiated_utility
                 logsum[:,nest] = log(sum_exponentiated_utility_logsum)
                 Pnm[:, altsidx] = exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))
-                if any(sum_exponentiated_utility_logsum<=0) or any(sum_exponentiated_utility_logsum == inf):
-                    logger.log_warning("Sum of exponentiated utility has invalid values.")
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
@@ -119,10 +117,12 @@ class nl_probabilities(Probabilities):
                     sum_exponentiated_utility_logsum = sum_exponentiated_utility
                 logsum[:,nest] = log(sum_exponentiated_utility_logsum)
                 Pnm[altsidx] = (exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))).flat
-                if any(sum_exponentiated_utility_logsum<=0):
-                    logger.log_warning("Sum of exponentiated utility has invalid values.")
-        logsum[isnan(logsum)] = 0
-        Pnm[isnan(Pnm)] = 0
+        nanidx_logsum = isnan(logsum)
+        nanidxPnm = isnan(Pnm)
+        if sum(nanidx_logsum)>0 or sum(nanidxPnm)>0:
+            logger.log_warning("Some nests not available to some agents (logsum is zero or infinity).")
+            logsum[where(nanidx_logsum)] = 0
+            Pnm[where(nanidxPnm)] = 0
                 
         # compute marginal probability
         nomin = exp(mu*logsum)
