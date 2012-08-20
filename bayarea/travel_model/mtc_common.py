@@ -35,5 +35,7 @@ def tm_get_base_dir(config):
 def tm_get_data_exchange_dir(config, year):
     tm_config = config['travel_model_configuration']
     base_dir = tm_get_base_dir(config)
-    data_exchange_dir = tm_config[year]['data_exchange_dir']
-    return os.path.join(base_dir, data_exchange_dir)
+    data_exchange_dir = os.path.join(base_dir, tm_config[year]['data_exchange_dir'])
+    if not os.path.exists(data_exchange_dir):
+        os.makedirs(data_exchange_dir)
+    return data_exchange_dir
