@@ -103,8 +103,13 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons_recs.add_attribute(persons['marriage_status'],"marstat")
         persons_recs.add_attribute(persons['student_status'],"schstat")
         persons_recs.add_attribute(persons['wtaz0'],"htaz_act")
-        persons_recs.add_attribute(persons['wtaz0'],"wtaz_rec")
-        persons_recs.add_attribute(persons['wtaz0'],"wtaz1")
+        persons_recs.add_attribute(0,"wtaz_rec")
+        persons_recs.add_attribute(0,"wtaz_rec1")
+        persons_recs.add_attribute(0,"wtaz_rec2")
+        persons_recs.add_attribute(0,"wtaz1")
+        persons_recs.add_attribute(0,"wtaz1_1")
+        persons_recs.add_attribute(0,"wtaz1_2")
+        persons_recs.add_attribute(0,"wtaz1_3")
         persons_recs.add_attribute(persons['student_status'],"schstat")
 
         persons_recs.add_attribute(0,"htaz")
@@ -141,12 +146,21 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'person.schtaz - 100',
                              
                              'htaz_act = (houseid>0)*(person.disaggregate(building.zone_id, intermediates=[household]))',
+                             
+                             'wtaz_rec1=0*(mag_zone.person.wtaz <= 100)',
+                             'wtaz_rec2=mag_zone.person.wtaz*(mag_zone.person.wtaz > 100)',
 
-                             'wtaz_rec=0*(mag_zone.person.wtaz == -1) + mag_zone.person.wtaz*(mag_zone.person.wtaz <> -1)',
-                             'wtaz1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>100)) + (htaz_act-100)*((person.employment_status == 1) & (wtaz_rec==0)) + 0*(person.employment_status == 0)',
-                       
+                             'wtaz_rec=wtaz_rec1 + wtaz_rec2',
 
                              'htaz = ((houseid>0) & (htaz_act>100))*(htaz_act - 100)+((houseid>0) & (htaz_act==-1))*1122',
+
+                             'wtaz1_1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>0)) ',
+                             'wtaz1_2=(htaz-100)*((person.employment_status == 1) & (wtaz_rec<=0))',
+                             'wtaz1_3=0*(person.employment_status == 0)',
+                             'wtaz1=wtaz1_1 + wtaz1_2 + wtaz1_3',
+                       
+
+
 
                              'wtaz = wtaz1',
                              'marstat = person.marriage_status',
@@ -172,7 +186,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons.write_dataset(attributes=attrs_to_export,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
-        #raw_input("check tables for consistency")
+        raw_input("check tables for consistency")
 
         zones = dataset_pool.get_dataset('zone')
         zones_variables = [
