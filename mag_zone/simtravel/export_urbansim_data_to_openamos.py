@@ -186,7 +186,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons.write_dataset(attributes=attrs_to_export,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
-        raw_input("check tables for consistency")
+        #raw_input("check tables for consistency")
 
         zones = dataset_pool.get_dataset('zone')
         zones_variables = [
