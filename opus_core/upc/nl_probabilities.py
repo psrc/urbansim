@@ -81,8 +81,8 @@ class nl_probabilities(Probabilities):
                 if availability is not None:
                     exponentiated_utility = exponentiated_utility *(availability[:,altsidx]).astype('b')
                 sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
-                if any(sum_exponentiated_utility<=0) or any(sum_exponentiated_utility == inf):
-                    return zeros(utils.shape)
+                #if any(sum_exponentiated_utility<=0) or any(sum_exponentiated_utility == inf):
+                #    return zeros(utils.shape)
                 if correct_for_sampling:
                     if 0 in altsidx: # chosen alternative belongs to this nest (it is assumed that chosen alternative is at position 0)
                         exponentiated_utility_logsum = exponentiated_utility.copy()
@@ -98,8 +98,8 @@ class nl_probabilities(Probabilities):
                     logger.log_warning("Sum of exponentiated utility has invalid values.")
                     zeroidx = where(sum_exponentiated_utility_logsum<=0)[0]
                     if zeroidx.size > 0:
-                        logsum[zeroidx,nest] = zeros(zeroidx.size).dtype(logsum.dtype)
-                        Pnm[zeroidx, altsidx] = zeros((zeroidx.size, altsidx.size)).dtype(Pnm.dtype)
+                        logsum[zeroidx,nest] = zeros(zeroidx.size).astype(logsum.dtype)
+                        Pnm[zeroidx, altsidx] = zeros((zeroidx.size, altsidx.size)).astype(Pnm.dtype)
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
