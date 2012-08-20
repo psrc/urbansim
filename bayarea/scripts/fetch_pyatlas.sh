@@ -30,9 +30,10 @@ if [ $? -ne 0 ]; then
     echo "pyatlas does not currently support " ${GIT_BRANCH}
     exit 1
 fi
+set -e
 
 if [ -e ${DEST} ]; then
-    cd ${DEST} && git pull -f
+    cd ${DEST} && git reset --hard HEAD && git pull -f
 else
     git clone -b ${GIT_BRANCH} ${GIT_URL} ${DEST}
 fi
