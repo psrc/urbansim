@@ -86,11 +86,12 @@ def prepare_run_manager(option_group=None):
 
 def main(option_group=None):
     options, config, run_manager = prepare_run_manager(option_group)
+
+    run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
+
     run_manager.run_run(config, 
                         scenario_name=options.scenario_name,
                         run_as_multiprocess=not options.run_as_single_process)
-
-    run_id, cache_directory = run_manager.run_id, run_manager.get_current_cache_directory() 
 
     return run_id, cache_directory
 
