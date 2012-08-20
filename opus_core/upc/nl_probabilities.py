@@ -92,10 +92,14 @@ class nl_probabilities(Probabilities):
                         sum_exponentiated_utility_logsum = sum_exponentiated_utility/sampling_rate[nest]
                 else:
                     sum_exponentiated_utility_logsum = sum_exponentiated_utility
-                if any(sum_exponentiated_utility_logsum<=0) or any(sum_exponentiated_utility_logsum == inf):
-                    logger.log_warning("Sum of exponentiated utility has invalid values.")
                 logsum[:,nest] = log(sum_exponentiated_utility_logsum)
                 Pnm[:, altsidx] = exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))
+                if any(sum_exponentiated_utility_logsum<=0) or any(sum_exponentiated_utility_logsum == inf):
+                    logger.log_warning("Sum of exponentiated utility has invalid values.")
+                    zeroidx = where(sum_exponentiated_utility_logsum<=0)[0]
+                    if zeroidx.size > 0:
+                        logsum[zeroidx,nest] = zeros(zeroidx.size).dtype(logsum.dtype)
+                        Pnm[zeroidx, altsidx] = zeros((zeroidx.size, altsidx.size)).dtype(Pnm.dtype)
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
@@ -117,10 +121,11 @@ class nl_probabilities(Probabilities):
                     sum_exponentiated_utility_logsum = sum(exponentiated_utility_logsum, axis=1, dtype="float64")
                 else:
                     sum_exponentiated_utility_logsum = sum_exponentiated_utility
-                if any(sum_exponentiated_utility_logsum<=0):
-                    logger.log_warning("Sum of exponentiated utility has invalid values.")
                 logsum[:,nest] = log(sum_exponentiated_utility_logsum)
                 Pnm[altsidx] = (exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))).flat
+                if any(sum_exponentiated_utility_logsum<=0):
+                    logger.log_warning("Sum of exponentiated utility has invalid values.")
+
                 
         # compute marginal probability
         nomin = exp(mu*logsum)
