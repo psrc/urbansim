@@ -4,10 +4,11 @@
 
 from opus_core.logger import logger, block, log_block
 from optparse import OptionParser
-import os, sys
+import os, sys, shutil, glob
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration 
 from opus_core.services.run_server.run_manager import RunManager
 import winssh
+import mtc_common
 
 travel_model_year_mapping = {2018:2020,
                              2025:2035,
@@ -30,6 +31,14 @@ def invoke_run_travel_model(config, year):
     except KeyError:
         logger.log_warning("no travel model year mapping for %d." % year)
         travel_model_year = year
+
+    # put the travel model input data in place
+    data_exchange_dir = mtc_common.tm_get_data_exchange_dir(config, year)
+    cache_directory = config['cache_directory']
+    mtc_dir = os.path.join(cache_directory, "mtc_data")
+    for f in glob.glob(os.path.join(mtc_dir, '*', str(year), '*')):
+        shutil.copy(f, data_exchange_dir)
+
     my_location = os.path.split(__file__)[0]
     script_filepath = os.path.join(my_location, "run_travel_model.py")
     cmd = "%s %s -s %s -y %s -n" % (sys.executable, script_filepath, scenario, travel_model_year)

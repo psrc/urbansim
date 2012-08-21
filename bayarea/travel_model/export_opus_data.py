@@ -38,7 +38,6 @@ def export_opus_data(config, year):
     out_dir = os.path.join(cache_directory, "mtc_data")
     tm_config = config['travel_model_configuration']
     data_to_export = tm_config['urbansim_to_tm_variable_mapping'] 
-    data_exchange_dir = mtc_common.tm_get_data_exchange_dir(config, year)
     out_storage = csv_storage(storage_location=out_dir)
     for data_fname, variable_mapping in data_to_export.iteritems():
         if not flip_urbansim_to_tm_variable_mappling:
@@ -69,8 +68,6 @@ def export_opus_data(config, year):
             #rename & process header
             shutil.move(org_fname, new_fname)
             os.system("sed 's/:[a-z][0-9]//g' -i %s" % new_fname)
-
-        shutil.copy(new_fname, data_exchange_dir)
 
 if __name__ == "__main__":
     try:import wingdbstub
