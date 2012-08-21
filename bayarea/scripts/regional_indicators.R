@@ -160,7 +160,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     ############################################################################
     ##process EMFAC MTC data
     travelYears <- c('2018','2025','2035')
-    mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("/home/aksel/Downloads/EMFAC2011-SG Summary - Year_%s - Group 1.csv",x)))                      
+    mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("%s/EMFAC2011-SG Summary - Year_%s - Group 1.csv",file.path(pth, fsep = .Platform$file.sep),x)))                      
     mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
     TOG <- data.frame(mtcData[[1]][,4], mtcData[[1]][,11],mtcData[[2]][,11],mtcData[[3]][,11])
     names(TOG) <- c("geography",2018,2025,2035)
