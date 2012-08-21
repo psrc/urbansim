@@ -175,6 +175,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     sprintf("Preparing file %s for charts and figures...", fileNameOut)
     ##plot it
     pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
+    print(fileNameOut)
     #multiplot(tb1, tb1, cols=1)
     set.seed(2)
     #q1 <- ggplot(data.frame(x=rnorm(50)), aes(x)) + geom_density()
@@ -246,5 +247,5 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
 #yrEnd<-2018
 #pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
 #mtcData <- "/var/www/MTC_Model/No_Project/run_139"
-#regionalProcessor(pth,yrStart,yrEnd)
+regionalProcessor(pth,yrStart,yrEnd)
 #garbage <- dev.off()
