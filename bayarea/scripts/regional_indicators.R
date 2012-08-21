@@ -13,6 +13,14 @@ pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
 
+## parse path to get runid, run date
+split <- strsplit(args[1],"/")[[1]]
+pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
+runid <- split[pos]
+periodPosition <- regexpr("\\.",runid)[[1]]
+tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
+id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
+
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 theme_set(theme_grey())
 ##generic line plot function
@@ -163,7 +171,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     ############################################################################
     ## start pdf object to store all charts
     fp <- file.path(pth, fsep = .Platform$file.sep)
-    fileNameOut=sprintf("%s_plot_%s_indexChart.pdf","region","134")
+    fileNameOut=sprintf("%s_topsheet.pdf","region",id)
     sprintf("Preparing file %s for charts and figures...", fileNameOut)
     ##plot it
     pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
@@ -231,6 +239,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     grid.draw(g1)
     popViewport()
     
+    dev.off()
     }   
 
 #yrStart<-2010
@@ -238,4 +247,4 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
 #pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
 #mtcData <- "/var/www/MTC_Model/No_Project/run_139"
 #regionalProcessor(pth,yrStart,yrEnd)
-garbage <- dev.off()
+#garbage <- dev.off()
