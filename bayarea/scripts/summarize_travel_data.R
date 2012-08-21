@@ -9,6 +9,8 @@ library(RColorBrewer)
 yrStart<-2010
 yrEnd<-2040
 pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
+travelYears <- c('2018','2025','2035')
+lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
 
 viewPortFunc <- function(printObject=printObject){
   grid.newpage()
@@ -17,7 +19,7 @@ viewPortFunc <- function(printObject=printObject){
   print(printObject, vp="vp")
   #print(sprintf("Outputting Chart %s to PDF",title))
 }
-manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=9))
+manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 
 ##generic line plot function
 linePlot <- function(data,name){
@@ -50,7 +52,7 @@ stackedBarPlot <- function(data,name){
                    fill=geography
                    ))+
                      geom_bar(alpha =.65) + 
-                     scale_colour_manual(values=manyColors(12)) +
+                     scale_colour_manual(values=manyColors(9)) +
                      scale_fill_brewer(palette="Set3") +
                      opts(title=name)+
                      xlab("Year") + 
@@ -78,14 +80,13 @@ if(yrEnd>=2035){
   popData <- data.frame(countyPop[,c("county","2018","2025","2035")])
   names(popData) <- c("county",2018,2025,2035)
 }
-travelYears <- c('2018','2025','2035')
-lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
 # popData <- structure(runif(27,10000,100000), 
 #                      dim = c(9,3),
 #                      .Dimnames = list(lCounties,travelYears))
 ############################################################################
 ##process EMFAC MTC data
 pdf("/home/aksel/Downloads/test.pdf",height=8.5, width=11,onefile=TRUE)
+#par(mai=c(.75,.75,.75,2.75))
 mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("/home/aksel/Downloads/EMFAC2011-SG Summary - Year_%s - Group 1.csv",x)))                      
 mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
 keepers<-8:21  #indices of numeric and relevant columns to plot

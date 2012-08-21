@@ -6,11 +6,18 @@ require("RGraphics")
 require("scales")
 library(directlabels)
 library(RColorBrewer)
+args <- commandArgs(TRUE)
+
+## grab arguments
+pth <-args[1]
+yrStart <- as.integer(args[2])
+yrEnd <- as.integer(args[3])
 
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
-
+theme_set(theme_grey())
 ##generic line plot function
 linePlot <- function(data,name){
+  theme_set(theme_grey(10))
   gOut <- ggplot(data=data,
        aes(
          x=variable, 
@@ -18,13 +25,15 @@ linePlot <- function(data,name){
          colour=geography,
          group=geography,
          linetype = geography))+
-           geom_line(size=1.75) + 
+           geom_line(size=1) + 
            scale_colour_manual(values=manyColors(10)) +
            geom_point(size=1.8) +
-           opts(title=name)+
+           opts(title=name) +#, theme_text(size = 25))+
            xlab("Year") + 
-           ylab(name) +
-           opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+           ylab("Million Tons ???") +
+           opts(axis.title.x = theme_text(size = 8, vjust = 0.5)) +
+           opts(axis.title.y = theme_text(size = 8, vjust = 0.5,angle=90)) +
+           opts(plot.title = theme_text(size = 10, vjust = 0.5)) +
            opts(legend.key.width = unit(1, "cm")) +
            scale_y_continuous(labels=comma) +
           #scale_linetype_manual(values = lty)      +
@@ -45,7 +54,10 @@ stackedBarPlot <- function(data,name){
                      opts(title=name)+
                      xlab("Year") + 
                      ylab(name) +
-                     opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                     opts(axis.title.x = theme_text(size = 8, vjust = 0.5)) +
+                     opts(axis.title.y = theme_text(size = 8, vjust = 0.5,angle=90)) +
+                     opts(plot.title = theme_text(size = 10, vjust = 0.5)) +
+                     #opts(axis.text.x=theme_text(angle=90, hjust=0)) +
                      opts(legend.key.width = unit(.6, "cm")) +
                      scale_y_continuous(labels=comma) 
                      #scale_linetype_manual(values = lty)      +
@@ -78,14 +90,16 @@ makeTable <- function(data){
   tableGrob(
     format(data
            , 
-           digits = 2,big.mark = ","), 
+           digits = 2,big.mark = ","),
+    core.just="left",
+    col.just="left",
+    gpar.coretext=gpar(fontsize=8), 
+    gpar.coltext=gpar(fontsize=9, fontface='bold'), 
     gpar.colfill = gpar(fill=NA,col=NA), 
     gpar.rowfill = gpar(fill=NA,col=NA), 
-    show.rownames = F,    
-    #gpar.corefill = gpar(fill="slateblue",alpha=0.5, col=NA), h.even.alpha = 0.5),
-    col.just = "left", core.just = "center",
+    show.rownames = F,
     h.even.alpha = 0,
-    gpar.rowtext = gpar(col="black", cex=0.8,
+    gpar.rowtext = gpar(col="black", cex=0.7,
                         equal.width = TRUE,
                         show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
     )
@@ -116,7 +130,6 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     title_concat_short <- ldply(lapply(title_concat,gsub, pattern="alldata|region",replacement=""))
     #title_proper <- lapply(title_concat,TitleCase)
     #title <- paste(title_concat[[1]], sep=" ", collapse = " ")
-    
     names(dat) <- ldply(title_concat_short)[2:ncol(title_concat_short),2]
   
   ## transform appropriately for ease of use
@@ -141,12 +154,12 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     travelYears <- c('2018','2025','2035')
     mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("/home/aksel/Downloads/EMFAC2011-SG Summary - Year_%s - Group 1.csv",x)))                      
     mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
-    VMT <- data.frame(mtcData[[1]][,4], mtcData[[1]][,9],mtcData[[2]][,9],mtcData[[3]][,9])
-    names(VMT) <- c("geography",2018,2025,2035)
-    #VMT$geography <- c("region",as.vector(substr(x=VMT$geography[2:10],start=1,last=length(VMT$geography[2:10])-5)))
-    VMT.m <- melt(VMT[2:10,],id="geography")
+    TOG <- data.frame(mtcData[[1]][,4], mtcData[[1]][,11],mtcData[[2]][,11],mtcData[[3]][,11])
+    names(TOG) <- c("geography",2018,2025,2035)
+    #TOG$geography <- c("region",as.vector(substr(x=TOG$geography[2:10],start=1,last=length(TOG$geography[2:10])-5)))
+    TOG.m <- melt(TOG[2:10,],id="geography")
     
-    g2 <- makeTable(VMT[2:10,])
+    g2 <- makeTable(TOG[2:10,])
     ############################################################################
     ## start pdf object to store all charts
     fp <- file.path(pth, fsep = .Platform$file.sep)
@@ -159,30 +172,70 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     #q1 <- ggplot(data.frame(x=rnorm(50)), aes(x)) + geom_density()
     #q2 <- ggplot(data.frame(x=rnorm(50)), aes(x)) + geom_density()
     
-    g6 <- linePlot(VMT.m,"Vehicle Miles Traveled")
-    g6 <- direct.label(g6, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
+    g6 <- linePlot(TOG.m,"Total Organic Gases")
+    g6 <- direct.label(g6, list(last.points, cex=.6, hjust = 0.7, vjust = 1,fontsize=12))
     
-    g7 <- stackedBarPlot(VMT.m,"Vehicle Miles Traveled")
+    g7 <- stackedBarPlot(TOG.m,"Vehicle Miles Traveled")
     
-    tb1 <- grid.arrange(g1,g2,g6,g7, nrow=2, 
-                        widths = c(1/2,1/2),
-                        heights = c(1/3,2/3), 
-                        main=textGrob(paste("\n","Topsheet Example"),
-                                      gp=gpar(fontsize=11,fontface="bold")))
-    #grid.text("test",x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
-    sub=textGrob("test sub", gp=gpar(font=2))
+#     tb1 <- grid.arrange(g1,g2,g6,g7, nrow=2, 
+#                         widths = c(1/2,1/2),
+#                         heights = c(1/3,2/3), 
+#                         main=textGrob(paste("\n","Topsheet Example"),
+#                                       gp=gpar(fontsize=11,fontface="bold")))
+#     #grid.text("test",x=unit(0.85,"npc"),y=unit(0.95,"npc"),gp=gpar(fontsize=7,fontface="italic")) 
+#    sub=textGrob("test sub", gp=gpar(font=2))
 
     #multiplot(q1, q2, q3, q4, q5, q6, cols=3)
-#     vp.setup(2,2)
-#     print(q1, vp=vp.layout(1, 1:2))
-#     print(q2, vp=vp.layout(2,2))
-#     print(tb1, vp=vp.layout(2,1))
-#     
+#      vp.setup(2,2)
+#      print(g1, vp=vp.layout(1, 1:2))
+#      print(g2, vp=vp.layout(2,2))
+#      print(g6, vp=vp.layout(2,1))
+#   
+    note <- "
+    This 'No Project' run with id number xxx represents the baseline scenario and is in a draft state until further notice.
+    "
+    g3 <- splitTextGrob(note,gp=gpar(fontsize=10, col="grey",just = "left"))
+    grid.newpage() 
+    #grid.text("Title 1", vp = viewport(layout.pos.row = 1, layout.pos.col = 1:2))
+    
+    vp <- viewport(layout = grid.layout(nrow=4, ncol=2, 
+                                        heights = unit(c(0.25, 3.5, 0.25, 3.5),"inches"), 
+                                        widths = unit(c(4.5,4.5), "inches")))
+    pushViewport(vp)
+    #grid.rect(gp=gpar(col="blue")) #,fill="blue"))
+    grid.rect(gp=gpar(col="grey"))#,fill="black"))
+    #grid.border(1, vp=viewport)
+    #upViewport()
+    #pushViewport(viewport(layout=grid.layout(nrow=2, ncol=2, widths=unit(c(5,4), "inches"),heights=unit(c(3.5,3.5), "inches"))))
+    grid.text("Table 1\nKey UrbanSim Indicators", vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+    grid.text("Table 2\nEMFAC Total Organic Gases", vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+    grid.text("Configuration Details", vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+    grid.text("Figure 1", vp = viewport(layout.pos.row = 3, layout.pos.col = 2))
+    
+    pushViewport(viewport(layout.pos.col=2, layout.pos.row=4)) 
+    print(g6, newpage=FALSE) 
+    popViewport()
+    #par(mar = c(2, 2,2, 2))
+    
+    pushViewport(viewport(layout.pos.col=1, layout.pos.row=2)) 
+    #print(g7, newpage=FALSE) 
+    #grid.text(note, gp=gpar(fontsize=20, col="grey"))
+    grid.draw(g3)
+    popViewport(1)
+    
+    pushViewport(viewport(layout.pos.col=1, layout.pos.row=4, clip="off"))
+    grid.draw(g2)
+    popViewport()
+    
+    pushViewport(viewport(layout.pos.col=2, layout.pos.row=2, clip="off"))
+    grid.draw(g1)
+    popViewport()
+    
     }   
 
-yrStart<-2010
-yrEnd<-2018
-pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
+#yrStart<-2010
+#yrEnd<-2018
+#pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
 #mtcData <- "/var/www/MTC_Model/No_Project/run_139"
-regionalProcessor(pth,yrStart,yrEnd)
+#regionalProcessor(pth,yrStart,yrEnd)
 garbage <- dev.off()

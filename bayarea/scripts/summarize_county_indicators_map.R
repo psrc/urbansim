@@ -27,6 +27,7 @@ library(maptools)
 library(RColorBrewer)
 library(classInt)
 require("rgdal")
+require("scales")
 gpclibPermit() 
 library(directlabels)
 annot <- function(){
@@ -42,6 +43,29 @@ indx <- function(dat, baseRow = 1)
   require(plyr)   
   divisors <- dat[baseRow ,]
   adply(dat, 1, function(x) x / divisors*100)
+}
+
+##generic line plot function
+linePlot <- function(data,name){
+  gOut <- ggplot(data=data,
+                 aes(
+                    x=year, 
+                    y=value, 
+                    colour=county,
+                    group=county,
+                    linetype = county))+
+                     geom_line(size=1.75) + 
+                     scale_colour_manual(values=manyColors(12)) +
+                     geom_point(size=1.8) +
+                     opts(title=name)+
+                     xlab("Year") + 
+                     ylab("Value") +
+                     opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                     opts(legend.key.width = unit(1, "cm")) +
+                     scale_y_continuous(labels=comma) +
+                     #scale_linetype_manual(values = lty)      +
+                     opts(legend.position="none")
+  return(gOut)
 }
 
 viewPortFunc <- function(printObject=printObject){
@@ -198,10 +222,10 @@ for(i in 1:length(dat))
   simulation[,1] <-factor(simulation[,1], labels=lCounties)
   
   ## rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
-  regexp <- "([[:digit:]]{4})"  
+  yr_ptrn <- "([[:digit:]]{4})"  
   maxCol <- length(simulation)
-  years <-str_extract(names(simulation)[2:maxCol],regexp) 
-  pos <- regexpr(pattern = regexp, text = names(simulation)[2:maxCol])  #where does year start in col name?
+  years <-str_extract(names(simulation)[2:maxCol],yr_ptrn) 
+  pos <- regexpr(pattern = yr_ptrn, text = names(simulation)[2:maxCol])  #where does year start in col name?
   yrEnd <-max(as.integer(years))  #overwrites passed years and uses actual outer years in tab files 
   yrStart <- min(as.integer(years))
   
@@ -284,7 +308,6 @@ for(i in 1:length(dat))
   #"
   #g2 <- splitTextGrob(string)
   theme_set(theme_grey()); 
-  #theme_set(theme_bw());
   
   ## plot object
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
@@ -293,46 +316,13 @@ for(i in 1:length(dat))
   ##possibly segment chart to have solid lines before 2010
   #simulation_long_abs[simulation_long_abs$year>2010,]
   lty <- setNames(sample(1:12,10,T), levels(simulation_long_index$county))
-  g3 <- ggplot(data=simulation_long_index,
-               aes(
-                 x=year, 
-                 y=value, 
-                 colour=county,
-                 group=county,
-                 linetype = county))+
-                   geom_line(size=.75) + 
-                   scale_colour_manual(values=manyColors(12)) +
-                   geom_point(size=1.8) +
-                   opts(title=title)+
-                   xlab("Year") + 
-                   ylab(paste("Indexed Value (Rel. to ",yrStart,")")) +
-                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
-                   opts(legend.key.width = unit(1, "cm")) +
-                   scale_linetype_manual(values = lty)      +
-                   opts(legend.position="none") #+
-  #opts(panel.background = theme_rect(fill = "grey50"))
+
+  g3 <- linePlot(simulation_long_index,title) + 
+    ylab(paste("Indexed Value (Rel. to ",yrStart,")")) + scale_y_continuous(labels=percent)    
   g3 <- direct.label(g3, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
   
-  
-  g4 <- ggplot(data=simulation_long_abs,
-               aes(
-                 x=year, 
-                 y=value, 
-                 colour=county,
-                 group=county,
-                 linetype = county))+
-                   geom_line(size=.75) + 
-                   scale_colour_manual(values=manyColors(12)) +
-                   geom_point(size=1.5) +
-                   opts(title=title)+
-                   xlab("Year") + 
-                   ylab("Value") +
-                   opts(axis.text.x=theme_text(angle=90, hjust=0)) +
-                   opts(legend.key.width = unit(1, "cm")) +
-                   scale_linetype_manual(values = lty) +
-                   opts(legend.position="none")
-  #g4 <- uselegend.ggplot(g4)
-  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1))
+  g4 <- linePlot(simulation_long_abs,title)
+  g4 <- direct.label(g4, list(last.points, hjust = 0.7, vjust = 1,fontsize=12))
   
   ##regular mapping
   #county_sp=readOGR(dsn=shp_path,layer=lyr)
@@ -371,7 +361,6 @@ for(i in 1:length(dat))
     expand_limits(x = county_ftfy$long, y = county_ftfy$lat)
   
   #scale_alpha(range = c(1, 1), na.value = 1)
-  
   #print(p1)
   
   if(Sys.getenv("HUDSON_DRAFT_RESULTS")=='true') {
