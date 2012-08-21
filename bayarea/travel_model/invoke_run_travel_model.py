@@ -53,8 +53,8 @@ def invoke_run_travel_model(config, year):
     cmd = cmd + " -o " + outdir
 
     logger.log_status("Launching %s" % cmd)
-    #if os.system(cmd) != 0:
-    #    raise TravelModelError
+    if os.system(cmd) != 0:
+        raise TravelModelError
 
     # Run the emfac report
 
