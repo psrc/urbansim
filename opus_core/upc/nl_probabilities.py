@@ -119,7 +119,7 @@ class nl_probabilities(Probabilities):
                 Pnm[altsidx] = (exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))).flat
         nanidx_logsum = isnan(logsum)
         nanidxPnm = isnan(Pnm)
-        if sum(nanidx_logsum)>0 or sum(nanidxPnm)>0:
+        if nanidx_logsum.any() or nanidxPnm.any():
             logger.log_warning("Some nests not available to some agents (logsum is zero or infinity).")
             logsum[where(nanidx_logsum)] = 0
             Pnm[where(nanidxPnm)] = 0
