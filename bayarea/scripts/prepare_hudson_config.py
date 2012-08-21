@@ -167,9 +167,6 @@ if __name__ == "__main__":
         tmc.append(tmh)
     models = etree.Element("models", type="selectable_list")
     tmc.append(models)
-    export_tm = etree.Element("selectable",
-                              name="bayarea.travel_model.export_opus_data",
-                              type="selectable")
     invoke_tm = etree.Element("selectable",
                               name="bayarea.travel_model.invoke_run_travel_model",
                               type="selectable")
@@ -179,14 +176,11 @@ if __name__ == "__main__":
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
     if travel_model:
         if travel_model == "true":
-            export_tm.text = "True"
             invoke_tm.text = "True"
             import_tm.text = "True"
         else:
-            export_tm.text = "True"
             invoke_tm.text = "False"
             import_tm.text = "False"
-        models.append(export_tm)
         models.append(invoke_tm)
         models.append(import_tm)
         scenario.append(tmc)
