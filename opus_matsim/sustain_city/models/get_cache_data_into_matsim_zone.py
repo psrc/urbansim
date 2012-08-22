@@ -61,7 +61,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         
         self.dataset_table_jobs = DatasetTable(
                 attributes = [
-                    'building_type_id = job.disaggregate(building_type.building_type_id)',
+                    'building_type_id = job.building_type',
                     'zone_id_work = job.disaggregate(zone.zone_id)'
                     ],
                 dataset_name = 'job',
