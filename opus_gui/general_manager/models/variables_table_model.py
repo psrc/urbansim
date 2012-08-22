@@ -3,6 +3,8 @@
 # See opus_core/LICENSE
 
 from lxml.etree import Element
+import sys
+import traceback
 
 from PyQt4.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
 from PyQt4.QtCore import SIGNAL, QEventLoop
@@ -101,7 +103,10 @@ def variable_batch_check(variables, validator_func, variable_key = None,
             success, msg = validator_func(variables = [converted_var,])
         except Exception, ex:
             success = False
-            msg = ['ERROR while trying to validate %s: %s' %(variable['name'], ex),]
+            type, value, tb = sys.exc_info()
+            stack_dump = ''.join(traceback.format_exception(type, value, tb))
+            msg = ['ERROR while trying to validate %s: %s' %(variable['name'], stack_dump),]
+
         if success is True:
             variable[variable_key] = False
         else:
