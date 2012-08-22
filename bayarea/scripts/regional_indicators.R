@@ -9,6 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
+args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018')
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -134,8 +135,8 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     fileNameClean = ldply(fileAndTypesFlattened)[,1]
     fileNameClean <- ldply(lapply(fileNameClean, gsub, pattern="alldata.+\\d{4}-\\d{4}_",replacement=""))
     title_split <- lapply(fileNameClean,strsplit, "_")
-    title_concat <- ldply(lapply(title_split[[1]][1:length(title_split[[1]])],paste, sep=" ", collapse = " "))
-    title_concat_short <- ldply(lapply(title_concat,gsub, pattern="alldata|region",replacement=""))
+    title_concat <- ldply(lapply(title_split[[1]][1:length(title_split[[1]])],paste, sep="", collapse = " "))
+    title_concat_short <- ldply(lapply(title_concat,gsub, pattern="alldata\\s+|region\\s+",replacement=""))
     #title_proper <- lapply(title_concat,TitleCase)
     #title <- paste(title_concat[[1]], sep=" ", collapse = " ")
     names(dat) <- ldply(title_concat_short)[2:ncol(title_concat_short),2]
@@ -151,8 +152,9 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
   ## grob time    
     containTest <- '2035' %in% names(df.t)
     extra=F
+    ##check if 
     if (T %in% containTest){
-      g1 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035")])
+      g1 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035","2040")])
       extra=T
     } else {
       g1 <- makeTable(df.t[c(1,2,ncol(df.t))])

@@ -86,13 +86,13 @@ dt.m2 <- melt(dt[,c(1,2)], id=c("building_type_id"),direction = "long")
 pdf("/home/aksel/Downloads/testChart.pdf",height=8.5, width=11,onefile=TRUE)
 ggplot(dt.m2, aes(x=value)) + 
   geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                 binwidth=10000,
-                 colour="black", fill="white") +
-                   geom_density(alpha=.2, fill="orange") +
+                 binwidth=1000,
+                 colour="black", fill="steelblue1") +
+                   geom_density(alpha=.2,size = 2 ) + #, fill="orange") +
                    xlab("square feet") +
                    opts(title="Dev Events Size Distribution") +
                    opts(legend.position=c(.24, .95), legend.justification = c(1, 1)) +
-                   scale_x_continuous(limits=c(0, 1e6))
+                   scale_x_continuous(limits=c(0, 1e4))
 #scale_y_continuous(labels=percent) 
 
 

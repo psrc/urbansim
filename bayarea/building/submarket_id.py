@@ -5,10 +5,10 @@
 from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from numpy import zeros
-from bayarea.datasets.submarket_dataset import SubmarketDataset, generate_unique_ids
+from bayarea.datasets.area_permutation_dataset import AreaPermutationDataset, generate_unique_ids
 
-class submarket_id(Variable):
-    """ Return the submarket_id of building, as defined in the datasets/submarket_dataset.py
+class area_permutation_id(Variable):
+    """ Return the area_permutation_id of building, as defined in the datasets/area_permutation_dataset.py
     """
     _return_type = "int32"
     
