@@ -13,7 +13,7 @@ class area_permutation_id(Variable):
     _return_type = "int32"
     
     def dependencies(self):
-        return SubmarketDataset.subgroup_definition
+        return AreaPermutationDataset.subgroup_definition
 
     def compute(self, dataset_pool):
         ds = self.get_dataset()
