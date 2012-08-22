@@ -13,7 +13,7 @@ class AreaPermutationDataset(SubgroupDataset):
     in_table_name_default = "area_permutations"
     out_table_name_default = "area_permutations"
     dataset_name = "area_permutation"
-    subgroup_definition = ['bayarea.parcel.county_id','bayarea.parcel.juris_id', 'bayarea.parcel.pda_id','bayarea.parcel.tpp_id']
+    subgroup_definition = ['bayarea.parcel.county_id','bayarea.parcel.jurisdiction_id', 'bayarea.parcel.pda_id','bayarea.parcel.tpp_id']
    
    
 #===============================================================================
