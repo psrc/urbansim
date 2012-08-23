@@ -105,7 +105,8 @@ def variable_batch_check(variables, validator_func, variable_key = None,
             success = False
             type, value, tb = sys.exc_info()
             stack_dump = ''.join(traceback.format_exception(type, value, tb))
-            msg = ['ERROR while trying to validate %s: %s' %(variable['name'], stack_dump),]
+            errors = "{}\n\n{}".format(ex, stack_dump)
+            msg = ['ERROR while trying to validate %s: %s' %(variable['name'], errors),]
 
         if success is True:
             variable[variable_key] = False

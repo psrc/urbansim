@@ -12,6 +12,8 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.interaction_dataset import InteractionDataset
 
 import numpy
+import sys
+import traceback
 
 class VariableValidator(object):
     def __init__(self, project):
@@ -82,6 +84,7 @@ class VariableValidator(object):
                 error_escaped = str(error).replace('\n', '<br>')
                 errors.append("Expression <b>%s</b> could not be run on <br>dataset <i>%s</i> on the baseyear data.<br>Details:<br>%s"%(
                                 var_name, dataset_name, error_escaped ))
+
         return len(errors) == 0, errors
 
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
@@ -126,4 +129,7 @@ class VariableValidator(object):
             dataset.compute_variables(names = [expression])
             return True, None
         except Exception, e:
-            return False, e
+            type, value, tb = sys.exc_info()
+            stack_dump = ''.join(traceback.format_exception(type, value, tb))
+            errors = "{}\n\n{}".format(e, stack_dump)
+            return False, errors
