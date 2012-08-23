@@ -13,7 +13,7 @@ try:
 except:
     ne = None
 
-annual_price_change_rate = 3/10.0
+annual_price_change_rate = 1/4.0
 
 class equilibration_choices(lottery_choices):
 
