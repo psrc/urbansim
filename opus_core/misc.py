@@ -481,7 +481,7 @@ def do_id_mapping_array_from_array(id_array, minid=None, maxid=None):
         maxid = long(id_array.max())
     if minid is None:
         minid = long(id_array.min())
-    id_mapping = -1 * ones(maxid-minid+1, dtype="int32")
+    id_mapping = -1 * ones(maxid-minid+1, dtype='i')
     id_mapping[id_array-minid] = arange(id_array.size).astype(id_mapping.dtype)
     return id_mapping
 
