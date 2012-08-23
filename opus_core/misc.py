@@ -473,15 +473,15 @@ def do_id_mapping_dict_from_array(id_array):
 
 def do_id_mapping_array_from_array(id_array, minid=None, maxid=None):
     # id_array must be a 1D numpy array
-    from numpy import resize, array, arange
+    from numpy import resize, array, arange, ones
 
     if id_array.size <= 0:
         return array([], dtype="int32")
     if maxid is None:
-        maxid = id_array.max()
+        maxid = long(id_array.max())
     if minid is None:
-        minid = id_array.min()
-    id_mapping = resize(array([-1], dtype="int32"), maxid-minid+1)
+        minid = long(id_array.min())
+    id_mapping = -1 * ones(maxid-minid+1, dtype="int32")
     id_mapping[id_array-minid] = arange(id_array.size).astype(id_mapping.dtype)
     return id_mapping
 

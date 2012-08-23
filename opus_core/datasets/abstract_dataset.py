@@ -1744,8 +1744,8 @@ class AbstractDataset(object):
                 self.id_mapping = array([], dtype="int32")
             return
         if id_array.ndim == 1:
-            maxid = id_array.max()
-            minid = id_array.min()
+            maxid = long(id_array.max())
+            minid = long(id_array.min())
             if (maxid-minid+1) <= (2*self.size()+1000):
                 self.id_mapping_type="A" #array
                 self.id_mapping_shift = minid
