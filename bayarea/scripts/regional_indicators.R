@@ -9,18 +9,13 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018')
+#args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018','134',"TRUE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
-
-## parse path to get runid, run date
-split <- strsplit(args[1],"/")[[1]]
-pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
-runid <- split[pos]
-periodPosition <- regexpr("\\.",runid)[[1]]
-tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
-id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
+run_id <- args[4]
+travelModelRan <- args[5]
+scenario <- args[6]
 
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 theme_set(theme_grey())
@@ -39,7 +34,7 @@ linePlot <- function(data,name){
            geom_point(size=1.8) +
            opts(title=name) +#, theme_text(size = 25))+
            xlab("Year") + 
-           ylab("Million Tons ???") +
+           ylab("Tons GHG per Weekday") +
            opts(axis.title.x = theme_text(size = 8, vjust = 0.5)) +
            opts(axis.title.y = theme_text(size = 8, vjust = 0.5,angle=90)) +
            opts(plot.title = theme_text(size = 10, vjust = 0.5)) +
@@ -161,32 +156,35 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     }
     ############################################################################
     ##process EMFAC MTC data
-    travelYears <- c('2018','2025','2035')
-    mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("%s/EMFAC2011-SG Summary - Year_%s - Group 1.csv",file.path(pth, fsep = .Platform$file.sep),x)))                      
-    mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
-    TOG <- data.frame(mtcData[[1]][,4], mtcData[[1]][,11],mtcData[[2]][,11],mtcData[[3]][,11])
-    names(TOG) <- c("geography",2018,2025,2035)
-    #TOG$geography <- c("region",as.vector(substr(x=TOG$geography[2:10],start=1,last=length(TOG$geography[2:10])-5)))
-    TOG.m <- melt(TOG[2:10,],id="geography")
-    
-    g2 <- makeTable(TOG[2:10,])
+    if(travelModelRan==T){
+      travelYears <- c('2018','2025','2035')
+      mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("%s/EMFAC2011-SG Summary - Year_%s - Group 1.csv",file.path(pth, fsep = .Platform$file.sep),x)))                      
+      mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
+      GHGFields <- c('Total.TOG','Total.ROG','Total.CO','Total.NOx','Total.CO2')
+      GHG2018 <- rowSums(as.matrix(mtcData[[1]][,GHGFields]))
+      GHG2025 <- rowSums(as.matrix(mtcData[[2]][,GHGFields]))
+      GHG2035 <- rowSums(as.matrix(mtcData[[3]][,GHGFields]))
+      GHG <- data.frame(mtcData[[1]][,4], GHG2018,GHG2025,GHG2035)
+      names(GHG) <- c("geography",2018,2025,2035)
+      #GHG$geography <- c("region",as.vector(substr(x=GHG$geography[2:10],start=1,last=length(GHG$geography[2:10])-5)))
+      GHG.m <- melt(GHG[2:10,],id="geography")
+      
+      g2 <- makeTable(GHG[2:10,])
+      g6 <- linePlot(GHG.m,"Total Greenhouse Gases")
+      g6 <- direct.label(g6, list(last.points, cex=.6, hjust = 0.7, vjust = 1,fontsize=12))
+      g7 <- stackedBarPlot(GHG.m,"Vehicle Miles Traveled")
+      }
     ############################################################################
     ## start pdf object to store all charts
     fp <- file.path(pth, fsep = .Platform$file.sep)
-    fileNameOut=sprintf("%s_topsheet.pdf","region",id)
+    fileNameOut=sprintf("region_run_%s_topsheet.pdf",run_id)
     sprintf("Preparing file %s for charts and figures...", fileNameOut)
     ##plot it
     pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
     print(fileNameOut)
-    #multiplot(tb1, tb1, cols=1)
-    set.seed(2)
+    #set.seed(2)
     #q1 <- ggplot(data.frame(x=rnorm(50)), aes(x)) + geom_density()
     #q2 <- ggplot(data.frame(x=rnorm(50)), aes(x)) + geom_density()
-    
-    g6 <- linePlot(TOG.m,"Total Organic Gases")
-    g6 <- direct.label(g6, list(last.points, cex=.6, hjust = 0.7, vjust = 1,fontsize=12))
-    
-    g7 <- stackedBarPlot(TOG.m,"Vehicle Miles Traveled")
     
 #     tb1 <- grid.arrange(g1,g2,g6,g7, nrow=2, 
 #                         widths = c(1/2,1/2),
@@ -202,10 +200,8 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
 #      print(g2, vp=vp.layout(2,2))
 #      print(g6, vp=vp.layout(2,1))
 #   
-    note <- "
-    This 'No Project' run with id number xxx represents the baseline scenario and is in a draft state until further notice.
-    "
-    g3 <- splitTextGrob(note,gp=gpar(fontsize=10, col="grey",just = "left"))
+    note <- sprintf("\nThis '%s' run with id number %s represents the baseline scenario and is in a draft state until further notice.",scenario, run_id)
+        g3 <- splitTextGrob(note,gp=gpar(fontsize=10, col="grey",just = "left"))
     grid.newpage() 
     #grid.text("Title 1", vp = viewport(layout.pos.row = 1, layout.pos.col = 1:2))
     
@@ -213,36 +209,49 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
                                         heights = unit(c(0.25, 3.5, 0.25, 3.5),"inches"), 
                                         widths = unit(c(4.5,4.5), "inches")))
     pushViewport(vp)
-    #grid.rect(gp=gpar(col="blue")) #,fill="blue"))
     grid.rect(gp=gpar(col="grey"))#,fill="black"))
     #grid.border(1, vp=viewport)
     #upViewport()
     #pushViewport(viewport(layout=grid.layout(nrow=2, ncol=2, widths=unit(c(5,4), "inches"),heights=unit(c(3.5,3.5), "inches"))))
-    grid.text("Table 1\nKey UrbanSim Indicators", vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-    grid.text("Table 2\nEMFAC Total Organic Gases", vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+    
+    if(travelModelRan==T){
+      grid.text("Figure 1", vp = viewport(layout.pos.row = 3, layout.pos.col = 2))
+      grid.text("Table 2\nEMFAC Total Greenhouse Gases", vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+      
+      ##GHG table
+      pushViewport(viewport(layout.pos.col=1, layout.pos.row=4, clip="off"))
+      grid.draw(g2)
+      popViewport()
+    
+      ##GHG chart
+      pushViewport(viewport(layout.pos.col=2, layout.pos.row=4)) 
+      print(g6, newpage=FALSE) 
+      popViewport()
+      #par(mar = c(2, 2,2, 2))
+    } else {
+      noteTM <- "Travel model was not run for this simulation. This panel left blank intentionally."
+      gt <- splitTextGrob(noteTM,gp=gpar(fontsize=14, col="grey",fontface="italic", just = "center"))
+      pushViewport(viewport(layout.pos.col=1:2, layout.pos.row=4)) 
+      grid.draw(gt)
+      popViewport(1)
+    }
+    
     grid.text("Configuration Details", vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-    grid.text("Figure 1", vp = viewport(layout.pos.row = 3, layout.pos.col = 2))
+    grid.text("Table 1\nKey UrbanSim Indicators", vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
     
-    pushViewport(viewport(layout.pos.col=2, layout.pos.row=4)) 
-    print(g6, newpage=FALSE) 
-    popViewport()
-    #par(mar = c(2, 2,2, 2))
-    
+    ##Note grob
     pushViewport(viewport(layout.pos.col=1, layout.pos.row=2)) 
     #print(g7, newpage=FALSE) 
     #grid.text(note, gp=gpar(fontsize=20, col="grey"))
     grid.draw(g3)
     popViewport(1)
     
-    pushViewport(viewport(layout.pos.col=1, layout.pos.row=4, clip="off"))
-    grid.draw(g2)
-    popViewport()
-    
+    ##key indicators
     pushViewport(viewport(layout.pos.col=2, layout.pos.row=2, clip="off"))
     grid.draw(g1)
     popViewport()
     
-    dev.off()
+    garbage <- dev.off()
     }   
 
 #yrStart<-2010
