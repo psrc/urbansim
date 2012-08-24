@@ -26,19 +26,22 @@ class MTCExport(Model):
     model_name = "MTCExport"
 
     def __init__(self, data_to_export=None):
-        logger.log_status("INITIALIZING")
-        print data_to_export
         self.data_to_export = data_to_export
 
-    def run(self, year=None, years_to_run=[]):
+    def run(self, year=None, years_to_run=[], configuration=None):
         if year not in years_to_run or self.data_to_export == None:
             return
 
-        sim_state = SimulationState()
-        cache_directory = sim_state.get_cache_directory()
-        logger.log_status("HA HA HA " + str(year) + " " + cache_directory)
+        cache_directory = configuration['cache_directory']
+        simulation_state = SimulationState()
+        simulation_state.set_cache_directory(cache_directory)
+        simulation_state.set_current_time(year)
         attribute_cache = AttributeCache()
-        dataset_pool = SessionConfiguration().get_dataset_pool()
+        package_order=configuration['dataset_pool_configuration'].package_order
+        dataset_pool = SessionConfiguration(new_instance=True,
+                                            package_order=package_order,
+                                            in_storage=attribute_cache
+                                            ).get_dataset_pool()
         out_dir = os.path.join(cache_directory, "mtc_data")
 
         out_storage = csv_storage(storage_location=out_dir)
