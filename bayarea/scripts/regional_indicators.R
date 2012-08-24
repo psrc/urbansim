@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-#args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018','134',"TRUE","No_Project")
+args <- c('/home/aksel/Documents/Data/Urbansim/run_139/indicators','2010','2040','134',"TRUE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -17,6 +17,7 @@ run_id <- args[4]
 travelModelRan <- args[5]
 scenario <- args[6]
 
+travelYears <- c(2018,2025,2035)
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 theme_set(theme_grey())
 ##generic line plot function
@@ -144,21 +145,40 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     df.t <- as.data.frame(cast(df.m))
     names(df.t)[1] <- "Indicator"
   
+    #########################################################################
+    ##get county-level population data
+    countyPopFile <- sprintf('county_table-3_%s-%s_county__county_population.tab',yrStart,yrEnd)
+    countyPopPth <- file.path(pth,countyPopFile,fsep = .Platform$file.sep)
+    lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma','ALL')
+    countyPopRaw <- read.csv(countyPopPth,sep="\t")
+    countyPop <- countyPopRaw[countyPopRaw[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
+    ptrn <- "([[:digit:]]{4})"  
+    names(countyPop) <- c("county",str_extract(names(countyPop)[2:ncol(countyPop)],ptrn))
+    countyPop <- rbind(countyPop,c("ALL",colSums(countyPop[,2:ncol(countyPop)])))
+    countyPop[,1] <-factor(countyPop[,1], labels=lCounties)
+    
+    
   ## grob time    
-    containTest <- '2035' %in% names(df.t)
-    extra=F
-    ##check if 
-    if (T %in% containTest){
+    #containTest <- '2035' %in% names(df.t)
+    if(yrEnd==2040){
+    #extra=F
+    ##check if out years are included 
       g1 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035","2040")])
+      popData <- data.frame(countyPop[,c("county","2018","2025","2035")])
+      names(popData) <- c("county",2018,2025,2035)
       extra=T
     } else {
+      popYearsKeepers <- travelYears<=yrEnd
+      popData <- data.frame(countyPop[,c("county",yrStart,travelYears[popYearsKeepers])])
+      names(popData) <- c("county",yrStart,travelYears[popYearsKeepers])
       g1 <- makeTable(df.t[c(1,2,ncol(df.t))])
     }
     ############################################################################
     ##process EMFAC MTC data
     if(travelModelRan==T){
-      travelYears <- c('2018','2025','2035')
-      mtcDataFiles <- ldply(lapply(travelYears,function(x) sprintf("%s/EMFAC2011-SG Summary - Year_%s - Group 1.csv",file.path(pth, fsep = .Platform$file.sep),x)))                      
+      mtcDataFiles <- ldply(lapply(travelYears,
+                                   function(x) sprintf("%s/EMFAC2011-SG Summary - Year_%s - Group 1.csv",
+                                                       file.path(pth, fsep = .Platform$file.sep),x)))                      
       mtcData<-lapply(mtcDataFiles[[1]],read.csv,header = TRUE, sep = ",", quote="\"")
       GHGFields <- c('Total.TOG','Total.ROG','Total.CO','Total.NOx','Total.CO2')
       GHG2018 <- rowSums(as.matrix(mtcData[[1]][,GHGFields]))
@@ -166,10 +186,18 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
       GHG2035 <- rowSums(as.matrix(mtcData[[3]][,GHGFields]))
       GHG <- data.frame(mtcData[[1]][,4], GHG2018,GHG2025,GHG2035)
       names(GHG) <- c("geography",2018,2025,2035)
-      #GHG$geography <- c("region",as.vector(substr(x=GHG$geography[2:10],start=1,last=length(GHG$geography[2:10])-5)))
-      GHG.m <- melt(GHG[2:10,],id="geography")
+      GHG[,1] <- gsub(pattern=" (SF)", x=GHG[,1],replacement="",fixed = T)
+      GHG.merge <- merge(GHG,popData, by.y="county", by.x="geography")
       
-      g2 <- makeTable(GHG[2:10,])
+      ##add ghg per cap for each urbansim year that is also in travel model run years
+      yrKeep <- travelYears[popYearsKeepers]
+      for(i in yrKeep){
+        GHG$newVar <- GHG.merge[,sprintf("%s.x",i)] / 
+          as.integer(GHG.merge[,sprintf("%s.y",i)])
+        names(GHG)[ncol(GHG)] <- sprintf("GHGPerCap%s", i)
+      }
+      GHG.m <- melt(GHG[2:10, 1:ncol(GHG)-length(yrKeep)],id="geography")
+      g2 <- makeTable(GHG)
       g6 <- linePlot(GHG.m,"Total Greenhouse Gases")
       g6 <- direct.label(g6, list(last.points, cex=.6, hjust = 0.7, vjust = 1,fontsize=12))
       g7 <- stackedBarPlot(GHG.m,"Vehicle Miles Traveled")
