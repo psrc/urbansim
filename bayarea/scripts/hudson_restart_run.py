@@ -3,6 +3,7 @@ from opus_core.logger import logger
 import opus_core.tools.restart_run as restart_run
 from opus_core.services.run_server.run_manager import RunManager
 import shutil, glob
+import hudson_common
 
 def main(option_group=None, args=None):
 
@@ -75,6 +76,9 @@ def main(option_group=None, args=None):
         years = map(lambda y : int(os.path.basename(y)),
                     glob.glob(os.path.join(cache_dir, "2*")))
         year = max(years)
+
+    # ensure that the report generation can know the current directory
+    hudson_common.dump_cache_dir(cache_directory)
 
     end_year = int(options.end_year) if options.end_year is not None else None
     run_manager.restart_run(run_id, 

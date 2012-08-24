@@ -4,6 +4,7 @@
 
 import opus_core.tools.start_run as start_run
 import os
+import hudson_common
 
 if __name__ == "__main__":
     option_group = start_run.StartRunOptionGroup()
@@ -11,13 +12,9 @@ if __name__ == "__main__":
     options, config, run_manager = start_run.prepare_run_manager(option_group)
     # Dump the cache_directory before we launch the run so that if the run
     # fails, we can still know the cache directory and can run the report.
-    ws = os.getenv("WORKSPACE")
     cache_directory = run_manager.get_current_cache_directory()
+    hudson_common.dump_cache_dir(cache_directory)
     if ws:
-        f = open(os.path.join(ws, "current_cache_dir.txt"), "w")
-        f.write(cache_directory)
-        f.close()
-
         # Dump the environment to the cache dir so that if we need to debug this on
         # the command line it's trivial to set up
         f = open(os.path.join(ws, "hudson.env"), "w")
