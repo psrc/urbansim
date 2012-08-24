@@ -14,6 +14,7 @@ if __name__ == "__main__":
     # fails, we can still know the cache directory and can run the report.
     cache_directory = run_manager.get_current_cache_directory()
     hudson_common.dump_cache_dir(cache_directory)
+    ws = os.getenv("WORKSPACE")
     if ws:
         # Dump the environment to the cache dir so that if we need to debug this on
         # the command line it's trivial to set up
