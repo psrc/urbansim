@@ -52,7 +52,9 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
             try: os.mkdir(self.output_directory)
             except: pass
             
-        ### TODO building types ??? ###############################
+        ### TODO building types or sector_id ??? ###############################
+        # To get additional indicators, e.g. schools, bars, etc., either the 
+        # building_type or sector_id can be used --> CHECK which one is correct!!!
         
         # dump out buildings by building type
         # i.e. for restaurants dump out all buildings (ids) with building type restaurant and the zone id
@@ -61,7 +63,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         
         self.dataset_table_jobs = DatasetTable(
                 attributes = [
-                    'building_type_id = job.building_type',
+                    'sector_id = job.sector_id',
                     'zone_id_work = job.disaggregate(zone.zone_id)'
                     ],
                 dataset_name = 'job',

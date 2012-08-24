@@ -26,8 +26,13 @@ class MATSimConfigObject(object):
         self.sub_config_exists = False
         self.config_destination_location = None
         
+        # TODO IMPLEMENTATION
+        # - configurable time-of-a-day for which to compute the travel data (default 8 am)
+        
         # get sub dictionaries from travel model configuration
         matsim4urbansim, matsim_controler, matsim_controler_parameter, matsim_accessibility_parameter, matsim_common, matsim_plan_calc_score, matsim_strategy = self.__get_travel_model_sub_dictionaries()
+        
+        self.project_name = self.config_dictionary['project_name']  # tnicolai: todo incude in matsim config
         
         # network parameter
         self.network_file = self.__get_file_location( matsim_common['matsim_network_file'], required=True)
