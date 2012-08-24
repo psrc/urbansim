@@ -31,6 +31,11 @@
 # OPUS_DBPASS: This is the database password used by the developer model
 # HUDSON_DBPASS: This is the databse password used by hudson for the urbansim
 # services db.
+#
+# NODE_NAME: hudson automatically sets this variable to the name of the slave
+# node that is running the job.  We preserve this in the configuration so that
+# when we restart jobs we can ensure that we have access to the correct run
+# directory.
 
 import sys, os
 from optparse import OptionParser
@@ -56,6 +61,11 @@ if __name__ == "__main__":
     parent_scenario = os.getenv("HUDSON_SCENARIO")
     if parent_scenario == None:
         print "ERROR: HUDSON_SCENARIO environment variable must be set"
+        sys.exit(1)
+
+    node_name = os.getenv("NODE_NAME")
+    if not node_name:
+        print "ERROR: NODE_NAME environment variable must be set"
         sys.exit(1)
 
     project = etree.Element("opus_project")
@@ -112,6 +122,13 @@ if __name__ == "__main__":
     scenario = etree.Element("scenario", executable="True",
                              name=parent_scenario + "_hudson",
                              type="scenario")
+    hudson_details = etree.Element("hudson_details", type="dictionary")
+    node = etree.Element("node", type="string")
+    node.text = node_name
+    hudson_details.append(node)
+    scenario.append(hudson_details)
+
+    hudson_details.append
     scenario_manager.append(scenario)
     parent = etree.Element("parent", type="scenario_name")
     parent.text = parent_scenario
