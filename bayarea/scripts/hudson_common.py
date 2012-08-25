@@ -1,4 +1,4 @@
-import os
+import os, shutil
 from opus_core.logger import logger
 
 class HudsonError(Exception):
@@ -38,6 +38,10 @@ def mount_cache_dir(run_resources):
             # it must be the one that we're expecting.
             pass
         else:
+            # Attempt to unmount cache_dir to start fresh.  Sometimes the mount
+            # lingers and gives unexpected results.
+            cmd = 'fusermount -u ' + cache_dir
+            rc = os.system(cmd)
             if os.path.exists(cache_dir):
                 # The local cache dir should be empty.  But sometimes it's not.
                 # Like if sshfs fails during a model run or something.  So we
