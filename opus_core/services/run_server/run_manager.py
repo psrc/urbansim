@@ -76,12 +76,12 @@ class RunManager(AbstractService):
         if run_resources['cache_directory'] != self.current_cache_directory:
             raise 'The configuration and the RunManager conflict on the proper cache_directory'
 
-        self.add_row_to_history(self.run_id, run_resources, "started", 
-                                run_name=run_name, scenario_name=scenario_name)
-
         run_resources['run_id'] = self.run_id
         if scenario_name is not None:
             run_resources['scenario_name'] = scenario_name
+
+        self.add_row_to_history(self.run_id, run_resources, "started", 
+                                run_name=run_name, scenario_name=scenario_name)
 
         try:
             # Test pre-conditions
