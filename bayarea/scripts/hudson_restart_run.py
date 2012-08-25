@@ -40,9 +40,6 @@ def main(option_group=None, args=None):
                     glob.glob(os.path.join(cache_dir, "2*")))
         year = max(years)
 
-    # ensure that the report generation can know the current directory
-    hudson_common.dump_cache_dir(cache_directory)
-
     end_year = int(options.end_year) if options.end_year is not None else None
     run_manager.restart_run(run_id, 
                             year,
