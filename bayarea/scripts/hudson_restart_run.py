@@ -33,6 +33,7 @@ def main(option_group=None, args=None):
                                                                   restart_year=2010)
     hudson_common.mount_cache_dir(run_resources)
 
+    cache_dir = run_resources['cache_directory']
     if not year:
         # guess the year based on how the cache dir is populated
         years = map(lambda y : int(os.path.basename(y)),
