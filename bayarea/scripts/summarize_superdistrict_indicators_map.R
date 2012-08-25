@@ -207,7 +207,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 fp <- file.path(pth, fsep = .Platform$file.sep)
 fileNameOut=sprintf("%s/%s_plot_%s_indexChart.pdf",fp,geo,runid)
 sprintf("Preparing file %s for charts and figures...", fileNameOut)
-pdf(fileNameOut,height=11, width=17,onefile=TRUE)
+pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 
 ## store each file in a dataframe, process and plot as we go.
 for(i in 1:length(dat)) 

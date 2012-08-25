@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-args <- c('/home/aksel/Documents/Data/Urbansim/run_139/indicators','2010','2040','134',"TRUE","No_Project")
+#args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018','134',"TRUE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -160,6 +160,8 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     
   ## grob time    
     #containTest <- '2035' %in% names(df.t)
+    popYearsKeepers <- travelYears<=yrEnd
+    
     if(yrEnd==2040){
     #extra=F
     ##check if out years are included 
@@ -168,7 +170,6 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
       names(popData) <- c("county",2018,2025,2035)
       extra=T
     } else {
-      popYearsKeepers <- travelYears<=yrEnd
       popData <- data.frame(countyPop[,c("county",yrStart,travelYears[popYearsKeepers])])
       names(popData) <- c("county",yrStart,travelYears[popYearsKeepers])
       g1 <- makeTable(df.t[c(1,2,ncol(df.t))])
