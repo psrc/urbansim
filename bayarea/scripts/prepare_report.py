@@ -42,10 +42,10 @@ def main():
     # determine the run_id from the command line args
     if options.run_id:
         run_id = options.run_id
-    elif options.cache_directory or options.scenario:
+    elif options.cache_directory:
         try:
             if options.cache_directory[-1] == os.sep:
-                options.cache_directory = cache_directory[0:-1]
+                options.cache_directory = options.cache_directory[0:-1]
             run_id = options.cache_directory.split(os.sep)[-1].split('.')[0].split('_')[1]
         except:
             print "Failed to parse run ID from cache directory name"
