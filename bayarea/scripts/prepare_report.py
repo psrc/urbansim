@@ -8,19 +8,29 @@ import textwrap
 import traceback
 from opus_core.configurations.xml_configuration import XMLConfiguration
 import bayarea.travel_model.mtc_common as mtc_common
+from opus_core.services.run_server.run_manager import RunManager
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+import hudson_common
+
+class ReportOptionGroup(GenericOptionGroup):
+    def __init__(self):
+        GenericOptionGroup.__init__(self,
+                                    usage="python %prog [options]",
+                                    description="Run hudson's reporting capability")
+        self.parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None,
+                               help="File name of xml configuration")
+        self.parser.add_option("-y", "--years", dest="years",
+                               help="List of years to make indicators for (e.g., range(2010,2012)).")
+        self.parser.add_option("-o", "--output-directory", dest="output",
+                               help="Output directory for results")
+        self.parser.add_option("-c", "--cache-directory", dest="cache_directory", default=None,
+                               help="Directory of UrbanSim cache to make indicators from (Defaults to most recent successful run)")
+        self.parser.add_option("-r", "--run-id", dest="run_id", default=None,
+                               help="run ID on which to run the report.  If this option is specified, -c and -s are ignored.")
 
 def main():
-    parser = OptionParser()
-    parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None,
-                      help="File name of xml configuration")
-    parser.add_option("-y", "--years", dest="years",
-                      help="List of years to make indicators for (e.g., range(2010,2012)).")
-    parser.add_option("-o", "--output-directory", dest="output",
-                      help="Output directory for results")
-    parser.add_option("-c", "--cache-directory", dest="cache_directory", default=None,
-                      help="Directory of UrbanSim cache to make indicators from (Defaults to most recent successful run)")
-    parser.add_option("-s", "--scenario", dest="scenario", default=None,
-                      help="Scenario (Defaults to most recent)")
+    option_group = ReportOptionGroup()
+    parser = option_group.parser
     (options, args) = parser.parse_args()
 
     if not options.xml_configuration or \
@@ -29,28 +39,37 @@ def main():
         print "ERROR: -x, -y, and -o are required options"
         sys.exit(1)
 
-    if options.cache_directory or options.scenario:
-        cache_directory = options.cache_directory
-        scenario = options.scenario
-        if not cache_directory or not scenario:
-            print "ERROR: cache directory and scenario must both be specified"
-            sys.exit(1)
+    # determine the run_id from the command line args
+    if options.run_id:
+        run_id = options.run_id
+    elif options.cache_directory or options.scenario:
         try:
-            if cache_directory[-1] == os.sep:
-                cache_directory = cache_directory[0:-1]
-            run_id = cache_directory.split(os.sep)[-1].split('.')[0].split('_')[1]
+            if options.cache_directory[-1] == os.sep:
+                options.cache_directory = cache_directory[0:-1]
+            run_id = options.cache_directory.split(os.sep)[-1].split('.')[0].split('_')[1]
         except:
             print "Failed to parse run ID from cache directory name"
             sys.exit(1)
     else:
-        # Start by opening up the mysql db
+        # get most recent succesful run from DB
         conn = MySQLdb.connect('paris.urbansim.org', 'hudson', os.getenv('HUDSON_DBPASS'), 'services');
         c = conn.cursor()
-        c.execute("SELECT max(date_time), cache_directory, scenario_name, run_id FROM run_activity where status='done'")
+        c.execute("SELECT max(date_time), run_id FROM run_activity where status='done'")
         results = c.fetchone()
-        cache_directory = results[1]
-        scenario = results[2]
-        run_id = str(results[3])
+        run_id = str(results[1])
+
+    # Note the dummy restart_year.  Because we're not actually going to
+    # restart the run, this will be ignored.
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
+    run_resources = run_manager.create_run_resources_from_history(run_id=run_id,
+                                                                  restart_year=2010)
+    cache_directory = run_resources['cache_directory']
+    scenario = run_resources['scenario_name']
+
+    # The cache directory may not exist if this script is being run on a hudson
+    # slave that did not perform the original run.  Ensure that we mount it if
+    # nec.
+    hudson_common.mount_cache_dir(run_resources)
 
     # Hudson appends "_hudson" to the scenario names.  Peel this off
     # if it's present.
