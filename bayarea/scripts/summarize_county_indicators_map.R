@@ -42,7 +42,7 @@ indx <- function(dat, baseRow = 1)
 {
   require(plyr)   
   divisors <- dat[baseRow ,]
-  adply(dat, 1, function(x) x / divisors*100)
+  adply(dat, 1, function(x) x / divisors)
 }
 
 ##generic line plot function
