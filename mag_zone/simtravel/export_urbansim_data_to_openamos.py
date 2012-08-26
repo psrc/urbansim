@@ -113,6 +113,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons_recs.add_attribute(persons['student_status'],"schstat")
 
         persons_recs.add_attribute(0,"htaz")
+        persons_recs.add_attribute(0,"schtaz1")
 
         persons_recs.flush_dataset()
 
@@ -155,23 +156,26 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'htaz = ((houseid>0) & (htaz_act>100))*(htaz_act - 100)+((houseid>0) & (htaz_act==-1))*1122',
 
                              'wtaz1_1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>0)) ',
-                             'wtaz1_2=(htaz-100)*((person.employment_status == 1) & (wtaz_rec<=0))',
+                             'wtaz1_2=(htaz)*((person.employment_status == 1) & (wtaz_rec<=0))',
                              'wtaz1_3=0*(person.employment_status == 0)',
                              'wtaz1=wtaz1_1 + wtaz1_2 + wtaz1_3',
                        
+                             'schstat = person.student_status',
+                             "presch = (person.age <= 5).astype('i')",
 
-
+                             'schtaz1 = person.schtaz*((person.schtaz>0) & ((schstat==1) |  (presch==1))) + htaz*((person.schtaz==0) & ((schstat==1) | (presch==1)))',
+                             
 
                              'wtaz = wtaz1',
                              'marstat = person.marriage_status',
-                             'schstat = person.student_status',
+
                              'enroll = person.student_status',
                              'grade = person.student_status & person.education',
                              'educ = person.education',
                              'male = person.sex==1',
                              'female = person.sex==2',
 
-                             "presch = (person.age <= 5).astype('i')",
+
                              "coled = (person.education >= 10).astype('i')",
 
                              'race1 = person.race',
@@ -186,7 +190,6 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         persons.write_dataset(attributes=attrs_to_export,
                               out_storage=output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
-        #raw_input("check tables for consistency")
 
         zones = dataset_pool.get_dataset('zone')
         zones_variables = [
