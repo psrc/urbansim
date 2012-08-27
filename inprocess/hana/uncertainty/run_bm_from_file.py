@@ -2,6 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import os
 from opus_core.bayesian_melding import BayesianMeldingFromFile
 from run_bm import export_quantiles
 
@@ -10,7 +11,7 @@ if __name__ == "__main__":
     cache_directory = "/Users/hana/workspace/data/psrc_parcel/runs"
     run_name_prefix = "run_%s" % run
     pardir = "/Users/hana/workspace/data/psrc_parcel/runs/bmanal/run129_val2010"
-    output_directory = "/Users/hana/workspace/data/psrc_parcel/runs/bmanal/run%s" % run
+    output_directory = "/Users/hana/workspace/data/psrc_parcel/runs/bmanal/run%s_test" % run
     
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
