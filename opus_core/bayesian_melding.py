@@ -752,7 +752,8 @@ class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
     """
-    def __init__(self, filename, package_order=['core'], additional_datasets={}):
+    def __init__(self, filename, package_order=['core'], additional_datasets={}, cache_file_location=None, 
+                 transformation_pair = (None, None), **kwargs):
         """The file 'filename' has the following structure:
         1. line: base_year calibration_year 
         2 lines per each variable: 
@@ -778,6 +779,9 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.weights = array([1.])
         self.number_of_runs = 1
         self.additional_datasets = additional_datasets
+        if cache_file_location is not None: 
+            BayesianMelding.set_cache_attributes(self, cache_file_location, **kwargs)
+        self.transformation_pair_for_prediction = transformation_pair
                  
     def get_calibration_year(self):
         return self.year
@@ -790,18 +794,15 @@ class BayesianMeldingFromFile(BayesianMelding):
     
     def generate_posterior_distribution(self, year, quantity_of_interest, cache_directory=None, values=None, ids=None, 
                                         procedure="opus_core.bm_normal_posterior", use_bias_and_variance_from=None, 
-                                        transformed_back=True, transformation_pair = (None, None), aggregate_to=None,
+                                        transformed_back=True, aggregate_to=None,
                                         intermediates=[], propagation_factor=1, no_propagation=True, additive_propagation=False, 
                                         omit_bias=False, **kwargs):
-        if cache_directory is not None:
-            self.cache_set = array([cache_directory])
-            #self.set_cache_attributes(cache_directory)
-        else:
-            if values is None or ids is None:
-                raise StandardError, "Either cache_directory or values and ids must be given."
+
+        if (values is None or ids is None) and (self.cache_set is None):
+            raise StandardError, "values and ids must be give if the BM object is initialized without cache_file_location."
             
         self.set_posterior(year, quantity_of_interest, values=values, ids=ids, use_bias_and_variance_from=use_bias_and_variance_from, 
-                           transformation_pair=transformation_pair, propagation_factor=propagation_factor, 
+                           propagation_factor=propagation_factor, 
                            no_propagation=no_propagation, additive_propagation=additive_propagation, omit_bias=omit_bias)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
@@ -816,7 +817,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         return self.simulated_values
         
     def set_posterior(self, year, quantity_of_interest, values=None, ids=None, use_bias_and_variance_from=None, 
-                      transformation_pair = (None, None), propagation_factor=1, no_propagation=True, 
+                      propagation_factor=1, no_propagation=True, 
                       additive_propagation=False, omit_bias=False):
         self.set_propagation_factor(year, factor=propagation_factor, no_propagation=no_propagation, additive=additive_propagation)
         if use_bias_and_variance_from is None:
@@ -826,7 +827,6 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.omit_bias = omit_bias
         if omit_bias:
             self.ahat[self.use_bias_and_variance_index] = 0
-        self.transformation_pair_for_prediction = transformation_pair
         self.compute_m(year, quantity_of_interest, values, ids)
         
     def get_index_for_quantity(self, variable_name):
