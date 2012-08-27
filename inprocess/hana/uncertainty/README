@@ -1,0 +1,51 @@
+How to create confidence intervals for a refined run
+====================================================
+I. Prerequisites:
+-----------------
+1. Cache directory with the unrefined run (base year and a validation year)
+2. Cache directory with the refined run (base year and what ever target years)
+3. Observed data - tab delimited ascii files:
+	- households2010_faz.tab (must contain columns faz_id and number_of_households)
+	- jobs2010_faz.tab (must contain columns faz_id and number_of_jobs)
+	Note: '2010' is the validation year and can be changed in the file names, if other year is used for validation.
+	'faz' can be changed to 'zone' in the file names if a zonal validation is desired. In such a case, 
+	both files must have a column zone_id.
+
+II. Generate uncertainty measures for an unrefined run:
+-------------------------------------------------------
+	1. In run_bm.py script modify:
+		cache_directory - directory with the unrefined run (I.1) minus the run name
+		observed_data_dir - directory with observed data (I.3)
+		output_directory - directory where output should be written
+		validation_year - year in which to validate
+		run - which UrbanSim run to use (i.e. number of the unrefined run)
+		run_name_prefix - unique prefix of the run name within cache_directory
+		validation_geography - geography for which to validate (only 'zone' or 'faz' allowed here)
+	2.	Optionally: If confidence intervals are desired for the unrefined run, uncomment a line 'export_quantiles(...)' and 
+					set the 'years' argument to the time of the target uncertainty (usually [2040]).
+	3. Run run_bm.py.
+	4. Output: In output_directory (set in step II.1) a file called bm_parameters is created containing 
+				bias and variance for each quantity, households and jobs.
+				Optionally (if 2. was set), it has files with the confidence intervals for the unrefined run 
+				(see below about info on file names).
+				
+III. Generate confidence intervals for a refined run:
+------------------------------------------------------
+	1. Go through the steps in II. (step 2. is not necessary).
+	2. In the script run_bm_from_file.py modify:
+		cache_directory - directory with the refined run (I.2) minus the run name
+		run - which UrbanSim run to use (i.e. number of the refined run)
+		run_name_prefix - unique prefix of the run name within cache_directory
+		pardir - directory of the outputs from II. (i.e. directory containing the bm_parameters file)
+		output_directory - directory where output should be written
+	3. In the 'export_quantiles(...)' call, set the desired target years for the confidence intervals.
+		If needed, modify the propagation factors propfac_hh and propfac_jobs.
+	4. Run run_bm_from_file.py.
+	5. Output: In the output_directory (set in step III.2), there is one file per target year and quantity and
+				each combination of a) no propagation factor (no suffix)
+									b) multiplicative propagation factor (suffix propf)
+									c) additive propagation factor (suffix propf_add) - this is the one to use!
+				Files that have 'aggrla' as part of the name are aggregations to large areas.
+
+	
+

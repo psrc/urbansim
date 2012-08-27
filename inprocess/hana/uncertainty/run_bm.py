@@ -2,10 +2,9 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import sys
 import os
-import shutil
-from numpy import sort, zeros, sqrt, concatenate, newaxis, transpose
+from numpy import sort, zeros, sqrt, concatenate, newaxis, transpose, array, round
+from numpy.random import seed
 from opus_core.bayesian_melding import BayesianMelding
 from opus_core.bayesian_melding import ObservedData
 from opus_core.plot_functions import plot_histogram
@@ -22,13 +21,21 @@ if __name__ == "__main__":
     #cache_directory = "/Volumes/D Drive TMOD3/opus/data/psrc_parcel/runs"
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/workspace/data/psrc_parcel/observed_data"
-
+    validation_year = 2010
+    run = 129
+    run_name_prefix = 'run_%s' % run
+    validation_geography = 'faz'
+    output_directory = "/Users/hana/workspace/data/psrc_parcel/runs/bmanal/run%s_val%s" % (run, validation_year)
+    
+    
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+ 
     observed_data = ObservedData(observed_data_dir, 
-                                 year=2008, # from what year are the observed data 
+                                 year=validation_year, # from what year are the observed data 
                                  storage_type='tab_storage', # in what format
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
-    validation_geography = 'zone'
     hhs_vars = {'zone': "urbansim_parcel.zone.number_of_households",
                 'faz': "number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)"
                 }
@@ -38,7 +45,7 @@ if __name__ == "__main__":
     known_output=[
                   {#'variable_name': "urbansim_parcel.zone.number_of_households", # What variable does the observed data correspond to
                    'variable_name': hhs_vars[validation_geography],
-                   'filename': "households2008_%s" % validation_geography, # In what file are values of this variable
+                   'filename': "households%s_%s" % (validation_year, validation_geography), # In what file are values of this variable
                    'transformation': "sqrt", # What transformation should be performed (can be set to None)
 #                    Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
                    #'filter': "urbansim_parcel.zone.number_of_households", 
@@ -51,7 +58,7 @@ if __name__ == "__main__":
                   {#'variable_name': "urbansim_parcel.zone.number_of_jobs",
                    'variable_name': jobs_vars[validation_geography],
                    #'filename': "jobs2008", 
-                   'filename': "jobs2008_%s" % validation_geography, 
+                   'filename': "jobs%s_%s" % (validation_year, validation_geography), 
                    'transformation': "sqrt",
                    #'filter': "urbansim_parcel.zone.number_of_jobs",
                    },
@@ -100,7 +107,7 @@ if __name__ == "__main__":
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
                          base_year=2000, 
-                         prefix='run_99', # within 'cache_directory' filter only directories with this prefix
+                         prefix=run_name_prefix, # within 'cache_directory' filter only directories with this prefix
                          overwrite_cache_directories_file=True,
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     
@@ -129,8 +136,7 @@ if __name__ == "__main__":
 #        maxi = argsort(wc)[-1]
 #        print "%s: max = %s, index = %s, w[%s] = %s" % (name, wc[maxi], maxi, maxiall, wc[maxiall])
 #        print wc[maxi3all], wc[miniall]
-
-    #bm.export_bm_parameters('/Users/hana/workspace/data/psrc_parcel/runs/bmanal', filename='bm_parameters')
+    bm.export_bm_parameters(output_directory, filename='bm_parameters')
     #bmf = BayesianMeldingFromFile("/Users/hana/bm/psrc_parcel/simulation_results/0818/2005/bm_parameters", package_order=['urbansim_parcel', 'urbansim', 'core'])
     
     ####
@@ -149,42 +155,121 @@ if __name__ == "__main__":
 #              directory="/Users/hana/workspace/data/psrc_parcel/runs/bmanaljobs")
 #    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_jobs",
 #                            directory="/Users/hana/bm/psrc_parcel/simulation_results")
-    outdir = "/Users/hana/workspace/data/psrc_parcel/runs/bmanal/run99"
-    year = 2040
-    repl = 10000
-    if validation_geography <> 'zone':
-        posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
-                                                   replicates=repl, omit_bias=True)
-    else:
-        posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest="urbansim_parcel.zone.number_of_households", aggregate_to='faz',
-                                                   replicates=repl, omit_bias=True)
-    prob80_hhs = bm.get_probability_interval(80)
-    prob50_hhs = bm.get_probability_interval(50)
-    prob90_hhs = bm.get_probability_interval(90)
-    mean_hhs = bm.get_quantity_from_simulated_values("mean")
-    estimate_ = bm
+    from run_bm import export_quantiles
+    #export_quantiles(bm, output_directory, years=[2010, 2015, 2020, 2030, 2040], validation_year=validation_year, validation_geography=validation_geography)
+    #export_quantiles(bm, output_directory, years=[2040], validation_year=validation_year, validation_geography=validation_geography)
+    #export_quantiles(bm, output_directory, years=[2010, 1013] + range(2015, 2026, 5), validation_year=validation_year, validation_geography=validation_geography)
     
-    #bm.write_simulated_values(os.path.join(outdir, "%s_simulated_values_hhs" % validation_geography))
-    #write_table_to_text_file(os.path.join(outdir, '%s_ids_hhs' % validation_geography), bm.simulated_values_ids[:,newaxis], delimiter='\t')
-    if validation_geography <> 'zone':
-        posterior_jobs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
-                                                   replicates=repl, omit_bias=True)
-    else:
-        posterior_jobs = bm.generate_posterior_distribution(year=year, quantity_of_interest="urbansim_parcel.zone.number_of_jobs", aggregate_to='faz',
-                                                            replicates=repl, omit_bias=True)
-    #posterior = bm.generate_posterior_distribution(year=2010, quantity_of_interest="urbansim_parcel.zone.number_of_households",
-    #                                               replicates=1000)
-    prob80_jobs = bm.get_probability_interval(80)
-    prob50_jobs = bm.get_probability_interval(50)
-    prob90_jobs = bm.get_probability_interval(90)
-    mean_jobs = bm.get_quantity_from_simulated_values("mean")
+def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year=2010, validation_geography='faz', 
+                        propfac_hh=0.95, propfac_jobs=3.5, **kwargs):
+    header_base = ['mean', 'lower_50', 'upper_50', 'lower_80', 'upper_80', 'lower_90', 'upper_90']
+    header = array(['faz_id'] + header_base)[newaxis,:]
+    header_la = array(['large_area_id'] + header_base)[newaxis,:]
+    for year in years:
+        if year < validation_year:
+            continue
+        for nopropag in [True, False]:
+            if not nopropag and year == validation_year:
+                continue
+            #for transform in [True, False]:
+            transform = True
+            propfac = {}
+            for additive_prop in [True, False]:
+                if nopropag and additive_prop:
+                    continue
+                if additive_prop:
+                    propfac['household'] = propfac_hh
+                    propfac['job'] = propfac_jobs
+                else:
+                    propfac['household'] = 1
+                    propfac['job'] = 1
+                seed(1)
+                if validation_geography <> 'zone':
+                    exact = True # calibration geography is the same as simulation target
+                    #posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
+                                                   #replicates=repl, omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                                   #propagation_factor=propfac['household'], transformed_back=transform, **kwargs)
+                    bm.set_posterior(year=year, quantity_of_interest="number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
+                                     omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                    propagation_factor=propfac['household'])
+                    mean_hhs = bm.get_posterior_component_mean()[:,0]
+                    if transform:
+                        mean_hhs = mean_hhs**2
+                    hhids = bm.get_m_ids()
+                else:
+                    exact = False
+                    posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest="urbansim_parcel.zone.number_of_households", aggregate_to='faz',
+                                                   replicates=repl, omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                                   propagation_factor=propfac['household'], transformed_back=transform, **kwargs)
+                    mean_hhs = bm.get_quantity_from_simulated_values("mean")
+                    hhids = bm.simulated_values_ids
+                prob80_hhs = bm.get_probability_interval(80, exact = exact, transformed_back=transform)
+                prob50_hhs = bm.get_probability_interval(50, exact = exact, transformed_back=transform)
+                prob90_hhs = bm.get_probability_interval(90, exact = exact, transformed_back=transform)
+                
+            #estimate_ = bm
     
-    #bm.write_simulated_values(os.path.join(outdir, "%s_simulated_values_jobs" % validation_geography))
-    #write_table_to_text_file(os.path.join(outdir, '%s_ids_jobs' % validation_geography), bm.simulated_values_ids[:,newaxis], delimiter='\t')
-    write_table_to_text_file(os.path.join(outdir, '%s_hhs_ci' % validation_geography), concatenate((bm.simulated_values_ids[:,newaxis], mean_hhs[:,newaxis], prob50_hhs, prob80_hhs, prob90_hhs), axis=1), delimiter='\t')
-    write_table_to_text_file(os.path.join(outdir, '%s_jobs_ci' % validation_geography), concatenate((bm.simulated_values_ids[:,newaxis], mean_jobs[:,newaxis], prob50_jobs, prob80_jobs, prob90_jobs), axis=1), delimiter='\t')
-    #write_table_to_text_file(os.path.join(outdir, '%s_mu_hhs' % validation_geography), bm.get_expected_values()[0])
-    #write_table_to_text_file(os.path.join(outdir, '%s_mu_jobs' % validation_geography), bm.get_expected_values()[1])
+            #bm.write_simulated_values(os.path.join(outdir, "%s_simulated_values_hhs" % validation_geography))
+            #write_table_to_text_file(os.path.join(outdir, '%s_ids_hhs' % validation_geography), bm.simulated_values_ids[:,newaxis], delimiter='\t')
+                seed(1)
+                if validation_geography <> 'zone':
+                    #posterior_jobs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
+                                                   #replicates=repl, omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                                   #propagation_factor=propfac['job'], transformed_back=transform, **kwargs)
+                    exact = True 
+                    bm.set_posterior(year=year, quantity_of_interest="number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
+                                     omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                    propagation_factor=propfac['job'])
+                    mean_jobs = bm.get_posterior_component_mean()[:,0]
+                    if transform:
+                        mean_jobs = mean_jobs**2
+                    jids = bm.get_m_ids()
+                else:
+                    posterior_jobs = bm.generate_posterior_distribution(year=year, quantity_of_interest="urbansim_parcel.zone.number_of_jobs", aggregate_to='faz',
+                                        replicates=repl, omit_bias=True, no_propagation=nopropag, additive_propagation=additive_prop, 
+                                        propagation_factor=propfac['job'], transformed_back=transform, **kwargs)
+                    exact = False
+                    mean_jobs = bm.get_quantity_from_simulated_values("mean")
+                    jids = bm.simulated_values_ids
+        #posterior = bm.generate_posterior_distribution(year=2010, quantity_of_interest="urbansim_parcel.zone.number_of_households",
+        #                                               replicates=1000)
+                prob80_jobs = bm.get_probability_interval(80, exact = exact, transformed_back=transform)
+                prob50_jobs = bm.get_probability_interval(50, exact = exact, transformed_back=transform)
+                prob90_jobs = bm.get_probability_interval(90, exact = exact, transformed_back=transform)
+                
+                if not nopropag:
+                    suffix = "_propf"
+                else:
+                    suffix = ""
+                if not transform:
+                    suffix = suffix + "_raw"
+                if additive_prop:
+                    suffix = suffix + "_add"
+        #bm.write_simulated_values(os.path.join(outdir, "%s_simulated_values_jobs" % validation_geography))
+        #write_table_to_text_file(os.path.join(outdir, '%s_ids_jobs' % validation_geography), bm.simulated_values_ids[:,newaxis], delimiter='\t')
+                write_table_to_text_file(os.path.join(outdir, '%s_hhs_ci_%s%s' % (validation_geography, year, suffix)), header)
+                write_table_to_text_file(os.path.join(outdir, '%s_hhs_ci_%s%s' % (validation_geography, year, suffix)), round(concatenate((hhids[:,newaxis], mean_hhs[:,newaxis], prob50_hhs, prob80_hhs, prob90_hhs), axis=1)).astype('int32'), delimiter='\t', mode='a')
+                write_table_to_text_file(os.path.join(outdir, '%s_jobs_ci_%s%s' % (validation_geography, year, suffix)), header)
+                write_table_to_text_file(os.path.join(outdir, '%s_jobs_ci_%s%s' % (validation_geography, year, suffix)), round(concatenate((jids[:,newaxis], mean_jobs[:,newaxis], prob50_jobs, prob80_jobs, prob90_jobs), axis=1)).astype('int32'), delimiter='\t', mode='a')
+        #write_table_to_text_file(os.path.join(outdir, '%s_mu_hhs' % validation_geography), bm.get_expected_values()[0])
+        #write_table_to_text_file(os.path.join(outdir, '%s_mu_jobs' % validation_geography), bm.get_expected_values()[1])
+                if validation_geography <> 'zone': # aggregate to large area
+                    posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
+                                                       replicates=repl, omit_bias=True, no_propagation=nopropag, aggregate_to='large_area', transformed_back=transform, **kwargs)
+                    prob80_hhs = bm.get_probability_interval(80, exact=False)
+                    prob50_hhs = bm.get_probability_interval(50, exact=False)
+                    prob90_hhs = bm.get_probability_interval(90, exact=False)
+                    mean_hhs = bm.get_quantity_from_simulated_values("mean")
+                    write_table_to_text_file(os.path.join(outdir, '%s_aggrla_hhs_ci_%s%s' % (validation_geography, year, suffix)), header_la)
+                    write_table_to_text_file(os.path.join(outdir, '%s_aggrla_hhs_ci_%s%s' % (validation_geography, year, suffix)), round(concatenate((bm.simulated_values_ids[:,newaxis], mean_hhs[:,newaxis], prob50_hhs, prob80_hhs, prob90_hhs), axis=1)).astype('int32'), delimiter='\t', mode='a')
+                    posterior_jobs = bm.generate_posterior_distribution(year=year, quantity_of_interest="number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
+                                                       replicates=repl, omit_bias=True, no_propagation=nopropag, aggregate_to='large_area', transformed_back=transform, **kwargs)
+                    prob80_jobs = bm.get_probability_interval(80, exact=False)
+                    prob50_jobs = bm.get_probability_interval(50, exact=False)
+                    prob90_jobs = bm.get_probability_interval(90, exact=False)
+                    mean_jobs = bm.get_quantity_from_simulated_values("mean")
+                    write_table_to_text_file(os.path.join(outdir, '%s_aggrla_jobs_ci_%s%s' % (validation_geography, year, suffix)), header_la)
+                    write_table_to_text_file(os.path.join(outdir, '%s_aggrla_jobs_ci_%s%s' % (validation_geography, year, suffix)), round(concatenate((bm.simulated_values_ids[:,newaxis], mean_jobs[:,newaxis], prob50_jobs, prob80_jobs, prob90_jobs), axis=1)).astype('int32'), delimiter='\t', mode='a')
     #bm.write_values_from_multiple_runs("/Users/hana/multiple_run_values")
 
     #bm.write_simulated_values("/Users/hana/simulated_values")
@@ -207,24 +292,3 @@ if __name__ == "__main__":
     #prob = bm.get_probability_interval(0.8)
     #print prob
     
-def convert_screenline_report_to_dataset(report_name, cache_directory, years):
-    """This is an obsolete function (not used)."""
-    for year in years:
-        dir = os.path.join(cache_directory, str(year))
-        flt_storage = StorageFactory().get_storage('flt_storage',storage_location = dir)
-        pool = DatasetPool(storage=flt_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
-        scnodes = pool.get_dataset('screenline_node')
-        scnodes.add_primary_attribute(name='traffic_volume_eh', data=zeros(scnodes.size(), dtype='float32'))
-        full_report_name = os.path.join(dir, report_name)
-        file = open(full_report_name, 'r')
-        file_contents = map(str.strip, file.readlines())
-        not_found_counter = 0
-        for line in file_contents[1:len(file_contents)]:
-            node_i, node_j, value, dummy = str.split(line)
-            try:
-                scnodes.set_value_of_attribute_by_id(attribute='traffic_volume_eh', value=float(value), 
-                                                             id=(int(node_i), int(node_j)))
-            except:
-                not_found_counter+=1
-        print "%s nodes not found in year %s" % (not_found_counter, year)
-        scnodes.write_dataset(out_storage=flt_storage)    
