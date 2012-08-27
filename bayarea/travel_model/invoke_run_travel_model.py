@@ -36,7 +36,8 @@ def invoke_run_travel_model(config, year):
     data_exchange_dir = mtc_common.tm_get_data_exchange_dir(config, year)
     cache_directory = config['cache_directory']
     mtc_dir = os.path.join(cache_directory, "mtc_data")
-    for f in glob.glob(os.path.join(mtc_dir, '*', str(year), '*')):
+    for f in glob.glob(os.path.join(mtc_dir, '*' + str(year) + '*')):
+        logger.log_status("Copying over travel model input " + f + " to " + data_exchange_dir)
         shutil.copy(f, data_exchange_dir)
 
     my_location = os.path.split(__file__)[0]
