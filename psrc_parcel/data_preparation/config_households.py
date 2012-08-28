@@ -66,5 +66,6 @@ class ConfigHouseholds(UrbansimParcelConfiguration):
                                location_id_name = 'building_id',
                                probabilities = None,
                                rate_table=None,
+                               rate_dataset_name = None,
                                output_index = 'hrm_index').execute()
                     

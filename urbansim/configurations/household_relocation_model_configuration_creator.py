@@ -11,18 +11,18 @@ class HouseholdRelocationModelConfigurationCreator(object):
     def __init__(self,
                 agent_set = 'household',
                 debuglevel = 'debuglevel',
+                rate_dataset_name = 'rate',
                 rate_table = 'annual_relocation_rates_for_households',
                 location_id_name = 'grid_id',
                 probabilities = 'opus_core.upc.rate_based_probabilities',
-                what = 'households',
                 output_index = 'hrm_index'):
         self.agent_set = agent_set
         self.debuglevel = debuglevel
         self.rate_table = rate_table
         self.location_id_name = location_id_name
         self.probabilities = probabilities
-        self.what = what
         self.output_index = output_index
+        self.rate_dataset_name = rate_dataset_name
         
     def execute(self):
         # Names of intermediate objects used to get data between steps
@@ -44,7 +44,7 @@ class HouseholdRelocationModelConfigurationCreator(object):
                 'arguments': {
                     'rate_storage': 'base_cache_storage',
                     'rate_table': get_string_or_None(self.rate_table),
-                    'what': "'%s'" % self.what,
+                    'rate_dataset_name': get_string_or_None(self.rate_dataset_name),
                     },
                 'name': 'prepare_for_run',
                 'output': _resources,
@@ -86,7 +86,7 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
                 'arguments': {
                     'rate_storage': 'base_cache_storage',
                     'rate_table': "'annual_relocation_rates_for_households'",
-                    'what': "'households'"
+                    'rate_dataset_name': "'rate'",
                     },
                 'name': 'prepare_for_run',
                 'output': 'hrm_resources'
@@ -108,8 +108,8 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
             agent_set = 'agent_set',
             debuglevel = 9999,
             rate_table = 'rate_table',
-            what = 'what',
             output_index = 'output_index',
+            rate_dataset_name = None
             )
         
         expected = Configuration({
@@ -127,7 +127,7 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
                 'arguments': {
                     'rate_storage': 'base_cache_storage',
                     'rate_table': "'rate_table'",
-                    'what': "'what'"
+                    'rate_dataset_name': None
                     },
                 'name': 'prepare_for_run',
                 'output': 'hrm_resources'
