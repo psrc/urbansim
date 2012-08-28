@@ -146,7 +146,23 @@ class DeveloperModel(Model):
     
     global building_sqft, building_price
     building_sqft = parcel_set.compute_variables('parcel.aggregate(building.building_sqft)')
-    building_price = parcel_set.compute_variables('parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
+
+
+    building_price_owner_residential = parcel_set.compute_variables(' building_price_owner_res = parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
+    building_price_rental_residential = parcel_set.compute_variables('building_price_rental_res = parcel.aggregate((residential_unit.rent*12*17.9)*(residential_unit.rent>0),intermediates=[building])')
+    building_price_nonresidential = parcel_set.compute_variables('building_price_nonres = parcel.aggregate((building.non_residential_rent*7*building.non_residential_sqft))')
+    sum_building_p = parcel_set.compute_variables('sum_building_price = parcel.building_price_owner_res + parcel.building_price_rental_res + building_price_nonres')
+    ##sum_building_price = building_price_owner_residential + building_price_rental_residential + building_price_nonresidential
+    vacant_parcel = parcel_set.compute_variables('parcel.sum_building_price == 0')
+    price_per_sqft_land = (parcel_set.compute_variables('parcel.disaggregate(safe_array_divide(zone.aggregate(parcel.sum_building_price),zone.aggregate(building.building_sqft)))'))/4
+    parcel_land_area = parcel_set.compute_variables('parcel.land_area')
+    vacant_land_price = vacant_parcel*price_per_sqft_land*parcel_land_area
+    building_price = sum_building_p + vacant_land_price
+
+
+    ##sum_building_price = building_price_owner_residential + building_price_rental_residential + building_price_nonresidential
+
+    #land_price = (sum_building_p==0) * (parcel_set.compute_variables('parcel.disaggregate(safe_array_divide(zone.aggregate(parcel.sum_building_price),zone.aggregate(building.building_sqft)))'))* parcel_set.compute_variables('parcel.land_area')
 
     #info used to match from proposal_component to submarket
     parcel_set.compute_variables(["bayarea.parcel.within_half_mile_transit", 
@@ -343,6 +359,7 @@ def process_parcel(parcel):
         taz = parcel_set['zone_id'][parcel]
         node_id = parcel_set['node_id'][parcel]
         existing_sqft = building_sqft[parcel]
+
         existing_price = building_price[parcel]
         if existing_sqft < 0: existing_sqft = 0
         if existing_price < 0: existing_price = 0
