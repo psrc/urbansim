@@ -199,8 +199,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                     if remove_proposals.size > 0:
                         redev_proposal_set.remove_elements(remove_proposals)
                         logger.log_status('%s proposals smaller than existing buildings, therefore removed.' %  remove_proposals.size)
-                    dataset_pool.remove_dataset(redev_proposal_set.get_dataset_name())
-                    dataset_pool.remove_dataset(proposal_component_set.get_dataset_name())
+                    dataset_pool._remove_dataset(redev_proposal_set.get_dataset_name())
+                    dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
                 redev_proposal_set.add_attribute( ones(redev_proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
                 proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
                 
