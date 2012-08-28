@@ -189,7 +189,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 
                 if(kwargs.get('accept_only_larger_proposals_for_redevelopment', False)):
                     # remove proposals that are smaller than the current building in the parcel
-                    remove_proposals = where(redev_proposal_set.compute_variables(['urbansim_parcel.development_project_proposal.units_proposed <= development_project_proposal.disaggregate(urbansim_parcel.parcel.existing_units)'],
+                    remove_proposals = where(redev_proposal_set.compute_variables(['urbansim_parcel.development_project_proposal.building_sqft <= development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)'],
                                                          dataset_pool=dataset_pool))[0]
                     if remove_proposals.size > 0:
                         redev_proposal_set.remove_elements(remove_proposals)
