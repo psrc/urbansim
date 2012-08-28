@@ -178,7 +178,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 index_in_parcels = parcels.get_id_index(buildings_parcel_ids)
                 demolished_buildings_index = where(is_redevelopment[index_in_parcels])[0]                   
                 buildings.set_values_of_one_attribute("land_area", zeros(demolished_buildings_index.size), 
-                                                     index=demolished_buildings_index )
+                                                     index=demolished_buildings_index)
                 redev_proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                                   filter_attribute=self.filter,
                                                                   parcel_index = where(is_redevelopment)[0],
@@ -189,13 +189,21 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 
                 if(kwargs.get('accept_only_larger_proposals_for_redevelopment', False)):
                     # remove proposals that are smaller than the current building in the parcel
+                    proposal_component_set = create_from_proposals_and_template_components(redev_proposal_set, 
+                                                           dataset_pool.get_dataset('development_template_component'))
+        
+                    dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
+                    dataset_pool.replace_dataset(redev_proposal_set.get_dataset_name(), redev_proposal_set)
                     remove_proposals = where(redev_proposal_set.compute_variables(['urbansim_parcel.development_project_proposal.building_sqft <= development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)'],
                                                          dataset_pool=dataset_pool))[0]
                     if remove_proposals.size > 0:
                         redev_proposal_set.remove_elements(remove_proposals)
                         logger.log_status('%s proposals smaller than existing buildings, therefore removed.' %  remove_proposals.size)
+                    dataset_pool.remove_dataset(redev_proposal_set.get_dataset_name())
+                    dataset_pool.remove_dataset(proposal_component_set.get_dataset_name())
                 redev_proposal_set.add_attribute( ones(redev_proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
                 proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
+                
                 ###roll back land_area of buildings
                 buildings.set_values_of_one_attribute("land_area", land_area[demolished_buildings_index], 
                                                      index=demolished_buildings_index )
