@@ -192,12 +192,16 @@ if __name__ == "__main__":
                               type="selectable")
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
     if travel_model:
-        if travel_model == "true":
+        if (travel_model == "true") or (travel_model == "FULL"):
             invoke_tm.text = "True"
+            import_tm.text = "True"
+        elif travel_model == "SKIMS":
+            invoke_tm.text = "False"
             import_tm.text = "True"
         else:
             invoke_tm.text = "False"
             import_tm.text = "False"
+            
         models.append(invoke_tm)
         models.append(import_tm)
         scenario.append(tmc)
