@@ -154,7 +154,7 @@ class DeveloperModel(Model):
     ##sum_building_price = building_price_owner_residential + building_price_rental_residential + building_price_nonresidential
     vacant_parcel = parcel_set.compute_variables('parcel.sum_building_price == 0')
     price_per_sqft_land = (parcel_set.compute_variables('parcel.disaggregate(safe_array_divide(zone.aggregate(parcel.sum_building_price),zone.aggregate(building.building_sqft)))'))/4
-    parcel_land_area = parcel_set.compute_variables('parcel.land_area')
+    parcel_land_area = parcel_set.compute_variables('parcel.shape_area')
     vacant_land_price = vacant_parcel*price_per_sqft_land*parcel_land_area
     building_price = sum_building_p + vacant_land_price
 
