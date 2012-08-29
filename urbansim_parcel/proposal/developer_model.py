@@ -147,9 +147,8 @@ class DeveloperModel(Model):
     global building_sqft, building_price
     building_sqft = parcel_set.compute_variables('parcel.aggregate(building.building_sqft)')
 
-
-    building_price_owner_residential = parcel_set.compute_variables(' building_price_owner_res = parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
-    building_price_rental_residential = parcel_set.compute_variables('building_price_rental_res = parcel.aggregate((residential_unit.rent*12*17.9)*(residential_unit.rent>0),intermediates=[building])')
+    building_price_owner_residential=parcel_set.compute_variables('building_price_owner_res=parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
+    building_price_rental_residential=parcel_set.compute_variables('building_price_rental_res=parcel.aggregate((residential_unit.rent*12*17.9)*(residential_unit.rent>0),intermediates=[building])')
     building_price_nonresidential = parcel_set.compute_variables('building_price_nonres = parcel.aggregate((building.non_residential_rent*7*building.non_residential_sqft))')
     sum_building_p = parcel_set.compute_variables('sum_building_price = parcel.building_price_owner_res + parcel.building_price_rental_res + building_price_nonres')
     ##sum_building_price = building_price_owner_residential + building_price_rental_residential + building_price_nonresidential
