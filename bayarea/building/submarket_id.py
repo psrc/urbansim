@@ -10,7 +10,6 @@ from bayarea.datasets.submarket_dataset import SubmarketDataset, generate_unique
 class submarket_id(Variable):
     """ Return the submarket_id of building, as defined in the datasets/submarket_dataset.py
     """
-    _return_type = "int32"
     
     def dependencies(self):
         return SubmarketDataset.subgroup_definition

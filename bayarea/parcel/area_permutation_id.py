@@ -10,7 +10,6 @@ from bayarea.datasets.area_permutation_dataset import AreaPermutationDataset, ge
 class area_permutation_id(Variable):
     """ Return the area_permutation_id of parcel, as defined in the datasets/area_permutation_dataset.py
     """
-    _return_type = "int32"
     
     def dependencies(self):
         return AreaPermutationDataset.subgroup_definition
