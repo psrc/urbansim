@@ -37,6 +37,7 @@
 # when we restart jobs we can ensure that we have access to the correct run
 # directory.
 
+from opus_core.paths import get_opus_data_path_path
 import sys, os
 from optparse import OptionParser
 from lxml import etree
@@ -69,6 +70,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     project = etree.Element("opus_project")
+    xml = etree.ElementTree(file=options.xml_configuration)
+    project_name = xml.getroot().find('general/project_name').text
     version = etree.Element("xml_version")
     version.text = "2.0"
     project.append(version)
@@ -166,8 +169,36 @@ if __name__ == "__main__":
     # apply the travel model specification
     tmc = etree.Element("travel_model_configuration", type="dictionary")
 
+    models = etree.Element("models", type="selectable_list")
+    tmc.append(models)
+    invoke_tm = etree.Element("selectable",
+                              name="bayarea.travel_model.invoke_run_travel_model",
+                              type="selectable")
+    import_tm = etree.Element("selectable",
+                              name="bayarea.travel_model.import_travel_model_data",
+                              type="selectable")
+    travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
+    if travel_model:
+        if (travel_model == "true") or (travel_model == "FULL"):
+            invoke_tm.text = "True"
+            import_tm.text = "True"
+            tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
+        elif travel_model == "SKIMS":
+            invoke_tm.text = "False"
+            import_tm.text = "True"
+            tm_home = os.path.join(get_opus_data_path_path(),
+                                   project_name,
+                                   'travel_model_skims')
+        else:
+            invoke_tm.text = "False"
+            import_tm.text = "False"
+            tm_home = None
+
+        models.append(invoke_tm)
+        models.append(import_tm)
+        scenario.append(tmc)
+
     # set up a project-specific travel model base directory if necessary.
-    tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
     if tm_home:
         tmh = etree.Element("travel_model_home", type="dictionary")
         tmbd = etree.Element("directory", type="string")
@@ -182,29 +213,6 @@ if __name__ == "__main__":
             tmh.append(tmproto)
             tmh.append(tmconnect)
         tmc.append(tmh)
-    models = etree.Element("models", type="selectable_list")
-    tmc.append(models)
-    invoke_tm = etree.Element("selectable",
-                              name="bayarea.travel_model.invoke_run_travel_model",
-                              type="selectable")
-    import_tm = etree.Element("selectable",
-                              name="bayarea.travel_model.import_travel_model_data",
-                              type="selectable")
-    travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
-    if travel_model:
-        if (travel_model == "true") or (travel_model == "FULL"):
-            invoke_tm.text = "True"
-            import_tm.text = "True"
-        elif travel_model == "SKIMS":
-            invoke_tm.text = "False"
-            import_tm.text = "True"
-        else:
-            invoke_tm.text = "False"
-            import_tm.text = "False"
-            
-        models.append(invoke_tm)
-        models.append(import_tm)
-        scenario.append(tmc)
 
     print etree.tostring(project, pretty_print=True)
 
