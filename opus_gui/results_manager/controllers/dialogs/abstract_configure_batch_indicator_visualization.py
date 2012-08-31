@@ -5,7 +5,7 @@
 import os
 from lxml.etree import SubElement
 
-from PyQt4.QtCore import QString,QFileInfo, pyqtSlot
+from PyQt4.QtCore import QString,QFileInfo, pyqtSlot, QModelIndex
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
@@ -482,5 +482,13 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         self.twIndicatorsToVisualize.removeRow(row)
 #        if self.twIndicatorsToVisualize.rowCount() == 0:
 #            self.dataset_name = None
+
+    @pyqtSlot(QModelIndex)
+    def on_twAvailableIndicators_activated(self, index):
+        self.on_pbnAddIndicator_clicked()
+
+    @pyqtSlot(QModelIndex)
+    def on_twIndicatorsToVisualize_activated(self, index):
+        self.on_pbnRemoveIndicator_clicked()
 
 
