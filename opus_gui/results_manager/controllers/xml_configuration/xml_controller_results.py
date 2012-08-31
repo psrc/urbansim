@@ -27,9 +27,7 @@ class XmlController_Results(XmlController):
 
     def __init__(self, manager):
         XmlController.__init__(self, manager)
-        callback = AddIndicatorBatch(callback = self._add_indicator_batch_callback,
-                                     parent_widget = self.view).exec_
-        p = ('add', "Add new indicator batch...", callback)
+        p = ('add', "Add new indicator batch...", self._addIndicatorBatch)
         self.actAddNewIndicatorBatch = self.create_action(*p)
         p = ('add', 'Add new indicator visualization...', self._configureNewBatchIndicatorVisualization)
         self.actAddVisualizationToBatch = self.create_action(*p)
@@ -87,11 +85,17 @@ class XmlController_Results(XmlController):
         #tab_widget.runThread.restart_run(run_id, config, restart_year,
         #                                 run_name=run_name)
     
-    def _add_indicator_batch_callback(self, batch_name):
-        # Create a new node with the given name and insert it into the model
-        node = Element('indicator_batch', {'name': batch_name})
-        batches_node = self.project.find('results_manager/indicator_batches')
-        self.model.insert_node(node, batches_node)
+    def _addIndicatorBatch(self):#, viz = None):
+        def _add_indicator_batch_callback(batch_name):
+            # Create a new node with the given name and insert it into the model
+            node = Element('indicator_batch', {'name': batch_name})
+            batches_node = self.project.find('results_manager/indicator_batches')
+            self.model.insert_node(node, batches_node)
+    
+        assert self.has_selected_item()
+        window = AddIndicatorBatch(callback = _add_indicator_batch_callback,
+                                   parent_widget = self.view)
+        window.show()
 
     def _configureNewBatchIndicatorVisualization(self):#, viz = None):
         assert self.has_selected_item()
