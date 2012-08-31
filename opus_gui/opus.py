@@ -10,31 +10,30 @@ from PyQt4.QtGui import QApplication, QIcon, QMessageBox
 # General system includes
 import sys, os
 
-# Urbansim Tools
-from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
-
 # Ensure that we have an existing OPUS_HOME directory that we can write to
 def check_opus_home():
-    valid_opus_home = True
-    if not 'OPUS_HOME' in os.environ:
-        msg = 'Opus GUI could not find the environment variable "OPUS_HOME".\n'\
-        'Opus GUI relies on this variable to function properly. '\
-        'Please set it to the directory containing Opus data and '\
-        'restart the application.'
-        valid_opus_home = False
-    elif not os.path.exists(os.environ['OPUS_HOME']):
-        msg = 'The directory pointed to by environment variable "OPUS_HOME" '\
-        '("%s") appears to be missing. Please make sure that the '\
-        'directory pointed to by this variable is valid and restart the '\
-        'application.' % os.path.normpath(os.environ['OPUS_HOME'])
-        valid_opus_home = False
-    elif not os.access(os.environ['OPUS_HOME'], os.W_OK):
-        msg = 'The directory pointed to by environment variable OPUS_HOME '\
-        '("%s") appears to be write protected (or you do not have '\
-        'sufficient privileges to make changes to it). Please make '\
-        'sure that the directory pointed to by this variable is valid '\
-        'and restart the application.'
-        valid_opus_home = False
+    valid_opus_home = False
+    try:
+        from opus_core.paths import OPUS_HOME
+    except Exception, e:
+        msg = 'Could not import "paths" module from "opus_core".\n%s\n\n' \
+            'Please make sure that the PYTHONPATH environment variable is set to the location of the "src" directory.' % e
+    else:
+        if not os.path.exists(OPUS_HOME):
+            msg = 'The directory pointed to by environment variable "OPUS_HOME" '\
+            '("%s") appears to be missing. Please make sure that the '\
+            'directory pointed to by this variable is valid and restart the '\
+            'application.' % OPUS_HOME
+        elif not os.access(OPUS_HOME, os.W_OK):
+            msg = 'The Opus home directory '\
+            '("%s") appears to be write protected (or you do not have '\
+            'sufficient privileges to make changes to it). Please make '\
+            'sure that this directory is valid, '\
+            'or set the "OPUS_HOME" environment variable to another location, '\
+            'and restart the application.'
+        else:
+            valid_opus_home = True
+
     if not valid_opus_home:
         QMessageBox.critical(None, 'Could not start Opus GUI', msg + '\n\nOpus GUI will now quit.')
     
@@ -53,13 +52,15 @@ def load_gui():
     # create Qt application
     app = QApplication(sys.argv,True)
 
-    gui_config = OpusGuiConfiguration()
-    gui_config.app = app
-    
     # Do this first, because loading the gui_config requires OPUS_HOME
     if not check_opus_home():
         sys.exit(1)
 
+    # Urbansim Tools
+    from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
+    gui_config = OpusGuiConfiguration()
+    gui_config.app = app
+    
     gui_config.load()
     gui_config.splash_screen.show()
     gui_config.splash_screen.raise_()
@@ -67,13 +68,10 @@ def load_gui():
     gui_config.splash_screen.showMessage('Loading and compiling Python Modules...')
     gui_config.splash_screen.show()
 
-if __name__ == '__main__':
-    load_gui() # start loading the gui before doing the heavy imports
-
-from opus_gui.main.controllers.mainwindow import OpusGui
-
 # Main entry to program.  Set up the main app and create a new window.
 def main():
+    load_gui() # start loading the gui before doing the heavy imports
+    
     global gui_config
     assert gui_config is not None
     app = gui_config.app
@@ -104,6 +102,7 @@ def main():
 
     # init main window
     gui_config.splash_screen.showMessage('Initializing Opus Main Window...')
+    from opus_gui.main.controllers.mainwindow import OpusGui
     wnd = OpusGui(gui_configuration = gui_config)
     gui_config.splash_screen.finish(wnd)
 

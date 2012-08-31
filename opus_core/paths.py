@@ -36,10 +36,7 @@ def _get_default_opus_home():
     """
     get_default_opus_home from the grandparent path of opus_core
     """
-    try:
-        import opus_core
-    except ImportError:
-        raise Exception('OPUS_HOME environment variable must be set.') 
+    import opus_core
 
     opus_core_path = os.path.dirname(opus_core.__file__)
     opus_home = os.path.normpath(os.path.join(opus_core_path, '../..'))
