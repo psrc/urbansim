@@ -8,7 +8,7 @@ import os
 from copy import deepcopy
 
 from PyQt4.QtCore import QObject, SIGNAL, Qt, QString, QFileInfo
-from PyQt4.QtGui import QCursor, QMenu, QFileDialog
+from PyQt4.QtGui import QCursor, QMenu, QFileDialog, QAction
 
 from lxml.etree import ElementTree
 
@@ -59,6 +59,10 @@ class XmlController(object):
         QObject.connect(self.view,
                         SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.process_custom_menu)
+        
+        QObject.connect(self.view,
+                        SIGNAL('activated(const QModelIndex&)'),
+                        self.on_activated)
 
         # Actions for common menu choices
         # Note that revert and delete are the same action, but we want to present them differently
@@ -146,22 +150,40 @@ class XmlController(object):
         item = self.select_item_at(position)
         assert item is not None
         node = item.node
+        menu = self.create_custom_menu_for_node(node)
+        if not menu.isEmpty():
+            menu.exec_(self.view.mapToGlobal(position))
         
+    def on_activated(self, index):
+        if not self.execute_default_action(index):
+            self.view.setExpanded(index, not self.view.isExpanded(index))
+
+    def execute_default_action(self, index):
+        if self.model.hasChildren(index) and not self.view.isExpanded(index):
+            return
+        node = index.internalPointer().node
+        if node is None:
+            return
+        menu = self.create_custom_menu_for_node(node)
+        act = menu.defaultAction()
+        if act is None:
+            return
+        act.activate(QAction.Trigger)
+        return True
+
+    def create_custom_menu_for_node(self, node):
         menu = QMenu(self.view)
-        if item is self.model.root_item():
+        if node is self.model.root_node():
             self.add_default_menu_items_for_widget(menu)
         elif not self.add_custom_menu_items_for_node(node, menu):
             if not menu.isEmpty():
                 menu.addSeparator()
             self.add_default_menu_items_for_node(node, menu)
-        if not menu.isEmpty():
-            menu.exec_(self.view.mapToGlobal(position))
-
+        return menu
 
     def set_project_dirty(self):
         if self.project:
             self.project.dirty = True
-
 
     def remove_selected_node(self):
         ''' Removes the selected item from the model. '''

@@ -37,9 +37,6 @@ class XmlController_Models(XmlController):
         self.action_run_estimation_group = self.create_action(*p)
         p = ('submodel', "Edit Submodel", self._open_submodel_editor_for_selected)
         self.action_edit_submodel = self.create_action(*p)
-        font = QFont()
-        font.setBold(True)
-        self.action_edit_submodel.setFont(font)
 
         # Create a list of available template nodes
         self.create_from_template_actions = []
@@ -53,21 +50,12 @@ class XmlController_Models(XmlController):
 
         self.editor = None
 
-        self.view.connect(self.view, SIGNAL('doubleClicked(const QModelIndex&)'), self._on_double_click)
-
     def add_model_view_delegate(self):
         ''' See XmlController for documentation '''
         # switch out the model for a custom one
         self.model = XmlModel_Models(self.xml_root, self.manager.project)
         self.view = XmlView(self.manager.base_widget)
         self.delegate = XmlItemDelegate(self.view)
-
-    def _on_double_click(self, index):
-        node = index.internalPointer().node
-        if node is None:
-            return
-        if index.column() == 0 and node.get('type') == 'submodel' and not node.get('inherited'):
-            self._open_submodel_editor_for_selected()
 
     def run_estimation_for_selected(self):
         '''
@@ -182,3 +170,8 @@ class XmlController_Models(XmlController):
 
         if node.tag == 'submodel_group':
             menu.addAction(self.action_run_estimation_group)
+
+        # In this menu, the first custom action is always the default action        
+        if not menu.isEmpty():
+            menu.setDefaultAction(menu.actions()[0])
+

@@ -23,6 +23,8 @@ class XmlView(QTreeView):
 
         self.setAnimated(True)
         self.setMinimumHeight(200)
+        # handled by the controller:
+        self.setExpandsOnDoubleClick(False)
 
     def _expand_subnodes(self, item):
         '''

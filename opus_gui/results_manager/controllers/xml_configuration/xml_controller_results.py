@@ -222,4 +222,8 @@ class XmlController_Results(XmlController):
         elif node.tag == 'batch_visualization': # get('type') == 'batch_visualization':
             menu.addAction(self.actConfigureExistingBatchIndicatorVis)
         
+        # In this menu, the first custom action is always the default action        
+        if not menu.isEmpty():
+            menu.setDefaultAction(menu.actions()[0])
+        
         return node.tag == 'run' # default menu items aren't meaningful for simulation run nodes
