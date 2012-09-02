@@ -19,7 +19,8 @@ class IterativeRun(AbstractTravelModel):
         """
         iteratively run openamos and malta until files indicating convergence are set to True (1)
         """
-        
+        raw_input("Press any key to continue for year - %d"%year)
+        #return
         tm_config = config['travel_model_configuration']
         openamos_convergence_file = tm_config.get("openamos_convergence_file",
                                          os.path.join(
@@ -56,9 +57,9 @@ class IterativeRun(AbstractTravelModel):
             setupCache = 1
             backupResults = 0
             RunOpenamos().run(config, year, iteration, setupCache, backupResults)
-
+            raw_input("Check before malta for year %d ... "%year)
             RunMalta().run(config, year, iteration)
-
+            raw_input("Check after malta is completed for year %d ... "%year)
 
             # Run the models for post processing the outputs ... 
             tm_config['openamos_configuration'] = openamosAfterConfig
@@ -66,7 +67,7 @@ class IterativeRun(AbstractTravelModel):
             setupCache = 0
             backupResults = 1
             RunOpenamos().run(config, year, iteration, setupCache, backupResults)
-
+            raw_input("Check after results are post-processed for year %d ... "%year)
             # Copy the malta generated files including link travel times file, dynustudio files, distance files
             maltaFiles = ["output_linkTrvTime.dat", "tmp_output_arrVeh.txt", 
                           "OutAccuVol.dat", "OutLinkSpeedAll.dat", "VehTrajectory.dat",
