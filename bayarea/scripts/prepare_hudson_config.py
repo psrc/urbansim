@@ -86,6 +86,7 @@ if __name__ == "__main__":
 
     # if we enable price equilibration, we do so under the model manager.
     price_equlibration = os.getenv("HUDSON_PRICE_EQUILIBRATION")
+
     if price_equlibration == "true":
         model_manager = etree.Element("model_manager")
         project.append(model_manager)
@@ -189,6 +190,7 @@ if __name__ == "__main__":
             tm_home = os.path.join(get_opus_data_path_path(),
                                    project_name,
                                    'travel_model_skims')
+            os.unsetenv("HUDSON_TRAVEL_MODEL_SSHFS")
         else:
             invoke_tm.text = "False"
             import_tm.text = "False"
