@@ -168,7 +168,7 @@ cached data: %s
     # topsheet--need the EMFAC outputs to be generated first, so this goes last
     travel_model_for_R = "TRUE" if travel_model else "FALSE" 
     topsheet_script = os.path.join(my_location, "regional_indicators.R")
-    cmd = "Rscript %s %s %d %d %s %s %s %s" % (topsheet_script,
+    cmd = "Rscript %s %s %d %d %s %s %s" % (topsheet_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1], run_id, travel_model_for_R, scenario)
     print "Creating topsheet: " + cmd
