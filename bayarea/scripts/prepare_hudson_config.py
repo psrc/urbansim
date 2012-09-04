@@ -179,22 +179,24 @@ if __name__ == "__main__":
                               name="bayarea.travel_model.import_travel_model_data",
                               type="selectable")
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
+    tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
+    tm_sshfs = os.getenv("HUDSON_TRAVEL_MODEL_SSHFS")
     if travel_model:
         if (travel_model == "true") or (travel_model == "FULL"):
             invoke_tm.text = "True"
             import_tm.text = "True"
-            tm_home = os.getenv("HUDSON_TRAVEL_MODEL_HOME")
         elif travel_model == "SKIMS":
             invoke_tm.text = "False"
             import_tm.text = "True"
             tm_home = os.path.join(get_opus_data_path_path(),
                                    project_name,
                                    'travel_model_skims')
-            os.unsetenv("HUDSON_TRAVEL_MODEL_SSHFS")
+            tm_sshfs = None
         else:
             invoke_tm.text = "False"
             import_tm.text = "False"
             tm_home = None
+            tm_sshfs = None
 
         models.append(invoke_tm)
         models.append(import_tm)
@@ -206,7 +208,6 @@ if __name__ == "__main__":
         tmbd = etree.Element("directory", type="string")
         tmbd.text = tm_home
         tmh.append(tmbd)
-        tm_sshfs = os.getenv("HUDSON_TRAVEL_MODEL_SSHFS")
         if tm_sshfs:
             tmproto = etree.Element("proto", type="string")
             tmproto.text = "sshfs"
