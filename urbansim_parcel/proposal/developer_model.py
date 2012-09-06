@@ -75,7 +75,7 @@ class DeveloperModel(Model):
     ## when developer_model is invoked alone from command line
     if cache_dir is not None and year is not None:
         #data_path = paths.get_opus_data_path_path()
-        #cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_105.2012_05_03_09')
+        cache_dir = os.path.join(data_path, 'bay_area_parcel/runs/run_105.2012_05_03_09')
         #year = 2011
         simulation_state = SimulationState()
         simulation_state.set_current_time(year)
@@ -89,6 +89,7 @@ class DeveloperModel(Model):
         
     dataset_pool = SessionConfiguration().get_dataset_pool()
     current_year = SimulationState().get_current_time()
+    cache_dir = SimulationState().get_cache_dir()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
@@ -188,9 +189,9 @@ class DeveloperModel(Model):
         prof = hotshot.Profile('devmdl.prof')
         prof.start()
 
-    outf = open('buildings-%d.csv' % current_year,'w')
+    outf = open(os.path.join(cache_dir,'buildings-%d.csv' % current_year),'w')
     outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
-    debugf = open('proforma-debug-%d.csv' % current_year,'w')
+    debugf = open(os.path.join(cache_dir,'proforma-debug-%d.csv' % current_year),'w')
     debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind\n')
     t1 = time.time()
     aggd = {}
