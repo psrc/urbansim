@@ -167,7 +167,8 @@ class Table(Visualization):
                 table_name = self.get_name(
                     dataset_name = dataset_name,
                     years = [year],
-                    attribute_names = [name for name, computed_name in attributes])
+                   #attribute_names = [name for name, computed_name in attributes])
+                    attribute_names = None)
             
             self._write_to_storage(
                 table_name = table_name,
@@ -242,7 +243,8 @@ class Table(Visualization):
         table_name = self.get_name(
             dataset_name = dataset_name,
             years = years,
-            attribute_names = [name for name, computed_name in attributes])
+           #attribute_names = [name for name, computed_name in attributes])
+            attribute_names = None)
         if self.name is not None:
             table_name = '%s__%s'%(self.name, table_name)
             
