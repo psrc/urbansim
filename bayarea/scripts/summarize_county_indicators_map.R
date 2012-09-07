@@ -55,7 +55,7 @@ linePlot <- function(data,name){
                     group=county,
                     linetype = county))+
                      geom_line(size=1.75) + 
-                     scale_colour_manual(values=manyColors(12)) +
+                     scale_colour_manual(values=manyColors(nrow(unique(data[2])))) +
                      geom_point(size=1.8) +
                      opts(title=name)+
                      xlab("Year") + 
@@ -79,7 +79,6 @@ viewPortFunc <- function(printObject=printObject){
 ################################################################################
 manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 #wrap cmd-line arguments to assign to proper names
-#cmdArgs <- function(a="/home/aksel/Documents/Data/Urbansim/run_139.2012_05_15_21_23/indicators/2010_2035",b=2010,c=2035) 
 #{
 #  pth <<- a
 #  yrStart <<- as.integer(b)
@@ -92,13 +91,13 @@ manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
 returnMatrix <- function(inputData=inputData,tableName=tableName) {
   if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
-    print("avg")
+    print("avg in table name, do not sum for regional total")
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData,id="year",variable_name = "county")
   }
   else #if (grep("average",fName,ignore.case=FALSE, fixed=T))
   {
-    print("not avg")
+    print("not avg in table name, sum to regional total")
     inputData$Region <- rowSums(inputData,na.rm = FALSE, dims = 1)
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData[,c(1:9,11)],id="year",variable_name = "county")
@@ -117,6 +116,10 @@ TitleCase <- function(string="test string")
 
 ################################################################################
 ## grab arguments
+##TODO: use library getopt instead for more proper handling
+#args <- c("/home/aksel/Documents/Data/Urbansim/run_216/indicators",2010,2040,
+#          "/home/aksel/Documents/Data/GIS","bayarea_counties.shp","No_Project","county")  
+
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -128,8 +131,18 @@ geo<-args[7]
 qual_shp_file <- file.path(shp_path,shp_file,fsep = .Platform$file.sep)
 lyr <- strsplit(shp_file,"\\.")[[1]][1]
 
+## switch gears, parse path to get runid, run date
+split <- strsplit(args[1],"/")[[1]]
+pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
+runid <- split[pos]
+periodPosition <- regexpr("\\.",runid)[[1]]
+tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
+id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
+datetime <-sprintf("%s/%s/%s %s:%s:00",tm[[1]][2],tm[[1]][3],tm[[1]][1],tm[[1]][4],tm[[1]][5]) #get from runid string
+runDate <- strptime(datetime, "%m/%d/%Y %H:%M:%S")
+
 ##Add historic data to data frame
-#test structure, 9 counties times 4 elements time 3 years
+#structure consisting of 9 counties times 4 variables time 3 years
 nCounties <- 9
 nElements <-4
 nYears <- 3
@@ -137,9 +150,9 @@ nYears <- 3
 #dput(hh)
 lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
 lElements <- c('population','households','employed residents','employment')
-lYears <- c('1980','1990','2000')
+lYears <- c('1980','1990','2000') 
 
-##data
+##historic data from http://www.bayareacensus.org/counties/counties.htm 
 dt<-c(1105379, 656380, 222568, 99199, 678974, 587329, 1295071, 
       235203, 299681, 1279182, 803732, 230096, 110765, 723959, 649623, 
       1497577, 340421, 388222, 1443741, 948816, 247289, 124279, 776733, 
@@ -158,20 +171,6 @@ dt<-c(1105379, 656380, 222568, 99199, 678974, 587329, 1295071,
 histData <- structure(dt, 
                       dim = c(9,3,4),
                       .Dimnames = list(lCounties,lYears,lElements))
-
-#histData <- data.frame(histData)
-#histData.m <- melt(histData)
-#histData.m <- rename(histData.m, c(X1 = "county", X2="variable", X3 = "year"))
-
-## parse path to get runid, run date
-split <- strsplit(args[1],"/")[[1]]
-pos <- length(split)-1  #this assumes we are one up from the indicators dir--a regex would be better.
-runid <- split[pos]
-periodPosition <- regexpr("\\.",runid)[[1]]
-tm <- strsplit(substr(runid,periodPosition+1,nchar(runid)),"_")
-id <- strsplit(substr(runid,1,periodPosition-1),"_")[[1]][2]
-datetime <-sprintf("%s/%s/%s %s:%s:00",tm[[1]][2],tm[[1]][3],tm[[1]][1],tm[[1]][4],tm[[1]][5]) #get from runid string
-runDate <- strptime(datetime, "%m/%d/%Y %H:%M:%S")
 
 ##  select folder with indicator files, fetch all beginning with "county..." having proper years in name
 ptrn <-sprintf("^%s%s_%s-%s%s","county_table-","[0-9]",yrStart,yrEnd,".+")
@@ -193,22 +192,18 @@ pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 ## store each file in a dataframe, process and plot as we go.
 for(i in 1:length(dat)) 
 {
-  simulation <- as.data.frame(dat[i])  #technically redundant; could just use dat list object
+  #technically redundant; could just use dat list object instead of re-casting
+  simulation <- as.data.frame(dat[i])
   #simulation <- read.csv("/home/aksel/Documents/Data/Urbansim/run_107.2012_07_26_21_39/indicators/county_table-3_2012-2020_county__county_employed_residents.tab",header=T,sep = "\t")  
+  
   ## subset to keep only relevant counties (using the arbitrary objectid in geography_county.id)
   simulation <- simulation[simulation[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
   
-  ##keep minimal data frame for mapping
+  ##keep minimal data frame for mapping. Is this necessary?
   strYrStart<-sprintf("yr_%s",yrStart)
   strYrEnd<-sprintf("yr_%s",yrEnd)
   simulation.m <- simulation[c(1,2,length(names(simulation)))]
-  #colnames(simulation.m) <- c("county_id",strYrStart,strYrEnd)
   n=length(simulation.m)
-  #index=is.na(simulation.m[n])|simulation.m[n]==Inf
-  #simulation.m[n][index]=0
-  #index=is.na(simulation.m[2])|simulation.m[2]==Inf 
-  #simulation.m[2][index]=0
-  
   simulation.m$growth=((simulation.m[n]-simulation.m[2])/simulation.m[2])*100
   simulation.m=data.frame(simulation.m[1],simulation.m$growth)
   #replace(simulation.m, simulation.m[n]==Inf, 0)
@@ -218,18 +213,15 @@ for(i in 1:length(dat))
   names(simulation.m)=c("county_id","growth")
   
   ## convert id key to factor levels for more meaningful labeling. Labels are assigned based on factor numerical order.
-  #cnty <- c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
   simulation[,1] <-factor(simulation[,1], labels=lCounties)
   
-  ## rename col names, retaining only year part, extract column name to use in chart name later. Each column has year embedded
+  ##rename columns, retaining only year part, extract column name to use later
   yr_ptrn <- "([[:digit:]]{4})"  
   maxCol <- length(simulation)
   years <-str_extract(names(simulation)[2:maxCol],yr_ptrn) 
   pos <- regexpr(pattern = yr_ptrn, text = names(simulation)[2:maxCol])  #where does year start in col name?
-  yrEnd <-max(as.integer(years))  #overwrites passed years and uses actual outer years in tab files 
-  yrStart <- min(as.integer(years))
   
-  ## extract field name representing variable for use in chart
+  ## extract field name representing variable for use in chart. could just have used table name
   title_prelim <- substr(names(simulation)[2],1,pos-2)
   title_split <- strsplit(title_prelim,"_")
   title_less_first<-paste(title_split[[1]][2:length(title_split[[1]])], sep=" ", collapse = " ")
@@ -240,11 +232,12 @@ for(i in 1:length(dat))
   yrNames <- c('county',years)
   names(simulation) <-yrNames
   
-  ##check for a few select variables for merging with historic data
+  ##check for a few select variables, then merge those with historic data. Dependent on exact name match.
   containTest <- title_less_first %in% lElements
   extra=F
   if (T %in% containTest){
-    histData[,,title_less_first]
+    #histData[,,title_less_first]
+    #reframe simulation with 1980-2000 data as first three years
     simulation <- cbind(county=simulation[,1],histData[,,title_less_first],simulation[,2:maxCol])
     extra=T
   }
@@ -257,7 +250,7 @@ for(i in 1:length(dat))
   simulation.t <-as.data.frame(simulation.t)
   
   ## add regional total for non-average tables
-  ## get matrices; chck if average in name. if so, treat total differently.
+  ## get matrices; check if average in name. if so, treat total differently. (dont'sum averages)
   returnMatrices <- returnMatrix(simulation.t,title_prelim)
   simulation.t <- returnMatrices$wide 
   simulation_long_abs <- returnMatrices$long
@@ -266,7 +259,7 @@ for(i in 1:length(dat))
   simulation.i <-indx(simulation.t, 1)
   simulation.i <- replace(simulation.i, is.na(simulation.i), 0) 
   
-  ##add two digit years for easier plotting
+  ##add extra years for select vars
   if(extra==T){
     yrNames <- c('county',1980,1990,2000,years)
     rownames(simulation.i) <- yrNames[seq(2,maxCol+3)]
@@ -281,7 +274,7 @@ for(i in 1:length(dat))
   simulation_long_index <- melt(simulation.i,id="year",variable_name = "county")
   
   ## prepare plotting
-  ## table object prep for chart
+  ## table object prep for chart--skip every other year if many years in run
   end <- yrEnd - yrStart + 1
   if (end > 26 ) {
     step <- 2 
@@ -313,8 +306,9 @@ for(i in 1:length(dat))
   stamp <- sprintf("Simulation #%s run on %s\nReport generated on %s",id,format(runDate, "%a %b %d %T"),format(Sys.time(), "%a %b %d %T"))
   ## first send line chart to pdf...
   
-  ##possibly segment chart to have solid lines before 2010
+  ##TODO: possibly segment chart to have solid lines before 2010
   #simulation_long_abs[simulation_long_abs$year>2010,]
+  ##prepare using different line types, one for each county
   lty <- setNames(sample(1:12,10,T), levels(simulation_long_index$county))
 
   g3 <- linePlot(simulation_long_index,title) + 
@@ -340,7 +334,8 @@ for(i in 1:length(dat))
     }
   #print(simulation.m$growth)
   
-  ##ggplot map --TODO: improve efficiency by putting outside of loop  
+  ##ggplot map --TODO: improve efficiency by putting outside of loop
+  ##instead of recreating every time  
   county_sp1 <- readShapeSpatial(qual_shp_file)
   county_ftfy <- fortify(county_sp1, region="id")
   county_sp_data <- merge(county_ftfy,simulation.m,by.x="id", by.y="county_id")
