@@ -17,10 +17,10 @@ class MATSimConfigObject(object):
         """ Constructor
         """
         
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         self.config_dictionary = config
         self.sub_config_exists = False
