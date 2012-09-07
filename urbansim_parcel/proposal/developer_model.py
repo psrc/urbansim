@@ -89,7 +89,7 @@ class DeveloperModel(Model):
         
     dataset_pool = SessionConfiguration().get_dataset_pool()
     current_year = SimulationState().get_current_time()
-    cache_dir = SimulationState().get_cache_dir()
+    cache_dir = SimulationState().get_cache_directory()
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
