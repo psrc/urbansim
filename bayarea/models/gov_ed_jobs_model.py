@@ -13,7 +13,7 @@ from scipy.stats import scoreatpercentile
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 
-class TestModel(Model):
+class GovEdJobsModel(Model):
     """Executes experimental code.
     """
     model_name = "Test Model"
