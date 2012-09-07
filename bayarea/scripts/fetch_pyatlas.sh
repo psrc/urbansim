@@ -17,15 +17,30 @@
 # in each branch independently.  Painful.
 
 set -e
+U=$USER
+DEST=pyatlas
 
-[ "$1" == "" ] && DEST=pyatlas
+while getopts ":d:u:" opt; do
+  case $opt in
+    d)
+      DEST=$OPTARG
+      ;;
+    u)
+      U=$OPTARG
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
 
-GIT_URL="ssh://git@paris.urbansim.org/var/git/pyatlas"
+GIT_URL="ssh://$U@paris.urbansim.org/var/git/pyatlas"
 GIT_BRANCH=`cat /etc/issue`
 GIT_BRANCH=`echo ${GIT_BRANCH} | sed 's/[\\ ]/_/g'`
 
+BRANCHES=`git ls-remote --heads ${GIT_URL}`
 set +e
-git ls-remote --heads ${GIT_URL} | grep -w ${GIT_BRANCH} > /dev/null 2>&1
+echo $BRANCHES | grep -w ${GIT_BRANCH} > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "pyatlas does not currently support " ${GIT_BRANCH}
     exit 1
