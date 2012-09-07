@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import array, int32
+from numpy import array, int32, dtype
 from numpy import arange
 from numpy import ma
 from opus_core.logger import logger
@@ -1050,24 +1050,31 @@ class DatasetTests(opus_unittest.OpusTestCase):
              
             }
         )
+        n = 3
         ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
         # only id is loaded (int32)
-        self.assertEqual(12, ds.itemsize_in_memory())
+        itemsize = dtype('int').itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
         # load the boolattr into memory
-        ds.get_attribute('boolattr')
-        self.assertEqual(12+3, ds.itemsize_in_memory())
+        attr = ds.get_attribute('boolattr')
+        itemsize += attr.dtype.itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
         # check that nothing more is loaded and everything stays the same
-        self.assertEqual(12+3, ds.itemsize_in_memory())
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
         # load other attributes
-        ds.get_attribute('float64attr')
-        self.assertEqual(12+3+24, ds.itemsize_in_memory())
-        ds.get_attribute('int16attr')
-        self.assertEqual(12+3+24+6, ds.itemsize_in_memory())
-        ds.get_attribute('strattr')
-        self.assertEqual(12+3+24+6+18, ds.itemsize_in_memory())
+        attr = ds.get_attribute('float64attr')
+        itemsize += attr.dtype.itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
+        attr = ds.get_attribute('int16attr')
+        itemsize += attr.dtype.itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
+        attr = ds.get_attribute('strattr')
+        itemsize += attr.dtype.itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
         # flush one attribute
         ds.flush_attribute("float64attr")
-        self.assertEqual(12+3+6+18, ds.itemsize_in_memory())
+        itemsize -= dtype('float64').itemsize * n
+        self.assertEqual(itemsize, ds.itemsize_in_memory())
         
     def test_copy_attribute_by_reload(self):
         # tests the function copy_attribute_by_reload
