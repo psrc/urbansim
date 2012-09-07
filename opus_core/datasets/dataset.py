@@ -264,7 +264,9 @@ class Dataset(AbstractDataset):
                 else:
                     for id in self._id_names:
                         # Convert all values to int32
-                        self.attribute_boxes[id].set_data(values=self.get_attribute(id).astype(int32))
+                        #self.attribute_boxes[id].set_data(values=self.get_attribute(id).astype(int32))
+                        ## LW: why id field has to be of int32?
+                        self.attribute_boxes[id].set_data(values=self.get_attribute(id).astype('int'))
                         
                     self._create_id_mapping()
 
