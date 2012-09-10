@@ -1,7 +1,7 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-    <description type="string">Honolulu parcel configuration</description>
+    <description type="string">DRCOG parcel configuration</description>
     <project_name hidden="True" type="string">drcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
@@ -252,7 +252,7 @@
       <variable use="both" source="expression" name="employment_submarket.land_per_nonres_sqft_esubmarket" type="variable_definition">safe_array_divide(employment_submarket.aggregate(building.land_area),employment_submarket.aggregate(building.non_residential_sqft))</variable>
       <variable use="both" source="expression" name="building.average_value_per_sqft" type="variable_definition">building.average_value_per_unit * building.disaggregate(building_type.is_residential==0)</variable>
       <variable use="both" source="expression" name="employment_submarket.average_value_per_sqft_esubmarket" type="variable_definition">safe_array_divide(employment_submarket.aggregate(building.improvement_value),employment_submarket.aggregate(building.non_residential_sqft))</variable>
-      <variable use="both" source="expression" name="employment_submarket.ln_average_value_per_sqft_esubmarket" type="variable_definition">ln(safe_array_divide(employment_submarket.aggregate(building.improvement_value),employment_submarket.aggregate(building.non_residential_sqft)))</variable>
+      <variable use="both" source="expression" name="employment_submarket.ln_average_value_per_sqft_esubmarket" type="variable_definition">ln(safe_array_divide(employment_submarket.aggregate(building.unit_price_non_residential*building.non_residential_sqft),employment_submarket.aggregate(building.non_residential_sqft)))</variable>
       <variable use="both" source="primary attribute" name="household.year_moved" type="variable_definition">household.year_moved</variable>
       <variable use="both" source="expression" name="building.emp_retail_200" type="variable_definition">where(building.disaggregate(zone.aggregate(job.sector_id==9))&lt;200,building.disaggregate(zone.aggregate(job.sector_id==9)),200)/200</variable>
       <variable use="both" source="expression" name="building.land_per_unit_1k" type="variable_definition">(building.land_area/building.residential_units)/1000</variable>
