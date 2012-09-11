@@ -1,5 +1,6 @@
 
-hudsonURL = 'http://paris.urbansim.org:8080/hudson/job/MTC_Model'
+hudsonURL = 'http://paris.urbansim.org:8080/hudson/job/MTC_Model';
+reportURL = 'http://paris.urbansim.org/MTC_Model';
 
 function createXMLHttpRequest() {
   var xmlHttp = false;
@@ -77,14 +78,26 @@ function addBuild(build) {
 	console.log("It appears that " + build.number + " is an older build for run " + build.urbansimNumber);
 	return;
   }
-  html = '<a href="' + build.url + 'console">Run #' + build.urbansimNumber + '</a>: ' +
+  title = '<a href="#">Run #' + build.urbansimNumber + ': ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
 	'<span>' + build.HUDSON_SCENARIO + '</span>' +
-	'<span id="status"> ' + status + '</span>';
-  if (e.length != 0)
+	'<span id="status"> ' + status + '</span></a>';
+  build.reportURL = reportURL + '/' + build.HUDSON_SCENARIO + '/run_' + build.urbansimNumber;
+  if (typeof build.HUDSON_SCENARIO == "undefined" || build.HUDSON_COMMENT == "")
+    build.HUDSON_COMMENT = "(no description available)";
+  body = '<p>' + build.HUDSON_COMMENT + '</p>' +
+    '<ul>' +
+    '<li>Travel Model: ' + build.HUDSON_TRAVEL_MODEL + '</li>' +
+    '<li>Go to the <a href="' + build.url + 'console">hudson page</a></li>' +
+    '<li>Go to the <a href="' + build.reportURL + '">report page</a></li>';
+  html = '<h3>' + title + '</h3><div>' + body + '</div>';
+  if (e.length != 0) {
 	$('#run' + build.urbansimNumber).html(html);
-  else
-	$('#builds').append('<li id=run' + build.urbansimNumber + '>' + html + '<li>');
+	$('#builds').accordion('destroy').accordion({header: "h3"});
+  } else {
+    html = '<div id=run' + build.urbansimNumber + '>' + html + '</div>';
+	$('#builds').append(html).accordion('destroy').accordion({header: "h3"});
+  }
 }
 
 function getBuilds() {
@@ -99,5 +112,6 @@ function getBuilds() {
 }
 
 $(function() {
+  $("#builds").accordion({header: "h3"});
   getBuilds();
 });
