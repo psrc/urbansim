@@ -55,7 +55,14 @@ function getBuild(buildURL, callback) {
     url = buildURL + '/api/json';
     $.getJSON(url, null, function(build) {
       build.urbansimNumber = urbansimNumber;
-      callback(build);
+	  $.each(build.actions, function (key, val) {
+		if (typeof val.parameters == "undefined")
+		  return;
+		$.each(val.parameters, function(key, val) {
+		  build[val.name] = val.value;
+		});
+	  });
+	  callback(build);
     });
   });
 }
@@ -72,7 +79,8 @@ function addBuild(build) {
   }
   html = '<a href="' + build.url + 'console">Run #' + build.urbansimNumber + '</a>: ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
-	'<span id="status">' + status + '</span>'
+	'<span>' + build.HUDSON_SCENARIO + '</span>' +
+	'<span id="status"> ' + status + '</span>';
   if (e.length != 0)
 	$('#run' + build.urbansimNumber).html(html);
   else
