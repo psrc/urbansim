@@ -70,7 +70,7 @@ function addBuild(build) {
 	console.log("It appears that " + build.number + " is an older build for run " + build.urbansimNumber);
 	return;
   }
-  html = 'Run #' + build.urbansimNumber + ': ' +
+  html = '<a href="' + build.url + 'console">Run #' + build.urbansimNumber + '</a>: ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
 	'<span id="status">' + status + '</span>'
   if (e.length != 0)
