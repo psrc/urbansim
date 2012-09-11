@@ -119,7 +119,9 @@ mapStuff <- function(data,shapefile){
     #scale_colour_manual(values = rev(brewer.pal(3,"BuPu")))+
     #opts(legend.position = "right")+
     opts(panel.background = theme_rect(fill = "grey95"))+
-    expand_limits(x = geography_ftfy$long, y = geography_ftfy$lat) 
+    expand_limits(x = geography_ftfy$long, y = geography_ftfy$lat)  +
+     #opts(aspect.ratio = 1) + 
+     coord_equal(ratio = 1/1) 
   #text(centroids$long, centroids$lat, rownames(centroids), offset=0, cex=0.4)
 
   return(g5)
@@ -207,7 +209,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 fp <- file.path(pth, fsep = .Platform$file.sep)
 fileNameOut=sprintf("%s/%s_plot_%s_indexChart.pdf",fp,geo,runid)
 sprintf("Preparing file %s for charts and figures...", fileNameOut)
-pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
+pdf(fileNameOut,height=11, width=17,onefile=TRUE)
 
 ## store each file in a dataframe, process and plot as we go.
 for(i in 1:length(dat)) 
