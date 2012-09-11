@@ -64,8 +64,19 @@ function addBuild(build) {
   var status = build.result;
   if (build.building)
     status = 'RUNNING';
-  html = '<li>Run #' + build.urbansimNumber + ': <span class="status">(' + status + ')</span></li>';
-  $('#builds').append(html);
+
+  e = $('#run' + build.urbansimNumber + " .hudsonNumber");
+  if (e.length != 0 && e.text() > build.number) {
+	console.log("It appears that " + build.number + " is an older build for run " + build.urbansimNumber);
+	return;
+  }
+  html = 'Run #' + build.urbansimNumber + ': ' +
+	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
+	'<span id="status">' + status + '</span>'
+  if (e.length != 0)
+	$('#run' + build.urbansimNumber).html(html);
+  else
+	$('#builds').append('<li id=run' + build.urbansimNumber + '>' + html + '<li>');
 }
 
 function getBuilds() {
