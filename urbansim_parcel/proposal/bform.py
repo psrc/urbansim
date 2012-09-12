@@ -42,6 +42,7 @@ class BForm:
         my.isr = isr
         my.parcelfees = parcelfees
         my.taz = taz
+        my.parcel_id = parcel_id
 
     def set_btype(my,btype):
         my.btype = btype
