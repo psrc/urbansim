@@ -132,7 +132,7 @@ class DeveloperModel(Model):
     elif my.scenario.startswith('Transit'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
     costdiscount = 0.0
-    if not my.scenario.startswith('No Project') and parcel_set['tpp_id'] > 0:
+    if not my.scenario.startswith('No Project'):
         costdiscount = .01
 
     #################################
@@ -366,6 +366,12 @@ def process_parcel(parcel):
         global parcel_set, z, node_set, submarket, esubmarket, isr, parcelfees, costdiscount
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
+
+        ###################
+        # CAUTION: unfortunately, there's more scenario-specific stuff
+        # that has to wait until the parcel is identified
+        if parcel_set['tpp_id'][parcel] == -1: costdiscount = 0.0
+        ###################
 
         debugoutput = ''
  
