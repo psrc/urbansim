@@ -132,7 +132,7 @@ class DeveloperModel(Model):
     elif my.scenario.startswith('Transit'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
     costdiscount = 0.0
-    if (my.scenario.startswith('Preferred') or my.scenario.startswith('Transit')) and parcel_set['tpp_id'] > 0:
+    if not my.scenario.startswith('No Project') and parcel_set['tpp_id'] > 0:
         costdiscount = .01
 
     #################################
