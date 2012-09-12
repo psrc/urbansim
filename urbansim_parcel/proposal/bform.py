@@ -11,7 +11,7 @@ CONDOFACTOR = 1.1 # ratio of own to ave
 
 class BForm:
 
-    def __init__(my,parcel_size,FAR,height,max_dua,county,taz,isr,existing_sqft,existing_price):
+    def __init__(my,parcel_id,parcel_size,FAR,height,max_dua,county,taz,isr,parcelfees,existing_sqft,existing_price):
         my.height = height
         my.FAR = FAR
         my.max_dua = max_dua
@@ -40,6 +40,7 @@ class BForm:
         else:
             my.maxnonressize = MAXNONRESSIZE
         my.isr = isr
+        my.parcelfees = parcelfees
         my.taz = taz
 
     def set_btype(my,btype):
@@ -107,6 +108,9 @@ class BForm:
         cost += numpy.sum(my.num_units)*IMPACTFEE
         if my.parking: cost += numpy.sum(my.num_units)*PARKINGCOSTPERSPOT
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
+        if my.parcelfees: 
+            cost += numpy.sum(my.num_units)*\
+								my.parcelfees.resother_parcel_fee(my.parcel_id)
         cost += numpy.dot(SFPARKING,my.num_units)*F
         return cost
 
@@ -137,6 +141,8 @@ class BForm:
         else: assert 0
 
         if my.isr: cost += my.isr.nonres_isr_fee(my.taz)*sqft
+        if my.parcelfees: 
+            cost += sqft*my.parcelfees.nonres_parcel_fee(my.parcel_id)
         #print cost
         return cost
 
@@ -157,6 +163,9 @@ class BForm:
         cost += numpy.sum(my.num_units)*IMPACTFEE
         if my.parking: cost += numpy.sum(my.num_units)*PARKINGCOSTPERSPOT
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
+        if my.parcelfees: 
+            cost += numpy.sum(my.num_units)*\
+								my.parcelfees.resmf_parcel_fee(my.parcel_id)
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F2
         return cost
 

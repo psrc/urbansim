@@ -18,6 +18,7 @@ from numpy import array, zeros, repeat, arange, round
 from devmdl_zoning import *
 import devmdl_optimize
 from isr import ISR
+from parcelfees import ParcelFees
 from bform import BForm
 from devmdl_accvars import compute_devmdl_accvars
 
@@ -60,7 +61,7 @@ class DeveloperModel(Model):
     dataset_pool._remove_dataset('cost_shifter')
 
   def run(my, cache_dir=None, year=None):
-    global parcel_set, z, node_set, submarket, esubmarket, isr
+    global parcel_set, z, node_set, submarket, esubmarket, isr, parcelfees, costdiscount
 
     '''
     if 0:
@@ -117,10 +118,25 @@ class DeveloperModel(Model):
    
     compute_devmdl_accvars(node_set) 
 
+    ######################
+    ### CAREFUL - THIS IS WHERE SCNERARIO SPECIFIC INFO GOES
+    ######################
+
     current_year = SimulationState().get_current_time()
     z = Zoning(my.scenario,current_year)
     isr = None
-    if my.scenario in ['Studio','Transit Priority']: isr = ISR()
+    if my.scenario.startswith('Transit'): isr = ISR()
+    parcelfees = None
+    if my.scenario.startswith('Preferred'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
+    elif my.scenario.startswith('Transit'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
+    costdiscount = 0.0
+    if (my.scenario.startswith('Preferred') or my.scenario.startswith('Transit')) and parcel_set['tpp_id'] > 0:
+        costdiscount = .01
+
+    #################################
+    #################################
 
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)")
@@ -347,7 +363,7 @@ NOBUILDTYPES = 0
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set, submarket, esubmarket, isr
+        global parcel_set, z, node_set, submarket, esubmarket, isr, parcelfees, costdiscount
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
 
@@ -394,7 +410,7 @@ def process_parcel(parcel):
 
         if far == 100 and height == 1000: far,height = .75,10
             
-        bform = BForm(v,far,height,max_dua,county_id,taz,isr,existing_sqft,existing_price)
+        bform = BForm(pid,v,far,height,max_dua,county_id,taz,isr,parcelfees,existing_sqft,existing_price)
 
         if DEBUG > 0: print "ZONING BTYPES:", btypes
 
@@ -509,7 +525,7 @@ def process_parcel(parcel):
             for attr in esubmarket.get_known_attribute_names():
                 esubmarket_info[attr] = esubmarket[attr][esub_idx]
 
-            X, npv = devmdl_optimize.optimize(bform,prices,
+            X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,
                                               submarket_info=submarket_info,
                                               esubmarket_info=esubmarket_info)
             if DEBUG: print X, npv

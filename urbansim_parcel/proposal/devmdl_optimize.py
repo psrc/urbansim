@@ -144,7 +144,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
         dataset_pool = proforma_inputs
     return dataset_pool
 
-def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=None):
+def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,excelprefix=None):
 
     global OBJCNT
     OBJCNT += 1    
@@ -234,6 +234,7 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     #print btype, params
     #print "cost", cost
     proposal['land_cost'] = max(bform.procurement_cost(),100000)
+    proposal['costdiscount'] = costdiscount
     proposal['construction_cost'] = cost 
     #print proposal['construction_cost']
     if DEBUG: print "COST:", proposal['construction_cost']
@@ -257,7 +258,8 @@ def _objfunc2(params,bform,btype,prices,dataset_pool,baveexcel=0,excelprefix=Non
     if DEBUG > 1: print "NPV=", npv, "\n\n"
     return -1*npv/100000.0
 
-def optimize(bform,prices,submarket_info=None,esubmarket_info=None):
+#cost discount should be .01 for 1% discount
+def optimize(bform,prices,costdiscount,submarket_info=None,esubmarket_info=None):
    
     btype = bform.btype
 
@@ -306,11 +308,11 @@ def optimize(bform,prices,submarket_info=None,esubmarket_info=None):
         #r2[0] = numpy.round(r2[0], decimals=1)
         #r2[1] = _objfunc(r2[0],btype)
    
-    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[bform,btype,prices,dataset_pool],iter=150,acc=.01)
+    r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[bform,btype,prices,costdiscount,dataset_pool],iter=150,acc=.01)
     #if DEBUG > 0: print r
     #print r
     r[0] = numpy.round(r[0], decimals=1)
-    r[1] = _objfunc2(r[0],bform,btype,prices,dataset_pool)
+    r[1] = _objfunc2(r[0],bform,btype,prices,costdiscount,dataset_pool)
     if 0: #DEBUG: 
         print r2
         print r

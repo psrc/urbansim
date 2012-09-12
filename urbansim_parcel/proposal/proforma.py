@@ -219,6 +219,7 @@ class proforma(Variable):
                     #break
 
         if DEBUG: print "REVENUES:", revenues
+        costs = costs * (1.0-p['costdiscount'])
         if DEBUG: print "COSTS:", costs
         cash_flow = (revenues - costs)[1:period]
         npv = np.npv(discount_rate, cash_flow)
