@@ -154,19 +154,22 @@ cached data: %s
     # add the travel model EMFAC output to the web report
     config = XMLConfiguration(options.xml_configuration).get_run_configuration(scenario)
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
-    if travel_model and travel_model == "true":
+    if travel_model.lower() == "full":
         print "Copying over travel model output"
+        travel_model_for_R = "TRUE"
         tm_base_dir = mtc_common.tm_get_base_dir(config)
         tm_dir = os.path.join(tm_base_dir, "runs", cache_directory.split(os.sep)[-1])
         for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.*')):
             shutil.copy(f, output_dir)
-
+	else:
+		travel_model_for_R =="FALSE"
+		
     p = os.path.join(cache_directory, "mtc_data")
     if os.path.exists(p):
         shutil.copytree(p, os.path.join(output_dir, "mtc_data"))
 
     # topsheet--need the EMFAC outputs to be generated first, so this goes last
-    travel_model_for_R = "TRUE" if travel_model else "FALSE" 
+    #travel_model_for_R = "TRUE" if travel_model else "FALSE" 
     topsheet_script = os.path.join(my_location, "regional_indicators.R")
     cmd = "Rscript %s %s %d %d %s %s %s" % (topsheet_script,
                                    os.path.join(cache_directory, "indicators"),

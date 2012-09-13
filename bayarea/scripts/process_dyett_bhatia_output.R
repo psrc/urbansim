@@ -2,16 +2,32 @@ library(RPostgreSQL)
 library(ggplot2)
 require(scales)
 library(plyr)
+require("rgdal")
+
 args <- commandArgs(TRUE)
 
 ## grab arguments
-args <- c('/home/aksel/Documents/Data/Urbansim/run_179/indicators','2010','2040','134',"TRUE","No_Project")
+args <- c('/home/aksel/Documents/Data/Urbansim/run_179/indicators','2010','2040','134',"TRUE","No_Project","","")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
 run_id <- args[4]
 travelModelRan <- args[5]
 scenario <- args[6]
+shp_file_name <- args[7]
+shp_file_path <- args[8]
+
+##read shapefile
+if (length(shp_file)>0){
+qual_shp_file <- file.path(shp_file_path,shp_file_name,fsep = .Platform$file.sep)
+shp_file <- readShapeSpatial(qual_shp_file)
+shp_file_ftfy <- fortify(county_sp1, region="id")
+shp_file_ftfy_data <- merge(county_ftfy,simulation.m,by.x="id", by.y="county_id")
+
+  ##alt
+shp_file=readOGR(shp_file_path,shp_file_name) 
+
+}
 
 dbname <- "bayarea"; dbuser <- "********"; dbpass <- "********";
 dbhost <- "paris.urbansim.org"; dbport <- 5432;
@@ -46,10 +62,11 @@ abag <- merge(abag,county_names, by.x="county_id.i8", by.y="county_id",all.x = T
 abag <- merge(abag,city_names, by.x="city_id.i8", by.y="city_id",all.x = T)
 abag <- merge(abag,tpp_names, by.x="tpp_id.i8", by.y="tpp_category_id",all.x = T)
 
-##shed redundant columns and write to csv
-keepers <-c('county','city','pda','tpp_category','total_households_2010.f8','total_population_2010.f8','age_lt_04_2010.f8','age_05_19_2010.f8','age_20_44_2010.f8','age_45_64_2010.f8','age_65_plus_2010.f8','empl_01_farm_nat_res_2010.f8','empl_02_construction_2010.f8','empl_03_manuf_whole_2010.f8','empl_04_retail_2010.f8','empl_05_transp_ware_util_2010.f8','empl_06_information_2010.f8','empl_07_fin_lease_2010.f8','empl_08_prof_2010.f8','empl_09_health_educ_2010.f8','empl_10_art_rec_other_2010.f8','empl_11_government_2010.f8','empl_99_unclassified_2010.f8','employed_residents_2010.f8','multi_family_housholds_2010.f8','multi_family_units_2010.f8','single_family_housholds_2010.f8','single_family_units_2010.f8')
-abag.k <- abag[,keepers]
-
+##shed redundant columns, clean names and write to csv
+keepers <-c('county','city','pda','tpp_category','total_households_2010.f8','total_population_2010.f8','total_employment_2010.f8','age_lt_04_2010.f8','age_05_19_2010.f8','age_20_44_2010.f8','age_45_64_2010.f8','age_65_plus_2010.f8','empl_01_farm_nat_res_2010.f8','empl_02_construction_2010.f8','empl_03_manuf_whole_2010.f8','empl_04_retail_2010.f8','empl_05_transp_ware_util_2010.f8','empl_06_information_2010.f8','empl_07_fin_lease_2010.f8','empl_08_prof_2010.f8','empl_09_health_educ_2010.f8','empl_10_art_rec_other_2010.f8','empl_11_government_2010.f8','empl_99_unclassified_2010.f8','employed_residents_2010.f8','multi_family_housholds_2010.f8','multi_family_units_2010.f8','single_family_housholds_2010.f8','single_family_units_2010.f8')
+abag.k <- data.frame(abag[,keepers])
 names(abag.k) <- lapply(names(abag.k), gsub, pattern="\\..+|_\\d{4}\\..+",replacement="")
+abag.k <- abag.k[with(abag.k, order(county, city, pda, tpp_category)), ]
+
 file_out <- file.path(pth, sprintf("db_area_permutation_summary_%s.csv",run_id), fsep = .Platform$file.sep)
 write.table(abag.k,file_out, sep="\t", row.names = F)

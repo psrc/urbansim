@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-#args <- c('/home/aksel/Documents/Data/Urbansim/run_134/indicators','2010','2018','134',"TRUE","No_Project")
+args <- c('/home/aksel/Documents/Data/Urbansim/run_204/indicators','2010','2040','204',"FALSE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -90,7 +90,7 @@ TitleCase <- function(string="test string")
   fString <- sprintf("%s%s",first,rest)
   return(fString)
 }
-
+##function for making tablegrob objects
 makeTable <- function(data){    
   tableGrob(
     format(data
@@ -109,11 +109,8 @@ makeTable <- function(data){
                         show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
     )
 }
+##main processor function
 regionalProcessor <- function(pth,yrStart,yrEnd){
-
-  ##  select folder with indicator files, fetch all beginning with "county..." having proper years in name
-    #pth <- '/home/aksel/Documents/Data/Urbansim/run_134/indicators'
-    #yrStart=2010; yrEnd=2018
     setwd(pth)
     ptrn <-sprintf("^%s%s_%s-%s%s","alldata_table-",3,yrStart,yrEnd,".+")
     fileList = list.files(path=pth, pattern=ptrn)
@@ -125,10 +122,10 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
   ##  create list with data tables
     dat<-lapply(fileList,read.csv,header=T,sep = "\t")
   
-  ## flatten list to something useful
+  ## flatten list to to get vector with nice variable names
     fileAndTypesLst<- lapply(fileList,function(x) strsplit(x,"\\."))
     fileAndTypesFlattened = lapply(fileAndTypesLst, ldply)
-    fileNameClean = ldply(fileAndTypesFlattened)[,1]
+    fileNameClean <- ldply(fileAndTypesFlattened)[,1]
     fileNameClean <- ldply(lapply(fileNameClean, gsub, pattern="alldata.+\\d{4}-\\d{4}_",replacement=""))
     title_split <- lapply(fileNameClean,strsplit, "_")
     title_concat <- ldply(lapply(title_split[[1]][1:length(title_split[[1]])],paste, sep="", collapse = " "))
@@ -137,7 +134,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     #title <- paste(title_concat[[1]], sep=" ", collapse = " ")
     names(dat) <- ldply(title_concat_short)[2:ncol(title_concat_short),2]
   
-  ## transform appropriately for ease of use
+  ## transform appropriately for ease of use/ggplot
     df.m<-melt(dat, id="alldata_id.i8")
     ptrn <- "([[:digit:]]{4})"  
     df.m[,2] <-as.integer(str_extract(df.m[,2],ptrn)) 
