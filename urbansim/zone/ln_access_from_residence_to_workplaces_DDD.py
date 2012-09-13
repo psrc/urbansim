@@ -6,7 +6,7 @@ from urbansim.zone.abstract_zone_access_variable import Abstract_Zone_Access_Var
 from urbansim.functions import attribute_label
 from opus_core.variables.variable import Variable
 from numpy import array, exp, log
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class ln_access_from_residence_to_workplaces_DDD(Variable):
     """ ln(SUM(Jobs(j) * exp(logsum_DDD(i to j)), for j=zone_1...zone_n))

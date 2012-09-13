@@ -5,7 +5,7 @@
 from urbansim.functions import attribute_label
 from opus_core.variables.variable import Variable
 from numpy import array, where, float32
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class trip_weighted_average_utility_hbw_from_home_am_income_DDD(Variable):
     """ SUM(trips(self, J) * logsum_DDD(self, J), for J=all_zones) / SUM(trips(self, I), I=all_zones)
