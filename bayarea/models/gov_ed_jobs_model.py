@@ -12,9 +12,9 @@ from opus_core.store.attribute_cache import AttributeCache
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
 
 class GovEdJobsModel(Model):
-    """Executes experimental code.
+    """Zonal Gov-Ed Jobs Model.
     """
-    model_name = "Zonal Gov-Ed Jobs Model"
+    model_name = "gov_ed_jobs_model"
 
     def run(self):
         """Runs the test model. 
