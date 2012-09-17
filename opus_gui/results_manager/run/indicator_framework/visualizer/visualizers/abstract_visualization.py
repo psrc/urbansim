@@ -89,7 +89,7 @@ class Visualization(object):
         id_subsets = {}
         old_key_to_index_map = dict([(year,{}) for year in years])
  
-        cols = [computed_name for name, computed_name in attributes]
+        cols = [computed_name.lower() for _, computed_name in attributes]
                         
         for year in years:
 
