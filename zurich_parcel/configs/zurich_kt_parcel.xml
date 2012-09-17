@@ -203,7 +203,7 @@
       <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_sect7" type="variable_definition">(job.sector_id == 7 ) * ln(building.sqm_sector7)</variable>
       <variable use="model variable" source="expression" name="job_x_building.RH_ln_surf_sect8" type="variable_definition">(job.sector_id == 8 ) * ln(building.sqm_sector8)</variable>
     </expression_library>
-    <available_datasets type="list">['building_x_parcel','building','parcel','household','business','household_x_building','zone','tract','district14','district24','alldata','pdist','buildings_for_estimation', 'development_event_history', 'job_x_building']</available_datasets>
+    <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building' ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
     <dataset_pool_configuration type="class" hidden="False">
       <class_name type="string">DatasetPoolConfiguration</class_name>
