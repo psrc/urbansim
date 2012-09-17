@@ -472,7 +472,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.twAvailableIndicators.setItem(last_row,0,item)
 
             item = QTableWidgetItem()
-            item.setText(indicator.get('name'))
+            item.setText(indicator.text or '')
             self.twAvailableIndicators.setItem(last_row,1,item)
 
 #            item = QTableWidgetItem()
