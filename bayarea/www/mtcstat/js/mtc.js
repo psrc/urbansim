@@ -19,6 +19,15 @@ function sortByUrbansimBuildAscending() {
   });
 }
 
+function sortByBuildStatus() {
+  var orderedStatus = {"RUNNING":0, "SUCCESS":1, "FAILURE":2, "ABORTED":3};
+  sortBuilds(function(a, b) {
+    var compA = orderedStatus[$(a).data("build").status];
+    var compB = orderedStatus[$(b).data("build").status];
+    return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+  });
+}
+
 function createXMLHttpRequest() {
   var xmlHttp = false;
   if(window.ActiveXObject) {
@@ -86,9 +95,9 @@ function getBuild(buildURL, callback) {
 }
 
 function addBuild(build) {
-  var status = build.result;
+  build.status = build.result;
   if (build.building)
-    status = 'RUNNING';
+    build.status = 'RUNNING';
 
   e = $('#run' + build.urbansimNumber + " .hudsonNumber");
   if (e.length != 0 && e.text() > build.number) {
@@ -98,7 +107,7 @@ function addBuild(build) {
   title = '<a href="#">Run #' + build.urbansimNumber + ': ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
 	'<span>' + build.HUDSON_SCENARIO + '</span>' +
-	'<span id="status"> ' + status + '</span></a>';
+	'<span id="status"> ' + build.status + '</span></a>';
   build.reportURL = reportURL + '/' + build.HUDSON_SCENARIO + '/run_' + build.urbansimNumber;
   if (typeof build.HUDSON_SCENARIO == "undefined" || build.HUDSON_COMMENT == "")
     build.HUDSON_COMMENT = "(no description available)";
