@@ -2,6 +2,23 @@
 hudsonURL = 'http://paris.urbansim.org:8080/hudson/job/MTC_Model';
 reportURL = 'http://paris.urbansim.org/MTC_Model';
 
+function sortBuilds(sortFunction) {
+  var mylist = $('#builds');
+  var listitems = mylist.children('div').get();
+  listitems.sort(sortFunction);
+  $.each(listitems, function(idx, itm) {
+    mylist.append(itm);
+  });
+}
+
+function sortByUrbansimBuildAscending() {
+  sortBuilds(function(a, b) {
+    var compA = $(a).data("build").urbansimNumber;
+    var compB = $(b).data("build").urbansimNumber;
+    return (compA > compB) ? -1 : (compA < compB) ? 1 : 0;
+  });
+}
+
 function createXMLHttpRequest() {
   var xmlHttp = false;
   if(window.ActiveXObject) {
@@ -98,6 +115,7 @@ function addBuild(build) {
     html = '<div id=run' + build.urbansimNumber + '>' + html + '</div>';
 	$('#builds').append(html).accordion('destroy').accordion({header: "h3"});
   }
+  $('#run' + build.urbansimNumber).data("build", build);
 }
 
 function getBuilds() {
