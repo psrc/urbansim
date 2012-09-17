@@ -947,13 +947,15 @@
           </run>
         </structure>
         <specification type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel" inherit_parent_values="False">
             <description type="string">A first model to run.</description>
             <variable_list type="variable_list">
               <variable_spec name="building.SC_acc_pt"/>
               <variable_spec name="building.SC_building_age"/>
               <variable_spec name="building.SC_building_is_pre_1941"/>
+              <variable_spec name="household.SC_dist_to_previous_loc"/>
               <variable_spec name="building.SC_dist_to_station"/>
+              <variable_spec name="household.SC_dist_to_workplace"/>
               <variable_spec name="building.SC_dist_to_zh_cbd"/>
               <variable_spec name="building.SC_jobs_G52_H_within_1km"/>
               <variable_spec name="household_x_building.SC_pop_dens_within_1km_X_young_hh_dummy"/>
