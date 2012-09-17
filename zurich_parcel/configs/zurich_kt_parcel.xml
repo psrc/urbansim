@@ -279,7 +279,7 @@
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="sample_filter" type="string">None</argument>
             <argument name="resources" type="string">model_resources</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">target_vacancy</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">target_vacancy_rate</argument>
           </run>
         </structure>
       </model>
