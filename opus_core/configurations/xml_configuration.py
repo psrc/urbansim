@@ -11,6 +11,7 @@ from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 from opus_core.variables.variable_name import VariableName
 from opus_core.misc import directory_path_from_opus_path
+from opus_core.logger import logger
 import re
 
 def is_comment(node):
@@ -154,6 +155,7 @@ class XMLConfiguration(object):
         If is_parent is true, mark all of the nodes as inherited
         (either from this configuration or a grandparent)."""
         # try to load the element tree
+        logger.log_status("Loading XML configuration: %s" % self.full_filename)
         tree = load_xml_file(self.full_filename)
         self._initialize(tree, is_parent)
 
