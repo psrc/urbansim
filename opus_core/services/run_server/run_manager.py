@@ -291,10 +291,7 @@ class RunManager(AbstractService):
             raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
 
         try:
-            if self.server_config.blob_compression:
-                r = pickle.loads(zlib.decompress(str(run_resources[0])))
-            else:
-                r = pickle.loads(str(run_resources[0]))
+            r = self._unpickle(run_resources[0])
             config = Configuration(r)
         except:
             logger.log_error('Could not create the configuration file for run %i'%run_id)
@@ -353,7 +350,20 @@ class RunManager(AbstractService):
         #run_activity_table = self.services_db.get_table('run_activity')
         #qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
         #return self.services_db.execute(qry).fetchone() is not None
-            
+
+    def _unpickle(self, resources):
+        if self.server_config.blob_compression:
+            try:
+                r = pickle.loads(zlib.decompress(str(resources)))
+            except zlib.error:
+                # There is the possibility that the user enabled blob
+                # compression after some number of runs.  We still want to
+                # decompress these runs correctly.
+                r = pickle.loads(str(resources))
+        else:
+            r = pickle.loads(str(resources))
+        return r
+
     def get_runs_rs(self, **kwargs):
         """ returns rows from run_activity table in services database
         
@@ -372,10 +382,7 @@ class RunManager(AbstractService):
         rs = self.services_db.execute(query)
         if resources:
             for row in rs:
-                if self.server_config.blob_compression:
-                    row_resources = pickle.loads(zlib.decompress(str(rs.resources)))
-                else:
-                    row_resources = pickle.loads(str(rs.resources))
+                row_resources = self._unpickle(rs.resources)
                 if isinstance(row_resources, XMLConfiguration) and 'scenario_name' in rs.c:
                     row.resources = row_resources.get_run_configuration(row.scenario_name)
                 else:
@@ -411,10 +418,7 @@ class RunManager(AbstractService):
             results = []
             for run_id, run_name, run_description, processor_name, run_resources in self.services_db.execute(query).fetchall():
                 try:
-                    if self.server_config.blob_compression:
-                        config = pickle.loads(zlib.decompress(str(run_resources)))
-                    else:
-                        config = pickle.loads(str(run_resources))
+                    config = self._unpickle(run_resources)
                     results.append((run_id, run_name, run_description, processor_name,config))
                 except:
                     if not soft_fail: raise
