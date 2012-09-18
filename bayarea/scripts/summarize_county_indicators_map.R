@@ -90,7 +90,7 @@ manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 ################################################################################
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
 returnMatrix <- function(inputData=inputData,tableName=tableName) {
-  if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE)) {
+  if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE) | grepl("pct",tableName,ignore.case=TRUE)) {
     print("avg in table name, do not sum for regional total")
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData,id="year",variable_name = "county")
