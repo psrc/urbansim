@@ -28,6 +28,7 @@ from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
+from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
 from opus_core.model import Model
 from opus_core import paths
 from shifters import price_shifters
@@ -94,6 +95,7 @@ class DeveloperModel(Model):
 
     parcel_set = dataset_pool.get_dataset('parcel')
     building_set = dataset_pool.get_dataset('building')
+    household_set = dataset_pool.get_dataset('household')
     node_set = dataset_pool.get_dataset('node')
     unit_set = dataset_pool.get_dataset('residential_unit')
     submarket = dataset_pool.get_dataset('submarket')
@@ -253,6 +255,10 @@ class DeveloperModel(Model):
     
         buildings_to_demolish = []
         idx_buildings_to_demolish = building_set.get_id_index(buildings_to_demolish)
+        
+        JAMM = JoinAttributeModificationModel()
+        JAMM.run(household_set, building_set, index=idx_buildings_to_demolish, value=-1)
+
         building_set.remove_elements(idx_buildings_to_demolish)
         column_names = ["parcel_id","county","building_type_id","stories",
                     "building_sqft","residential_sqft","non_residential_sqft",
