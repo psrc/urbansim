@@ -162,7 +162,7 @@ cached data: %s
         for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.*')):
             shutil.copy(f, output_dir)
 	else:
-		travel_model_for_R =="FALSE"
+		travel_model_for_R ="FALSE"
 		
     p = os.path.join(cache_directory, "mtc_data")
     if os.path.exists(p):
