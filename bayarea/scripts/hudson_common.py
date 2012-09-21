@@ -1,5 +1,6 @@
 import os, shutil
 from opus_core.logger import logger
+import socket
 
 class HudsonError(Exception):
     pass
@@ -18,7 +19,9 @@ def mount_cache_dir(run_resources):
     # directory via ssh if necessary.
     node_name = os.getenv("NODE_NAME")
     if not node_name:
-        raise HudsonError("NODE_NAME environment variable not set.  Are you running within hudson?")
+        node_name = socket.gethostname()
+        print "WARNING: NODE_NAME environment variable not set."
+        print "Assuming hudson node name equals hostname!"
     try:
         original_node = run_resources['hudson_details']['node']
         if not original_node:
@@ -54,3 +57,12 @@ def mount_cache_dir(run_resources):
             if (rc != 0):
                 raise IOError("Failed to '" + cmd + "'")
 
+def run_id_from_cache_dir(c):
+    try:
+        if c[-1] == os.sep:
+            options.cache_directory = options.cache_directory[0:-1]
+        run_id = c.split(os.sep)[-1].split('.')[0].split('_')[1]
+        return run_id
+    except:
+        print "Failed to parse run ID from cache directory name"
+        return None
