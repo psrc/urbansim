@@ -80,7 +80,7 @@ def main():
     # records into the db
     psql = os.path.join(os.path.split(__file__)[0], "process_building_to_sql.py")
     cmd = "%s %s %s %d" % (sys.executable, psql, cache_directory, id)
-    cmd += " | psql -q -U urbanvision bayarea > /dev/null"
+    cmd += " | psql -h paris.urbansim.org -q -U urbanvision bayarea > /dev/null"
     print "Exporting buildings to db: " + cmd
     if os.system("export PGPASSWORD=$OPUS_DBPASS; " + cmd) != 0:
         print "ERROR: Failed to export buildings to urbanvision DB"
