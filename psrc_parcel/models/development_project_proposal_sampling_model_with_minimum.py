@@ -33,6 +33,25 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
     1. Selecting one proposal within each parcel and building type, in order not to give too much advantage to parcels with a large amount of proposals. 
     2. Between parcel sampling - the same as the parent model.
     """
+    
+    def __init__(self, proposal_set,
+                 weight_string = "exp_roi=exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
+                 filter_attribute=None, **kwargs):
+        USDevelopmentProjectProposalSamplingModel.__init__(self, proposal_set, weight_string=weight_string, 
+                                                           filter_attribute=None, **kwargs)
+        self.proposal_set.id_eliminated_in_within_parcel_selection = 44
+        self.proposal_set.id_no_demand = 43
+        self.proposal_set.id_weights_zero = 41
+        self.proposal_set.id_filter_not_passed = 42
+        self.proposal_set['status_id'][where((self.weight == 0)*(self.proposal_set['status_id'] == self.proposal_set.id_tentative))] = self.proposal_set.id_weights_zero   
+
+        if filter_attribute is not None:
+            if VariableName(filter_attribute).get_alias() not in self.proposal_set.get_known_attribute_names():
+                self.proposal_set.compute_variables(filter_attribute)
+            self.proposal_set['status_id'][where((self.proposal_set[filter_attribute]==0)*(self.proposal_set['status_id'] == self.proposal_set.id_tentative))] = self.proposal_set.id_filter_not_passed
+            self.weight = self.weight * self.proposal_set.get_attribute(filter_attribute)
+
+    
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,
@@ -74,6 +93,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 
         self.accepted_proposals = []
         self.demolished_buildings = []  #id of buildings to be demolished
+
         if self.proposal_set.n <= 0:
             logger.log_status("The size of proposal_set is 0; no proposals to consider, skipping DPPSM.")
             return (self.proposal_set, self.demolished_buildings)
@@ -170,7 +190,9 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                     ) == self.proposal_set["number_of_components"])[0]
                 else:
                     comp_indexes = where(self.proposal_set["number_of_components"]==1)[0]
-                self.weight[intersect1d(proposal_indexes, comp_indexes)] = 0.0
+                target_reached_prop_idx = intersect1d(proposal_indexes, comp_indexes)
+                self.weight[target_reached_prop_idx] = 0.0
+                self.proposal_set["status_id"][intersect1d(target_reached_prop_idx, where(self.proposal_set["status_id"]==self.proposal_set.id_tentative)[0])] = self.proposal_set.id_no_demand
                 
         ## handle planned proposals: all proposals with status_id == is_planned 
         ## and start_year == year are accepted
@@ -180,7 +202,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
@@ -268,7 +290,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_weights = self.proposal_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
         else:
             within_parcel_weights = self.weight
-        self.proposal_set.id_eliminated_in_within_parcel_selection = 44
+        
         egligible = logical_and(self.weight > 0, 
                                 self.proposal_set['status_id'] == self.proposal_set.id_tentative)
         wegligible = where(egligible)[0]
