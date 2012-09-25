@@ -5,5 +5,4 @@
 aliases = [
     "ciacre_factor = safe_array_divide(alldata.aggregate_all(zone.ciacre_abag_2010), alldata.aggregate_all(bayarea.zone.ciacre_2010))",
     "resacre_factor = safe_array_divide(alldata.aggregate_all(zone.resacre_abag_2010), alldata.aggregate_all(bayarea.zone.resacre_2010))",
-	"is_open_space =((parcel.aggregate(building.total_sqft)==0) + (safe_array_divide(parcel.land_area,parcel.aggregate(building.total_sqft))>4))>0",
            ]
