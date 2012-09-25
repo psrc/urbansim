@@ -11,7 +11,7 @@ aliases = [
     "is_pda_x_county = (parcel.county_id * (parcel.pda_id > 0)).astype('i')" ,
     "is_tpp  =  (parcel.tpp_id > 0).astype('i')",
     "region_id = 9*ones_like(parcel.parcel_id)",
-	"is_open_space = ((parcel.aggregate(building.total_sqft)==0) + (safe_array_divide((0.000247105*parcel.shape_area),parcel.aggregate(0.000022956*building.building_sqft))>4))>0",
+	"is_open_space = ((parcel.aggregate(building.building_sqft)==0) + (safe_array_divide((0.000247105*parcel.shape_area),parcel.aggregate(0.000022956*building.building_sqft))>4))>0",
 
            ]
     
