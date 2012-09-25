@@ -1352,7 +1352,7 @@
         <common type="dictionary">
           <external_matsim_config type="dictionary">
           </external_matsim_config>
-          <matsim_network_file type="file">/data/zurich_kt_parcel/base_year_data/2000/matsim/network/network.multimodal-wu.xml.gz</matsim_network_file>
+          <matsim_network_file type="file">data/zurich_kt_parcel/base_year_data/2000/matsim/network/network.multimodal-wu.xml.gz</matsim_network_file>
           <last_iteration type="integer">100</last_iteration>
           <input_plans_file type="file"/>
           <hotstart_plans_file type="file"/>
