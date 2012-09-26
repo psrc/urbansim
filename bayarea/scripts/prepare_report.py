@@ -152,7 +152,7 @@ cached data: %s
     config = XMLConfiguration(options.xml_configuration).get_run_configuration(scenario)
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
     travel_model_for_R ="FALSE"
-    if travel_model.lower() = "full":
+    if travel_model.lower() == "full":
         print "Copying over travel model output"
         travel_model_for_R = "TRUE"
         tm_base_dir = mtc_common.tm_get_base_dir(config)
