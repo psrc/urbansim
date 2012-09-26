@@ -151,6 +151,7 @@ cached data: %s
     # add the travel model EMFAC output to the web report
     config = XMLConfiguration(options.xml_configuration).get_run_configuration(scenario)
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
+    travel_model_for_R ="FALSE"
     if travel_model.lower() = "full":
         print "Copying over travel model output"
         travel_model_for_R = "TRUE"
@@ -158,8 +159,6 @@ cached data: %s
         tm_dir = os.path.join(tm_base_dir, "runs", cache_directory.split(os.sep)[-1])
         for f in glob.glob(os.path.join(tm_dir, '*', 'emfac', 'output', 'EMFAC2011-SG Summary*Group 1.*')):
             shutil.copy(f, output_dir)
-	else:
-		travel_model_for_R ="FALSE"
 		
     p = os.path.join(cache_directory, "mtc_data")
     if os.path.exists(p):
