@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-args <- c('/home/aksel/Documents/Data/Urbansim/run_204/indicators','2010','2040','204',"FALSE","No_Project")
+#args <- c('/home/aksel/Documents/Data/Urbansim/runs/run_204/indicators','2010','2040','204',"FALSE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -136,7 +136,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
   
   ## transform appropriately for ease of use/ggplot
     df.m<-melt(dat, id="alldata_id.i8")
-    ptrn <- "([[:digit:]]{4})"  
+    ptrn <- "([0-9]{4})" #"^[^[:digit:]]*"  
     df.m[,2] <-as.integer(str_extract(df.m[,2],ptrn)) 
     df.m <- df.m[,c(2:4)]
     df.t <- as.data.frame(cast(df.m))
@@ -149,7 +149,7 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     lCounties <- c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma','ALL')
     countyPopRaw <- read.csv(countyPopPth,sep="\t")
     countyPop <- countyPopRaw[countyPopRaw[,1] %in% c(49,48,43,41,38,28,21,7,1),  ]
-    ptrn <- "([[:digit:]]{4})"  
+    #ptrn <- "([[:digit:]]{4})"  
     names(countyPop) <- c("county",str_extract(names(countyPop)[2:ncol(countyPop)],ptrn))
     countyPop <- rbind(countyPop,c("ALL",colSums(countyPop[,2:ncol(countyPop)])))
     countyPop[,1] <-factor(countyPop[,1], labels=lCounties)
