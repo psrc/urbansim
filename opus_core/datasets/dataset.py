@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import array, int32, dtype
-from numpy import arange
+from numpy import arange, zeros, ndarray
 from numpy import ma
 from opus_core.logger import logger
 from opus_core.datasets.abstract_dataset import AbstractDataset
@@ -403,6 +403,39 @@ class Dataset(AbstractDataset):
                 table_data=values_computed,
                 )
          
+    def write_to_text_file(self, filename, attributes='*', index=None, delimiter='\t'):
+        """ Write the set of attributes into an ascii file.
+        The set of values can be restricted by the given index. The resulting file has a form of a table
+        with rows corresponding to records, columns corresponding to attributes. 
+        This is a quick and dirty way to write out dataset values without going through the storage class. 
+        Only numerical columns are allowed.
+        """
+        from opus_core.misc import write_to_text_file, write_table_to_text_file
+        if attributes == '*':
+            attr_names = self.get_known_attribute_names()
+        elif isinstance(attributes, list) or isinstance(attributes, tuple):
+            attr_names = attributes
+        elif isinstance(attributes, ndarray):
+            attr_names = attributes.tolist()
+        elif attributes == AttributeType.COMPUTED:
+            attr_names = self.get_computed_attribute_names()
+        elif attributes == AttributeType.PRIMARY:
+            attr_names = self.get_primary_attribute_names()
+        elif isinstance(attributes, str):
+            attr_names = [attributes]
+        else:
+            raise TypeError, 'Wrong type of the argument "attributes". Array, list, tuple, "*", %s, and %s allowed.' % (AttributeType.PRIMARY, AttributeType.COMPUTED)
+
+        if index is None:
+            index = arange(self.size())
+        if isinstance(index, list) or isinstance(index, tuple):
+            index = array(index)
+        data = zeros((index.size, len(attr_names)))
+        for iattr in range(len(attr_names)):
+            data[:, iattr] = self[attr_names[iattr]][index]
+        write_to_text_file(filename, attr_names, delimiter=delimiter)
+        write_table_to_text_file(filename, data, mode="ab", delimiter=delimiter)
+        
     def copy_attribute_by_reload(self, name, storage=None, **kwargs):
         """Reloads (or recomputes) attribute 'name' from storage and connects it to self as 
             an additional attribute with the postfix '_reload__'. This can be useful 

@@ -146,7 +146,7 @@ class ModelExplorer(object):
         Works only for the ChoiceModel class.
         """
         index = self.get_choice_set_index()
-        return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
+        return take (index, indices=self.get_model().observations_mapping[submodel], axis=0)
     
     def get_active_choice_set(self, submodel=None):
         """Return choice set as seen by agents in the model.
@@ -176,7 +176,7 @@ class ModelExplorer(object):
         Works only for the ChoiceModel class.
         """
         model = self.get_model()
-        return model.observations_mapping[submodel]
+        return model.model_interaction.interaction_dataset.get_index(1)[model.observations_mapping[submodel]]
     
     def get_active_agent_set(self, submodel=None):
         """Return agent set that make choices in the model.

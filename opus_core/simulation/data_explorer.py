@@ -7,7 +7,6 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
-from opus_core.misc import write_to_text_file, write_table_to_text_file
 
 class DataExplorer(object):
     def __init__(self, cache_directory, storage_type='flt_storage', package_order=['opus_core']):
@@ -41,15 +40,7 @@ class DataExplorer(object):
         The set of values can be restricted by the given index. The resulting file has a form of a table
         with rows corresponding to records, columns corresponding to attributes.  
         """
-        if not isinstance(attributes, list):
-            attributes = [attributes]
-        if index is None:
-            index = arange(dataset.size())
-        data = zeros((index.size, len(attributes)))
-        for iattr in range(len(attributes)):
-            data[:, iattr] = dataset[attributes[iattr]][index]
-        write_to_text_file(filename, attributes, delimiter=delimiter)
-        write_table_to_text_file(filename, data, mode="ab", delimiter=delimiter)
+        dataset.write_to_text_file(filename, attributes, index=index, delimiter=delimiter)
         
     def run(self):
         logger.log_status('Exploring data in %s' % self.cache_directory)
