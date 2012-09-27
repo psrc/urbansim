@@ -5,6 +5,8 @@
     <project_name hidden="True" type="string">drcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="employment_submarket.ln_residential_units_in_zone" type="variable_definition">ln(employment_submarket.disaggregate(zone.aggregate(building.residential_units)))</variable>
+      <variable use="both" source="expression" name="employment_submarket.esbumarket_close_to_transit" type="variable_definition">employment_submarket.within_half_mile_transit==1</variable>
       <variable use="both" source="expression" name="submarket.ln_median_lot_sqft" type="variable_definition">ln(submarket.aggregate(building.disaggregate(parcel.parcel_sqft),function=median))</variable>
       <variable use="both" source="expression" name="submarket.median_household_size" type="variable_definition">submarket.aggregate(household.persons,function=median)</variable>
       <variable use="both" source="expression" name="submarket.ln_population_density_zone_submarket" type="variable_definition">ln(submarket.aggregate(building.disaggregate(parcel.disaggregate(43560*safe_array_divide(zone.aggregate(household.persons,intermediates=[building,parcel]), zone.aggregate(parcel.parcel_sqft)))),function=mean))</variable>
@@ -2714,180 +2716,210 @@
           <submodel hidden="Children" name="agri" submodel_id="11" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="mining" submodel_id="21" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="util" submodel_id="22" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="construction" submodel_id="23" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="manufacturing1" submodel_id="31" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="manufacturing2" submodel_id="32" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="manufacturing3" submodel_id="33" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="wholesale" submodel_id="42" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="retail1" submodel_id="44" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="retail2" submodel_id="45" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="transport" submodel_id="48" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="warehousing" submodel_id="49" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="information" submodel_id="51" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="finance" submodel_id="52" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="realestate" submodel_id="53" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="professional" submodel_id="54" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="management" submodel_id="55" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="administrative" submodel_id="56" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="education" submodel_id="61" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="healthcare" submodel_id="62" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="arts" submodel_id="71" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="otherservices" submodel_id="81" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="publicadmin" submodel_id="92" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food1" submodel_id="7211" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food2" submodel_id="7212" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food3" submodel_id="7213" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food4" submodel_id="7221" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food5" submodel_id="7222" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food6" submodel_id="7223" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food7" submodel_id="7224" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"/>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
@@ -2993,10 +3025,10 @@
           <submodel hidden="Children" name="mining" submodel_id="21" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.jobs21_mining_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"/>
-              <variable_spec name="employment_submarket.is_office_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="util" submodel_id="22" type="submodel">
@@ -3016,6 +3048,7 @@
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_construction_jobs_within_20_min_esubmarket"/>
               <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="manufacturing1" submodel_id="31" type="submodel">
@@ -3027,11 +3060,13 @@
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector31_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="manufacturing2" submodel_id="32" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_industrial_esubmarket"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
@@ -3048,15 +3083,18 @@
               <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector33_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="wholesale" submodel_id="42" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector42_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="retail1" submodel_id="44" type="submodel">
@@ -3067,6 +3105,7 @@
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_pop_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="retail2" submodel_id="45" type="submodel">
@@ -3086,6 +3125,7 @@
               <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector48_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="warehousing" submodel_id="49" type="submodel">
@@ -3094,6 +3134,7 @@
               <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector49_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="information" submodel_id="51" type="submodel">
@@ -3111,30 +3152,37 @@
               <variable_spec name="employment_submarket.jobs52_finance_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_jobs_within_15_min_auto_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="realestate" submodel_id="53" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector53_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="professional" submodel_id="54" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector54_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="management" submodel_id="55" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.ln_sector55_20_min_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="administrative" submodel_id="56" type="submodel">
@@ -3151,6 +3199,7 @@
               <variable_spec name="employment_submarket.is_school_esubmarket"/>
               <variable_spec name="employment_submarket.jobs61_edu_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="healthcare" submodel_id="62" type="submodel">
@@ -3169,6 +3218,7 @@
               <variable_spec name="employment_submarket.is_recreation_esubmarket"/>
               <variable_spec name="employment_submarket.jobs71_arts_entertain_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="otherservices" submodel_id="81" type="submodel">
@@ -3184,15 +3234,16 @@
           <submodel hidden="Children" name="publicadmin" submodel_id="92" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_government_esubmarket"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
-              <variable_spec name="employment_submarket.jobs92_pubadmin_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food1" submodel_id="7211" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_lodging_esubmarket"/>
               <variable_spec name="employment_submarket.jobs7211_afs1_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
@@ -3201,8 +3252,8 @@
           <submodel hidden="Children" name="accomodation_food2" submodel_id="7212" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
-              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               <variable_spec name="employment_submarket.is_office_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food3" submodel_id="7213" type="submodel">
@@ -3215,19 +3266,23 @@
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
               <variable_spec name="employment_submarket.allpurpose_agglosum"/>
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_restaurant_esubmarket"/>
               <variable_spec name="employment_submarket.jobs7221_afs4_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food5" submodel_id="7222" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
               <variable_spec name="employment_submarket.allpurpose_agglosum"/>
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"/>
               <variable_spec name="employment_submarket.is_restaurant_esubmarket"/>
               <variable_spec name="employment_submarket.is_retail_esubmarket"/>
               <variable_spec name="employment_submarket.jobs7222_afs5_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_pop_20_min_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food6" submodel_id="7223" type="submodel">
@@ -3236,6 +3291,7 @@
               <variable_spec name="employment_submarket.is_retail_esubmarket"/>
               <variable_spec name="employment_submarket.jobs7223_afs6_esubmarket"/>
               <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
+              <variable_spec name="employment_submarket.ln_pop_20_min_esubmarket"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="accomodation_food7" submodel_id="7224" type="submodel">
