@@ -31,6 +31,8 @@ class RealEstateTransitionModel(Model):
     
     def __init__(self, target_vancy_dataset=None, model_name=None, model_short_name=None):
         self.target_vancy_dataset = target_vancy_dataset
+        self.control_totals = None
+        self.employment_control_totals = None
         if model_name:
             self.model_name = model_name
         if model_short_name:
@@ -100,9 +102,9 @@ class RealEstateTransitionModel(Model):
         #log header
         if PrettyTable is not None:
             status_log = PrettyTable()
-            status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
+            status_log.set_field_names(column_names + ["actual", "target", "expected", "difference", "action"])
         else:
-            logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action"]))
+            logger.log_status("\t".join(column_names + ["actual", "target", "expected", "difference", "action"]))
         error_log = ''
         for index in range(target_vacancy_for_this_year.size()):
             this_sampled_index = array([], dtype=int32)
@@ -159,10 +161,30 @@ class RealEstateTransitionModel(Model):
             logger.talk()
             
             actual_num = (realestate_dataset.get_attribute(this_total_spaces_variable)).sum()
+            #target_num is obsolete with this version.
             target_num = int(round( (realestate_dataset.get_attribute(this_occupied_spaces_variable)).sum() /\
-                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]) 
-                            ))
-            diff = target_num - actual_num
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
+            '''If the target vacancy is very small and the inflow to the region big it is not enough to check
+            only the current simulation year's vacancy. The simulation is more robust if the BTM is anticipating the
+            next year's population (of households and jobs).
+            #TODO: Make code more general to cover various stratifications in the real estate market.
+            '''
+            if criterion[col] == 1:
+                idx = where(self.control_totals.get_attribute("year")==year + 1)[0]
+                this_years_control_totals = DatasetSubset(self.control_totals, idx)
+                expected_num = int(round( this_years_control_totals.get_attribute('total_number_of_households').sum() /\
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
+                diff = expected_num - actual_num
+            if criterion[col] == 0:
+                idx = where(self.employment_control_totals.get_attribute("year")==year + 1)[0]
+                next_years_control_totals = DatasetSubset(self.employment_control_totals, idx)
+                expected_num = int(round( next_years_control_totals.get_attribute('number_of_jobs').sum() /\
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
+                diff = expected_num - actual_num
+            
+            #Previous version which is checking the current years occupation.
+            #diff = target_num - actual_num
+            
             if diff > 0:
                 total_spaces_in_sample_dataset = sample_from_dataset.get_attribute(this_total_spaces_variable)
                 legit_index = where(logical_and(sample_indicator, filter_indicator) * total_spaces_in_sample_dataset > 0)[0]
@@ -188,7 +210,7 @@ class RealEstateTransitionModel(Model):
                 if diff > 0: action = "+" + str(action_num)
                 if diff < 0: action = "-" + str(action_num)
             cat = [ str(criterion[col]) for col in column_names]
-            cat += [str(actual_num), str(target_num), str(diff), action]
+            cat += [str(actual_num), str(target_num), str(expected_num), str(diff), action]
             
             if PrettyTable is not None:
                 status_log.add_row(cat)
@@ -238,6 +260,7 @@ class RealEstateTransitionModel(Model):
         return (result_dataset, index)
     
     def prepare_for_run(self, dataset_name=None, table_name=None, storage=None):
+        '''Load target vacancies table.'''
         if (storage is None) or ((table_name is None) and (dataset_name is None)):
             dataset_pool = SessionConfiguration().get_dataset_pool()
             dataset = dataset_pool.get_dataset( 'target_vacancy' )
@@ -255,9 +278,35 @@ class RealEstateTransitionModel(Model):
                                                       )
         if self.target_vancy_dataset is None:
             self.target_vancy_dataset = dataset
+        
+        '''Load household control totals table. Purpose: Anticipation of next year's household number.
+        '''
+        control_totals_dataset = DatasetFactory().search_for_dataset('control_totals',
+                                                      package_order=SessionConfiguration().package_order,
+                                                      arguments={'in_storage':storage, 
+                                                                 'in_table_name':'annual_household_control_totals',
+                                                                 'id_name':[]
+                                                                 }
+                                                      )
+        
+        if self.control_totals is None:
+            self.control_totals = control_totals_dataset
             
+        '''Load employment control totals table. Purpose: Anticipation of next year's employment number.
+        '''
+        employment_control_totals_dataset = DatasetFactory().search_for_dataset('control_totals',
+                                                      package_order=SessionConfiguration().package_order,
+                                                      arguments={'in_storage':storage, 
+                                                                 'in_table_name':'annual_employment_control_totals',
+                                                                 'id_name':[]
+                                                                 }
+                                                      )
+        
+        if self.employment_control_totals is None:
+            self.employment_control_totals = employment_control_totals_dataset
+          
         return dataset
-    
+        
     def post_run(self, *args, **kwargs):
         """ To be implemented in child class for additional function, like synchronizing persons with households table
         """
