@@ -26,15 +26,13 @@ class GovEdJobsModel(Model):
 
         zone_pop = zone_set.compute_variables('_zone_pop = zone.aggregate(household.persons,intermediates=[building,parcel])')
 
-        #county_pop = zone_set.compute_variables('_county_pop = zone.aggregate(parcel.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])),function=median)')
+        county_pop = zone_set.compute_variables('_county_pop = zone.aggregate(parcel.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])),function=median)')
         
-        county_pop = zone_set.compute_variables('_county_pop = zone.disaggregate(zone_gov_ed_job.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])))')
-        
-        zone_set.add_primary_attribute(name='county_pop', data=county_pop)
+        #zone_set.add_primary_attribute(name='county_pop', data=county_pop)
 
         regional_pop = zone_set.compute_variables('_regional_pop = zone.disaggregate(alldata.aggregate_all(household.persons))')
         
-        zone_set.add_primary_attribute(name='regional_pop', data=regional_pop)
+        #zone_set.add_primary_attribute(name='regional_pop', data=regional_pop)
 
         local_gov_jobs = zone_set.compute_variables('_local_gov_jobs = zone._zone_pop * zone.disaggregate(zone_gov_ed_job.local_gov)')
 
@@ -42,11 +40,11 @@ class GovEdJobsModel(Model):
 
         county_gov_jobs = zone_set.compute_variables('_county_gov_jobs = zone._county_pop * zone.disaggregate(zone_gov_ed_job.county_gov)')
         
-        county_gov_job_coeff = zone_set.compute_variables('_county_gov_job_coeff = zone.disaggregate(zone_gov_ed_job.county_gov)')
+        #county_gov_job_coeff = zone_set.compute_variables('_county_gov_job_coeff = zone.disaggregate(zone_gov_ed_job.county_gov)')
         
-        zone_set.add_primary_attribute(name='county_gov_jobs', data=county_gov_jobs)
+        #zone_set.add_primary_attribute(name='county_gov_jobs', data=county_gov_jobs)
         
-        zone_set.add_primary_attribute(name='county_gov_job_coeff', data=county_gov_job_coeff)
+        #zone_set.add_primary_attribute(name='county_gov_job_coeff', data=county_gov_job_coeff)
 
         state_gov_jobs = zone_set.compute_variables('_state_gov_jobs = zone._regional_pop * zone.disaggregate(zone_gov_ed_job.state_gov)')
 
