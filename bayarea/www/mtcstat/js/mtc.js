@@ -104,18 +104,22 @@ function addBuild(build) {
 	console.log("It appears that " + build.number + " is an older build for run " + build.urbansimNumber);
 	return;
   }
-  title = '<a href="#">Run #' + build.urbansimNumber + ': ' +
+  title = '<a href="#">UrbanSim Run #' + build.urbansimNumber + ': ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
-	'<span>' + build.HUDSON_SCENARIO + '</span>' +
-	'<span id="status"> ' + build.status + '</span></a>';
+	'<span>' + build.HUDSON_SCENARIO + '</span>' + ' | ' + 
+	'<span id="status"> ' + build.status + '</span>' + ' | ' +
+        '<span>' + build.id + '</span> </a>';
   build.reportURL = reportURL + '/' + build.HUDSON_SCENARIO + '/run_' + build.urbansimNumber;
   if (typeof build.HUDSON_SCENARIO == "undefined" || build.HUDSON_COMMENT == "")
     build.HUDSON_COMMENT = "(no description available)";
-  body = '<p>' + build.HUDSON_COMMENT + '</p>' +
+  body = 
     '<ul>' +
-    '<li>Travel Model: ' + build.HUDSON_TRAVEL_MODEL + '</li>' +
-    '<li>Go to the <a href="' + build.url + 'console">hudson page</a></li>' +
-    '<li>Go to the <a href="' + build.reportURL + '">report page</a></li>';
+    '<li><b>Travel Model:</b> ' + build.HUDSON_TRAVEL_MODEL + '</li>' +
+    '<li><b>Go to the </b> <a href="' + build.url + 'console">hudson page</a></li>' +
+    '<li><b>Go to the </b> <a href="' + build.reportURL + '">report page</a></li>' +
+    '<li><b>Comment:</b> ' + build.HUDSON_COMMENT + '<li>' +
+    '<li><b>Post-Run Analysis:</b> ' + build.description + '<li>';
+
   html = '<h3>' + title + '</h3><div>' + body + '</div>';
   if (e.length != 0) {
 	$('#run' + build.urbansimNumber).html(html);
