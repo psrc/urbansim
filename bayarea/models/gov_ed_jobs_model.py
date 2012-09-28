@@ -39,6 +39,12 @@ class GovEdJobsModel(Model):
         local_ed_k12_jobs = zone_set.compute_variables('_ed_k12 = zone._zone_pop * zone.disaggregate(zone_gov_ed_job.ed_k12)')
 
         county_gov_jobs = zone_set.compute_variables('_county_gov_jobs = zone._county_pop * zone.disaggregate(zone_gov_ed_job.county_gov)')
+        
+        county_gov_job_coeff = zone_set.compute_variables('_county_gov_job_coeff = zone.disaggregate(zone_gov_ed_job.county_gov)')
+        
+        zone_set.add_primary_attribute(name='county_gov_jobs', data=county_gov_jobs)
+        
+        zone_set.add_primary_attribute(name='county_gov_job_coeff', data=county_gov_job_coeff)
 
         state_gov_jobs = zone_set.compute_variables('_state_gov_jobs = zone._regional_pop * zone.disaggregate(zone_gov_ed_job.state_gov)')
 
