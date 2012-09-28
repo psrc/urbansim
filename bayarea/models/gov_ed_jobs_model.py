@@ -26,7 +26,9 @@ class GovEdJobsModel(Model):
 
         zone_pop = zone_set.compute_variables('_zone_pop = zone.aggregate(household.persons,intermediates=[building,parcel])')
 
-        county_pop = zone_set.compute_variables('_county_pop = zone.aggregate(parcel.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])),function=median)')
+        #county_pop = zone_set.compute_variables('_county_pop = zone.aggregate(parcel.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])),function=median)')
+        
+        county_pop = zone_set.compute_variables('_county_pop = zone.disaggregate(zone_gov_ed_job.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])))')
         
         zone_set.add_primary_attribute(name='county_pop', data=county_pop)
 
