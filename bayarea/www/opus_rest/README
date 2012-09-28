@@ -1,0 +1,23 @@
+Introduction
+============
+
+We run the bayarea model on many different model servers in parallel using
+hudson.  Hudson offeres a convenient web interface and REST API for viewing all
+of the state of all of the runs, but it has some limitations.  In particular,
+hudson does not have access to urbansim internals.  So hudson can't report
+things about the run configuration including run numbers and cache directories.
+So we're augmenting the hudson REST API with this django app.  This alows a
+client to get run state from the services DB.  This, in turn, allows us to
+enrich our mtcstat front-end with more useful run data.
+
+Setup
+=====
+
+-- Configure and create a mysql services db for your urbansim runs
+   [more to come]
+
+-- Create a read-only user in your mysql services db
+
+   mysql> CREATE USER opus_rest_ro;
+   mysql> SET PASSWORD FOR opus_rest_ro = PASSWORD ('******');
+   mysql> GRANT SELECT ON services.* TO opus_rest_ro;
