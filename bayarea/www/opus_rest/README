@@ -13,6 +13,14 @@ enrich our mtcstat front-end with more useful run data.
 Setup
 =====
 
+Here I describe how to set up the full deploy environment.  If you only need a
+development environment, you can probably get away with something simpler.  And
+if you're using a different environment than me, you can probably adapt these
+instructions to work for you.
+
+-- Install required packages.  Here's how on Ubuntu:
+   $ sudo apt-get install python-django apache2 libapache2-mod-wsgi
+
 -- Configure and create a mysql services db for your urbansim runs
    [more to come]
 
@@ -21,3 +29,24 @@ Setup
    mysql> CREATE USER opus_rest_ro;
    mysql> SET PASSWORD FOR opus_rest_ro = PASSWORD ('******');
    mysql> GRANT SELECT ON services.* TO opus_rest_ro;
+
+-- Add the following to your httpd.conf and reload apache:
+
+<Directory /var/www/opus>
+Order deny,allow
+Allow from all
+</Directory>
+WSGIScriptAlias /opus /var/www/opus/opus_rest/opus_rest.wsgi
+
+-- Make the deploy directory
+
+   $ mkdir -p /var/www/opus
+
+-- Deploy the required files.  Note that we actually depend on some pieces of
+   opus_core and urbansim for parsing configurations.  In these instructions we
+   just plop in the entire thing, even though we could probably be lighter
+   weight.
+
+   $ scp -r /path/to/src/root/opus_core yourserver.org:/var/www/opus/
+   $ scp -r /path/to/src/root/bayarea/www/opus_rest yourserver.org:/var/www/opus/
+   $ scp -r /path/to/src/root/urbansim yourserver.org:/var/www/opus/
