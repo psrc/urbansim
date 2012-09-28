@@ -26,17 +26,21 @@ class GovEdJobsModel(Model):
 
         zone_pop = zone_set.compute_variables('_zone_pop = zone.aggregate(household.persons,intermediates=[building,parcel])')
 
+        county_pop = zone_set.compute_variables('_county_pop = zone.aggregate(parcel.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel])),function=median)')
+
+        regional_pop = zone_set.compute_variables('_regional_pop = zone.disaggregate(alldata.aggregate_all(household.persons))')
+
         local_gov_jobs = zone_set.compute_variables('_local_gov_jobs = zone._zone_pop * zone.disaggregate(zone_gov_ed_job.local_gov)')
 
         local_ed_k12_jobs = zone_set.compute_variables('_ed_k12 = zone._zone_pop * zone.disaggregate(zone_gov_ed_job.ed_k12)')
 
-        county_gov_jobs = zone_set.compute_variables('_county_gov_jobs = zone.disaggregate(zone_gov_ed_job.disaggregate(county.aggregate(household.persons,intermediates=[building,parcel]))) * zone.disaggregate(zone_gov_ed_job.county_gov)')
+        county_gov_jobs = zone_set.compute_variables('_county_gov_jobs = zone._county_pop * zone.disaggregate(zone_gov_ed_job.county_gov)')
 
-        state_gov_jobs = zone_set.compute_variables('_state_gov_jobs = zone.disaggregate(alldata.aggregate_all(household.persons)) * zone.disaggregate(zone_gov_ed_job.state_gov)')
+        state_gov_jobs = zone_set.compute_variables('_state_gov_jobs = zone._regional_pop * zone.disaggregate(zone_gov_ed_job.state_gov)')
 
-        fed_gov_jobs = zone_set.compute_variables('_fed_gov_jobs = zone.disaggregate(alldata.aggregate_all(household.persons)) * zone.disaggregate(zone_gov_ed_job.fed_gov)')
+        fed_gov_jobs = zone_set.compute_variables('_fed_gov_jobs = zone._regional_pop * zone.disaggregate(zone_gov_ed_job.fed_gov)')
 
-        ed_high_jobs = zone_set.compute_variables('_ed_high_jobs = zone.disaggregate(alldata.aggregate_all(household.persons)) * zone.disaggregate(zone_gov_ed_job.ed_high)')
+        ed_high_jobs = zone_set.compute_variables('_ed_high_jobs = zone._regional_pop * zone.disaggregate(zone_gov_ed_job.ed_high)')
         
         gov_jobs =  zone_set.compute_variables('_gov_jobs = _local_gov_jobs + _county_gov_jobs + _state_gov_jobs + _fed_gov_jobs')
         
