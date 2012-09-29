@@ -3,6 +3,7 @@ from rest.models import RunActivity
 import simplejson as json
 from django.shortcuts import get_object_or_404
 import zlib, pickle
+from django.conf import settings
 
 def run_to_dict(r):
     d = {
@@ -25,18 +26,21 @@ def run_to_dict(r):
         c = pickle.loads(str(r.resources))
 
     # we have to be careful only to add serializable elements to the dictionary
-    print c.keys()
     for k in ['project_name', 'hudson_details', 'models', 'years', 'base_year',
               'models_configuration', 'travel_model_configuration', 'models_in_year']:
         d[k] = c[k]
     return d
 
+def add_headers(r):
+    r['Access-Control-Allow-Origin']  = settings.XS_SHARING_ALLOWED_ORIGINS
+    return r
+
 def index(request):
     recent_runs = RunActivity.objects.all().order_by('-date_time')
     recent_run_jsons = map(run_to_dict, recent_runs)
-    return HttpResponse(json.dumps(recent_run_jsons), mimetype="application/json")
+    return add_headers(HttpResponse(json.dumps(recent_run_jsons), mimetype="application/json"))
 
 def run(request, run_id):
     r = get_object_or_404(RunActivity, pk=run_id)
     j = run_to_dict(r)
-    return HttpResponse(json.dumps(j), mimetype="application/json")
+    return add_headers(HttpResponse(json.dumps(j), mimetype="application/json"))

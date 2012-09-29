@@ -1,6 +1,7 @@
 
 hudsonURL = 'http://paris.urbansim.org:8080/hudson/job/MTC_Model';
 reportURL = 'http://paris.urbansim.org/MTC_Model';
+opusRestURL = 'http://paris.urbansim.org/opus/rest';
 
 function sortBuilds(sortFunction) {
   var mylist = $('#builds');
@@ -77,6 +78,27 @@ function getBuildNumber(buildURL, callback) {
   xmlhttp.send(null);
 }
 
+// get urbansim run data.  Note that this data comes from opus_rest, not from
+// hudson.  Accordingly, it has much more information on the run, including
+// whatever is available in the configuration resources.  Note that we call the
+// callback on success or failure because opus_rest is under development and
+// may occasionally fail.  Anyway, callbacks should check for possible null
+// response.
+function getUrbansimRun(runURL, callback) {
+  $.ajax({
+    url: runURL,
+    dataType: 'json',
+    data: null,
+    success: function (run) {
+      callback(run);
+    },
+    error: function () {
+      console.log("Failed to fetch opus run from " + runURL);
+      callback(null);
+    }
+  });
+}
+
 function getBuild(buildURL, callback) {
   getBuildNumber(buildURL, function (urbansimNumber) {
     url = buildURL + '/api/json';
@@ -89,9 +111,16 @@ function getBuild(buildURL, callback) {
 		  build[val.name] = val.value;
 		});
 	  });
-	  callback(build);
+      getUrbansimRun(opusRestURL + '/' + urbansimNumber + '/', function (run) {
+        build.urbansimRun = run;
+	    callback(build);
+      });
     });
   });
+}
+
+function escapeHTML(t) {
+  return $('<div/>').text(t).html();
 }
 
 function addBuild(build) {
@@ -112,13 +141,19 @@ function addBuild(build) {
   build.reportURL = reportURL + '/' + build.HUDSON_SCENARIO + '/run_' + build.urbansimNumber;
   if (typeof build.HUDSON_SCENARIO == "undefined" || build.HUDSON_COMMENT == "")
     build.HUDSON_COMMENT = "(no description available)";
+
+  dataLocation = "&lt;unavailable&gt;";
+  if (build.urbansimRun)
+    dataLocation = build.urbansimRun.hudson_details.node + ':' + build.urbansimRun.cache_directory;
+
   body = 
     '<ul>' +
     '<li><b>Travel Model:</b> ' + build.HUDSON_TRAVEL_MODEL + '</li>' +
     '<li><b>Go to the </b> <a href="' + build.url + 'console">hudson page</a></li>' +
     '<li><b>Go to the </b> <a href="' + build.reportURL + '">report page</a></li>' +
-    '<li><b>Comment:</b> ' + build.HUDSON_COMMENT + '<li>' +
-    '<li><b>Post-Run Analysis:</b> ' + build.description + '<li>';
+    '<li><b>Comment:</b> ' + escapeHTML(build.HUDSON_COMMENT) + '<li>' +
+    '<li><b>Post-Run Analysis:</b> ' + escapeHTML(build.description) + '<li>' +
+    '<li><b>Data location:</b> ' + dataLocation;
 
   html = '<h3>' + title + '</h3><div>' + body + '</div>';
   if (e.length != 0) {

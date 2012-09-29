@@ -149,3 +149,8 @@ LOGGING = {
         },
     }
 }
+
+# Here we set the cross-site scripting policy.  Because opus_rest is used by
+# clients that may be hosted on other machines or ports, we must support some
+# level of cross-site scripting.
+XS_SHARING_ALLOWED_ORIGINS = "*"
