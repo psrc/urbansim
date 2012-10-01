@@ -1,0 +1,274 @@
+#!/usr/bin/python
+import optparse
+import textwrap
+import os, sys
+import getpass
+
+HUDSON_OPUS_HOME = '/var/hudson/workspace/MTC_Model'
+HUDSON_PROJECT = 'bay_area_parcel'
+HUDSON_RUN_DIR = HUDSON_OPUS_HOME + '/data/' + HUDSON_PROJECT + '/runs'
+OPUS_REST_URL = 'http://paris.urbansim.org/opus/rest'
+HUDSON_DOMAIN = 'cusp.berkeley.edu'
+
+# NOTE: subcommand support borrowed from https://gist.github.com/462717
+class Subcommand(object):
+    """A subcommand of a root command-line application that may be
+    invoked by a SubcommandOptionParser.
+    """
+    def __init__(self, name, parser=None, help='', aliases=()):
+        """Creates a new subcommand. name is the primary way to invoke
+        the subcommand; aliases are alternate names. parser is an
+        OptionParser responsible for parsing the subcommand's options.
+        help is a short description of the command. If no parser is
+        given, it defaults to a new, empty OptionParser.
+        """
+        self.name = name
+        self.parser = parser or optparse.OptionParser()
+        self.aliases = aliases
+        self.help = help
+
+class SubcommandsOptionParser(optparse.OptionParser):
+    """A variant of OptionParser that parses subcommands and their
+    arguments.
+    """
+
+    # A singleton command used to give help on other subcommands.
+    _HelpSubcommand = Subcommand('help', optparse.OptionParser(),
+        help='give detailed help on a specific sub-command',
+        aliases=('?',))
+
+    def __init__(self, *args, **kwargs):
+        """Create a new subcommand-aware option parser. All of the
+        options to OptionParser.__init__ are supported in addition
+        to subcommands, a sequence of Subcommand objects.
+        """
+        # The subcommand array, with the help command included.
+        self.subcommands = list(kwargs.pop('subcommands', []))
+        self.subcommands.append(self._HelpSubcommand)
+
+        # A more helpful default usage.
+        if 'usage' not in kwargs:
+            kwargs['usage'] = """
+  %prog [global options] COMMAND [ARGS...]
+  %prog help COMMAND"""
+
+        # Super constructor.
+        optparse.OptionParser.__init__(self, *args, **kwargs)
+
+        # Adjust the help-visible name of each subcommand.
+        for subcommand in self.subcommands:
+            subcommand.parser.prog = '%s %s' % \
+                    (self.get_prog_name(), subcommand.name)
+
+        # Our root parser needs to stop on the first unrecognized argument.
+        self.disable_interspersed_args()
+
+    def add_subcommand(self, cmd):
+        """Adds a Subcommand object to the parser's list of commands.
+        """
+        self.subcommands.append(cmd)
+
+    # Add the list of subcommands to the help message.
+    def format_help(self, formatter=None):
+        # Get the original help message, to which we will append.
+        out = optparse.OptionParser.format_help(self, formatter)
+        if formatter is None:
+            formatter = self.formatter
+
+        # Subcommands header.
+        result = ["\n"]
+        result.append(formatter.format_heading('Commands'))
+        formatter.indent()
+
+        # Generate the display names (including aliases).
+        # Also determine the help position.
+        disp_names = []
+        help_position = 0
+        for subcommand in self.subcommands:
+            name = subcommand.name
+            if subcommand.aliases:
+                name += ' (%s)' % ', '.join(subcommand.aliases)
+            disp_names.append(name)
+
+            # Set the help position based on the max width.
+            proposed_help_position = len(name) + formatter.current_indent + 2
+            if proposed_help_position <= formatter.max_help_position:
+                help_position = max(help_position, proposed_help_position)
+
+        # Add each subcommand to the output.
+        for subcommand, name in zip(self.subcommands, disp_names):
+            # Lifted directly from optparse.py.
+            name_width = help_position - formatter.current_indent - 2
+            if len(name) > name_width:
+                name = "%*s%s\n" % (formatter.current_indent, "", name)
+                indent_first = help_position
+            else:
+                name = "%*s%-*s  " % (formatter.current_indent, "",
+                                      name_width, name)
+                indent_first = 0
+            result.append(name)
+            help_width = formatter.width - help_position
+            help_lines = textwrap.wrap(subcommand.help, help_width)
+            result.append("%*s%s\n" % (indent_first, "", help_lines[0]))
+            result.extend(["%*s%s\n" % (help_position, "", line)
+                           for line in help_lines[1:]])
+        formatter.dedent()
+
+        # Concatenate the original help message with the subcommand
+        # list.
+        return out + "".join(result)
+
+    def _subcommand_for_name(self, name):
+        """Return the subcommand in self.subcommands matching the
+        given name. The name may either be the name of a subcommand or
+        an alias. If no subcommand matches, returns None.
+        """
+        for subcommand in self.subcommands:
+            if name == subcommand.name or \
+               name in subcommand.aliases:
+                return subcommand
+        return None
+
+    def parse_args(self, a=None, v=None):
+        """Like OptionParser.parse_args, but returns these four items:
+        - options: the options passed to the root parser
+        - subcommand: the Subcommand object that was invoked
+        - suboptions: the options passed to the subcommand parser
+        - subargs: the positional arguments passed to the subcommand
+        """
+        options, args = optparse.OptionParser.parse_args(self, a, v)
+
+        if not args:
+            # No command given.
+            self.print_help()
+            self.exit()
+        else:
+            cmdname = args.pop(0)
+            subcommand = self._subcommand_for_name(cmdname)
+            if not subcommand:
+                self.error('unknown command ' + cmdname)
+
+        suboptions, subargs = subcommand.parser.parse_args(args)
+
+        if subcommand is self._HelpSubcommand:
+            if subargs:
+                # particular
+                cmdname = subargs[0]
+                helpcommand = self._subcommand_for_name(cmdname)
+                helpcommand.parser.print_help()
+                self.exit()
+            else:
+                # general
+                self.print_help()
+                self.exit()
+
+        return options, subcommand, suboptions, subargs
+
+if __name__ == '__main__':
+    # Support the mount command
+    mount_cmd = Subcommand('mount',
+                           optparse.OptionParser(usage='%prog [OPTIONS] run_id1 [run_id2] ...'),
+                           'mount the specified run directory')
+    mount_cmd.parser.add_option('-d', '--directory', dest='dir',
+        help='''
+        Mount point for the run directory.  This defaults to the run
+        directory in hudson\'s $OPUS_HOME, which is ''' + HUDSON_RUN_DIR +
+        '/run_<run_id>_<timestamp>',
+        action='store', default=HUDSON_RUN_DIR)
+
+    mount_cmd.parser.add_option('-u', '--user', dest='user',
+        help='''
+        The username you use on the remote machines.  This defaults to your
+        current username''',
+        action='store', default=getpass.getuser())
+
+    umount_cmd = Subcommand('umount',
+                            optparse.OptionParser(usage='%prog [dir]'),
+                            'unmount all of the run directories in the specified dir.  ' +
+                            'If no directory is specified, ' + HUDSON_RUN_DIR + ' is assumed')
+
+    # Set up the global parser and its options.
+    parser = SubcommandsOptionParser(
+        subcommands = [mount_cmd, umount_cmd]
+    )
+    parser.add_option('-o', '--opus_home', dest='opus_home',
+                      help='hudson\'s opus home directory.  Defaults to ' +
+                      HUDSON_OPUS_HOME)
+
+    # Parse the global options and the subcommand options.
+    options, subcommand, suboptions, subargs = parser.parse_args()
+
+    if subcommand is mount_cmd:
+        import urllib2, json, socket
+        if not subargs:
+            subcommand.parser.error('specify the run_ids of the runs to mount')
+            sys.exit(1)
+
+        if not os.path.exists(suboptions.dir):
+            subcommand.parser.error('The mount point ' + suboptions.dir +
+                                    ' does not exist.  Please specify an ' +
+                                    'alternative mount point with the -d option.')
+
+        # We do not want to realy on OPUS_HOME being set here, so we can't rely
+        # on the run manager or a direct connection to the services db.
+        # Instead we rely on opus rest
+        for r in subargs:
+            try:
+                f = urllib2.urlopen(OPUS_REST_URL + '/' + r)
+            except urllib2.HTTPError as e:
+                if e.code == 404:
+                    print 'Run ' + r + ' does not appear to exist'
+                elif e.code >= 500:
+                    print 'Yikes!  The opus rest server failed for some reason!'
+                sys.exit(1)
+
+            j = json.loads(f.read())
+            cache_directory = j['cache_directory']
+            host = j['hudson_details']['node']
+            local_run = os.path.split(cache_directory)[1]
+            mount_point = os.path.abspath(suboptions.dir) + '/' + local_run
+            my_host = socket.gethostname()
+            if my_host == host and cache_directory == mount_point:
+                # In this case, we're operating on the same host that owns the
+                # directory, and the user wishes to access the directory in its
+                # native place.  So don't remount it.
+                print 'run ' + r + ' is available at ' + mount_point
+                continue
+
+            # make sure we can get to the host
+            try:
+                socket.gethostbyname(host)
+            except socket.gaierror:
+                try:
+                    host = host + '.' + HUDSON_DOMAIN
+                    socket.gethostbyname(host)
+                except socket.gaierror:
+                    print 'Can\'t find host ' + host
+                    sys.exit(1)
+
+            cmd = 'fusermount -u ' + mount_point + ' > /dev/null 2>&1'
+            rc = os.system(cmd)
+            if not os.path.exists(mount_point):
+                os.makedirs(mount_point)
+            cmd = 'sshfs ' + suboptions.user + '@' + host + ':' + cache_directory + ' ' + mount_point
+            rc = os.system(cmd)
+            if (rc != 0):
+                print "Failed to '" + cmd + "'"
+                sys.exit(1)
+            print 'mounted run ' + r + ' in ' + mount_point
+
+    elif subcommand is umount_cmd:
+        if not subargs:
+            subargs = [HUDSON_RUN_DIR]
+        for d in subargs:
+            mount_points = []
+            for name in os.listdir(d):
+                m = os.path.join(d, name)
+                if os.path.isdir(m):
+                    mount_points.append(m)
+            for m in mount_points:
+                print "unmounting " + m
+                cmd = 'fusermount -u ' + m + ' > /dev/null'
+                rc = os.system(cmd)
+                if (rc == 0):
+                    os.rmdir(m)
