@@ -104,9 +104,7 @@ cached data: %s
 
     # prepare the indicators
     shutil.rmtree(os.path.join(output_dir, "indicators"), True)
-    for indicator_batch in ["regional_indicators", "county_indicators",
-                            "diagnostic_indicators", "zone_data",
-                            "superdistrict_indicators", "abag_eir_area_permutation"]:
+    for indicator_batch in ["county_indicators", "zone_data", "superdistrict_indicators"]:
         urbansim.tools.make_indicators.run(options.xml_configuration,
                                            indicator_batch,
                                            None,
@@ -138,15 +136,6 @@ cached data: %s
     shutil.copytree(os.path.join(cache_directory, "indicators"),
                     os.path.join(output_dir, "indicators"),
                     ignore=shutil.ignore_patterns("*_stored_data*", "*.log"))
-
-    # prepare zonal indicator maps
-    map_script = os.path.join(my_location, "map_indicators.R")
-    cmd = "Rscript %s %s %s %s" % (map_script,
-                                   os.path.join(cache_directory, "indicators"),
-                                   os.path.join(output_dir, "maps"),
-                                   shp_path)
-    if os.system(cmd) != 0:
-        print "WARNING: Failed to generate county indicators"
 
     # add the travel model EMFAC output to the web report
     config = XMLConfiguration(options.xml_configuration).get_run_configuration(scenario)
