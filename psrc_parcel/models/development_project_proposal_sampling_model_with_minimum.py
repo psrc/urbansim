@@ -300,21 +300,21 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         #min_type = {}
         #egligible_proposals = {}
         tobechosen_ind = ones(wegligible.size).astype('bool8')
-        if compete_among_types:
+        if not compete_among_types:
             for key in self.column_names:
-                mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
-                                            index=self.proposal_set.get_id_attribute())
-                if isinstance(mean_type, list):
-                    mean_type = array(mean_type)
-                    #min_type[key] = ndimage_min(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
-                    #                                index=self.proposal_set['proposal_id'])
-#                max_type = ndimage_max(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
-#                                            index=self.proposal_set['proposal_id'])
-#                egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
-                utypes = unique(mean_type[wegligible])
-            
+                utypes_all = unique(self.proposal_component_set[key])
+                categories = zeros(self.proposal_set.size(), dtype='int32')
+                for btype in utypes_all:
+                    w = where(ndimage.sum(self.proposal_component_set[key] == btype,
+                                          labels=self.proposal_component_set['proposal_id'], 
+                                          index=self.proposal_set.get_id_attribute()
+                                          ) == self.proposal_set["number_of_components"])[0]
+                    categories[w] = btype
+                # categories equal zero means mix-used type with components of different type
+
+                utypes = unique(categories[wegligible])           
                 for value in utypes:
-                    mean_type_is_value_ind = mean_type[wegligible]==value
+                    mean_type_is_value_ind = categories[wegligible]==value
                     for i in range(nmax):
                         parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
                         if parcels_with_proposals.size <= 0:
