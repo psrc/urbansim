@@ -208,7 +208,7 @@ class DeveloperModel(Model):
         prof.start()
 
     outf = open(os.path.join(cache_dir,'buildings-%d.csv' % current_year),'w')
-    outf.write('pid,county,btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units\n')
+    outf.write('pid,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,btype\n')
     debugf = open(os.path.join(cache_dir,'proforma-debug-%d.csv' % current_year),'w')
     debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind\n')
     t1 = time.time()
@@ -249,7 +249,8 @@ class DeveloperModel(Model):
             results = results_bldg
         for result in results:
             #print result
-            outf.write(string.join([str(x) for x in result],sep=',')+'\n')
+            out_btype = devmdltypes[int(result[2])-1]
+            outf.write(string.join([str(x) for x in result]+[str(out_btype)],sep=',')+'\n')
 
         ##TODO: id of buildings to be demolished
     
