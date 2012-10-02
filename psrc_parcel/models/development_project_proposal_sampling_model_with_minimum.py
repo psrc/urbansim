@@ -314,17 +314,17 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 
                 utypes = unique(categories[wegligible])           
                 for value in utypes:
-                    mean_type_is_value_ind = categories[wegligible]==value
+                    type_is_value_ind = categories[wegligible]==value
                     for i in range(nmax):
-                        parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
+                        parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(type_is_value_ind)])).astype(int32)
                         if parcels_with_proposals.size <= 0:
                             continue
-                        labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
+                        labels = (self.proposal_set['parcel_id'][wegligible])*type_is_value_ind               
                         chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                             labels=labels, 
                                             index=parcels_with_proposals)).flatten().astype(int32)               
                         egligible[wegligible[chosen_prop]] = False
-                        mean_type_is_value_ind[chosen_prop] = False
+                        type_is_value_ind[chosen_prop] = False
         else:
             incompetition = ones(wegligible.size, dtype='bool8')                
             for i in range(nmax):
