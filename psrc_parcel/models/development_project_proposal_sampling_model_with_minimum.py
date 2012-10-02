@@ -60,6 +60,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             minimum_spaces_attribute="minimum_spaces",
             within_parcel_selection_weight_string=None,
             within_parcel_selection_n=0,
+            within_parcel_selection_compete_among_types=False,
             run_config=None,
             debuglevel=0):
         """
@@ -202,12 +203,13 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
             logger.start_block("Selecting proposals within parcels (%s proposals per parcel)" % within_parcel_selection_n)
-            self.select_proposals_within_parcels(nmax=within_parcel_selection_n, weight_string=within_parcel_selection_weight_string)
+            self.select_proposals_within_parcels(nmax=within_parcel_selection_n, weight_string=within_parcel_selection_weight_string,
+                                                 compete_among_types=within_parcel_selection_compete_among_types)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -281,7 +283,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
 
-    def select_proposals_within_parcels(self, nmax=2, weight_string=None):
+    def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
@@ -298,30 +300,41 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         #min_type = {}
         #egligible_proposals = {}
         tobechosen_ind = ones(wegligible.size).astype('bool8')
-        for key in self.column_names:
-            mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+        if compete_among_types:
+            for key in self.column_names:
+                mean_type = ndimage_mean(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
                                             index=self.proposal_set.get_id_attribute())
-            if isinstance(mean_type, list):
-                mean_type = array(mean_type)
-            #min_type[key] = ndimage_min(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
-            #                                index=self.proposal_set['proposal_id'])
-#            max_type = ndimage_max(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+                if isinstance(mean_type, list):
+                    mean_type = array(mean_type)
+                    #min_type[key] = ndimage_min(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
+                    #                                index=self.proposal_set['proposal_id'])
+#                max_type = ndimage_max(self.proposal_component_set[key], labels=self.proposal_component_set['proposal_id'], 
 #                                            index=self.proposal_set['proposal_id'])
-#            egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
-            utypes = unique(mean_type[wegligible])
+#                egligible_proposals[key] = logical_and(min_type[key] == max_type, egligible)
+                utypes = unique(mean_type[wegligible])
             
-            for value in utypes:
-                mean_type_is_value_ind = mean_type[wegligible]==value
-                for i in range(nmax):
-                    parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
-                    if parcels_with_proposals.size <= 0:
-                        continue
-                    labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
-                    chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
-                                        labels=labels, 
-                                        index=parcels_with_proposals)).flatten().astype(int32)               
-                    egligible[wegligible[chosen_prop]] = False
-                    mean_type_is_value_ind[chosen_prop] = False
+                for value in utypes:
+                    mean_type_is_value_ind = mean_type[wegligible]==value
+                    for i in range(nmax):
+                        parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(mean_type_is_value_ind)])).astype(int32)
+                        if parcels_with_proposals.size <= 0:
+                            continue
+                        labels = (self.proposal_set['parcel_id'][wegligible])*mean_type_is_value_ind               
+                        chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
+                                            labels=labels, 
+                                            index=parcels_with_proposals)).flatten().astype(int32)               
+                        egligible[wegligible[chosen_prop]] = False
+                        mean_type_is_value_ind[chosen_prop] = False
+        else:
+            incompetition = ones(wegligible.size, dtype='bool8')                
+            for i in range(nmax):
+                parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible][where(incompetition)]).astype(int32)
+                labels = (self.proposal_set['parcel_id'][wegligible])*incompetition   
+                chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
+                                            labels=labels, 
+                                            index=parcels_with_proposals)).flatten().astype(int32)
+                egligible[wegligible[chosen_prop]] = False   
+                incompetition[chosen_prop] = False
                     
         self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
         
