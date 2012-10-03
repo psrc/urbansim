@@ -51,7 +51,7 @@ class FazDataset(UrbansimDataset):
 
     def _create_id_mapping_array(self):
         ids = self.get_id_attribute()
-        self.__id_mapping_array = -1*ones(ids.max(), dtype='i')
+        self.__id_mapping_array = -1*ones(ids.max(), dtype='int')
         self.__id_mapping_array[self.get_id_attribute()-1] = self.get_id_index(ids)
 
     def get_value_from_same_age_table(self, ages, fazes):
