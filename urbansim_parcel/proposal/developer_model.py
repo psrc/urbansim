@@ -503,8 +503,8 @@ def process_parcel(parcel):
             #prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
             prices = (price_per_sqft_sf*price_shifters['price_per_sqft_sf'],
                       price_per_sqft_mf,
-                      rent_per_sqft_sf*price_shifters['rent_per_sqft_sf'],
-                      rent_per_sqft_mf*price_shifters['rent_per_sqft_mf'],
+                      rent_per_sqft_sf*2*price_shifters['rent_per_sqft_sf'],
+                      rent_per_sqft_mf*2*price_shifters['rent_per_sqft_mf'],
                       of_rent_sqft*price_shifters['of_rent_sqft'],
                       ret_rent_sqft*price_shifters['ret_rent_sqft'],
                       ind_rent_sqft*price_shifters['ind_rent_sqft'])
