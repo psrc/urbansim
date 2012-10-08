@@ -8,7 +8,7 @@ from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
-from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue
+from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue, setdiff1d, union1d
 from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d
 from scipy.ndimage import minimum as ndimage_min
 from scipy.ndimage import maximum as ndimage_max
@@ -326,16 +326,27 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                         egligible[wegligible[chosen_prop]] = False
                         type_is_value_ind[chosen_prop] = False
         else:
-            incompetition = ones(wegligible.size, dtype='bool8')                
-            for i in range(nmax):
-                parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible][where(incompetition)]).astype(int32)
-                labels = (self.proposal_set['parcel_id'][wegligible])*incompetition   
+            parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible]).astype(int32)
+            max_prop = array(maximum_position(within_parcel_weights[wegligible], 
+                                            labels=self.proposal_set['parcel_id'][wegligible], 
+                                            index=parcels_with_proposals)).flatten().astype(int32)                                            
+            max_value_by_parcel = within_parcel_weights[wegligible][max_prop]
+            incompetition = ones(wegligible.size, dtype='bool8')
+            incompetition[max_prop] = False
+            egligible[wegligible[max_prop]] = False            
+            for i in range(nmax-1):
+                labels = (self.proposal_set['parcel_id'][wegligible])*incompetition 
+                valid_parcels = where(in1d(parcels_with_proposals, self.proposal_set['parcel_id'][wegligible][where(incompetition)]))[0]
                 chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                             labels=labels, 
-                                            index=parcels_with_proposals)).flatten().astype(int32)
-                egligible[wegligible[chosen_prop]] = False   
-                incompetition[chosen_prop] = False
-                    
+                                            index=parcels_with_proposals[valid_parcels])).flatten().astype(int32)
+                percent = within_parcel_weights[wegligible][chosen_prop]/(max_value_by_parcel[valid_parcels]/100.0)
+                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent < 75]))[0]
+                egligible[wegligible[setdiff1d(chosen_prop, where_lower)]] = False   # proposals with egligible=True get eliminated, so we dont want to set it to False for the where_lower ones
+                incompetition[union1d(chosen_prop, where_lower)] = False
+                if incompetition.sum() <= 0:
+                    break
+                
         self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
         
 #        for pclid in parcels_with_proposals:
