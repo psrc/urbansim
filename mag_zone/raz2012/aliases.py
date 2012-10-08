@@ -22,6 +22,7 @@ aliases = [
         'number_of_industrial_jobs = raz2012.aggregate(mag_zone.job.is_industrial_job)',
         'number_of_entertainment_jobs = raz2012.aggregate(mag_zone.job.is_entertainment_job)',
         'number_of_homebased_jobs = raz2012.aggregate(mag_zone.job.is_homebased_job)',
+        'number_of_nonhomebased_jobs = raz2012.aggregate(mag_zone.job.is_nonhomebased_job)',
         'number_of_office_jobs = raz2012.aggregate(mag_zone.job.is_office_job)',
         # individual sector job totals:
         'number_of_agricultural_jobs = raz2012.aggregate(mag_zone.job.is_agricultural_job)',
@@ -52,11 +53,23 @@ aliases = [
         'population_with_at_least_bachelors_degree = raz2012.aggregate(mag_zone.person.at_least_bachelors_degree)',
         'population_with_at_least_masters_degree = raz2012.aggregate(mag_zone.person.at_least_masters_degree)',
         'average_adult_education = raz2012.aggregate(mag_zone.person.is_adult*person.education, function=mean)',
+        'seasonal_pop = raz2012.aggregate(household.is_seasonal)',
         # household related:
         'number_of_hh_age_of_head_over_55 = raz2012.aggregate(mag_zone.household.hh_head_over_55)',
         'average_household_income = raz2012.aggregate(household.income, function=mean)',
         'median_household_income = raz2012.aggregate(household.income, function=median)',
         'number_of_households = raz2012.number_of_agents(household)',
         'percent_hh_age_of_head_over_55 = raz2012.aggregate(safe_array_divide(mag_zone.raz2012.number_of_hh_age_of_head_over_55, mag_zone.raz2012.number_of_households))',
+        'raz2012_hh_inc_quint01 = raz2012.aggregate(mag_zone.household.income_quintiles==1)',
+        'raz2012_hh_inc_quint02 = raz2012.aggregate(mag_zone.household.income_quintiles==2)',
+        'raz2012_hh_inc_quint03 = raz2012.aggregate(mag_zone.household.income_quintiles==3)',
+        'raz2012_hh_inc_quint04 = raz2012.aggregate(mag_zone.household.income_quintiles==4)',
+        'raz2012_hh_inc_quint05 = raz2012.aggregate(mag_zone.household.income_quintiles==5)',
+        'raz2012_hh_age_of_head_under_25 = raz2012.aggregate(mag_zone.household.age_of_head_under_25)',
+        'raz2012_hh_age_of_head_26_35 = raz2012.aggregate(mag_zone.household.age_of_head_26_35)',
+        'raz2012_hh_age_of_head_36_45 = raz2012.aggregate(mag_zone.household.age_of_head_36_45)',
+        'raz2012_hh_age_of_head_46_55 = raz2012.aggregate(mag_zone.household.age_of_head_46_55)',
+        'raz2012_hh_age_of_head_56_65 = raz2012.aggregate(mag_zone.household.age_of_head_56_65)',
+        'raz2012_hh_age_of_head_66_up = raz2012.aggregate(mag_zone.household.age_of_head_66_up)',
            ]
 
