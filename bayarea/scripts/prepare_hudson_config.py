@@ -17,9 +17,6 @@
 # model should be run.  Typically, this is 1.  But for testing purposes, we
 # might want to turn it off.
 #
-# HUDSON_PRICE_EQUILIBRATION: Whether or not to enable price equilibration in
-# the location choice models
-#
 # HUDSON_TRAVEL_MODEL_HOME: override the travel model base directory with this
 # variable if it is set.  This enables the caller to mount the travel model
 # directory however s/he wishes.
@@ -83,41 +80,6 @@ if __name__ == "__main__":
     parent = etree.Element("parent", type="file")
     parent.text = options.xml_configuration
     general.append(parent)
-
-    # if we enable price equilibration, we do so under the model manager.
-    price_equlibration = os.getenv("HUDSON_PRICE_EQUILIBRATION")
-
-    if price_equlibration == "true":
-        model_manager = etree.Element("model_manager")
-        project.append(model_manager)
-        models = etree.Element("models", config_name="model_system",
-                               hidden="False", name="Models", setexpanded="True",
-                               type="dictionary")
-        model_manager.append(models)
-
-        # prepare common structure/init/argument node
-        structure = etree.Element("structure", type="dictionary")
-        init = etree.Element("init", type="dictionary")
-        arg = etree.Element("argument", name="choices", parser_action="quote_string",
-                            type="string")
-        arg.text = "opus_core.upc.equilibration_choices"
-        init.append(arg)
-        structure.append(init)
-
-        blcm = etree.Element("model", name="business_location_choice_model",
-                             type="model")
-        blcm.append(structure)
-        models.append(blcm)
-        hlcm_owner = etree.Element("model",
-                                   name="submarket_household_location_choice_model_owner",
-                                   type="model")
-        hlcm_owner.append(deepcopy(structure))
-        models.append(hlcm_owner)
-        hlcm_renter = etree.Element("model",
-                                    name="submarket_household_location_choice_model_renter",
-                                    type="model")
-        hlcm_renter.append(deepcopy(structure))
-        models.append(hlcm_renter)
 
     # Now we create a child scenario of HUDSON_SCENARIO that we can use to
     # override some options.
