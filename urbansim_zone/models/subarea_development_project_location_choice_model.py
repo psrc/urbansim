@@ -19,7 +19,7 @@ class SubareaDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCho
         self.subarea_id_name = subarea_id_name
     
     def run(self, specification, coefficients, agent_set, agents_index=None, 
-            agents_filter=None, **kwargs):
+            flush_after_each_subarea=False, agents_filter=None, **kwargs):
         if agents_index is None:
             if agents_filter is None:
                 agents_index = arange(agent_set.size())
@@ -54,8 +54,12 @@ class SubareaDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCho
                 logger.log_status("DPLCM for subarea %s" % subarea)
                 DevelopmentProjectLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                           agents_index=new_index, **kwargs)
+                if flush_after_each_subarea:
+                    agent_set.flush_dataset()
+                    self.choice_set.flush_dataset()
         self.filter = filter0
         no_subarea = where(subareas[agents_index] <= 0)[0]
+
         
         # this loop handles agents w/out a subarea
         if no_subarea.size > 0:            
