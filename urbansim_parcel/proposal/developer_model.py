@@ -144,11 +144,12 @@ class DeveloperModel(Model):
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     bart_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_1_within_800_meters))")
     caltrain_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_2_within_800_meters))")
-    SAMPLE_RATE = 0
+    pda_parcels = parcel_set.compute_variables("(parcel.pda_id > -1)")
+    SAMPLE_RATE = 0.01
     from opus_core.sampling_toolbox import sample_noreplace
     from numpy import concatenate, where
     sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
-    test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index,where(bart_parcels==1)[0],where(caltrain_parcels==1)[0]))
+    test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index,where(bart_parcels==1)[0],where(caltrain_parcels==1)[0],where(pda_parcels==1)[0]))
     test_parcels = sample_noreplace(test_parcels, int(.08 * 154877))
     
     """
