@@ -15,7 +15,7 @@ except:
 
 annual_price_change_rate = 1/2.0
 
-class equilibration_choices(lottery_choices):
+class renter_equilibration_choices(lottery_choices):
 
     def run(self, 
             probability=None, 
