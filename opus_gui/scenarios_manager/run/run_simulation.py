@@ -197,7 +197,8 @@ class OpusModel(object):
         self.startedCallback(run_id=run_id,
                              run_name=run_name, 
                              scenario_name=self.scenariotorun, 
-                             run_resources = config)
+                             run_resources = config,
+                             status = 'running')
         run_manager.restart_run(run_id, restart_year, 
                                 end_year=end_year, 
                                 project_name='',
