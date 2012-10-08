@@ -47,8 +47,8 @@ function getBuildNumber(buildURL, callback) {
   // so we want to abort after detecting the urbansim build number.
   var xmlhttp = createXMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
-	if (xmlhttp.readyState == 3 && xmlhttp.responseText.length > 128*1024) {
-      // give up if the first 128kB of text don't have what we're looking for
+	if (xmlhttp.readyState == 3 && xmlhttp.responseText.length > 1024*1024) {
+      // give up if the first 1MB of text don't have what we're looking for
 	  xmlhttp.abort();
       if (callback != null) {
         callback(-1);
