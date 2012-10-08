@@ -90,7 +90,10 @@ manyColors <- colorRampPalette(brewer.pal(name = 'Set3',n=10))
 ################################################################################
 ## function to render a matrix WITH a regional total if absolute values, otherwise no total
 returnMatrix <- function(inputData=inputData,tableName=tableName) {
-  if (grepl("average",tableName,ignore.case=TRUE) | grepl("avg",tableName,ignore.case=TRUE) | grepl("pct",tableName,ignore.case=TRUE)) {
+  if (grepl("average",tableName,ignore.case=TRUE) | 
+       grepl("avg",tableName,ignore.case=TRUE) |
+       grepl("density",tableName,ignore.case=TRUE) |
+       grepl("pct",tableName,ignore.case=TRUE)) {
     print("avg in table name, do not sum for regional total")
     inputData$year <- as.integer(rownames(inputData))
     meltedInputData <- melt(inputData,id="year",variable_name = "county")
@@ -185,7 +188,7 @@ dat<-lapply(fileList,read.csv,header=T,sep = "\t")
 
 ## start pdf object to store all charts
 fp <- file.path(pth, fsep = .Platform$file.sep)
-fileNameOut=sprintf("%s/%s_plot_%s_indexChart.pdf",fp,geo,runid)
+fileNameOut=sprintf("%s/%s_plot_%s_summary.pdf",fp,geo,runid)
 sprintf("Preparing file %s for charts and figures...", fileNameOut)
 pdf(fileNameOut,height=8.5, width=11,onefile=TRUE)
 
@@ -220,7 +223,7 @@ for(i in 1:length(dat))
   maxCol <- length(simulation)
   years <-str_extract(names(simulation)[2:maxCol],yr_ptrn) 
   pos <- regexpr(pattern = yr_ptrn, text = names(simulation)[2:maxCol])  #where does year start in col name?
-  
+  print(years)
   ## extract field name representing variable for use in chart. could just have used table name
   title_prelim <- substr(names(simulation)[2],1,pos-2)
   title_split <- strsplit(title_prelim,"_")
@@ -268,14 +271,15 @@ for(i in 1:length(dat))
     rownames(simulation.i) <- yrNames[2:maxCol]
   }
   #attach(simulation.i)
-  
+  print(yrNames)
   ##   convert to long format for ggplot
   simulation.i$year <- as.integer(rownames(simulation.i))
   simulation_long_index <- melt(simulation.i,id="year",variable_name = "county")
   
   ## prepare plotting
-  ## table object prep for chart--skip every other year if many years in run
-  end <- yrEnd - yrStart + 1
+  ## table object prep for chart--skip every other year if many years in run to fit on chart
+  end <- as.integer(tail(yrNames,1)) - as.integer(yrNames[2]) + 1
+  print(end)
   if (end > 26 ) {
     step <- 2 
   }
@@ -283,9 +287,16 @@ for(i in 1:length(dat))
     step <- 1
   }
   
+  if (nrow(simulation.t)%%2==0){
+    yrs<- c(1,seq(2,nrow(simulation.t),step))
+  }
+  else {
+    yrs<- seq(1,nrow(simulation.t),step)
+  }
+    
   g1 <- tableGrob(
     format(
-      simulation.t[seq(1,end,step),1:length(names(simulation.t))-1], 
+      simulation.t[yrs,1:length(names(simulation.t))-1], 
       digits = 2,big.mark = ","), 
     gpar.colfill = gpar(fill=NA,col=NA), 
     gpar.rowfill = gpar(fill=NA,col=NA), 
@@ -299,7 +310,7 @@ for(i in 1:length(dat))
   #string <- "
   #placeholder for possible annotation
   #"
-  #g2 <- splitTextGrob(string)
+    #g2 <- splitTextGrob(string)
   theme_set(theme_grey()); 
   
   ## plot object
@@ -397,7 +408,7 @@ sprintf("File is ready: %s", fileNameOut)
 ##county ids used in data
 #1  Alameda  ala
 #7  Contra Costa  cnc
-#21  Marin	mar
+#21 Marin	mar
 #28	Napa	nap
 #38	San Francisco	sfr
 #41	San Mateo	smt
