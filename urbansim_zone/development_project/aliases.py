@@ -3,5 +3,6 @@
 # See opus_core/LICENSE
 
 aliases = [
-        "raz2012_id = development_project.disaggregate(zone.raz2012_id)",
+        "is_residential = development_project.disaggregate(building_type.is_residential)",
+        "is_non_residential = numpy.logical_not(urbansim_zone.development_project.is_residential)",
            ]
