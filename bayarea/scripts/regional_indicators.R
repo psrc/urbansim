@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-#args <- c('/home/aksel/Documents/Data/Urbansim/runs/run_204/indicators','2010','2040','204',"FALSE","No_Project")
+#args <- c('/home/aksel/Documents/Data/Urbansim/runs/run_257/indicators','2010','2040','204',"FALSE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -93,9 +93,8 @@ TitleCase <- function(string="test string")
 ##function for making tablegrob objects
 makeTable <- function(data){    
   tableGrob(
-    format(data
-           , 
-           digits = 2,big.mark = ","),
+    format(data, digits = 1,#nsmall=sample(c(1,0),11,replace=T),
+           scientific=F,big.mark = ","),
     core.just="left",
     col.just="left",
     gpar.coretext=gpar(fontsize=8), 
@@ -109,6 +108,13 @@ makeTable <- function(data){
                         show.vlines = TRUE, show.hlines = TRUE, separator="grey")                     
     )
 }
+
+dt.pda<-c(.78,.60,.34,.33,.92,.78,.84,.56,.65,.70,.57,.23,.18,.85,.60,.71,.33,.47)
+lCounties <-c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
+targetPDAData <- structure(dt.pda, 
+                        dim = c(9,2),
+                        .Dimnames = list(lCounties,c('hh','jobs')))
+
 ##main processor function
 regionalProcessor <- function(pth,yrStart,yrEnd){
     setwd(pth)
@@ -141,7 +147,12 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     df.m <- df.m[,c(2:4)]
     df.t <- as.data.frame(cast(df.m))
     names(df.t)[1] <- "Indicator"
-  
+    df.t$index<-((df.t[,ncol(df.t)]/df.t[,2])*100)
+    
+    ########get separate dataframe for comparison with targets###############
+    #comparisonVars <- c("jobs in pda","hh in pda","households","employment")
+    #df.t.pda<- df.t[df.t[,1] %in% comparisonVars,]
+    
     #########################################################################
     ##get county-level population data
     countyPopFile <- sprintf('county_table-3_%s-%s_county__county_population.tab',yrStart,yrEnd)
@@ -162,7 +173,8 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     if(yrEnd==2040){
     #extra=F
     ##check if out years are included 
-      g1 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035","2040")])
+      g1 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035","2040","index")])
+      g8 <- makeTable(df.t[c("Indicator","2010","2018","2025","2035","2040","index")])
       popData <- data.frame(countyPop[,c("county","2018","2025","2035")])
       names(popData) <- c("county",2018,2025,2035)
       extra=T
@@ -277,6 +289,95 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     grid.draw(g1)
     popViewport()
     
+    ###########################################################################
+    ###########################################################################
+    #PDA matching chart. TODO: could use some cleaning
+    #grid.newpage()
+    
+    dt<-c(.78,.60,.34,.33,.92,.78,.84,.56,.65,.70,.57,.23,.18,.85,.60,.71,.33,.47)
+    lCountiesShort <-c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
+    lCountiesShort <-c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
+    targetData <- data.frame(structure(dt, dim = c(9,2), .Dimnames = list(lCountiesShort,c('households','employment'))))
+    targetData$county<-rownames(targetData)
+    simFiles <- c('county_table-3_2010-2040_county__county_employment.tab','county_table-3_2010-2040_county__county_employment_pda.tab',
+                  'county_table-3_2010-2040_county__county_households.tab','county_table-3_2010-2040_county__county_households_pda.tab')
+    targetData.m <-melt(targetData, id.vars='county')
+    targetData.m$obs_pred <-'target'
+    targetData.m <- targetData.m[,c(1,4,3,2)] 
+    
+    ##get county-level files from simFiles list, flatten and melt
+    ##  create list with data tables
+    dat<-lapply(simFiles,read.csv,header=T,sep = "\t")
+    
+    ## flatten list to to get vector with nice variable names
+    fileAndTypesLst<- lapply(simFiles,function(x) strsplit(x,"\\."))
+    fileAndTypesFlattened = lapply(fileAndTypesLst, ldply)
+    fileNameClean <- ldply(fileAndTypesFlattened)[,1]
+    fileNameClean <- ldply(lapply(fileNameClean, gsub, pattern="county.+\\d{4}-\\d{4}_",replacement=""))
+    title_split <- lapply(fileNameClean,strsplit, "_")
+    title_concat <- ldply(lapply(title_split[[1]][1:length(title_split[[1]])],paste, sep="", collapse = " "))
+    title_concat_short <- ldply(lapply(title_concat,gsub, pattern="county\\s+|region\\s+",replacement=""))
+    #title_proper <- lapply(title_concat,TitleCase)
+    #title <- paste(title_concat[[1]], sep=" ", collapse = " ")
+    names(dat) <- ldply(title_concat_short)[2:ncol(title_concat_short),2]
+    
+    ##calculate the share of the growth that happens in PDAs
+    #households
+    dat$households$growth<-(dat$"households pda"$county_households_pda_2040.f8-dat$"households pda"$county_households_pda_2010.f8)/
+      (dat$households$county_households_2040.f8-dat$households$county_households_2010.f8)
+    #employment
+    dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2040.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
+      (dat$employment$county_employment_2040.f8-dat$employment$county_employment_2010.f8)
+    lapply(dat,"[[",32)
+    
+    ## 1) transform appropriately for ease of use/ggplot
+    df.m<-melt(dat, id.vars=c("county_id.i8"))
+    df.m<-df.m[df.m[,1] %in% c(49,48,43,41,38,28,21,7,1),]
+    df.m[,1] <-factor(df.m[,1], labels=lCountiesShort)
+    
+    ptrn <- "([0-9]{4})|growth" #"^[^[:digit:]]*"  
+    df.m[,2] <-str_extract(df.m[,2],ptrn) 
+    df.m<-df.m[df.m[,2] %in% c("growth"),]
+    
+    df.t <- as.data.frame(df.m)
+    names(df.t) <- c("county","obs_pred","value","variable")
+    data.mix <- rbind(targetData.m,df.t)
+    
+    
+    stackedBarPlot <- function(data,name){
+      gOut <- 
+        ggplot(data=data.mix[data.mix$obs_pred=='growth',],
+               aes(
+                 x=county, 
+                 y=value, 
+                 fill=obs_pred
+               ))+
+                 geom_bar(stat = "identity", alpha=.55,fill="grey20",color="black") + 
+                 #labs(title=name)+
+                 opts(title = name)+
+                 #ylab("value") +
+                 opts(axis.text.x=theme_text(angle=90, hjust=0)) +
+                 #opts(legend.key.width = unit(.6, "cm")) +
+                 opts(legend.position = "right")+
+                 #opts(keep = "legend_box")+
+                 scale_y_continuous(labels=percent)  +
+                 facet_grid( . ~variable) +
+                 opts(strip.text.x = theme_text(size = 14, colour = "black", angle = 0))+
+                 #theme_bw() +
+                 #opts(panel.margin = unit(4, "lines"))+
+                 #add targets             
+                 geom_point(data=data.mix[data.mix$obs_pred!='growth',],aes(
+                   x=county, 
+                   y=value, 
+                   fill=obs_pred
+                 ),shape=21, size=4, fill="steelblue4",alpha=.55)
+      #scale_linetype_manual(values = lty)      +
+      #opts(legend.position="none")
+      return(gOut)
+    }
+    l<-stackedBarPlot(data.mix,"Comparison of Actual to Target PDA Growth")              
+    print(l)
+    
     garbage <- dev.off()
     }   
 
@@ -285,4 +386,5 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
 #pth <- "/home/aksel/Documents/Data/Urbansim/run_134/indicators"
 #mtcData <- "/var/www/MTC_Model/No_Project/run_139"
 regionalProcessor(pth,yrStart,yrEnd)
+
 #garbage <- dev.off()
