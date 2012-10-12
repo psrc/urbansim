@@ -10,7 +10,6 @@ aliases = [
     "neighborhood_type = building.disaggregate(bayarea.parcel.neighborhood_type)",
     "building_type = 1*(building.building_type_id<2) + 2*(building.building_type_id==2) + 3*(building.building_type_id>2)",
     "jurisdiction_id = building.disaggregate(parcel.jurisdiction_id)",
-    "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id",
     "within_half_mile_transit = building.disaggregate(bayarea.parcel.within_half_mile_transit)",
     "building_sqft_per_employee=building.disaggregate(employment_submarket.building_sqft_per_employee)",
@@ -18,4 +17,5 @@ aliases = [
     "vacant_job_spaces = clip_to_zero(bayarea.building.total_job_spaces - bayarea.building.employees)",
     "establishments=building.number_of_agents(establishment)",
     "employees=building.aggregate(establishment.employees)",
+    "tenure_id = 1*(building.tenure==1) + 2*(building.tenure==2) + 3*(building.tenure==-1)",
            ]
