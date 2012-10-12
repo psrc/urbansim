@@ -35,5 +35,6 @@ aliases = [
                          " 12 * (household.income >= 75000)*(household.persons > 2)",
     "submarket_id = household.disaggregate(bayarea.building.submarket_id)",
     "building_type_coded = 1*(household.building_type_id<3) + 2*(household.building_type_id>2)",
-    "persons_topcode = household.persons*(household.persons<5) + 5*(household.persons>4)"
+    "persons_topcode = household.persons*(household.persons<5) + 5*(household.persons>4)",
+    "tenure_id = household.disaggregate(bayarea.building.tenure_id)"
            ]
