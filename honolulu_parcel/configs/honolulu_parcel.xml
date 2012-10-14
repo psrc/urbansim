@@ -5,6 +5,15 @@
     <project_name hidden="True" type="string">honolulu_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="dpa.dpa_jobs" type="variable_definition">dpa.number_of_agents(job)</variable>
+      <variable use="both" source="expression" name="dpa.dpa_households" type="variable_definition">dpa.number_of_agents(households)</variable>
+      <variable use="both" source="expression" name="alldata.unplaced_jobs" type="variable_definition">alldata.aggregate_all(job.building_id==-1)</variable>
+      <variable use="both" source="expression" name="alldata.unplaced_households" type="variable_definition">alldata.aggregate_all(household.building_id==-1)</variable>
+      <variable use="both" source="expression" name="alldata.unplaced_buildings" type="variable_definition">alldata.aggregate_all(building.parcel_id==-1)</variable>
+      <variable use="both" source="expression" name="alldata.region_employment_placed" type="variable_definition">alldata.aggregate_all(parcel.aggregate(building.number_of_agents(job)))</variable>
+      <variable use="both" source="expression" name="alldata.region_households_placed" type="variable_definition">alldata.aggregate_all(parcel.aggregate(building.number_of_agents(household)))</variable>
+      <variable use="both" source="expression" name="alldata.region_non_residential_sqft_placed" type="variable_definition">alldata.aggregate_all(parcel.aggregate(building.non_residential_sqft))</variable>
+      <variable use="both" source="expression" name="alldata.region_dwelling_units_placed" type="variable_definition">alldata.aggregate_all(parcel.aggregate(building.residential_units))</variable>
       <variable use="both" source="expression" name="building.building_walk10_wait10" type="variable_definition">building.disaggregate(zone.walk10_wait10,intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="building.building_walk25_wait10" type="variable_definition">building.disaggregate(zone.walk25_wait10,intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="building.building_walk25_wait25" type="variable_definition">building.disaggregate(zone.walk25_wait25,intermediates=[parcel])</variable>
@@ -505,7 +514,7 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['honolulu_parcel','urbansim_parcel','urbansim','opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','neighborhood_board','tract']</available_datasets>
+    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','neighborhood_board','tract','dpa']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','faz','gridcell','city','county','node']</spatial_datasets>
   </general>
   <data_manager>
@@ -3621,7 +3630,7 @@
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2001</firstyear>
-        <lastyear type="integer">2010</lastyear>
+        <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="test_model" type="selectable" name="test_model_1">False</selectable>
@@ -4607,6 +4616,22 @@
   </scenario_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="dpa">
+        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+          <indicators>['dpa_households', 'dpa_jobs']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>dpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="region">
+        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+          <indicators>['unplaced_jobs', 'unplaced_households', 'unplaced_buildings']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>alldata</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
       <indicator_batch name="zonal">
         <batch_visualization hidden="Children" type="batch_visualization" name="hotel_resort">
           <indicators>['resort_units_zone', 'hotel_units_zone']</indicators>
