@@ -131,8 +131,8 @@
       <variable use="both" source="primary attribute" name="zone.zone_distance_to_coast" type="variable_definition">zone.distance_to_coast</variable>
       <variable use="both" source="primary attribute" name="zone.zone_travel_time_to_waikiki" type="variable_definition">zone.travel_time_to_waikiki</variable>
       <variable use="both" source="primary attribute" name="zone.visitor_units" type="variable_definition">zone.visitor_units</variable>
-      <variable use="both" source="expression" name="parcel.p_in_central_oahu" type="variable_definition">parcel.dpa==30</variable>
-      <variable use="both" source="expression" name="parcel.p_in_ewa" type="variable_definition">parcel.dpa==20</variable>
+      <variable use="both" source="expression" name="parcel.p_in_central_oahu" type="variable_definition">parcel.dpa_id==30</variable>
+      <variable use="both" source="expression" name="parcel.p_in_ewa" type="variable_definition">parcel.dpa_id==20</variable>
       <variable use="both" source="expression" name="submarket.dpa_is_ewa" type="variable_definition">submarket.disaggregate(zone.dpa_id==20)</variable>
       <variable use="both" source="expression" name="household_x_submarket.dpa_northshore_x_workathome" type="variable_definition">household.aggregate((person.relation==1)*(person.mode_to_work==11))*submarket.disaggregate(zone.dpa_id==70)</variable>
       <variable use="both" source="expression" name="household_x_submarket.dpa_waianae_x_not_in_labor_force" type="variable_definition">household.aggregate((person.relation==1)*(person.employment_status==6))*submarket.disaggregate(zone.dpa_id==80)</variable>
@@ -667,7 +667,7 @@
             <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
             <argument name="append_to_realestate_dataset" type="string">True</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="sample_filter" type="string">"(building.building_type_id&lt;3)*(building.year_built&gt;1989) +  (building.building_type_id==3)*(building.year_built&gt;1979) +  (building.building_type_id==4)*(building.year_built&gt;1989)+ (building.building_type_id&gt;6)*(building.building_type_id&lt;26)"</argument>
+            <argument name="sample_filter" type="string">"(building.building_type_id==1)*(building.year_built&gt;1989) +  (building.building_type_id==3)*(building.year_built&gt;1979) +  (building.building_type_id==2)*(building.year_built&gt;1989)+ (building.building_type_id&gt;3)*(building.building_type_id&lt;10)"</argument>
             <argument name="resources" type="string">model_resources</argument>
           </run>
         </structure>
@@ -686,7 +686,7 @@
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">parcel.disaggregate(zoning.allow_sf==1)</argument>
-            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id&lt;3)</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id==1)</argument>
             <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="model_name" parser_action="quote_string" type="string">BuildingLocationChoiceModel_sf</argument>
@@ -744,7 +744,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
-            <argument convert_blank_to_none="True" name="agents_filter" type="string">'building.building_type_id&lt;3'</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'building.building_type_id==1'</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -769,17 +769,6 @@
               <variable_spec name="parcel.proportion_sf_units_in_zone"/>
             </variable_list>
           </submodel>
-          <submodel hidden="Children" name="duplex" submodel_id="2" type="submodel">
-            <description type="string">duplex</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_zone_ln_emp_15_min"/>
-              <variable_spec name="parcel.parcel_bus_stops_per_acre_in_zone"/>
-              <variable_spec name="parcel.parcel_distance_to_highway"/>
-              <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
-              <variable_spec name="parcel.proportion_sf_units_in_zone"/>
-            </variable_list>
-          </submodel>
         </specification>
       </model>
       <model name="mf_building_location_choice_model" type="model">
@@ -796,7 +785,7 @@
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">parcel.disaggregate(zoning.allow_mf==1)</argument>
-            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id&lt;5)*(building.building_type_id&gt;2)</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id&lt;4)*(building.building_type_id&gt;1)</argument>
             <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="model_name" parser_action="quote_string" type="string">BuildingLocationChoiceModel_mf</argument>
@@ -854,7 +843,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
-            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;5)*(building.building_type_id&gt;2)'</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;4)*(building.building_type_id&gt;1)'</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -864,20 +853,7 @@
           </run>
         </structure>
         <specification type="dictionary">
-          <submodel hidden="Children" name="apartment" submodel_id="3" type="submodel">
-            <description type="string">apartment</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_avg_resunit_price_in_zone"/>
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
-              <variable_spec name="parcel.parcel_distance_to_coast"/>
-              <variable_spec name="parcel.parcel_distance_to_highway"/>
-              <variable_spec name="parcel.parcel_distance_to_public_school"/>
-              <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
-              <variable_spec name="parcel.proportion_sf_units_in_zone"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="townhome" submodel_id="4" type="submodel">
+          <submodel hidden="Children" name="townhome" submodel_id="2" type="submodel">
             <description type="string">townhome</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.p_district2"/>
@@ -889,6 +865,19 @@
               <variable_spec name="parcel.parcel_distance_to_highway"/>
               <variable_spec name="parcel.parcel_distance_to_public_school"/>
               <variable_spec name="parcel.parcel_elevation"/>
+              <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
+              <variable_spec name="parcel.proportion_sf_units_in_zone"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="apartment" submodel_id="3" type="submodel">
+            <description type="string">apartment</description>
+            <variable_list type="variable_list">
+              <variable_spec name="parcel.p_avg_resunit_price_in_zone"/>
+              <variable_spec name="parcel.p_ln_parcel_sqft"/>
+              <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
+              <variable_spec name="parcel.parcel_distance_to_coast"/>
+              <variable_spec name="parcel.parcel_distance_to_highway"/>
+              <variable_spec name="parcel.parcel_distance_to_public_school"/>
               <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
               <variable_spec name="parcel.proportion_sf_units_in_zone"/>
             </variable_list>
@@ -909,7 +898,7 @@
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">parcel.disaggregate(zoning.allow_comm==1)</argument>
-            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id&lt;26)*(building.building_type_id&gt;18)</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable">(building.building_type_id)*(building.building_type_id&lt;10)*(building.building_type_id&gt;7)</argument>
             <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="model_name" parser_action="quote_string" type="string">BuildingLocationChoiceModel_c</argument>
@@ -967,7 +956,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
-            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;26)*(building.building_type_id&gt;18)'</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;10)*(building.building_type_id&gt;7)'</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -977,7 +966,16 @@
           </run>
         </structure>
         <specification type="dictionary">
-          <submodel hidden="Children" name="neighborhood_retail" submodel_id="19" type="submodel">
+          <submodel hidden="Children" name="office" submodel_id="8" type="submodel">
+            <description type="string">office</description>
+            <variable_list type="variable_list">
+              <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
+              <variable_spec name="parcel.p_ln_parcel_sqft"/>
+              <variable_spec name="parcel.p_zone_ln_emp_15_min"/>
+              <variable_spec name="parcel.parcel_distance_to_highway"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="neighborhood_retail" submodel_id="9" type="submodel">
             <description type="string">neighborhood_retail</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
@@ -987,56 +985,6 @@
               <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
               <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="regional_retail" submodel_id="20" type="submodel">
-            <description type="string">regional_retail</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_ln_pop_10_min"/>
-              <variable_spec name="parcel.parcel_distance_to_highway"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="retail_residential_mix" submodel_id="21" type="submodel">
-            <description type="string">retail_residential_mix</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_residential_density_in_zone"/>
-              <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="office" submodel_id="22" type="submodel">
-            <description type="string">office</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_zone_ln_emp_15_min"/>
-              <variable_spec name="parcel.parcel_distance_to_highway"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="office_residential_mix" submodel_id="23" type="submodel">
-            <description type="string">office_residential_mix</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
-              <variable_spec name="parcel.p_in_core_area"/>
-              <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
-              <variable_spec name="parcel.parcel_distance_to_highway"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="service_shops_supplies" submodel_id="24" type="submodel">
-            <description type="string">service_shops_supplies</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.p_residential_density_in_zone"/>
-              <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
-              <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
-            </variable_list>
-          </submodel>
-          <submodel hidden="Children" name="service_shops_residential_mix" submodel_id="25" type="submodel">
-            <description type="string">service_shops_residential_mix</description>
-            <variable_list type="variable_list">
-              <variable_spec name="parcel.p_ln_pop_10_min"/>
             </variable_list>
           </submodel>
         </specification>
@@ -1090,7 +1038,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(building.year_built&gt;1979)*(building.building_type_id&lt;19)*(building.building_type_id&gt;7)</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(building.year_built&gt;1979)*(building.building_type_id&lt;8)*(building.building_type_id&gt;5)</argument>
             <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
@@ -1113,7 +1061,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
-            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;19)*(building.building_type_id&gt;7)'</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id&lt;8)*(building.building_type_id&gt;5)'</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -1133,7 +1081,7 @@
           </submodel>
         </specification>
       </model>
-      <model name="hotel_building_location_choice_model" type="model">
+      <model name="visitor_building_location_choice_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
@@ -1174,7 +1122,7 @@
             <name name="name" type="string">prepare_for_estimate</name>
             <output name="output" type="string">(alcm_specification, alcm_index)</output>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">hotel_building_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">visitor_building_location_choice_model_specification</argument>
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
             <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="agents_for_estimation_table" parser_action="quote_string" type="string" model_dependency_type="table">buildings</argument>
@@ -1182,7 +1130,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(building.year_built&gt;0)*(building.building_type_id==7)</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(building.year_built&gt;0)*(numpy.in1d(building.building_type_id,[4,5]))</argument>
             <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
@@ -1198,14 +1146,13 @@
             <name name="name" type="string">prepare_for_run</name>
             <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">hotel_building_location_choice_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">visitor_building_location_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">hotel_building_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">visitor_building_location_choice_model_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">building</argument>
-            <argument convert_blank_to_none="True" name="agents_index" type="string">new_building_index</argument>
-            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(building.building_type_id==7)'</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(numpy.in1d(building.building_type_id,[4,5]))*(building.parcel_id==-1)'</argument>
             <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
             <argument name="coefficients" type="string">alcm_coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -1219,8 +1166,8 @@
             <description type="string">hotel</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
+              <variable_spec name="parcel.p_jobs17_hotel_jobs_in_zone"/>
               <variable_spec name="parcel.p_ln_parcel_sqft"/>
-              <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
               <variable_spec name="parcel.parcel_distance_to_coast"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
             </variable_list>
@@ -1302,6 +1249,7 @@
             <argument name="variable_package" parser_action="quote_string" type="string">honolulu_parcel</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">5</key>
+              <key name="accept_unavailability_of_choices" type="boolean">True</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string" model_dependency_type="variable"/>
             </argument>
             <argument name="location_set" type="string" model_dependency_type="dataset">employment_submarket</argument>
@@ -1321,7 +1269,7 @@
             <name name="name" type="string" hidden="True">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':25000}</argument>
             <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
             <argument name="specification" type="string" hidden="True">specification</argument>
             <argument name="maximum_runs" type="integer">5</argument>
@@ -3551,6 +3499,56 @@
           </run>
         </structure>
       </model>
+      <model name="hotel_room_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="dataset_accounting_attribute" parser_action="quote_string" type="string">hotel_units</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Hotel Room Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_hotel_room_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_hotel_units</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'parcel_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="resort_unit_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="dataset_accounting_attribute" parser_action="quote_string" type="string">resort_units</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Resort Unit Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">RTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_resort_unit_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_resort_units</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'parcel_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
@@ -3623,11 +3621,40 @@
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2001</firstyear>
-        <lastyear type="integer">2001</lastyear>
+        <lastyear type="integer">2010</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="test_model" type="selectable" name="test_model_1">False</selectable>
+        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">True</selectable>
+        <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">True</selectable>
+        <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">True</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
+        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">True</selectable>
+        <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">True</selectable>
+        <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">True</selectable>
+        <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_sf" type="selectable" name="submarket_household_location_choice_model_owner_sf_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_apartment" type="selectable" name="submarket_household_location_choice_model_owner_apartment_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_townhome" type="selectable" name="submarket_household_location_choice_model_owner_townhome_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_sf" type="selectable" name="submarket_household_location_choice_model_renter_sf_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_apartment" type="selectable" name="submarket_household_location_choice_model_renter_apartment_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">True</selectable>
+        <selectable return_value="add_dpa" type="selectable" name="add_dpa_1">True</selectable>
+        <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">True</selectable>
+        <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">True</selectable>
+        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">True</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
+        </selectable>
+        <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">True</selectable>
         <selectable return_value="real_estate_transition_model_by_submarkets" type="selectable" name="real_estate_transition_model_by_submarkets_1">True</selectable>
+        <selectable return_value="honolulu_building_transition_model" type="selectable" name="honolulu_building_transition_model_1">True</selectable>
+        <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">True</selectable>
+        <selectable return_value="mf_building_location_choice_model" type="selectable" name="mf_building_location_choice_model_1">True</selectable>
+        <selectable return_value="commercial_building_location_choice_model" type="selectable" name="commercial_building_location_choice_model_1">True</selectable>
+        <selectable return_value="industrial_building_location_choice_model" type="selectable" name="industrial_building_location_choice_model_1">True</selectable>
+        <selectable return_value="resort_unit_transition_model" type="selectable" name="resort_unit_transition_model_1">True</selectable>
+        <selectable return_value="hotel_room_transition_model" type="selectable" name="hotel_room_transition_model_1">True</selectable>
+        <selectable return_value="visitor_building_location_choice_model" type="selectable" name="visitor_building_location_choice_model_1">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">honolulu_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
