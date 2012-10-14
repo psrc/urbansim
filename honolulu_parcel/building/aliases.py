@@ -5,6 +5,8 @@
 
 aliases = [
        "zone_id = (building.parcel_id>-1)*building.disaggregate(parcel.zone_id)",
+       "hotel_building = (building.building_type_id==4)*(building.hotel_units>0)",
+       "resort_building = (building.building_type_id==5)*(building.resort_units>0)",
        "superdistrict_id = building.disaggregate((parcel.superdistrict_id)*(parcel.superdistrict_id>0)+(parcel.superdistrict_id<1))",
        "schooldistrict = building.disaggregate((parcel.schooldistrict_id)*(parcel.schooldistrict_id>0))",
        "neighborhood_type = building.disaggregate((parcel.neighborhood_type)*(parcel.neighborhood_type>0)+(parcel.neighborhood_type<1))",
