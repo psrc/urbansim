@@ -5,6 +5,8 @@
     <project_name hidden="True" type="string">honolulu_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="parcel.parcel_walk50_wait25" type="variable_definition">parcel.disaggregate(zone.walk50_wait25)</variable>
+      <variable use="both" source="expression" name="park.parcel_walk50_wait25" type="variable_definition">park.disaggregate(zone.walk50_wait25)</variable>
       <variable use="both" source="expression" name="dpa.dpa_jobs" type="variable_definition">dpa.number_of_agents(job)</variable>
       <variable use="both" source="expression" name="dpa.dpa_households" type="variable_definition">dpa.number_of_agents(households)</variable>
       <variable use="both" source="expression" name="alldata.unplaced_jobs" type="variable_definition">alldata.aggregate_all(job.building_id==-1)</variable>
@@ -773,9 +775,8 @@
               <variable_spec name="parcel.p_zone_ln_avg_income"/>
               <variable_spec name="parcel.p_zone_ln_emp_15_min"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
-              <variable_spec name="parcel.parcel_elevation"/>
               <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
-              <variable_spec name="parcel.proportion_sf_units_in_zone"/>
+              <variable_spec name="parcel.parcel_walk50_wait25"/>
             </variable_list>
           </submodel>
         </specification>
@@ -873,7 +874,6 @@
               <variable_spec name="parcel.p_zone_ln_avg_income"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
               <variable_spec name="parcel.parcel_distance_to_public_school"/>
-              <variable_spec name="parcel.parcel_elevation"/>
               <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
               <variable_spec name="parcel.proportion_sf_units_in_zone"/>
             </variable_list>
@@ -881,13 +881,13 @@
           <submodel hidden="Children" name="apartment" submodel_id="3" type="submodel">
             <description type="string">apartment</description>
             <variable_list type="variable_list">
-              <variable_spec name="parcel.p_avg_resunit_price_in_zone"/>
               <variable_spec name="parcel.p_ln_parcel_sqft"/>
               <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
               <variable_spec name="parcel.parcel_distance_to_coast"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
               <variable_spec name="parcel.parcel_distance_to_public_school"/>
               <variable_spec name="parcel.parcel_travel_time_to_waikiki"/>
+              <variable_spec name="parcel.parcel_walk50_wait25"/>
               <variable_spec name="parcel.proportion_sf_units_in_zone"/>
             </variable_list>
           </submodel>
@@ -982,6 +982,7 @@
               <variable_spec name="parcel.p_ln_parcel_sqft"/>
               <variable_spec name="parcel.p_zone_ln_emp_15_min"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
+              <variable_spec name="parcel.parcel_walk50_wait25"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="neighborhood_retail" submodel_id="9" type="submodel">
@@ -990,10 +991,8 @@
               <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
               <variable_spec name="parcel.p_ln_parcel_sqft"/>
               <variable_spec name="parcel.p_ln_pop_10_min"/>
-              <variable_spec name="parcel.p_zone_ln_avg_income"/>
-              <variable_spec name="parcel.p_zone_ln_emp_30_min"/>
-              <variable_spec name="parcel.parcel_distance_to_bus_stop"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
+              <variable_spec name="parcel.parcel_walk50_wait25"/>
             </variable_list>
           </submodel>
         </specification>
@@ -1486,13 +1485,11 @@
             <submodel hidden="Children" name="BusinessServices" submodel_id="13" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
+                <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
                 <variable_spec name="employment_submarket.households_in_zone_esubmarket"/>
-                <variable_spec name="employment_submarket.is_hospital_esubmarket"/>
                 <variable_spec name="employment_submarket.is_neighborhood_retail_esubmarket"/>
                 <variable_spec name="employment_submarket.is_office_esubmarket"/>
-                <variable_spec name="employment_submarket.is_service_shops_supplies_esubmarket"/>
                 <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
-                <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="EducationalServices" submodel_id="14" type="submodel">
@@ -1568,6 +1565,7 @@
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
+                <variable_spec name="employment_submarket.jobs20_gov_esubmarket"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -2189,7 +2187,6 @@
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
               <variable_spec name="submarket.submarket_elevation_stdev"/>
               <variable_spec name="submarket.submarket_walk50_wait25"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
             </variable_list>
           </submodel>
           <submodel name="lowmidinc_sfdetached" submodel_id="2" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2212,7 +2209,6 @@
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
               <variable_spec name="submarket.submarket_distance_to_freeway"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
               <variable_spec name="submarket.submarket_walk50_wait25"/>
             </variable_list>
           </submodel>
@@ -2349,9 +2345,8 @@
               <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
-              <variable_spec name="submarket.submarket_walk50_wait25"/>
               <variable_spec name="submarket.submarket_elevation_mean"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
+              <variable_spec name="submarket.submarket_walk50_wait25"/>
             </variable_list>
           </submodel>
           <submodel name="lowmidinc_apartment" submodel_id="2" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2370,8 +2365,8 @@
               <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
               <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="submarket.submarket_walk50_wait25"/>
               <variable_spec name="submarket.submarket_distance_to_freeway"/>
+              <variable_spec name="submarket.submarket_walk50_wait25"/>
               <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
             </variable_list>
           </submodel>
@@ -2625,15 +2620,7 @@
             <description type="string">lowinc_sfdetached</description>
             <variable_list type="variable_list">
               <variable_spec name="household_x_submarket.children_ln_jobs_30_min_submarket"/>
-              <variable_spec name="submarket.ln_avg_unit_price_submarket"/>
-              <variable_spec name="submarket.ln_residential_units_in_submarket"/>
-              <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
-              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
-              <variable_spec name="submarket.submarket_distance_to_coast"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
               <variable_spec name="household_x_submarket.dpa_easthonolulu_x_collegegrad"/>
-              <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
               <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_northshore_x_nonfamily"/>
@@ -2642,12 +2629,24 @@
               <variable_spec name="household_x_submarket.dpa_waianae_x_collegegrad"/>
               <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
               <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
+              <variable_spec name="submarket.ln_avg_unit_price_submarket"/>
+              <variable_spec name="submarket.ln_residential_units_in_submarket"/>
+              <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
+              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
+              <variable_spec name="submarket.submarket_distance_to_coast"/>
+              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
             </variable_list>
           </submodel>
           <submodel name="lowmidinc_sfdetached" submodel_id="2" type="submodel" hidden="Children" inherit_parent_values="False">
             <description type="string">lowmidinc_sfdetached</description>
             <variable_list type="variable_list">
-              <variable_spec name="household_x_submarket.hh_income_within50percent_submarket_avginc"/>
+              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
+              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_not_in_labor_force"/>
               <variable_spec name="submarket.iv_ln_price_residual"/>
               <variable_spec name="submarket.ln_avg_unit_price_submarket"/>
               <variable_spec name="submarket.ln_residential_units_in_submarket"/>
@@ -2656,15 +2655,8 @@
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
               <variable_spec name="submarket.submarket_distance_to_coast"/>
               <variable_spec name="submarket.submarket_distance_to_freeway"/>
-              <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
               <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_hhsize"/>
-              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_not_in_labor_force"/>
+              <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
             </variable_list>
           </submodel>
           <submodel name="highmidinc_sfdetached" submodel_id="3" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2672,6 +2664,12 @@
             <variable_list type="variable_list">
               <variable_spec name="submarket.average_year_built"/>
               <variable_spec name="submarket.core_submarket"/>
+              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
+              <variable_spec name="household_x_submarket.dpa_ewa_x_hhsize"/>
+              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_not_in_labor_force"/>
               <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"/>
               <variable_spec name="submarket.ln_avg_unit_price_submarket"/>
               <variable_spec name="submarket.ln_job_density_zone_submarket"/>
@@ -2681,30 +2679,15 @@
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
               <variable_spec name="submarket.submarket_distance_to_coast"/>
               <variable_spec name="submarket.submarket_distance_to_freeway"/>
+              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
               <variable_spec name="household_x_submarket.vehicles_x_average_stories"/>
               <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_hhsize"/>
-              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_not_in_labor_force"/>
             </variable_list>
           </submodel>
           <submodel name="highinc_sfdetached" submodel_id="4" type="submodel" hidden="Children" inherit_parent_values="False">
             <description type="string">highinc_sfdetached</description>
             <variable_list type="variable_list">
               <variable_spec name="submarket.avg_unit_price_submarket"/>
-              <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"/>
-              <variable_spec name="submarket.iv_price_residual"/>
-              <variable_spec name="submarket.ln_job_density_zone_submarket"/>
-              <variable_spec name="submarket.ln_residential_units_in_submarket"/>
-              <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
-              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="submarket.submarket_distance_to_coast"/>
-              <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
               <variable_spec name="household_x_submarket.dpa_easthonolulu_x_collegegrad"/>
               <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
@@ -2716,6 +2699,12 @@
               <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
               <variable_spec name="household_x_submarket.dpa_waianae_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_waianae_x_not_in_labor_force"/>
+              <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"/>
+              <variable_spec name="submarket.iv_price_residual"/>
+              <variable_spec name="submarket.ln_job_density_zone_submarket"/>
+              <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
+              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
+              <variable_spec name="submarket.submarket_distance_to_coast"/>
             </variable_list>
           </submodel>
         </specification>
@@ -2798,8 +2787,8 @@
             <variable_list type="variable_list">
               <variable_spec name="household_x_submarket.children_ln_jobs_30_min_submarket"/>
               <variable_spec name="submarket.core_submarket"/>
+              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
               <variable_spec name="submarket.ln_avg_unit_price_submarket"/>
-              <variable_spec name="submarket.ln_job_density_zone_submarket"/>
               <variable_spec name="submarket.ln_residential_units_in_submarket"/>
               <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
               <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
@@ -2807,8 +2796,6 @@
               <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"/>
               <variable_spec name="submarket.submarket_distance_to_freeway"/>
               <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
-              <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
             </variable_list>
           </submodel>
           <submodel name="lowmidinc_apartment" submodel_id="2" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2817,24 +2804,22 @@
               <variable_spec name="submarket.average_income_in_submarket"/>
               <variable_spec name="submarket.average_stories"/>
               <variable_spec name="submarket.average_year_built"/>
-              <variable_spec name="submarket.avg_unit_price_submarket"/>
               <variable_spec name="household_x_submarket.children_ln_jobs_30_min_submarket"/>
-              <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"/>
-              <variable_spec name="submarket.ln_job_density_zone_submarket"/>
-              <variable_spec name="submarket.ln_residential_units_in_submarket"/>
-              <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
-              <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
-              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="submarket.submarket_walk50_wait25"/>
-              <variable_spec name="submarket.submarket_distance_to_freeway"/>
-              <variable_spec name="submarket.submarket_elevation_mean"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
               <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
               <variable_spec name="submarket.dpa_is_ewa"/>
               <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
               <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
               <variable_spec name="household_x_submarket.dpa_waianae_x_collegegrad"/>
+              <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"/>
+              <variable_spec name="submarket.ln_residential_units_in_submarket"/>
+              <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
+              <variable_spec name="household_x_submarket.proportion_no_vehicle_if_hh_no_vehicle"/>
+              <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
+              <variable_spec name="submarket.submarket_distance_to_freeway"/>
+              <variable_spec name="submarket.submarket_elevation_mean"/>
+              <variable_spec name="submarket.submarket_walk50_wait25"/>
+              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
             </variable_list>
           </submodel>
           <submodel name="highmidinc_apartment" submodel_id="3" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2843,21 +2828,18 @@
               <variable_spec name="submarket.average_income_in_submarket"/>
               <variable_spec name="submarket.average_stories"/>
               <variable_spec name="submarket.average_year_built"/>
-              <variable_spec name="submarket.avg_unit_price_submarket"/>
               <variable_spec name="household_x_submarket.children_ln_jobs_30_min_submarket"/>
+              <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
+              <variable_spec name="submarket.dpa_is_ewa"/>
+              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
               <variable_spec name="household_x_submarket.hh_income_within50percent_submarket_avginc"/>
               <variable_spec name="submarket.ln_job_density_zone_submarket"/>
               <variable_spec name="submarket.ln_residential_units_in_submarket"/>
               <variable_spec name="household_x_submarket.proportion_hh_contain_kids_if_hh_contains_kids"/>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
               <variable_spec name="submarket.submarket_walk50_wait25"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
-              <variable_spec name="household_x_submarket.dpa_easthonolulu_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
-              <variable_spec name="submarket.dpa_is_ewa"/>
-              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_hhsize"/>
             </variable_list>
           </submodel>
           <submodel name="highinc_apartment" submodel_id="4" type="submodel" hidden="Children" inherit_parent_values="False">
@@ -2866,16 +2848,14 @@
               <variable_spec name="submarket.average_income_in_submarket"/>
               <variable_spec name="submarket.avg_unit_price_submarket"/>
               <variable_spec name="household_x_submarket.children_ln_jobs_30_min_submarket"/>
+              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
+              <variable_spec name="submarket.dpa_is_ewa"/>
+              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
+              <variable_spec name="household_x_submarket.dpa_waianae_x_collegegrad"/>
               <variable_spec name="submarket.ln_job_density_zone_submarket"/>
               <variable_spec name="submarket.ln_residential_units_in_submarket"/>
               <variable_spec name="household_x_submarket.proportion_more_than_2_vehicle_if_hh_more_than_2_vehicle"/>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="submarket.travel_time_to_waikiki_submarket"/>
-              <variable_spec name="household_x_submarket.dpa_ewa_x_employed"/>
-              <variable_spec name="submarket.dpa_is_ewa"/>
-              <variable_spec name="household_x_submarket.dpa_koolauloa_x_median_age"/>
-              <variable_spec name="household_x_submarket.dpa_puc_x_nonfamily"/>
-              <variable_spec name="household_x_submarket.dpa_waianae_x_collegegrad"/>
             </variable_list>
           </submodel>
         </specification>
@@ -2983,9 +2963,8 @@
               <variable_spec name="submarket.avg_unit_price_submarket"/>
               <variable_spec name="submarket.ln_residential_units_in_submarket"/>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"/>
-              <variable_spec name="submarket.submarket_distance_to_freeway"/>
-              <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
               <variable_spec name="submarket.submarket_walk50_wait25"/>
+              <variable_spec name="household_x_submarket.wkrs_hhs_ln_jobs_30_min_submarket"/>
             </variable_list>
           </submodel>
           <submodel name="highinc_townhome" submodel_id="4" type="submodel" hidden="Children" inherit_parent_values="False">
