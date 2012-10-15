@@ -9,7 +9,7 @@ from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue, setdiff1d, union1d
-from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d
+from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d, argsort
 from scipy.ndimage import minimum as ndimage_min
 from scipy.ndimage import maximum as ndimage_max
 from scipy.ndimage import mean as ndimage_mean
@@ -233,8 +233,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
                                                                 prob_array=self.weight[available_indexes],
                                                                 return_index=False)
-
-                self.consider_proposals(sampled_proposal_indexes)
+                sorted_sampled_indices = argsort(self.weight[sampled_proposal_indexes])
+                self.consider_proposals(sampled_proposal_indexes[sorted_sampled_indices][::-1])
                 self.weight[sampled_proposal_indexes] = 0
                 #sample_size = 1
                 #sampled_proposal_index = probsample_noreplace(available_indexes, sample_size, 
