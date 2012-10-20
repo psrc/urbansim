@@ -292,15 +292,17 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     ###########################################################################
     ###########################################################################
     #PDA matching chart. TODO: could use some cleaning
-    #grid.newpage()
+    #TODO: problem if end year is not 2040. Other sections deal, but here we
+    #only have target data for 2010 and 2040. We could assume the same
+    #share by 20xx as by 2040.
     
     dt<-c(.78,.60,.34,.33,.92,.78,.84,.56,.65,.70,.57,.23,.18,.85,.60,.71,.33,.47)
     lCountiesShort <-c('ala','cnc','mar','nap','sfr','smt','scl','sol','son')
     lCountiesShort <-c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
     targetData <- data.frame(structure(dt, dim = c(9,2), .Dimnames = list(lCountiesShort,c('households','employment'))))
     targetData$county<-rownames(targetData)
-    simFiles <- c('county_table-3_2010-2040_county__county_employment.tab','county_table-3_2010-2040_county__county_employment_pda.tab',
-                  'county_table-3_2010-2040_county__county_households.tab','county_table-3_2010-2040_county__county_households_pda.tab')
+    simFiles <- c('county_table-3_2010-2035_county__county_employment.tab','county_table-3_2010-2035_county__county_employment_pda.tab',
+                  'county_table-3_2010-2035_county__county_households.tab','county_table-3_2010-2035_county__county_households_pda.tab')
     targetData.m <-melt(targetData, id.vars='county')
     targetData.m$obs_pred <-'target'
     targetData.m <- targetData.m[,c(1,4,3,2)] 
@@ -323,12 +325,13 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     
     ##calculate the share of the growth that happens in PDAs
     #households
-    dat$households$growth<-(dat$"households pda"$county_households_pda_2040.f8-dat$"households pda"$county_households_pda_2010.f8)/
-      (dat$households$county_households_2040.f8-dat$households$county_households_2010.f8)
+    names(dat$"households pda")
+    dat$households$growth<-(dat$"households pda"$county_households_pda_2035.f8-dat$"households pda"$county_households_pda_2010.f8)/
+      (dat$households$county_households_2035.f8-dat$households$county_households_2010.f8)
     #employment
-    dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2040.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
-      (dat$employment$county_employment_2040.f8-dat$employment$county_employment_2010.f8)
-    lapply(dat,"[[",32)
+    dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2035.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
+      (dat$employment$county_employment_2035.f8-dat$employment$county_employment_2010.f8)
+    #lapply(dat,"[[",32)
     
     ## 1) transform appropriately for ease of use/ggplot
     df.m<-melt(dat, id.vars=c("county_id.i8"))
