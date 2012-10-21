@@ -104,7 +104,7 @@ cached data: %s
 
     # prepare the indicators
     shutil.rmtree(os.path.join(output_dir, "indicators"), True)
-    for indicator_batch in ["county_indicators", "zone_data", "superdistrict_indicators", "regional_indicators_short"]:
+    for indicator_batch in ["county_indicators", "zone_data", "superdistrict_indicators", "regional_indicators_short","pda_indicators"]:
         urbansim.tools.make_indicators.run(options.xml_configuration,
                                            indicator_batch,
                                            None,
@@ -152,7 +152,15 @@ cached data: %s
     p = os.path.join(cache_directory, "mtc_data")
     if os.path.exists(p):
         shutil.copytree(p, os.path.join(output_dir, "mtc_data"))
-
+    
+    #Generate PDA comparison chart
+    pda_script = os.path.join(my_location, "pda_compare.R")
+    cmd = "Rscript %s %s %d %d %s %s" % (pda_script,
+                                   os.path.join(cache_directory, "indicators"),
+                                   years[0], years[-1], run_id, scenario)
+    print "Creating pda comparison chart: " + cmd
+    
+    
     # topsheet--need the EMFAC outputs to be generated first, so this goes last
     #travel_model_for_R = "TRUE" if travel_model else "FALSE" 
     topsheet_script = os.path.join(my_location, "regional_indicators.R")
@@ -161,7 +169,7 @@ cached data: %s
                                    years[0], years[-1], run_id, travel_model_for_R, scenario)
     print "Creating topsheet: " + cmd
     if os.system(cmd) != 0:
-        print "WARNING: Failed to generate county indicators"
+        print "WARNING: Failed to generate indicators"
 if __name__ == '__main__':
     try:
         main()
