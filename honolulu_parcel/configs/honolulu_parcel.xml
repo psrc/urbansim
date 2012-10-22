@@ -3582,9 +3582,9 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="building" type="selectable">True</selectable>
-        <selectable name="household" type="selectable">True</selectable>
-        <selectable name="job" type="selectable">True</selectable>
+        <selectable name="building" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="job" type="selectable" followers="my_dataset">True</selectable>
         <selectable name="parcel" type="selectable">True</selectable>
         <selectable name="submarket" type="selectable">True</selectable>
         <selectable name="node" type="selectable">False</selectable>
@@ -4768,7 +4768,7 @@
       </indicator_batch>
       <indicator_batch name="zonal">
         <batch_visualization hidden="Children" type="batch_visualization" name="hotel_resort">
-          <indicators>['zone_buildings']</indicators>
+          <indicators>['zone_jobs']</indicators>
           <output_type>tab</output_type>
           <dataset_name>zone</dataset_name>
           <visualization_type>tab</visualization_type>
