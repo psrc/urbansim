@@ -1184,6 +1184,19 @@
           </submodel>
         </specification>
       </model>
+      <model name="household2010_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">honolulu_parcel.models.household2010_allocation_model</class_module>
+            <class_name type="string">Household2010AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">Household2010AllocationModel</name>
+          </init>
+          <run type="dictionary">
+          </run>
+        </structure>
+      </model>
       <model name="employment2010_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -3641,7 +3654,8 @@
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="buildings2010_transition_model" type="selectable" name="buildings2010_transition_model_1">False</selectable>
-        <selectable return_value="employment2010_model" type="selectable" name="employment2010_model_1">True</selectable>
+        <selectable return_value="employment2010_model" type="selectable" name="employment2010_model_1">False</selectable>
+        <selectable return_value="household2010_allocation_model" type="selectable" name="household2010_allocation_model_1">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">honolulu_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
