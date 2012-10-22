@@ -341,7 +341,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                             labels=labels, 
                                             index=parcels_with_proposals[valid_parcels])).flatten().astype(int32)
                 percent = within_parcel_weights[wegligible][chosen_prop]/(max_value_by_parcel[valid_parcels]/100.0)
-                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent < 75]))[0]
+                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent < 65]))[0]
                 egligible[wegligible[setdiff1d(chosen_prop, where_lower)]] = False   # proposals with egligible=True get eliminated, so we dont want to set it to False for the where_lower ones
                 incompetition[union1d(chosen_prop, where_lower)] = False
                 if incompetition.sum() <= 0:
