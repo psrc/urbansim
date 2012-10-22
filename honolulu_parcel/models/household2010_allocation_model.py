@@ -32,6 +32,9 @@ class Household2010AllocationModel(Model):
             household_set.delete_computed_attributes()
             idx_households_to_place = where(household_set['household_zone'] == zone_id)[0]
             for household in idx_households_to_place:
+                parcel_set.delete_computed_attributes()
+                building_set.delete_computed_attributes()
+                household_set.delete_computed_attributes()
                 household_building_type = household_set['building_type_id'][household]
                 available_hh_capacity = building_set.compute_variables('_available_hh_capacity_type = (building.disaggregate(parcel.zone_id) == %s) * ((building.residential_units)>building.number_of_agents(household)) * (building.building_type_id == %s)'%(zone_id,household_building_type))
                 idx_available_hh_capacity = where(available_hh_capacity)[0]
