@@ -36,7 +36,7 @@ class Employment2010Model(Model):
             job_set.delete_computed_attributes()
             parcel_set.delete_computed_attributes()
             index_zone = where(job_controls['zone_id']==zone_id)[0]
-            for sector_id in arange(1, 21):
+            for sector_id in arange(1, 20):
                 sector_array_name = 'sector' + str(sector_id)
                 employment = job_controls["%s"%(sector_array_name)][index_zone]
                 logger.log_status("employment: %s" % (employment) )
