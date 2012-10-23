@@ -7,6 +7,70 @@
       <variable use="both" source="expression" name="mpa.med_hh_inc_razmodel" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
       <variable use="both" source="expression" name="mpa.avg_hh_inc_razmodel" type="variable_definition">mpa.aggregate(household.income, function=mean)</variable>
       <variable use="both" source="expression" name="mpa.mpa_jobs_razmodel" type="variable_definition">mpa.aggregate(job.job_id&gt;0, intermediates=[raz2012])</variable>
+      <variable use="both" source="expression" name="mpa.mpa_total_population_srazmodel" type="variable_definition">mpa.aggregate(household.persons, intermediates=[super_raz])</variable>
+      <variable use="both" source="expression" name="mpa.mpa_jobs_srazmodel" type="variable_definition">mpa.aggregate(job.job_id&gt;0, intermediates=[super_raz])</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_total_employment" type="variable_definition">super_raz.number_of_agents(job)</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_total_households" type="variable_definition">super_raz.number_of_agents(household)</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_total_population" type="variable_definition">super_raz.aggregate(household.persons)</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_num_office_jobs_per_acre" type="variable_definition">mag_zone.super_raz.number_of_office_jobs/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_num_industrial_jobs_per_acre" type="variable_definition">mag_zone.super_raz.number_of_industrial_jobs/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_household_density_per_acre" type="variable_definition">mag_zone.super_raz.number_of_households/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_non_home_based_job_density_per_acre" type="variable_definition">mag_zone.super_raz.number_of_nonhomebased_jobs/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_home_based_job_density_per_acre" type="variable_definition">mag_zone.super_raz.number_of_homebased_jobs/super_raz.acres</variable>
+      <variable use="both" source="primary attribute" name="super_raz.sraz_is_very_rural" type="variable_definition">super_raz.is_very_rural</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_seasonal_pop" type="variable_definition">super_raz.aggregate(household.is_seasonal)</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_num_jobs_per_acre" type="variable_definition">mag_zone.super_raz.number_of_jobs/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_num_retail_jobs_per_acre" type="variable_definition">mag_zone.super_raz.number_of_jobs/super_raz.acres</variable>
+      <variable use="both" source="primary attribute" name="super_raz.sraz_avg_income_quintile" type="variable_definition">super_raz.avg_income_quintile</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_pop_density_per_acre" type="variable_definition">mag_zone.super_raz.population/super_raz.acres</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_number_of_children" type="variable_definition">super_raz.aggregate(where(person.age&lt;17,1,0))</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_median_household_income" type="variable_definition">super_raz.aggregate(household.income,function=median)</variable>
+      <variable use="both" source="primary attribute" name="super_raz.sraz_in_central_valley" type="variable_definition">super_raz.in_central_valley</variable>
+      <variable use="both" source="expression" name="super_raz.sraz_avg_adult_education" type="variable_definition">super_raz.aggregate(mag_zone.person.is_adult*person.education,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_num_hh_within_30mins_peak_sov" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_households_within_30_peak_sov_tt_threshold,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_num_office_jobs_within_30mins_peak_sov" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_office_jobs_within_30_peak_sov_tt_threshold,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_num_retail_jobs_within_30mins_peak_sov" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_retail_jobs_within_30_peak_sov_tt_threshold,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_num_industrial_jobs_within_30mins_peak_sov" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_industrial_jobs_within_30_peak_sov_tt_threshold,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz_num_jobs_within_45mins_transit_combined" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_jobs_within_45_transit_combined_tt_threshold,function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz_num_jobs_within_30mins_hwy24" type="variable_definition">raz2012.aggregate(mag_zone.tazi03.number_of_jobs_within_30_hwytwentyfour_tt_threshold,function=mean)</variable>
+      <variable use="both" source="primary attribute" name="raz2012.raz2012_avg_income_quintile" type="variable_definition">raz2012.avg_income_quintile</variable>
+      <variable use="both" source="expression" name="raz2012.med_hh_inc_razmodel" type="variable_definition">raz2012.aggregate(household.income, function=median)</variable>
+      <variable use="both" source="expression" name="raz2012.avg_hh_inc_razmodel" type="variable_definition">raz2012.aggregate(household.income, function=mean)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_jobs_razmodel" type="variable_definition">raz2012.aggregate(job.job_id&gt;0, intermediates=[raz2012])</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_population_razmodel" type="variable_definition">raz2012.aggregate(household.persons)</variable>
+      <variable use="both" source="expression" name="raz2012.non_home_based_job_density_per_acre" type="variable_definition">mag_zone.raz2012.number_of_nonhomebased_jobs/raz2012.acres</variable>
+      <variable use="both" source="expression" name="raz2012.home_based_job_density_per_acre" type="variable_definition">mag_zone.raz2012.number_of_homebased_jobs/raz2012.acres</variable>
+      <variable use="both" source="primary attribute" name="raz2012.acres" type="variable_definition">raz2012.acres</variable>
+      <variable use="both" source="expression" name="raz2012.job_density_per_acre" type="variable_definition">mag_zone.raz2012.number_of_jobs/raz2012.acres</variable>
+      <variable use="both" source="expression" name="raz2012.pop_density_per_acre" type="variable_definition">mag_zone.raz2012.population/raz2012.acres</variable>
+      <variable use="both" source="expression" name="raz2012.proportion_hh_income_quint1" type="variable_definition">safe_array_divide((raz2012.aggregate(mag_zone.household.income_quintiles==1)),(mag_zone.raz2012.number_of_households))</variable>
+      <variable use="both" source="expression" name="raz2012.proportion_hh_income_quint5" type="variable_definition">safe_array_divide((raz2012.aggregate(mag_zone.household.income_quintiles==5)),(mag_zone.raz2012.number_of_households))</variable>
+      <variable use="both" source="primary attribute" name="raz2012.in_gila_bend" type="variable_definition">raz2012.in_gila_bend</variable>
+      <variable use="both" source="primary attribute" name="raz2012.is_very_rural" type="variable_definition">raz2012.is_very_rural</variable>
+      <variable use="both" source="primary attribute" name="raz2012.is_reservation_land" type="variable_definition">raz2012.is_reservation_land</variable>
+      <variable use="both" source="primary attribute" name="raz2012.in_central_valley" type="variable_definition">raz2012.in_central_valley</variable>
+      <variable use="both" source="primary attribute" name="raz2012.distance_to_cbd" type="variable_definition">raz2012.distance_to_cbd</variable>
+      <variable use="both" source="expression" name="raz2012.seasonal_pop" type="variable_definition">raz2012.aggregate(household.is_seasonal)</variable>
+      <variable use="both" source="expression" name="mpa.population_from_hh" type="variable_definition">mpa.aggregate(household.persons)</variable>
+      <variable use="both" source="expression" name="raz2012.raz_pk_sov_access" type="variable_definition">raz2012.aggregate(zone.pop_pk_sov_access, function=mean)</variable>
+      <variable use="both" source="Python class" name="household.income_quintiles" type="variable_definition">mag_zone.household.income_quintiles</variable>
+      <variable use="both" source="expression" name="building.number_of_non_home_based_jobs" type="variable_definition">building.aggregate(job.home_based_status==0)</variable>
+      <variable use="both" source="primary attribute" name="mpa.mpa_abbreviation" type="variable_definition">mpa.mpa_abbreviation</variable>
+      <variable use="both" source="primary attribute" name="mpa.mpa_name" type="variable_definition">mpa.mpa_name</variable>
+      <variable use="both" source="expression" name="mpa.mpa_vacant_residential_units_with_negatives" type="variable_definition">mpa.aggregate(building.residential_units - urbansim_zone.building.number_of_households)</variable>
+      <variable use="both" source="expression" name="building.total_non_home_based_job_spaces" type="variable_definition">numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))</variable>
+      <variable use="both" source="expression" name="building.vacant_non_home_based_job_spaces" type="variable_definition">clip_to_zero(mag_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)</variable>
+      <variable use="both" source="Python class" name="mpa.test_6" type="variable_definition">mag_zone.mpa.population_with_at_least_masters_degree</variable>
+      <variable use="both" source="Python class" name="taz2012.test_5" type="variable_definition">mag_zone.taz2012.number_of_entertainment_jobs</variable>
+      <variable use="both" source="Python class" name="raz2012.test_4" type="variable_definition">mag_zone.raz2012.percent_hh_age_of_head_over_55</variable>
+      <variable use="both" source="Python class" name="tazi03.test_3" type="variable_definition">mag_zone.tazi03.percent_hh_age_of_head_over_55</variable>
+      <variable use="both" source="Python class" name="tazi03.pp_at_leaast_high_school" type="variable_definition">mag_zone.tazi03.number_of_persons_with_at_least_high_school_diploma</variable>
+      <variable use="both" source="Python class" name="tazi03.public_jobs_local" type="variable_definition">mag_zone.tazi03.number_of_publocal_jobs</variable>
+      <variable use="both" source="Python class" name="tazi03.public_jobs_fedst" type="variable_definition">mag_zone.tazi03.number_of_pubfedstate_jobs</variable>
+      <variable use="both" source="Python class" name="tazi03.public_jobs" type="variable_definition">mag_zone.tazi03.number_of_public_jobs</variable>
+      <variable use="both" source="Python class" name="tazi03.test_2" type="variable_definition">mag_zone.tazi03.number_of_retail_jobs_within_10_transit_combined_tt_threshold</variable>
+      <variable use="both" source="expression" name="zone.test_1" type="variable_definition">zone.disaggregate(mag_zone.tazi03.number_of_jobs_within_10_transit_combined_tt_threshold)</variable>
+      <variable use="both" source="Python class" name="tazi03.test" type="variable_definition">mag_zone.tazi03.number_of_jobs_within_10_transit_combined_tt_threshold</variable>
     </expression_library>
   </general>
   <model_manager>
@@ -36,8 +100,8 @@
             <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"/>
             <argument name="sampling_threshold" convert_blank_to_none="True" type="string"/>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
-            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
-            <argument name="sync_dataset" type="string">person</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'super_raz_id':-1}</argument>
+            <argument name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
           </run>
         </structure>
       </model>
@@ -61,7 +125,7 @@
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
-            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'super_raz_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -418,6 +482,98 @@
           </prepare_for_estimate>
         </structure>
       </model>
+      <model name="compute_household_income_adjustment" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">mag_zone.household.income_adjustment</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">income</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="household_relocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.agent_relocation_model</class_module>
+            <class_name>AgentRelocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">super_raz_id</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Relocation Model</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">AgentRelocationModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">hrm_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_household_relocation_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">hrm_index</output>
+            <argument name="resources" type="string">hrm_resources</argument>
+            <argument name="agent_set" type="string">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="employment_relocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.agent_relocation_model</class_module>
+            <class_name>AgentRelocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">super_raz_id</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Relocation Model</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">AgentRelocationModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">erm_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_job_relocation_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">erm_index</output>
+            <argument name="resources" type="string">erm_resources</argument>
+            <argument name="agent_set" type="string">job</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="scheduled_development_events_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.scheduled_events_model</class_module>
+            <class_name>ScheduledEventsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ScheduledEventsModel</name>
+            <argument name="dataset" type="string">super_raz</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Scheduled Development Events Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">SDEM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="scheduled_events_table" parser_action="quote_string" type="string">scheduled_development_events</argument>
+            <argument name="scheduled_events_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
     </models>
   </model_manager>
   <results_manager>
@@ -486,173 +642,137 @@
           <visualization_type>tab</visualization_type>
         </batch_visualization>
       </indicator_batch>
+      <indicator_batch name="mpa_household_income_quintiles_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_household_income_quintiles">
+          <indicators>['mpa_hh_inc_quint01', 'mpa_hh_inc_quint02', 'mpa_hh_inc_quint03', 'mpa_hh_inc_quint04', 'mpa_hh_inc_quint05']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_avg_med_income_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_avg_med_income">
+          <indicators>['avg_hh_inc_razmodel', 'med_hh_inc_razmodel']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_total_population_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_total_population">
+          <indicators>['raz2012_population_razmodel']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_total_jobs_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_total_jobs">
+          <indicators>['raz2012_jobs_razmodel']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_household_income_quintiles_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_household_income_quintiles">
+          <indicators>['raz2012_hh_inc_quint01', 'raz2012_hh_inc_quint02', 'raz2012_hh_inc_quint03', 'raz2012_hh_inc_quint04', 'raz2012_hh_inc_quint05']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_household_header_categories_to45_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_household_header_categories_to45">
+          <indicators>['raz2012_hh_age_of_head_under_25', 'raz2012_hh_age_of_head_26_35', 'raz2012_hh_age_of_head_36_45']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_household_header_categories_46up_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_household_header_categories_46up">
+          <indicators>['raz2012_hh_age_of_head_46_55', 'raz2012_hh_age_of_head_56_65', 'raz2012_hh_age_of_head_66_up']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_household_number_of_children_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_number_of_children">
+          <indicators>['number_of_children']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_number_pct_hh_age_head_over55_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_number_pct_hh_age_head_over55">
+          <indicators>['number_of_hh_age_of_head_over_55', 'percent_hh_age_of_head_over_55']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_household_seasonal_population">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_seasonal_population">
+          <indicators>['seasonal_pop']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_total_pub_ind_ent_off_home_jobs">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_total_pub_ind_ent_off_home_jobs">
+          <indicators>['number_of_public_jobs', 'number_of_industrial_jobs', 'number_of_entertainment_jobs', 'number_of_homebased_jobs', 'number_of_nonhomebased_jobs', 'number_of_office_jobs']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_total_households_razmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_total_households_razmodel">
+          <indicators>['number_of_households']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_large_batch">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_large_batch">
+          <indicators>['raz2012_population_razmodel', 'raz2012_jobs_razmodel', 'seasonal_pop', 'med_hh_inc_razmodel', 'avg_hh_inc_razmodel', 'number_of_public_jobs', 'number_of_industrial_jobs', 'number_of_entertainment_jobs', 'number_of_homebased_jobs', 'number_of_nonhomebased_jobs', 'number_of_office_jobs']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="raz2012_simple_hh_and_job_control_totals">
+        <batch_visualization hidden="Children" type="batch_visualization" name="raz2012_simple_hh_and_job_control_totals">
+          <indicators>['raz2012_jobs_razmodel', 'number_of_households']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>raz2012</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="sraz_total_population_and_employment">
+        <batch_visualization hidden="Children" type="batch_visualization" name="sraz_total_population_and_employment">
+          <indicators>['sraz_total_employment', 'sraz_total_population']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>super_raz</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="mpa_total_population_and_employment_srazmodel">
+        <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_population_and_employment_srazmodel">
+          <indicators>['mpa_total_population_srazmodel', 'mpa_jobs_srazmodel']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>mpa</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
     </indicator_batches>
   </results_manager>
   <scenario_manager>
-    <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
-      <models_to_run setexpanded="True" config_name="models" type="selectable_list">
-        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
-        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
-        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
-        <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
-        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
-        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
-        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
-        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
-        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
-        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
-        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
-        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
-        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="development_project_transition_model" type="selectable">True</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="add_projects_to_buildings" type="selectable">True</selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
-        </selectable>
-      </models_to_run>
-      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2010</base_year>
-      <years_to_run setexpanded="True" config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
-      </years_to_run>
-      <write_datasets_to_cache_at_end_of_year type="string">False</write_datasets_to_cache_at_end_of_year>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</cache_directory>
-      <creating_baseyear_cache_configuration type="class">
-        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
-        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/runs</argument>
-        <argument name="baseyear_cache" type="class">
-          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</argument>
-        </argument>
-        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
-        <argument name="advanced" type="category">
-          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
-            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
-            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
-            <argument name="database_name" type="string">urbansim</argument>
-          </baseyear_database_configuration>
-          <cache_from_database type="boolean">False</cache_from_database>
-          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-          <tables_to_cache type="selectable_list">
-            <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
-            <selectable name="households" type="selectable">True</selectable>
-            <selectable name="job_building_types" type="selectable">True</selectable>
-            <selectable name="building_types" type="selectable">True</selectable>
-            <selectable name="jobs" type="selectable">True</selectable>
-            <selectable name="travel_data" type="selectable">True</selectable>
-            <selectable name="zones" type="selectable">True</selectable>
-            <selectable name="counties" type="selectable">True</selectable>
-            <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="urbansim_constants" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
-            <selectable name="base_year" type="selectable">True</selectable>
-            <selectable name="cities" type="selectable">True</selectable>
-            <selectable name="development_event_history" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
-            <selectable name="employment_sectors" type="selectable">True</selectable>
-            <selectable name="race_names" type="selectable">True</selectable>
-            <selectable name="target_vacancies" type="selectable">True</selectable>
-            <selectable name="jobs_for_estimation" type="selectable">True</selectable>
-            <selectable name="households_for_estimation" type="selectable">True</selectable>
-          </tables_to_cache>
-          <tables_to_cache_nchunks type="dictionary">
-            <parcels type="integer">1</parcels>
-          </tables_to_cache_nchunks>
-        </argument>
-      </creating_baseyear_cache_configuration>
-      <advanced type="category">
-        <dataset_pool_configuration type="class">
-          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
-        </dataset_pool_configuration>
-        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
-        <flush_variables type="boolean">False</flush_variables>
-        <low_memory_run type="boolean">False</low_memory_run>
-        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <selectable name="zone" type="selectable">True</selectable>
-          <selectable name="household" type="selectable">True</selectable>
-          <selectable name="building" type="selectable">True</selectable>
-          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
-          </selectable>
-          <selectable name="job" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
-          </selectable>
-          <selectable name="travel_data" type="selectable">False</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
-          <selectable name="home_based_status" type="selectable">False</selectable>
-        </datasets_to_preload>
-      </advanced>
-    </scenario>
-    <scenario executable="True" name="demographic_evolution_models" type="scenario">
-      <model_system type="string">opus_core.model_coordinators.model_system</model_system>
-      <base_year type="integer">2010</base_year>
-      <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
-      </years_to_run>
-      <models_to_run config_name="models" type="selectable_list">
-        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
-        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
-        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
-        <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
-        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
-        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
-        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
-        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
-        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
-        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
-        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
-        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
-        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
-      </models_to_run>
-      <creating_baseyear_cache_configuration type="class">
-        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
-        <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/runs</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</argument>
-        <argument name="cache_from_database" type="boolean">False</argument>
-      </creating_baseyear_cache_configuration>
-      <dataset_pool_configuration type="class">
-        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
-        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
-      </dataset_pool_configuration>
-      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="household" type="selectable">True</selectable>
-        <selectable name="person" type="selectable">True</selectable>
-      </datasets_to_preload>
-    </scenario>
   </scenario_manager>
 </opus_project>
 

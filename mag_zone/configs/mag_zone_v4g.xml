@@ -7,6 +7,21 @@
       <variable use="both" source="expression" name="mpa.med_hh_inc_razmodel" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
       <variable use="both" source="expression" name="mpa.avg_hh_inc_razmodel" type="variable_definition">mpa.aggregate(household.income, function=mean)</variable>
       <variable use="both" source="expression" name="mpa.mpa_jobs_razmodel" type="variable_definition">mpa.aggregate(job.job_id&gt;0, intermediates=[raz2012])</variable>
+      <variable use="both" source="primary attribute" name="building.building_res_units" type="variable_definition">building.residential_units</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_non_res_sqft" type="variable_definition">raz2012.aggregate(building.non_residential_sqft)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_total_job_space_capacity" type="variable_definition">raz2012.aggregate(numpy.round(safe_array_divide(building.non_residential_sqft_capacity, urbansim_zone.building.building_sqft_per_job)))</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_total_job_spaces" type="variable_definition">raz2012.aggregate(urbansim_zone.building.total_job_spaces)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_non_residential_sqft_capacity" type="variable_definition">raz2012.aggregate(building.non_residential_sqft_capacity)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_residential_units_capacity" type="variable_definition">raz2012.aggregate(building.residential_units_capacity)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_vacant_residential_units_clipped_to_zero" type="variable_definition">raz2012.aggregate(urbansim_zone.building.vacant_residential_units)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_residential_units" type="variable_definition">raz2012.aggregate(building.residential_units)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_vacant_residential_units_with_negatives" type="variable_definition">raz2012.aggregate(mag_zone.building.vacant_residential_units_with_negatives)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_total_hb_job_spaces" type="variable_definition">raz2012.aggregate(mag_zone.building.total_home_based_job_spaces)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_total_nhb_job_spaces" type="variable_definition">raz2012.aggregate(mag_zone.building.total_non_home_based_job_spaces)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_vacant_nhb_job_spaces" type="variable_definition">raz2012.aggregate(mag_zone.building.vacant_non_home_based_job_spaces)</variable>
+      <variable use="both" source="expression" name="raz2012.raz2012_vacant_hb_job_spaces" type="variable_definition">raz2012.aggregate(mag_zone.building.vacant_home_based_job_spaces)</variable>
+      <variable use="both" source="expression" name="None.negative_vacant_non_home_based_job_spaces_plus25pct" type="variable_definition">negative_vacant_non_home_based_job_spaces*0.25</variable>
+      <variable use="both" source="expression" name="building.negative_vacant_non_home_based_job_spaces" type="variable_definition">(urbansim_zone.building.total_non_home_based_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)&lt;0</variable>
     </expression_library>
   </general>
   <model_manager>
@@ -33,11 +48,11 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"/>
-            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"/>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string">['super_raz_id','county_id']</argument>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string">1000</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
-            <argument name="sync_dataset" type="string">person</argument>
+            <argument name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
           </run>
         </structure>
       </model>
@@ -52,6 +67,8 @@
             <argument name="dataset" type="string">job</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Employment Transition Model</argument>
             <argument name="model_short_name" parser_action="quote_string" type="string">ETM</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
+            <argument name="dataset_accounting_attribute" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
@@ -60,8 +77,11 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string">['super_raz_id','county_id']</argument>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string">1</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+            <argument name="sync_dataset" convert_blank_to_none="True" type="string"/>
           </run>
         </structure>
       </model>
@@ -418,6 +438,32 @@
           </prepare_for_estimate>
         </structure>
       </model>
+      <model name="development_project_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.real_estate_transition_model</class_module>
+            <class_name>RealEstateTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="target_vancy_dataset" type="string">target_vacancy</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Development Project Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">DPTM</argument>
+            <name name="name" type="string">RealEstateTransitionModel</name>
+          </init>
+          <run type="dictionary">
+            <output name="output" type="string">projects, _index</output>
+            <argument name="realestate_dataset" type="string">building</argument>
+            <argument name="year" type="string">year</argument>
+            <argument name="occupied_spaces_variable" parser_action="quote_string" type="string">occupied_spaces</argument>
+            <argument name="total_spaces_variable" parser_action="quote_string" type="string">total_spaces</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">target_vacancy</argument>
+            <argument name="sample_from_dataset" type="string">development_event_history</argument>
+            <argument name="sample_filter" type="string">None</argument>
+            <argument name="reset_attribute_value" type="string">{'building_id':-1}</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+      </model>
     </models>
   </model_manager>
   <results_manager>
@@ -489,170 +535,6 @@
     </indicator_batches>
   </results_manager>
   <scenario_manager>
-    <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
-      <models_to_run setexpanded="True" config_name="models" type="selectable_list">
-        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
-        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
-        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
-        <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
-        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
-        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
-        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
-        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
-        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
-        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
-        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
-        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
-        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="development_project_transition_model" type="selectable">True</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="add_projects_to_buildings" type="selectable">True</selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
-        </selectable>
-      </models_to_run>
-      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2010</base_year>
-      <years_to_run setexpanded="True" config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
-      </years_to_run>
-      <write_datasets_to_cache_at_end_of_year type="string">False</write_datasets_to_cache_at_end_of_year>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4g/base_year_data</cache_directory>
-      <creating_baseyear_cache_configuration type="class">
-        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
-        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4g/runs</argument>
-        <argument name="baseyear_cache" type="class">
-          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4g/base_year_data</argument>
-        </argument>
-        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
-        <argument name="advanced" type="category">
-          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
-            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
-            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
-            <argument name="database_name" type="string">urbansim</argument>
-          </baseyear_database_configuration>
-          <cache_from_database type="boolean">False</cache_from_database>
-          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-          <tables_to_cache type="selectable_list">
-            <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
-            <selectable name="households" type="selectable">True</selectable>
-            <selectable name="job_building_types" type="selectable">True</selectable>
-            <selectable name="building_types" type="selectable">True</selectable>
-            <selectable name="jobs" type="selectable">True</selectable>
-            <selectable name="travel_data" type="selectable">True</selectable>
-            <selectable name="zones" type="selectable">True</selectable>
-            <selectable name="counties" type="selectable">True</selectable>
-            <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="urbansim_constants" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
-            <selectable name="base_year" type="selectable">True</selectable>
-            <selectable name="cities" type="selectable">True</selectable>
-            <selectable name="development_event_history" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
-            <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
-            <selectable name="employment_sectors" type="selectable">True</selectable>
-            <selectable name="race_names" type="selectable">True</selectable>
-            <selectable name="target_vacancies" type="selectable">True</selectable>
-            <selectable name="jobs_for_estimation" type="selectable">True</selectable>
-            <selectable name="households_for_estimation" type="selectable">True</selectable>
-          </tables_to_cache>
-          <tables_to_cache_nchunks type="dictionary">
-            <parcels type="integer">1</parcels>
-          </tables_to_cache_nchunks>
-        </argument>
-      </creating_baseyear_cache_configuration>
-      <advanced type="category">
-        <dataset_pool_configuration type="class">
-          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
-        </dataset_pool_configuration>
-        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
-        <flush_variables type="boolean">False</flush_variables>
-        <low_memory_run type="boolean">False</low_memory_run>
-        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <selectable name="zone" type="selectable">True</selectable>
-          <selectable name="household" type="selectable">True</selectable>
-          <selectable name="building" type="selectable">True</selectable>
-          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
-          </selectable>
-          <selectable name="job" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
-          </selectable>
-          <selectable name="travel_data" type="selectable">False</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
-          <selectable name="home_based_status" type="selectable">False</selectable>
-        </datasets_to_preload>
-      </advanced>
-    </scenario>
-    <scenario executable="True" name="demographic_evolution_models" type="scenario">
-      <model_system type="string">opus_core.model_coordinators.model_system</model_system>
-      <base_year type="integer">2010</base_year>
-      <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
-      </years_to_run>
-      <models_to_run config_name="models" type="selectable_list">
-        <selectable return_value="aging_model" type="selectable" name="aging_model_1">True</selectable>
-        <selectable return_value="fertility_model" type="selectable" name="fertility_model_1">True</selectable>
-        <selectable return_value="mortality_model" type="selectable" name="mortality_model_1">True</selectable>
-        <selectable return_value="education_model" type="selectable" name="education_model_1">True</selectable>
-        <selectable return_value="marriage_model" type="selectable" name="marriage_model_1">True</selectable>
-        <selectable return_value="cohabitation_model" type="selectable" name="cohabitation_model_1">True</selectable>
-        <selectable return_value="divorce_model" type="selectable" name="divorce_model_1">True</selectable>
-        <selectable return_value="breakup_model" type="selectable" name="breakup_model_1">True</selectable>
-        <selectable return_value="child_leaving_home_model" type="selectable" name="child_leaving_home_model_1">True</selectable>
-        <selectable return_value="roommate_model" type="selectable" name="roommate_model_1">True</selectable>
-        <selectable return_value="household_workers_init_model" type="selectable" name="household_workers_init_model_1">True</selectable>
-        <selectable return_value="household_workers_model" type="selectable" name="household_workers_model_1">True</selectable>
-        <selectable return_value="income_regression_model" type="selectable" name="income_regression_model_1">True</selectable>
-        <selectable return_value="zeroworker_income_model" type="selectable" name="zeroworker_income_model_1">True</selectable>
-      </models_to_run>
-      <creating_baseyear_cache_configuration type="class">
-        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
-        <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4g/runs</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4g/base_year_data</argument>
-        <argument name="cache_from_database" type="boolean">False</argument>
-      </creating_baseyear_cache_configuration>
-      <dataset_pool_configuration type="class">
-        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
-        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
-      </dataset_pool_configuration>
-      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="household" type="selectable">True</selectable>
-        <selectable name="person" type="selectable">True</selectable>
-      </datasets_to_preload>
-    </scenario>
   </scenario_manager>
 </opus_project>
 
