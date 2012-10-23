@@ -5,6 +5,13 @@
     <project_name hidden="True" type="string">honolulu_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="zone.tm_service" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [12,13,14,15,16,17,19])),intermediates=[parcel]) + .733*zone.aggregate(building.aggregate(job.sector_id==18),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_cstr" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [2,4])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_retail" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==7),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_fire" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [10,11])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_indus" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [5,6])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_tcu" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [3,8,9])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_ag" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==1),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.zone_buildings" type="variable_definition">zone.aggregate(parcel.number_of_agents(building))</variable>
       <variable use="both" source="expression" name="zone.h_runit_resbuilding" type="variable_definition">zone.aggregate(building.residential_units*(building.building_type_id&lt;4),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="parcel.parcel_walk50_wait25" type="variable_definition">parcel.disaggregate(zone.walk50_wait25)</variable>
@@ -3582,9 +3589,9 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="building" type="selectable" followers="my_dataset">True</selectable>
-        <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
-        <selectable name="job" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">True</selectable>
         <selectable name="parcel" type="selectable">True</selectable>
         <selectable name="submarket" type="selectable">True</selectable>
         <selectable name="node" type="selectable">False</selectable>
@@ -4768,7 +4775,7 @@
       </indicator_batch>
       <indicator_batch name="zonal">
         <batch_visualization hidden="Children" type="batch_visualization" name="hotel_resort">
-          <indicators>['zone_jobs']</indicators>
+          <indicators>['tm_ag', 'tm_tcu', 'tm_indus', 'tm_fire', 'tm_retail', 'tm_cstr', 'tm_service']</indicators>
           <output_type>tab</output_type>
           <dataset_name>zone</dataset_name>
           <visualization_type>tab</visualization_type>
