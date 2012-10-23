@@ -139,12 +139,31 @@ class PlannedRedevelopmentResidualModel(Model):
 
         new_residential_units = residential_units_to_remove_from - total_dus_to_remove_this_year
         new_non_residential_sqft = non_residential_sqft_to_remove_from - total_non_residential_sqft_to_remove_this_year
+        # Replace any negative values with zeros
+        new_residential_units_lt_zero = where(new_residential_units<0)[0]
+        new_residential_units[new_residential_units_lt_zero] = 0
+        new_non_residential_sqft_lt_zero = where(new_non_residential_sqft<0)[0]
+        new_non_residential_sqft[new_non_residential_sqft_lt_zero] = 0
+        if new_residential_units_lt_zero.size > 0:
+            logger.log_warning('Found %s building records with negative new_residential_units values, replacing with zeros.' % str(new_residential_units_lt_zero.size))
+        if new_non_residential_sqft_lt_zero.size > 0:
+            logger.log_warning('Found %s building records with negative new_non_residential_sqft values, replacing with zeros.' % str(new_non_residential_sqft_lt_zero.size))
         
         redev_ids_to_actually_do_something_with_index = self.buildings_dataset.get_id_index(redev_ids_to_actually_do_something_with)
         unique_redevelopment_building_ids_index = self.buildings_dataset.get_id_index(unique_redevelopment_building_ids)
         self.buildings_dataset.set_values_of_one_attribute('residential_units', new_residential_units, unique_redevelopment_building_ids_index)
         self.buildings_dataset.set_values_of_one_attribute('non_residential_sqft', new_non_residential_sqft, unique_redevelopment_building_ids_index)
-
+        
+#        # TEMP: checking for values <0 in the updated arrays:
+#        nonres_sqft_lt_zero = where(self.buildings_dataset.get_attribute('non_residential_sqft')<0)[0].size
+#        res_units_lt_zero = where(self.buildings_dataset.get_attribute('residential_units')<0)[0].size
+#        print '\n///////////////////////////////////////////////////////////\n'
+#        print '///////////////////////////////////////////////////////////\n'
+#        print 'nonres_sqft has %s records with negative values' % str(nonres_sqft)
+#        print 'res_units has %s records with negative values' % str(res_units)
+#        print '\n///////////////////////////////////////////////////////////\n'
+#        print '///////////////////////////////////////////////////////////\n'
+        
         ### Unplace building occupants
         # compute variables
         vacant_residential_units_with_negatives = \

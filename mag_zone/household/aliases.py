@@ -48,10 +48,11 @@ aliases = [
     # households by geographies:
     'tazi03_id = household.disaggregate(building.disaggregate(zone.tazi03_id))',
     'razi03_id = household.disaggregate(building.disaggregate(zone.razi03_id))',
-    #'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
+    'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
     'mpa_id = household.disaggregate(raz2012.mpa_id)',
     'taz2012_id = household.disaggregate(building.disaggregate(zone.taz2012_id))',
     'raz2012_id = household.disaggregate(building.disaggregate(zone.raz2012_id))',
+    'super_raz_id = household.disaggregate(building.disaggregate(zone.super_raz_id))',
     'zone_id = household.disaggregate(building.disaggregate(zone.zone_id))',
     'pseudo_blockgroup_id = household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id))',
     'census_place_id = household.disaggregate(building.disaggregate(zone.census_place_id))',

@@ -15,6 +15,7 @@ aliases = [
     "is_residential = building.disaggregate(building_type.is_residential)",
     "tazi03_id = building.disaggregate(zone.tazi03_id)",
     "raz2012_id = building.disaggregate(zone.raz2012_id)",
+    "super_raz_id = building.disaggregate(zone.super_raz_id)",
     "is_building_type_rsf = urbansim_zone.building.is_building_type_rsf",
     "is_building_type_rmf = urbansim_zone.building.is_building_type_rmf",
     "is_building_type_retl = urbansim_zone.building.is_building_type_retl",

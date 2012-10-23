@@ -3,4 +3,5 @@
 # See opus_core/LICENSE
 aliases = [
 		   "mpa_id = development_event_history.disaggregate(zone.mpa_id)",
+		   "super_raz_id = development_event_history.disaggregate(zone.super_raz_id)",
            ]

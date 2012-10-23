@@ -1,7 +1,7 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-    <project_name type="string" hidden="True">mag_zone_v4c</project_name>
+    <project_name type="string" hidden="True">mag_zone_v4f</project_name>
     <parent type="file">mag_zone/configs/mag_zone_base.xml</parent>
     <expression_library type="dictionary">
       <variable use="both" source="expression" name="mpa.med_hh_inc_razmodel" type="variable_definition">mpa.aggregate(household.income, function=median)</variable>
@@ -525,15 +525,15 @@
         <lastyear type="integer">2011</lastyear>
       </years_to_run>
       <write_datasets_to_cache_at_end_of_year type="string">False</write_datasets_to_cache_at_end_of_year>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4c/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4c/runs</argument>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/runs</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4c/base_year_data</argument>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</argument>
         </argument>
         <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
         <argument name="advanced" type="category">
@@ -639,8 +639,8 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4c/runs</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4c/base_year_data</argument>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/runs</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v4f/base_year_data</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">

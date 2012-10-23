@@ -43,6 +43,7 @@ aliases = [
     'zone_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.zone_id)))',
     'pseudo_blockgroup_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.pseudo_blockgroup_id)))',
     'census_place_id = person.disaggregate(household.disaggregate(building.disaggregate(zone.census_place_id)))',
+    'super_raz_id = person.disaggregate(household.super_raz_id)',
     # other variables:
     'gender = person.sex',
     'head_of_hh = person.relate==1',

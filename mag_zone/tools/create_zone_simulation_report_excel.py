@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, exc
 from datetime import datetime
 from easygui import multenterbox, multchoicebox, choicebox
 from numpy import array, median, seterr
+from time import time
 import xlwt, os, sys
 
 class RegionWideReport():
@@ -1734,6 +1735,68 @@ def get_total_households_by_year_and_subarea(subarea, years, workbook, run_name,
         column_counter += 1
         r.close()
 
+def get_households_by_income_quintile_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    for quintile in range(1,6):
+        # Get total households by income quintiles by subarea in a separate sheet
+        # write column headings (years)
+        worksheet = workbook.add_sheet('hh_inc_quint_%s_by_%s' % (quintile, subarea))
+        worksheet.write(0,0,'%s_id' % (subarea))
+        
+        # TODO: if subarea is mpa, write mpa_name
+    #    if subarea == 'mpa':
+    #        blah blah blah
+        # write column labels:
+        column_counter = 1
+        for year in years:
+            worksheet.write(0,column_counter,'y'+str(year)+'q'+str(quintile))
+            column_counter += 1
+        # get distinct subareas and write to 1st column as IDs
+        row_counter = 1
+        r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+        for row in r:
+            worksheet.write(row_counter,0,row[0])
+            row_counter += 1
+        
+        # TODO: if subarea is mpa, write mpa_name
+    #    if subarea == 'mpa':
+    #        blah blah blah
+        
+        # get values and fill in table
+        column_counter = 1
+        for year in years:
+            print 'Computing total households for income quintile %s by %s for year %s' % (quintile, subarea, year)
+            row_counter = 1
+            r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+            r.close()
+            r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+            r.close()
+            query = '''select z.%s_id, count(*) as numhh
+                        into #numhh_%s_%s
+                        from %s_%s_households h
+                        left join %s_%s_buildings b
+                        on b.building_id = h.building_id
+                        left join %s_%s_zones z
+                        on b.zone_id = z.zone_id
+                        where h.income_quintiles = %s
+                        group by z.%s_id
+                        order by z.%s_id''' % (subarea, year, quintile, run_name, year, run_name, year, run_name, year, quintile, subarea, subarea)
+            r = connection.execute(query)
+            r.close()
+            r = connection.execute('''select
+                                CASE 
+                                        WHEN u.numhh IS NULL THEN 0
+                                        ELSE u.numhh
+                                END
+                            from #distinct_%s r
+                            left join #numhh_%s_%s u
+                            on r.%s_id = u.%s_id
+                            order by r.%s_id''' % (subarea, year, quintile, subarea, subarea, subarea))
+            for row in r:
+                worksheet.write(row_counter,column_counter,row[0])
+                row_counter += 1
+            column_counter += 1
+            r.close()
+
 def get_persons_per_household_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get persons per household by subarea in a separate sheet
     # write column headings
@@ -1801,6 +1864,7 @@ def get_persons_per_household_by_year_and_subarea(subarea, years, workbook, run_
 def get_mean_household_income_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get mean household income by subarea in a separate sheet
     # write column headings
+    function_begin = time()
     worksheet = workbook.add_sheet('mean_hh_income_by_%s' % (subarea))
     worksheet.write(0,0,'%s_id' % (subarea))
     column_counter = 1
@@ -1816,7 +1880,8 @@ def get_mean_household_income_by_year_and_subarea(subarea, years, workbook, run_
     # get values and fill in table
     column_counter = 1
     for year in years:
-        print 'Computing mean household income by %s for year %s' % (subarea, year)
+        t0 = time()
+        print '\nComputing mean household income by %s for year %s' % (subarea, year)
         row_counter = 1
         r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
         r.close()
@@ -1842,11 +1907,80 @@ def get_mean_household_income_by_year_and_subarea(subarea, years, workbook, run_
                         left join #avghhinc_%s u
                         on r.%s_id = u.%s_id
                         order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        t1 = time() - t0
+        print 'Query took %s seconds' % t1
+        t0 = time()
         for row in r:
             worksheet.write(row_counter,column_counter,row[0])
             row_counter += 1
         column_counter += 1
+        t1 = time() - t0
+        print 'Writing to Excel took %s seconds' % t1
         r.close()
+    function_end = time() - function_begin
+    print '---------------'
+    print 'Old style queries took %s seconds' % function_end
+    print '---------------'
+
+def get_mean_household_income_by_year_and_subarea2(subarea, years, workbook, run_name, base_year, connection):
+    # Get mean household income by subarea in a separate sheet
+    # write column headings
+    function_begin = time()
+    worksheet = workbook.add_sheet('mean_hh_income_by_%s2' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        t0 = time()
+        print '\nComputing mean household income by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute('''  SELECT
+                                          CASE 
+                                                WHEN u.avghhinc IS NULL THEN 0
+                                                ELSE u.avghhinc
+                                          END
+                                    FROM
+                                    (
+                                    SELECT DISTINCT(%s_id)
+                                    FROM %s_%s_zones
+                                    ) r
+                                    LEFT JOIN 
+                                    (
+                                    SELECT z.%s_id, ROUND(AVG(CAST(income AS FLOAT)),2) AS avghhinc
+                                    FROM %s_%s_households h
+                                    LEFT JOIN %s_%s_buildings b
+                                    ON b.building_id = h.building_id
+                                    LEFT JOIN %s_%s_zones z
+                                    ON b.zone_id = z.zone_id
+                                    GROUP BY z.%s_id
+                                    ) u
+                                    ON r.%s_id = u.%s_id
+                                    ORDER BY r.%s_id
+                               ''' % (subarea, run_name, year, subarea, run_name, year, run_name, year, run_name, year, subarea, subarea, subarea, subarea))
+        t1 = time() - t0
+        print 'Query took %s seconds' % t1
+        t0 = time()
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        t1 = time() - t0
+        print 'Writing to Excel took %s seconds' % t1
+        r.close()
+    function_end = time() - function_begin
+    print '---------------'
+    print 'New style queries took %s seconds' % function_end
+    print '---------------'
 
 def get_median_household_income_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get median household income by subarea in a separate sheet
@@ -2142,6 +2276,59 @@ def get_total_population_by_year_and_subarea(subarea, years, workbook, run_name,
             row_counter += 1
         column_counter += 1
         r.close()
+        
+
+def get_total_population_by_year_and_subarea_stacked(subarea, years, workbook, run_name, base_year, connection):
+    # Get total population by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('pop_by_%s_and_year_stacked' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    worksheet.write(0,1,'population')
+    worksheet.write(0,2,'year')
+    # write distinct subareas
+    row_counter = 1
+    for year in years:
+        r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+        for row in r:
+            worksheet.write(row_counter,0,row[0])
+            row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    row_counter = 1
+    for year in years:
+        print 'Computing total population by %s for year %s' % (subarea, year)
+        #row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select z.%s_id, sum(persons) as numhh
+                    into #numpp_%s
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on b.building_id = h.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    group by z.%s_id
+                    order by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numhh IS NULL THEN 0
+                                    ELSE u.numhh
+                            END
+                        from #distinct_%s r
+                        left join #numpp_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            worksheet.write(row_counter,column_counter+1,year)
+            row_counter += 1
+        r.close()
+
+
 
 def get_total_DUs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total residential units by subarea in a separate sheet
@@ -2590,6 +2777,8 @@ def main():
                         , 'get_mean_household_income_by_year_and_subarea'
                         , 'get_median_household_income_by_year_and_subarea (CAUTION:VERY SLOW!)'
                         , 'get_persons_per_household_by_year_and_subarea'
+                        , 'get_households_by_income_quintile_by_year_and_subarea'
+                        , 'get_total_population_by_year_and_subarea_stacked'
                         ]
                                )
         report_list.sort()
@@ -2615,6 +2804,9 @@ def main():
             else:
                 region_wide_choices.append(choice)
         
+        # start timer
+        t0 = time()
+        
         # Run region wide queries
         for region_wide_choice in region_wide_choices:
             try:
@@ -2631,7 +2823,11 @@ def main():
             except exc.ProgrammingError, e:
                 print '\nERROR when calling the following subarea report function: \n%s' % q
                 print '\nThere was a SQL error: \n%s\n' % (e)
-
+        
+        # print time of execution
+        t1 = time() - t0
+        print 'The queries took %s seconds' % (t1)
+        
         # Save excel workbook
         print 'Report successful'
         save_excel_workbook(run_name, excel_output_path, workbook)
