@@ -291,7 +291,7 @@ for(i in 1:length(dat))
   ## table object prep for chart
   cols<-ncol(simulation.t)
   end<-(yrEnd - yrStart + 1)
-  if (end > 26 ) {
+  if (end > 24 ) {
     step <- 2 
   }
   else {
