@@ -36,7 +36,7 @@ class Employment2010Model(Model):
             job_set.delete_computed_attributes()
             parcel_set.delete_computed_attributes()
             index_zone = where(job_controls['zone_id']==zone_id)[0]
-            for sector_id in arange(1, 20):
+            for sector_id in arange(1, 19):
                 sector_array_name = 'sector' + str(sector_id)
                 employment = job_controls["%s"%(sector_array_name)][index_zone]
                 logger.log_status("employment: %s" % (employment) )
@@ -94,7 +94,7 @@ class Employment2010Model(Model):
         job_set.delete_one_attribute('job_zone')   
 
         home_based_job_controls = dataset_pool.get_dataset('jobs2010_home_based')
-        for sector in arange(1,20):
+        for sector in arange(1,19):
             logger.log_status("Sector: %s"%(sector))
             idx_sector = where(home_based_job_controls['sector_id'] == sector)
             num_home_based_jobs = home_based_job_controls['home_based_jobs'][idx_sector]
