@@ -1,64 +1,65 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>dlgConfigureBatchIndicatorVisualization</class>
- <widget class="QDialog" name="dlgConfigureBatchIndicatorVisualization" >
-  <property name="geometry" >
+ <widget class="QDialog" name="dlgConfigureBatchIndicatorVisualization">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1003</width>
-    <height>703</height>
+    <height>849</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Batch indicator visualization</string>
   </property>
-  <property name="toolTip" >
+  <property name="toolTip">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6" >
-   <item row="0" column="0" >
-    <widget class="QFrame" name="frame" >
-     <property name="frameShape" >
+  <layout class="QGridLayout" name="gridLayout_6">
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5" >
-      <item row="0" column="0" >
-       <widget class="QGroupBox" name="gbOutputOptions" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="gbOutputOptions">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="title" >
+        <property name="title">
          <string>Output options</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_5" >
-           <property name="text" >
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
             <string>Visualization name:</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QLineEdit" name="leVizName" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="leVizName">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>100</width>
              <height>0</height>
@@ -66,55 +67,55 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="label_7" >
-           <property name="text" >
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
             <string>Type:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QComboBox" name="cboVizType" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <item row="1" column="1">
+          <widget class="QComboBox" name="cboVizType">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>0</width>
              <height>0</height>
             </size>
            </property>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Table</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Map</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Animation</string>
             </property>
            </item>
           </widget>
          </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="label_6" >
-           <property name="text" >
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
             <string>Dataset name:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="QComboBox" name="cboDataset" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <item row="2" column="1">
+          <widget class="QComboBox" name="cboDataset">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -124,64 +125,64 @@
         </layout>
        </widget>
       </item>
-      <item rowspan="2" row="0" column="1" colspan="2" >
-       <widget class="QGroupBox" name="groupBox" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+      <item row="0" column="1" rowspan="2" colspan="2">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="title" >
+        <property name="title">
          <string>Format options</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QLabel" name="label_4" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <widget class="QLabel" name="label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Format:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cboOutputType" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <widget class="QComboBox" name="cboOutputType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize" >
+             <property name="minimumSize">
               <size>
                <width>0</width>
                <height>0</height>
               </size>
              </property>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>Tab delimited file (.tab)</string>
               </property>
              </item>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>Fixed field file (.dat)</string>
               </property>
              </item>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>Export to SQL database</string>
               </property>
              </item>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>ESRI database</string>
               </property>
              </item>
@@ -189,30 +190,30 @@
            </item>
           </layout>
          </item>
-         <item row="4" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout" >
+         <item row="4" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QLabel" name="lblOption1" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <widget class="QLabel" name="lblOption1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>TextLabel</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="leOption1" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <widget class="QLineEdit" name="leOption1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize" >
+             <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
@@ -221,132 +222,288 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pbn_set_storage_location" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <widget class="QPushButton" name="pbn_set_storage_location">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>...</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item row="1" column="0" >
-          <widget class="QRadioButton" name="rbSingleTable" >
-           <property name="toolTip" >
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="rbSingleTable">
+           <property name="toolTip">
             <string>The table will have the values of all indicators for each year the indicator batch is run on.</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Output a single table</string>
            </property>
-           <property name="checked" >
+           <property name="checked">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
-          <widget class="QRadioButton" name="rbTablePerYear" >
-           <property name="toolTip" >
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="rbTablePerYear">
+           <property name="toolTip">
             <string>Each table will have the values of the selected indicators for the given year.</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Output a table for every year</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0" >
-          <widget class="QRadioButton" name="rbTablePerIndicator" >
-           <property name="toolTip" >
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="rbTablePerIndicator">
+           <property name="toolTip">
             <string>Each table will have the values of a given indicator across all years the batch is run on.</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Output a table for each indicator</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0" >
-          <widget class="QPushButton" name="mapnikOptions" >
-           <property name="maximumSize" >
+         <item row="5" column="0">
+          <widget class="QPushButton" name="mapnikOptions">
+           <property name="maximumSize">
             <size>
              <width>150</width>
              <height>16777215</height>
             </size>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Mapnik Map Options</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="appendTypeCheckBox">
+           <property name="text">
+            <string>Append Column Type To Column Name</string>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QGroupBox" name="groupBox_2" >
-        <property name="title" >
-         <string>Available indicators</string>
+      <item row="2" column="1">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pbnAddIndicator">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Add currently selected indicator on the left to this indicator visualization.</string>
+          </property>
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pbnRemoveIndicator">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Remove currently selected indicator on the right from this indicator visualization.</string>
+          </property>
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="2">
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Indicators in current visualization</string>
         </property>
-        <property name="flat" >
+        <property name="flat">
          <bool>true</bool>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4" >
-         <property name="leftMargin" >
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <property name="topMargin" >
+         <property name="topMargin">
           <number>6</number>
          </property>
-         <property name="rightMargin" >
+         <property name="rightMargin">
           <number>0</number>
          </property>
-         <property name="bottomMargin" >
+         <property name="bottomMargin">
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="spacing">
           <number>0</number>
          </property>
-         <item row="0" column="0" >
-          <widget class="QTableWidget" name="twAvailableIndicators" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-             <horstretch>37</horstretch>
+         <item row="0" column="0">
+          <widget class="QTableWidget" name="twIndicatorsToVisualize">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>200</width>
              <height>0</height>
             </size>
            </property>
-           <property name="editTriggers" >
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="dragDropOverwriteMode" >
+           <property name="dragDropOverwriteMode">
             <bool>false</bool>
            </property>
-           <property name="alternatingRowColors" >
+           <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
-           <property name="selectionMode" >
-            <enum>QAbstractItemView::ExtendedSelection</enum>
-           </property>
-           <property name="selectionBehavior" >
+           <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
-           <property name="textElideMode" >
-            <enum>Qt::ElideRight</enum>
-           </property>
-           <property name="showGrid" >
+           <property name="wordWrap">
             <bool>true</bool>
            </property>
-           <property name="sortingEnabled" >
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Field format</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Available indicators</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QTableWidget" name="twAvailableIndicators">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>37</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="dragDropOverwriteMode">
             <bool>false</bool>
            </property>
-           <property name="columnCount" >
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="textElideMode">
+            <enum>Qt::ElideRight</enum>
+           </property>
+           <property name="showGrid">
+            <bool>true</bool>
+           </property>
+           <property name="sortingEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="columnCount">
             <number>3</number>
            </property>
            <column/>
@@ -357,164 +514,15 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <layout class="QVBoxLayout" name="verticalLayout_3" >
-        <item>
-         <spacer name="verticalSpacer" >
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pbnAddIndicator" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font" >
-           <font>
-            <pointsize>20</pointsize>
-           </font>
-          </property>
-          <property name="toolTip" >
-           <string>Add currently selected indicator on the left to this indicator visualization.</string>
-          </property>
-          <property name="text" >
-           <string>+</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pbnRemoveIndicator" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font" >
-           <font>
-            <pointsize>20</pointsize>
-           </font>
-          </property>
-          <property name="toolTip" >
-           <string>Remove currently selected indicator on the right from this indicator visualization.</string>
-          </property>
-          <property name="text" >
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2" >
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QGroupBox" name="groupBox_3" >
-        <property name="title" >
-         <string>Indicators in current visualization</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>6</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QTableWidget" name="twIndicatorsToVisualize" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize" >
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="dragDropOverwriteMode" >
-            <bool>false</bool>
-           </property>
-           <property name="alternatingRowColors" >
-            <bool>true</bool>
-           </property>
-           <property name="selectionBehavior" >
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <property name="wordWrap" >
-            <bool>true</bool>
-           </property>
-           <column>
-            <property name="text" >
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text" >
-             <string>Field format</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
@@ -529,11 +537,11 @@
    <receiver>dlgConfigureBatchIndicatorVisualization</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -545,11 +553,11 @@
    <receiver>dlgConfigureBatchIndicatorVisualization</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

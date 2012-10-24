@@ -56,6 +56,14 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             database_name = viz_spec['database_name'] or ''
             self.leOption1.setText(QString(database_name))
         elif prev_output_type in ('tab', 'xls'):
+            append = 'False'
+            try:
+                append = viz_spec['append_col_type']
+                if append=='True':
+                    self.appendTypeCheckBox.setChecked(True)
+            except:
+                self.appendTypeCheckBox.setChecked(False)
+
             try:
                 prev_output_style = int(str(viz_spec['output_style'] or ''))
             except: pass

@@ -24,7 +24,8 @@ class Table(Visualization):
                  output_type = None,
                  storage_location = None,
                  output_style = ALL,
-                 fixed_field_format = None  # Only used with the 'fixed_field' output type
+                 fixed_field_format = None,  # Only used with the 'fixed_field' output type
+                 **kwargs
                 ):
 
         if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
@@ -73,6 +74,16 @@ class Table(Visualization):
 
         self.name = name
         self.indicator_directory = indicator_directory
+        
+        #checking for new append_col_type argument
+        if kwargs:
+            try:
+                self.append_col_type = kwargs['append_col_type']
+            except:
+                self.append_col_type = 'True'
+        else:
+            self.append_col_type = False
+        
 
     def get_file_extension(self):
         if self.output_type == 'sql':
@@ -248,9 +259,9 @@ class Table(Visualization):
         if self.name is not None:
             table_name = '%s__%s'%(self.name, table_name)
             
-	cols = [col for col in new_data.keys()
+        cols = [col for col in new_data.keys()
                                                if col not in primary_keys]
-	cols.sort()
+        cols.sort()
         self._write_to_storage(
             table_name = table_name,
             table_data = new_data,
@@ -274,7 +285,10 @@ class Table(Visualization):
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
-            #kwargs['append_type_info'] = False
+            if self.append_col_type == 'True':
+                kwargs['append_type_info'] = True
+            else:
+                kwargs['append_type_info'] = False
         elif self.output_type in ['fixed_field']:
             if isinstance(self.fixed_field_format, str):
                 format = self.fixed_field_format

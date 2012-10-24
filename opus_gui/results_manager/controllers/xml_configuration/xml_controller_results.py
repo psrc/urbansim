@@ -220,7 +220,13 @@ class XmlController_Results(XmlController):
             menu.addMenu(run_batch_on_menu)
 
         elif node.tag == 'batch_visualization': # get('type') == 'batch_visualization':
-            menu.addAction(self.actConfigureExistingBatchIndicatorVis)
+            # check to see if the batch_visualization in question is an inherited node,
+            #   if so, don't display the ability to edit it.  This essentially forces
+            #   the user to make it local first.
+            if node.get('inherited'):
+                pass
+            else:
+                menu.addAction(self.actConfigureExistingBatchIndicatorVis)
         
         # In this menu, the first custom action is always the default action        
         if not menu.isEmpty():

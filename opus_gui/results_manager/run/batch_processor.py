@@ -70,6 +70,8 @@ class BatchProcessor(object):
             elif output_type == 'tab':
                 if 'output_style' in params:
                     args['output_style'] = int(str(params['output_style']))
+                if 'append_col_type' in params:
+                    args['append_col_type'] = params['append_col_type']
             elif output_type == 'xls':
                 if 'output_style' in params:
                     args['output_style'] = int(str(params['output_style']))

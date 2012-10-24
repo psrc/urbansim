@@ -331,7 +331,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             vals['database_name'] = self.leOption1.text()
         elif output_type == 'esri':
             vals['storage_location'] = self.leOption1.text()
-        elif output_type == ('tab', 'xls'):
+        elif output_type in ('tab', 'xls'):
             if self.rbSingleTable.isChecked():
                 output_style = Table.ALL
             elif self.rbTablePerIndicator.isChecked():
@@ -339,6 +339,10 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             elif self.rbTablePerYear.isChecked():
                 output_style = Table.PER_YEAR
             vals['output_style'] = QString(str(output_style))
+            if self.appendTypeCheckBox.isChecked():
+                vals['append_col_type'] = True
+            else:
+                vals['append_col_type'] = False
             if output_type == 'xls':
                 vals['storage_location'] = self.leOption1.text()
 
@@ -373,15 +377,18 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.rbTablePerIndicator.hide()
             self.rbTablePerYear.hide()
             self.mapnikOptions.hide()
+            self.appendTypeCheckBox.hide()
         elif output_type == 'Mapnik map (.png)' or output_type == 'Animated Mapnik map (.gif)':
             self.mapnikOptions.show()
+            self.appendTypeCheckBox.hide()
         elif output_type == 'Tab delimited file (.tab)':
-            self.lblOption1.show()
-            self.leOption1.show()
+            self.lblOption1.hide()
+            self.leOption1.hide()
             self.rbSingleTable.show()
             self.rbTablePerIndicator.show()
             self.rbTablePerYear.show()
             self.mapnikOptions.hide()
+            self.appendTypeCheckBox.show()
         elif output_type == 'Excel (.xls)':
             self.lblOption1.show()
             self.leOption1.show()
@@ -390,12 +397,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.rbTablePerIndicator.show()
             self.rbTablePerYear.show()
             self.mapnikOptions.hide()
+            self.appendTypeCheckBox.hide()
         else:
             self.lblOption1.hide()
             self.leOption1.hide()
             self.rbSingleTable.hide()
             self.rbTablePerIndicator.hide()
             self.rbTablePerYear.hide()
+            self.appendTypeCheckBox.hide()
 
 
         if output_type == 'Fixed field file (.dat)':
