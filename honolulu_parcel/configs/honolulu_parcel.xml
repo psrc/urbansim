@@ -5,6 +5,13 @@
     <project_name hidden="True" type="string">honolulu_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="parcel.p_hotel_and_resort_units_in_zone" type="variable_definition">parcel.disaggregate(zone.aggregate(building.hotel_units+building.resort_units,intermediates=[parcel]))</variable>
+      <variable use="both" source="expression" name="zone.tm_hh5" type="variable_definition">zone.aggregate((household.persons&gt;4),intermediates=[building,parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_hh4" type="variable_definition">zone.aggregate((household.persons==4),intermediates=[building,parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_hh3" type="variable_definition">zone.aggregate((household.persons==3),intermediates=[building,parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_hh2" type="variable_definition">zone.aggregate((household.persons==2),intermediates=[building,parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_hh1" type="variable_definition">zone.aggregate((household.persons==1),intermediates=[building,parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_hu" type="variable_definition">zone.aggregate(building.residential_units*(building.building_type_id&lt;4),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_service" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [12,13,14,15,16,17,19])),intermediates=[parcel]) + .733*zone.aggregate(building.aggregate(job.sector_id==18),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_cstr" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [2,4])),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_retail" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==7),intermediates=[parcel])</variable>
@@ -1183,7 +1190,7 @@
             <description type="string">hotel</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.p_avg_nonres_sqft_price_in_zone"/>
-              <variable_spec name="parcel.p_jobs17_hotel_jobs_in_zone"/>
+              <variable_spec name="parcel.p_hotel_and_resort_units_in_zone"/>
               <variable_spec name="parcel.p_ln_parcel_sqft"/>
               <variable_spec name="parcel.parcel_distance_to_coast"/>
               <variable_spec name="parcel.parcel_distance_to_highway"/>
@@ -1403,35 +1410,21 @@
                 <variable_spec name="employment_submarket.ln_pop_10_min_esubmarket"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="FoodProcessing" submodel_id="3" type="submodel">
+            <submodel hidden="Children" name="Manufacturing" submodel_id="4" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
                 <variable_spec name="employment_submarket.esubmarket_distance_to_freeway"/>
                 <variable_spec name="employment_submarket.is_manufacturing_esubmarket"/>
-                <variable_spec name="employment_submarket.is_neighborhood_retail_esubmarket"/>
-                <variable_spec name="employment_submarket.is_office_esubmarket"/>
-                <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
-                <variable_spec name="employment_submarket.ln_pop_10_min_esubmarket"/>
-                <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
-              </variable_list>
-            </submodel>
-            <submodel hidden="Children" name="OtherManufacturing" submodel_id="4" type="submodel">
-              <description type="string">No submodel</description>
-              <variable_list type="variable_list">
-                <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
-                <variable_spec name="employment_submarket.esubmarket_distance_to_freeway"/>
                 <variable_spec name="employment_submarket.households_in_zone_esubmarket"/>
-                <variable_spec name="employment_submarket.is_manufacturing_esubmarket"/>
-                <variable_spec name="employment_submarket.is_office_esubmarket"/>
                 <variable_spec name="employment_submarket.is_service_shops_supplies_esubmarket"/>
+                <variable_spec name="employment_submarket.is_office_esubmarket"/>
                 <variable_spec name="employment_submarket.is_warehouse_esubmarket"/>
-                <variable_spec name="employment_submarket.ln_jobs_within_15_min_esubmarket"/>
                 <variable_spec name="employment_submarket.ln_pop_10_min_esubmarket"/>
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Transport" submodel_id="5" type="submodel">
+            <submodel hidden="Children" name="Transport" submodel_id="7" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1446,7 +1439,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Information" submodel_id="6" type="submodel">
+            <submodel hidden="Children" name="Information" submodel_id="8" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1460,7 +1453,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Utilities" submodel_id="7" type="submodel">
+            <submodel hidden="Children" name="Utilities" submodel_id="3" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1472,7 +1465,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Wholesale" submodel_id="8" type="submodel">
+            <submodel hidden="Children" name="Wholesale" submodel_id="5" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1485,7 +1478,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Retail" submodel_id="9" type="submodel">
+            <submodel hidden="Children" name="Retail" submodel_id="6" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.avg_hh_income_zonal_esubmarket"/>
@@ -1497,7 +1490,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="FinanceInsurance" submodel_id="10" type="submodel">
+            <submodel hidden="Children" name="FinanceInsurance" submodel_id="9" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.avg_hh_income_zonal_esubmarket"/>
@@ -1508,7 +1501,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="RealEstate" submodel_id="11" type="submodel">
+            <submodel hidden="Children" name="RealEstate" submodel_id="10" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.avg_hh_income_zonal_esubmarket"/>
@@ -1518,7 +1511,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="ProfessionalServices" submodel_id="12" type="submodel">
+            <submodel hidden="Children" name="ProfessionalServices" submodel_id="11" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1530,7 +1523,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="BusinessServices" submodel_id="13" type="submodel">
+            <submodel hidden="Children" name="BusinessServices" submodel_id="12" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
@@ -1540,7 +1533,7 @@
                 <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="EducationalServices" submodel_id="14" type="submodel">
+            <submodel hidden="Children" name="EducationalServices" submodel_id="13" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.avg_hh_income_zonal_esubmarket"/>
@@ -1551,7 +1544,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="HealthServices" submodel_id="15" type="submodel">
+            <submodel hidden="Children" name="HealthServices" submodel_id="14" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.average_value_per_sqft_esubmarket"/>
@@ -1562,7 +1555,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="ArtsEntertainment" submodel_id="16" type="submodel">
+            <submodel hidden="Children" name="ArtsEntertainment" submodel_id="15" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.avg_hh_income_zonal_esubmarket"/>
@@ -1574,19 +1567,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Hotels" submodel_id="17" type="submodel">
-              <description type="string">No submodel</description>
-              <variable_list type="variable_list">
-                <variable_spec name="employment_submarket.esubmarket_distance_to_coast"/>
-                <variable_spec name="employment_submarket.esubmarket_distance_to_freeway"/>
-                <variable_spec name="employment_submarket.hotel_sqft_esubmarket"/>
-                <variable_spec name="employment_submarket.households_in_zone_esubmarket"/>
-                <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"/>
-                <variable_spec name="employment_submarket.travel_time_to_waikiki_esubmarket"/>
-                <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
-              </variable_list>
-            </submodel>
-            <submodel hidden="Children" name="EatingDrinking" submodel_id="18" type="submodel">
+            <submodel hidden="Children" name="EatingDrinking" submodel_id="16" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.esubmarket_distance_to_freeway"/>
@@ -1597,7 +1578,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="OtherServices" submodel_id="19" type="submodel">
+            <submodel hidden="Children" name="OtherServices" submodel_id="17" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.esubmarket_distance_to_freeway"/>
@@ -1609,7 +1590,7 @@
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="Government" submodel_id="20" type="submodel">
+            <submodel hidden="Children" name="Government" submodel_id="18" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
                 <variable_spec name="employment_submarket.employment_submarket_walk50_wait25"/>
@@ -3769,16 +3750,16 @@
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2010</firstyear>
-        <lastyear type="integer">2010</lastyear>
+        <firstyear type="integer">2012</firstyear>
+        <lastyear type="integer">2012</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="test_model" type="selectable" name="test_model_1">False</selectable>
-        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">True</selectable>
+        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">False</selectable>
         <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">False</selectable>
         <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">False</selectable>
-        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
-        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">True</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">False</selectable>
+        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">False</selectable>
         <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">False</selectable>
         <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">False</selectable>
         <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">False</selectable>
@@ -3790,11 +3771,11 @@
         <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">False</selectable>
         <selectable return_value="add_dpa" type="selectable" name="add_dpa_1">False</selectable>
         <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">False</selectable>
-        <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">False</selectable>
-        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">False</selectable>
-        <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">_all_</group_members>
+        <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">True</selectable>
+        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">True</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
         </selectable>
-        <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">False</selectable>
+        <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">True</selectable>
         <selectable return_value="real_estate_transition_model_by_submarkets" type="selectable" name="real_estate_transition_model_by_submarkets_1">False</selectable>
         <selectable return_value="honolulu_building_transition_model" type="selectable" name="honolulu_building_transition_model_1">False</selectable>
         <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">False</selectable>
@@ -3804,7 +3785,6 @@
         <selectable return_value="resort_unit_transition_model" type="selectable" name="resort_unit_transition_model_1">False</selectable>
         <selectable return_value="hotel_room_transition_model" type="selectable" name="hotel_room_transition_model_1">False</selectable>
         <selectable return_value="visitor_building_location_choice_model" type="selectable" name="visitor_building_location_choice_model_1">False</selectable>
-        <selectable return_value="buildings2010_transition_model" type="selectable" name="buildings2010_transition_model_1">False</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">honolulu_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
@@ -4775,7 +4755,7 @@
       </indicator_batch>
       <indicator_batch name="zonal">
         <batch_visualization hidden="Children" type="batch_visualization" name="hotel_resort">
-          <indicators>['tm_ag', 'tm_tcu', 'tm_indus', 'tm_fire', 'tm_retail', 'tm_cstr', 'tm_service']</indicators>
+          <indicators>['tm_hh1', 'tm_hh2', 'tm_hh3', 'tm_hh4', 'tm_hh5', 'tm_hu']</indicators>
           <output_type>tab</output_type>
           <dataset_name>zone</dataset_name>
           <visualization_type>tab</visualization_type>
