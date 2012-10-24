@@ -61,6 +61,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_weight_string=None,
             within_parcel_selection_n=0,
             within_parcel_selection_compete_among_types=False,
+            within_parcel_selection_threshold=75,
             run_config=None,
             debuglevel=0):
         """
@@ -209,7 +210,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         if within_parcel_selection_n > 0:
             logger.start_block("Selecting proposals within parcels (%s proposals per parcel)" % within_parcel_selection_n)
             self.select_proposals_within_parcels(nmax=within_parcel_selection_n, weight_string=within_parcel_selection_weight_string,
-                                                 compete_among_types=within_parcel_selection_compete_among_types)
+                                                 compete_among_types=within_parcel_selection_compete_among_types, 
+                                                 filter_threshold=within_parcel_selection_threshold)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -283,7 +285,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
 
-    def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False):
+    def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
@@ -341,7 +343,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                             labels=labels, 
                                             index=parcels_with_proposals[valid_parcels])).flatten().astype(int32)
                 percent = within_parcel_weights[wegligible][chosen_prop]/(max_value_by_parcel[valid_parcels]/100.0)
-                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent < 65]))[0]
+                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent <= filter_threshold]))[0]
                 egligible[wegligible[setdiff1d(chosen_prop, where_lower)]] = False   # proposals with egligible=True get eliminated, so we dont want to set it to False for the where_lower ones
                 incompetition[union1d(chosen_prop, where_lower)] = False
                 if incompetition.sum() <= 0:
