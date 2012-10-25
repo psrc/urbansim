@@ -144,7 +144,8 @@ class DeveloperModel(Model):
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.node_id>0)*(parcel.shape_area>80)")
     bart_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_1_within_800_meters))")
     caltrain_parcels = parcel_set.compute_variables("(parcel.disaggregate(bayarea.node.transit_type_2_within_800_meters))")
-    pda_parcels = parcel_set.compute_variables("(parcel.pda_id > -1)*(numpy.logical_not(parcel.county_id==38))")
+    #pda_parcels = parcel_set.compute_variables("(parcel.pda_id > -1)*(numpy.logical_not(parcel.county_id==38))")
+    pda_parcels = parcel_set.compute_variables("(parcel.pda_id > -1)")
     SAMPLE_RATE = 0.01
     from opus_core.sampling_toolbox import sample_noreplace
     from numpy import concatenate, where
@@ -504,8 +505,8 @@ def process_parcel(parcel):
             #prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
             prices = (price_per_sqft_sf*price_shifters['price_per_sqft_sf'],
                       price_per_sqft_mf,
-                      rent_per_sqft_sf*1.5*price_shifters['rent_per_sqft_sf'],
-                      rent_per_sqft_mf*1.5*price_shifters['rent_per_sqft_mf'],
+                      rent_per_sqft_sf*1.0*price_shifters['rent_per_sqft_sf'],
+                      rent_per_sqft_mf*1.0*price_shifters['rent_per_sqft_mf'],
                       of_rent_sqft*price_shifters['of_rent_sqft'],
                       ret_rent_sqft*price_shifters['ret_rent_sqft'],
                       ind_rent_sqft*price_shifters['ind_rent_sqft'])
