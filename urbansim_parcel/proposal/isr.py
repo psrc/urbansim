@@ -40,7 +40,7 @@ class ISR:
         z = my.isr[taz][1]
         if z == "A": return 5000
         elif z == "B": return 15000
-        elif z == "C": return 25000
+        elif z == "C": return 35000
         elif z == "D": return 50000
         elif z == "No Fee": return 0
         print z
