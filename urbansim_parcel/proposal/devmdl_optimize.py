@@ -226,6 +226,13 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
     proposal['rent_vacancy_per_period'] = (proposal_comp['rent_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
     proposal['leases_vacancy_per_period'] = (proposal_comp['leases_revenue_per_period'] * proposal_comp['vacancy_rates']).sum()
 
+    bform.sales_absorption = proposal_comp['sales_absorption']
+    bform.rent_absorption = proposal_comp['rent_absorption']
+    bform.leases_absorption = proposal_comp['leases_absorption']
+    bform.sales_vacancy_rates = proposal_comp['sales_vacancy_rates']
+    bform.rent_vacancy_per_period = proposal['rent_vacancy_per_period']
+    bform.leases_vacancy_per_period = proposal['leases_vacancy_per_period']
+
     if btype in [1,2]: cost = bform.sf_cost()
     elif btype in [3,4]: cost = bform.mf_cost('apt')
     elif btype in [5,6]: cost = bform.mf_cost('condo')

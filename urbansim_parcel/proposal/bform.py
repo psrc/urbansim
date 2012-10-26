@@ -21,6 +21,13 @@ class BForm:
         my.buildable_area = parcel_size*.8
         my.btype = None
         my.parking = None
+    
+        my.sales_absorption = -1
+        my.rent_absorption = -1
+        my.leases_absorption = -1
+        my.sales_vacancy_rates = -1
+        my.rent_vacancy_per_period = -1
+        my.leases_vacancy_per_period = -1
         
         far_area = FAR*parcel_size
         height_area = height/FLOORHEIGHT*my.buildable_area

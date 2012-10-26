@@ -212,7 +212,9 @@ class DeveloperModel(Model):
     outf = open(os.path.join(cache_dir,'buildings-%d.csv' % current_year),'w')
     outf.write('pid,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,btype\n')
     debugf = open(os.path.join(cache_dir,'proforma-debug-%d.csv' % current_year),'w')
-    debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind\n')
+    bformdbg = 'bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area'
+    otherdbg = 'isr,parcelfees,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period'
+    debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind,%s,%s\n' % (bformdbg,otherdbg))
     t1 = time.time()
     aggd = {}
 
@@ -545,7 +547,9 @@ def process_parcel(parcel):
                                               esubmarket_info=esubmarket_info)
             if DEBUG: print X, npv
 
-            debugoutput += string.join([str(x) for x in [pid,btype,npv]+list(prices)]
+            bformdbg = (bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
+            otherdbg = (isr,parcelfees,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period)
+            debugoutput += string.join([str(x) for x in [pid,btype,npv]+list(prices)+list(bformdbg)+list(otherdbg)]
 ,sep=',')+'\n'
             #if npv == -1: return # error code
             if npv > maxnpv:
