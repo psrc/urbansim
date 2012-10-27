@@ -133,6 +133,8 @@ class DeveloperModel(Model):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
     #elif my.scenario.startswith('Transit'):
         #parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
+    elif my.scenario.startswith('Equity'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_equity'))
     costdiscount = 0.0
     if not my.scenario.startswith('No Project'):
         costdiscount = .01
@@ -507,8 +509,8 @@ def process_parcel(parcel):
             #prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
             prices = (price_per_sqft_sf*price_shifters['price_per_sqft_sf'],
                       price_per_sqft_mf,
-                      rent_per_sqft_sf*1.3*price_shifters['rent_per_sqft_sf'],
-                      rent_per_sqft_mf*1.3*price_shifters['rent_per_sqft_mf'],
+                      rent_per_sqft_sf*1.0*price_shifters['rent_per_sqft_sf'],
+                      rent_per_sqft_mf*1.0*price_shifters['rent_per_sqft_mf'],
                       of_rent_sqft*price_shifters['of_rent_sqft'],
                       ret_rent_sqft*price_shifters['ret_rent_sqft'],
                       ind_rent_sqft*price_shifters['ind_rent_sqft'])
