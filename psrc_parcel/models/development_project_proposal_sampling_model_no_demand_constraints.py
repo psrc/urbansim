@@ -6,6 +6,7 @@ from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.simulation_state import SimulationState
 from numpy import where, intersect1d, in1d, array, unique
+from scipy.ndimage import maximum
 from collections import defaultdict
 
 class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSamplingModelWithMinimum):
@@ -26,6 +27,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
             year = SimulationState().get_current_time()
         else:
             year = current_year
+        self.current_year = year
         this_year_index = where(target_vacancy['year']==year)[0]
         target_vacancy_for_this_year = DatasetSubset(target_vacancy, this_year_index)
         if target_vacancy_for_this_year.size() == 0:
@@ -54,7 +56,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
 #        return all(results)      
     
     def _are_targets_reached(self, column_value):
-        if column_value[0] not in self.same_demand_group:
+        if (column_value[0] not in self.same_demand_group) or (self.current_year >= 2015):
             return (DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value), False)
         is_target_reached = DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value)
         results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
@@ -115,6 +117,11 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                         # disable proposals for all parcels with proposals of this BT 
                         proposal_indexes = intersect1d(where(self.get_index_by_condition(self.proposal_set['status_id'], self.proposal_set.id_tentative))[0], proposal_indexes)  
                         parcels = self.proposal_set['parcel_id'][proposal_indexes]
+         #               btonpcl = zeros(parcels.size)
+         #               for bt in target_vacancy_for_this_year['building_type_id']:
+         #                   btonpcl =  btonpcl + array(maximum(self.proposal_component_set['building_type_id'] == bt, labels=parcels, index=parcels))
+                            
+         #               parcels = parcels[btonpcl>=3]
                         proposal_indexes = where(in1d(self.proposal_set['parcel_id'], parcels))[0]
                     self.weight[proposal_indexes] = 0.0
                                      
