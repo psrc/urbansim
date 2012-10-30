@@ -48,8 +48,11 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         if filter_attribute is not None:
             if VariableName(filter_attribute).get_alias() not in self.proposal_set.get_known_attribute_names():
                 self.proposal_set.compute_variables(filter_attribute)
-            self.proposal_set['status_id'][where((self.proposal_set[filter_attribute]==0)*(self.proposal_set['status_id'] == self.proposal_set.id_tentative))] = self.proposal_set.id_filter_not_passed
-            self.weight = self.weight * self.proposal_set.get_attribute(filter_attribute)
+            where_not_passed = where((self.proposal_set[filter_attribute]==0)*(self.proposal_set['status_id'] == self.proposal_set.id_tentative))[0]
+            if where_not_passed.size > 0:
+                self.proposal_set['status_id'][where_not_passed] = self.proposal_set.id_filter_not_passed
+                logger.log_status("%s proposals did not pass given filter and were eliminated." % where_not_passed.size)
+            self.weight = self.weight * (self.proposal_set.get_attribute(filter_attribute) >=1)
 
     
     def run(self, n=500, 
