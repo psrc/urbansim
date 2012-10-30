@@ -135,6 +135,8 @@ class DeveloperModel(Model):
         #parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
     elif my.scenario.startswith('Equity'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_equity'))
+    elif my.scenario.startswith('Infill'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_infill'))
     costdiscount = 0.0
     if not my.scenario.startswith('No Project'):
         costdiscount = .01
