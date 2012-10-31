@@ -5,6 +5,19 @@
     <project_name hidden="True" type="string">oahu</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="dpa.dpa_jobs3" type="variable_definition">dpa.aggregate(building.number_of_agents(job),intermediates=[parcel,zone]) + numpy.ceil(.4160*dpa.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel,zone])) + dpa.aggregate(zone.military_jobs)</variable>
+      <variable use="both" source="expression" name="dpa.dpa_households3" type="variable_definition">dpa.aggregate(building.number_of_agents(household),intermediates=[parcel,zone])</variable>
+      <variable use="both" source="expression" name="dpa.dpa_households2" type="variable_definition">dpa.aggregate(building.number_of_agents(household),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="dpa.dpa_jobs2" type="variable_definition">dpa.aggregate(building.number_of_agents(job),intermediates=[parcel]) + numpy.ceil(.4160*dpa.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel]))</variable>
+      <variable use="both" source="expression" name="zone.tm_totalhh" type="variable_definition">zone.aggregate(building.number_of_agents(household),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_totalemp" type="variable_definition">zone.aggregate(building.number_of_agents(job),intermediates=[parcel]) + numpy.ceil(.4160*zone.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel])) + zone.military_jobs</variable>
+      <variable use="both" source="expression" name="zone.tm_hotel" type="variable_definition">numpy.ceil(.4160*zone.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel]))</variable>
+      <variable use="both" source="expression" name="zone.tm_govt" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==18),intermediates=[parcel])</variable>
+      <variable use="both" source="primary attribute" name="zone.tm_mili" type="variable_definition">zone.military_jobs</variable>
+      <variable use="both" source="expression" name="zone.tm_hr" type="variable_definition">zone.aggregate(building.hotel_units,intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_rc" type="variable_definition">zone.aggregate(building.resort_units,intermediates=[parcel])</variable>
+      <variable use="both" source="primary attribute" name="zone.tm_gq" type="variable_definition">zone.gqpop2010</variable>
+      <variable use="both" source="expression" name="zone.tm_pop" type="variable_definition">zone.aggregate((household.persons_total),intermediates=[building,parcel]) + zone.gqpop2010</variable>
       <variable use="both" source="expression" name="parcel.p_hotel_and_resort_units_in_zone" type="variable_definition">parcel.disaggregate(zone.aggregate(building.hotel_units+building.resort_units,intermediates=[parcel]))</variable>
       <variable use="both" source="expression" name="zone.tm_hh5" type="variable_definition">zone.aggregate((household.persons&gt;4),intermediates=[building,parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_hh4" type="variable_definition">zone.aggregate((household.persons==4),intermediates=[building,parcel])</variable>
@@ -12,18 +25,18 @@
       <variable use="both" source="expression" name="zone.tm_hh2" type="variable_definition">zone.aggregate((household.persons==2),intermediates=[building,parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_hh1" type="variable_definition">zone.aggregate((household.persons==1),intermediates=[building,parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_hu" type="variable_definition">zone.aggregate(building.residential_units*(building.building_type_id&lt;4),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_service" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [12,13,14,15,16,17,19])),intermediates=[parcel]) + .733*zone.aggregate(building.aggregate(job.sector_id==18),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_cstr" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [2,4])),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_retail" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==7),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_fire" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [10,11])),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_indus" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [5,6])),intermediates=[parcel])</variable>
-      <variable use="both" source="expression" name="zone.tm_tcu" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [3,8,9])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_service" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [11,12,13,14,15,16,17])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_cstr" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==2),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_retail" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==6),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_fire" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [9,10])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_indus" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [4,5])),intermediates=[parcel])</variable>
+      <variable use="both" source="expression" name="zone.tm_tcu" type="variable_definition">zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [3,7,8])),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.tm_ag" type="variable_definition">zone.aggregate(building.aggregate(job.sector_id==1),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="zone.zone_buildings" type="variable_definition">zone.aggregate(parcel.number_of_agents(building))</variable>
       <variable use="both" source="expression" name="zone.h_runit_resbuilding" type="variable_definition">zone.aggregate(building.residential_units*(building.building_type_id&lt;4),intermediates=[parcel])</variable>
       <variable use="both" source="expression" name="parcel.parcel_walk50_wait25" type="variable_definition">parcel.disaggregate(zone.walk50_wait25)</variable>
       <variable use="both" source="expression" name="park.parcel_walk50_wait25" type="variable_definition">park.disaggregate(zone.walk50_wait25)</variable>
-      <variable use="both" source="expression" name="dpa.dpa_jobs" type="variable_definition">dpa.number_of_agents(job)</variable>
+      <variable use="both" source="expression" name="dpa.dpa_jobs" type="variable_definition">dpa.number_of_agents(job) + numpy.ceil(.4160*dpa.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel]))</variable>
       <variable use="both" source="expression" name="dpa.dpa_households" type="variable_definition">dpa.number_of_agents(households)</variable>
       <variable use="both" source="expression" name="alldata.unplaced_jobs" type="variable_definition">alldata.aggregate_all(job.building_id==-1)</variable>
       <variable use="both" source="expression" name="alldata.unplaced_households" type="variable_definition">alldata.aggregate_all(household.building_id==-1)</variable>
@@ -535,6 +548,20 @@
     <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','neighborhood_board','tract','dpa']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','faz','gridcell','city','county','node']</spatial_datasets>
   </general>
+  <data_manager>
+    <tool_library setexpanded="True">
+      <tool_group name="opus_data_import_export_tools" setexpanded="True">
+        <tool name="csv_data_to_opus_tool">
+          <params>
+            <param name="csv_data_path" param_type="dir_path" required="True">C:\Users\janowicz\Desktop</param>
+            <param name="csv_table_name" param_type="string" required="True">non_home_based_employment_location_choice_model_coefficients</param>
+            <param name="opus_data_directory" param_type="dir_path" required="True">c:/opus/data/oahu/base_year_data</param>
+            <param name="opus_data_year" param_type="string" required="True">2010</param>
+          </params>
+        </tool>
+      </tool_group>
+    </tool_library>
+  </data_manager>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
       <model name="test_model" type="model">
@@ -3621,15 +3648,16 @@
   <scenario_manager>
     <scenario executable="True" name="building_synthesis" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
-      <base_year type="integer">2000</base_year>
+      <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2010</firstyear>
-        <lastyear type="integer">2010</lastyear>
+        <firstyear type="integer">2011</firstyear>
+        <lastyear type="integer">2011</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="buildings2010_transition_model" type="selectable" name="buildings2010_transition_model_1">False</selectable>
         <selectable return_value="employment2010_model" type="selectable" name="employment2010_model_1">False</selectable>
-        <selectable return_value="household2010_allocation_model" type="selectable" name="household2010_allocation_model_1">True</selectable>
+        <selectable return_value="household2010_allocation_model" type="selectable" name="household2010_allocation_model_1">False</selectable>
+        <selectable return_value="scheduled_development_events_model" type="selectable" name="scheduled_development_events_model_1">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">oahu/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
@@ -3734,43 +3762,44 @@
     </scenario>
     <scenario executable="True" name="test_model" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
-      <base_year type="integer">2000</base_year>
+      <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2012</firstyear>
-        <lastyear type="integer">2012</lastyear>
+        <firstyear type="integer">2011</firstyear>
+        <lastyear type="integer">2035</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable return_value="test_model" type="selectable" name="test_model_1">False</selectable>
-        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">False</selectable>
-        <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">False</selectable>
-        <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">False</selectable>
-        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">False</selectable>
-        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">False</selectable>
-        <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">False</selectable>
-        <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">False</selectable>
-        <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_sf" type="selectable" name="submarket_household_location_choice_model_owner_sf_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_apartment" type="selectable" name="submarket_household_location_choice_model_owner_apartment_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_townhome" type="selectable" name="submarket_household_location_choice_model_owner_townhome_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_sf" type="selectable" name="submarket_household_location_choice_model_renter_sf_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_apartment" type="selectable" name="submarket_household_location_choice_model_renter_apartment_1">False</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">False</selectable>
-        <selectable return_value="add_dpa" type="selectable" name="add_dpa_1">False</selectable>
-        <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">False</selectable>
+        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">True</selectable>
+        <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">True</selectable>
+        <selectable return_value="scheduled_development_events_model" type="selectable" name="scheduled_development_events_model_1">False</selectable>
+        <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">True</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
+        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">True</selectable>
+        <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">True</selectable>
+        <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">True</selectable>
+        <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_sf" type="selectable" name="submarket_household_location_choice_model_owner_sf_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_apartment" type="selectable" name="submarket_household_location_choice_model_owner_apartment_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_townhome" type="selectable" name="submarket_household_location_choice_model_owner_townhome_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_sf" type="selectable" name="submarket_household_location_choice_model_renter_sf_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_apartment" type="selectable" name="submarket_household_location_choice_model_renter_apartment_1">True</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">True</selectable>
+        <selectable return_value="add_dpa" type="selectable" name="add_dpa_1">True</selectable>
+        <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">True</selectable>
         <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">True</selectable>
         <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">True</selectable>
         <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
         </selectable>
         <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">True</selectable>
-        <selectable return_value="real_estate_transition_model_by_submarkets" type="selectable" name="real_estate_transition_model_by_submarkets_1">False</selectable>
-        <selectable return_value="honolulu_building_transition_model" type="selectable" name="honolulu_building_transition_model_1">False</selectable>
-        <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">False</selectable>
-        <selectable return_value="mf_building_location_choice_model" type="selectable" name="mf_building_location_choice_model_1">False</selectable>
-        <selectable return_value="commercial_building_location_choice_model" type="selectable" name="commercial_building_location_choice_model_1">False</selectable>
-        <selectable return_value="industrial_building_location_choice_model" type="selectable" name="industrial_building_location_choice_model_1">False</selectable>
-        <selectable return_value="resort_unit_transition_model" type="selectable" name="resort_unit_transition_model_1">False</selectable>
-        <selectable return_value="hotel_room_transition_model" type="selectable" name="hotel_room_transition_model_1">False</selectable>
-        <selectable return_value="visitor_building_location_choice_model" type="selectable" name="visitor_building_location_choice_model_1">False</selectable>
+        <selectable return_value="real_estate_transition_model_by_submarkets" type="selectable" name="real_estate_transition_model_by_submarkets_1">True</selectable>
+        <selectable return_value="honolulu_building_transition_model" type="selectable" name="honolulu_building_transition_model_1">True</selectable>
+        <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">True</selectable>
+        <selectable return_value="mf_building_location_choice_model" type="selectable" name="mf_building_location_choice_model_1">True</selectable>
+        <selectable return_value="commercial_building_location_choice_model" type="selectable" name="commercial_building_location_choice_model_1">True</selectable>
+        <selectable return_value="industrial_building_location_choice_model" type="selectable" name="industrial_building_location_choice_model_1">True</selectable>
+        <selectable return_value="resort_unit_transition_model" type="selectable" name="resort_unit_transition_model_1">True</selectable>
+        <selectable return_value="hotel_room_transition_model" type="selectable" name="hotel_room_transition_model_1">True</selectable>
+        <selectable return_value="visitor_building_location_choice_model" type="selectable" name="visitor_building_location_choice_model_1">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">oahu/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
@@ -4725,10 +4754,14 @@
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
       <indicator_batch name="dpa">
         <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
-          <indicators>['dpa_households', 'dpa_jobs']</indicators>
+          <indicators>['dpa_jobs3', 'dpa_households3']</indicators>
           <output_type>tab</output_type>
           <dataset_name>dpa</dataset_name>
           <visualization_type>tab</visualization_type>
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
         </batch_visualization>
       </indicator_batch>
       <indicator_batch name="region">
@@ -4741,10 +4774,14 @@
       </indicator_batch>
       <indicator_batch name="zonal">
         <batch_visualization hidden="Children" type="batch_visualization" name="hotel_resort">
-          <indicators>['tm_hh1', 'tm_hh2', 'tm_hh3', 'tm_hh4', 'tm_hh5', 'tm_hu']</indicators>
+          <indicators>['tm_hh5', 'tm_hh4', 'tm_hh3', 'tm_hh2', 'tm_hh1', 'tm_hu', 'tm_totalhh', 'tm_totalemp', 'tm_hotel', 'tm_govt', 'tm_mili', 'tm_hr', 'tm_rc', 'tm_gq', 'tm_pop', 'tm_service', 'tm_ag', 'tm_tcu', 'tm_indus', 'tm_fire', 'tm_retail', 'tm_cstr']</indicators>
           <output_type>tab</output_type>
           <dataset_name>zone</dataset_name>
           <visualization_type>tab</visualization_type>
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
         </batch_visualization>
       </indicator_batch>
       <indicator_batch name="joint_distrib">
