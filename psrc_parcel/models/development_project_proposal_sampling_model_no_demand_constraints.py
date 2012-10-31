@@ -57,7 +57,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
     
     def _are_targets_reached(self, column_value):
         if (column_value[0] not in self.same_demand_group) or (self.current_year >= 2015):
-            return (DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value), False)
+            return (DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value), True)
         is_target_reached = DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value)
         results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) )) and (
