@@ -509,10 +509,10 @@ def process_parcel(parcel):
             if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
             if DEBUG > 0: print "of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft
             #prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
-            prices = (price_per_sqft_sf*1.2*price_shifters['price_per_sqft_sf'],
-                      price_per_sqft_mf*1.2,
-                      rent_per_sqft_sf*1.2*price_shifters['rent_per_sqft_sf'],
-                      rent_per_sqft_mf*1.2*price_shifters['rent_per_sqft_mf'],
+            prices = (price_per_sqft_sf*1.0*price_shifters['price_per_sqft_sf'],
+                      price_per_sqft_mf*1.0,
+                      rent_per_sqft_sf*1.0*price_shifters['rent_per_sqft_sf'],
+                      rent_per_sqft_mf*1.0*price_shifters['rent_per_sqft_mf'],
                       of_rent_sqft*price_shifters['of_rent_sqft'],
                       ret_rent_sqft*price_shifters['ret_rent_sqft'],
                       ind_rent_sqft*price_shifters['ind_rent_sqft'])
