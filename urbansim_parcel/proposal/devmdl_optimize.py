@@ -318,6 +318,7 @@ def optimize(bform,prices,costdiscount,submarket_info=None,esubmarket_info=None)
     r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[bform,btype,prices,costdiscount,dataset_pool],iter=150,acc=.01)
     #if DEBUG > 0: print r
     #print r
+    if r[3] <> 0: return r[0], -1
     r[0] = numpy.round(r[0], decimals=1)
     r[1] = _objfunc2(r[0],bform,btype,prices,costdiscount,dataset_pool)
     if 0: #DEBUG: 
