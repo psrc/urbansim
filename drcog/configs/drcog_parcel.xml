@@ -5,6 +5,10 @@
     <project_name hidden="True" type="string">drcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable use="both" source="expression" name="county.county_parcels_near_capacity" type="variable_definition">county.aggregate(((((parcel.parcel_sqft)*parcel.disaggregate(zoning.max_far)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))&lt;2000)</variable>
+      <variable use="both" source="expression" name="county.county_num_parcels" type="variable_definition">county.aggregate((parcel.parcel_id&gt;0))</variable>
+      <variable use="both" source="expression" name="county.county_parcels_overcapacity" type="variable_definition">county.aggregate(((((parcel.parcel_sqft)*parcel.disaggregate(zoning.max_far)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))&lt;0)</variable>
+      <variable use="both" source="expression" name="parcel.remaining_capacity" type="variable_definition">(((parcel.parcel_sqft)*parcel.disaggregate(zoning.max_far)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft))</variable>
       <variable use="both" source="expression" name="employment_submarket.ln_residential_units_in_zone" type="variable_definition">ln(employment_submarket.disaggregate(zone.aggregate(building.residential_units)))</variable>
       <variable use="both" source="expression" name="employment_submarket.esbumarket_close_to_transit" type="variable_definition">employment_submarket.within_half_mile_transit==1</variable>
       <variable use="both" source="expression" name="submarket.ln_median_lot_sqft" type="variable_definition">ln(submarket.aggregate(building.disaggregate(parcel.parcel_sqft),function=median))</variable>
@@ -3518,7 +3522,7 @@
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
       <indicator_batch name="county">
         <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
-          <indicators>['county_nonres_sqft', 'county_resunits', 'county_employment', 'county_households']</indicators>
+          <indicators>['county_num_parcels', 'county_parcels_overcapacity', 'county_parcels_near_capacity']</indicators>
           <output_type>tab</output_type>
           <dataset_name>county</dataset_name>
           <visualization_type>tab</visualization_type>
