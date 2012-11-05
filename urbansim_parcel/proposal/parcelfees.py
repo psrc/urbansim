@@ -16,3 +16,6 @@ class ParcelFees:
     
     def nonres_parcel_fee(my,parcel_id):
         return my.fee_dataset['cs_nr'][parcel_id]
+
+    def get(my,pid):
+        return (my.resmf_parcel_fee(pid),my.resother_parcel_fee(pid),my.nonres_parcel_fee(pid))
