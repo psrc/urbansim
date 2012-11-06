@@ -110,10 +110,10 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
             else:
                 self.accounting[key]["proposed_spaces"] += value
                 targets_reached = self._are_targets_reached(key)
-                if any(targets_reached):
+                if targets_reached[0]:
                     component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
                     proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
-                    if targets_reached[0] and not targets_reached[1]:
+                    if not targets_reached[1]:
                         # disable proposals for all parcels with proposals of this BT 
                         proposal_indexes = intersect1d(where(self.get_index_by_condition(self.proposal_set['status_id'], self.proposal_set.id_tentative))[0], proposal_indexes)  
                         parcels = self.proposal_set['parcel_id'][proposal_indexes]
