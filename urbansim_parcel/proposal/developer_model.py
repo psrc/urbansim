@@ -552,7 +552,9 @@ def process_parcel(parcel):
             if DEBUG: print X, npv
 
             bformdbg = (bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
-            otherdbg = (isr,parcelfees.get(pid),existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period)
+            pfeesstr = ''
+            if parcelfees: pfeesstr = parcelfees.get(pid)
+            otherdbg = (isr,pfeesstr,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period)
             debugoutput += string.join([str(x) for x in [pid,btype,npv]+list(prices)+list(bformdbg)+list(otherdbg)]
 ,sep=',')+'\n'
             #if npv == -1: return # error code
