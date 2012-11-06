@@ -129,11 +129,11 @@ class DeveloperModel(Model):
     isr = None
     if my.scenario.startswith('Transit'): isr = ISR()
     parcelfees = None
-    #if my.scenario.startswith('Preferred'):
-        #parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
+    if my.scenario.startswith('Preferred'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
     #elif my.scenario.startswith('Transit'):
         #parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
-    if my.scenario.startswith('Equity'):
+    elif my.scenario.startswith('Equity'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_equity'))
     elif my.scenario.startswith('Infill'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_infill'))
