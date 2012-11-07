@@ -20,8 +20,8 @@ scenario <- args[5]
 
 ##load stuff
 #filist<-list.files(path=pth,pattern='area_permutation_table-1_2010_2015_2020_2025_2030_2035_2040.tab')
-#summary <- file.path(pth,filist[1],fsep = .Platform$file.sep)
-summary<-'area_permutation_table-1_2010_2015_2020_2025_2030_2035_2040.tab'
+file<-'area_permutation_table-1_2010_2015_2020_2025_2030_2035_2040.tab'
+summary <- file.path(pth,file,fsep = .Platform$file.sep)
 abag <- read.csv(summary,header = TRUE, sep="\t")
 
 ##discard extraneous identifier columns
