@@ -1,6 +1,7 @@
 library(ggplot2)
 library(scales)
 library(reshape)
+library(stringr)
 #library(RPostgreSQL)
 library(plyr)
 #require("rgdal")
