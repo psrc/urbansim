@@ -12,6 +12,7 @@ args <- commandArgs(TRUE)
 #args <- c('/home/aksel/workspace/opus/data/bay_area_parcel/runs/run_391','2010','2040','391',"No_Project")
 ##hard coded path is immaterial--when invoked, overwritten by commandArgs
 pth <-args[1]
+print(pth)
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
 run_id <- args[4]
