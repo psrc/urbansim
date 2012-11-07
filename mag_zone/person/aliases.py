@@ -57,4 +57,5 @@ aliases = [
     'tmtowrk = (person.work_outside_region==0)*(mag_zone.person.travel_time_from_home_to_work) + (person.work_outside_region==1)*person.disaggregate(synthetic_person.tmtowrk)',
     'part_time = ~ (person.full_time == 1)',
     'county_id = person.disaggregate(zone.county_id, intermediates=[building, household])',
+    'nadlt = (person.age > 5)*(person.age < 18)',
            ]
