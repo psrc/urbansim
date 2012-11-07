@@ -53,7 +53,7 @@ class SimpleModel(Model):
                                                                dataset_pool=dataset_pool))[0]
             elif isinstance(dataset_filter, ndarray):
                 filter_index = dataset_filter
-            logger.log_status("Values of {} records to be updated.".format(filter_index.size))
+            logger.log_status("Values of %s records to be updated." % filter_index.size)
             outcome[filter_index] = (values[filter_index]).astype(ddtype)
         else:
             outcome = values.astype(ddtype)
