@@ -49,6 +49,7 @@ function getBuildNumber(buildURL, callback) {
   xmlhttp.onreadystatechange = function() {
 	if (xmlhttp.readyState == 3 && xmlhttp.responseText.length > 1024*1024) {
       // give up if the first 1MB of text don't have what we're looking for
+      xmlhttp.onreadystatechange = function() {};
 	  xmlhttp.abort();
       if (callback != null) {
         callback(-1);
@@ -68,10 +69,20 @@ function getBuildNumber(buildURL, callback) {
       }
 	  i = i + magicString.length;
 	  urbansimNumber = xmlhttp.responseText.substring(i, i + 20).split('\n')[0].split(' ')[0];
+      xmlhttp.onreadystatechange = function() {};
 	  xmlhttp.abort();
 	  console.log('Found urbansim run number ' + urbansimNumber);
-      if (callback != null)
+      if (callback != null) {
         callback(urbansimNumber);
+      }
+
+    } else if (xmlhttp.readyState == 4) {
+      // This is the case where the console log did not have any evidence of
+      // the urbansim build number.  This probably happened because the job was
+      // canceled before urbansim ran.
+      if (callback != null) {
+        callback(0);
+      }
 	}
   };
   xmlhttp.open('GET', buildURL + '/consoleText', true);
@@ -101,20 +112,36 @@ function getUrbansimRun(runURL, callback) {
 
 function getBuild(buildURL, callback) {
   getBuildNumber(buildURL, function (urbansimNumber) {
+    if (urbansimNumber == -1) {
+      console.log("Failed to get urbansim build number");
+      return;
+    }
+    if (urbansimNumber == 0) {
+      callback(null);
+      return;
+    }
     url = buildURL + '/api/json';
-    $.getJSON(url, null, function(build) {
-      build.urbansimNumber = urbansimNumber;
-	  $.each(build.actions, function (key, val) {
-		if (typeof val.parameters == "undefined")
-		  return;
-		$.each(val.parameters, function(key, val) {
-		  build[val.name] = val.value;
-		});
-	  });
-      getUrbansimRun(opusRestURL + '/' + urbansimNumber + '/', function (run) {
-        build.urbansimRun = run;
-	    callback(build);
-      });
+    $.ajax({
+      url: url,
+      data: null,
+      dataType: 'json',
+      success: function(build) {
+        build.urbansimNumber = urbansimNumber;
+	    $.each(build.actions, function (key, val) {
+		  if (typeof val.parameters == "undefined")
+		    return;
+		  $.each(val.parameters, function(key, val) {
+		    build[val.name] = val.value;
+		  });
+	    });
+        getUrbansimRun(opusRestURL + '/' + urbansimNumber + '/', function (run) {
+          build.urbansimRun = run;
+	      callback(build);
+        });
+      },
+      error: function() {
+        console.log("Hmm.  Failed to get " + this.url);
+      }
     });
   });
 }
@@ -123,7 +150,22 @@ function escapeHTML(t) {
   return $('<div/>').text(t).html();
 }
 
+var numBuilds = 0;
+var MAX_BUILDS = 20;
+var currentBuild;
+
+function getNextBuild() {
+  if (numBuilds < MAX_BUILDS && currentBuild > 0) {
+    currentBuild--;
+    getBuild(hudsonURL + '/' + currentBuild, addBuild);
+  }
+}
+
 function addBuild(build) {
+  if (!build) {
+    getNextBuild();
+    return;
+  }
   build.status = build.result;
   if (build.building)
     build.status = 'RUNNING';
@@ -131,8 +173,10 @@ function addBuild(build) {
   e = $('#run' + build.urbansimNumber + " .hudsonNumber");
   if (e.length != 0 && e.text() > build.number) {
 	console.log("It appears that " + build.number + " is an older build for run " + build.urbansimNumber);
+    getNextBuild();
 	return;
   }
+  numBuilds++;
   title = '<a href="#">UrbanSim Run #' + build.urbansimNumber + ': ' +
 	'<span class="hudsonNumber" style="display:none">' + build.number + '</span>' +
 	'<span>' + build.HUDSON_SCENARIO + '</span>' + ' | ' + 
@@ -164,16 +208,15 @@ function addBuild(build) {
 	$('#builds').append(html).accordion('destroy').accordion({header: "h3"});
   }
   $('#run' + build.urbansimNumber).data("build", build);
+
+  // fetch builds until we have MAX_BUILDS.
+  getNextBuild();
 }
 
 function getBuilds() {
   getBuild(hudsonURL + '/lastBuild', function(build) {
+    currentBuild = build.number;
     addBuild(build);
-    var newest = Math.max(build.number-1, 0);
-    var oldest = Math.max(newest-20, 0);
-    for (i=newest; i>oldest; i--) {
-      getBuild(hudsonURL + '/' + i, addBuild);
-    }
   });
 }
 
