@@ -2,6 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
+import os
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
@@ -12,6 +13,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset import Dataset
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.sql_storage import sql_storage
+from opus_core.store.csv_storage import csv_storage
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.misc import unique
@@ -22,7 +24,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
     """
     """
 
-    def run(self, config, year):
+    def run(self, config, year, storage_type='sql'):
         """ 
         """
         
@@ -38,16 +40,23 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         dataset_pool = SessionConfiguration(new_instance=True,
                                             package_order=config['dataset_pool_configuration'].package_order,
                                             in_storage=attribute_cache).get_dataset_pool()
-        db_server = DatabaseServer(DatabaseConfiguration(
-                                                         database_name = database_name,
-                                                         database_configuration = database_server_config
-                                                         )
-                                                         )
-        if not db_server.has_database(database_name): 
-            print "Db doesn't exist creating one"
-            db_server.create_database(database_name)
-        db = db_server.get_database(database_name) 
-        output_storage = sql_storage(storage_location = db)
+
+        if storage_type == 'sql':
+            db_server = DatabaseServer(DatabaseConfiguration(
+                                                             database_name = database_name,
+                                                             database_configuration = database_server_config
+                                                             )
+                                                             )
+            if not db_server.has_database(database_name): 
+                print "Db doesn't exist creating one"
+                db_server.create_database(database_name)
+            #db = db_server.get_database(database_name) 
+            #output_storage = sql_storage(storage_location = db)
+        elif storage_type == 'csv':
+            csv_directory = os.path.join(cache_directory, 'csv', str(year))
+            output_storage = csv_storage(storage_location=csv_directory)
+        else:
+            raise ValueError, "Unsupported output storage type {}".format(storage_type)
                                                             
         logger.start_block('Compute and export data to openAMOS...')
 
@@ -256,9 +265,14 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
+    parser.add_option("-t", "--storage_type", dest="storage_type", action="store", 
+                      type="string", default='sql',
+                      help="storage type for output")
+
     (options, args) = parser.parse_args()
 
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
     logger.enable_memory_logging()
-    ExportUrbansimDataToOpenamos().run(resources, options.year)    
+    ExportUrbansimDataToOpenamos().run(resources, options.year, 
+                                       storage_type=options.storage_type)    
