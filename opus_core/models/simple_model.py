@@ -5,6 +5,7 @@
 from opus_core.model import Model
 from opus_core.variables.variable_name import VariableName
 from numpy import ndarray, ones_like, where
+from opus_core.logger import logger
 
 class SimpleModel(Model):
     """
@@ -52,6 +53,7 @@ class SimpleModel(Model):
                                                                dataset_pool=dataset_pool))[0]
             elif isinstance(dataset_filter, ndarray):
                 filter_index = dataset_filter
+            logger.log_status("Values of {} records to be updated.".format(filter_index.size))
             outcome[filter_index] = (values[filter_index]).astype(ddtype)
         else:
             outcome = values.astype(ddtype)
