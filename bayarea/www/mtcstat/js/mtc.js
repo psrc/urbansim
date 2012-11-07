@@ -41,11 +41,24 @@ function createXMLHttpRequest() {
   return xmlhttp;
 }
 
+var xmlhttp = null;
+
+// Ugh.  We're really gonna need a proper state machine.
+var cancel = false;
+
+function cancelAll() {
+  cancel = true;
+  if (xmlhttp) {
+      xmlhttp.onreadystatechange = function() {};
+	  xmlhttp.abort();
+  }
+}
+
 function getBuildNumber(buildURL, callback) {
   // We must user our own XMLHttpRequest because we want to parse data as it
   // comes in.  The reason for this is that the raw console log is often HUGE,
   // so we want to abort after detecting the urbansim build number.
-  var xmlhttp = createXMLHttpRequest();
+  xmlhttp = createXMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
 	if (xmlhttp.readyState == 3 && xmlhttp.responseText.length > 1024*1024) {
       // give up if the first 1MB of text don't have what we're looking for
@@ -162,6 +175,8 @@ function getNextBuild() {
 }
 
 function addBuild(build) {
+  if (cancel)
+    return;
   if (!build) {
     getNextBuild();
     return;
@@ -214,10 +229,19 @@ function addBuild(build) {
 }
 
 function getBuilds() {
+  cancel = false;
   getBuild(hudsonURL + '/lastBuild', function(build) {
     currentBuild = build.number;
     addBuild(build);
   });
+}
+
+function getNextPage() {
+  cancelAll();
+  $('#builds').empty();
+  cancel = false;
+  numBuilds = 0;
+  getNextBuild();
 }
 
 $(function() {
