@@ -3613,16 +3613,51 @@
     </estimation_config>
     <travel_model_configuration type="dictionary">
       <transcad_binary type="string">C:\\Program Files (x86)\\TransCAD\\tcw.exe</transcad_binary>
-      <scenario_directory type="string">C:\\LUMTM120625</scenario_directory>
-      <generic_directory type="string">C:\\model\\generic</generic_directory>
-      <ui_file type="string">C:\\model\\generic\\scripts\ompo5</ui_file>
+      <scenario_directory type="string">C:\\TravelModel\\2007test5</scenario_directory>
+      <generic_directory type="string">C:\\TravelModel\\generic</generic_directory>
+      <ui_file type="string">C:\\TravelModel\\generic\\scripts\\batchrun</ui_file>
       <urbansim_to_tm_variable_mapping type="dictionary">
         <DataTable type="string">yYYYYtazdata</DataTable>
         <JoinField type="string">TAZ</JoinField>
         <variable_mapping type="dictionary">
           <variable name="zone.zone_id" type="string">TAZ</variable>
-          <variable name="zone.aggregate(household.persons==1)" type="string">HH1</variable>
-          <variable name="zone.number_of_agents(job)" type="string">TOTALEMP</variable>
+          <variable name="zone.aggregate((household.persons_total),intermediates=[building,parcel]) + zone.gqpop2010" type="string">POP</variable>
+          <variable name="zone.gqpop2010" type="string">GQ</variable>
+          <variable name="zone.aggregate(building.hotel_units,intermediates=[parcel])" type="string">HR</variable>
+          <variable name="zone.aggregate(building.resort_units,intermediates=[parcel])" type="string">RC</variable>
+          <variable name="zone.aggregate(building.residential_units*(building.building_type_id&lt;4),intermediates=[parcel])" type="string">HU</variable>
+          <variable name="zone.aggregate((household.persons==1),intermediates=[building,parcel])" type="string">HH1</variable>
+          <variable name="zone.aggregate((household.persons==2),intermediates=[building,parcel])" type="string">HH2</variable>
+          <variable name="zone.aggregate((household.persons==3),intermediates=[building,parcel])" type="string">HH3</variable>
+          <variable name="zone.aggregate((household.persons==4),intermediates=[building,parcel])" type="string">HH4</variable>
+          <variable name="zone.aggregate((household.persons&gt;4),intermediates=[building,parcel])" type="string">HH5</variable>
+          <variable name="zone.military_jobs" type="string">MILI</variable>
+          <variable name="zone.aggregate(building.aggregate(job.sector_id==18),intermediates=[parcel])" type="string">GOVT</variable>
+          <variable name="numpy.ceil(.4160*zone.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel]))" type="string">HOTEL</variable>
+          <variable name="zone.aggregate(building.aggregate(job.sector_id==1),intermediates=[parcel])" type="string">AG</variable>
+          <variable name="zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [3,7,8])),intermediates=[parcel])" type="string">TCU</variable>
+          <variable name="zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [4,5])),intermediates=[parcel])" type="string">INDUS</variable>
+          <variable name="zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [9,10])),intermediates=[parcel])" type="string">FIRE</variable>
+          <variable name="zone.aggregate(building.aggregate(numpy.in1d(job.sector_id, [11,12,13,14,15,16,17])),intermediates=[parcel])" type="string">SERV</variable>
+          <variable name="zone.aggregate(building.aggregate(job.sector_id==6),intermediates=[parcel])" type="string">RETAIL</variable>
+          <variable name="zone.aggregate(building.aggregate(job.sector_id==2),intermediates=[parcel])" type="string">CSTR</variable>
+          <variable name="zone.aggregate(building.number_of_agents(job),intermediates=[parcel]) + numpy.ceil(.4160*zone.aggregate(building.resort_units+building.hotel_units,intermediates=[parcel])) + zone.military_jobs" type="string">TOTALEMP</variable>
+          <variable name="zone.aggregate(building.number_of_agents(household),intermediates=[parcel])" type="string">TOTALHH</variable>
+          <variable name="zone.termtype" type="string">TERMTYPE</variable>
+          <variable name="zone.termtime" type="string">TERMTIME</variable>
+          <variable name="zone.wk_pkcost" type="string">WK_PKCOST</variable>
+          <variable name="zone.nw_pkcost" type="string">NW_PKCOST</variable>
+          <variable name="zone.percwlk" type="string">PERCWLK</variable>
+          <variable name="zone.prv_univ_enroll" type="string">PRV_UNIV_ENROLL</variable>
+          <variable name="zone.pub_univ_enroll" type="string">PUB_UNIV_ENROLL</variable>
+          <variable name="zone.prv_k12_enroll" type="string">PRV_K12_ENROLL</variable>
+          <variable name="zone.pub_k12_enroll" type="string">PUB_K12_ENROLL</variable>
+          <variable name="zone.schools" type="string">SCHOOLS</variable>
+          <variable name="zone.gqwrk" type="string">GQWRK</variable>
+          <variable name="zone.nonvisret" type="string">NONVISRET</variable>
+          <variable name="zone.visprcauto" type="string">VISPRCAUTO</variable>
+          <variable name="zone.visprctour" type="string">VISPRCTOUR</variable>
+          <variable name="zone.mili_base" type="string">MILI_BASE</variable>
         </variable_mapping>
       </urbansim_to_tm_variable_mapping>
       <tm_to_urbansim_variable_mapping type="dictionary">
@@ -3633,15 +3668,15 @@
         </matrix>
       </tm_to_urbansim_variable_mapping>
       <macro type="dictionary">
-        <get_cache_data_into_transcad type="string">tazmanager</get_cache_data_into_transcad>
-        <get_transcad_data_into_cache type="string">ConvertMatricesToCSV</get_transcad_data_into_cache>
-        <run_transcad_travel_model type="string">OMPO5</run_transcad_travel_model>
+        <get_cache_data_into_transcad type="string">ImportxlsFile</get_cache_data_into_transcad>
+        <get_transcad_data_into_cache type="string">ExportMatrices</get_transcad_data_into_cache>
+        <run_transcad_travel_model type="string">BatchRun</run_transcad_travel_model>
       </macro>
       <locations_to_disaggregate type="list">['parcel', 'building']</locations_to_disaggregate>
       <models type="selectable_list">
-        <selectable name="honolulu_parcel.transcad.get_cache_data_into_transcad" type="selectable">True</selectable>
+        <selectable name="honolulu_parcel.transcad.get_cache_data_into_transcad" type="selectable">False</selectable>
         <selectable name="honolulu_parcel.transcad.run_transcad_travel_model" type="selectable">True</selectable>
-        <selectable name="opus_transcad.models.get_transcad_data_into_cache" type="selectable">True</selectable>
+        <selectable name="honolulu_parcel.transcad.get_transcad_data_into_cache" type="selectable">False</selectable>
       </models>
     </travel_model_configuration>
   </model_manager>
@@ -4594,47 +4629,47 @@
     </scenario>
     <scenario executable="True" name="baseline_with_tm" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
-      <base_year type="integer">2000</base_year>
+      <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2001</firstyear>
-        <lastyear type="integer">2040</lastyear>
+        <firstyear type="integer">2011</firstyear>
+        <lastyear type="integer">2011</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">True</selectable>
-        <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">True</selectable>
-        <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">True</selectable>
-        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">True</selectable>
-        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">True</selectable>
-        <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">True</selectable>
-        <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">True</selectable>
-        <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_sfdetached" type="selectable" name="submarket_household_location_choice_model_owner_sfdetached_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_duplex" type="selectable" name="submarket_household_location_choice_model_owner_duplex_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_apartment" type="selectable" name="submarket_household_location_choice_model_owner_apartment_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_owner_townhome" type="selectable" name="submarket_household_location_choice_model_owner_townhome_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_sfdetached" type="selectable" name="submarket_household_location_choice_model_renter_sfdetached_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_duplex" type="selectable" name="submarket_household_location_choice_model_renter_duplex_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_apartment" type="selectable" name="submarket_household_location_choice_model_renter_apartment_1">True</selectable>
-        <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">True</selectable>
-        <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">True</selectable>
-        <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">True</selectable>
-        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">True</selectable>
-        <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
+        <selectable return_value="residential_price_model" type="selectable" name="residential_price_model_1">False</selectable>
+        <selectable return_value="non_residential_price_model" type="selectable" name="non_residential_price_model_1">False</selectable>
+        <selectable return_value="household_transition_model_with_persons" type="selectable" name="household_transition_model_with_persons_1">False</selectable>
+        <selectable return_value="household_relocation_model" type="selectable" name="household_relocation_model_1">False</selectable>
+        <selectable return_value="tenure_choice_model" type="selectable" name="tenure_choice_model_1">False</selectable>
+        <selectable return_value="residential_building_type_choice_model_owner" type="selectable" name="residential_building_type_choice_model_owner_1">False</selectable>
+        <selectable return_value="residential_building_type_choice_model_renter" type="selectable" name="residential_building_type_choice_model_renter_1">False</selectable>
+        <selectable return_value="update_hh_building_type_id" type="selectable" name="update_hh_building_type_id_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_sfdetached" type="selectable" name="submarket_household_location_choice_model_owner_sfdetached_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_duplex" type="selectable" name="submarket_household_location_choice_model_owner_duplex_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_apartment" type="selectable" name="submarket_household_location_choice_model_owner_apartment_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_owner_townhome" type="selectable" name="submarket_household_location_choice_model_owner_townhome_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_sfdetached" type="selectable" name="submarket_household_location_choice_model_renter_sfdetached_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_duplex" type="selectable" name="submarket_household_location_choice_model_renter_duplex_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_apartment" type="selectable" name="submarket_household_location_choice_model_renter_apartment_1">False</selectable>
+        <selectable return_value="submarket_household_location_choice_model_renter_townhome" type="selectable" name="submarket_household_location_choice_model_renter_townhome_1">False</selectable>
+        <selectable return_value="household_allocation_to_building_model" type="selectable" name="household_allocation_to_building_model_1">False</selectable>
+        <selectable return_value="emp_transition_model" type="selectable" name="emp_transition_model_1">False</selectable>
+        <selectable return_value="employment_relocation_model" type="selectable" name="employment_relocation_model_1">False</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">_all_</group_members>
         </selectable>
-        <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">True</selectable>
-        <selectable return_value="honolulu_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
-        <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">True</selectable>
-        <selectable return_value="mf_building_location_choice_model" type="selectable" name="mf_building_location_choice_model_1">True</selectable>
-        <selectable return_value="commercial_building_location_choice_model" type="selectable" name="commercial_building_location_choice_model_1">True</selectable>
-        <selectable return_value="industrial_building_location_choice_model" type="selectable" name="industrial_building_location_choice_model_1">True</selectable>
-        <selectable return_value="hotel_building_location_choice_model" type="selectable" name="hotel_building_location_choice_model_1">True</selectable>
+        <selectable return_value="job_allocation_to_building_model" type="selectable" name="job_allocation_to_building_model_1">False</selectable>
+        <selectable return_value="honolulu_building_transition_model" type="selectable" name="SC_building_transition_model_1">False</selectable>
+        <selectable return_value="sf_building_location_choice_model" type="selectable" name="sf_building_location_choice_model_1">False</selectable>
+        <selectable return_value="mf_building_location_choice_model" type="selectable" name="mf_building_location_choice_model_1">False</selectable>
+        <selectable return_value="commercial_building_location_choice_model" type="selectable" name="commercial_building_location_choice_model_1">False</selectable>
+        <selectable return_value="industrial_building_location_choice_model" type="selectable" name="industrial_building_location_choice_model_1">False</selectable>
+        <selectable return_value="hotel_building_location_choice_model" type="selectable" name="hotel_building_location_choice_model_1">False</selectable>
       </models_to_run>
       <travel_model_configuration type="dictionary">
         <years_to_run key_name="year" type="category_with_special_keys">
           <run_description type="dictionary">
-            <year type="integer">2020</year>
+            <year type="integer">2011</year>
             <data_dir type="string"/>
-            <data_exchange_dir type="string">inputs\\taz\\2020</data_exchange_dir>
+            <data_exchange_dir type="string">inputs\\taz\\2005</data_exchange_dir>
           </run_description>
           <run_description type="dictionary">
             <year type="integer">2030</year>
@@ -4728,24 +4763,24 @@
         <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
           <selectable name="zone" type="selectable">False</selectable>
-          <selectable name="household" type="selectable">True</selectable>
-          <selectable name="building" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">True</selectable>
-          <selectable name="parcel" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          <selectable name="household" type="selectable">False</selectable>
+          <selectable name="building" type="selectable">False</selectable>
+          <selectable name="building_type" type="selectable">False</selectable>
+          <selectable name="parcel" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
-          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          <selectable name="person" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="development_template" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
           <selectable name="development_template_component" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
-          <selectable name="job" type="selectable">True</selectable>
+          <selectable name="job" type="selectable">False</selectable>
           <selectable name="building_type" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
-          <selectable name="submarket" type="selectable">True</selectable>
+          <selectable name="submarket" type="selectable">False</selectable>
           <selectable name="development_event_history" type="selectable">False</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="residential_building_type" type="selectable">True</selectable>
+          <selectable name="target_vacancy" type="selectable">False</selectable>
+          <selectable name="residential_building_type" type="selectable">False</selectable>
         </datasets_to_preload>
       </advanced>
     </scenario>
