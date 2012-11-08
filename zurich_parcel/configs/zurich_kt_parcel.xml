@@ -1305,7 +1305,7 @@
         </matsim_controler>
         <controler_parameter type="dictionary">
           <cell_size type="integer">100</cell_size>
-          <shape_file type="file">data/zurich_parcel/shapefiles/zurich_mun.shp</shape_file>
+          <shape_file type="file">data/zurich_kt_parcel/shapefiles/zurich_mun.shp</shape_file>
           <bounding_box type="selectable_list">
             <selectable name="use_bounding_box" type="selectable">False</selectable>
           </bounding_box>
