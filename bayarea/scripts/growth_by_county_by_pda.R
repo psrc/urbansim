@@ -79,7 +79,7 @@ for(elem in elements){
     facet_grid(is_pda~county_id)+
     #facet_grid(.~county_id)+
     scale_y_continuous(labels = comma_format(digits = 5)) +
-    labs(title=sprintf("%s for_run_391_%s_%s_to%s",elem,scenario,yrStart,yrEnd))+theme(axis.text.x=element_text(angle = -90, hjust = 0))
+    labs(title=sprintf("%s for_run_%s_%s_%s_to%s",elem,run_id,scenario,yrStart,yrEnd))+theme(axis.text.x=element_text(angle = -90, hjust = 0))
   
   print(gp)
   #qplot(variable, data=abag.plot, geom="bar", weight=value,colour="black") +facet_grid(as.factor(year) ~county_id) +
