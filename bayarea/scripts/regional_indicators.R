@@ -9,7 +9,7 @@ library(RColorBrewer)
 args <- commandArgs(TRUE)
 
 ## grab arguments
-#args <- c('/home/aksel/Documents/Data/Urbansim/runs/run_257/indicators','2010','2040','204',"FALSE","No_Project")
+#args <- c('/home/aksel/workspace/opus/data/bay_area_parcel/runs/run_257.2012_10_03_00_45/indicators','2010','2040','257',"FALSE","No_Project")
 pth <-args[1]
 yrStart <- as.integer(args[2])
 yrEnd <- as.integer(args[3])
@@ -326,11 +326,11 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     ##calculate the share of the growth that happens in PDAs
     #households
     names(dat$"households pda")
-    dat$households$growth<-(dat$"households pda"$county_households_pda_2035.f8-dat$"households pda"$county_households_pda_2010.f8)/
-      (dat$households$county_households_2035.f8-dat$households$county_households_2010.f8)
+    dat$households$growth<-(dat$"households pda"$county_households_pda_2040.f8-dat$"households pda"$county_households_pda_2010.f8)/
+      (dat$households$county_households_2040.f8-dat$households$county_households_2010.f8)
     #employment
-    dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2035.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
-      (dat$employment$county_employment_2035.f8-dat$employment$county_employment_2010.f8)
+    dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2040.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
+      (dat$employment$county_employment_2040.f8-dat$employment$county_employment_2010.f8)
     #lapply(dat,"[[",32)
     
     ## 1) transform appropriately for ease of use/ggplot
