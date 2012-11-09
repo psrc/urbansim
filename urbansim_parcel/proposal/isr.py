@@ -38,11 +38,11 @@ class ISR:
     def res_isr_fee(my,taz):
         if taz == 0: return 0
         z = my.isr[taz][1]
-        if z == "A": return 5000
-        elif z == "B": return 15000
-        elif z == "C": return 35000
+        if z == "A": return 0
+        elif z == "B": return 12500
+        elif z == "C": return 25000
         elif z == "D": return 50000
-        elif z == "No Fee": return 0
+        elif z == "No Fee": return -40000
         print z
         return 0
         '''
@@ -58,11 +58,11 @@ class ISR:
     def nonres_isr_fee(my,taz):
         if taz == 0: return 0
         z = my.isr[taz][0]
-        if z == "A": return 2
-        elif z == "B": return 6
+        if z == "A": return 0
+        elif z == "B": return 5
         elif z == "C": return 10
         elif z == "D": return 20
-        elif z == "No Fee": return 0
+        elif z == "No Fee": return -15
         print z
         return 0
         '''
