@@ -10,6 +10,30 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
 
+# these are defaults that will be overwritten
+RESLOCALCOST_D = {
+49:115.58*.45, # sonoma
+41:114.6*1.1, # san mateo
+1:116.2*.95, # alameda
+43:117.15*.9, # santa clara
+28:115.58*1.9, # napa
+38:123.8*1.1, # san fran
+7:112.9*.9, # contra costa
+48:110.5*1.2, # solano
+21:115.58*1.45 # marin 
+}
+NONRESLOCALCOST_D = {
+49:115.58*1.2, # sonoma
+41:114.6*1.1, # san mateo
+1:116.2*.9, # alameda
+43:117.1*1.0, # santa clara
+28:115.58*1.0, # napa
+38:123.8*1.3, # san fran
+7:112.9*1.2, # contra costa
+48:110.5*.8, # solano
+21:115.58*1.0 # marin 
+}
+
 class Shifters(object):
 
     def __init__(self):

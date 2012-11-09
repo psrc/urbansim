@@ -22,12 +22,11 @@ class BForm:
         my.btype = None
         my.parking = None
     
-        my.sales_absorption = -1
-        my.rent_absorption = -1
-        my.leases_absorption = -1
-        my.sales_vacancy_rates = -1
-        my.rent_vacancy_per_period = -1
-        my.leases_vacancy_per_period = -1
+        my.sales_absorption = []
+        my.rent_absorption = []
+        my.leases_absorption = []
+        my.sales_vacancy_rates = []
+        my.vacancy_rates = []
         
         far_area = FAR*parcel_size
         height_area = height/FLOORHEIGHT*my.buildable_area
@@ -48,6 +47,7 @@ class BForm:
             my.maxnonressize = MAXNONRESSIZE
         my.isr = isr
         my.parcelfees = parcelfees
+        my.actualfees = 0
         my.taz = taz
         my.parcel_id = parcel_id
 
@@ -117,8 +117,9 @@ class BForm:
         if my.parking: cost += numpy.sum(my.num_units)*PARKINGCOSTPERSPOT
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         if my.parcelfees: 
-            cost += numpy.sum(my.num_units)*\
+            my.actualfees = numpy.sum(my.num_units)*\
 								my.parcelfees.resother_parcel_fee(my.parcel_id)
+            cost += my.actualfees
         cost += numpy.dot(SFPARKING,my.num_units)*F
         return cost
 
@@ -150,7 +151,8 @@ class BForm:
 
         if my.isr: cost += my.isr.nonres_isr_fee(my.taz)*sqft
         if my.parcelfees: 
-            cost += sqft*my.parcelfees.nonres_parcel_fee(my.parcel_id)
+            my.actualfees = sqft*my.parcelfees.nonres_parcel_fee(my.parcel_id)
+            cost += my.actualfees
         #print cost
         return cost
 
@@ -172,8 +174,9 @@ class BForm:
         if my.parking: cost += numpy.sum(my.num_units)*PARKINGCOSTPERSPOT
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         if my.parcelfees: 
-            cost += numpy.sum(my.num_units)*\
+            my.actualfees = numpy.sum(my.num_units)*\
 								my.parcelfees.resmf_parcel_fee(my.parcel_id)
+            cost += my.actualfees
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F2
         return cost
 

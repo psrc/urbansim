@@ -3,10 +3,6 @@
 # See opus_core/LICENSE
 
 '''
-absorption
-land cost
-nonresidential building prices
-building construction model
 account for parking
 fix buildable area
 '''
@@ -19,10 +15,12 @@ from devmdl_zoning import *
 import devmdl_optimize
 from isr import ISR
 from parcelfees import ParcelFees
+from shifters import price_shifters
 from bform import BForm
 from devmdl_accvars import compute_devmdl_accvars
+from constants import *
+import submarkets
 
-sys.path.insert(1,os.path.join(os.environ['OPUS_HOME'],'src/urbansim_parcel/proposal'))
 import proforma
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
@@ -31,7 +29,6 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
 from opus_core.model import Model
 from opus_core import paths
-from shifters import price_shifters
 #price_shifters = {
 #    'price_per_sqft_mf': .35,
 #    'price_per_sqft_sf': 1.2,
@@ -45,7 +42,6 @@ from shifters import price_shifters
 DEBUG = 0
 MP = 0  #process parcels with multiprocessing?
 
-devmdltypes = devmdl_optimize.devmdltypes
 scenario_d = {'Baseline': 1, 'No Project': 4, 'No Project V1': 11, 'Transit Priority': 5, 'Studio': 3}
 
 class DeveloperModel(Model):
@@ -214,11 +210,11 @@ class DeveloperModel(Model):
         prof.start()
 
     outf = open(os.path.join(cache_dir,'buildings-%d.csv' % current_year),'w')
-    outf.write('pid,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,btype\n')
+    outf.write('pid,npv,actualfee,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,btype\n')
     debugf = open(os.path.join(cache_dir,'proforma-debug-%d.csv' % current_year),'w')
-    bformdbg = 'bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area'
-    otherdbg = 'isr,parcelfees,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period'
-    debugf.write('pid,btype,npv,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind,%s,%s\n' % (bformdbg,otherdbg))
+    bformdbg = 'county_id,far,height,max_dua,bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area'
+    otherdbg = 'isr,parcelfees,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.vacancy_rates'
+    debugf.write('pid,btype,npv,actualfee,pricesf,pricemf,rentsf,rentmf,rentof,rentret,rentind,%s,%s\n' % (bformdbg,otherdbg))
     t1 = time.time()
     aggd = {}
 
@@ -381,7 +377,7 @@ def process_parcel(parcel):
         global parcel_set, z, node_set, submarket, esubmarket, isr, parcelfees, costdiscount
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
-
+        
         ###################
         # CAUTION: unfortunately, there's more scenario-specific stuff
         # that has to wait until the parcel is identified
@@ -545,17 +541,19 @@ def process_parcel(parcel):
             esubmarket_info = {}
             for attr in esubmarket.get_known_attribute_names():
                 esubmarket_info[attr] = esubmarket[attr][esub_idx]
+            
+            submarket_pool = submarkets.setup_dataset_pool(opus=False,btype=btype,submarket_info=submarket_info,esubmarket_info=esubmarket_info)
 
             X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,
-                                              submarket_info=submarket_info,
-                                              esubmarket_info=esubmarket_info)
+                                              submarket_pool)
             if DEBUG: print X, npv
 
-            bformdbg = (bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
+            bformdbg = (county_id,far,height,max_dua,bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
             pfeesstr = ''
             if parcelfees: pfeesstr = parcelfees.get(pid)
-            otherdbg = (isr,pfeesstr,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.rent_vacancy_per_period,bform.leases_vacancy_per_period)
-            debugoutput += string.join([str(x) for x in [pid,btype,npv]+list(prices)+list(bformdbg)+list(otherdbg)]
+
+            otherdbg = (isr,pfeesstr,existing_sqft,existing_price,lotsize,unitsize,unitsize2,string.join([str(x) for x in bform.sales_absorption],'|'),string.join([str(x) for x in bform.rent_absorption],'|'),string.join([str(x) for x in bform.leases_absorption],'|'),string.join([str(x) for x in bform.sales_vacancy_rates],'|'),string.join([str(x) for x in bform.vacancy_rates],'|'))
+            debugoutput += string.join([str(x) for x in [pid,btype,npv,bform.actualfees]+list(prices)+list(bformdbg)+list(otherdbg)]
 ,sep=',')+'\n'
             #if npv == -1: return # error code
             if npv > maxnpv:
@@ -587,7 +585,7 @@ def process_parcel(parcel):
                 res_units = math.floor(res_units)
                 # it's not mixed if the nonres gets optimized out
                 if btype == 12 and nonres_sqft == 0: btype = 3 
-                building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
+                building = (pid, npv, bform.actualfees, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units)
                 maxbuilding = building
                 units = bform.num_units
 
