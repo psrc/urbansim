@@ -75,11 +75,11 @@ names(dat) <- ldply(title_concat_short)[2:ncol(title_concat_short),2]
 ##calculate the share of the growth that happens in PDAs
 #households
 names(dat$"households pda")
-dat$households$growth<-(dat$"households pda"$county_households_pda_2035.f8-dat$"households pda"$county_households_pda_2010.f8)/
-  (dat$households$county_households_2035.f8-dat$households$county_households_2010.f8)
+dat$households$growth<-(dat$"households pda"$county_households_pda_2040.f8-dat$"households pda"$county_households_pda_2010.f8)/
+  (dat$households$county_households_2040.f8-dat$households$county_households_2010.f8)
 #employment
-dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2035.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
-  (dat$employment$county_employment_2035.f8-dat$employment$county_employment_2010.f8)
+dat$employment$growth<-(dat$"employment pda"$county_employment_pda_2040.f8-dat$"employment pda"$county_employment_pda_2010.f8)/
+  (dat$employment$county_employment_2040.f8-dat$employment$county_employment_2010.f8)
 #lapply(dat,"[[",32)
 
 ## 1) transform appropriately for ease of use/ggplot
