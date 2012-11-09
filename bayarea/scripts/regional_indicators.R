@@ -301,8 +301,8 @@ regionalProcessor <- function(pth,yrStart,yrEnd){
     lCountiesShort <-c('Alameda','Contra Costa','Marin','Napa','San Francisco','San Mateo','Santa Clara','Solano','Sonoma')
     targetData <- data.frame(structure(dt, dim = c(9,2), .Dimnames = list(lCountiesShort,c('households','employment'))))
     targetData$county<-rownames(targetData)
-    simFiles <- c('county_table-3_2010-2035_county__county_employment.tab','county_table-3_2010-2035_county__county_employment_pda.tab',
-                  'county_table-3_2010-2035_county__county_households.tab','county_table-3_2010-2035_county__county_households_pda.tab')
+    simFiles <- c('county_table-3_2010-2040_county__county_employment.tab','county_table-3_2010-2040_county__county_employment_pda.tab',
+                  'county_table-3_2010-2040_county__county_households.tab','county_table-3_2010-2040_county__county_households_pda.tab')
     targetData.m <-melt(targetData, id.vars='county')
     targetData.m$obs_pred <-'target'
     targetData.m <- targetData.m[,c(1,4,3,2)] 
