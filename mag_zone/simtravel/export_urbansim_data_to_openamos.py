@@ -3,10 +3,11 @@
 # See opus_core/LICENSE 
 
 import os
+from pandas import read_csv, DataFrame
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
-from opus_core.logger import logger
+from opus_core.logger import logger, block, log_block
 from opus_core.simulation_state import SimulationState
 from numpy import array, float32, ones
 from opus_core.store.attribute_cache import AttributeCache
@@ -62,7 +63,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
 
         hh = dataset_pool.get_dataset('household')
         hh_recs = dataset_pool.get_dataset('households_recs')
-        hh_recs.add_attribute(0,"htaz1")
+        #hh_recs.add_attribute(0,"htaz1")
         hh_recs.flush_dataset()
         #syn_hh = dataset_pool.get_dataset('synthetic_household')
 
@@ -77,8 +78,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         "inc35t50=((household.income>=35000) & (household.income<50000)).astype('i')",
                         "inc50t75=((household.income>=50000) & (household.income<75000)).astype('i')",
                         "inc75t100=((household.income>=75000) & (household.income<100000)).astype('i')",
-                        'htaz1 = (houseid>0)*(household.disaggregate(building.zone_id))',
-                        'htaz = ((houseid>0) & (htaz1>100))*(htaz1-100)+((houseid>0) & (htaz1==-1))*1122',
+                        'htaz = ((houseid>0)*(household.disaggregate(building.zone_id)-100) + (houseid<=0)*0)',
+                        #'htaz = ((houseid>0) & (htaz1>100))*(htaz1-100)+((houseid>0) & (htaz1==-1))*1122',
                         "withchild = (household.aggregate(person.age<18)>0).astype('i')",
                         "noc = household.aggregate(person.age<18)",
                         "numadlt = household.aggregate(person.age>=18)",
@@ -94,40 +95,45 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'mag_zone.household.sparent',
                         'mag_zone.household.rur',
                         'mag_zone.household.urb',
-                        'zonetidi4 = household.disaggregate(building.zone_id) - 100',
+                        'zonetidi4 = household.disaggregate(building.zone_id)',
                         ]
         
         self.prepare_attributes(hh, hh_variables)
         attrs_to_export = hh_recs.get_known_attribute_names()
-
-        hh.write_dataset(attributes=attrs_to_export,
-                         out_storage=output_storage)
+       
+        self.write_dataset(hh, attrs_to_export, output_storage)
         dataset_pool._remove_dataset(hh.dataset_name)
 
         persons = dataset_pool.get_dataset('person')
+        persons.out_table_name_default = 'persons'
 
         # Recoding invalid work and school locations to some random valid values
         persons_recs = dataset_pool.get_dataset('persons_recs')
         persons_recs.add_attribute(persons['person_id'],"personuniqueid")
         persons_recs.add_attribute(persons['marriage_status'],"marstat")
         persons_recs.add_attribute(persons['student_status'],"schstat")
+
+
+        """
         persons_recs.add_attribute(persons['wtaz0'],"htaz_act")
         persons_recs.add_attribute(0,"wtaz_rec")
         persons_recs.add_attribute(0,"wtaz_rec1")
         persons_recs.add_attribute(0,"wtaz_rec2")
-        persons_recs.add_attribute(0,"wtaz1")
+
         persons_recs.add_attribute(0,"wtaz1_1")
         persons_recs.add_attribute(0,"wtaz1_2")
         persons_recs.add_attribute(0,"wtaz1_3")
-        persons_recs.add_attribute(persons['student_status'],"schstat")
+        #persons_recs.add_attribute(persons['student_status'],"schstat")
+        """
 
+        persons_recs.add_attribute(0,"wtaz1")
         persons_recs.add_attribute(0,"htaz")
         persons_recs.add_attribute(0,"schtaz1")
 
         persons_recs.flush_dataset()
 
         #syn_persons = dataset_pool.get_dataset('synthetic_person')
-        persons_variables = ['personid=mag_zone.person.unique_member_id',
+        persons_variables = ['personid=mag_zone.person.member_id',
                              'personuniqueid=person.person_id',
                              'houseid=person.household_id',
                              "one=(person.person_id>0).astype('i')",
@@ -153,51 +159,35 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              "isemploy=(person.employment_status==1).astype('i')",
                              "fulltim=(mag_zone.person.full_time==1).astype('i')",
                              'parttim=mag_zone.person.part_time',
-                             'person.schtaz - 100',
-                             
-                             'htaz_act = (houseid>0)*(person.disaggregate(building.zone_id, intermediates=[household]))',
-                             
-                             'wtaz_rec1=0*(mag_zone.person.wtaz <= 100)',
-                             'wtaz_rec2=mag_zone.person.wtaz*(mag_zone.person.wtaz > 100)',
 
-                             'wtaz_rec=wtaz_rec1 + wtaz_rec2',
+                             'htaz = ((houseid>0)*(person.disaggregate(building.zone_id, intermediates=[household])-100) + (houseid<=0)*0)',
 
-                             'htaz = ((houseid>0) & (htaz_act>100))*(htaz_act - 100)+((houseid>0) & (htaz_act==-1))*1122',
-
-                             'wtaz1_1=(wtaz_rec-100)*((person.employment_status == 1) & (wtaz_rec>0)) ',
-                             'wtaz1_2=(htaz)*((person.employment_status == 1) & (wtaz_rec<=0))',
-                             'wtaz1_3=0*(person.employment_status == 0)',
-                             'wtaz1=wtaz1_1 + wtaz1_2 + wtaz1_3',
+                             'wtaz1=(person.wtaz <= 0)*0 + (person.wtaz > 0)*(person.wtaz-100)',
                        
-                             'schstat = person.student_status',
-                             "presch = (person.age <= 5).astype('i')",
+                             "presch = ((person.age < 5)&(houseid>0)).astype('i')",
+                             "schstat = ((person.student_status==1)|((person.age < 5)&(houseid>0))).astype('i')",
 
-                             'schtaz1 = person.schtaz*((person.schtaz>0) & ((schstat==1) |  (presch==1))) + htaz*((person.schtaz==0) & ((schstat==1) | (presch==1)))',
-                             
 
-                             'wtaz = wtaz1',
+                             'schtaz1 = (person.schtaz <= 0)*0 + (person.schtaz > 0)*(person.schtaz-100)',
                              'marstat = person.marriage_status',
 
                              'enroll = person.student_status',
                              'grade = person.student_status & person.education',
                              'educ = person.education',
-                             'male = person.sex==1',
-                             'female = person.sex==2',
-
+                             "male = (person.sex==1).astype('i')",
+                             "female = (person.sex==2).astype('i')",
 
                              "coled = (person.education >= 10).astype('i')",
 
                              'race1 = person.race',
-                             'white = person.race == 1',
-                             'person.hispanic',
+                             "white = (person.race == 1).astype('i')",
+                             'person.hispanic'
                              ]
-        
         self.prepare_attributes(persons, persons_variables)
 
         attrs_to_export = persons_recs.get_known_attribute_names()
 
-        persons.write_dataset(attributes=attrs_to_export,
-                              out_storage=output_storage)
+        self.write_dataset(persons, attrs_to_export, output_storage)
         dataset_pool._remove_dataset(persons.dataset_name)
 
         zones = dataset_pool.get_dataset('zone')
@@ -232,13 +222,13 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         self.prepare_attributes(zones, zones_variables, dataset2=locations)
         attrs_to_export = locations.get_known_attribute_names()
 
-        locations.write_dataset(attributes=attrs_to_export,
-                                out_storage=output_storage)
+        self.write_dataset(locations, attrs_to_export, output_storage)
         dataset_pool._remove_dataset(locations.dataset_name)
         #raw_input("check location block")
 
         logger.end_block()
 
+    @log_block()
     def prepare_attributes(self, dataset1, variables_to_compute, dataset2=None):
         dataset1.compute_variables(variables_to_compute)
         variables_short_name = unique([VariableName(v).get_alias() for v in variables_to_compute]).tolist()
@@ -252,6 +242,24 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
             dataset2_index = dataset2.get_id_index(dataset1.get_id_attribute())
             for attr in variables_short_name:
                 dataset2.modify_attribute(attr, dataset1[attr], dataset2_index)
+
+    def write_dataset(self, dataset, attributes, out_storage):
+        with block("Exporting %s dataset" % dataset.get_dataset_name()):
+            if isinstance(out_storage, csv_storage):
+                data = {}
+                for attr in attributes:
+                    data[VariableName(attr).get_alias()] = dataset[attr]
+                dataframe = DataFrame(data)
+                output_loc = out_storage.get_storage_location()
+                if not os.path.exists(output_loc):
+                    os.makedirs(output_loc)
+                filename = dataset.out_table_name_default + '.csv'
+                filepath = os.path.join(output_loc, filename)
+                logger.log_status("export to %s" % filepath)
+                dataframe.to_csv(filepath, cols=data.keys(), index=False)
+            else:
+                dataset.write_dataset(attributes=attributes,
+                                      out_storage=out_storage)
         
 if __name__ == "__main__":
 
