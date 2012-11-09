@@ -161,6 +161,14 @@ cached data: %s
     print "Creating pda comparison chart: " + cmd
     
     
+    #Generate county x PDA facet chart
+    pda_county_script = os.path.join(my_location, "growth_by_county_by_pda.R")
+    cmd = "Rscript %s %s %d %d %s %s" % (pda_county_script,
+                                   os.path.join(cache_directory, "indicators"),
+                                   years[0], years[-1], run_id, scenario)
+    print "Creating county by pda chart: " + cmd
+    
+    
     # topsheet--need the EMFAC outputs to be generated first, so this goes last
     #travel_model_for_R = "TRUE" if travel_model else "FALSE" 
     topsheet_script = os.path.join(my_location, "regional_indicators.R")
