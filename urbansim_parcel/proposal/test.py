@@ -1,10 +1,22 @@
 from bform import BForm
 import submarkets
 import devmdl_optimize
-import csv, string
+import csv, string, sys
+import zipfile
 
-TESTFILE = 'proforma-debug-2011.csv'
-f = csv.DictReader(open(TESTFILE))
+try:
+    f = sys.argv[1]
+except:
+    print "Include a file to test on the command line"
+    sys.exit(0)
+
+if f[-3:] == "zip":
+    print "Opening as a zipfile"
+    z = zipfile.ZipFile(f)
+    f = z.open(f.replace("zip","csv"))
+else: f = open(f)
+
+f = csv.DictReader(f)
 c = 0
 for r in f:
   #print r
@@ -54,8 +66,7 @@ for r in f:
 
   X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,submarket_pool)
 
-  print X, npv
-  print bform.actualfees
+  print X, npv, btype
 
   c += 1
-  if c == 10: break
+  #if c == 500: break
