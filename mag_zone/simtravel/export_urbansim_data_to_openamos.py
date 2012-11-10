@@ -51,8 +51,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
             if not db_server.has_database(database_name): 
                 print "Db doesn't exist creating one"
                 db_server.create_database(database_name)
-            #db = db_server.get_database(database_name) 
-            #output_storage = sql_storage(storage_location = db)
+            db = db_server.get_database(database_name) 
+            output_storage = sql_storage(storage_location = db)
         elif storage_type == 'csv':
             csv_directory = os.path.join(cache_directory, 'csv', str(year))
             output_storage = csv_storage(storage_location=csv_directory)
@@ -64,7 +64,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
         hh = dataset_pool.get_dataset('household')
         hh_recs = dataset_pool.get_dataset('households_recs')
         #hh_recs.add_attribute(0,"htaz1")
-        hh_recs.flush_dataset()
+        #hh_recs.flush_dataset()
         #syn_hh = dataset_pool.get_dataset('synthetic_household')
 
         hh_variables = ['houseid=household.household_id',
@@ -95,7 +95,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                         'mag_zone.household.sparent',
                         'mag_zone.household.rur',
                         'mag_zone.household.urb',
-                        'zonetidi4 = household.disaggregate(building.zone_id)',
+                        'zonetid = household.disaggregate(building.zone_id)',
                         ]
         
         self.prepare_attributes(hh, hh_variables)
@@ -165,7 +165,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'wtaz1=(person.wtaz <= 0)*0 + (person.wtaz > 0)*(person.wtaz-100)',
                        
                              "presch = ((person.age < 5)&(houseid>0)).astype('i')",
-                             "schstat = ((person.student_status==1)|((person.age < 5)&(houseid>0))).astype('i')",
+                             "mag_zone.person.schstat",
 
 
                              'schtaz1 = (person.schtaz <= 0)*0 + (person.schtaz > 0)*(person.schtaz-100)',

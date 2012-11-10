@@ -59,4 +59,6 @@ aliases = [
     'part_time = numpy.logical_not(person.full_time == 1)',
     'county_id = person.disaggregate(zone.county_id, intermediates=[building, household])',
     'nadlt = (person.age > 5)*(person.age < 18)',
-           ]
+    'houseid=household.household_id',
+    "schstat = ((person.student_status==1)|((person.age < 5)&(mag_zone.person.houseid>0))).astype('i')",
+   ]
