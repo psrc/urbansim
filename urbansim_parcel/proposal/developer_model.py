@@ -210,7 +210,7 @@ class DeveloperModel(Model):
         prof.start()
 
     outf = open(os.path.join(cache_dir,'buildings-%d.csv' % current_year),'w')
-    outf.write('pid,npv,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,actualfee,btype\n')
+    outf.write('pid,county,dev_btype,stories,sqft,res_sqft,nonres_sqft,tenure,year_built,res_units,npv,actualfee,btype\n')
     debugf = open(os.path.join(cache_dir,'proforma-debug-%d.csv' % current_year),'w')
     bformdbg = 'county_id,far,height,max_dua,bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area'
     otherdbg = 'isr,parcelfees,existing_sqft,existing_price,lotsize,unitsize,unitsize2,bform.sales_absorption,bform.rent_absorption,bform.leases_absorption,bform.sales_vacancy_rates,bform.vacancy_rates'
@@ -585,7 +585,7 @@ def process_parcel(parcel):
                 res_units = math.floor(res_units)
                 # it's not mixed if the nonres gets optimized out
                 if btype == 12 and nonres_sqft == 0: btype = 3 
-                building = (pid, npv, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units, bform.actualfees)
+                building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units, npv, bform.actualfees)
                 maxbuilding = building
                 units = bform.num_units
 
