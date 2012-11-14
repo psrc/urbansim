@@ -23,7 +23,9 @@ datasets = ['building',
             'razi03',
             'taz2012',
             'tazi03',
-            'zone']
+            'zone',
+            'super_raz',
+            ]
 
 # loop over each dataset and aliases.py, make appropriate string substitutions, write to txt file
 def run(full_path_to_temp_file):
