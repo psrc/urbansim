@@ -582,7 +582,7 @@ def process_parcel(parcel):
                 sqft = math.floor(sqft)
                 res_sqft = math.floor(res_sqft)
                 nonres_sqft = math.floor(nonres_sqft)
-                res_units = math.floor(res_units)
+                res_units = math.ceil(res_units) # these are partial units, but usually very close to one
                 # it's not mixed if the nonres gets optimized out
                 if btype == 12 and nonres_sqft == 0: btype = 3 
                 building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units, npv, bform.actualfees)
