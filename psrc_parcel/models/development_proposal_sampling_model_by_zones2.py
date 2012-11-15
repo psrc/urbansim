@@ -43,6 +43,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                                  ], dataset_pool=self.dataset_pool)
         bldgs.compute_variables(["urbansim_parcel.building.zone_id"], dataset_pool=self.dataset_pool)
         self.occuppied_estimate = {}
+        self.occupied_estimate_residential = 0
+        self.occupied_estimate_nonresidential = 0
         if self.type["residential"]: 
             occupied_residential_units = zones.compute_variables(["total_number_of_households = zone.number_of_agents(household)",
                                      ], dataset_pool=self.dataset_pool) - self.do_not_count_residential_units
@@ -54,6 +56,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(hhdistr[ibt]*to_be_placed_households)
+                self.occupied_estimate_residential = self.occupied_estimate_residential + self.occuppied_estimate[(bt,)]
+                
         if self.type["non_residential"]:    
             zones.compute_variables(["number_of_all_nhb_jobs = zone.aggregate(job.home_based_status==0)"],
                                  dataset_pool=self.dataset_pool)
@@ -65,7 +69,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     continue
                 self.occuppied_estimate[(bt,)] = zones.sum_over_ids(bldgs['zone_id'], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(to_be_placed_jobs * job_building_type_distribution[ibt])
-              
+                self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential + self.occuppied_estimate[(bt,)]
+                      
         self.is_residential_bt = {}
         for ibt in range(all_building_types.size):
             self.is_residential_bt[(all_building_types[ibt],)] = bts['is_residential'][ibt]
@@ -144,11 +149,27 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if not self.is_residential_bt[column_value] and not self.build_in_zone["non_residential"]:
                 return True
             if self.accounting.has_key(column_value):
-                accounting = self.accounting[column_value]
-                result = (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
-                                                                accounting.get("demolished_spaces",0) )) and (
-                         accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                return result
+                # build as long as there is demand over all types of res/nonres
+                tot = 0
+                prop = 0
+                demol = 0
+                for bt in self.occuppied_estimate.keys():
+                    if (self.is_residential_bt[column_value] and not self.is_residential_bt[bt]) or (not self.is_residential_bt[column_value] and self.is_residential_bt[bt]):
+                        continue
+                    if not self.accounting.has_key(bt):
+                        realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
+                                       self.realestate_dataset['zone_id'] == self.zone))
+                        tot = tot + self.realestate_dataset.total_spaces[realestate_indexes].sum()
+                    else:
+                        accounting = self.accounting[bt]
+                        tot = tot + accounting.get("total_spaces",0)
+                        prop = prop + accounting.get("proposed_spaces",0)
+                        demol = demol + accounting.get("demolished_spaces",0)
+                if self.is_residential_bt[column_value]:
+                    target = self.occupied_estimate_residential[self.zone_index]
+                else:
+                    target = self.occupied_estimate_nonresidential[self.zone_index]
+                return target <= (tot + prop - demol)
             else:
                 return True
         results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
