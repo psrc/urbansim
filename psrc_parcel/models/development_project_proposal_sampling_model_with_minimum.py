@@ -301,6 +301,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         egligible = logical_and(self.weight > 0, 
                                 self.proposal_set['status_id'] == self.proposal_set.id_tentative)
         wegligible = where(egligible)[0]
+        if wegligible.size <=0:
+            return
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible])
         #min_type = {}
         #egligible_proposals = {}
