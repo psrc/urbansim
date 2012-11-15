@@ -29,7 +29,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
         """
         this model sample project proposals from proposal set weighted by exponentiated ROI
         """
-        logger.log_warning('This model is obsolete. Change your configuration to use development_project_proposal_sampling_model2')
         self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
@@ -69,6 +68,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         """
         n - sample n proposals at a time, evaluate them one by one
         """
+        logger.log_warning('This model is obsolete. Change your configuration to use development_project_proposal_sampling_model2')
         self.demolished_buildings = array([], dtype='int32')  #id of buildings to be demolished
         if current_year is None:
             current_year = SimulationState().get_current_time()
