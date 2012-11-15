@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
+from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
@@ -204,9 +204,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                   self.proposal_set.get_attribute("status_id") == self.proposal_set.id_planned, 
                                                   self.proposal_set.get_attribute("start_year") == year ) 
                                         )[0]
-      
+        logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
         self.consider_proposals(planned_proposal_indexes, force_accepting=True)
-        
+        logger.end_block()
         # consider proposals (in this order: proposed, tentative)
         for status in [self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
             stat = (self.proposal_set.get_attribute("status_id") == status)
@@ -214,7 +214,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 continue
             
             logger.log_status("Sampling from %s eligible proposals of status %s." % (stat.sum(), status))
-            iteration = 0
+            #iteration = 0
             while (not self._is_target_reached()):
                 ## prevent proposals from being sampled for vacancy type whose target is reached
                 #for column_value in self.accounting.keys():
@@ -225,21 +225,18 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 
                 available_indexes = where(logical_and(stat, self.weight > 0))[0]
                 sample_size = minimum(available_indexes.size, n)
-                sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
+                #sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
+                #                                                prob_array=self.weight[available_indexes],
+                #                                                return_index=False)
+                # Use sampling with replacement because probsample_noreplace returns sorted results.
+                # It is o.k. because the method consider_proposals does not consider the same proposal multiple times 
+                sampled_proposal_indexes = probsample_replace(available_indexes, sample_size, 
                                                                 prob_array=self.weight[available_indexes],
                                                                 return_index=False)
 
                 self.consider_proposals(sampled_proposal_indexes)
                 self.weight[sampled_proposal_indexes] = 0
-                #sample_size = 1
-                #sampled_proposal_index = probsample_noreplace(available_indexes, sample_size, 
-                                                                #prob_array=self.weight[available_indexes],
-                                                                #return_index=False)
-                
-                #self.consider_proposal(sampled_proposal_index)
-                
-                #self.weight[sampled_proposal_index] = 0
-                iteration += 1
+                #iteration += 1
         
         self._log_status()
         
@@ -335,7 +332,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_rejected = zeros(proposal_indexes.size, dtype="bool")
         sites = self.proposal_set["parcel_id"][proposal_indexes]
         for i, proposal_index in enumerate(proposal_indexes):
-            if not is_proposal_rejected[i]:
+            if not is_proposal_rejected[i] and (self.weight[proposal_index] > 0):
                 accepted = self.consider_proposal(proposal_index, force_accepting=force_accepting)
                 if accepted:
                     is_proposal_rejected[ sites == sites[i]] = True
