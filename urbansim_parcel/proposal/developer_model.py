@@ -127,8 +127,8 @@ class DeveloperModel(Model):
     parcelfees = None
     if my.scenario.startswith('Preferred'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
-    #elif my.scenario.startswith('Transit'):
-        #parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
+    elif my.scenario.startswith('Transit'):
+        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
     elif my.scenario.startswith('Equity'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_equity'))
     elif my.scenario.startswith('Infill'):
