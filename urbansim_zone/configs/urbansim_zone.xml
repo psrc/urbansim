@@ -265,6 +265,7 @@
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="filter" parser_action="quote_string" type="string">(building.building_type_id==SUBMODEL)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
           <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>  <!--used by lottery_choices-->
@@ -354,6 +355,7 @@
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
         <argument name="filter" parser_action="quote_string" type="string">(building.building_type_id==SUBMODEL)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
           <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
