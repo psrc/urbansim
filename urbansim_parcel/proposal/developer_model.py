@@ -152,7 +152,8 @@ class DeveloperModel(Model):
     sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
     test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index,where(bart_parcels==1)[0],where(caltrain_parcels==1)[0],where(pda_parcels==1)[0]))
     test_parcels = sample_noreplace(test_parcels, int(.08 * 154877))
-    
+    numpy.random.shuffle(test_parcels)
+ 
     """
     sample = []
     for i in range(parcel_set.size()):
