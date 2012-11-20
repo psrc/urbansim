@@ -6,7 +6,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from numpy import array, allclose, column_stack, cumsum, concatenate
-from opus_core.misc import unique, digits
+from opus_core.misc import np_unique, digits
 from opus_core.variables.variable_name import VariableName
 
 class SubgroupDataset(UrbansimDataset):
@@ -23,15 +23,20 @@ class SubgroupDataset(UrbansimDataset):
     dataset_name = "subgroup"
     default_package_order = ['urbansim', 'opus_core']
     subgroup_definition = ['parcel.large_area_id', 'parcel.land_use_type_id']
+    use_cached_table_if_exists = False
     
     def __init__(self, subgroup_definition=[], **kwargs):
+        in_storage = kwargs.get('in_storage', None)
+        if self.use_cached_table_if_exists and in_storage and in_storage.table_exists(self.in_table_name_default): 
+            return UrbansimDataset.__init__(self, **kwargs)
+
         if subgroup_definition:
             self.subgroup_definition = subgroup_definition
             
         dataset, short_names, subgroup_ids = self.solve_dependencies(**kwargs)
         table_data = {}
             
-        table_data[self.id_name_default], unique_index = unique( subgroup_ids, return_index=True )
+        table_data[self.id_name_default], unique_index = np_unique( subgroup_ids, return_index=True )
         
         table_data.update([(short_name, dataset[short_name][unique_index]) for short_name in short_names])
 

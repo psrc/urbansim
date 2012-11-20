@@ -401,15 +401,15 @@ def unique(arr, return_index=False, **kwargs):
     unique_results = np_unique(arr, return_index=need_index, **kwargs)
      
     unique_elements, unique_index  = unique_results[0], unique_results[1]
-    unique_index.sort()
-    unique_elements = numpy.asarray(arr)[unique_index]
+    unique_index_unsorted = unique_index.argsort()
+    unique_elements = unique_elements[unique_index_unsorted]
 
     if len(unique_results)>2:
         # reverse unique index is returned
-        return (unique_elements, unique_index) + unique_results[2:]
+        return (unique_elements, unique_index_unsorted) + unique_results[2:]
 
     if return_index:
-        return unique_elements, unique_index
+        return unique_elements, unique_index_unsorted
     else:
         return unique_elements
 
