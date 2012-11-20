@@ -11,6 +11,7 @@ import shutil
 import socket
 import sys
 import tempfile
+import numpy
 
 from numpy import ma, array, ndarray, divide, seterr, inf, allclose
 from inspect import getmembers, ismethod
@@ -393,21 +394,44 @@ def intersect1d(ar1, ar2, **kwargs):
         return f(ar1, ar2, **kwargs)
 
 def unique(arr, return_index=False, **kwargs):
+    """ unique function that return unsorted unique elements
+    """
+    
+    need_index = True
+    unique_results = np_unique(arr, return_index=need_index, **kwargs)
+     
+    unique_elements, unique_index  = unique_results[0], unique_results[1]
+    unique_index.sort()
+    unique_elements = numpy.asarray(arr)[unique_index]
+
+    if len(unique_results)>2:
+        # reverse unique index is returned
+        return (unique_elements, unique_index) + unique_results[2:]
+
+    if return_index:
+        return unique_elements, unique_index
+    else:
+        return unique_elements
+
+def np_unique(arr, return_index=False, **kwargs):
     """ wrapper for numpy.unique and numpy.unique1d for different version of numpy
     """
-    import numpy
     ver = parse_version(numpy.__version__) 
+    
     if ver < parse_version('1.2.0'):   #numpy 1.0 and 1.1 don't accept extra argument
         f = numpy.unique1d
-        return f(arr, return_index=return_index)[::-1]
+        unique_results = f(arr, return_index=return_index)[::-1]
     elif ver < parse_version('1.3.0'): #numpy 1.2+ accepts return_inverse argument
         f = numpy.unique1d
-        return f(arr, return_index=return_index, **kwargs)[::-1]
+        unique_results = f(arr, return_index=return_index, **kwargs)[::-1]
     elif ver < parse_version('1.4.0'): #numpy 1.3 reverses the order of outputs from unique1d
         f = numpy.unique1d
+        unique_results = f(arr, return_index=return_index, **kwargs)
     else:               #unique1d is deprecated in numpy 1.4+, use unique instead
         f = numpy.unique
-    return f(arr, return_index=return_index, **kwargs)
+        unique_results = f(arr, return_index=return_index, **kwargs)
+
+    return unique_results
 
 def uniquend(arr):
     """Returns unique elements of arr; works with n-dimension array
@@ -1122,16 +1146,20 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
                 self.assert_(os.path.exists(path))
 
     def test_unique(self):
-        from numpy import array
+        from numpy import array, setmember1d, all
 
         a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
-        self.assertArraysEqual(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))
-        self.assertArraysEqual(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
-        self.assertArraysEqual(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))
+        self.assertTrue(all(setmember1d(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(setmember1d(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(setmember1d(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))))
+        #self.assertArraysEqual(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        #self.assertArraysEqual(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        #self.assertArraysEqual(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))
+        #list
         b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
-        self.assertArraysEqual(unique(b), array([0.01, 0.08, 0.1, 0.2, 0.5]))
-        self.assertArraysEqual(unique(b, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
-        self.assertArraysEqual(unique(b, return_index=True)[1], array([0, 6, 1, 3, 5]))
+        self.assertTrue(all(setmember1d(unique(b), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(setmember1d(unique(b, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(setmember1d(unique(b, return_index=True)[1], array([0, 6, 1, 3, 5]))))
         
     def test_get_dataset_from_tab_storage(self):
         import opus_core
