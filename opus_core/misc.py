@@ -1153,7 +1153,8 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertTrue(all(setmember1d(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
         self.assertTrue(all(setmember1d(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
         self.assertTrue(all(setmember1d(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))))
-        #self.assertArraysEqual(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        # check that ordering is retained
+        self.assertArraysEqual(unique(a), array([0.01, 0.1, 0.2, 0.5, 0.08]))
         #self.assertArraysEqual(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
         #self.assertArraysEqual(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))
         #list
