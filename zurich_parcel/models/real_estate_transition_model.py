@@ -29,10 +29,11 @@ class RealEstateTransitionModel(Model):
     model_name = "Real Estate Transition Model"
     model_short_name = "RETM"
     
-    def __init__(self, target_vancy_dataset=None, model_name=None, model_short_name=None):
+    def __init__(self, target_vancy_dataset=None, model_name=None, model_short_name=None,
+                 control_totals=None, employment_control_totals=None):
         self.target_vancy_dataset = target_vancy_dataset
-        self.control_totals = None
-        self.employment_control_totals = None
+        self.control_totals = control_totals
+        self.employment_control_totals = employment_control_totals
         if model_name:
             self.model_name = model_name
         if model_short_name:
@@ -174,13 +175,13 @@ class RealEstateTransitionModel(Model):
                 this_years_control_totals = DatasetSubset(self.control_totals, idx)
                 expected_num = int(round( this_years_control_totals.get_attribute('total_number_of_households').sum() /\
                                     (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
-                diff = expected_num - actual_num
             if criterion[col] == 0:
                 idx = where(self.employment_control_totals.get_attribute("year")==year + 1)[0]
                 next_years_control_totals = DatasetSubset(self.employment_control_totals, idx)
                 expected_num = int(round( next_years_control_totals.get_attribute('number_of_jobs').sum() /\
                                     (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
-                diff = expected_num - actual_num
+
+            diff = expected_num - actual_num
             
             #Previous version which is checking the current years occupation.
             #diff = target_num - actual_num
@@ -225,7 +226,7 @@ class RealEstateTransitionModel(Model):
         result_data = {}
         result_dataset = None
         index = array([], dtype='int32')
-        if sampled_index.size > 0:
+        if True: #sampled_index.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
             ##realestate_dataset.duplicate_rows(sampled_index)
@@ -337,7 +338,10 @@ class RETMTests(StochasticTestCase):
                 "scheduled_year":array( 100*[1999] ),
                 "building_type_id": array(30*[1] + 35*[2] + 35*[4]),
                 "residential_units":array( 65*[0] + 35*[50] ),
-                "non_residential_sqft":array( 65*[500] + 35*[0] )
+                "non_residential_sqft":array( 65*[500] + 35*[0] ),
+                "non_residential_sqft_1": array(100*[0]),
+                "non_residential_sqft_2": array(100*[0]),
+                "residential_units_4": array(100*[0]),
                 }
             )
         self.storage.write_table(
@@ -353,7 +357,13 @@ class RETMTests(StochasticTestCase):
                 "zone_id": array( [1, 1, 1,  2, 2,  2, 3, 3, 3, 4, 4, 4, 5, 5, 5,  6, 6,  6,  7, 7,  7, 8,  8, 8, 9,  9, 9, 10,10,10] ),
                 "building_type_id": array(10*[1,2,4]),
                 "residential_units": array(10*[0, 0, 100]),
-                "non_residential_sqft": array(10*[100,150,0])
+                "non_residential_sqft": array(10*[100,150,0]),
+                "occupied_sqft_1": array(10*[0, 0, 0]),
+                "non_residential_sqft_1": array(10*[0, 0, 0]),
+                "occupied_sqft_2": array(10*[0, 0, 0]),
+                "non_residential_sqft_2": array(10*[0, 0, 0]),
+                "number_of_households_4": array(10*[0, 0, 0]),
+                "residential_units_4": array(10*[0, 0, 0]),
                 }
             )
         self.storage.write_table(
@@ -391,6 +401,19 @@ class RETMTests(StochasticTestCase):
                    "building_sqft_per_job":array([10, 5, 8, 6, 20,10,10,20,10,20,10,20,10,20,10,20,10,20,10, 20]),
             }
         )  
+        self.storage.write_table(
+            table_name='annual_household_control_totals',
+            table_data={
+                    "year":                       arange(2000, 2003),
+                    "total_number_of_households": array(3 * [0]),
+            }
+        )
+        self.storage.write_table(
+            table_name='annual_employment_control_totals',
+            table_data={
+                    "year":                arange(2000, 2003),
+            }
+        )
         self.dataset_pool = DatasetPool(package_order=['urbansim_zone', 'urbansim_parcel', "urbansim"],
                                         storage=self.storage)
 
@@ -417,7 +440,10 @@ class RETMTests(StochasticTestCase):
                 }
             )
 
-        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'),
+                                         control_totals=self.dataset_pool.get_dataset('annual_household_control_totals', {'id_name':[]}),
+                                         employment_control_totals=self.dataset_pool.get_dataset('annual_employment_control_totals', {'id_name':[]}),
+                                         )
         results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2000,
                            occupied_spaces_variable = 'occupied_units',
@@ -451,7 +477,10 @@ class RETMTests(StochasticTestCase):
                 }
             )
 
-        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'),
+                                         control_totals=self.dataset_pool.get_dataset('annual_household_control_totals', {'id_name':[]}),
+                                         employment_control_totals=self.dataset_pool.get_dataset('annual_employment_control_totals', {'id_name':[]}),
+                                         )
         results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2000,
                            occupied_spaces_variable = 'occupied_units',
@@ -482,7 +511,10 @@ class RETMTests(StochasticTestCase):
                 }
             )
         
-        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'),
+                                         control_totals=self.dataset_pool.get_dataset('annual_household_control_totals', {'id_name':[]}),
+                                         employment_control_totals=self.dataset_pool.get_dataset('annual_employment_control_totals', {'id_name':[]}),
+                                         )
         results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_units',
@@ -519,7 +551,10 @@ class RETMTests(StochasticTestCase):
                 }
             )
         
-        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'),
+                                         control_totals=self.dataset_pool.get_dataset('annual_household_control_totals', {'id_name':[]}),
+                                         employment_control_totals=self.dataset_pool.get_dataset('annual_employment_control_totals', {'id_name':[]}),
+                                         )
         results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_sqft',
@@ -555,7 +590,10 @@ class RETMTests(StochasticTestCase):
                 }
             )
 
-        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'),
+                                         control_totals=self.dataset_pool.get_dataset('annual_household_control_totals', {'id_name':[]}),
+                                         employment_control_totals=self.dataset_pool.get_dataset('annual_employment_control_totals', {'id_name':[]}),
+                                         )
         results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_units',
