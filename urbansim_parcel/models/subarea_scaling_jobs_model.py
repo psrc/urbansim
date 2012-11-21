@@ -21,7 +21,7 @@ class SubareaScalingJobsModel(ScalingJobsModel):
         super(SubareaScalingJobsModel, self).__init__(**kwargs)
         self.subarea_id_name = subarea_id_name
     
-    def run(self, location_set, agent_set, agents_index=None, data_objects=None, **kwargs):
+    def run(self, location_set, agent_set, agents_index=None, run_no_area=True, data_objects=None, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         regions = agent_set.get_attribute(self.subarea_id_name)
@@ -38,13 +38,14 @@ class SubareaScalingJobsModel(ScalingJobsModel):
                 logger.log_status("SJM for area %s" % area)
                 ScalingJobsModel.run(self, location_set, agent_set, agents_index=new_index, **kwargs)
 
-        no_region = where(regions[agents_index] <= 0)[0]
-        if no_region.size > 0: # run the model for jobs that don't have assigned region
-            self.filter = None
-            logger.log_status("SJM for jobs with no area assigned")
-            choices = ScalingJobsModel.run(self, location_set, agent_set, agents_index=agents_index[no_region], **kwargs)
-            where_valid_choice = where(choices > 0)[0]
-            choices_index = location_set.get_id_index(choices[where_valid_choice])
-            chosen_regions = location_set.get_attribute_by_index(self.subarea_id_name, choices_index)
-            agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
-                                       index=no_region[where_valid_choice])
+        if run_no_area:
+            no_region = where(regions[agents_index] <= 0)[0]
+            if no_region.size > 0: # run the model for jobs that don't have assigned region
+                self.filter = None
+                logger.log_status("SJM for jobs with no area assigned")
+                choices = ScalingJobsModel.run(self, location_set, agent_set, agents_index=agents_index[no_region], **kwargs)
+                where_valid_choice = where(choices > 0)[0]
+                choices_index = location_set.get_id_index(choices[where_valid_choice])
+                chosen_regions = location_set.get_attribute_by_index(self.subarea_id_name, choices_index)
+                agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
+                                           index=no_region[where_valid_choice])
