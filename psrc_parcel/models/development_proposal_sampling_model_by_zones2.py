@@ -39,7 +39,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         self.do_not_count_residential_units  = self.get_do_not_count_residential_units(zones)
         
         zones.compute_variables(["placed_households = zone.aggregate(building.number_of_agents(household))",
-                                 "occupied_spaces = zone.aggregate(psrc_parcel.building.occupied_spaces, [parcel])"
+                                 "occupied_spaces = zone.aggregate(psrc_parcel.building.occupied_spaces * (urbansim_parcel.building.is_residential == 0), [parcel])"
                                  ], dataset_pool=self.dataset_pool)
         bldgs.compute_variables(["urbansim_parcel.building.zone_id"], dataset_pool=self.dataset_pool)
         self.occuppied_estimate = {}
@@ -85,6 +85,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         start_year = year
         self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
         status = self.proposal_set.get_attribute("status_id")
+        self.proposal_set.add_primary_attribute(name='original_status_id', data=status.copy())
         for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]
             self.zone_index = zone_index
@@ -109,21 +110,20 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             idx_out_zone_not_active_not_refused = where(logical_and(logical_and(status != self.proposal_set.id_active, 
                                                                                status != self.proposal_set.id_refused),
                                                                     logical_not(where_zone)))[0]
-            status[idx_zone] = self.proposal_set.id_proposed
+            status[idx_zone] = self.proposal_set.id_tentative
             status[idx_out_zone_not_active_not_refused] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
-            self.weight[:] = original_weight[:]
-            self.proposed_units_from_previous_iterations = {}
             
             logger.log_status("\nDPSM for zone %s" % self.zone)
             self.weight[:] = original_weight[:]
             if self.weight[idx_zone].sum() <= 0:
                 logger.log_status("No non-zero weights for zone %s." % self.zone)
             while isinf(self.weight[idx_zone].sum()):
-                self.weight[idx_zone] = self.weight[idx_zone]/10
+                self.weight[idx_zone] = self.weight[idx_zone]/10.
             self.second_pass = {}
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)                
             status = self.proposal_set.get_attribute("status_id")
+            self.proposal_set.modify_attribute(name="original_status_id", data=status[idx_zone], index=idx_zone)
             where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
             self.proposal_set.modify_attribute(name="status_id", data=status)
