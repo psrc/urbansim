@@ -38,7 +38,8 @@ class MATSimConfigObject(object):
         # controler parameter
         self.first_iteration = first_iteration
         self.last_iteration = matsim_common['last_iteration']
-        self.matsim_configuration = self.__get_file_location( matsim_common['matsim_config'] )
+        self.matsim_configuration = self.__get_external_matsim_config_for_current_year(matsim_common['external_matsim_config'], year)
+        #self.matsim_configuration = self.__get_file_location( matsim_common['matsim_config'] )
         
         # planCalcScoreType
         self.activityType_0                 = activity_type_0
@@ -123,6 +124,17 @@ class MATSimConfigObject(object):
         self.betawalk_ln_travel_cost                = walk_parameter['betawalk_ln_travel_cost']
         
         self.config_destination_location = self.__set_config_destination( self.config_dictionary )
+        
+    def __get_external_matsim_config_for_current_year(self, external_matsim_config, year):
+        
+        if external_matsim_config != None:
+            try:
+                path = external_matsim_config[str(year)]
+                return self.__get_file_location( path )
+            except:
+                logger.log_status("There is no external MATSim configuration set for the current year!")
+        
+        return ""   
     
     def __get_file_location(self, file_path, required=False ):
         ''' checks if a given sub path exists
