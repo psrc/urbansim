@@ -336,8 +336,6 @@ class ChoiceModel(ChunkModel):
         if self.compute_demand_flag:
             self.compute_demand(self.upc_sequence.probabilities)
 
-        if choices is None:
-            return None #in case choices class is None
         choices = choices.astype(int32)
         res_positive_idx = where(choices>=0)[0]
         if index is not None:
