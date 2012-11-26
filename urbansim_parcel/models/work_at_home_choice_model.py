@@ -33,8 +33,9 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.location_id_name = location_id_name
         self.match_number_of_jobs=match_number_of_jobs
         ChoiceModel.__init__(self, [0, 1], choice_attribute_name=choice_attribute_name, **kwargs)
-        if self.match_number_of_jobs:
-            self.upc_sequence.choice_class = None # no choices are made, since we only want the probabilities
+        #if self.match_number_of_jobs:
+        #    this breaks the choice model run
+        #    self.upc_sequence.choice_class = None # no choices are made, since we only want the probabilities
     
         
     def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, *args, **kwargs):
