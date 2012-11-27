@@ -238,17 +238,10 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
                                                                 prob_array=self.weight[available_indexes],
                                                                 return_index=False)
-                sorted_sampled_indices = argsort(self.weight[sampled_proposal_indexes])
-                self.consider_proposals(sampled_proposal_indexes[sorted_sampled_indices][::-1])
+                #sorted_sampled_indices = argsort(self.weight[sampled_proposal_indexes])
+                #self.consider_proposals(sampled_proposal_indexes[sorted_sampled_indices][::-1])
+                self.consider_proposals(sampled_proposal_indexes)
                 self.weight[sampled_proposal_indexes] = 0
-                #sample_size = 1
-                #sampled_proposal_index = probsample_noreplace(available_indexes, sample_size, 
-                                                                #prob_array=self.weight[available_indexes],
-                                                                #return_index=False)
-                
-                #self.consider_proposal(sampled_proposal_index)
-                
-                #self.weight[sampled_proposal_index] = 0
                 iteration += 1
         
         self._log_status()
