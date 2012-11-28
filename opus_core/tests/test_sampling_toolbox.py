@@ -11,10 +11,10 @@ from opus_core.sampling_toolbox import prob2dsample
 from opus_core.sampling_toolbox import sample_choice
 from opus_core.tests import opus_unittest
 import time
-from numpy import array
+from numpy import array, arange
 from numpy import sometrue, alltrue, not_equal, ndarray
 from numpy import float32, all
-from numpy.random import randint
+from numpy.random import randint, seed
 from opus_core.logger import logger
 
 class SampleToolboxTest(opus_unittest.OpusTestCase):
@@ -67,6 +67,38 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
         assert alltrue(not_equal(self.prob[sample], 0.0)), "elements with zero weight in the sample"
         assert not sometrue(find_duplicates(sample)), "there are duplicates in samples"
 
+    def test_probsample_noreplace_ordering(self):
+        probs=array([1, 1, 1, 1, 100, 1, 1, 1, 1, 1])
+        probsum = float(probs.sum())
+        first = []
+        n = 100
+        #seed(10)
+        for i in range(n):
+            sample = probsample_noreplace(arange(10), 5, prob_array=probs/probsum, return_index=False)
+            # keep the first element sampled
+            first.append(sample[0])
+        # How many times the fifth element (which has highest probability) came out first. It should be most of the time.
+        freq4 = (array(first) == 4).sum()/float(n)
+        assert freq4 > 0.8, "Error in ordering elements in probsample_noreplace"
+        
+#        probs=array([1, 1, 1, 1, 1, 1, 0.001, 1, 1, 1])
+#        probsum = float(probs.sum())
+#        last=[]
+#        for i in range(n):
+#            sample = probsample_noreplace(arange(10), 9, prob_array=probs/probsum, return_index=False)
+#            # keep the last element sampled if seventh element sampled
+#            if (sample == 6).sum() > 0:
+#                print sample
+#                last.append(sample[8])
+#        # How many times the seventh element (which has lowest probability) came out last. It should be most of the time.
+#        alast = array(last)
+#        freq6 = 1
+#        if alast.size > 0:
+#            freq6 = (array(last) == 6).sum()/float(alast.size)
+#        print last
+#        print freq6
+#        assert freq6 > 0.8, "Error in ordering elements in probsample_noreplace"
+        
     def test_prob2dsample(self):
         start_time = time.time()
         sample = prob2dsample(self.all, self.sample_size, self.prob, return_index=True)
