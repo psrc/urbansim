@@ -225,15 +225,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 
                 available_indexes = where(logical_and(stat, self.weight > 0))[0]
                 sample_size = minimum(available_indexes.size, n)
-                #sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
-                #                                                prob_array=self.weight[available_indexes],
-                #                                                return_index=False)
-                # Use sampling with replacement because probsample_noreplace returns sorted results.
-                # It is o.k. because the method consider_proposals does not consider the same proposal multiple times 
-                sampled_proposal_indexes = probsample_replace(available_indexes, sample_size, 
+                sampled_proposal_indexes = probsample_noreplace(available_indexes, sample_size, 
                                                                 prob_array=self.weight[available_indexes],
                                                                 return_index=False)
-
                 self.consider_proposals(sampled_proposal_indexes)
                 self.weight[sampled_proposal_indexes] = 0
                 #iteration += 1
