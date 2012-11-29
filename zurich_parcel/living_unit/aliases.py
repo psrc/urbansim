@@ -5,5 +5,5 @@
 aliases = [
            "living_unit_year_built = living_unit.disaggregate(building.year_built)",
            "has_valid_year_built = living_unit.disaggregate(urbansim_parcel.building.has_valid_year_built)",
-
+           "is_untaken_living_unit = living_unit.number_of_agents(household)==0",
            ]
