@@ -10,6 +10,7 @@ from numpy import ones, array, where, logical_and, around
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
+import time
 
 class TestModel(Model):
     """Zonal Gov-Ed Jobs Model.
@@ -23,6 +24,8 @@ class TestModel(Model):
         dataset_pool = SessionConfiguration().get_dataset_pool()
 
         zone_set = dataset_pool.get_dataset('zone')
-
+        start = time.time()
         zone_sqft_per_job = zone_set.compute_variables('_sqft_per_employee = safe_array_divide(zone.aggregate(building.non_residential_sqft,intermediates=[parcel]),zone.aggregate(establishment.employees,intermediates=[building,parcel]))')
+        end = time.time()
+        logger.log_status("%s" % (end - start))
         
