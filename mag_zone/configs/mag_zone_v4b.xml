@@ -3,6 +3,11 @@
   <general>
     <project_name type="string" hidden="True">mag_zone_v4b</project_name>
     <parent type="file">mag_zone/configs/mag_zone_base.xml</parent>
+    <expression_library type="dictionary">
+      <variable use="both" source="primary attribute" name="household.hhld_income_last_year" type="variable_definition">household.income_lag1</variable>
+      <!-- Variables generated in GUI  -->
+      <!-- Variables generated from script  -->
+    </expression_library>
   </general>
   <model_manager>
     <templates name="Model Templates" parser_action="skip" hidden="True"/>
@@ -28,8 +33,8 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"></argument>
-            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"></argument>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"/>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"/>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_population</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
             <argument name="sync_dataset" type="string">person</argument>
@@ -189,6 +194,7 @@
         <structure type="dictionary">
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -207,6 +213,12 @@
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <!--used by lottery_choices-->
+              <!--
+          used by AgentLocationChoiceModel
+          <key convert_blank_to_none="True" name="number_of_agents_string" type="string">building.aggregate(development_project.residential_units)</key> 
+          <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key> 
+          -->
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units_capacity</key>
               <key name="sample_alternatives_by_submodel" type="string">True</key>
@@ -216,6 +228,10 @@
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <!--
+          <key convert_blank_to_none="True" name="number_of_agents_string" type="string">building.aggregate(development_project.residential_units)</key>
+          <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
+          -->
               <key name="capacity_string" type="string">urbansim_zone.building.residential_units_capacity</key>
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="sample_alternatives_by_submodel" type="string">True</key>
@@ -269,6 +285,7 @@
         <structure type="dictionary">
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_non_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -287,6 +304,10 @@
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <!--
+          <key convert_blank_to_none="True" name="number_of_agents_string" type="string">building.aggregate(development_project.non_residential_sqft)</key>
+          <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
+          -->
               <key name="capacity_string" type="string">urbansim_zone.building.developable_non_residential_sqft_capacity</key>
               <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
               <key name="compute_capacity_flag" type="string">True</key>
@@ -296,6 +317,10 @@
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
+              <!--
+          <key convert_blank_to_none="True" name="number_of_agents_string" type="string">building.aggregate(development_project.non_residential_sqft)</key>
+          <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
+          -->
               <key name="capacity_string" type="string">urbansim_zone.building.non_residential_sqft_capacity</key>
               <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string"/>
               <key name="compute_capacity_flag" type="string">True</key>
@@ -413,10 +438,40 @@
           </prepare_for_estimate>
         </structure>
       </model>
+      <model name="compute_building_hotel_rooms" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">building</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(numpy.logical_and(building.building_type_id == 10, numpy.logical_or(building.non_residential_sqft-building.non_residential_sqft_lag1&lt; -100, building.non_residential_sqft-building.non_residential_sqft_lag1&gt; 100)), building.other_spaces+((building.non_residential_sqft-building.non_residential_sqft_lag1)/685).astype(int32), building.other_spaces)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">other_spaces</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
     </models>
   </model_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="test_hhld_income_lastyear">
+        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
+          <visualization_type>tab</visualization_type>
+          <indicators>['hhld_income_last_year']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>household</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
       <indicator_batch name="mpa_hh_by_vehicle_availability">
         <batch_visualization hidden="Children" type="batch_visualization" name="mpa_hh_by_vehicle_availability">
           <indicators>['number_of_hh_0_vehicles', 'number_of_hh_1_vehicles', 'number_of_hh_2_vehicles', 'number_of_hh_3_vehicles', 'number_of_hh_4up_vehicles']</indicators>
@@ -625,5 +680,89 @@
       </datasets_to_preload>
     </scenario>
   </scenario_manager>
+  <!--
+  <scenario_manager>
+    <scenario executable="True" name="urbansim_zone_baseline" setexpanded="True" type="scenario">
+      <models_to_run type="selectable_list">
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="development_project_transition_model" type="selectable">False</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True
+          <group_members type="string">_all_</group_members>
+        </selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+      </models_to_run>
+      <scenario_database_configuration type="string"/>
+      <others type="category">
+        <base_year type="integer">2000</base_year>
+        <years_to_run config_name="years" type="tuple">
+          <firstyear type="integer">2001</firstyear>
+          <lastyear type="integer">2002</lastyear>
+        </years_to_run>
+      </others>
+      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">runs</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
+        </argument>
+        <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
+        <argument name="tables_to_cache" type="selectable_list">
+          <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
+          <selectable name="annual_household_control_totals" type="selectable">True</selectable>
+          <selectable name="households" type="selectable">True</selectable>
+          <selectable name="building_types" type="selectable">True</selectable>
+          <selectable name="jobs" type="selectable">True</selectable>
+          <selectable name="travel_data" type="selectable">True</selectable>
+          <selectable name="zones" type="selectable">True</selectable>
+          <selectable name="buildings" type="selectable">True</selectable>
+          <selectable name="counties" type="selectable">True</selectable>
+          <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="urbansim_constants" type="selectable">True</selectable>
+          <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
+          <selectable name="annual_household_relocation_rates" type="selectable">True</selectable>
+          <selectable name="annual_job_relocation_rates" type="selectable">True</selectable>
+          <selectable name="base_year" type="selectable">True</selectable>
+          <selectable name="cities" type="selectable">True</selectable>
+          <selectable name="development_event_history" type="selectable">True</selectable>
+          <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
+          <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
+          <selectable name="employment_sectors" type="selectable">True</selectable>
+          <selectable name="race_names" type="selectable">True</selectable>
+          <selectable name="target_vacancies" type="selectable">True</selectable>
+          <selectable name="jobs_for_estimation" type="selectable">True</selectable>
+          <selectable name="households_for_estimation" type="selectable">True</selectable>
+        </argument>
+        <argument name="tables_to_cache_nchunks" type="dictionary"/>
+        <argument name="tables_to_copy_to_previous_years" type="dictionary"/>
+      </creating_baseyear_cache_configuration>
+    </scenario>
+  </scenario_manager>
+  -->
 </opus_project>
 
