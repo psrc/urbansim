@@ -35,12 +35,13 @@ class RefinementModel(Model):
     model_name = "Refinement Model"
     model_short_name = "RM"
 
-    def __init__(self, model_name=None, model_short_name=None, *args, **kwargs):
+    def __init__(self, subarea_name, model_name=None, model_short_name=None, *args, **kwargs):
         if model_name:
             self.model_name = model_name
         if model_short_name:
             self.model_short_name = model_short_name
         Model.__init__(self, *args, **kwargs)
+        self.subarea_name=subarea_name
 
     def run(self, refinement_dataset=None, current_year=None, base_year=2000,
             action_order=['subtract', 'target', 'add', 'set_value', 'delete'],
@@ -76,6 +77,9 @@ class RefinementModel(Model):
         all_agent_datasets = []
         self.processed_locations = {}
         self.subtracted_from_demolished_buildings = {'job': {}, 'household': {}}
+        bldgs = dataset_pool.get_dataset('building')
+        bldgs.modify_attribute('template_id', bldgs['template_id'].astype('int32'))
+        bldgs.load_and_flush_dataset()
         for this_transaction in sort( unique(transactions) ):
             #transaction_list = [] # list of each action in this transaction
             agents_pool = []  # index to agents to keep track agent within 1 transaction
@@ -96,16 +100,16 @@ class RefinementModel(Model):
                     if len(this_refinement.location_expression)>0:
                         location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
                     
-                    if location_dataset.get_id_name()[0] not in agent_dataset.get_known_attribute_names():
-                        agent_dataset.compute_variables('urbansim_parcel.%s.%s' % 
-                            (agent_dataset.get_dataset_name(), location_dataset.get_id_name()[0]), dataset_pool=dataset_pool)
+                        if location_dataset.get_id_name()[0] not in agent_dataset.get_known_attribute_names():
+                            agent_dataset.compute_variables('urbansim_parcel.%s.%s' % 
+                                                            (agent_dataset.get_dataset_name(), location_dataset.get_id_name()[0]), dataset_pool=dataset_pool)
 
                     logger.log_status("Action: %s %i agents satisfying %s" % \
                                   (action_type, this_refinement.amount,
                                    ' and '.join( [this_refinement.agent_expression, 
                                                 this_refinement.location_expression] ).strip(' and ')
                                ) )
-                    if len(agents_pool) == 0: # add unplaced agents into the pool
+                    if location_dataset is not None and len(agents_pool) == 0: # add unplaced agents into the pool
                         agents_pool += (where(agent_dataset[location_dataset.get_id_name()[0]] < 0)[0]).tolist()
                         
                     action_function( agents_pool, this_refinement.amount,
@@ -113,16 +117,16 @@ class RefinementModel(Model):
                                  this_refinement, 
                                  dataset_pool )
                 
-                    if location_dataset.get_dataset_name() == 'zone' and 'zone_id' not in agent_dataset.get_primary_attribute_names():
-                        zones = agent_dataset['zone_id'].copy()
-                        agent_dataset.delete_one_attribute('zone_id')
-                        agent_dataset.add_attribute(name='zone_id', data=zones, metadata=1)
-                    if location_dataset.get_dataset_name() <> 'zone' and 'zone_id' in agent_dataset.get_primary_attribute_names():
-                        agent_dataset.delete_one_attribute('zone_id')
+                    if location_dataset is not None:
+                        self.subarea_id_name = '%s_id' % self.subarea_name
+                        if location_dataset.get_dataset_name() == self.subarea_name and self.subarea_id_name not in agent_dataset.get_primary_attribute_names():
+                            regions = agent_dataset[self.subarea_id_name].copy()
+                            agent_dataset.delete_one_attribute(self.subarea_id_name)
+                            agent_dataset.add_attribute(name=self.subarea_id_name, data=regions, metadata=1)
+                        if location_dataset.get_dataset_name() <> self.subarea_name and self.subarea_id_name in agent_dataset.get_primary_attribute_names():
+                            agent_dataset.delete_one_attribute(self.subarea_id_name)
                         
                     agent_dataset.flush_dataset()
-                    #if 'zone_id' in agent_dataset.get_known_attribute_names():
-                    #    agent_dataset.get_attribute('zone_id')
                     dataset_pool._remove_dataset(agent_dataset.get_dataset_name())
                     if location_dataset is not None:
                         location_dataset.flush_dataset()
@@ -332,6 +336,7 @@ class RefinementModel(Model):
             movers_index = concatenate((movers_index, movers_index2))
             
         agents_pool += movers_index.tolist()
+        logger.log_status('agents pool size: ', len(agents_pool))
  
         # remove remaining agents from demolished buildings and update building_id
         for synch_dataset_name in ['job', 'household']:
@@ -348,7 +353,9 @@ class RefinementModel(Model):
                                        -1 * ones( idx.size, dtype='int32' ),
                                        index = idx)
             logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, idxb.size))
-            
+            if synch_dataset_name <> agent_dataset.get_dataset_name():
+                synch_dataset.flush_dataset()
+                
         if location_dataset.get_id_name()[0] <> 'building_id':
             agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
                                        -1 * ones( movers_index.size, dtype='int32' ),
@@ -486,7 +493,7 @@ class RefinementModel(Model):
 
             self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=agents_index_from_agents_pool)
             self.processed_locations['add'] = concatenate((self.processed_locations.get('add', array([])), 
-                                                unique(location_dataset['zone_id'][location_dataset.get_id_index(location_id_for_agents_pool)])))
+                                                unique(location_dataset[self.subarea_id_name][location_dataset.get_id_index(location_id_for_agents_pool)])))
             
         if amount > amount_from_agents_pool:
             new_agents_index = agent_dataset.duplicate_rows(agents_index_to_clone)
@@ -498,7 +505,7 @@ class RefinementModel(Model):
                                             new_agents_index
                                             )
             self.processed_locations['add'] = concatenate((self.processed_locations.get('add', array([])), 
-                                                unique(agent_dataset['zone_id'][new_agents_index])))
+                                                unique(agent_dataset[self.subarea_id_name][new_agents_index])))
             
     def _set_value(self, agents_pool, amount, 
                    agent_dataset, location_dataset, 
