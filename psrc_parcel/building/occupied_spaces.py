@@ -7,8 +7,7 @@ from opus_core.misc import unique
 from numpy import zeros, logical_not
 
 class occupied_spaces(Variable):
-    """units occupied by consumers, the unit is defined by unit_name in building_types 
-       table (either building_sqft or residential_units)
+    """units occupied by consumers (either number of jobs or residential_units)
        
        This is the same as units_occupied at this moment
     """
@@ -50,15 +49,12 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             "building":{"building_id":         array([1,2,3,4,5,6,7,8,9,10]),
                         "is_residential":      array([0,1,1,1,0,1,0,0,1,1,]),
-                       "building_sqft":        array([1,0,0,0,1,3,3,1,2,2])*1000,
                        "residential_units":    array([0,3,1,2,0,1,0,1,2,4])
-                       #occupied sqft              1400,0,0,0,0,0,1200,0,0,0
                        #occupied units                0,3,3,0,0,1,1, 0,1,1
                 },
             "job":{"job_id":              array([1,2,3,4,5,6,7,8,9,10]),
                    "building_id":         array([1,1,1,4,5,7,7,7,9,10]),
                    "home_based_status":   array([0,0,0,1,1,0,0,0,1,1]),
-                   "sqft_imputed":        array([3,3,1,2,2,1,2,3,2,4]) * 200
                 },
             "household":{"household_id":        array([1,2,3,4,5,6,7,8,9,10]),
                          "building_id":         array([2,2,2,3,3,3,6,7,9,10]),
