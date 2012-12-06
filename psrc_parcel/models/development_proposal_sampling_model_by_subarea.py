@@ -137,7 +137,7 @@ class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSampli
                 self.proposal_set.flush_dataset()
                 
         self.proposal_set.set_values_of_one_attribute("status_id", self.proposal_set.id_not_available, where(status != self.proposal_set.id_active)[0])
-        return (self.proposal_set, self.realestate_dataset.get_id_attribute()[self.all_demolished_buildings])
+        return (self.proposal_set, bldgs.get_id_attribute()[self.all_demolished_buildings])
     
     def _is_target_reached(self, column_value=()):
         if column_value and not self.second_pass.has_key(column_value):
