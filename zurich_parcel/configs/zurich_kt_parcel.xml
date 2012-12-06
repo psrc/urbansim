@@ -344,7 +344,7 @@
       <model name="SC_building_transition_model" type="model">
         <structure type="dictionary">
           <import hidden="False" name="import" type="dictionary">
-            <class_module type="string">zurich_parcel.models.real_estate_transition_model</class_module>
+            <class_module type="string">zurich_parcel.models.real_estate_and_units_transition_model</class_module>
             <class_name>RealEstateTransitionModel</class_name>
           </import>
           <init type="dictionary">
@@ -360,10 +360,12 @@
           <run type="dictionary">
             <output name="output" type="string">building, new_building_index</output>
             <argument name="realestate_dataset" type="string">building</argument>
+            <argument name="living_units_dataset" type="string">living_unit</argument>
             <argument name="year" type="string">year</argument>
             <argument name="occupied_spaces_variable" parser_action="quote_string" type="string">SC_occupied_spaces</argument>
             <argument name="total_spaces_variable" parser_action="quote_string" type="string">SC_total_spaces</argument>
             <argument name="sample_from_dataset" type="string">development_event_history</argument>
+            <argument name="living_units_from_dataset" type="string">living_units_history</argument>
             <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
             <argument name="append_to_realestate_dataset" type="string">True</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
