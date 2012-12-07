@@ -1424,6 +1424,198 @@
           <dataset_name>zone</dataset_name>
         </batch_visualization>
       </indicator_batch>
+      <indicator_batch name="overall_numbers">
+        <batch_visualization hidden="Children" type="batch_visualization" name="non_resi_sqft">
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
+          <visualization_type>tab</visualization_type>
+          <indicators>['SC_non_resi_units_city']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>city</dataset_name>
+        </batch_visualization>
+        <batch_visualization hidden="Children" type="batch_visualization" name="living_units">
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
+          <visualization_type>tab</visualization_type>
+          <indicators>['SC_nb_living_units_city']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>city</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="buildings_map">
+        <batch_visualization hidden="Children" type="batch_visualization" name="nb_buildings_per_parcel">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['sc_nb_buildings_parcel']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>parcel</dataset_name>
+        </batch_visualization>
+        <batch_visualization hidden="Children" type="batch_visualization" name="buildings_per_city">
+          <indicators>['sc_nb_buildings_city']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>city</dataset_name>
+          <visualization_type>mapnik_map</visualization_type>
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="vacant_units">
+        <batch_visualization hidden="Children" type="batch_visualization" name="vacant_resi">
+          <indicators>['SC_vacant_resi_units', 'SC_resi_units', 'SC_occupied_resi_spaces_city']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>city</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="nutzungsziffern">
+        <batch_visualization hidden="Children" type="batch_visualization" name="az_parcel">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['sc_az_approx']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>parcel</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="persons_map">
+        <batch_visualization hidden="Children" type="batch_visualization" name="persons_city">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['SC_nb_hh_city']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>city</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="job_maps">
+        <batch_visualization hidden="Children" type="batch_visualization" name="jobs_per_city">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['SC_jobs_city']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>city</dataset_name>
+        </batch_visualization>
+        <batch_visualization hidden="Children" type="batch_visualization" name="jobs_per_parcel">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['SC_jobs_per_parcel']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>parcel</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="parcel_map">
+        <batch_visualization hidden="Children" type="batch_visualization" name="area_capacity">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['SC_area_capacity']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>parcel</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="job_map">
+        <batch_visualization hidden="Children" type="batch_visualization" name="nb_per_city">
+          <settings>
+            <setting name="mapnik_bucket_labels">range_labels</setting>
+            <setting name="mapnik_legend_lower_left">6.5,0.5</setting>
+            <setting name="mapnik_map_lower_left">0.5,0.5</setting>
+            <setting name="mapnik_page_dims">8.5,5.5</setting>
+            <setting name="mapnik_bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+            <setting name="mapnik_map_upper_right">6.0,5.0</setting>
+            <setting name="mapnik_resolution">96</setting>
+            <setting name="mapnik_bucket_ranges">linear_scale</setting>
+            <setting name="mapnik_legend_upper_right">6.9,5.0</setting>
+          </settings>
+          <visualization_type>mapnik_map</visualization_type>
+          <indicators>['SC_jobs_city']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>city</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="vacancy">
+        <batch_visualization hidden="Children" type="batch_visualization" name="Residential">
+          <indicators>['SC_occupied_resi_spaces_city', 'SC_resi_vacancy_city', 'SC_resi_units', 'SC_target_resi_units']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>city</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+        <batch_visualization hidden="Children" type="batch_visualization" name="Non_resi">
+          <indicators>['SC_non_resi_vacancy_city', 'SC_non_resi_units_city', 'SC_occupied_non_resi_spaces_city', 'SC_target_non_resi_units']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>city</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
     </indicator_batches>
   </results_manager>
 </opus_project>
