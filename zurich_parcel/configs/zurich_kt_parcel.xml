@@ -916,7 +916,7 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">HouseholdLocationChoiceModel</name>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
-            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="choices" parser_action="quote_string" type="string">opus_core.upc.lottery_choices</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_wesml_mnl_estimation</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="location_set" type="string">building</argument>
@@ -925,7 +925,7 @@
             <argument name="estimation_weight_string" parser_action="quote_string" type="string">residential_units</argument>
             <argument name="number_of_units_string" parser_action="quote_string" type="string">residential_units</argument>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
-            <argument name="location_id_string" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="location_id_string" parser_action="quote_string" type="string">living_unit_id</argument>
             <argument name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
             <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(building.residential_units, building.sqft_per_unit))</argument>
@@ -971,16 +971,17 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel" inherit_parent_values="False">
             <description type="string">A first model to run.</description>
             <variable_list type="variable_list">
-              <variable_spec name="building.SC_acc_pt"/>
-              <variable_spec name="building.SC_building_age"/>
-              <variable_spec name="building.SC_building_is_pre_1941"/>
-              <variable_spec name="household.SC_dist_to_previous_loc"/>
-              <variable_spec name="building.SC_dist_to_station"/>
-              <variable_spec name="household.SC_dist_to_workplace"/>
-              <variable_spec name="building.SC_dist_to_zh_cbd"/>
-              <variable_spec name="building.SC_jobs_G52_H_within_1km"/>
-              <variable_spec name="household_x_building.SC_pop_dens_within_1km_X_young_hh_dummy"/>
-              <variable_spec name="building.SC_rent_vacancy_per_municipality"/>
+              <variable_spec name="living_unit.SC_acc_car_LU"/>
+              <variable_spec name="living_unit.SC_acc_pt_LU"/>
+              <variable_spec name="living_unit.SC_building_age_LU"/>
+              <variable_spec name="living_unit.SC_dist_to_highwayaccess_LU"/>
+              <variable_spec name="living_unit.SC_dist_to_school_LU"/>
+              <variable_spec name="living_unit.SC_dist_to_station_LU"/>
+              <variable_spec name="living_unit.SC_dist_to_zh_cbd_LU"/>
+              <variable_spec name="living_unit.SC_highway_within_100m_LU"/>
+              <variable_spec name="living_unit.SC_jobs_retail_density_300m_LU"/>
+              <variable_spec name="living_unit.SC_jobs_service_density_300m_LU"/>
+              <variable_spec name="living_unit.SC_sqm_per_room_LU"/>
             </variable_list>
           </submodel>
         </specification>
