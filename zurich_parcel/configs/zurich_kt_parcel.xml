@@ -10,7 +10,7 @@
       <variable use="both" source="expression" name="parcel.SC_unbuilt_parcel_area" type="variable_definition">parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])</variable>
       <variable use="both" source="Python class" name="building.Inwork_SC_building_type" type="variable_definition">zurich_parcel.building.is_building_type_3</variable>
       <variable use="both" source="expression" name="parcel.SC_is_built" type="variable_definition">zurich_parcel.parcel.number_of_buildings &gt; 0</variable>
-      <variable use="both" source="expression" name="person.SC_dist_to_job_exp_-0106" type="variable_definition">5.81 * exp(-0.106 *(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.x_coord_sp, intermediates=[building, job])) ** 2 + (person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.y_coord_sp, intermediates=[building, job])) ** 2)))</variable>
+      <variable use="both" source="expression" name="person.SC_dist_to_job_exp_0106" type="variable_definition">person.aggregate(exp(-0.106 *(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.x_coord_sp, intermediates=[building, job])) ** 2 + (person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.y_coord_sp, intermediates=[building, job])) ** 2))))</variable>
       <variable use="both" source="expression" name="living_unit.SC_building_age_log_LU" type="variable_definition">living_unit.disaggregate(ln(urbansim_parcel.building.age_masked))</variable>
       <variable use="both" source="expression" name="person.SC_dist_to_job" type="variable_definition">sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))**2)</variable>
       <variable use="both" source="expression" name="job.SC_job_xcoord" type="variable_definition">job.disaggregate(parcel.x_coord_sp, intermediates=[building])</variable>
@@ -1085,9 +1085,9 @@
             <name name="name" type="string">prepare_for_run</name>
             <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_workplace_location_choice_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_workplace_location_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_workplace_location_choice_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_workplace_location_choice_model_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">person</argument>
@@ -1105,9 +1105,7 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel" inherit_parent_values="False">
             <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
             <variable_list type="variable_list">
-              <variable_spec name="person.SC_dist_to_job"/>
-              <variable_spec name="person.SC_dist_to_job_exp_-0106"/>
-            </variable_list>
+              </variable_list>
           </submodel>
         </specification>
         <estimation_config name="Estimation Configuration" parser_action="skip">
@@ -1220,9 +1218,9 @@
     </models>
     <estimation_config name="Estimation Configuration" config_name="estimation_config" type="dictionary">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="building" type="selectable">True</selectable>
-        <selectable name="household" type="selectable">True</selectable>
-        <selectable name="job" type="selectable">True</selectable>
+        <selectable name="building" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
+        <selectable name="job" type="selectable" followers="my_dataset">True</selectable>
         <selectable name="parcel" type="selectable">True</selectable>
         <selectable name="buildings_for_estimation" type="selectable">False</selectable>
       </datasets_to_preload>
