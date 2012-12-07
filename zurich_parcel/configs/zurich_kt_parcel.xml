@@ -1345,6 +1345,7 @@
           <selectable name="zone" type="selectable">False</selectable>
           <selectable name="target_vacancy" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
+          <selectable name="living_unit" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
           <selectable name="buildings_for_estimation" type="selectable">False</selectable>
           <selectable name="parcel" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
