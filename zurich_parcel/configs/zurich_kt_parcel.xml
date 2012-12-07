@@ -856,7 +856,7 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">HouseholdRelocationModelCreator().get_model</name>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">living_unit_id</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.rate_based_probabilities</argument>
           </init>
           <prepare_for_run type="dictionary">
@@ -1100,10 +1100,11 @@
           </run>
         </structure>
         <specification type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel" inherit_parent_values="False">
             <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
             <variable_list type="variable_list">
               <variable_spec name="person.SC_dist_to_job"/>
+              <variable_spec name="person.SC_dist_to_job_exp_-0106"/>
             </variable_list>
           </submodel>
         </specification>
