@@ -450,7 +450,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">SC_quality_is_non_residential</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(SC_plan_type_id_of_building_location_between_2999_and_7000, SC_quality_is_non_residential)</argument>
             <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
@@ -548,7 +548,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">SC_quality_is_residential</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">numpy.logical_and(SC_plan_type_id_of_building_location_smaller_3000, SC_quality_is_residential)</argument>
             <argument convert_blank_to_none="True" name="location_id_variable" parser_action="quote_string" type="string" model_dependency_type="variable">parcel_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
