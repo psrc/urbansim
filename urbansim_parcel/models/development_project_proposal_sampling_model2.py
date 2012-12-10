@@ -326,7 +326,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_rejected = zeros(proposal_indexes.size, dtype="bool")
         sites = self.proposal_set["parcel_id"][proposal_indexes]
         for i, proposal_index in enumerate(proposal_indexes):
-            if not is_proposal_rejected[i] and (self.weight[proposal_index] > 0):
+            if not is_proposal_rejected[i] and ((self.weight[proposal_index] > 0) or force_accepting):
                 accepted = self.consider_proposal(proposal_index, force_accepting=force_accepting)
                 if accepted:
                     is_proposal_rejected[ sites == sites[i]] = True
