@@ -50,19 +50,20 @@ class RunTravelModel(AbstractTravelModel):
         if sys.platform.lower() == 'win32': 
             # reserve memory for java
             xmx = '-Xmx1500m'# Windows can't reserve more than 1500m
+            logger.log_note("Note that Java for Windows can't reserve more than 1500 MB of memory to run MATSim!!!")
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimTEST",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         else:
             # reserve memory for java
-            xmx = '-Xmx6000m'
+            xmx = '-Xmx3500m'
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimTEST",
+                'javaclass': "playground.tnicolai.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         

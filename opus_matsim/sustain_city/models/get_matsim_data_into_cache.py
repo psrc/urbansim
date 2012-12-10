@@ -56,6 +56,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                                       'single_vehicle_to_work_travel_distance']
         
         self.travel_data_table_name = "travel_data"
+        self.parcel_table_name      = "parcels"
         self.zone_table_name        = "zones"
         self.person_data_table      = "persons"
 
@@ -67,13 +68,16 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         # print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
-        #try: # tnicolai :for debugging
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
+        try: # tnicolai :for debugging
+            import pydevd
+            pydevd.settrace()
+        except: pass
         
         self.init(year, config);
         
+        # import parcel-based accessibilities from MATSim into parcel table
+        if( self.__get_value_as_boolean('cell_based_accessibility', self.matsim_controler) ):
+            self.get_parcel_based_accessibility_into_cache(year)
         # import zone-based accessibilities from MATSim into zones table
         if( self.__get_value_as_boolean('zone_based_accessibility', self.matsim_controler) ):
             self.get_zone_based_accessibility_into_cache(year)
@@ -112,7 +116,28 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
                 if os.path.exists(file):
                     logger.log_status('Removing %s ...'%file)
                     os.remove(file)
-        logger.log_status('Finished clearing.')        
+        logger.log_status('Finished clearing.')     
+        
+    def get_parcel_based_accessibility_into_cache(self, year):
+        """ Imports accessibility results from MATSim into 
+            UrbanSim cache (parcel table)
+        """
+        logger.log_status('Importing parcel-based accessibility indicators from MATSim ...')
+        
+        parcel_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.parcel_table_name)
+        
+        existing_parcel_data_set = ZoneDataset( in_storage=self.cache_storage, in_table_name=self.parcel_table_name )
+        
+        existing_parcel_data_set.join(parcel_data_set, parcel_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
+        
+        logger.log_status('Writing parcel data to cache ...')
+        flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
+        out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
+        existing_parcel_data_set.write_dataset(attributes=existing_parcel_data_set.get_known_attribute_names(),
+                                             out_storage=out_storage,
+                                             out_table_name=self.zone_table_name)
+        
+        logger.log_status('Finished importing parcel-based accessibility indicators to parcel dataset.')   
     
     def get_zone_based_accessibility_into_cache(self, year):
         """ Imports accessibility results from MATSim into 

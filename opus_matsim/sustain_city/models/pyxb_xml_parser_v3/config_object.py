@@ -5,7 +5,7 @@
 import os
 from opus_core.logger import logger
 from lxml import etree
-from opus_matsim.brussels.models.pyxb_xml_parser import pyxb_matsim_config_parser
+from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from opus_matsim.models.org.constants import matsim4opus, matsim_config,\
     matsim_output, matsim_temp, activity_type_0, activity_type_1, first_iteration,\
     backup_run_data, test_parameter, warmstart_flag, hotstart_flag
@@ -16,6 +16,7 @@ class MATSimConfigObject(object):
     def __init__(self, config, year):
         """ Constructor
         """
+        
         #try: # tnicolai :for debugging
         #    import pydevd
         #    pydevd.settrace()
@@ -25,8 +26,14 @@ class MATSimConfigObject(object):
         self.sub_config_exists = False
         self.config_destination_location = None
         
+        # TODO IMPLEMENTATION
+        # - configurable time-of-a-day for which to compute the travel data (default 8 am)
+        
         # get sub dictionaries from travel model configuration
         matsim4urbansim, matsim_controler, matsim_controler_parameter, matsim_accessibility_parameter, matsim_common, matsim_plan_calc_score, matsim_strategy = self.__get_travel_model_sub_dictionaries()
+        
+        # this serves as an indicator in MATSim
+        self.project_name = self.config_dictionary['project_name']
         
         # network parameter
         self.network_file = self.__get_file_location( matsim_common['matsim_network_file'], required=True)
@@ -34,16 +41,11 @@ class MATSimConfigObject(object):
         # input plans file parameter
         self.input_plans_file = self.__get_plans_file(matsim_common, warmstart_flag)
         self.hotstart_plans_file = self.__get_plans_file(matsim_common, hotstart_flag)
-        if self.hotstart_plans_file == None or self.hotstart_plans_file == "":
-            self.hotstart_plans_file = "matsim4opus/tmp/hotStartPlansFile.xml"
-            logger.log_note("Setting location for hot start plans file at %s" %self.hotstart_plans_file)
-        
         
         # controler parameter
         self.first_iteration = first_iteration
         self.last_iteration = matsim_common['last_iteration']
         self.matsim_configuration = self.__get_external_matsim_config_for_current_year(matsim_common['external_matsim_config'], year)
-        #self.matsim_configuration = self.__get_file_location( matsim_common['matsim_config'] )
         
         # planCalcScoreType
         self.activityType_0                 = activity_type_0
@@ -62,7 +64,12 @@ class MATSimConfigObject(object):
         # urbansim parameter
         self.year = year
         self.population_sampling_rate = matsim4urbansim['population_sampling_rate']
-        self.random_location_distribution_radius_for_urbansim_zone = matsim4urbansim['random_location_distribution_radius_for_urbansim_zone']
+        select_zone_location_distribution_method = matsim4urbansim['select_zone_location_distribution_method']
+        self.use_shape_file_location_distribution = self.__get_value_as_boolean('use_shape_file_location_distribution', select_zone_location_distribution_method)
+        self.urbansim_zone_shape_file_location_distribution = matsim4urbansim['urbansim_zone_shape_file_location_distribution']
+        self.urbansim_zone_radius_location_distribution = matsim4urbansim['urbansim_zone_radius_location_distribution']
+        
+        self.time_of_day                  = matsim4urbansim['time_of_day']
 
         self.opus_home = paths.get_opus_home_path()
         self.opus_data_path = paths.get_opus_data_path_path()
@@ -97,12 +104,13 @@ class MATSimConfigObject(object):
         self.shape_file               = self.__get_file_location( matsim_controler_parameter['shape_file'] )
         
         # matsim4urbansim accessibility parameter
-        self.accessibility_destination_sampling_rate= matsim_accessibility_parameter['accessibility_destination_sampling_rate']
-        use_MATSim_parameter                        = matsim_accessibility_parameter['use_MATSim_parameter']
-        self.use_logit_scale_parameter_from_MATSim  = self.__get_value_as_boolean( 'use_logit_scale_parameter_from_MATSim', use_MATSim_parameter )
-        self.use_car_parameter_from_MATSim          = self.__get_value_as_boolean( 'use_car_parameter_from_MATSim', use_MATSim_parameter )
-        self.use_walk_parameter_from_MATSim         = self.__get_value_as_boolean( 'use_walk_parameter_from_MATSim', use_MATSim_parameter )
-        self.use_raw_sums_without_ln                = self.__get_value_as_boolean( 'use_raw_sums_without_ln', use_MATSim_parameter )
+        self.opportunity_sampling_rate              = matsim_accessibility_parameter['opportunity_sampling_rate']
+        select_MATSim_parameter                     = matsim_accessibility_parameter['select_MATSim_parameter']
+        self.use_logit_scale_parameter_from_MATSim  = self.__get_value_as_boolean( 'use_logit_scale_parameter_from_MATSim', select_MATSim_parameter )
+        self.use_car_parameter_from_MATSim          = self.__get_value_as_boolean( 'use_car_parameter_from_MATSim', select_MATSim_parameter )
+        self.use_bike_parameter_from_MATSim         = self.__get_value_as_boolean( 'use_bike_parameter_from_MATSim', select_MATSim_parameter )
+        self.use_walk_parameter_from_MATSim         = self.__get_value_as_boolean( 'use_walk_parameter_from_MATSim', select_MATSim_parameter )
+        self.use_raw_sums_without_ln                = self.__get_value_as_boolean( 'use_raw_sums_without_ln', select_MATSim_parameter )
         self.logit_scale_parameter                  = matsim_accessibility_parameter['logit_scale_parameter']
         # beta car values
         car_parameter                               = matsim_accessibility_parameter['car_parameter']
@@ -115,6 +123,17 @@ class MATSimConfigObject(object):
         self.betacar_travel_cost                    = car_parameter['betacar_travel_cost']
         self.betacar_travel_cost_power2             = car_parameter['betacar_travel_cost_power2']
         self.betacar_ln_travel_cost                 = car_parameter['betacar_ln_travel_cost']
+        # beta bike values
+        bike_parameter                              = matsim_accessibility_parameter['bike_parameter']
+        self.betabike_travel_time                   = bike_parameter['betabike_travel_time']
+        self.betabike_travel_time_power2            = bike_parameter['betabike_travel_time_power2']
+        self.betabike_ln_travel_time                = bike_parameter['betabike_ln_travel_time']
+        self.betabike_travel_distance               = bike_parameter['betabike_travel_distance']
+        self.betabike_travel_distance_power2        = bike_parameter['betabike_travel_distance_power2']
+        self.betabike_ln_travel_distance            = bike_parameter['betabike_ln_travel_distance']
+        self.betabike_travel_cost                   = bike_parameter['betabike_travel_cost']
+        self.betabike_travel_cost_power2            = bike_parameter['betabike_travel_cost_power2']
+        self.betabike_ln_travel_cost                = bike_parameter['betabike_ln_travel_cost']
         # beta walk values
         walk_parameter                              = matsim_accessibility_parameter['walk_parameter']
         self.betawalk_travel_time                   = walk_parameter['betawalk_travel_time']
@@ -138,7 +157,8 @@ class MATSimConfigObject(object):
             except:
                 logger.log_status("There is no external MATSim configuration set for the current year!")
         
-        return ""   
+        return ""    
+        
     
     def __get_file_location(self, file_path, required=False ):
         ''' checks if a given sub path exists
@@ -206,7 +226,7 @@ class MATSimConfigObject(object):
         """
 
         # create/maschal matsim config file
-        logger.log_status("Creating MATSim config file in " + self.config_destination_location)
+        logger.log_status("Generating MATSim4UrbanSin configuration at " + self.config_destination_location)
         
         # xml root element
         root = pyxb_matsim_config_parser.matsim_configType.Factory()
@@ -251,8 +271,8 @@ class MATSimConfigObject(object):
         strategy_elem.changeExpBetaProbability              = self.change_exp_beta_probability
         strategy_elem.reRouteDijkstraProbability            = self.reroute_dijkstra_probability
         
+        urbansim_parameter_elem.projectName                 = self.project_name
         urbansim_parameter_elem.populationSamplingRate      = self.population_sampling_rate
-        urbansim_parameter_elem.randomLocationDistributionRadiusForUrbanSimZone = self.random_location_distribution_radius_for_urbansim_zone
         urbansim_parameter_elem.year                        = self.year
         urbansim_parameter_elem.opusHome                    = self.opus_home
         urbansim_parameter_elem.opusDataPath                = self.opus_data_path
@@ -260,6 +280,9 @@ class MATSimConfigObject(object):
         urbansim_parameter_elem.matsim4opusConfig           = self.matsim_config_path
         urbansim_parameter_elem.matsim4opusOutput           = self.matsim_output_path
         urbansim_parameter_elem.matsim4opusTemp             = self.matsim_temp_path
+        urbansim_parameter_elem.useShapefileLocationDistribution = self.use_shape_file_location_distribution
+        urbansim_parameter_elem.urbanSimZoneShapefileLocationDistribution = self.urbansim_zone_shape_file_location_distribution
+        urbansim_parameter_elem.urbanSimZoneRadiusLocationDistribution = self.urbansim_zone_radius_location_distribution
         urbansim_parameter_elem.isTestRun                   = self.isTestRun
         urbansim_parameter_elem.testParameter               = self.test_parameter
         urbansim_parameter_elem.backupRunData               = self.backup_run_data
@@ -275,10 +298,12 @@ class MATSimConfigObject(object):
         matsim4urbansim_controler_elem.boundingBoxRight     = self.bounding_box_right
         matsim4urbansim_controler_elem.boundingBoxBottom    = self.bounding_box_bottom
         matsim4urbansim_controler_elem.agentPerformance     = self.agent_performance 
+        matsim4urbansim_controler_elem.timeOfADay           = self.time_of_day
         
-        accessibility_parameter_elem.accessibilityDestinationSamplingRate = self.accessibility_destination_sampling_rate
+        accessibility_parameter_elem.opportunitiySamplingRate = self.opportunity_sampling_rate
         accessibility_parameter_elem.useLogitScaleParameterFromMATSim= self.use_logit_scale_parameter_from_MATSim
         accessibility_parameter_elem.useCarParameterFromMATSim= self.use_car_parameter_from_MATSim
+        accessibility_parameter_elem.useBikeParameterFromMATSim= self.use_bike_parameter_from_MATSim
         accessibility_parameter_elem.useWalkParameterFromMATSim= self.use_walk_parameter_from_MATSim
         accessibility_parameter_elem.useRawSumsWithoutLn    = self.use_raw_sums_without_ln
         accessibility_parameter_elem.logitScaleParameter    = self.logit_scale_parameter
@@ -291,6 +316,15 @@ class MATSimConfigObject(object):
         accessibility_parameter_elem.betaCarTravelCost      = self.betacar_travel_cost
         accessibility_parameter_elem.betaCarTravelCostPower2= self.betacar_travel_cost_power2
         accessibility_parameter_elem.betaCarLnTravelCost    = self.betacar_ln_travel_cost
+        accessibility_parameter_elem.betaBikeTravelTime     = self.betabike_travel_time
+        accessibility_parameter_elem.betaBikeTravelTimePower2= self.betabike_travel_time_power2
+        accessibility_parameter_elem.betaBikeLnTravelTime   = self.betabike_ln_travel_time
+        accessibility_parameter_elem.betaBikeTravelDistance = self.betabike_travel_distance
+        accessibility_parameter_elem.betaBikeTravelDistancePower2= self.betabike_travel_distance_power2
+        accessibility_parameter_elem.betaBikeLnTravelDistance= self.betabike_ln_travel_distance
+        accessibility_parameter_elem.betaBikeTravelCost     = self.betabike_travel_cost
+        accessibility_parameter_elem.betaBikeTravelCostPower2= self.betabike_travel_cost_power2
+        accessibility_parameter_elem.betaBikeLnTravelCost   = self.betabike_ln_travel_cost
         accessibility_parameter_elem.betaWalkTravelTime     = self.betawalk_travel_time
         accessibility_parameter_elem.betaWalkTravelTimePower2= self.betawalk_travel_time_power2
         accessibility_parameter_elem.betaWalkLnTravelTime   = self.betawalk_ln_travel_time
@@ -336,7 +370,7 @@ class MATSimConfigObject(object):
         if not file_object.closed:
             file_object.close()
             
-        logger.log_status( "Finished Marschalling" )
+        logger.log_status( "Generating MATSim4UrbanSim configuration done!" )
         
         return self.config_destination_location
         

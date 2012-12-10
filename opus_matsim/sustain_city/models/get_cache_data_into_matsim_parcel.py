@@ -105,9 +105,6 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                     'parcel.x_coord_sp',
                     'parcel.y_coord_sp',
                     'parcel.zone_id',
-                    # tnicolai: Gewicht fuer parcels, um zone centroid in MATSim genauer zu bestimmen
-                    # Zone mit 1Parcel Wald und 10Parcels Wohnungen -> Schwerpunkt bei den Wohnungen
-                    # Zone mit 1Parcel Wohnblock und 20Parcels Einfamilienhauesern -> Schwerpunkt bei Wohnblock 
                     ],
                 dataset_name = 'parcel',
                 storage_location = self.output_directory,
