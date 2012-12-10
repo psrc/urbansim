@@ -1389,7 +1389,6 @@
         <selectable return_value="SC_building_transition_model" type="selectable" name="SC_building_transition_model_1">True</selectable>
         <selectable return_value="SC_RBLCM_from_template" type="selectable" name="SC_RBLCM_from_template_1">True</selectable>
         <selectable return_value="SC_NRBLCM_from_template" type="selectable" name="SC_NRBLCM_from_template_1">True</selectable>
-        <selectable return_value="SC_building_location_choice_model_from_template" type="selectable" name="SC_building_location_choice_model_from_template_1">False</selectable>
         <selectable return_value="SC_workplace_location_choice" type="selectable" name="SC_workplace_location_choice_1">True</selectable>
         <selectable return_value="SC_household_transition_model" type="selectable" name="SC_household_transition_model_1">True</selectable>
         <selectable return_value="SC_household_relocation_model" type="selectable" name="SC_household_relocation_model_1">True</selectable>
