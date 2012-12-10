@@ -648,14 +648,14 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model>
-      <model name="employment_location_choice_model" type="model">
+      <model name="SC_employment_location_choice_model" type="model">
         <dependencies type="list">['SC_employment_relocation_model']</dependencies>
         <structure type="dictionary">
           <group_by_attribute type="list">('home_based_status', 'name')<argument name="grouping_table" type="string" model_dependency_type="table">home_based_status</argument>
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
           <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.employment_location_choice_model</class_module>
+            <class_module type="string">urbansim.models.SC_employment_location_choice_model</class_module>
             <class_name>EmploymentLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
@@ -670,9 +670,9 @@
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">(specification, coefficients)</output>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_coefficients</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_employment_location_choice_model_coefficients</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_employment_location_choice_model_specification</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="agent_set" type="string" model_dependency_type="dataset">job</argument>
@@ -714,7 +714,7 @@
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="portion_to_unplace" type="float">0</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">employment_location_choice_model_specification</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string" model_dependency_type="table">SC_employment_location_choice_model_specification</argument>
             <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">(job.building_id&gt;0)</argument>
           </prepare_for_estimate>
         </structure>
@@ -1422,7 +1422,7 @@
         <selectable return_value="SC_household_location_choice_model" type="selectable" name="SC_household_location_choice_model_1">True</selectable>
         <selectable return_value="SC_employment_transition_model" type="selectable" name="new_employment_transition_model_1">True</selectable>
         <selectable return_value="SC_employment_relocation_model" type="selectable" name="SC_employment_relocation_model">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
+        <selectable name="SC_employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
         </selectable>
       </models_to_run>
     </scenario>
