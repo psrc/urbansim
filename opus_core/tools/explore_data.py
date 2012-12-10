@@ -6,7 +6,7 @@ from optparse import OptionParser
 from opus_core.simulation.data_explorer import DataExplorer
 
 class DataExplorerOptionGroup:
-    def __init__(self, usage="python %prog -i [options] ", 
+    def __init__(self, usage="python -i %prog [options] ", 
                  description="Utility for exploring data stored in cache_directory. Run this script with the -i option to use its functionality interactively."):
             
         self.parser = OptionParser(usage=usage, description=description)
