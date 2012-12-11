@@ -1203,7 +1203,7 @@
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument convert_blank_to_none="True" name="location_id_string" type="string">"super_raz_id"</argument>
             <argument convert_blank_to_none="True" name="submodel_string" type="string">-2</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.residential_capacity - mag_zone.super_raz.number_of_households)</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.residential_capacity - (numpy.ceil(mag_zone.super_raz.number_of_households*1.09).astype('int')))</argument>
             <argument name="filter" parser_action="quote_string" type="string">super_raz_id&gt;0</argument>
             <argument convert_blank_to_none="True" name="estimation_weight_string" parser_action="quote_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -1255,16 +1255,17 @@
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
-        <specification type="dictionary">
+        <specification type="dictionary" inherit_parent_values="False">
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
               <variable_spec name="super_raz.sraz_avg_adult_education"/>
               <variable_spec name="super_raz.sraz_in_central_valley"/>
+              <variable_spec name="super_raz.sraz_is_very_rural"/>
               <variable_spec name="super_raz.sraz_median_household_income"/>
               <variable_spec name="super_raz.sraz_num_retail_jobs_per_acre"/>
               <variable_spec name="super_raz.sraz_number_of_children"/>
-              <variable_spec name="super_raz.sraz_seasonal_pop"/>
+              <variable_spec name="super_raz.sraz_population_weight"/>
             </variable_list>
           </submodel>
         </specification>
@@ -1378,7 +1379,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.public_job_capacity - mag_zone.super_raz.number_of_srazpublic_jobs)</argument>
+            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.public_job_capacity - (numpy.ceil(mag_zone.super_raz.number_of_srazpublic_jobs*1.09).astype('int32')))</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -1443,6 +1444,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_education_jobs"/>
                 <variable_spec name="super_raz.number_of_srazpublic_jobs"/>
+                <variable_spec name="super_raz.sraz_public_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Public Federal State" submodel_id="21" type="submodel" inherit_parent_values="False">
@@ -1450,12 +1452,14 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_pubfedstate_jobs"/>
                 <variable_spec name="super_raz.number_of_srazpublic_jobs"/>
+                <variable_spec name="super_raz.sraz_public_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Public Local" submodel_id="22" type="submodel" inherit_parent_values="False">
               <description type="string">Public Local</description>
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_publocal_jobs"/>
+                <variable_spec name="super_raz.sraz_public_weight"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -1478,7 +1482,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.other_job_capacity - mag_zone.super_raz.number_of_srazother_jobs)</argument>
+            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero((super_raz.other_job_capacity+(super_raz.office_job_capacity*0.25).astype('int32')) - (numpy.ceil(mag_zone.super_raz.number_of_srazother_jobs*1.09).astype('int32')))</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -1542,6 +1546,7 @@
               <description type="string">Agriculture</description>
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_agricultural_jobs"/>
+                <variable_spec name="super_raz.sraz_other_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Construction" submodel_id="4" type="submodel" inherit_parent_values="False">
@@ -1549,6 +1554,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_construction_jobs"/>
                 <variable_spec name="super_raz.number_of_srazother_jobs"/>
+                <variable_spec name="super_raz.sraz_other_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Medical" submodel_id="16" type="submodel" inherit_parent_values="False">
@@ -1556,12 +1562,14 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_medical_jobs"/>
                 <variable_spec name="super_raz.number_of_srazother_jobs"/>
+                <variable_spec name="super_raz.sraz_other_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Other Services" submodel_id="20" type="submodel" inherit_parent_values="False">
               <description type="string">Other Services</description>
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_other_services_jobs"/>
+                <variable_spec name="super_raz.sraz_other_weight"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -1584,7 +1592,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.office_job_capacity - mag_zone.super_raz.number_of_srazoffice_jobs)</argument>
+            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.office_job_capacity - (numpy.ceil(mag_zone.super_raz.number_of_srazoffice_jobs*1.09).astype('int32')))</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -1649,6 +1657,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_information_jobs"/>
                 <variable_spec name="super_raz.number_of_srazoffice_jobs"/>
+                <variable_spec name="super_raz.sraz_office_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Finance" submodel_id="10" type="submodel" inherit_parent_values="False">
@@ -1663,6 +1672,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_realestate_jobs"/>
                 <variable_spec name="super_raz.number_of_srazoffice_jobs"/>
+                <variable_spec name="super_raz.sraz_office_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Professional" submodel_id="12" type="submodel" inherit_parent_values="False">
@@ -1670,6 +1680,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_professional_jobs"/>
                 <variable_spec name="super_raz.number_of_srazoffice_jobs"/>
+                <variable_spec name="super_raz.sraz_office_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Management" submodel_id="13" type="submodel" inherit_parent_values="False">
@@ -1677,6 +1688,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_management_jobs"/>
                 <variable_spec name="super_raz.number_of_srazoffice_jobs"/>
+                <variable_spec name="super_raz.sraz_office_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Administration" submodel_id="14" type="submodel">
@@ -1706,7 +1718,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.industrial_job_capacity - mag_zone.super_raz.number_of_srazindustrial_jobs)</argument>
+            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.industrial_job_capacity - (numpy.ceil(mag_zone.super_raz.number_of_srazindustrial_jobs*1.09).astype('int32')))</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -1776,7 +1788,6 @@
             <submodel hidden="Children" name="Utilities" submodel_id="3" type="submodel" inherit_parent_values="False">
               <description type="string">Utilities</description>
               <variable_list type="variable_list">
-                <variable_spec name="super_raz.number_of_srazindustrial_jobs"/>
                 <variable_spec name="super_raz.number_of_utilities_jobs"/>
               </variable_list>
             </submodel>
@@ -1785,6 +1796,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_manufacturing_jobs"/>
                 <variable_spec name="super_raz.number_of_srazindustrial_jobs"/>
+                <variable_spec name="super_raz.sraz_industrial_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Wholesale Trade" submodel_id="6" type="submodel" inherit_parent_values="False">
@@ -1792,6 +1804,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_srazindustrial_jobs"/>
                 <variable_spec name="super_raz.number_of_wholesale_jobs"/>
+                <variable_spec name="super_raz.sraz_industrial_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Transportation" submodel_id="8" type="submodel">
@@ -1799,6 +1812,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_srazindustrial_jobs"/>
                 <variable_spec name="super_raz.number_of_transportation_jobs"/>
+                <variable_spec name="super_raz.sraz_industrial_weight"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -1821,7 +1835,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.retail_job_capacity - mag_zone.super_raz.number_of_srazretail_jobs)</argument>
+            <argument convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(super_raz.retail_job_capacity - (numpy.ceil(mag_zone.super_raz.number_of_srazretail_jobs*1.09).astype('int32')))</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -1886,6 +1900,7 @@
               <variable_list type="variable_list">
                 <variable_spec name="super_raz.number_of_retail_jobs"/>
                 <variable_spec name="super_raz.number_of_srazretail_jobs"/>
+                <variable_spec name="super_raz.sraz_retail_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Food" submodel_id="19" type="submodel" inherit_parent_values="False">
@@ -1894,6 +1909,7 @@
                 <variable_spec name="super_raz.number_of_foodservice_jobs"/>
                 <variable_spec name="super_raz.sraz_in_central_valley"/>
                 <variable_spec name="super_raz.sraz_num_retail_jobs_per_acre"/>
+                <variable_spec name="super_raz.sraz_retail_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Accomodation" submodel_id="18" type="submodel" inherit_parent_values="False">
@@ -1902,6 +1918,7 @@
                 <variable_spec name="super_raz.number_of_accomodation_jobs"/>
                 <variable_spec name="super_raz.sraz_in_central_valley"/>
                 <variable_spec name="super_raz.sraz_num_retail_jobs_per_acre"/>
+                <variable_spec name="super_raz.sraz_retail_weight"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Arts" submodel_id="17" type="submodel">
