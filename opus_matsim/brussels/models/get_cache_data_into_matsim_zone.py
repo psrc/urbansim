@@ -81,7 +81,6 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                     'zone_id_work = person.disaggregate(zone.zone_id, intermediates=[job])',
                     ],
                 dataset_name = 'person',
-                # exclude_condition = 'person.matsim_flag==0',
                 storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',

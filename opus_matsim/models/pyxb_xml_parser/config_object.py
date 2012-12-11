@@ -55,13 +55,13 @@ class MATSimConfigObject(object):
         self.opus_data_path = paths.get_opus_data_path_path()
         
         self.matsim4opus_path = paths.get_opus_home_path( matsim4opus )
-        self.ceckAndCreateFolder(self.matsim4opus_path)
+        self.checkAndCreateFolder(self.matsim4opus_path)
         self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config )
-        self.ceckAndCreateFolder(self.matsim_config_path)
+        self.checkAndCreateFolder(self.matsim_config_path)
         self.matsim_output_path = os.path.join( self.matsim4opus_path, matsim_output )
-        self.ceckAndCreateFolder(self.matsim_output_path)
+        self.checkAndCreateFolder(self.matsim_output_path)
         self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp )
-        self.ceckAndCreateFolder(self.matsim_temp_path)
+        self.checkAndCreateFolder(self.matsim_temp_path)
         
         self.isTestRun = False
         self.test_parameter = ""
@@ -105,7 +105,7 @@ class MATSimConfigObject(object):
         if(path.startswith('/')):
             raise StandardError('Absolute path names are not supported by now! Check: %s' %path)
     
-    def ceckAndCreateFolder(self, path):
+    def checkAndCreateFolder(self, path):
         if not os.path.exists(path):
             try: os.mkdir(path)
             except: pass

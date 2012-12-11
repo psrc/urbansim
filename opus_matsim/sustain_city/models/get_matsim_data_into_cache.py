@@ -126,19 +126,21 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
             UrbanSim cache (parcel table)
         """
         logger.log_status('Importing parcel-based accessibility indicators from MATSim ...')
-        
-        parcel_data_set = ParcelDataset(in_storage=self.in_storage, in_table_name=self.parcel_table_name)
-        
-        existing_parcel_data_set = ParcelDataset( in_storage=self.cache_storage, in_table_name=self.parcel_table_name )
-        
-        existing_parcel_data_set.join(parcel_data_set, parcel_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
-        
-        logger.log_status('Writing parcel data to cache ...')
-        flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
-        out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
-        existing_parcel_data_set.write_dataset(attributes=existing_parcel_data_set.get_known_attribute_names(),
-                                             out_storage=out_storage,
-                                             out_table_name=self.parcel_table_name)
+        try:
+            parcel_data_set = ParcelDataset(in_storage=self.in_storage, in_table_name=self.parcel_table_name)
+            
+            existing_parcel_data_set = ParcelDataset( in_storage=self.cache_storage, in_table_name=self.parcel_table_name )
+            
+            existing_parcel_data_set.join(parcel_data_set, parcel_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
+            
+            logger.log_status('Writing parcel data to cache ...')
+            flt_dir_for_next_year = os.path.join(self.cache_directory, str(year+1))
+            out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
+            existing_parcel_data_set.write_dataset(attributes=existing_parcel_data_set.get_known_attribute_names(),
+                                                 out_storage=out_storage,
+                                                 out_table_name=self.parcel_table_name)
+        except:
+            logger.log_warning('There is no parcel dataset! The parcel-based accessibility indicators from MATSim can not be imported!')
         
         logger.log_status('Finished importing parcel-based accessibility indicators to parcel dataset.')   
     

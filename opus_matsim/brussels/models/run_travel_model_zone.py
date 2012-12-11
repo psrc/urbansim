@@ -16,10 +16,10 @@ class RunTravelModel(AbstractTravelModel):
     def __init__(self):
         """Constructor
         """
-        self.matsim_config_destination = None  # path to generated matsim config xml
-        self.matsim_config_name = None  # matsim config xml name
-        self.matsim_config_full = None  # concatenation of matsim config path and name
-        self.test_parameter = ""        # optional parameter for testing and debugging purposes
+        self.matsim_config_destination = None   # path to generated matsim config xml
+        self.matsim_config_name = None          # matsim config xml name
+        self.matsim_config_full = None          # concatenation of matsim config path and name
+        self.test_parameter = ""                # optional parameter for testing and debugging purposes
 
     def run(self, config, year):
         """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}

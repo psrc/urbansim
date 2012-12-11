@@ -34,9 +34,9 @@ class StartRunOptionGroup(object):
     if options.scenario_executable == None:
         logger.log_error("Missing name of executable scenario")
     
-    #config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
+    config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
     # tnicolai: debug
-    config = XMLConfiguration( '/Users/thomas/Development/opus_home/vsp_configs/proposal_urbansim_travel_model_config/seattle_parcel_from_MATSim4UrbanSim_CONFIG_EXTENSION_TEST.xml' ).get_run_configuration( 'Seattle_baseline' )
+    #config = XMLConfiguration( '/Users/thomas/Desktop/brussels_urbansim_zone_config_v2_with_travel_model_20120425.xml' ).get_run_configuration( 'brussels_baseline' )
         
     insert_auto_generated_cache_directory_if_needed(config)
      
