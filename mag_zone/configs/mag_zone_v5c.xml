@@ -4,7 +4,24 @@
     <project_name type="string" hidden="True">mag_zone_v5c</project_name>
     <parent type="file">mag_zone/configs/mag_zone_base.xml</parent>
     <expression_library type="dictionary">
-    </expression_library>
+      <variable use="both" source="expression" name="household.For_hhld_inc_pct_MH_du_super_raz" type="variable_definition">safe_array_divide(household.disaggregate(super_raz.aggregate(where(building.building_type_id == 3,building.residential_units, 0)))*1.0, household.disaggregate(super_raz.aggregate(building.residential_units)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_avg_workers_edu" type="variable_definition">safe_array_divide(household.aggregate(where(numpy.in1d(person.work_status, (1,2,4,5)), person.education, 0))*1.0, household.aggregate(where(numpy.in1d(person.work_status, (1,2,4,5)), 1, 0)))</variable>
+      <variable use="both" source="primary attribute" name="household.For_hhld_inc_workers" type="variable_definition">household.workers</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_du_price" type="variable_definition">household.disaggregate(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_ttl_retl_jobs_taz" type="variable_definition">household.disaggregate(taz2012.aggregate(numpy.logical_and(job.home_based_status == 0, job.sector_id == 7)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_ttl_jobs_taz" type="variable_definition">household.disaggregate(taz2012.aggregate(job.home_based_status == 0))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_within_qtrmi_lightrail" type="variable_definition">household.disaggregate(zone.within_qtrmi_lightrail)</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_avg_superraz_hhld_inc" type="variable_definition">household.disaggregate((zone.aggregate(household.is_seasonal==0)&lt; (zone.res_units_capacity_2100*0.4)))*household.disaggregate(super_raz.aggregate(where(household.is_seasonal == 0,household.income, 0))*1.0/super_raz.aggregate(household.is_seasonal==0))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_avg_superparcel_hhld_inc" type="variable_definition">household.disaggregate((zone.aggregate(household.is_seasonal==0) &gt; (zone.res_units_capacity_2100*0.4))*(zone.aggregate(where(household.is_seasonal == 0,household.income, 0))*1.0/zone.aggregate(household.is_seasonal==0)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_avg_slope" type="variable_definition">household.disaggregate(zone.avg_slope)</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_highest_worker_edu" type="variable_definition">household.aggregate(where(numpy.in1d(person.work_status, (1,2,4,5)), person.education, 0), function = maximum)</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_os_to_other_landarea_super_raz" type="variable_definition">household.disaggregate(safe_array_divide(super_raz.aggregate(where(numpy.logical_and(building.redevelopment_building_id == -1, building.building_type_id == 20),building.land_area,0))*1.0, super_raz.aggregate(where(building.redevelopment_building_id == -1,building.land_area, 0))))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_seasonal_to_reg_hhlds_ratio_super_raz" type="variable_definition">household.disaggregate(safe_array_divide(super_raz.aggregate(household.is_seasonal == 1)*1.0, super_raz.aggregate(household.is_seasonal &lt;&gt; 1)))</variable>    	
+      <variable use="both" source="expression" name="household.For_hhld_inc_du_occupancy_super_parcel" type="variable_definition">household.disaggregate(safe_array_divide(zone.number_of_agents(household)*1.0, zone.aggregate(building.residential_units)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_comm_sqft_taz" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (4,8)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_ind_sqft_super_parcel" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (5,6,7)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>
+      <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_ind_sqft_taz" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (5,6,7)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>    
+	</expression_library>
   </general>
   <model_manager>
     <templates name="Model Templates" parser_action="skip" hidden="True"/>
@@ -446,6 +463,78 @@
           </run>
         </structure>
       </model>
+      <model name="compute_new_household_income" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(numpy.logical_and(household.is_new == 1, household.is_seasonal == 0), mag_zone.household.new_hhld_income, household.income)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">income</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="remove_newly_added_hhlds_flag" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(household.is_new == 1, 0, 0)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">is_new</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="flag_newly_added_hhlds" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(household.building_id &lt; 1, 1, 0)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">is_new</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="compute_existing_household_income_adjustment" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(numpy.logical_and(household.is_new == 0, household.is_seasonal == 0), mag_zone.household.income_adjustment, household.income)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">income</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>	  	  
     </models>
   </model_manager>
   <results_manager>
