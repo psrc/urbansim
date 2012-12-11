@@ -11,6 +11,7 @@ from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.csv_storage import csv_storage
 from opus_core.store.attribute_cache import AttributeCache
 from urbansim.datasets.zone_dataset import ZoneDataset
+from urbansim_parcel.datasets.parcel_dataset import ParcelDataset
 from opus_core.storage_factory import StorageFactory
 from opus_matsim.models.org.constants import matsim4opus, matsim_temp
 from opus_core import paths
@@ -68,10 +69,10 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         # print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         self.init(year, config);
         
@@ -91,6 +92,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         existing_travel_data_set = TravelDataDataset( in_storage=self.cache_storage, in_table_name=self.travel_data_table_name )
         # import zone2zone impedances from MATSim into travel_data table
         if(self.__get_value_as_boolean('zone2zone_impedance', self.matsim_controler)):
+            logger.log_status('Importing zone to zone impedances from MATSim ...')
             travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )
             # tnicolai : Replace travel data table 
             # Case 1) Delete all 'columns' but the 'columns' passing to urbansim first. then no join operation is needed
@@ -100,7 +102,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
             ##changed from ['from_zone_id', 'to_zone_id'] to _hidden_id (lmwang)
             # join current data set with imported matsim travel data
             existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)
-                
+            logger.log_status('Finished join operation for zone to zone impedances (travel_data_set).') 
+            
         # return new travel data set
         return existing_travel_data_set
             
@@ -124,9 +127,9 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         """
         logger.log_status('Importing parcel-based accessibility indicators from MATSim ...')
         
-        parcel_data_set = ZoneDataset(in_storage=self.in_storage, in_table_name=self.parcel_table_name)
+        parcel_data_set = ParcelDataset(in_storage=self.in_storage, in_table_name=self.parcel_table_name)
         
-        existing_parcel_data_set = ZoneDataset( in_storage=self.cache_storage, in_table_name=self.parcel_table_name )
+        existing_parcel_data_set = ParcelDataset( in_storage=self.cache_storage, in_table_name=self.parcel_table_name )
         
         existing_parcel_data_set.join(parcel_data_set, parcel_data_set.get_non_id_primary_attribute_names(), metadata=AttributeType.PRIMARY)
         
@@ -135,7 +138,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         out_storage = StorageFactory().get_storage('flt_storage', storage_location = flt_dir_for_next_year)
         existing_parcel_data_set.write_dataset(attributes=existing_parcel_data_set.get_known_attribute_names(),
                                              out_storage=out_storage,
-                                             out_table_name=self.zone_table_name)
+                                             out_table_name=self.parcel_table_name)
         
         logger.log_status('Finished importing parcel-based accessibility indicators to parcel dataset.')   
     
