@@ -17,6 +17,7 @@
 
 aliases = [
     # household attributes
+    'resident_household_income = household.is_seasonal==0*household.income',
     'persons = household.number_of_agents(person)',
     'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
     'age_of_head = household.aggregate(person.age * mag_zone.person.head_of_hh)',
@@ -40,6 +41,7 @@ aliases = [
     'number_of_vehicles2 = household.number_of_vehicles==2',
     'number_of_vehicles3 = household.number_of_vehicles==3',
     'number_of_vehicles4up = household.number_of_vehicles>3',
+    "is_unplaced = household.building_id<1",
     'is_seasonal = household.is_seasonal==1',
     'is_seasonal_and_all_pp_over_55 = numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_the_youngest>54)',
     'is_seasonal_and_hh_head_over_55 = numpy.logical_and(mag_zone.household.is_seasonal, mag_zone.household.age_of_head>54)',

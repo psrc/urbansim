@@ -40,6 +40,7 @@ aliases = [
         "is_office_job = numpy.in1d(job.sector_id, (9,10,11,12,13))",
         "is_homebased_job = job.home_based_status==1",
         "is_nonhomebased_job = job.home_based_status==0",
+        "is_unplaced = job.building_id<1",
         # individual sector job totals:
         "is_agricultural_job = job.sector_id==1",
         "is_mining_job = job.sector_id==2",

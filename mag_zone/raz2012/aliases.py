@@ -72,6 +72,6 @@ aliases = [
         'raz2012_hh_age_of_head_56_65 = raz2012.aggregate(mag_zone.household.age_of_head_56_65)',
         'raz2012_hh_age_of_head_66_up = raz2012.aggregate(mag_zone.household.age_of_head_66_up)',
         # building related:
-        'number_of_residential_units = raz2012.aggregate(mag',
+        'number_of_residential_units = raz2012.aggregate(building.residential_units)',
            ]
 

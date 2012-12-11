@@ -263,6 +263,9 @@ class ActiveDevelopmentsModel(Model):
             action = developing_building_types_info[developing_building_type]['%s_action' % developing_building_types_info[developing_building_type]['building_type_name']]
             available = developing_building_types_info[developing_building_type]['available_active_capacity_this_year']
             actual_action = self.lesser(action,available)
+            # revise actual action if minimum build units is in effect:
+            if build_minimum_units and developing_building_types_info[developing_building_type]['adm_minimum_annual_build_max_year'] >= simulation_year:
+                actual_action = self.greater(actual_action,developing_building_types_info[developing_building_type]['adm_minimum_annual_build_units'])
             developing_building_types_info[developing_building_type]['action_to_take_this_year'] = actual_action
 
             # create status line for logging
@@ -307,6 +310,13 @@ class ActiveDevelopmentsModel(Model):
                 # distribute the total to build against the weight
                 action_array = (total_action * weight_array).astype('int32')
                 new_built_units = current_built_units + action_array
+                # make sure we are not going to build more than the buildout_capacity
+                check = buildout_capacity - new_built_units
+                check_lt_zero = where(check<0)
+                if check_lt_zero[0].size>0:
+                    # We have a problem, set the new_built_units = the buildout_capacity
+                    #  for those records where we are blowing the buildout of the development
+                    new_built_units[check_lt_zero] = buildout_capacity[check_lt_zero]
                 # update the current_built_units column with new values
                 developments_building_ids = developments_dataset.get_attribute('building_id')
                 building_ids_to_be_updated = developments_building_ids[active_developments_index][indx]
@@ -355,6 +365,11 @@ class ActiveDevelopmentsModel(Model):
         else:
             return x
 
+    def greater(self,x,y):
+        if x-y < 0:
+            return y
+        else:
+            return x
 
 
 from opus_core.tests import opus_unittest
