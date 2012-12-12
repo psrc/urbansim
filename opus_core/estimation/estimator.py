@@ -411,7 +411,7 @@ class Estimator(ModelExplorer):
         (such as biogeme format, i.e. one row per observation), or in a long format (i.e. each alternative 
         has one row per observation).
         """
-        from opus_core.choice_model import ChoiceModel
+        from opus_core.models.choice_model import ChoiceModel
         model = self.get_model()
         if isinstance(model, ChoiceModel):
             data = model.model_interaction.convert_data_from_estimation_to_simulation_format(submodel)
