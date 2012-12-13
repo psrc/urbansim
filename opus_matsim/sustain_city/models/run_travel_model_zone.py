@@ -59,7 +59,7 @@ class RunTravelModel(AbstractTravelModel):
                 'test_parameter': self.test_parameter } 
         else:
             # reserve memory for java
-            xmx = '-Xmx3500m'
+            xmx = '-Xmx4000m'
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
