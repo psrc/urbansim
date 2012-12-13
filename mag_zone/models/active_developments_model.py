@@ -27,7 +27,8 @@ class ActiveDevelopmentsModel(Model):
         self.debug = DebugPrinter(debuglevel)
         self.debuglevel = debuglevel
 
-    def run(self, percent_active_development=100, build_minimum_units=False, year=None, dataset_pool=None,
+    def run(self, percent_active_development=100, build_minimum_units=False, year=None, start_year=None,
+            dataset_pool=None,
             capacity_this_year_variable='mag_zone.active_development.capacity_this_year'):
         # General TODO:
         #    - deal w/ "other_spaces" columns
@@ -61,7 +62,12 @@ class ActiveDevelopmentsModel(Model):
             simulation_year = SimulationState().get_current_time()
         else:
             simulation_year = year
-
+        
+        # only run if start_year
+        if start_year:
+            if start_year > simulation_year:
+                return
+        
         # Get the percent_active_development
         # convert it to a float
         percent_active_development = percent_active_development / 100.0
