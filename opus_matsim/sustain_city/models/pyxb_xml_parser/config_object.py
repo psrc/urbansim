@@ -34,9 +34,9 @@ class MATSimConfigObject(object):
         # input plans file parameter
         self.input_plans_file = self.__get_plans_file(matsim_common, warmstart_flag)
         self.hotstart_plans_file = self.__get_plans_file(matsim_common, hotstart_flag)
-        if self.hotstart_plans_file == None or self.hotstart_plans_file == "":
-            self.hotstart_plans_file = "matsim4opus/tmp/hotStartPlansFile.xml"
-            logger.log_note("Setting location for hot start plans file at %s" %self.hotstart_plans_file)
+        #if self.hotstart_plans_file == None or self.hotstart_plans_file == "":
+        #    self.hotstart_plans_file = "matsim4opus/tmp/hotStartPlansFile.xml"
+        #    logger.log_note("Setting location for hot start plans file at %s" %self.hotstart_plans_file)
         
         
         # controler parameter
