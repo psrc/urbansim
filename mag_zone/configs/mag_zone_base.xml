@@ -339,6 +339,30 @@
       <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
       <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
       <!-- Variables generated from script  -->
+	  
+<variable use="both" source="expression" name="taz2012.taz_number_of_01agricultural_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_agricultural_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_02mining_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_mining_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_03utilities_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_utilities_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_04construction_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_construction_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_05manufacturing_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_manufacturing_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_06wholesale_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_wholesale_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_07retail_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_retail_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_08transportation_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_transportation_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_09information_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_information_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_10finance_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_finance_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_11realestate_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_realestate_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_12professional_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_professional_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_13management_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_management_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_14administrative_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_admin_support_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_15education_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_educ_svcs_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_16healthcare_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_healthcare_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_17arts_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_arts_ent_rec_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_18accomodation_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_accomodation_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_19foodservice_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_foodservice_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_20other_services_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_other_svcs_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_21pubfedstate_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_pubfedstate_job)</variable>
+<variable use="both" source="expression" name="taz2012.taz_number_of_22publocal_jobs" type="variable_definition">taz2012.aggregate(mag_zone.job.is_publocal_job)</variable>
+	  
       <variable use="both" source="expression" name="building.skyharbor_enplanement_capacity" type="variable_definition">(building.other_space_name=='skyharbor')*(building.other_spaces)</variable>
       <variable use="both" source="expression" name="building.williamsgateway_enplanement_capacity" type="variable_definition">(building.other_space_name=='williamsgateway')*(building.other_spaces)</variable>
       <variable use="both" source="expression" name="building.hotel_motel_rooms" type="variable_definition">(building.other_space_name=='hotel_motel_rooms')*(building.other_spaces)</variable>
@@ -1599,7 +1623,8 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">AllocationModel</name>
-          </init>
+     			<argument name="start_year" type="integer">2013</argument>
+     </init>
           <run type="dictionary">
             <argument name="dataset" type="string">zone</argument>
             <argument name="outcome_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
@@ -2086,7 +2111,25 @@
         <batch_visualization hidden="Children" type="batch_visualization" name="mpa_total_jobs">
           <indicators>['number_of_jobs']</indicators>
           <output_type>tab</output_type>
-          <dataset_name>mpa</dataset_name>
+           <model name="compute_existing_household_income_adjustment" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string" model_dependency_type="dataset">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string" model_dependency_type="variable">where(household.is_new == 0, mag_zone.household.income_adjustment, household.income)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">income</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+     <dataset_name>mpa</dataset_name>
           <visualization_type>tab</visualization_type>
         </batch_visualization>
       </indicator_batch>
