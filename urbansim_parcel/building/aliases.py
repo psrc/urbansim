@@ -32,6 +32,7 @@ aliases = [
    "zone_id = building.disaggregate(parcel.zone_id)",
    "faz_id = building.disaggregate(zone.faz_id)",
    "large_area_id = building.disaggregate(faz.large_area_id, intermediates=[zone, parcel])",
+   "county_id = building.disaggregate(large_area.county_id, intermediates=[faz, zone, parcel])",
    "zip_id = building.disaggregate(parcel.zip_id)",
    "has_vacant_residential_units = urbansim_parcel.building.vacant_residential_units > 0",
    "is_governmental = building.disaggregate(building_type.generic_building_type_description == 'government')",

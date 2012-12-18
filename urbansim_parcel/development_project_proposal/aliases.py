@@ -19,5 +19,6 @@ aliases = [
    "faz_id = development_project_proposal.disaggregate(zone.faz_id, intermediates=[zone])",
    "zone_id = development_project_proposal.disaggregate(parcel.zone_id)",
    "large_area_id = development_project_proposal.disaggregate(urbansim_parcel.parcel.large_area_id)",
+   "county_id = development_project_proposal.disaggregate(urbansim_parcel.parcel.county_id)",
    "parcel_sqft = development_project_proposal.disaggregate(parcel.parcel_sqft)"
     ]

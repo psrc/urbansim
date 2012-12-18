@@ -19,5 +19,6 @@ aliases = [
    "velocity_function_id = development_project_proposal_component.disaggregate(development_template_component.velocity_function_id)",
    "city_id = development_project_proposal_component.disaggregate(parcel.city_id, intermediates=[development_project_proposal])",
    "zone_id = development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.zone_id)",
-   "large_area_id = development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.large_area_id)",   
+   "large_area_id = development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.large_area_id)",
+   "county_id = development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.county_id)",   
    ]

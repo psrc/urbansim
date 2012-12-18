@@ -73,4 +73,5 @@ aliases = [
        "travel_time_to_cbd = parcel.disaggregate(urbansim.gridcell.travel_time_to_cbd)",
        "faz_id = parcel.disaggregate(zone.faz_id)",
        "large_area_id = parcel.disaggregate(faz.large_area_id, intermediates=[zone])",
+       "county_id = parcel.disaggregate(large_area.county_id, intermediates=[faz, zone])",
            ]
