@@ -123,7 +123,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                    ] )
                             )
         self.column_names.sort(reverse=True)
-        
+            
         ## buildings table provides existing stocks
         self.realestate_dataset = self.dataset_pool.get_dataset(realestate_dataset_name)
         
@@ -141,6 +141,10 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                             dataset_pool=self.dataset_pool)
         
         n_column = len(self.column_names)
+        self.column_names_index = {}
+        for iname in range(n_column):
+            self.column_names_index[self.column_names[iname]] = iname
+ 
         target_vacancy_for_this_year.column_values = target_vacancy_for_this_year.get_multiple_attributes(self.column_names).reshape((-1, n_column))
         self.realestate_dataset.column_values = self.realestate_dataset.get_multiple_attributes(self.column_names).reshape((-1, n_column))
         self.proposal_component_set.column_values = self.proposal_component_set.get_multiple_attributes(self.column_names).reshape((-1, n_column))

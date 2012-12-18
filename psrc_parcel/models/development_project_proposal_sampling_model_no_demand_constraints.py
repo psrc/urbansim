@@ -5,7 +5,7 @@
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel as DevelopmentProjectProposalSamplingModelWithMinimum
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.simulation_state import SimulationState
-from numpy import where, intersect1d, in1d, array, unique
+from numpy import where, intersect1d, in1d, array, unique, ones
 from scipy.ndimage import maximum
 from collections import defaultdict
 
@@ -37,7 +37,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                                                                       current_year=current_year, **kwargs)
         
     def _is_target_reached(self, column_value=()):
-        if column_value and column_value[0] not in self.same_demand_group:
+        if column_value and column_value[self.column_names_index['building_type_id']] not in self.same_demand_group:
             return DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value)
         if len(self.accounting) < self.all_btypes_size:
             return False
@@ -56,14 +56,20 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
 #        return all(results)      
     
     def _are_targets_reached(self, column_value):
-        if (column_value[0] not in self.same_demand_group) or (self.current_year >= 2015):
+        if (column_value[self.column_names_index['building_type_id']] not in self.same_demand_group) or (self.current_year >= 2015):
             return (DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value), True)
         is_target_reached = DevelopmentProjectProposalSamplingModelWithMinimum._is_target_reached(self, column_value)
-        results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
+        result = []
+        names_index = ones(len(self.column_names), dtype='bool8')
+        names_index[self.column_names_index['building_type_id']] = False
+        arr_column_value = array(column_value)
+        for colvalue, accounting in self.accounting.items():
+            if (not (array(colvalue)[names_index] == arr_column_value[names_index]).all()) or (colvalue[self.column_names_index['building_type_id']] not in self.same_demand_group):
+                continue
+            result.append((accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) )) and (
-                         accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                   for column_value, accounting in self.accounting.items() if column_value[0] in self.same_demand_group]
-        return (is_target_reached, all(results))            
+                         accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0)))
+        return (is_target_reached, all(result))            
                 
 
     def consider_proposal(self, proposal_index, force_accepting=False):
@@ -86,8 +92,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
             proposed_spaces[column_value] += self.proposal_component_set.total_spaces[component_index]
         
         ## skip this proposal if the proposal has no components that are needed to reach vacancy target
-        if not force_accepting and all([ self._is_target_reached(key) 
-                 or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
+        if not force_accepting and all([ (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
                  for key in proposed_spaces.keys() ]):
             return False
         
