@@ -73,8 +73,6 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                 
 
     def consider_proposal(self, proposal_index, force_accepting=False):
-        if self.weight[proposal_index] <= 0:
-            return False
         this_site = self.proposal_set["parcel_id"][proposal_index]            
         building_indexes = array([], dtype='i')
         demolished_spaces = defaultdict(int)
@@ -92,7 +90,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
             proposed_spaces[column_value] += self.proposal_component_set.total_spaces[component_index]
         
         ## skip this proposal if the proposal has no components that are needed to reach vacancy target
-        if not force_accepting and all([ (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
+        if not force_accepting and all([ all(self._are_targets_reached(key)) or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
                  for key in proposed_spaces.keys() ]):
             return False
         
