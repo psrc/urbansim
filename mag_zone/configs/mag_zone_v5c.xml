@@ -16,12 +16,12 @@
       <variable use="both" source="expression" name="household.For_hhld_inc_avg_slope" type="variable_definition">household.disaggregate(zone.avg_slope)</variable>
       <variable use="both" source="expression" name="household.For_hhld_inc_highest_worker_edu" type="variable_definition">household.aggregate(where(numpy.in1d(person.work_status, (1,2,4,5)), person.education, 0), function = maximum)</variable>
       <variable use="both" source="expression" name="household.For_hhld_inc_os_to_other_landarea_super_raz" type="variable_definition">household.disaggregate(safe_array_divide(super_raz.aggregate(where(numpy.logical_and(building.redevelopment_building_id == -1, building.building_type_id == 20),building.land_area,0))*1.0, super_raz.aggregate(where(building.redevelopment_building_id == -1,building.land_area, 0))))</variable>
-      <variable use="both" source="expression" name="household.For_hhld_inc_seasonal_to_reg_hhlds_ratio_super_raz" type="variable_definition">household.disaggregate(safe_array_divide(super_raz.aggregate(household.is_seasonal == 1)*1.0, super_raz.aggregate(household.is_seasonal &lt;&gt; 1)))</variable>    	
+      <variable use="both" source="expression" name="household.For_hhld_inc_seasonal_to_reg_hhlds_ratio_super_raz" type="variable_definition">household.disaggregate(safe_array_divide(super_raz.aggregate(household.is_seasonal == 1)*1.0, super_raz.aggregate(household.is_seasonal &lt;&gt; 1)))</variable>
       <variable use="both" source="expression" name="household.For_hhld_inc_du_occupancy_super_parcel" type="variable_definition">household.disaggregate(safe_array_divide(zone.number_of_agents(household)*1.0, zone.aggregate(building.residential_units)))</variable>
       <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_comm_sqft_taz" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (4,8)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>
       <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_ind_sqft_super_parcel" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (5,6,7)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>
-      <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_ind_sqft_taz" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (5,6,7)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>    
-	</expression_library>
+      <variable use="both" source="expression" name="household.For_hhld_inc_pct_of_ind_sqft_taz" type="variable_definition">household.disaggregate(safe_array_divide(taz2012.aggregate(where(numpy.in1d(building.building_type_id, (5,6,7)), building.non_residential_sqft, 0))*1.0, taz2012.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)))</variable>
+    </expression_library>
   </general>
   <model_manager>
     <templates name="Model Templates" parser_action="skip" hidden="True"/>
@@ -534,7 +534,7 @@
           </run>
         </structure>
         <specification type="dictionary"/>
-      </model>	  	  
+      </model>
     </models>
   </model_manager>
   <results_manager>
@@ -542,6 +542,11 @@
     </indicator_batches>
   </results_manager>
   <scenario_manager>
+    <scenario setexpanded="True" copyable="True" executable="True" name="Zone_All_Models" type="scenario">
+      <advanced type="category">
+        <seed type="integer" convert_blank_to_none="True">1</seed>
+      </advanced>
+    </scenario>
   </scenario_manager>
 </opus_project>
 
