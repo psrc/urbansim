@@ -424,9 +424,9 @@ class XMLConfiguration(object):
         """
         self._indent(self.tree.getroot())
         if file_object is not None:
-            self.tree.write(file_object, pretty_print = True)
+            self.tree.write_c14n(file_object)
         else:
-            self.tree.write(str(filename), pretty_print = True)
+            self.tree.write_c14n(str(filename))
 
     def find(self, path):
         """return the string encoding of the node referenced by 'path', or None if there is no such node"""
