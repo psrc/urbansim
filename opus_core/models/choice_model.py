@@ -269,6 +269,7 @@ class ChoiceModel(ChunkModel):
         utilities = np.empty((self.observations_mapping["index"].size,
                               self.get_choice_set_size())
                             )
+        availability = utilities.copy()
         price_coef_name = self.run_config.get('price_coef_name', None)
         price_var_name = self.run_config.get('price_variable_name', 
                                               price_coef_name)
@@ -303,8 +304,9 @@ class ChoiceModel(ChunkModel):
                     data = nan_to_num(data)
                     logger.log_warning("Inf is returned from variable %s; it is replaced with %s." % (vnames[inf_var_index], nan_to_num(inf)))                    
                     #raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
-                self.run_config['availability'] = self.model_interaction.get_availability(submodel)
                 utilities[self.observations_mapping[submodel], :] = self.upc_sequence.compute_utilities(data, coef_vals, resources=self.run_config)
+                if self.availability is not None:
+                    availability[self.observations_mapping[submodel], :] = self.model_interaction.get_availability(submodel)
                 if price_coef_name is not None:
                     ##assume the price coef doesn't vary by equation (alternative)
                     price_coef_val[self.observations_mapping[submodel], 0] = coef_vals[coef_names==price_coef_name][0]
@@ -315,6 +317,8 @@ class ChoiceModel(ChunkModel):
                                    'utilities': utilities})
         self.upc_sequence.utilities = utilities[self.observations_mapping['mapped_index'],:]
         self.run_config["index"] = index[self.observations_mapping['mapped_index'],:]
+        if self.availability is not None:
+            self.run_config["availability"] = availability[self.observations_mapping['mapped_index'],:]
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
