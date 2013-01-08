@@ -9,11 +9,7 @@ from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
-import os
-from opus_matsim.models.org.constants import matsim4opus, matsim_temp
-from opus_core import paths
-
-
+from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
 class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
     """Get needed data from UrbanSim cache into inputs for travel model.
@@ -32,6 +28,8 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         #    pydevd.settrace()
         #except: pass
         
+        config_obj = MATSimConfigObject(config, year)
+        
         # I guess this is access to the full UrbanSim cache data.
         source_data = SourceData(
             cache_directory = config['cache_directory'],
@@ -41,15 +39,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
-        output_root = paths.get_opus_home_path( matsim4opus ) 
-        if not os.path.exists( output_root ):
-            try: os.mkdir( output_root )
-            except: pass
-        
-        self.output_directory = paths.get_opus_home_path( matsim4opus, matsim_temp )
-        if not os.path.exists( self.output_directory ):
-            try: os.mkdir(self.output_directory)
-            except: pass
+        self.output_directory = config_obj.matsim_temp_path
                 
         ### Jobs ###############################
         

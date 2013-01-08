@@ -7,8 +7,8 @@ from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
 from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
-from opus_matsim.models.org.constants import matsim4opus
-from opus_core import paths
+#from opus_matsim.models.org.constants import matsim4opus
+#from opus_core import paths
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -42,7 +42,8 @@ class RunTravelModel(AbstractTravelModel):
         if tmc['matsim4urbansim'].get('test_parameter') != None:
             self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
         # change to directory opus_matsim
-        os.chdir( paths.get_opus_home_path(matsim4opus) )
+        os.chdir( config_obj.matsim4opus_path )
+        #os.chdir( paths.get_opus_home_path(matsim4opus) )
         
         # int cmd
         cmd = ""

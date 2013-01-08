@@ -69,11 +69,15 @@ class MATSimConfigObject(object):
         
         self.matsim4opus_path = paths.get_opus_home_path( matsim4opus )
         self.checkAndCreateFolder(self.matsim4opus_path)
-        self.matsim_config_path = os.path.join( self.matsim4opus_path, matsim_config )
+
+        cache_directory = config['cache_directory']
+        
+        matsim4opus_target_path = os.path.join(cache_directory, matsim4opus) 
+        self.matsim_config_path = os.path.join( matsim4opus_target_path, matsim_config )
         self.checkAndCreateFolder(self.matsim_config_path)
-        self.matsim_output_path = os.path.join( self.matsim4opus_path, matsim_output )
+        self.matsim_output_path = os.path.join( matsim4opus_target_path, matsim_output )
         self.checkAndCreateFolder(self.matsim_output_path)
-        self.matsim_temp_path = os.path.join( self.matsim4opus_path, matsim_temp )
+        self.matsim_temp_path = os.path.join( matsim4opus_target_path, matsim_temp )
         self.checkAndCreateFolder(self.matsim_temp_path)
         
         self.isTestRun = False
@@ -188,7 +192,7 @@ class MATSimConfigObject(object):
             msg = "Folder %s dosn't exist and is created ..." % (path)
             try:
                 logger.log_status(msg)
-                os.mkdir(path)
+                os.makedirs(path)
                 logger.log_status("done!")
             except: 
                 logger.log_error("Folder could not be created!")

@@ -13,9 +13,8 @@ from opus_core.store.attribute_cache import AttributeCache
 from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim_parcel.datasets.parcel_dataset import ParcelDataset
 from opus_core.storage_factory import StorageFactory
-from opus_matsim.models.org.constants import matsim4opus, matsim_temp
-from opus_core import paths
 from urbansim_parcel.datasets.person_dataset import PersonDataset
+from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -24,7 +23,11 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     
     def init(self, year, config):
         
-        self.input_directory = paths.get_opus_home_path( matsim4opus, matsim_temp )
+        config_obj = MATSimConfigObject(config, year)
+        
+        self.input_directory = config_obj.matsim_temp_path
+        
+        # self.input_directory = paths.get_opus_home_path( matsim4opus, matsim_temp )
         logger.log_status("input_directory: " + self.input_directory )
         self.in_storage = csv_storage(storage_location = self.input_directory)
         self.cache_storage = AttributeCache().get_flt_storage_for_year(year)
