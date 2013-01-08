@@ -1265,9 +1265,9 @@
     </estimation_config>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable name="opus_matsim.zurich.models.get_cache_data_into_matsim_parcel" type="selectable">True</selectable>
-        <selectable name="opus_matsim.zurich.models.run_travel_model_parcel" type="selectable">True</selectable>
-        <selectable name="opus_matsim.zurich.models.get_matsim_data_into_cache" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.models.get_cache_data_into_matsim_parcel" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.models.run_travel_model_parcel" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.models.get_matsim_data_into_cache" type="selectable">True</selectable>
       </models>
       <matsim4urbansim type="dictionary">
         <population_sampling_rate type="float">0.1</population_sampling_rate>
@@ -1642,5 +1642,6 @@
         </batch_visualization>
       </indicator_batch>
     </indicator_batches>
+    <simulation_runs/>
   </results_manager>
 </opus_project>
