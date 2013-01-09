@@ -9,7 +9,7 @@ read 30-year demographic data prepared by INED
 import h5py
 import sys, os
 import numpy as np
-from subprocess import check_output
+from subprocess import Popen, PIPE
 
 def read_header(in_fname, rename_attrs=None, dtypes=None):
     in_fh = file(in_fname)
@@ -29,7 +29,7 @@ def read_header(in_fname, rename_attrs=None, dtypes=None):
 def determine_dims(in_fname):
     names, dtype = read_header(in_fname)
     ncols = len(names)
-    nrows = int(check_output(["wc", "-l", in_fname]).split()[0]) 
+    nrows = int(Popen(["wc", "-l", in_fname], stdout=PIPE).communicate()[0].split()[0])
     ## exclude header
     nrows = nrows - 1
     return nrows, ncols
