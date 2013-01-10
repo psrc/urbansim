@@ -39,9 +39,9 @@ class ISR:
         if taz == 0: return 0
         z = my.isr[taz][1]
         if z == "A": return 0
-        elif z == "B": return 12500
-        elif z == "C": return 25000
-        elif z == "D": return 50000
+        elif z == "B": return 125 #12500
+        elif z == "C": return 250 #25000
+        elif z == "D": return 500 #50000
         elif z == "No Fee": return -40000
         print z
         return 0
@@ -59,9 +59,9 @@ class ISR:
         if taz == 0: return 0
         z = my.isr[taz][0]
         if z == "A": return 0
-        elif z == "B": return 5
-        elif z == "C": return 10
-        elif z == "D": return 20
+        elif z == "B": return 2 #5
+        elif z == "C": return 7 #10
+        elif z == "D": return 15 #20
         elif z == "No Fee": return -15
         print z
         return 0
