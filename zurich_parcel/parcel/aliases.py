@@ -17,5 +17,5 @@ aliases = [
        "number_of_buildings = parcel.number_of_agents(building)",
        "built_area = parcel.aggregate(building.land_area, intermediates=[parcel])",
        "area_capacity = parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])",
-       "SC_floor_capacity = numpy.maximum(0, (parcel.disaggregate(plan_type.aggregate(development_constraint.maximum, function=maximum)) * parcel.parcel_sqft) - parcel.aggregate(building.land_area * building.stories))",
+       "sc_floor_capacity = numpy.maximum(0, (parcel.disaggregate(plan_type.aggregate(development_constraint.maximum, function=maximum)) * parcel.parcel_sqft) - parcel.aggregate(building.land_area * building.stories))",
            ]

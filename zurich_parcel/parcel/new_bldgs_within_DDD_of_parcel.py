@@ -12,7 +12,7 @@ class new_bldgs_within_DDD_of_parcel(abstract_variable_within_radius_DDD_of_parc
     
     """
     def __init__(self, year_built, radius):
-        self.quantity = "SC_nbldgs_of_year_built_%s = parcel.aggregate(building.year_built>%s)" % (year_built, year_built)
+        self.quantity = "sc_nbldgs_of_year_built_%s = parcel.aggregate(building.year_built>%s)" % (year_built, year_built)
         abstract_variable_within_radius_DDD_of_parcel.__init__(self, radius)
     """
 
