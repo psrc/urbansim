@@ -1147,21 +1147,21 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
                 self.assert_(os.path.exists(path))
 
     def test_unique(self):
-        from numpy import array, setmember1d, all
+        from numpy import array, all
 
         a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
-        self.assertTrue(all(setmember1d(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
-        self.assertTrue(all(setmember1d(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
-        self.assertTrue(all(setmember1d(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))))
+        self.assertTrue(all(ismember(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(ismember(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(ismember(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))))
         # check that ordering is retained
         self.assertArraysEqual(unique(a), array([0.01, 0.1, 0.2, 0.5, 0.08]))
         #self.assertArraysEqual(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
         #self.assertArraysEqual(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))
         #list
         b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
-        self.assertTrue(all(setmember1d(unique(b), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
-        self.assertTrue(all(setmember1d(unique(b, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
-        self.assertTrue(all(setmember1d(unique(b, return_index=True)[1], array([0, 6, 1, 3, 5]))))
+        self.assertTrue(all(ismember(unique(b), array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(ismember(unique(b, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))))
+        self.assertTrue(all(ismember(unique(b, return_index=True)[1], array([0, 6, 1, 3, 5]))))
         
     def test_get_dataset_from_tab_storage(self):
         import opus_core
