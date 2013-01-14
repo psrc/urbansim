@@ -51,7 +51,7 @@ class RunTravelModel(AbstractTravelModel):
             logger.log_note("Note that Java for Windows can't reserve more than 1500 MB of memory to run MATSim!!!")
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
-                'classpath': "jar/matsim.jar:jar/contrib/matsim4urbansim.jar",
+                'classpath': "jar/matsim.jar;jar/contrib/matsim4urbansim.jar",
                 'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSimParcel",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
