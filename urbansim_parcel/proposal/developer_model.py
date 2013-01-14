@@ -127,8 +127,8 @@ class DeveloperModel(Model):
     parcelfees = None
     if my.scenario.startswith('Preferred'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_preferred'))
-    elif my.scenario.startswith('Transit'):
-        parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
+    #elif my.scenario.startswith('Transit'):
+    #    parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_transit'))
     elif my.scenario.startswith('Equity'):
         parcelfees = ParcelFees(dataset_pool.get_dataset('parcelfees_equity'))
     elif my.scenario.startswith('Infill'):
@@ -164,6 +164,7 @@ class DeveloperModel(Model):
     test_parcels = array(sample)
     """
 
+    #empty_parcels = parcel_set.compute_variables("(parcel.node_id>0)*(parcel.shape_area>80)")
     #test_parcels = numpy.where(empty_parcels==1)[0]
     
     global building_sqft, building_price
