@@ -30,12 +30,24 @@ class hdf5g_storage(hdf5_storage):
         f.close()
         return result
 
-    def write_table(self, table_name, table_data, mode = Storage.APPEND, driver=None, **kwargs):
+    def load_meta(self, table_name, column_name=None):
+        file_name = self._get_file_path()   
+        f = h5py.File(file_name, 'r')
+        if table_name not in f.keys():
+            raise KeyError, 'Table %s not found in %s.' % (table_name, file_name)
+        meta = self._get_meta(f[table_name], column_name)
+        f.close()
+        return meta
+    
+    def write_table(self, table_name, table_data, mode = Storage.APPEND, table_meta={}, column_meta={}, driver=None, **kwargs):
         """
         table_data is a dictionary where keys are the column names and values 
             are value arrays of the corresponding columns.
         Each table is stored as a group called table_name. Each column is stored as an hdf5 dataset.
-        Set the argument mode to 'a' if data should be appended to an existing file, otherwise the file is overwritten.       
+        By default, data are appended to an existing file. Set the argument mode to 'o' or 'w' to overwrite the file.
+        Meta data for the whole table and/or for the columns can be passed as dictionaries table_meta and column_meta, respectively.
+        Keys in column_meta have to correspond to column names. The values are again dictionaries with the meta data 
+        which can be either strings, scalar or arrays (this is hdf5 restriction).    
         Argument driver is passed to the h5py.File. Other arguments can be passed to the h5py create_dataset function, 
         e.g. compression. 
         """
@@ -51,8 +63,7 @@ class hdf5g_storage(hdf5_storage):
         if h5mode == 'a' and table_name in f.keys():
             raise StandardError, 'File %s already contains table %s. Use mode="w" to overwrite the table.' % (file_name, table_name)
         group = f.create_group(table_name)
-        for column_name in column_names:                    
-            column_ds = group.create_dataset(column_name, data=table_data[column_name], **kwargs)
+        self._write_columns(group, column_names, table_data, table_meta, column_meta, **kwargs)
         f.close()
 
 
@@ -110,10 +121,10 @@ class TestHDF5Storage(TestStorageInterface):
             'aaa': array([1,2,3,4,5]),
             'baz': array(['one', 'two', 'three', 'four', 'five']),
             }
-        self.storage.write_table(
-            table_name = 'foo1', table_data = data1) 
-        self.storage.write_table(
-            table_name = 'foo2', table_data = data2)          
+        table_meta = {'mymeta': array([5,6])}
+        col_meta = {'baz': {'description': 'this is a description of column baz'}}
+        self.storage.write_table(table_name = 'foo1', table_data = data1, table_meta=table_meta) 
+        self.storage.write_table(table_name = 'foo2', table_data = data2, column_meta=col_meta)          
               
         actual1 = self.storage.load_table(table_name = 'foo1', column_names = ['bar', 'baz'])           
         self.assertDictsEqual(data1, actual1)
@@ -123,6 +134,9 @@ class TestHDF5Storage(TestStorageInterface):
         self.assertEqual(self.storage.get_table_names(), ['foo1', 'foo2'])
         self.assertEqual(self.storage.has_table('foo1'), True)
         self.assertEqual(self.storage.has_table('bar'), False)
+        self.assertDictsEqual(self.storage.load_meta('foo1'), table_meta)
+        self.assertDictsEqual(self.storage.load_meta('foo2', 'baz'), col_meta['baz'])
+        self.assertDictsEqual(self.storage.load_meta('foo1', 'baz'), {})
 
 if __name__ == '__main__':
     opus_unittest.main()   

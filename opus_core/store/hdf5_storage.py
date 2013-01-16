@@ -60,12 +60,38 @@ class hdf5_storage(Storage):
             h5mode = 'w'
         return h5mode
     
-    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE, driver=None, **kwargs):
+    def _get_meta(self, f, column_name):
+        if column_name is None:
+            meta = dict(f.attrs.items())
+        else:
+            meta = dict(f[column_name].attrs.items())
+        return meta
+    
+    def load_meta(self, table_name, column_name=None):
+        file_name = self._get_file_path_for_table(table_name)   
+        f = h5py.File(file_name, 'r')
+        meta = self._get_meta(f, column_name)
+        f.close()
+        return meta
+    
+    def _write_columns(self, f, column_names, table_data, table_meta={}, column_meta={}, **kwargs):
+        for mkey, mvalue in table_meta.iteritems():
+            f.attrs[mkey] = mvalue
+        for column_name in column_names:                    
+            column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
+            ds_meta = column_meta.get(column_name, {})
+            for mkey, mvalue in ds_meta.iteritems():
+                column_ds.attrs[mkey] = mvalue
+            
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE, table_meta={}, column_meta={}, driver=None, **kwargs):
         """
         Argument table_name specifies the file name in the base storage directory (without the suffix '.hdf5'). 
         table_data is a dictionary where keys are the column names and values 
             are value arrays of the corresponding columns.
-        Each column is stored as an hdf5 dataset. 
+        Each column is stored as an hdf5 dataset.
+        Meta data for the whole table and/or for the columns can be passed as dictionaries table_meta and column_meta, respectively.
+        Keys in column_meta have to correspond to column names. The values are again dictionaries with the meta data 
+        which can be either strings, scalar or arrays (this is hdf5 restriction).
         Argument driver is passed to the h5py.File. kwargs are passed to the h5py create_dataset function, 
         e.g. compression. 
         """
@@ -75,8 +101,7 @@ class hdf5_storage(Storage):
             os.makedirs(dir)
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
         f = h5py.File(os.path.join(dir, '%s.hdf5' % table_name), self._get_hdf5mode(mode), driver=driver)
-        for column_name in column_names:                    
-            column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
+        self._write_columns(f, column_names, table_data, table_meta, column_meta, **kwargs)
         f.close()
 
     def get_column_names(self, table_name, lowercase=True):
@@ -118,9 +143,14 @@ class TestHDF5Storage(TestStorageInterface):
             'bar': array([1,2,3]),
             'baz': array(['one', 'two', 'three']),
             }
+        table_meta = {'mymeta': array([5,6])}
+        col_meta = {'bar': {'description': 'this is a description of column bar'}}
+        
         self.storage.write_table(
             table_name = 'foo',
-            table_data = data
+            table_data = data,
+            table_meta = table_meta,
+            column_meta = col_meta
             )          
         filename = os.path.join(self.temp_dir, 'foo.hdf5')
         self.assert_(os.path.exists(filename))
@@ -134,6 +164,9 @@ class TestHDF5Storage(TestStorageInterface):
         self.assertEqual(self.storage.get_table_names(), ['foo'])
         self.assertEqual(self.storage.has_table('foo'), True)
         self.assertEqual(self.storage.has_table('bar'), False)
+        self.assertDictsEqual(self.storage.load_meta('foo'), table_meta)
+        self.assertDictsEqual(self.storage.load_meta('foo', 'bar'), col_meta['bar'])
+        self.assertDictsEqual(self.storage.load_meta('foo', 'baz'), {})
         
 if __name__ == '__main__':
     opus_unittest.main()   
