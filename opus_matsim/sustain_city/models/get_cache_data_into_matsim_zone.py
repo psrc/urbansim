@@ -9,9 +9,6 @@ from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
-#import os
-#from opus_matsim.models.org.constants import matsim4opus, matsim_temp
-#from opus_core import paths
 from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
 
