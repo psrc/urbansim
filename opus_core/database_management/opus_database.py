@@ -228,6 +228,7 @@ def type_mapper(type_val):
     return filter_data[type_val]     
 
 def inverse_type_mapper(type_class):
+    from sqlalchemy.dialects.mysql import TINYINT, BOOLEAN
     filter_data = {Integer: "INTEGER",
                    SmallInteger: "SHORT",
                    Float: "FLOAT",
@@ -257,7 +258,11 @@ def inverse_type_mapper(type_class):
             my_type = "DOUBLE"
         elif isinstance(type_class, String):
             my_type = "VARCHAR"
-        if isinstance(type_class, Integer):
+
+        if isinstance(type_class, BOOLEAN) or \
+                ( isinstance(type_class, TINYINT) and type_class.display_width==1 ):
+            my_type = "BOOLEAN"
+        elif isinstance(type_class, Integer):
             my_type = "INTEGER"
     
     return my_type               
