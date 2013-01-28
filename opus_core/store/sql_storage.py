@@ -141,11 +141,15 @@ class sql_storage(Storage):
                     clean_column_data = [x for (r, x) in enumerate(clean_column_data)
                                          if r not in problem_rows]
                 
-		# Unicode is currently NOT supported, but will be returned
+                # Unicode is currently NOT supported, but will be returned
                 # by the database server.  To avoid import errors with non-ASCII
-		# characters in Python 2.6 or earlier, encode as UTF-8
-		# explicitly.  Proper Unicode support will require using the 'U'
+                # characters in Python 2.6 or earlier, encode as UTF-8
+                # explicitly.  Proper Unicode support will require using the 'U'
                 # column type -- a rather big change.
+                #
+                # See http://stackoverflow.com/a/7183618/946850 for details
+                # on what will be observed if the following two lines
+                # are omitted..
                 if col_type.kind == 'S':
                     clean_column_data = [x.encode('utf8') for x in clean_column_data]
                     
