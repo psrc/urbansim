@@ -4,7 +4,7 @@
 
 import copy, os, pprint
 from numpy import array
-from lxml.etree import ElementTree, tostring, fromstring, Element, _Comment
+from lxml.etree import ElementTree, tostring, fromstring, Element, _Comment, Comment
 from opus_core.configuration import Configuration
 from opus_core.configurations.xml_version import XMLVersion
 from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
@@ -599,11 +599,11 @@ class XMLConfiguration(object):
             if name != 'inherited' and not name in local_node.attrib:
                 local_node.set(name, value)
         # pair up nodes with their id's
-        parent_child_nodes = dict((node_identity_string(n), n) for n in parent_node.getchildren())
-        local_child_nodes = dict((node_identity_string(n), n) for n in local_node.getchildren())
+        parent_child_nodes = dict((node_identity_string(n), n) for n in parent_node.iterchildren(tag=Element))
+        local_child_nodes = dict((node_identity_string(n), n) for n in local_node.iterchildren(tag=Element))
         # decide what to do with each child node of the parent tree
         node_index = 0
-        for n in parent_node.getchildren():
+        for n in parent_node.iterchildren(tag=Element):
             id_ = node_identity_string(n)
             parent_child_node = parent_child_nodes[id_]
             if id_ in local_child_nodes:
@@ -1739,6 +1739,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             self.assert_(re.match(r'.*child2\.xml$', config.get_first_writable_parent_file()), 'Second parent')
         finally:
             os.access = old_os_access
+            
+    def test_parent_comments_are_removed(self):
+        f = os.path.join(self.test_configs, 'child1.xml')
+        config = XMLConfiguration(f)
+
+        print(tostring(config.full_tree.getroot()))
+        for n in config.full_tree.getroot().getiterator(tag=Comment):
+            self.assert_(not re.match('.* parent .*', n.text),
+                          'Parent comments (except parent-only comments) have been removed')
+        
 
 if __name__ == '__main__':
     opus_unittest.main()
