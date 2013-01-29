@@ -294,11 +294,23 @@ class OpusProject(object):
                     if subelement is not n:
                         n.getparent().remove(subelement)
         
-        # Remove "inherited" attribute from all nodes below tree_node
-        def clear_inherited_attribute(tree_node):
-            for node in tree_node.iter():
+        # Remove "inherited" attribute from all nodes below tree_node that were
+        # introduced by the immediate parent.  Remove all inherited nodes
+        # that were introduced by a grandparent -- copying them to the parent
+        # leads to incorrect results.
+        def clear_inherited_attribute_or_delete_inherited_nodes(tree_node):
+            nodes_to_delete = []
+            for node in tree_node.iterchildren():
                 if node.get('inherited') is not None:
-                    del node.attrib['inherited']
+                    if node.get('inherited') == parent_name:
+                        del node.attrib['inherited']
+                        clear_inherited_attribute_or_delete_inherited_nodes(node)
+                    else:
+                        nodes_to_delete.append(node)
+            
+            for node in nodes_to_delete:
+                tree_node.remove(node)
+
 
         #work on clone_node
         id_string = node_identity_string(node)
@@ -309,6 +321,7 @@ class OpusProject(object):
         parent_file = self.get_first_writable_parent_file()
         parent_project = OpusProject()
         parent_project.open(parent_file)
+        parent_name = parent_project.xml_config.name
         parent_root = parent_project.xml_config.tree.getroot()
         
         delete_immutable()
@@ -319,7 +332,7 @@ class OpusProject(object):
 
         node = parents_to_insert[-1]
         strip_children(parents_to_insert)
-        clear_inherited_attribute(node)
+        clear_inherited_attribute_or_delete_inherited_nodes(node)
         
         XMLConfiguration._merge_nodes(insert_node, node)
         

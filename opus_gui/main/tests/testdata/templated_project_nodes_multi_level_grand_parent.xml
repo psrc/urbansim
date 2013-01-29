@@ -7,6 +7,10 @@
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
     <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data" field_identifier="template_from_grandparent"/>
+    <grandparent_based_children>
+      <grandparent>
+      </grandparent>
+    </grandparent_based_children>
   </results_manager>
   <test_section name="Test section" field_identifier="grandparent" type="string">grand parent</test_section>
 </opus_project>

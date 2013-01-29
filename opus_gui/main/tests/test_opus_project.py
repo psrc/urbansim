@@ -427,6 +427,7 @@ class TestOpusProjectWithSave(OpusProjectModifyingTestCase):
                       '/results_manager:/deep_copy_this_to_parent:',
                       '/results_manager:/merge_this_with_parent:/copy_this_to_parent:',
                       '/results_manager:/overwrite_this_in_parent:/already_in_parent:',
+                      '/results_manager:/grandparent_based_children:',
                       )
         for id_string in id_strings:
             n = p.find_by_id_string(id_string)

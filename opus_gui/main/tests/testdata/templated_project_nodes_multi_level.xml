@@ -26,5 +26,9 @@
     <overwrite_this_in_parent>
       <already_in_parent name="this" new_attribute="that"/>
     </overwrite_this_in_parent>
+    <grandparent_based_children>
+      <child>
+      </child>
+    </grandparent_based_children>
   </results_manager>
 </opus_project>

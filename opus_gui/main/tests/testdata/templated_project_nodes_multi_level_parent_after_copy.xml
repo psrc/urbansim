@@ -15,6 +15,12 @@
     <overwrite_this_in_parent>
       <already_in_parent name="this" new_attribute="that"></already_in_parent>
     </overwrite_this_in_parent>
+    <grandparent_based_children>
+      <parent>
+      </parent>
+      <child>
+      </child>
+    </grandparent_based_children>
     <copy_this_to_parent dummy_attribute="this">any contents here?</copy_this_to_parent>
     <add_this_to_parent>
       <copy_this_to_parent dummy_attribute="this"></copy_this_to_parent>
