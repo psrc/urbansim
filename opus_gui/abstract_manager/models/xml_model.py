@@ -9,7 +9,7 @@ from PyQt4.Qt import qApp # For platform specific icons
 from opus_gui.util.icon_library import IconLibrary
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
-from opus_core.configurations.xml_configuration import is_no_comment
+from opus_core.configurations.xml_configuration import is_no_comment, is_comment
 
 # What node types we want checkboxes for
 # _CHECKBOX_NODE_TYPES = ('selectable')
@@ -170,7 +170,7 @@ class XmlModel(QAbstractItemModel):
 
         # Foreground Coloring
         if role == Qt.ForegroundRole:
-            if node.get('inherited'):
+            if node.get('inherited') or (is_comment(node) and node.getparent().get('inherited')):
                 return QVariant(QColor(Qt.darkBlue))
             return QVariant() # = default color
 
