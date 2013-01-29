@@ -110,7 +110,7 @@ class sql_storage(Storage):
         len_rm = len(remove_columns)
         if len_rm > 0:
             logger.log_warning('%s of %s columns ignored in %s '
-                               'due to NULL values in column(s) (with row count in parens) "%s"' 
+                               'due to NULL values in column(s) (with row count in parens) "%s)"' 
                                % (len_rm, len(table_data.keys()), table_name,
                                '), "'.join('%s" (%s' % (k, remove_columns[k]) for k in sorted(list(remove_columns)))))
             
