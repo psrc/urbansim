@@ -91,7 +91,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Load the latest project file if that flag is set in GUI configuration
         if self.gui_config.load_latest_on_start:
-            self.openProject(self.gui_config.latest_project_filename or '')
+            try:
+                self.openProject(self.gui_config.latest_project_filename or '')
+            except:
+                self.closeProject()
             if self.gui_config.load_latest_tab_on_start:
                 try:
                     self.toolBox.setCurrentIndex(int(self.gui_config.latest_tab_index))
