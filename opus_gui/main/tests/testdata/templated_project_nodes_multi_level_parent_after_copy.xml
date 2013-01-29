@@ -6,23 +6,22 @@
     <parent type="file">templated_project_nodes_multi_level_grand_parent.xml</parent>
   </general>
   <results_manager>
-    <indicator_batches name="Indicator Batches" setexpanded="True" type="group" field_identifier="template_from_parent"/>
-    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
+    <indicator_batches field_identifier="template_from_parent" name="Indicator Batches" setexpanded="True" type="group"></indicator_batches>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"></simulation_runs>
     <merge_this_with_parent>
-      <already_in_parent dummy_attribute="this"/>
-      <copy_this_to_parent dummy_attribute="this"/>
+      <already_in_parent dummy_attribute="this"></already_in_parent>
+      <copy_this_to_parent dummy_attribute="this"></copy_this_to_parent>
     </merge_this_with_parent>
     <overwrite_this_in_parent>
-      <already_in_parent name="this" new_attribute="that"/>
+      <already_in_parent name="this" new_attribute="that"></already_in_parent>
     </overwrite_this_in_parent>
     <copy_this_to_parent dummy_attribute="this">any contents here?</copy_this_to_parent>
     <add_this_to_parent>
-      <copy_this_to_parent dummy_attribute="this"/>
+      <copy_this_to_parent dummy_attribute="this"></copy_this_to_parent>
     </add_this_to_parent>
     <deep_copy_this_to_parent>
-      <copy_this_to_parent dummy_attribute="this"/>
+      <copy_this_to_parent dummy_attribute="this"></copy_this_to_parent>
     </deep_copy_this_to_parent>
   </results_manager>
-  <test_section name="Test section" field_identifier="parent" type="string">parent</test_section>
+  <test_section field_identifier="parent" name="Test section" type="string">parent</test_section>
 </opus_project>
-
