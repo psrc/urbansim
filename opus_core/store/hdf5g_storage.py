@@ -54,7 +54,7 @@ class hdf5g_storage(hdf5_storage):
         
         file_name = self.get_storage_location()  
         dir = os.path.split(file_name)[0]     
-        if not os.path.exists(dir):
+        if len(dir) > 0 and not os.path.exists(dir):
             logger.log_status("%s doesn't exist and is created" % dir)
             os.makedirs(dir)
         unused_column_size, column_names = self._get_column_size_and_names(table_data)

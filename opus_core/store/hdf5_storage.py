@@ -96,7 +96,7 @@ class hdf5_storage(Storage):
         e.g. compression. 
         """
         dir = self.get_storage_location()        
-        if not os.path.exists(dir):
+        if len(dir) > 0 and not os.path.exists(dir):
             logger.log_status("%s doesn't exist and is created" % dir)
             os.makedirs(dir)
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
