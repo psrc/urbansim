@@ -31,7 +31,11 @@ class ModelSystem(CoreModelSystem):
                                                                      profiler_name=profiler_name,
                                                                      log_file=log_file
                                                                      )
-        
+        success = success and self._run_travel_models_from_resources_in_separate_processes(year, resources)
+        return success
+    
+    def _run_travel_models_from_resources_in_separate_processes(self, year, resources):
+        success = True
         if ('travel_model_configuration' in resources) and (not resources.get('skip_travel_model', False)):
             # tnicolai add start year to travel model config
             logger.log_status('Triggering travelmodel')
@@ -44,6 +48,7 @@ class ModelSystem(CoreModelSystem):
             success = success and self._run_travel_models_in_separate_processes(resources['post_year_configuration'], 
                                                                                 year,
                                                                                 resources)
+
         return success
 
     def _run_travel_models_in_separate_processes(self, year_models_dict, year, resources):
