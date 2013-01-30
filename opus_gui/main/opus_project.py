@@ -274,8 +274,7 @@ class OpusProject(object):
         def delete_immutable():
             id_strings = self.IMMUTABLE_NODE_IDS
             for id_string in id_strings:
-                n = self.find_by_id_string(id_string, clone)
-                if n is not None:
+                for n in self.find_all_by_id_string(id_string, clone):
                     n.getparent().remove(n)
     
         # Find deepest parent node of to-be-inserted node that is also in the parent config
@@ -362,16 +361,19 @@ class OpusProject(object):
             return self.same_node_id(node1.getparent(), node2.getparent())
         return True
 
-    def find_by_id_string(self, id_string, tree_root = None):
+    def find_all_by_id_string(self, id_string, tree_root = None):
         '''
-        Select a node by it's id string in a given tree (default tree is project root).
+        Select all nodes by it's id string in a given tree (default tree is project root).
         @param id_string (str) the id string for the node to select
         @param tree_root (Element) root of the tree to insert node in
         @return the resolved node (Element) or None
-        @raises LookupError if the id cannot be resolved to a single node
         @raises SyntaxError if the id_string format is incorrect
         '''
         def lookup_next(node, path_steps):
+            if not path_steps:
+                yield node
+                return
+            
             step = path_steps[0]
             path_steps = path_steps[1:]
             try: tag, name = step.split(':')
@@ -381,13 +383,10 @@ class OpusProject(object):
                                   (step, id_string))
             found_nodes = node.findall(tag)
             found_nodes = [node for node in found_nodes if (node.get('name') == name) or (name == '')]
-            if len(found_nodes) > 1:
-                raise LookupError('id path resolved to multiple nodes. Found %d nodes like %s (from %s)'
-                                  % (len(found_nodes), step, id_string))
-            if len(found_nodes) == 0:
-                return None
-
-            return lookup_next(found_nodes[0], path_steps) if path_steps else found_nodes[0]
+            
+            for node in found_nodes:
+                for found_node in lookup_next(node, path_steps):
+                    yield found_node
 
         if tree_root is None:
             tree_root = self._root_node
@@ -396,7 +395,24 @@ class OpusProject(object):
         if all_path_steps[0] != '':
             raise SyntaxError('id path did not start with leading slash (/): %s' % id_string)
         all_path_steps = all_path_steps[1:]
-        return lookup_next(tree_root, all_path_steps)
+        return list(lookup_next(tree_root, all_path_steps))
+
+    def find_by_id_string(self, id_string, tree_root = None):
+        '''
+        Select a node by it's id string in a given tree (default tree is project root).
+        @param id_string (str) the id string for the node to select
+        @param tree_root (Element) root of the tree to insert node in
+        @return the resolved node (Element) or None
+        @raises LookupError if the id cannot be resolved to a single node
+        @raises SyntaxError if the id_string format is incorrect
+        '''
+        found_nodes = self.find_all_by_id_string(id_string, tree_root)
+        if len(found_nodes) > 1:
+            raise LookupError('id path resolved to multiple nodes. Found %d nodes (from %s): %s'
+                              % (len(found_nodes), id_string, found_nodes))
+        if len(found_nodes) == 0:
+            return None
+        return found_nodes[0]
 
     def update_xml_config(self):
         '''
