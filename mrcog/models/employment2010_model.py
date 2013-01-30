@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.model import Model
-from numpy import arange, zeros, logical_and, where, array, unique, ones
+from numpy import arange, zeros, logical_and, where, array, unique, ones, in1d
 from numpy.random import randint, shuffle
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
