@@ -17,6 +17,8 @@ class hdf5g_storage(hdf5_storage):
        An object of this class is associated with a file name (passed to the init method with its full path), 
        since all datasets are stored in one file.
     """
+    def base_location_exists(self):
+        return os.path.exists(self.get_storage_location())
       
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         """
@@ -88,10 +90,20 @@ class hdf5g_storage(hdf5_storage):
         return result
     
     def has_table(self, table_name):
+        if not self.base_location_exists():
+            return False
         f = h5py.File(self._get_file_path() , 'r')
         res = table_name in f.keys()
         f.close()
         return res
+    
+    def drop_table(self, table_name):
+        if not self.base_location_exists():
+            return
+        f = h5py.File(self._get_file_path())
+        if table_name in f.keys():
+            del f[table_name]
+        f.close()   
     
 from opus_core.tests import opus_unittest
 from opus_core.store.storage import TestStorageInterface
