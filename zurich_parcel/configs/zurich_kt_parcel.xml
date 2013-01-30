@@ -1289,14 +1289,14 @@
         <accessibility_parameter type="dictionary">
           <accessibility_destination_sampling_rate type="float">1.</accessibility_destination_sampling_rate>
           <use_MATSim_parameter type="selectable_list">
-            <selectable name="use_logit_scale_parameter_from_MATSim" type="selectable">True</selectable>
-            <selectable name="use_car_parameter_from_MATSim" type="selectable">True</selectable>
-            <selectable name="use_walk_parameter_from_MATSim" type="selectable">True</selectable>
-            <selectable name="use_raw_sums_without_ln" type="selectable">False</selectable>
+            <selectable name="use_logit_scale_parameter_from_MATSim" type="selectable">False</selectable>
+            <selectable name="use_car_parameter_from_MATSim" type="selectable">False</selectable>
+            <selectable name="use_walk_parameter_from_MATSim" type="selectable">False</selectable>
+            <selectable name="use_raw_sums_without_ln" type="selectable">True</selectable>
           </use_MATSim_parameter>
-          <logit_scale_parameter type="float">0.</logit_scale_parameter>
+          <logit_scale_parameter type="float">0.2</logit_scale_parameter>
           <car_parameter type="dictionary">
-            <betacar_travel_time type="float">0.</betacar_travel_time>
+            <betacar_travel_time type="float">-12</betacar_travel_time>
             <betacar_travel_time_power2 type="float">0.</betacar_travel_time_power2>
             <betacar_ln_travel_time type="float">0.</betacar_ln_travel_time>
             <betacar_travel_distance type="float">0.</betacar_travel_distance>
@@ -1307,7 +1307,7 @@
             <betacar_ln_travel_cost type="float">0.</betacar_ln_travel_cost>
           </car_parameter>
           <walk_parameter type="dictionary">
-            <betawalk_travel_time type="float">0.</betawalk_travel_time>
+            <betawalk_travel_time type="float">-12</betawalk_travel_time>
             <betawalk_travel_time_power2 type="float">0.</betawalk_travel_time_power2>
             <betawalk_ln_travel_time type="float">0.</betawalk_ln_travel_time>
             <betawalk_travel_distance type="float">0.</betawalk_travel_distance>
