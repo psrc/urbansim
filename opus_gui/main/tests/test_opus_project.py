@@ -425,7 +425,7 @@ class TestOpusProjectWithSave(OpusProjectModifyingTestCase):
                       '/results_manager:/copy_this_to_parent:',
                       '/results_manager:/add_this_to_parent:/copy_this_to_parent:',
                       '/results_manager:/deep_copy_this_to_parent:',
-                      '/results_manager:/merge_this_with_parent:/copy_this_to_parent:',
+                      '/results_manager:/merge_this_with_parent:',
                       '/results_manager:/overwrite_this_in_parent:/already_in_parent:',
                       '/results_manager:/grandparent_based_children:',
                       )

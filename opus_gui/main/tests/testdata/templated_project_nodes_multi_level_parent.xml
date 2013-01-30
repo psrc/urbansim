@@ -10,6 +10,11 @@
     <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
     <merge_this_with_parent>
       <already_in_parent dummy_attribute="this"/>
+      <in_both_parent_and_child dummy_attribute="this">
+        <also_copy_this>
+          <and_that/>
+        </also_copy_this>
+      </in_both_parent_and_child>
     </merge_this_with_parent>
     <overwrite_this_in_parent>
       <already_in_parent name="this"/>

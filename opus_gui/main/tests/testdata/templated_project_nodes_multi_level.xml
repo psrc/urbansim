@@ -18,10 +18,19 @@
       <copy_this_to_parent dummy_attribute="this"/>
     </add_this_to_parent>
     <deep_copy_this_to_parent>
-      <copy_this_to_parent dummy_attribute="this"/>
+      <copy_this_to_parent dummy_attribute="this">
+        <also_copy_this_to_parent/>
+      </copy_this_to_parent>
     </deep_copy_this_to_parent>
     <merge_this_with_parent>
-      <copy_this_to_parent dummy_attribute="this"/>
+      <in_both_parent_and_child other_dummy_attribute="that">
+        <also_copy_this>
+          <and_that/>
+        </also_copy_this>
+      </in_both_parent_and_child>
+      <copy_this_to_parent dummy_attribute="this">
+        <also_copy_this_to_parent/>
+      </copy_this_to_parent>
     </merge_this_with_parent>
     <overwrite_this_in_parent>
       <already_in_parent name="this" new_attribute="that"/>
