@@ -10,6 +10,8 @@
       <variable name="parcel.sc_unbuilt_parcel_area" source="expression" type="variable_definition" use="both">parcel.parcel_sqft - parcel.aggregate(building.land_area, intermediates=[parcel])</variable>
       <variable name="building.Inwork_sc_building_type" source="Python class" type="variable_definition" use="both">zurich_parcel.building.is_building_type_3</variable>
       <variable name="parcel.sc_is_built" source="expression" type="variable_definition" use="both">zurich_parcel.parcel.number_of_buildings &gt; 0</variable>
+      <variable name="person_x_job.sc_dist_pers_to_job_interaction" source="expression" type="variable_definition" use="both">sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household])-job.disaggregate(parcel.x_coord_sp, intermediates=[building]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household])-job.disaggregate(parcel.y_coord_sp, intermediates=[building]))**2)</variable>
+      <variable name="person_x_job.sc_dist_pers_to_job_interaction_exp_0106" source="expression" type="variable_definition" use="both">exp(-0.106 *(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household])-job.disaggregate(parcel.x_coord_sp, intermediates=[building]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household])-job.disaggregate(parcel.y_coord_sp, intermediates=[building]))**2)/1000.0)) #uses distance in km!</variable>
       <variable name="person.sc_dist_to_job_exp_0106" source="expression" type="variable_definition" use="both">person.aggregate(exp(-0.106 *(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.x_coord_sp, intermediates=[building, job])) ** 2 + (person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household]) - person.disaggregate(parcel.y_coord_sp, intermediates=[building, job])) ** 2))))</variable>
       <variable name="living_unit.sc_building_age_log_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(ln(urbansim_parcel.building.age_masked))</variable>
       <variable name="person.sc_dist_to_job" source="expression" type="variable_definition" use="both">sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building,living_unit, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building,living_unit, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))**2)</variable>
@@ -19,15 +21,15 @@
       <variable name="living_unit_x_household.sc_dist_to_highwayaccess_lu_x_car" source="expression" type="variable_definition" use="both">(household.cars&gt;0)*living_unit.disaggregate(parcel.dist_to_highwayaccess, intermediates=[building])</variable>
       <variable name="living_unit.sc_building_age_less_10_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(urbansim_parcel.building.age_masked&lt;11)</variable>
       <variable name="living_unit_x_household.sc_acc_pt_lu_x_no_car" source="expression" type="variable_definition" use="both">(household.cars==0)*(living_unit.disaggregate(parcel.acc_pt, intermediates=[building]))</variable>
-      <variable name="living_unit_x_household.sc_acc_car_lu_x_car" source="expression" type="variable_definition" use="both">(household.cars&gt;0)*(living_unit.disaggregate(parcel.acc_car, intermediates=[building]))</variable>
-      <variable name="living_unit_x_household.sc_share_of_hh_age_0_40_within_300m_lu" source="expression" type="variable_definition" use="model variable">(household.age_of_head&lt;40)*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_0_to_40_within_300_of_parcel, intermediates=[building]))/ living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])</variable>
-      <variable name="living_unit_x_household.sc_share_of_hh_age_40_65_within_300m_lu" source="expression" type="variable_definition" use="model variable">(numpy.logical_and(household.age_of_head&gt;40,household.age_of_head&lt;65))*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_40_to_60_within_300_of_parcel, intermediates=[building]))/ living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])</variable>
-      <variable name="living_unit_x_household.sc_share_of_hh_age_65_99_within_300m_lu" source="expression" type="variable_definition" use="model variable">(household.age_of_head&gt;64)*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_65_to_150_within_300_of_parcel, intermediates=[building]))/ living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])</variable>
+      <variable name="living_unit_x_household.sc_acc_car_lu_x_car" source="expression" type="variable_definition" use="both">(household.cars&gt;0)*(ln(living_unit.disaggregate(parcel.car_accessibility, intermediates=[building])))</variable>
+      <variable name="living_unit_x_household.sc_share_of_hh_age_0_40_within_300m_lu" source="expression" type="variable_definition" use="model variable">(household.age_of_head&lt;40)*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_0_to_40_within_300_of_parcel, intermediates=[building]))/ (living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])*1.0)</variable>
+      <variable name="living_unit_x_household.sc_share_of_hh_age_40_65_within_300m_lu" source="expression" type="variable_definition" use="model variable">(numpy.logical_and(household.age_of_head&gt;40,household.age_of_head&lt;65))*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_40_to_60_within_300_of_parcel, intermediates=[building]))/ (living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])*1.0)</variable>
+      <variable name="living_unit_x_household.sc_share_of_hh_age_65_99_within_300m_lu" source="expression" type="variable_definition" use="model variable">(household.age_of_head&gt;64)*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_65_to_150_within_300_of_parcel, intermediates=[building]))/ (living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])*1.0)</variable>
       <variable name="living_unit.sc_dist_to_previous_loc_lu_0163" source="expression" type="variable_definition" use="both">living_unit.aggregate(household.aggregate(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, living_unit, household])-person.disaggregate(parcel.x_coord_sp_lag1, intermediates=[building, living_unit, household]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, living_unit, household])-person.disaggregate(parcel.y_coord_sp_lag1, intermediates=[building, living_unit, household]))**2)**0.163) / (household.number_of_agents(person)))</variable>
-      <variable name="living_unit_x_household.sc_rent_price_to_income_lu" source="expression" type="variable_definition" use="both">household.income/living_unit.rent_price # zurich_parcel.living_unit_x_household.rooms_per_person # #</variable>
+      <variable name="living_unit_x_household.sc_rent_price_to_income_lu" source="expression" type="variable_definition" use="both">((living_unit.rent_price &gt; 0)* living_unit.rent_price)/(household.income * 2000.0) # zurich_parcel.living_unit_x_household.rooms_per_person # #</variable>
       <variable name="living_unit.sc_dist_to_workplace_lu_0203" source="expression" type="variable_definition" use="both">living_unit.aggregate(household.aggregate((sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))**2)**0.203))/ household.aggregate(person.worker))</variable>
       <variable name="living_unit_x_household.sc_dist_to_station_lu_x_no_car" source="expression" type="variable_definition" use="both">(household.cars==0)*(living_unit.disaggregate(parcel.dist_to_station, intermediates=[building]))</variable>
-      <variable name="living_unit_x_household.sc_rooms_per_person_lu" source="expression" type="variable_definition" use="both">living_unit.rooms/household.persons # zurich_parcel.living_unit_x_household.rooms_per_person # #</variable>
+      <variable name="living_unit_x_household.sc_rooms_per_person_lu" source="expression" type="variable_definition" use="both">(living_unit.rooms*1.0)/(household.persons*1.0) # zurich_parcel.living_unit_x_household.rooms_per_person # #</variable>
       <variable name="living_unit.sc_dist_to_zh_cbd_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.dist_to_zh_cbd, intermediates=[building])</variable>
       <variable name="living_unit.sc_sqm_per_room_lu" source="expression" type="variable_definition" use="both">living_unit.area/living_unit.rooms</variable>
       <variable name="living_unit.sc_building_age_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(urbansim_parcel.building.age_masked)</variable>
@@ -50,7 +52,7 @@
       <variable name="building.sc_rent_vacancy_per_municipality" source="expression" type="variable_definition" use="model variable">building.disaggregate(city.aggregate(zone.aggregate(building.residential_units, intermediates=[parcel])- zone.number_of_agents(household)), intermediates=[parcel, building])#city.aggregate(zone.aggregate(building.residential_units, intermediates=[parcel])- zone.number_of_agents(household))</variable>
       <variable name="building.sc_jobs_in_municipality" source="expression" type="variable_definition" use="model variable">building.disaggregate(city.aggregate(zone.number_of_agents(job)),intermediates=[zone,parcel])</variable>
       <variable name="building.sc_jobs_G52_H_within_1km" source="expression" type="variable_definition" use="model variable">building.disaggregate(urbansim_parcel.parcel.jobs_of_sector_5_within_1000_of_parcel, intermediates=[parcel])#urbansim_parcel.parcel.jobs_within_1000_of_parcel did work</variable>
-      <variable name="building.sc_building_is_pre_1941" source="expression" type="variable_definition" use="both">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1921</variable>
+      <variable name="building.sc_building_is_pre_1941" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 0, building.year_built &lt; 1921)</variable>
       <variable name="building.sc_jobs_within_1km" source="expression" type="variable_definition" use="model variable">building.disaggregate(ln(parcel.bz05_g52_1km+parcel.bz05_h_1km+1)) #this uses the precalculated values out of GIS</variable>
       <variable name="zones.sc_number_of_resid_units_in_zone" source="expression" type="variable_definition" use="both">zones.aggregate(buildings.residential_units, intermediates=[parcels])</variable>
       <variable name="building.sc_ln_dist_to_station" source="expression" type="variable_definition" use="both">ln(building.disaggregate(parcel.dist_to_station))</variable>
@@ -59,18 +61,18 @@
       <variable name="parcel.sc_households_within_500_of_parcel" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.households_within_500_of_parcel</variable>
       <variable name="parcel.sc_pop_ha" source="Python class" type="variable_definition" use="both">zurich_parcel.parcel.persons_within_56_of_parcel</variable>
       <variable name="building.sc_acc_pt" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.acc_pt)</variable>
-      <variable name="building.sc_acc_car" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.acc_car)</variable>
+      <variable name="building.sc_acc_car" source="expression" type="variable_definition" use="both">ln(building.disaggregate(parcel.car_accessibility))</variable>
       <variable name="building.sc_ln_sqm_per_unit" source="expression" type="variable_definition" use="both">ln(building.sqft_per_unit)</variable>
-      <variable name="living_unit.sc_acc_car_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.acc_car, intermediates=[building])</variable>
+      <variable name="living_unit.sc_acc_car_lu" source="expression" type="variable_definition" use="both">ln(living_unit.disaggregate(parcel.car_accessibility, intermediates=[building]))</variable>
       <variable name="living_unit.sc_dist_to_station_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.dist_to_station, intermediates=[building])</variable>
       <variable name="living_unit.sc_jobs_G52_H_within_1km_lu" source="expression" type="variable_definition" use="model variable">living_unit.disaggregate(urbansim_parcel.parcel.jobs_of_sector_5_within_1000_of_parcel, intermediates=[building])</variable>
       <variable name="living_unit.sc_ln_pop_ha_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(ln(zurich_parcel.parcel.persons_within_56_of_parcel), intermediates=[building])</variable>
       <variable name="living_unit.sc_sunhine_eve_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.gr_sun_eve, intermediates=[building])</variable>
       <variable name="living_unit.sc_lakeview_ha_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.gr_lake_view, intermediates=[building])</variable>
-      <variable name="living_unit.sc_building_is_pre_1921_lu" source="expression" type="variable_definition" use="both">numpy.ma.masked_where(zurich_parcel.living_unit.has_valid_year_built == 0, living_unit.disaggregate(building.year_built) &lt; 1921)</variable>
-      <variable name="living_unit.sc_building_built91tonow_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(numpy.logical_and(urbansim_parcel.building.has_valid_year_built == 0, building.year_built &gt; 1991))</variable>
-      <variable name="living_unit.sc_building_built81to90_lu" source="expression" type="variable_definition" use="both">numpy.logical_and(numpy.ma.masked_where(zurich_parcel.living_unit.has_valid_year_built == 0, living_unit.disaggregate(building.year_built)&gt; 1981), numpy.ma.masked_where(zurich_parcel.living_unit.has_valid_year_built == 0, living_unit.disaggregate(building.year_built) &lt; 1990))</variable>
-      <variable name="living_unit.sc_building_built21to30_lu" source="expression" type="variable_definition" use="both">numpy.logical_and(numpy.ma.masked_where(zurich_parcel.living_unit.has_valid_year_built == 0, living_unit.disaggregate(building.year_built)&gt; 1921), numpy.ma.masked_where(zurich_parcel.living_unit.has_valid_year_built == 0, living_unit.disaggregate(building.year_built) &lt; 1930))</variable>
+      <variable name="living_unit.sc_building_is_pre_1921_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(numpy.logical_and(building.year_built&gt; 0, building.year_built &lt; 1921))</variable>
+      <variable name="living_unit.sc_building_built91tonow_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(numpy.logical_and(building.year_built&gt; 0, building.year_built &gt; 1991))</variable>
+      <variable name="living_unit.sc_building_built81to90_lu" source="expression" type="variable_definition" use="both">numpy.logical_and(living_unit.disaggregate(building.year_built)&gt; 1981, living_unit.disaggregate(building.year_built) &lt; 1990)</variable>
+      <variable name="living_unit.sc_building_built21to30_lu" source="expression" type="variable_definition" use="both">numpy.logical_and(living_unit.disaggregate(building.year_built)&gt; 1921, living_unit.disaggregate(building.year_built) &lt; 1930)</variable>
       <variable name="living_unit.sc_pop_ha_per_building_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(zurich_parcel.parcel.persons_within_56_of_parcel, intermediates=[building])</variable>
       <variable name="living_unit.sc_logit_slope_lu" source="expression" type="variable_definition" use="model variable">living_unit.disaggregate(parcel.gr_slope_logit, intermediates=[building])</variable>
       <variable name="living_unit.sc_logit_foreigners_within_300_of_building_lu" source="expression" type="variable_definition" use="model variable">living_unit.disaggregate(ln(zurich_parcel.parcel.households_foreign_within_300_of_parcel) - ln(1 - zurich_parcel.parcel.households_foreign_within_56_of_parcel), intermediates=[building])</variable>
@@ -80,10 +82,10 @@
       <variable name="living_unit.sc_highway_within_100m_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.autobahn_100m, intermediates=[building])</variable>
       <variable name="living_unit.sc_acc_pt_lu" source="expression" type="variable_definition" use="both">living_unit.disaggregate(parcel.acc_pt, intermediates=[building])</variable>
       <variable name="building.sc_is_house" source="expression" type="variable_definition" use="both">building.building_quality_id == 1021</variable>
-      <variable name="building.sc_building_built91to05" source="expression" type="variable_definition" use="both">numpy.logical_and(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1991, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 2005)</variable>
-      <variable name="building.sc_building_built81to90" source="expression" type="variable_definition" use="both">numpy.logical_and(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1981, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1990)</variable>
-      <variable name="building.sc_building_is_pre_1921" source="expression" type="variable_definition" use="both">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1921</variable>
-      <variable name="building.sc_building_built21to30" source="expression" type="variable_definition" use="both">numpy.logical_and(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &gt; 1921, numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1930)</variable>
+      <variable name="building.sc_building_built91to05" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 1991, building.year_built &lt; 2005)</variable>
+      <variable name="building.sc_building_built81to90" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 1981, building.year_built &lt; 1990)</variable>
+      <variable name="building.sc_building_is_pre_1921" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 0, building.year_built &lt; 1921)</variable>
+      <variable name="building.sc_building_built21to30" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 1921, building.year_built &lt; 1930)</variable>
       <variable name="building.sc_ln_dist_to_zh_cbd" source="expression" type="variable_definition" use="both">ln(building.disaggregate(parcel.dist_to_zh_cbd))</variable>
       <variable name="parcel.is_nearer_100_highway" source="expression" type="variable_definition" use="both">parcel.dist_to_highwaynet&lt;100</variable>
       <variable name="parcel.sc_share_of_university_degrees" source="primary attribute" type="variable_definition" use="both">parcel.share_of_universitydegrees</variable>
@@ -103,7 +105,7 @@
       <variable name="building.sc_mean_year_built_within_zone" source="expression" type="variable_definition" use="both">building.disaggregate(zone.aggregate(building.year_built, function=mean, intermediates=[parcel]))</variable>
       <variable name="&lt;unknown>.sc_households_with_same_size" source="expression" type="variable_definition" use="both">numpy.ma.masked_where(household.persons == household.persons, households.persons * households.persons)</variable>
       <variable name="building.sc_households_within_1000_of_parcel" source="expression" type="variable_definition" use="model variable">building.disaggregate(urbansim_parcel.parcel.households_within_1000_of_parcel)</variable>
-      <variable name="building.sc_building_is_pre_1971" source="expression" type="variable_definition" use="both">numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built) &lt; 1971</variable>
+      <variable name="building.sc_building_is_pre_1971" source="expression" type="variable_definition" use="both">numpy.logical_and(building.year_built &gt; 0, building.year_built &lt; 1971)</variable>
       <variable name="building.blngcdacbd" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</variable>
       <variable name="household_x_building.is_high_income_x_ln_sqft_per_unit" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</variable>
       <variable name="household_x_building.sc_population_density_interacted_young_household" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32) * (household.age_of_head &lt; 30)</variable>
@@ -192,7 +194,7 @@
       <variable name="parcel.sc_slope" source="primary attribute" type="variable_definition" use="both">parcel.gr_slope_deg</variable>
       <variable name="parcel.sc_dist_to_zh_cbd" source="primary attribute" type="variable_definition" use="both">parcel.dist_to_zh_cbd</variable>
       <variable name="parcel.sc_acc_pt" source="primary attribute" type="variable_definition" use="both">parcel.acc_pt</variable>
-      <variable name="parcel.sc_acc_car" source="primary attribute" type="variable_definition" use="both">parcel.acc_car</variable>
+      <variable name="parcel.sc_acc_car" source="primary attribute" type="variable_definition" use="both">ln(parcel.car_accessibility)</variable>
       <variable name="parcel.sc_taxlevel_parcel" source="primary attribute" type="variable_definition" use="both">parcel.municipal_taxindex</variable>
       <variable name="building.sc_building_type_id_bigger_1" source="expression" type="variable_definition" use="both">building.building_type_id &gt; 1</variable>
       <variable name="building.sc_is_Nebengebaeude" source="expression" type="variable_definition" use="both">building.building_type_id == 7</variable>
@@ -253,7 +255,7 @@
       <variable name="building.sc_quality_is_non_residential" source="expression" type="variable_definition" use="both">building.building_quality_id &gt;=1040</variable>
       <variable name="development_event_history_x_parcel.sc_dev_fit_parcel_cut_off" source="expression" type="variable_definition" use="both">(parcel.parcel_sqft &gt; development_event_history.land_area) * parcel.parcel_sqft - development_event_history.land_area</variable>
       <variable name="development_event_history_x_parcel.sc_dev_fit_parcel_and_far" source="expression" type="variable_definition" use="both">(parcel.parcel_sqft &gt; development_event_history.land_area) * parcel.disaggregate(plan_type.aggregate(development_constraint.maximum, function=maximum)) - (parcel.aggregate(development_event_history.land_area * development_event_history.stories) / development_event_history.land_area)</variable>
-      <variable name="parcel.sc_acc_car_and_pt" source="expression" type="variable_definition" use="both">parcel.acc_car + parcel.acc_pt</variable>
+      <variable name="parcel.sc_acc_car_and_pt" source="expression" type="variable_definition" use="both">ln(parcel.car_accessibility) + parcel.acc_pt</variable>
       <variable name="parcel.sc_fed_tax_revenue_pers" source="primary attribute" type="variable_definition" use="both">parcel.fed_tax_revenue_pers</variable>
       <variable name="parcel.sc_workers_within_1000" source="Python class" type="variable_definition" use="model variable">zurich_parcel.parcel.workers_within_1000_of_parcel</variable>
       <variable name="parcel.sc_ln_jobs_and_pop_within_300" source="expression" type="variable_definition" use="both">ln(zurich_parcel.parcel.persons_within_300_of_parcel + urbansim_parcel.parcel.jobs_within_300_of_parcel)</variable>
@@ -280,7 +282,7 @@
       <variable name="building.sc_plan_type_id_of_building_location_smaller_3000" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.plan_type_id &lt; 3000, intermediates=[parcel])</variable>
       <variable name="building.sc_plan_type_id_of_building_location_between_2999_and_7000" source="expression" type="variable_definition" use="both">numpy.logical_and(building.disaggregate(parcel.plan_type_id &gt; 2999, intermediates=[parcel]), building.disaggregate(parcel.plan_type_id &lt; 7000, intermediates=[parcel]))</variable>
     </expression_library>
-    <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person']</available_datasets>
+    <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
     <dataset_pool_configuration hidden="False" type="class">
       <class_name type="string">DatasetPoolConfiguration</class_name>
@@ -382,7 +384,7 @@
           <estimate type="dictionary">
             <argument name="specification" type="string">specification</argument>
             <argument model_dependency_type="dataset" name="dataset" type="string">living_unit</argument>
-            <argument config_name="outcome_attribute" model_dependency_type="variable" name="dependent_variable" parser_action="quote_string" type="string">rent_price</argument>
+            <argument config_name="outcome_attribute" model_dependency_type="variable" name="dependent_variable" parser_action="quote_string" type="string">ln(rent_price)</argument>
             <argument convert_blank_to_none="True" name="index" type="string">rm_index</argument>
             <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -401,11 +403,12 @@
           <submodel hidden="Children" inherit_parent_values="False" name="all" submodel_id="-2" type="submodel">
             <description type="string">Rent price model according to diss of Loechl</description>
             <variable_list type="variable_list">
+              <variable_spec name="constant"></variable_spec>
               <variable_spec name="living_unit.sc_acc_car_lu"></variable_spec>
               <variable_spec name="living_unit.sc_acc_pt_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_built21to30_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_built81to90_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_building_built91to05_lu"></variable_spec>
+              <variable_spec name="living_unit.sc_building_built91tonow_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_is_pre_1921_lu"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_station_lu"></variable_spec>
               <variable_spec name="living_unit.sc_highway_within_100m_lu"></variable_spec>
@@ -417,7 +420,6 @@
               <variable_spec name="living_unit.sc_logit_foreigners_within_300_of_building_lu"></variable_spec>
               <variable_spec name="living_unit.sc_logit_slope_lu"></variable_spec>
               <variable_spec name="living_unit.sc_sunhine_eve_lu"></variable_spec>
-              <variable_spec name="constant"></variable_spec>
             </variable_list>
           </submodel>
         </specification>
@@ -732,7 +734,7 @@
               <key convert_blank_to_none="True" model_dependency_type="variable" name="weights_for_estimation_string" type="string">sc_is_placed_job = (urbansim_parcel.job.zone_id&gt;0).astype(int32)</key>
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
-              <key name="estimation_size_agents" type="float">0.1</key>
+              <key name="estimation_size_agents" type="float">0.01</key>
             </argument>
           </init>
           <prepare_for_estimate type="dictionary">
@@ -748,7 +750,7 @@
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">zurich_parcel.person.is_non_home_based_worker_with_job</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_variable" parser_action="quote_string" type="string"></argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_variable" parser_action="quote_string" type="string">job_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
             <output name="output" type="string">(alcm_coefficients, dummy)</output>
@@ -783,7 +785,8 @@
           <submodel hidden="Children" inherit_parent_values="False" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
             <variable_list type="variable_list">
-              </variable_list>
+              <variable_spec name="person_x_job.sc_dist_pers_to_job_interaction_exp_0106"></variable_spec>
+            </variable_list>
           </submodel>
         </specification>
         <estimation_config name="Estimation Configuration" parser_action="skip">
@@ -874,7 +877,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">living_unit.number_of_agents(household)==0</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(living_unit.number_of_agents(household)==0, living_unit.rent_price &gt; 0)</argument>
             <argument name="run_config" type="dictionary">
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
@@ -888,7 +891,7 @@
               <key convert_blank_to_none="True" model_dependency_type="variable" name="weights_for_estimation_string" type="string"></key>
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
-              <key name="estimation_size_agents" type="float">1.0</key>
+              <key name="estimation_size_agents" type="float">0.01</key>
             </argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
@@ -907,7 +910,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"></argument>
             <argument name="join_datasets" type="boolean">False</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">None</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">household.living_unit_id &gt; 0</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_variable" parser_action="quote_string" type="string">living_unit_id</argument>
           </prepare_for_estimate>
           <prepare_for_run type="dictionary">
@@ -933,17 +936,12 @@
           <submodel hidden="Children" inherit_parent_values="False" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
             <variable_list type="variable_list">
-              <variable_spec name="living_unit.sc_acc_car_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_acc_pt_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_building_age_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_dist_to_highwayaccess_lu"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_acc_car_lu_x_car"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_acc_pt_lu_x_no_car"></variable_spec>
               <variable_spec name="living_unit.sc_building_age_less_10_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_age_log_lu"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_dist_to_highwayaccess_lu_x_car"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_school_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_dist_to_station_lu"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_dist_to_station_lu_x_no_car"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_zh_cbd_lu"></variable_spec>
               <variable_spec name="living_unit.sc_highway_within_100m_lu"></variable_spec>
