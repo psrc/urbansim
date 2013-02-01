@@ -74,7 +74,7 @@ def read_native_write_h5py(in_fname, out_fname, dataset_name,
             if irow < skiprows: continue
             
             if irow % 1e4 == 0:
-                logger.log_note('Processed %d rows' % irow)
+                logger.log_note('Processed %d/%d rows' % (irow, shape[0]))
 
             row = row.split(comments)[0].strip()
             if row == '': continue
@@ -121,7 +121,7 @@ if __name__ == '__main__':
         data = read_native_write_h5py(in_fname, out_fname, dataset_name,
                                       rename_and_fix_attrs=rename_attrs[dataset_name])
         
-        logger.log_note('Reorganizing %s', dataset_name)
+        logger.log_note('Reorganizing %s' % dataset_name)
     
         ## post-write process
         fh = h5py.File(out_fname)
@@ -129,6 +129,9 @@ if __name__ == '__main__':
         #dataset_names = ['household', 'person']
         for year in np.unique(fh[dataset_name][:, 'year']):
             year_str = str(year)
+            
+            logger.log_note('Reorganizing year %s' % year_str)
+    
             group = fh.get(year_str, None)
             if group is None:
                 group = fh.create_group(year_str)
