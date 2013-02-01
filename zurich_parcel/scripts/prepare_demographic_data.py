@@ -10,6 +10,8 @@ import h5py
 import sys, os
 import numpy as np
 from subprocess import Popen, PIPE
+from opus_core.logger import logger
+
 
 def read_header(in_fname, rename_attrs=None, dtypes=None):
     in_fh = file(in_fname)
@@ -57,69 +59,83 @@ def read_csv_with_numpy(in_fname):
 
 def read_native_write_h5py(in_fname, out_fname, dataset_name, 
                            skiprows=1, delimiter=",", comments="#",
-                          rename_attrs=None):
-    if rename_attrs is not None:
-        rename_attrs = rename_attrs.get(dataset_name, None)
-    names, dtype = read_header(in_fname, rename_attrs=rename_attrs)
+                          rename_and_fix_attrs=None):
+    logger.log_note('Importing %s' % dataset_name)
+    names, dtype = read_header(in_fname, rename_attrs=rename_and_fix_attrs)
+
     shape = determine_dims(in_fname)
 
     out_fh = h5py.File(out_fname)
     h5data = out_fh.create_dataset(dataset_name, shape=(shape[0],), dtype=dtype, 
-                                   compression='gzip', compression_opts=9)
-
+                                   compression='gzip', compression_opts=5)
+    
     with open(in_fname, 'U') as fh:
         for irow, row in enumerate(fh):
             if irow < skiprows: continue
+            
+            if irow % 1e4 == 0:
+                logger.log_note('Processed %d rows' % irow)
+
             row = row.split(comments)[0].strip()
             if row == '': continue
             vals = [int(val) for val in row.split(delimiter)]
+            
+            # Adjust those attributes in rename_and_fix_attrs
+            # by the respective value of the first record
+            if irow == skiprows:
+                delta = dict( (names.index(n), vals[names.index(n)]) for n in rename_and_fix_attrs.values())
+                logger.log_note('Adjusting IDs: %s' % delta)
+            for i, d in delta.iteritems():
+                vals[i] -= d
+            
             h5data[irow-1] = np.array([tuple(vals)], dtype=dtype)
+            
+        logger.log_note('Processed %d rows in total' % (irow + 1))
     out_fh.close()
     return h5data
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print "Usage: python %s.py in_fname out_fname <household | person>" % sys.argv[0]
+        print "Usage: python %s.py in_fname_hh in_fname_person out_fname" % sys.argv[0]
         sys.exit(0)
+        
+    in_fnames = {}
+    in_fnames['household'], in_fnames['person'], out_fname = sys.argv[1:4]
 
-    in_fname, out_fname = sys.argv[1], sys.argv[2]
-    dataset_name = sys.argv[3]
-    assert dataset_name in ('person', 'household')
-    #in_fname = 'HouseholdCensus.csv'
-    #out_fname = 'households.h5'
-    #dataset_name = 'household'
+    try:
+        os.unlink(out_fname)
+        logger.log_note('Deleted file %s' % out_fname)
+    except:
+        pass
 
-    ## pre-process
-    ## remove the last "," from input file
-    #os.system("sed 's/,\r/\r/g' -i %s" % in_fname)
-    ## replace '<' with '_lt'
-    #os.system("sed 's/</_lt/' -i %s" % in_fname)
-    ## replace MS-DOS ctrl-Z, ie \x1a
-    #os.system("sed 's/\x1a/\x20/g' -i %s" % in_fname)
     rename_attrs = {'household': {'id':'household_id'},
                     'person':{'id':'person_id', 
                               'hh_id':'household_id'}
                     }
 
-    ## read
-    #data = read_csv_with_numpy(in_fname) 
-    #data = read_csv_native(in_fname) 
-    data = read_native_write_h5py(in_fname, out_fname, dataset_name,
-                                  rename_attrs=rename_attrs)
-
-    ## post-write process
-    fh = h5py.File(out_fname)
-    ## re-organize hdf5 file into /<year>/household & /<year>/person
-    #dataset_names = ['household', 'person']
-    for year in np.unique(fh[dataset_name][:, 'year']):
-        year_str = str(year)
-        group = fh.get(year_str, None)
-        if group is None:
-            group = fh.create_group(year_str)
-
-        is_year = fh[dataset_name][:, 'year'] == year
-        group.create_dataset(dataset_name, data=fh[dataset_name][is_year],
-                             compression='gzip', compression_opts=9)
-
-    #del fh[dataset_name]
-    fh.close()
+    for dataset_name in ('household', 'person'):
+        ## read
+        #data = read_csv_with_numpy(in_fname) 
+        #data = read_csv_native(in_fname) 
+        in_fname = in_fnames[dataset_name]
+        data = read_native_write_h5py(in_fname, out_fname, dataset_name,
+                                      rename_and_fix_attrs=rename_attrs[dataset_name])
+        
+        logger.log_note('Reorganizing %s', dataset_name)
+    
+        ## post-write process
+        fh = h5py.File(out_fname)
+        ## re-organize hdf5 file into /<year>/household & /<year>/person
+        #dataset_names = ['household', 'person']
+        for year in np.unique(fh[dataset_name][:, 'year']):
+            year_str = str(year)
+            group = fh.get(year_str, None)
+            if group is None:
+                group = fh.create_group(year_str)
+    
+            is_year = fh[dataset_name][:, 'year'] == year
+            group.create_dataset(dataset_name, data=fh[dataset_name][is_year],
+                                 compression='gzip', compression_opts=5)
+    
+        #del fh[dataset_name]
+        fh.close()
