@@ -1280,14 +1280,14 @@
         </matsim_controler>
         <controler_parameter type="dictionary">
           <cell_size type="integer">100</cell_size>
-          <shape_file type="file">data/zurich_kt_parcel/shapefiles/zurich_mun.shp</shape_file>
+          <shape_file type="file"></shape_file>
           <bounding_box type="selectable_list">
-            <selectable name="use_bounding_box" type="selectable">False</selectable>
+            <selectable name="use_bounding_box" type="selectable">True</selectable>
           </bounding_box>
-          <bounding_box_top type="float">0.</bounding_box_top>
-          <bounding_box_left type="float">0.</bounding_box_left>
-          <bounding_box_right type="float">0.</bounding_box_right>
-          <bounding_box_bottom type="float">0.</bounding_box_bottom>
+          <bounding_box_bottom type="float">223900</bounding_box_bottom>
+          <bounding_box_top type="float">283400</bounding_box_top>
+          <bounding_box_left type="float">669200</bounding_box_left>
+          <bounding_box_right type="float">710000</bounding_box_right>
         </controler_parameter>
         <accessibility_parameter type="dictionary">
           <accessibility_destination_sampling_rate type="float">1.</accessibility_destination_sampling_rate>
@@ -1412,7 +1412,6 @@
         <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2010</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="sc_real_estate_price_model_new_1" return_value="sc_real_estate_price_model" type="selectable">True</selectable>
         <selectable name="sc_postprocess_real_estate_price_model_1" return_value="sc_postprocess_real_estate_price_model" type="selectable">True</selectable>
         <selectable name="sc_real_estate_price_model_1" return_value="sc_real_estate_price_model" type="selectable">False</selectable>
         <selectable name="sc_building_transition_model_1" return_value="sc_building_transition_model" type="selectable">True</selectable>
