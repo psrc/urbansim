@@ -281,6 +281,7 @@
       <variable name="job_x_building.rh_ln_surf_sect8" source="expression" type="variable_definition" use="model variable">(job.sector_id == 8 ) * ln(building.sqm_sector8)</variable>
       <variable name="building.sc_plan_type_id_of_building_location_smaller_3000" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.plan_type_id &lt; 3000, intermediates=[parcel])</variable>
       <variable name="building.sc_plan_type_id_of_building_location_between_2999_and_7000" source="expression" type="variable_definition" use="both">numpy.logical_and(building.disaggregate(parcel.plan_type_id &gt; 2999, intermediates=[parcel]), building.disaggregate(parcel.plan_type_id &lt; 7000, intermediates=[parcel]))</variable>
+      <variable name="living_unit.sc_foreigners_within_300_of_building_lu" source="expression" type="variable_definition" use="model variable">living_unit.disaggregate(zurich_parcel.parcel.households_foreign_within_300_of_parcel, intermediates=[building])</variable>
     </expression_library>
     <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
@@ -411,13 +412,13 @@
               <variable_spec name="living_unit.sc_building_built91tonow_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_is_pre_1921_lu"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_station_lu"></variable_spec>
+              <variable_spec name="living_unit.sc_foreigners_within_300_of_building_lu"></variable_spec>
               <variable_spec name="living_unit.sc_highway_within_100m_lu"></variable_spec>
               <variable_spec name="living_unit.sc_is_house_lu"></variable_spec>
               <variable_spec name="living_unit.sc_jobs_G52_H_within_1km_lu"></variable_spec>
               <variable_spec name="living_unit.sc_lakeview_ha_lu"></variable_spec>
               <variable_spec name="living_unit.sc_ln_pop_ha_lu"></variable_spec>
               <variable_spec name="living_unit.sc_ln_sqm_per_unit_lu"></variable_spec>
-              <variable_spec name="living_unit.sc_logit_foreigners_within_300_of_building_lu"></variable_spec>
               <variable_spec name="living_unit.sc_logit_slope_lu"></variable_spec>
               <variable_spec name="living_unit.sc_sunhine_eve_lu"></variable_spec>
             </variable_list>
@@ -941,8 +942,10 @@
               <variable_spec name="living_unit.sc_building_age_less_10_lu"></variable_spec>
               <variable_spec name="living_unit.sc_building_age_log_lu"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_dist_to_highwayaccess_lu_x_car"></variable_spec>
+              <variable_spec name="living_unit.sc_dist_to_previous_loc_lu_0163"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_school_lu"></variable_spec>
               <variable_spec name="living_unit_x_household.sc_dist_to_station_lu_x_no_car"></variable_spec>
+              <variable_spec name="living_unit.sc_dist_to_workplace_lu_0203"></variable_spec>
               <variable_spec name="living_unit.sc_dist_to_zh_cbd_lu"></variable_spec>
               <variable_spec name="living_unit.sc_highway_within_100m_lu"></variable_spec>
               <variable_spec name="living_unit.sc_jobs_retail_density_300m_lu"></variable_spec>
@@ -1358,7 +1361,7 @@
   <scenario_manager>
     <scenario executable="True" name="test_run" type="scenario">
       <advanced type="category">
-        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <model_system type="string">zurich_parcel.model_coordinators.model_system</model_system>
         <debuglevel type="integer">4</debuglevel>
         <flush_variables type="boolean">False</flush_variables>
         <seed convert_blank_to_none="True" type="integer">None</seed>
