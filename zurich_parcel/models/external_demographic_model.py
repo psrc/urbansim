@@ -8,6 +8,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 from numpy import ones, in1d, array, allclose, sort, unique
+import os.path
 
 class ExternalDemographicModel(Model):
     """ A model that updates households with external demographic data; 
@@ -51,6 +52,9 @@ class ExternalDemographicModel(Model):
         """
         if dataset_pool is None:
             dataset_pool = SessionConfiguration().get_dataset_pool()
+
+        if not os.path.isabs(demographic_data_file):
+            demographic_data_file = os.path.join(dataset_pool.get_storage().get_storage_location(), demographic_data_file)
 
         hh_ds = household_dataset
         if year is None:
