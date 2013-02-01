@@ -80,7 +80,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         else:
             database_name = self._get_default_database()
         
-        connect_string = '%s://%s:%s@%s/%s'%('postgresql+psycopg2', 
+        connect_string = '%s://%s:%s@%s/%s'%('postgresql', 
                                              server_config.user_name, 
                                              password, 
                                              host_name,
