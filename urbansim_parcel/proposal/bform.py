@@ -71,6 +71,8 @@ class BForm:
         my.nonres_sqft = nonres_sqft
 
     def sfoneoff_bounds(my,X,*args):
+        # there's a bug here - need to make sure a single family house actually
+        # fits on this lot - I suppose by respecting height / FAR limits
         return numpy.append(X,1 - numpy.sum(X))
 
     def sfbuilder_bounds(my,X,*args):
