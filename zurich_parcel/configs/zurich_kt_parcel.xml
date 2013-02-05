@@ -1023,7 +1023,7 @@
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
           <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">urbansim.models.sc_employment_location_choice_model</class_module>
+            <class_module type="string">urbansim.models.employment_location_choice_model</class_module>
             <class_name>EmploymentLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
