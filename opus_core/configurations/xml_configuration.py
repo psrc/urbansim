@@ -1751,12 +1751,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             
     def test_dup_names_in_parents_do_not_crash_merge_configs(self):
         f = os.path.join(self.test_configs, 'dupname_child.xml')
-        config = XMLConfiguration(f)
-
-        print(tostring(config.full_tree.getroot()))
-        for n in config.full_tree.getroot().getiterator(tag=Comment):
-            self.assert_(not re.match('.* parent .*', n.text),
-                          'Parent comments (except parent-only comments) have been removed')
+        _ = XMLConfiguration(f)
         
 
 if __name__ == '__main__':
