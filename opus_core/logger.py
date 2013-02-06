@@ -194,14 +194,14 @@ class _Logger(Singleton):
                         break
                 
                 if not found:
-                    outer_self.log_warning('Log block not found on block stack: %s' % str(self.block_stack_item))
+                    outer_self.log_warning('Too many end_block() calls, log block not found on block stack: %s' % str(self.block_stack_item))
                     return
                 
                 while True:
                     if i is outer_self._block_stack[-1]:
                         outer_self.end_block(verbose=verbose)
                         return
-                    outer_self.log_warning('Auto-closing log block')
+                    outer_self.log_warning('Too many start_block() calls, auto-closing log block')
                     outer_self.end_block(verbose=True)
             
         return block_controller()
