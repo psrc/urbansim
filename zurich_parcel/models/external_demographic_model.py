@@ -27,11 +27,14 @@ class ExternalDemographicModel(Model):
             self.model_short_name = model_short_name
 
     def run(self, demographic_data_file, 
-            household_dataset, 
+            household_dataset,
+            person_dataset, 
             year=None,
             keep_attributes=None,
+            keep_attributes_p=None,
             fill_value=-1,
             demographic_attributes=None,
+            demographic_attributes_p=None,
             dataset_pool=None
             ): 
         """
@@ -40,14 +43,17 @@ class ExternalDemographicModel(Model):
                                Run paris/scripts/prepare_demographic_data.py to create
                                the file.
         household_dataset: opus dataset of household
+        person_dataset: opus dataset of household
         year: integer, optional
         keep_attributes: list, attributes to keep from household dataset
+        keep_attributes_p: list, attributes to keep from person dataset
         fill_value: fill attributes with fill_value for new households
         demographic_attributes: dictionary, attributes to load from external
                                 demographic file.  The key of the dictionary is 
                                 attribute name for household data, its value is
                                 the expression to compute the attribute value.
                                 See unittest for example.
+        demographic_attributes_p: Same as demographic_attributes, for persons 
         dataset_pool: opus DatasetPool object, optional
         """
         if dataset_pool is None:
@@ -55,8 +61,7 @@ class ExternalDemographicModel(Model):
 
         if not os.path.isabs(demographic_data_file):
             demographic_data_file = os.path.join(dataset_pool.get_storage().get_storage_location(), demographic_data_file)
-
-        hh_ds = household_dataset
+        
         if year is None:
             year = SimulationState().get_current_time()
         ## this relies on the order of household_id in
@@ -65,58 +70,81 @@ class ExternalDemographicModel(Model):
         fh = h5py.File(demographic_data_file, 'r')
         year_str = str(year)
         dmgh_current = fh[year_str]
-        #hh_dmgh = fh['household']
-        #ps_dmgh = fh['person']
-        #hh_dmgh_current = hh_dmgh[hh_dmgh[:,'year'] == year]
-        #ps_dmgh_current = ps_dmgh[ps_dmgh[:,'year'] == year]
+        
+        household_id = household_dataset.get_id_name()[0]
+        person_id = person_dataset.get_id_name()[0]
 
         hhs_new = compound_array_to_dataset(dmgh_current['household'],
                                         table_name='households',
-                                        id_name=hh_ds.get_id_name(),
-                                        dataset_name=hh_ds.dataset_name)
-        ps = compound_array_to_dataset(dmgh_current['person'],
+                                        id_name=household_id,
+                                        dataset_name=household_dataset.dataset_name)
+        ps_new = compound_array_to_dataset(dmgh_current['person'],
                                        table_name='persons',
-                                       id_name='person_id',
-                                       dataset_name='person')
+                                       id_name=person_id,
+                                       dataset_name=person_dataset.dataset_name)
 
-        dataset_pool.replace_dataset(hh_ds.dataset_name, hhs_new)
-        dataset_pool.replace_dataset('person', ps)
-       
-        hh_ids = hhs_new['household_id']
+        dataset_pool.replace_dataset(household_dataset.dataset_name, hhs_new)
+        dataset_pool.replace_dataset(person_dataset.dataset_name, ps_new)
+        
+        hh_ids = hhs_new[household_id]
         n_hhs = hh_ids.size
         results = {}
-        results['household_id'] = hh_ids
+        results[household_id] = hh_ids
         for k, v in demographic_attributes.iteritems():
             results[k] = hhs_new.compute_variables(v)
 
-        logger.log_status( ('Loaded demographic characteristics {} for {} ' +\
-                            'households from external file {}.').format(
+        logger.log_status( ('Loaded demographic characteristics {0} for {1} ' +\
+                            'households from external file {2}.').format(
                             demographic_attributes.keys(), n_hhs, 
                             demographic_data_file) )
 
-        is_existing = in1d(hh_ids, hh_ds['household_id'])
+        p_ids = ps_new[person_id]
+        n_ps = p_ids.size
+        results_p = {}
+        results_p[person_id] = p_ids
+        for k, v in demographic_attributes_p.iteritems():
+            results_p[k] = ps_new.compute_variables(v)
+
+        logger.log_status( ('Loaded demographic characteristics {0} for {1} ' +\
+                            'persons from external file {2}.').format(
+                            demographic_attributes_p.keys(), n_ps, 
+                            demographic_data_file) )
+
+        is_existing = in1d(hh_ids, household_dataset[household_id])
         for attr in keep_attributes:
-            dtype = hh_ds[attr].dtype
+            dtype = household_dataset[attr].dtype
             values = fill_value * ones(n_hhs, dtype=dtype)
-            values[is_existing] = hh_ds.get_attribute_by_id(attr,
+            values[is_existing] = household_dataset.get_attribute_by_id(attr,
                                                             hh_ids[is_existing])
             results[attr] = values
 
+        is_existing = in1d(p_ids, person_dataset[person_id])
+        for attr in keep_attributes_p:
+            dtype = person_dataset[attr].dtype
+            values = fill_value * ones(n_ps, dtype=dtype)
+            values[is_existing] = person_dataset.get_attribute_by_id(attr,
+                                                            p_ids[is_existing])
+            results_p[attr] = values
+
         storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='households', table_data=results)
+        storage.write_table(table_name='persons', table_data=results_p)
 
-        table_name = 'households'
-        storage.write_table(table_name=table_name,
-                            table_data=results)
-
-        new_hh_ds = Dataset(in_storage=storage, 
-                            in_table_name=table_name,
-                            id_name=household_dataset.get_id_name(),
+        new_household_ds = Dataset(in_storage=storage, 
+                            in_table_name='households',
+                            id_name=household_id,
                             dataset_name=household_dataset.dataset_name)
-        household_dataset = new_hh_ds
-        if dataset_pool is not None:
-            dataset_pool.replace_dataset(household_dataset.dataset_name,
-                                         household_dataset)
-        return household_dataset
+        
+        new_person_ds = Dataset(in_storage=storage, 
+                            in_table_name='persons',
+                            id_name=person_id,
+                            dataset_name=person_dataset.dataset_name)
+        
+        dataset_pool.replace_dataset(household_dataset.dataset_name,
+                                     new_household_ds)
+        dataset_pool.replace_dataset(person_dataset.dataset_name,
+                                     new_person_ds)
+        return None
 
 def compound_array_to_dataset(nparray, table_name, **dataset_kwargs):
     ds_dict = {}
@@ -150,6 +178,11 @@ class Tests(opus_unittest.OpusTestCase):
             'income':        array([51, 52, 53, 54])*1000,
             'keep':          array([4.1, 4.2, 4.3, 4.4]),
             }
+        p_data = {
+            'person_id':    array([ 1,  2,  3,  5,  6,  7,  8,  9, 10]),
+            'household_id': array([ 1,  1,  1,  2,  2,  3,  3,  3,  4]),
+            'age':          array([75, 71, 29, 56, 16, 22, 20, 96, 88]),
+            }
         if attribute_cache:
             self.tmp_dir = tempfile.mkdtemp(prefix='urbansim_tmp')
             SimulationState().set_cache_directory(self.tmp_dir)
@@ -159,18 +192,24 @@ class Tests(opus_unittest.OpusTestCase):
                                      in_storage=self.attribute_cache
                                     ).get_dataset_pool()        
 
-            self.attribute_cache.write_table(table_name='households', 
+            self.attribute_cache.write_table(table_name='households',
                                              table_data=hh_data)
+            self.attribute_cache.write_table(table_name='persons',
+                                             table_data=p_data)
             self.hh_ds = self.dataset_pool.get_dataset('household')
+            self.p_ds = self.dataset_pool.get_dataset('person')
         else:
             storage = StorageFactory().get_storage('dict_storage')
-            table_name = 'households'
-            storage.write_table(table_name=table_name,
+            storage.write_table(table_name='households',
                                 table_data=hh_data)
-
             self.hh_ds = Dataset(in_storage=storage, 
-                                     in_table_name=table_name,
+                                     in_table_name='households',
                                      dataset_name='household')
+            storage.write_table(table_name='persons',
+                                table_data=p_data)
+            self.p_ds = Dataset(in_storage=storage, 
+                                     in_table_name='persons',
+                                     dataset_name='person')
 
         self.dmgh_data_dir = tempfile.mkdtemp(prefix='urbansim_tmp')
         self.dmgh_data_file = os.path.join(self.dmgh_data_dir, 
@@ -238,34 +277,68 @@ class Tests(opus_unittest.OpusTestCase):
         model = ExternalDemographicModel()
         attrs_mapping = {'income': "household.income",
                           'size': "household.number_of_agents(person)",
-                   'age_of_head': "household.aggregate(person.age * (person.disaggregate(household.head_person_id)==person.person_id))"
+                          'age_of_head': "household.aggregate(person.age * (person.disaggregate(household.head_person_id)==person.person_id))",
                      }
-        new_hh_ds = model.run(self.dmgh_data_file, self.hh_ds,
+        attrs_mapping_p = { 'household_id': 'person.household_id',
+                            'age': 'person.age',
+                            'age_months' : 'age * 12', }
+        model.run(self.dmgh_data_file, self.hh_ds, self.p_ds,
                   year=2000, 
                   keep_attributes=['building_id', 'keep'],
+                  keep_attributes_p=[],
                   demographic_attributes=attrs_mapping,
+                  demographic_attributes_p=attrs_mapping_p,
                   dataset_pool=self.dataset_pool)
+        
+        new_hh_ds = self.dataset_pool.get_dataset('household')
 
-        assert allclose(new_hh_ds['household_id'], array([ 5, 1,  2,  3]))
-        assert allclose(new_hh_ds['building_id'],  array([-1, 11, 22, 33]))
-        assert allclose(new_hh_ds['keep'],         array([-1,4.1, 4.2, 4.3]))
-        assert allclose(new_hh_ds['income'],       array([65, 61, 62, 63])*1000.0)
-        assert allclose(new_hh_ds['size'],         array([ 2, 3,  3,  3]))
-        assert allclose(new_hh_ds['age_of_head'],  array([67, 30, -1, 23]))
+        self.assert_(allclose(new_hh_ds['household_id'], array([ 5, 1,  2,  3])))
+        self.assert_(allclose(new_hh_ds['building_id'],  array([-1, 11, 22, 33])))
+        self.assert_(allclose(new_hh_ds['keep'],         array([-1,4.1, 4.2, 4.3])))
+        self.assert_(allclose(new_hh_ds['income'],       array([65, 61, 62, 63])*1000.0))
+        self.assert_(allclose(new_hh_ds['size'],         array([ 2, 3,  3,  3])))
+        self.assert_(allclose(new_hh_ds['age_of_head'],  array([67, 30, -1, 23])))
+        
+        new_p_ds = self.dataset_pool.get_dataset('person')
+        
+        print('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])')
+        self.assert_(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 5, 6, 9, 10, 7, 8, 81])))
+        self.assert_(allclose(new_p_ds['household_id'], array([1, 1, 1, 2, 2, 2, 5, 5, 3, 3, 3])))
+        self.assert_(allclose(new_p_ds['age'], array([76, 72, 30, -1, 57, 17, 67, 71, 23, 21, 2])))
+        self.assert_(allclose(new_p_ds['age_months'], array([912, 864, 360, -12, 684, 204, 804, 852, 276, 252, 24])))
+        self.assert_((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
 
-        new_hh_ds = model.run(self.dmgh_data_file, self.hh_ds,
+        model.run(self.dmgh_data_file, self.hh_ds, self.p_ds,
                   year=2001, 
                   keep_attributes=['building_id', 'keep'],
+                  keep_attributes_p=[],
                   demographic_attributes=attrs_mapping,
-                 )
+                  demographic_attributes_p=attrs_mapping_p,
+                  dataset_pool=self.dataset_pool)
 
-        assert allclose(new_hh_ds['household_id'], array([ 1]))
-        assert allclose(new_hh_ds['building_id'],  array([11]))
-        assert allclose(new_hh_ds['keep'],         array([4.1]))
-        assert allclose(new_hh_ds['income'],       array([71])*1000.0)
-        assert allclose(new_hh_ds['size'],         array([ 5]))
-        assert allclose(new_hh_ds['age_of_head'],  array([31]))
+        new_hh_ds = self.dataset_pool.get_dataset('household')
 
+        self.assert_(allclose(new_hh_ds['household_id'], array([ 1])))
+        self.assert_(allclose(new_hh_ds['building_id'],  array([11])))
+        self.assert_(allclose(new_hh_ds['keep'],         array([4.1])))
+        self.assert_(allclose(new_hh_ds['income'],       array([71])*1000.0))
+        self.assert_(allclose(new_hh_ds['size'],         array([ 5])))
+        self.assert_(allclose(new_hh_ds['age_of_head'],  array([31])))
+
+        new_p_ds = self.dataset_pool.get_dataset('person')
+        
+        print('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])')
+        print('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])')
+        self.assert_(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 31])))
+        self.assert_(allclose(new_p_ds['household_id'], array([1, 1, 1, 1, 1])))
+        self.assert_(allclose(new_p_ds['age'], array([77, 73, 31, 35, 1])))
+        self.assert_(allclose(new_p_ds['age_months'], array([924, 876, 372, 420, 12])))
+        self.assert_((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
         
 if __name__ == '__main__':
     opus_unittest.main()
