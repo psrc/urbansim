@@ -1,0 +1,9 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <parent type="file">dupname_parent.xml</parent>
+    <expression_library type="dictionary">
+       <variable name="parcel.lns_bldgage" source="expression" type="variable_definition" use="model variable">1</variable>
+    </expression_library>
+   </general>
+ </opus_project>

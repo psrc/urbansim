@@ -603,7 +603,7 @@ class XMLConfiguration(object):
         local_child_nodes = dict((node_identity_string(n), n) for n in local_node.iterchildren(tag=Element))
         # decide what to do with each child node of the parent tree
         node_index = 0
-        for n in parent_node.iterchildren(tag=Element):
+        for n in tuple(parent_node.iterchildren(tag=Element)):
             id_ = node_identity_string(n)
             parent_child_node = parent_child_nodes[id_]
             if id_ in local_child_nodes:
@@ -1742,6 +1742,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             
     def test_parent_comments_are_removed(self):
         f = os.path.join(self.test_configs, 'child1.xml')
+        config = XMLConfiguration(f)
+
+        print(tostring(config.full_tree.getroot()))
+        for n in config.full_tree.getroot().getiterator(tag=Comment):
+            self.assert_(not re.match('.* parent .*', n.text),
+                          'Parent comments (except parent-only comments) have been removed')
+            
+    def test_dup_names_in_parents_do_not_crash_merge_configs(self):
+        f = os.path.join(self.test_configs, 'dupname_child.xml')
         config = XMLConfiguration(f)
 
         print(tostring(config.full_tree.getroot()))
