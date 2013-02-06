@@ -175,36 +175,25 @@ class _Logger(Singleton):
                     self.log_status('Closing warning log file: ' 
                             + os.path.join(os.getcwd(), file_dict['file_name']))
    
-                    file_dict['file_stream'].close()                
-                
-    def block(self, name='Unnamed block', verbose=True, tags=[], verbosity_level=3, *args, **kwargs):
-        outer_self = self
+                    file_dict['file_stream'].close()
+                    
+    def _end_block(self, block_stack_item, verbose):                
+        found = False
+        for i in reversed(self._block_stack):
+            if i is block_stack_item:
+                found = True
+                break
         
-        class block_controller:
-            def __enter__(self):
-                self.block_stack_item = outer_self.start_block(name=name, verbose=verbose, tags=tags,
-                                                               verbosity_level=verbosity_level,
-                                                               *args, **kwargs)
-            
-            def __exit__(self, _type, _value, _traceback):
-                found = False
-                for i in reversed(outer_self._block_stack):
-                    if i is self.block_stack_item:
-                        found = True
-                        break
-                
-                if not found:
-                    outer_self.log_warning('Too many end_block() calls, log block not found on block stack: %s' % str(self.block_stack_item))
-                    return
-                
-                while True:
-                    if i is outer_self._block_stack[-1]:
-                        outer_self.end_block(verbose=verbose)
-                        return
-                    outer_self.log_warning('Too many start_block() calls, auto-closing log block')
-                    outer_self.end_block(verbose=True)
-            
-        return block_controller()
+        if not found:
+            self.log_warning('Too many end_block() calls, log block not found on block stack: %s' % str(block_stack_item))
+            return
+        
+        while True:
+            if i is self._block_stack[-1]:
+                self.end_block(verbose=verbose)
+                return
+            self.log_warning('Too many start_block() calls, auto-closing log block')
+            self.end_block(verbose=True)
         
     def start_block(self, name='Unnamed block', verbose=True, tags=[], verbosity_level=3):
         """
@@ -466,11 +455,11 @@ def block(name='Unnamed block', verbose=True, *args, **kwargs):
         logger.log_status('log stuff')
 
     """
-    logger.start_block(name=name, verbose=verbose, *args, **kwargs)
+    block_stack_item = logger.start_block(name=name, verbose=verbose, *args, **kwargs)
     try:
         yield None
     finally:
-        logger.end_block(verbose=verbose)
+        logger._end_block(block_stack_item=block_stack_item, verbose=verbose)
 
 def log_block(*decorator_args, **decorator_kwargs):
     """ 
@@ -623,15 +612,15 @@ class LoggerTests(opus_unittest.OpusTestCase):
         # check that each file has what it's supposed to have
 
     def test_block(self):
-        with logger.block("block"):
+        with block("block"):
             pass
 
     def test_block_too_many_start_block_calls(self):
-        with logger.block("block"):
+        with block("block"):
             logger.start_block("extra start")
 
     def test_block_too_many_end_block_calls(self):
-        with logger.block("block"):
+        with block("block"):
             logger.end_block()
 
 if __name__ == '__main__':
