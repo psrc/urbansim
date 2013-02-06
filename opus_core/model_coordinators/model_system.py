@@ -81,9 +81,8 @@ class ModelSystem(object):
         logger.enable_file_logging(log_file, verbose=False)
         try:
             logger.log_status("Cache Directory set to: " + cache_directory)
-            logger.start_block('Start simulation run')
 
-            try:
+            with logger.block('Start simulation run'):
                 models = resources.get("models", [])
                 models_in_years = resources.get("models_in_year",  {})
 
@@ -107,8 +106,7 @@ class ModelSystem(object):
                 seed(seed_values)
 
                 for year in range(start_year, end_year+1):
-                    logger.start_block("Starting simulation for year " + str(year))
-                    try:
+                    with logger.block("Starting simulation for year " + str(year)):
                         self.simulation_state.set_current_time(year)
                         SessionConfiguration().get_dataset_pool().remove_all_datasets()
                         logger.disable_file_logging(log_file)
@@ -128,10 +126,6 @@ class ModelSystem(object):
                         finally:
                             logger.enable_file_logging(log_file, verbose=False)
                         collect()
-                    finally:
-                        logger.end_block()
-            finally:
-                logger.end_block()
 
         finally:
             logger.disable_file_logging(log_file)

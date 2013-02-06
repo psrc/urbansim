@@ -177,6 +177,35 @@ class _Logger(Singleton):
    
                     file_dict['file_stream'].close()                
                 
+    def block(self, name='Unnamed block', verbose=True, tags=[], verbosity_level=3, *args, **kwargs):
+        outer_self = self
+        
+        class block_controller:
+            def __enter__(self):
+                self.block_stack_item = outer_self.start_block(name=name, verbose=verbose, tags=tags,
+                                                               verbosity_level=verbosity_level,
+                                                               *args, **kwargs)
+            
+            def __exit__(self, _type, _value, _traceback):
+                found = False
+                for i in reversed(outer_self._block_stack):
+                    if i is self.block_stack_item:
+                        found = True
+                        break
+                
+                if not found:
+                    outer_self.log_warning('Log block not found on block stack: %s' % str(self.block_stack_item))
+                    return
+                
+                while True:
+                    if i is outer_self._block_stack[-1]:
+                        outer_self.end_block(verbose=verbose)
+                        return
+                    outer_self.log_warning('Auto-closing log block')
+                    outer_self.end_block(verbose=True)
+            
+        return block_controller()
+        
     def start_block(self, name='Unnamed block', verbose=True, tags=[], verbosity_level=3):
         """
         Starts a logger 'block'.  If in verbose mode, prints the current datetime.
@@ -193,8 +222,10 @@ class _Logger(Singleton):
             self._current_level += 1
             self._has_indent = False
             
-        start_time = time.time()  
-        self._block_stack.append((name, start_time, start_memory, tags, verbosity_level, self._show_exact_time, self._is_logging_memory))
+        start_time = time.time()
+        block_stack_item = (name, start_time, start_memory, tags, verbosity_level, self._show_exact_time, self._is_logging_memory)
+        self._block_stack.append(block_stack_item)
+        return block_stack_item
         
     def end_block(self, verbose=True):
         """
@@ -590,6 +621,18 @@ class LoggerTests(opus_unittest.OpusTestCase):
         os.remove(file_name_a)
         os.remove(file_name_b)
         # check that each file has what it's supposed to have
+
+    def test_block(self):
+        with logger.block("block"):
+            pass
+
+    def test_block_too_many_start_block_calls(self):
+        with logger.block("block"):
+            logger.start_block("extra start")
+
+    def test_block_too_many_end_block_calls(self):
+        with logger.block("block"):
+            logger.end_block()
 
 if __name__ == '__main__':
     opus_unittest.main()
