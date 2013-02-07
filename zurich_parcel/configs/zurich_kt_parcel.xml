@@ -443,7 +443,6 @@
             <argument model_dependency_type="variable" name="expression" parser_action="quote_string" type="string"></argument>
             <argument name="outcome_attribute" parser_action="quote_string" type="string">rent_price</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="outcome_values" type="string">rent_price</argument>
           </run>
         </structure>
         <specification type="dictionary"></specification>
