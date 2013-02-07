@@ -29,7 +29,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],
+            package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
             test_data={
             "building":{ 
                  "building_id": array([1,2,3,4]),
