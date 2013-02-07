@@ -17,7 +17,7 @@ from numpy import array
 from numpy.random import seed
 from numpy.random import randint
 
-from opus_core.logger import logger
+from opus_core.logger import logger, block
 from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
 from opus_core.model_group import ModelGroup
@@ -82,7 +82,7 @@ class ModelSystem(object):
         try:
             logger.log_status("Cache Directory set to: " + cache_directory)
 
-            with logger.block('Start simulation run'):
+            with block('Start simulation run'):
                 models = resources.get("models", [])
                 models_in_years = resources.get("models_in_year",  {})
 
@@ -106,7 +106,7 @@ class ModelSystem(object):
                 seed(seed_values)
 
                 for year in range(start_year, end_year+1):
-                    with logger.block("Starting simulation for year " + str(year)):
+                    with block("Starting simulation for year " + str(year)):
                         self.simulation_state.set_current_time(year)
                         SessionConfiguration().get_dataset_pool().remove_all_datasets()
                         logger.disable_file_logging(log_file)
