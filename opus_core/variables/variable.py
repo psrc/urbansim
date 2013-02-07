@@ -65,12 +65,10 @@ class Variable(object):
         compute_method = an_instance.compute_with_dependencies
 
         def logged_method (*req_args, **opt_args):
-            logger.start_block(name=an_instance.name(), verbose=False)
-            try:
+            with logger.block(name=an_instance.name(), verbose=False):
                 results = compute_method(*req_args, **opt_args)
                 an_instance._do_flush_dependent_variables_if_required()
-            finally:
-                logger.end_block()
+
             return results       
             
         an_instance.compute_with_dependencies = logged_method

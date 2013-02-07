@@ -56,18 +56,16 @@ class ChunkModel(Model):
         self.number_of_chunks = chunker.nchunks(dataset_index)
         chunksize = int(ceil(all_indexed_individuals.size()/float(self.number_of_chunks)))
         for ichunk in range(self.number_of_chunks):
-            logger.start_block("%s chunk %d out of %d."
-                               % (self.model_short_name, (ichunk+1), self.number_of_chunks))
-            self.index_of_current_chunk = ichunk
-            try:
+            with logger.block("%s chunk %d out of %d."
+                               % (self.model_short_name, (ichunk+1), self.number_of_chunks)):
+                self.index_of_current_chunk = ichunk
+
                 chunk_agent_indices = ordered_agent_indices[arange((ichunk*chunksize),
                                                                    min((ichunk+1)*chunksize,
                                                                        all_indexed_individuals.size()))]
                 logger.log_status("Number of agents in this chunk: %s" % chunk_agent_indices.size)
                 result_array[chunk_agent_indices] = self.run_chunk(dataset_index[chunk_agent_indices],
                                                                    dataset, **kwargs).astype(result_array_type)
-            finally:
-                logger.end_block()
 
         return result_array
 
