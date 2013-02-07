@@ -195,6 +195,24 @@ class _Logger(Singleton):
             self.log_warning('Too many start_block() calls, auto-closing log block')
             self.end_block(verbose=True)
         
+    @contextmanager
+    def block(self, name='Unnamed block', verbose=True, *args, **kwargs):
+        """ 
+        arguments directly map to 
+        logger.start_block(name='Unnamed block', verbose=True, tags=[], verbosity_level=3) 
+    
+        Enable block as a context manager, e.g.
+        with logger.block(name='new block'):
+            do something
+            logger.log_status('log stuff')
+    
+        """
+        block_stack_item = self.start_block(name=name, verbose=verbose, *args, **kwargs)
+        try:
+            yield None
+        finally:
+            self._end_block(block_stack_item=block_stack_item, verbose=verbose)
+    
     def start_block(self, name='Unnamed block', verbose=True, tags=[], verbosity_level=3):
         """
         Starts a logger 'block'.  If in verbose mode, prints the current datetime.
@@ -443,7 +461,6 @@ class _Logger(Singleton):
 # so callers can say 'from opus_core.logger import logger'.
 logger = _Logger()        
 
-@contextmanager
 def block(name='Unnamed block', verbose=True, *args, **kwargs):
     """ 
     arguments directly map to 
@@ -455,11 +472,7 @@ def block(name='Unnamed block', verbose=True, *args, **kwargs):
         logger.log_status('log stuff')
 
     """
-    block_stack_item = logger.start_block(name=name, verbose=verbose, *args, **kwargs)
-    try:
-        yield None
-    finally:
-        logger._end_block(block_stack_item=block_stack_item, verbose=verbose)
+    return logger.block(name=name, verbose=verbose, *args, **kwargs)
 
 def log_block(*decorator_args, **decorator_kwargs):
     """ 
@@ -612,15 +625,15 @@ class LoggerTests(opus_unittest.OpusTestCase):
         # check that each file has what it's supposed to have
 
     def test_block(self):
-        with block("block"):
+        with logger.block("block"):
             pass
 
     def test_block_too_many_start_block_calls(self):
-        with block("block"):
+        with logger.block("block"):
             logger.start_block("extra start")
 
     def test_block_too_many_end_block_calls(self):
-        with block("block"):
+        with logger.block("block"):
             logger.end_block()
 
 if __name__ == '__main__':

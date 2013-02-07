@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.logger import logger, block
+from opus_core.logger import logger
 
 
 class ExportStorage(object):
@@ -28,7 +28,7 @@ class ExportStorage(object):
         if not overwrite and dataset_name in out_storage.get_table_names():
             logger.log_note('Dataset %s ignored because it already exists in OPUS' % dataset_name)
             return
-        with block('Exporting dataset %s' % dataset_name):
+        with logger.block('Exporting dataset %s' % dataset_name):
             if out_dataset_name is None:
                 out_dataset_name = dataset_name
             values_from_storage = in_storage.load_table(dataset_name)
