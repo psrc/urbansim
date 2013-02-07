@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 #
-from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf, isnan
+from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf, isnan, tile, transpose, concatenate, array
 from opus_core.misc import unique
 from opus_core.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
@@ -65,40 +65,60 @@ class nl_probabilities(Probabilities):
                 i = to_be_transformed[idx]
                 this_max = utils[i,:].max()
                 utils[i,:]=utils[i,:]-this_max
-        
+       
+        topmu = 1.0
+        stratum_id = resources.get('stratum_id', False)
         correct_for_sampling = resources.get('correct_for_sampling', False)
         sampling_rate = resources.get('sampling_rate', None)
-        if correct_for_sampling and sampling_rate is None:
-            raise StandardError, "If correct_for_sampling is True, sampling_rate must be given."
+        sampling_size = resources.get('sampling_size', None)
+        nesting_keys = resources.get('keys', None)
+        sampling_nest_size = resources.get('sampling_nest_size', None)
+        if correct_for_sampling and (sampling_rate is None or sampling_size is None or sampling_nest_size is None or stratum_id is None):
+            raise StandardError, "If correct_for_sampling is True, must pass sampling_size and sampling_nest_size."
         availability = resources.get('availability', None)
         # compute logsum and conditional probability
         logsum = zeros((N,M), dtype="float64")
         Pnm = zeros((utils.shape), dtype="float64")
         if leaves.ndim < 3:
             for nest in range(M):
-                altsidx = where(leaves[nest,:])[0]
-                exponentiated_utility = exp(utils[:,altsidx]/mu[nest])
+                altsidx = where(stratum_id == nesting_keys[nest])
+                nestutils = array(reshape(utils[altsidx],(N,sampling_size[nest])),dtype="float64")
+
+                if correct_for_sampling:
+                    # need to create rate panel which is the corrections for sampling by nest
+                    nest_is_chosen = array(stratum_id[:,0] == nesting_keys[nest],dtype="int32")
+                    nest_is_not_chosen = array(stratum_id[:,0] <> nesting_keys[nest],dtype="int32")
+
+                    sampling_rate = sampling_size[nest]/sampling_nest_size[nest]
+                    modified_sampling_rate = (sampling_size[nest]-1)/(sampling_nest_size[nest]-1) 
+                    rate_panel = transpose(tile(nest_is_not_chosen,(sampling_size[nest],1)))/sampling_rate
+                    # for the chosen nest you need to leave the chosen alternative alone and divide by
+                    # the modified sample rate
+                    rate_panel2 = transpose(tile(nest_is_chosen,(sampling_size[nest]-1,1)))/modified_sampling_rate
+                    rate_panel2 = concatenate((transpose(tile(nest_is_chosen,(1,1))),rate_panel2),axis=1)
+                    rate_panel = rate_panel+rate_panel2
+                else:
+                    rate_panel = ones(nestutils.shape)
+
+                exponentiated_utility = rate_panel*exp(mu[nest]*nestutils)
                 if availability is not None:
                     exponentiated_utility = exponentiated_utility *(availability[:,altsidx]).astype('b')
-                sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
-                #if any(sum_exponentiated_utility<=0) or any(sum_exponentiated_utility == inf):
-                #    return zeros(utils.shape)
+                sum_exponentiated_utility = reshape(sum(exponentiated_utility, axis=1, dtype="float64"),(N,1))
+
+                logGnest = (topmu/mu[nest]-1.0)*log(sum_exponentiated_utility)+log(topmu)
+                logG = logGnest+(mu[nest]-1.0)*nestutils
+
                 if correct_for_sampling:
-                    if 0 in altsidx: # chosen alternative belongs to this nest (it is assumed that chosen alternative is at position 0)
-                        exponentiated_utility_logsum = exponentiated_utility.copy()
-                        exponentiated_utility_logsum[:,1:] = exponentiated_utility[:,1:]/sampling_rate[nest]
-                        sum_exponentiated_utility_logsum = sum(exponentiated_utility_logsum, axis=1, dtype="float64")
-                    else:
-                        sum_exponentiated_utility_logsum = sum_exponentiated_utility/sampling_rate[nest]
+                    mcfaddencorrection = sampling_nest_size[nest]/sampling_size[nest]
                 else:
-                    sum_exponentiated_utility_logsum = sum_exponentiated_utility
-                logsum[:,nest] = log(sum_exponentiated_utility_logsum)
-                Pnm[:, altsidx] = exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))
+                    mcfaddencorrection = 1.0 
+                Pnm[altsidx] = reshape(exp(nestutils+logG+log(mcfaddencorrection)),(nestutils.size,))
+
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
                 neleminnest = where(leaves[0,nest,:])[0].size
-                exponentiated_utility = reshape(exp(utils[altsidx]/mu[nest]), (N, neleminnest))
+                exponentiated_utility = reshape(exp(utils[altsidx]*mu[nest]), (N, neleminnest))
                 if availability is not None:
                     exponentiated_utility = exponentiated_utility *(availability[:,altsidx]).astype('b')
                 sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
@@ -117,6 +137,7 @@ class nl_probabilities(Probabilities):
                     sum_exponentiated_utility_logsum = sum_exponentiated_utility
                 logsum[:,nest] = log(sum_exponentiated_utility_logsum)
                 Pnm[altsidx] = (exponentiated_utility/reshape(sum_exponentiated_utility,(N, 1))).flat
+
         nanidx_logsum = isnan(logsum)
         nanidxPnm = isnan(Pnm)
         if nanidx_logsum.any() or nanidxPnm.any():
@@ -124,18 +145,16 @@ class nl_probabilities(Probabilities):
             logsum[where(nanidx_logsum)] = 0
             Pnm[where(nanidxPnm)] = 0
                 
-        # compute marginal probability
-        nomin = exp(mu*logsum)
-        denomin = sum(nomin, axis=1, dtype="float64")
-        Pm = nomin/reshape(denomin, (N,1))
-        
-        # compute the joint probability
-        Pn = zeros(utils.shape, dtype="float64")
         if leaves.ndim < 3:
-            for nest in range(M):
-                altsidx = where(leaves[nest,:])[0]
-                Pn[:,altsidx] = Pnm[:,altsidx] * reshape(Pm[:,nest], (N,1))
+            Pn = Pnm 
         else:
+            # compute marginal probability
+            nomin = exp(mu*logsum)
+            denomin = sum(nomin, axis=1, dtype="float64")
+            Pm = nomin/reshape(denomin, (N,1))
+        
+            # compute the joint probability
+            Pn = zeros(utils.shape, dtype="float64")
             for nest in range(M):
                 altsidx = where(leaves[:,nest,:])
                 Pn[altsidx] = (reshape(Pnm[altsidx], (N, neleminnest)) * reshape(Pm[:,nest], (N,1))).flat

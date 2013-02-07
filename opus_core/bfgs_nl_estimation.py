@@ -8,14 +8,14 @@ from numpy import zeros,log,float32,reshape,diagonal,sqrt, array, ones, where, a
 from numpy import sort, concatenate
 from opus_core.third_party.pstat import chisqprob
 from opus_core.misc import get_indices_of_matched_items, ematch
-from scipy.optimize import fmin_bfgs
+from scipy.optimize import fmin_bfgs, fmin_l_bfgs_b
 import time
 
 class bfgs_nl_estimation(EstimationProcedure):
     """Estimation of two-level nested logit using the BFGS procedure."""
     
-    range_mu = (0.00001, 1.0)
-    _epsilon = 0.0000001 # Step size for approximation of the first derivative
+    range_mu = (0.1, 6.0)
+    _epsilon = 0.001 # Step size for approximation of the first derivative
     _approximate_second_derivative = False # If True, the inverse Hessian is computed by a numerical approximation
                                            # of the second derivative (using finite difference method), 
                                            # instead of taking it out of the scipy BFGS function, which seems to be 
@@ -55,10 +55,12 @@ class bfgs_nl_estimation(EstimationProcedure):
             index_of_fixed_values[get_indices_of_matched_items(coef_names, fixed_coefs)] = True
         index_of_not_fixed_values = logical_not(index_of_fixed_values)
         
-        beta=zeros(nvars+M).astype(float32)
+        beta=ones(nvars+M).astype(float32)
         beta[-M:] = self.range_mu[1]
         beta[index_of_fixed_values] = fixed_values.astype(beta.dtype)
-        l_0 = self.nl_loglikelihood(beta, data, depm)
+        l_0beta = zeros(nvars+M).astype(float32)
+        l_0beta[-M:] = 1
+        l_0 = self.nl_loglikelihood(l_0beta, data, depm)
 
         ls_idx = arange(nvars, nvars+M)
         for name, sv in self.resources.get("starting_values", {}).iteritems():
@@ -79,7 +81,7 @@ class bfgs_nl_estimation(EstimationProcedure):
         index_of_not_fixed_values = where(logical_not(index_of_fixed_values))[0] 
         index_of_fixed_values = where(index_of_fixed_values)[0]
         
-        bounds = index_of_not_fixed_values.size*[(None, None)]
+        bounds = index_of_not_fixed_values.size*[(-5.0,5.0)]
         j=0
         for i in range(nvars+M-1, nvars-1, -1):
             if i in index_of_not_fixed_values:
@@ -87,18 +89,19 @@ class bfgs_nl_estimation(EstimationProcedure):
                 j+=1
                 
         logger.start_block('BFGS procedure')
-        bfgs_result = fmin_bfgs(self.minus_nl_loglikelihood, beta[index_of_not_fixed_values], 
+        bfgs_result = fmin_l_bfgs_b(self.minus_nl_loglikelihood, beta[index_of_not_fixed_values], pgtol=.01,
                                 args=(data, depm, beta[index_of_fixed_values], index_of_not_fixed_values, index_of_fixed_values), 
-                                full_output=True, disp=True, epsilon=self.resources.get('bfgs_epsilon', self._epsilon),
+								bounds=bounds,approx_grad=True,
+                                disp=True, epsilon=self.resources.get('bfgs_epsilon', self._epsilon),
                                 )
 
         logger.end_block()
         beta[index_of_not_fixed_values] = bfgs_result[0].astype(beta.dtype)
         se = zeros(nvars+M)
         tvalues = zeros(nvars+M)
-        mingrad = bfgs_result[2]
+        mingrad = bfgs_result[2]['grad']
 
-        if not self.resources.get('bfgs_approximate_second_derivative', self._approximate_second_derivative):
+        if 0: # hessian is no longer provided by bfgs ## not self.resources.get('bfgs_approximate_second_derivative', self._approximate_second_derivative):
             inv_hessian = bfgs_result[3]
             se[index_of_not_fixed_values] = sqrt(diagonal(inv_hessian))
         else:
@@ -127,6 +130,7 @@ class bfgs_nl_estimation(EstimationProcedure):
         logger.log_status('Adj. likelihood ratio index: ', adj_ll_ratio, tags=tags, verbosity_level=vl)
         logger.log_status('Number of observations:      ', nobs, tags=tags, verbosity_level=vl)
         logger.log_status('Suggested |t-value| >        ', sqrt(log(nobs)))
+        logger.log_status('WARNING: Standard errors printed below are approximated')
         logger.log_status("-----------------------------------------------", tags=tags, verbosity_level=vl)
         if coef_names is not None:
             nestn = nest_numbers
@@ -159,7 +163,10 @@ class bfgs_nl_estimation(EstimationProcedure):
         coef = zeros(b.size + b_fixed.size)
         coef[index_of_not_fixed_values] = b.astype(coef.dtype)
         coef[index_of_fixed_values] = b_fixed
-        return -1*self.nl_loglikelihood(coef, data, depm)
+        a = -1*self.nl_loglikelihood(coef, data, depm)
+        print "coefficients = ", coef
+        print a
+        return a
         
     def get_nest_numbers(self):
         model = self.resources.get('_model_')

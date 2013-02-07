@@ -143,12 +143,18 @@ class HierarchicalChoiceModel(ChoiceModel):
         stratum_sample_size = self.estimate_config["sample_size_from_each_stratum"]
         keys = sort(self.nested_structure.keys())
         self.estimate_config["sampling_rate"] = ones(self.number_of_nests)
+        self.estimate_config["keys"] = keys
+        self.estimate_config["sampling_size"] = ones(self.number_of_nests)
+        self.estimate_config["sampling_nest_size"] = ones(self.number_of_nests)
+        self.estimate_config["stratum_id"] = self.sampler_class._stratum_id
         this_sample_size = stratum_sample_size
         for nest in range(self.number_of_nests):
             idx = where(self.estimate_config['stratum'] == keys[nest])[0]
             if isinstance(stratum_sample_size, ndarray):
                 this_sample_size = stratum_sample_size[nest]
             self.estimate_config["sampling_rate"][nest] = this_sample_size/float(idx.size)
+            self.estimate_config["sampling_size"][nest] = this_sample_size
+            self.estimate_config["sampling_nest_size"][nest] = idx.size
             
     def add_logsum_to_coefficients(self, estimation_results):
         for submodel, res in estimation_results.iteritems():
