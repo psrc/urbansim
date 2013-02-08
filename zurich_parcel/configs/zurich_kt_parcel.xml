@@ -980,7 +980,7 @@
             <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument model_dependency_type="dataset" name="control_totals" type="string">control_totals</argument>
+            <argument model_dependency_type="dataset" name="control_totals" parser_action="quote_string" type="string">control_totals</argument>
             <argument model_dependency_type="dataset" name="job_set" type="string">job</argument>
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
@@ -1085,15 +1085,7 @@
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">(job.building_id&gt;0)</argument>
           </prepare_for_estimate>
         </structure>
-        <specification type="dictionary">
-          <submodel_group name="home_based" type="submodel_group">
-            <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
-              <description type="string">No submodel</description>
-              <variable_list type="variable_list">
-                <variable_spec name="building.sc_ln_dist_to_station"></variable_spec>
-              </variable_list>
-            </submodel>
-          </submodel_group>
+        <specification inherit_parent_values="False" type="dictionary">
           <submodel_group name="non_home_based" type="submodel_group">
             <submodel hidden="Children" name="manufacturing" submodel_id="1" type="submodel">
               <description type="string">manufacturing</description>
@@ -1349,11 +1341,18 @@
         </strategy>
       </matsim_config>
       <years_to_run key_name="year" type="category_with_special_keys">
-        <!--
-  <run_description type="dictionary">
-    <year type="integer">2001</year>
-  </run_description>
--->
+        <run_description type="dictionary">
+          <year type="integer">2005</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2010</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2015</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2020</year>
+        </run_description>
       </years_to_run>
     </travel_model_configuration>
   </model_manager>
@@ -1387,7 +1386,7 @@
           <selectable name="job" type="selectable">True</selectable>
           <selectable name="building_type" type="selectable">True<package_name type="string">zurich_parcel</package_name>
           </selectable>
-          <selectable name="travel_data" type="selectable">False</selectable>
+          <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>
           <selectable name="living_units_history" type="selectable">True</selectable>
         </datasets_to_preload>
@@ -1410,22 +1409,22 @@
       <base_year field_identifier="Base Year" name="" type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear field_identifier="First Year of Simulation" name="" type="integer">2001</firstyear>
-        <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2010</lastyear>
+        <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2022</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
+        <selectable name="sc_real_estate_price_model_1" return_value="sc_real_estate_price_model" type="selectable">True</selectable>
         <selectable name="sc_postprocess_real_estate_price_model_1" return_value="sc_postprocess_real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="sc_real_estate_price_model_1" return_value="sc_real_estate_price_model" type="selectable">False</selectable>
         <selectable name="sc_building_transition_model_1" return_value="sc_building_transition_model" type="selectable">True</selectable>
         <selectable name="sc_RBLCM_1" return_value="sc_RBLCM" type="selectable">True</selectable>
         <selectable name="sc_NRBLCM_1" return_value="sc_NRBLCM" type="selectable">True</selectable>
         <selectable name="sc_workplace_location_choice_1" return_value="sc_workplace_location_choice" type="selectable">True</selectable>
-        <selectable name="sc_household_transition_model_1" return_value="sc_household_transition_model" type="selectable">True</selectable>
-        <selectable name="sc_household_relocation_model_1" return_value="sc_household_relocation_model" type="selectable">True</selectable>
-        <selectable name="sc_household_location_choice_model_1" return_value="sc_household_location_choice_model" type="selectable">True</selectable>
         <selectable name="new_employment_transition_model_1" return_value="sc_employment_transition_model" type="selectable">True</selectable>
         <selectable name="sc_employment_relocation_model" return_value="sc_employment_relocation_model" type="selectable">True</selectable>
         <selectable name="sc_employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
         </selectable>
+        <selectable name="sc_household_transition_model_1" return_value="sc_household_transition_model" type="selectable">True</selectable>
+        <selectable name="sc_household_relocation_model_1" return_value="sc_household_relocation_model" type="selectable">True</selectable>
+        <selectable name="sc_household_location_choice_model_1" return_value="sc_household_location_choice_model" type="selectable">True</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
