@@ -282,6 +282,13 @@
       <variable name="building.sc_plan_type_id_of_building_location_smaller_3000" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.plan_type_id &lt; 3000, intermediates=[parcel])</variable>
       <variable name="building.sc_plan_type_id_of_building_location_between_2999_and_7000" source="expression" type="variable_definition" use="both">numpy.logical_and(building.disaggregate(parcel.plan_type_id &gt; 2999, intermediates=[parcel]), building.disaggregate(parcel.plan_type_id &lt; 7000, intermediates=[parcel]))</variable>
       <variable name="living_unit.sc_foreigners_within_300_of_building_lu" source="expression" type="variable_definition" use="model variable">living_unit.disaggregate(zurich_parcel.parcel.households_foreign_within_300_of_parcel, intermediates=[building])</variable>
+      <variable name="household.sc_household_has_car" source="expression" type="variable_definition" use="both">(household.cars &gt; 0) #numpy.logical_or(household.cars &gt; 0, household.household_id &gt; 0)</variable>
+      <variable name="household.sc_number_of_workers_in_household" source="expression" type="variable_definition" use="both">household.aggregate(person.worker, function=sum)</variable>
+      <variable name="household.sc_level_of_education_hh" source="expression" type="variable_definition" use="both">household.aggregate(person.finlevedu, function=mean)</variable>
+      <variable name="household.sc_number_of_cars_in_household" source="primary attribute" type="variable_definition" use="both">household.cars</variable>
+      <variable name="household.sc_household_income" source="primary attribute" type="variable_definition" use="both">household.income</variable>
+      <variable name="household.sc_households_number_of_cars" source="primary attribute" type="variable_definition" use="both">household.cars</variable>
+      <variable name="household.sc_number_of_persons_in_household" source="primary attribute" type="variable_definition" use="both">household.persons</variable>
     </expression_library>
     <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
@@ -962,6 +969,96 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model>
+      <model name="sc_income_regression_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.regression_model</class_module>
+            <class_name type="string">RegressionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">RegressionModel</name>
+            <argument name="regression_procedure" parser_action="quote_string" type="string">opus_core.linear_regression</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="submodel_string" type="string"></argument>
+            <argument convert_blank_to_none="True" name="run_config" type="string"></argument>
+            <argument convert_blank_to_none="True" name="estimate_config" type="string"></argument>
+            <argument name="debuglevel" type="integer">0</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument model_dependency_type="dataset" name="dataset" type="string">household</argument>
+            <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <output hidden="False" name="output" type="string">hh_income</output>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument convert_blank_to_none="True" model_dependency_type="dataset" name="dataset" type="string">household</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="dataset_filter" parser_action="quote_string" type="string"></argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="specification_table" parser_action="quote_string" type="string">sc_income_regression_model_specification</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="coefficients_table" parser_action="quote_string" type="string">sc_income_regression_model_coefficients</argument>
+            <argument name="cache_storage" type="string">base_cache_storage</argument>
+            <argument name="sample_coefficients" type="boolean">False</argument>
+            <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+            <argument name="multiplicator" type="integer">1</argument>
+            <output name="output" type="string">(specification, coefficients, rm_index)</output>
+          </prepare_for_run>
+          <estimate type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument model_dependency_type="dataset" name="dataset" type="string">household</argument>
+            <argument config_name="outcome_attribute" model_dependency_type="variable" name="dependent_variable" parser_action="quote_string" type="string">household.income*2000</argument>
+            <argument convert_blank_to_none="True" name="index" type="string">rm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <output name="output" type="string">(coefficients, dummy)</output>
+          </estimate>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <argument convert_blank_to_none="True" model_dependency_type="dataset" name="dataset" type="string">household</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="dataset_filter" parser_action="quote_string" type="string">household.income &gt; 0</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="specification_table" parser_action="quote_string" type="string">regression_model_template_specification</argument>
+            <output name="output" type="string">(specification, rm_index)</output>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="Submodel" submodel_id="-2" type="submodel">
+            <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"></variable_spec>
+              <variable_spec name="household.sc_level_of_education_hh"></variable_spec>
+              <variable_spec name="household.sc_number_of_cars_in_household"></variable_spec>
+              <variable_spec name="household.sc_number_of_persons_in_household"></variable_spec>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="sc_postprocess_income_regression_model" type="model">
+        <dependencies type="list">['sc_income_regression_model']</dependencies>
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument model_dependency_type="dataset" name="dataset" type="string">household</argument>
+            <argument model_dependency_type="variable" name="expression" parser_action="quote_string" type="string"></argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">income</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="outcome_values" type="string">hh_income</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"></specification>
+      </model>
       <model name="sc_employment_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -1412,6 +1509,8 @@
         <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2022</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
+        <selectable name="sc_income_regression_model" type="selectable">False</selectable>
+        <selectable name="sc_postprocess_income_regression_model" type="selectable">False</selectable>
         <selectable name="sc_building_transition_model" type="selectable">True</selectable>
         <selectable name="sc_RBLCM" type="selectable">True</selectable>
         <selectable name="sc_NRBLCM" type="selectable">True</selectable>
