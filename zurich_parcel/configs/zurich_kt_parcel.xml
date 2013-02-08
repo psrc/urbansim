@@ -1412,19 +1412,19 @@
         <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2022</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="sc_real_estate_price_model_1" return_value="sc_real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="sc_postprocess_real_estate_price_model_1" return_value="sc_postprocess_real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="sc_building_transition_model_1" return_value="sc_building_transition_model" type="selectable">True</selectable>
-        <selectable name="sc_RBLCM_1" return_value="sc_RBLCM" type="selectable">True</selectable>
-        <selectable name="sc_NRBLCM_1" return_value="sc_NRBLCM" type="selectable">True</selectable>
-        <selectable name="sc_workplace_location_choice_1" return_value="sc_workplace_location_choice" type="selectable">True</selectable>
-        <selectable name="new_employment_transition_model_1" return_value="sc_employment_transition_model" type="selectable">True</selectable>
-        <selectable name="sc_employment_relocation_model" return_value="sc_employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="sc_building_transition_model" type="selectable">True</selectable>
+        <selectable name="sc_RBLCM" type="selectable">True</selectable>
+        <selectable name="sc_NRBLCM" type="selectable">True</selectable>
+        <selectable name="sc_real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="sc_postprocess_real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="sc_employment_transition_model" type="selectable">True</selectable>
+        <selectable name="sc_employment_relocation_model" type="selectable">True</selectable>
         <selectable name="sc_employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable name="sc_household_transition_model_1" return_value="sc_household_transition_model" type="selectable">True</selectable>
-        <selectable name="sc_household_relocation_model_1" return_value="sc_household_relocation_model" type="selectable">True</selectable>
-        <selectable name="sc_household_location_choice_model_1" return_value="sc_household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="sc_workplace_location_choice" type="selectable">True</selectable>
+        <selectable name="sc_household_transition_model" type="selectable">True</selectable>
+        <selectable name="sc_household_relocation_model" type="selectable">True</selectable>
+        <selectable name="sc_household_location_choice_model" type="selectable">True</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
