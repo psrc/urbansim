@@ -18,7 +18,7 @@ from opus_gui.data_manager.data_manager_functions import get_path_to_tool_module
 
 
 class FileController_OpusData(FileController):
-    def __init__(self, manager, data_path, parent_widget):
+    def __init__(self, manager, data_path, parent_widget, tools_model):
 
         FileController.__init__(self, manager, data_path, parent_widget)
 
@@ -32,6 +32,8 @@ class FileController_OpusData(FileController):
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"), self.openTextFile)
 
         self.tool_library_node = self.manager.project.find('data_manager/tool_library')
+        
+        self.tools_model = tools_model
 
     def viewDatasetAction(self):
         #print "viewDatasetAction"
@@ -338,7 +340,7 @@ class FileController_OpusData(FileController):
                                     tool_config = None,
                                     tool_library_node = self.tool_library_node, 
                                     params = params,
-                                    model = self.model)
+                                    model = self.tools_model)
             window.show()
         return
 

@@ -12,7 +12,8 @@ class DataManager(AbstractManager):
     def __init__(self, base_xml_widget, base_file_widget, tab_widget, project):
         AbstractManager.__init__(self, base_xml_widget, tab_widget, project, 'data_manager')
         self.xml_controller = XmlController_DataTools(self)
-        self.file_tree = FileController_OpusData(self, self.project.data_path(), base_file_widget)
+        self.file_tree = FileController_OpusData(self, self.project.data_path(), base_file_widget,
+                                                 self.xml_controller.model)
 
     def close(self):
         ''' See AbstractManager for documentation '''
