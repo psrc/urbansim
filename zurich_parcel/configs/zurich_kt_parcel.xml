@@ -373,7 +373,7 @@
             <argument model_dependency_type="dataset" name="dataset" type="string">living_unit</argument>
             <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <output hidden="False" name="output" type="string">rent_price</output>
+            <output hidden="False" name="output" type="string">ln_rent_price</output>
           </run>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
@@ -447,8 +447,8 @@
           </init>
           <run type="dictionary">
             <argument model_dependency_type="dataset" name="dataset" type="string">living_unit</argument>
-            <argument model_dependency_type="variable" name="expression" parser_action="quote_string" type="string"></argument>
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">rent_price</argument>
+            <argument name="outcome_values" type="string">ln_rent_price</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_rent_price</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
           </run>
         </structure>
