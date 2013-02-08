@@ -577,19 +577,17 @@
               <variable_spec name="development_event_history_x_parcel.sc_dev_fit_permitted_floor_m2_step_ln"></variable_spec>
               <variable_spec name="parcel.sc_dist_to_school"></variable_spec>
               <variable_spec name="parcel.sc_new_bldgs_within_150_of_parcel"></variable_spec>
-              <variable_spec name="parcel.sc_newcomers_within_300_of_parcel"></variable_spec>
               <variable_spec name="parcel.sc_price_permitted_floor_m2"></variable_spec>
               <variable_spec name="parcel.sc_slope"></variable_spec>
             </variable_list>
           </submodel>
-          <submodel hidden="Children" name="MFH" submodel_id="1025" type="submodel">
+          <submodel hidden="Children" inherit_parent_values="False" name="MFH" submodel_id="1025" type="submodel">
             <description type="string">Submodel for multi family houses.</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.sc_acc_car"></variable_spec>
               <variable_spec name="parcel.sc_acc_pt"></variable_spec>
               <variable_spec name="development_event_history_x_parcel.sc_dev_fit_permitted_floor_m2_step_ln"></variable_spec>
               <variable_spec name="parcel.sc_new_bldgs_within_150_of_parcel"></variable_spec>
-              <variable_spec name="parcel.sc_newcomers_within_300_of_parcel"></variable_spec>
               <variable_spec name="parcel.sc_price_permitted_floor_m2"></variable_spec>
               <variable_spec name="parcel.sc_slope"></variable_spec>
             </variable_list>
@@ -690,14 +688,13 @@
           </run>
         </structure>
         <specification inherit_parent_values="False" type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+          <submodel hidden="Children" inherit_parent_values="False" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">Model using single non-residential buildings.</description>
             <variable_list type="variable_list">
               <variable_spec name="parcel.sc_acc_car"></variable_spec>
               <variable_spec name="parcel.sc_acc_pt"></variable_spec>
               <variable_spec name="development_event_history_x_parcel.sc_dev_fit_permitted_floor_m2_step_ln"></variable_spec>
               <variable_spec name="parcel.sc_new_bldgs_within_150_of_parcel"></variable_spec>
-              <variable_spec name="parcel.sc_newcomers_within_300_of_parcel"></variable_spec>
               <variable_spec name="parcel.sc_price_permitted_floor_m2"></variable_spec>
               <variable_spec name="parcel.sc_slope"></variable_spec>
             </variable_list>
