@@ -1257,7 +1257,7 @@
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <argument model_dependency_type="dataset" name="location_set" type="string">building</argument>
             <argument name="sample_size_locations" type="integer">50</argument>
-            <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">vacant_SSS_job_space</argument>
+            <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">zurich_parcel.building.vacant_SSS_job_space</argument>
             <argument model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">vacant_SSS_job_space</argument>
             <argument model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">building.non_residential_sqft</argument>
             <argument name="estimation_size_agents" type="float">2</argument>
