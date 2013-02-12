@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import arange, zeros, logical_and, where
+from numpy import arange, zeros, logical_and, where, ceil, maximum
 from opus_core.logger import logger
 from psrc_parcel.models.employment_location_choice_model import EmploymentLocationChoiceModel
 
@@ -29,8 +29,22 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
             else:
                 self.filter = "building.%s == %s" % (self.geography_id_name, geography_id)
             logger.log_status("ELCM for %s %s" % (self.geography_dataset.get_dataset_name(), geography_id))
-            EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
+            for irun in [1,2]:
+                EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
+                if irun==1:
+                    unplaced_size = (agent_set['building_id'][agent_set[self.geography_id_name]==geography_id] <= 0).sum()
+                    if unplaced_size <= 0:
+                        break
+                    filt = where(self.choice_set.compute_variables(self.filter, dataset_pool=self.dataset_pool)>0)[0]
+                    noa = self.choice_set.compute_variables('noj = building.number_of_agents(job)', 
+                                                                    dataset_pool=self.dataset_pool)
+                    cap = maximum(self.choice_set['capacity'][filt], self.choice_set['noj'])
+                    if unplaced_size <= cap.sum():
+                        break
+                    self.choice_set.modify_attribute(name='capacity', data=ceil(cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype),
+                                                      index=filt)
+                    logger.log_warning('Capacity increased by %s' % unplaced_size/float(cap.sum()))
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()
         # set the right parcels

@@ -11,7 +11,7 @@ from opus_core.datasets.dataset import DatasetSubset
 class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectProposalSamplingModel):
         
     def __init__(self, subarea_name, intermediates_to_realestate, **kwargs):
-        super(DevelopmentProposalSamplingModelBySubarea, self).__init__(**kwargs)
+        super(DevelopmentProposalSamplingModelBySubareaForRefinement, self).__init__(**kwargs)
         self.subarea_name = subarea_name
         self.intermediates_to_realestate = intermediates_to_realestate
         
