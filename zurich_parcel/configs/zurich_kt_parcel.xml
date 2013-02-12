@@ -881,7 +881,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(living_unit.number_of_agents(household)==0, living_unit.rent_price &gt; 0)</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(living_unit.number_of_agents(household)==0, living_unit.ln_rent_price &gt; 0)</argument>
             <argument name="run_config" type="dictionary">
               <key name="sample_size_locations" type="integer">30</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
