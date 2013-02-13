@@ -697,7 +697,7 @@ class TestDelimitedStorage(TestStorageInterface):
         expected2 = {
             'attr1': array([1, 2,3,4])
             }
-        # read for csv
+        # read from csv
         actual = self.storage.load_table(table_name='test_table', column_names=['attribute1'])
         self.assertDictsEqual(expected, actual)
         # read from tab
