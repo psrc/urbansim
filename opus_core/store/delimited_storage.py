@@ -8,7 +8,7 @@ import csv
 from glob import glob
 
 from numpy import array, dtype
-
+from numpy.random import randint
 from opus_core.opus_error import OpusError
 from opus_core.logger import logger
 from opus_core.store.storage import Storage
@@ -53,6 +53,7 @@ class delimited_storage(Storage):
         self._lineterminator = lineterminator
         self._quotechar = quotechar
         self._skipinitialspace = skipinitialspace
+        self._dialect_name = "my_format%s" % randint(0, 99999999)
         
         class MyDialect(csv.Dialect):
             delimiter = self._delimiter
@@ -63,7 +64,7 @@ class delimited_storage(Storage):
             quoting = self._quoting
             skipinitialspace = self._skipinitialspace
         
-        csv.register_dialect('my_format', MyDialect)
+        csv.register_dialect(self._dialect_name, MyDialect)
         
     def get_storage_location(self):
         return self._output_directory
@@ -108,7 +109,7 @@ class delimited_storage(Storage):
             
         output = open(file_path, 'wb')
         try:
-            writer = csv.writer(output, 'my_format')
+            writer = csv.writer(output, self._dialect_name)
             
             # write headers
             writer.writerow(header)
@@ -138,7 +139,7 @@ class delimited_storage(Storage):
         
         input = open(file_path, 'rb')
         try:
-            reader = csv.reader(input, 'my_format')
+            reader = csv.reader(input, self._dialect_name)
             
             reader.next() # skip header because it was already read above
     
@@ -253,7 +254,7 @@ class delimited_storage(Storage):
         
         input = open(file_path, 'rb')
         try:
-            reader = csv.reader(input, 'my_format')
+            reader = csv.reader(input, self._dialect_name)
             
             # load header
             header_information = reader.next()
@@ -283,7 +284,7 @@ class delimited_storage(Storage):
         
         input = open(file_path, 'rb')
         try:
-            reader = csv.reader(input, 'my_format')
+            reader = csv.reader(input, self._dialect_name)
             
             # skip header
             reader.next()
