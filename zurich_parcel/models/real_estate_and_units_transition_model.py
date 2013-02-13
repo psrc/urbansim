@@ -182,7 +182,7 @@ class RealEstateTransitionModel(Model):
                 idx = where(self.control_totals.get_attribute("year")==year + 1)[0]
                 this_years_control_totals = DatasetSubset(self.control_totals, idx)
                 expected_num = int(round( this_years_control_totals.get_attribute('total_number_of_households').sum() /\
-                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) # TODO: remove factor  * 1.04 
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) 
             if criterion[col] == 0:
                 # Getting control totals per sector in a dictionary
                 idx = where(self.employment_control_totals.get_attribute("year")==year + 1)[0] # Create index to get the subset of control totals for the next simulation year.
@@ -203,7 +203,7 @@ class RealEstateTransitionModel(Model):
                 
                 needed_sqft_over_all_sectors = sum([sector_job_totals[sector] * requirements_by_sector[sector] for sector in controled_sectors])
                 expected_num = int(round( needed_sqft_over_all_sectors /\
-                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) # TODO: remove factor  * 2.5 
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) 
 
             diff = expected_num - actual_num
             
@@ -263,6 +263,10 @@ class RealEstateTransitionModel(Model):
                     result_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
             # Reset the year_built attribute.
             result_data['year_built'] = resize(year, sampled_index.size).astype('int32')
+            # TODO: Uncomment the following three lines to reset land_area, tax_exempt, zgde. Test still to be done. parcel_id should be changed by location choice model.
+            #result_data['land_area'] = resize(-1, sampled_index.size).astype('int32')
+            #result_data['tax_exempt'] = resize(-1, sampled_index.size).astype('int32')
+            #result_data['zgde'] = resize(-1, sampled_index.size).astype('int32')
             
             if id_name and result_data and id_name not in result_data:
                 result_data[id_name] = arange(sampled_index.size, dtype='int32') + 1
@@ -313,6 +317,11 @@ class RealEstateTransitionModel(Model):
                             selected_living_units_dict[attribute_name] = concatenate([selected_living_units_dict[attribute_name], this_living_units_dict[attribute_name]])
                 # Reset year_built attribute of living units
                 selected_living_units_dict['year_built'] = resize(year, len(selected_living_units_dict['year_built'])).astype('int32')
+                # TODO: Uncomment the following two lines to reset rent_price, zgde. Test still to be done
+                # selected_living_units_dict['rent_price'] = resize(-1, len(selected_living_units_dict['rent_price'])).astype('int32')
+                # selected_living_units_dict['zgde'] = resize(-1, len(selected_living_units_dict['zgde'])).astype('int32')
+
+
                 
                 index_units = living_units_dataset.add_elements(selected_living_units_dict, require_all_attributes=False,
                                                         change_ids_if_not_unique=True)
