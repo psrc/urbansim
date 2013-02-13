@@ -676,6 +676,34 @@ class TestDelimitedStorage(TestStorageInterface):
         finally:
             foo_file.close()
             
+    def test_two_delimited_storage_objects(self):
+        tab_storage = delimited_storage(
+            storage_location = self.temp_dir,
+            delimiter = '\t',
+            file_extension = 'tab',
+            )
+        
+        tab_storage.write_table(
+            table_name = 'test_table2',
+            table_data = {
+                'attr1': array([1,2,3,4]),
+                'attr2': array(['a','b','c','d']),
+                }
+            )
+            
+        expected = {
+            'attribute1': array([1, 2,3,4])
+            }
+        expected2 = {
+            'attr1': array([1, 2,3,4])
+            }
+        # read for csv
+        actual = self.storage.load_table(table_name='test_table', column_names=['attribute1'])
+        self.assertDictsEqual(expected, actual)
+        # read from tab
+        actual = tab_storage.load_table(table_name='test_table2', column_names=['attr1'])
+        self.assertDictsEqual(expected2, actual)
+            
 class TestDelimitedStorageGetTableNames(TestStorageInterface):
     def setUp(self):
         self.temp_dir = mkdtemp(prefix='opus_core_test_delimited_storage_get_table_names')
