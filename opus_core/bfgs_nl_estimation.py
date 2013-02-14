@@ -4,7 +4,7 @@
 
 from opus_core.estimation_procedure import EstimationProcedure
 from opus_core.logger import logger
-from numpy import zeros,log,float32,reshape,diagonal,sqrt, array, ones, where, arange, exp, clip, logical_not
+from numpy import zeros,log,float32,reshape,diagonal,sqrt, array, ones, where, arange, exp, clip, logical_not, identity
 from numpy import sort, concatenate
 from opus_core.third_party.pstat import chisqprob
 from opus_core.misc import get_indices_of_matched_items, ematch
@@ -91,7 +91,7 @@ class bfgs_nl_estimation(EstimationProcedure):
         logger.start_block('BFGS procedure')
         bfgs_result = fmin_l_bfgs_b(self.minus_nl_loglikelihood, beta[index_of_not_fixed_values], pgtol=.01,
                                 args=(data, depm, beta[index_of_fixed_values], index_of_not_fixed_values, index_of_fixed_values), 
-								bounds=bounds,approx_grad=True,
+                                bounds=bounds,approx_grad=True,
                                 disp=True, epsilon=self.resources.get('bfgs_epsilon', self._epsilon),
                                 )
 
@@ -164,8 +164,8 @@ class bfgs_nl_estimation(EstimationProcedure):
         coef[index_of_not_fixed_values] = b.astype(coef.dtype)
         coef[index_of_fixed_values] = b_fixed
         a = -1*self.nl_loglikelihood(coef, data, depm)
-        print "coefficients = ", coef
-        print a
+        #print "coefficients = ", coef
+        #print a
         return a
         
     def get_nest_numbers(self):
@@ -177,7 +177,6 @@ class bfgs_nl_estimation(EstimationProcedure):
         return sort(model.get_nested_structure().keys())
 
 def approximate_second_derivative(f, x, args):
-    from numpy import identity
     delta = 0.001*x
     mu = identity(delta.size, dtype='bool8')
     result = zeros(delta.size)
