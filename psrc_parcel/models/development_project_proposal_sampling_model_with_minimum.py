@@ -9,7 +9,7 @@ from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue, setdiff1d, union1d
-from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d, argsort
+from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d, argsort, log, exp
 from scipy.ndimage import minimum as ndimage_min
 from scipy.ndimage import maximum as ndimage_max
 from scipy.ndimage import mean as ndimage_mean
@@ -65,6 +65,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_n=0,
             within_parcel_selection_compete_among_types=False,
             within_parcel_selection_threshold=75,
+            within_parcel_selection_MU_same_weight=True,
+            within_parcel_selection_transpose_interpcl_weight=True,
             run_config=None,
             debuglevel=0):
         """
@@ -211,14 +213,16 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
             logger.start_block("Selecting proposals within parcels (%s proposals per parcel)" % within_parcel_selection_n)
             self.select_proposals_within_parcels(nmax=within_parcel_selection_n, weight_string=within_parcel_selection_weight_string,
                                                  compete_among_types=within_parcel_selection_compete_among_types, 
-                                                 filter_threshold=within_parcel_selection_threshold)
+                                                 filter_threshold=within_parcel_selection_threshold,
+                                                 MU_same_weight=within_parcel_selection_MU_same_weight,
+                                                 transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -285,7 +289,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                    for column_value, accounting in self.accounting.items() ]
         return all(results)
 
-    def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75):
+    def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75, 
+                                        MU_same_weight=False, transpose_interpcl_weight=True):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
@@ -350,21 +355,27 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 incompetition[union1d(chosen_prop, where_lower)] = False
                 if incompetition.sum() <= 0:
                     break
-                
-        self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
-        
-#        for pclid in parcels_with_proposals:
-#            for key in self.column_names:
-#                propind = logical_and(self.proposal_set['parcel_id'] == pclid, egligible_proposals[key])
-#                propidx = where(propind)[0]
-#                #compidx = where(in1d(self.proposal_component_set['proposal_id'], self.proposal_set['proposal_id'][propidx]))[0]
-#                #type_values = unique(self.proposal_component_set[key][compidx])
-#                for value, tmp in self.accounting.iteritems():
-#                    proptypeidx = where(min_type[key][propidx] == value)[0]
-#                    if proptypeidx.size <= 0:
-#                        continue
-#                    chosen_prop = probsample_noreplace(proptypeidx, 1, self.weight[propidx[proptypeidx]])
-#                    propind[propidx[chosen_prop]] = 0
-#                self.proposal_set['status_id'][propind] = self.proposal_set.id_eliminated_in_within_parcel_sampling
-        
-        
+             
+            self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
+            if MU_same_weight:
+                # Set weights of mix-use proposals within the same parcel to the same value
+                parcels = self.dataset_pool.get_dataset('parcel')
+                parcels.compute_variables(['mu_ind = parcel.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12) + numpy.logical_or(development_project_proposal_component.building_type_id==3, development_project_proposal_component.building_type_id==13), intermediates=[development_project_proposal])'], 
+                                                    dataset_pool=self.dataset_pool)
+                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 1]
+                is_mu = logical_and(logical_and(self.weight > 0, 
+                                self.proposal_set['status_id'] == self.proposal_set.id_tentative),
+                                       in1d(self.proposal_set['parcel_id'], pcl_ids))
+                where_mu = where(is_mu)[0]
+                trans_weights = self.weight[where_mu]
+                if transpose_interpcl_weight:
+                    trans_weights = log(trans_weights)
+                weight_mean = array(ndimage_mean(trans_weights, 
+                                            labels=self.proposal_set['parcel_id'][where_mu], 
+                                            index=self.proposal_set['parcel_id'][where_mu]
+                                            ))
+                if transpose_interpcl_weight:
+                    weight_mean = exp(weight_mean)
+                self.weight[where_mu]=weight_mean
+                return
+            
