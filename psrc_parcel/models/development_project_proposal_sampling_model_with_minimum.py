@@ -213,7 +213,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
@@ -375,6 +375,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
                 if transpose_interpcl_weight:
                     weight_mean = exp(weight_mean)
-                self.weight[where_mu]=weight_mean[pcl_idx]
+                weight_mean_tmp = zeros(upcl_idx.max()+1).astype(weight_mean.dtype)
+                weight_mean_tmp[upcl_idx]=weight_mean
+                self.weight[where_mu]=weight_mean_tmp[pcl_idx]
                 return
             
