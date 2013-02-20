@@ -213,7 +213,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
@@ -370,12 +370,11 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 trans_weights = self.weight[where_mu]
                 if transpose_interpcl_weight:
                     trans_weights = log(trans_weights)
-                weight_mean = array(ndimage_mean(trans_weights, 
-                                            labels=self.proposal_set['parcel_id'][where_mu], 
-                                            index=self.proposal_set['parcel_id'][where_mu]
-                                            ))
+                pcl_idx = parcels.get_id_index(self.proposal_set['parcel_id'][where_mu])
+                upcl_idx = unique(pcl_idx)
+                weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
                 if transpose_interpcl_weight:
                     weight_mean = exp(weight_mean)
-                self.weight[where_mu]=weight_mean
+                self.weight[where_mu]=weight_mean[pcl_idx]
                 return
             

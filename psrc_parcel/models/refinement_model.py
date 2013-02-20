@@ -10,7 +10,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 import numpy
 from numpy import logical_and, logical_not, ones, zeros, concatenate, unique
-from numpy import where, histogram, round_, sort, array, in1d
+from numpy import where, histogram, round_, sort, array, in1d, arange
 from opus_core.misc import safe_array_divide, unique
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
@@ -437,9 +437,15 @@ class RefinementModel(Model):
         #if amount_adj > amount:
         #    logger.log_status("Amount %s adjusted to %s because of agents being removed for demolished buildings in previous transactions." % (amount, amount_adj))
         #    amount = amount_adj 
+        if this_refinement.agent_expression is not None and len(this_refinement.agent_expression) > 0:
+            agents_index = where(agent_dataset.compute_variables(this_refinement.agent_expression, 
+                                                               dataset_pool=dataset_pool)>0)[0]
+        else:
+            agents_index = arange(agent_dataset.size())
         movers_index = array([],dtype="int32")
-        fitted_agents_pool = agents_pool[in1d(agents_pool, fit_index)]
-        amount_from_agents_pool = min( amount, len(fitted_agents_pool) )
+        ar_pool = array(agents_pool)
+        fitted_agents_pool = ar_pool[in1d(ar_pool, agents_index)]
+        amount_from_agents_pool = min( amount, fitted_agents_pool.size )
         if amount_from_agents_pool > 0:
             agents_index_from_agents_pool = sample_noreplace( fitted_agents_pool, amount_from_agents_pool )
             [ agents_pool.remove(i) for i in agents_index_from_agents_pool ]
