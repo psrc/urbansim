@@ -213,7 +213,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                         )[0]
         
         logger.start_block("Processing %s planned proposals" % planned_proposal_indexes.size)
-        #self.consider_proposals(planned_proposal_indexes, force_accepting=True)
+        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         logger.end_block()
         
         if within_parcel_selection_n > 0:
