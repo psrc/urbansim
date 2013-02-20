@@ -367,6 +367,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                 self.proposal_set['status_id'] == self.proposal_set.id_tentative),
                                        in1d(self.proposal_set['parcel_id'], pcl_ids))
                 where_mu = where(is_mu)[0]
+                if where_mu.size <= 0:
+                    return
                 trans_weights = self.weight[where_mu]
                 if transpose_interpcl_weight:
                     trans_weights = log(trans_weights)
