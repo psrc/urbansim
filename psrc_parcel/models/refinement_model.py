@@ -45,7 +45,7 @@ class RefinementModel(Model):
 
     def run(self, refinement_dataset=None, current_year=None, base_year=2000,
             action_order=['subtract', 'target', 'add', 'set_value', 'delete'],
-            dataset_pool=None):
+            dataset_pool=None, demolish_buildings=True):
         
         """'refinement_dataset' is a RefinementDataset object.  see unittest for its columns
         """
@@ -53,6 +53,7 @@ class RefinementModel(Model):
         if refinement_dataset is None:
             refinement_dataset = dataset_pool.get_dataset('refinement')
         self.id_names = (refinement_dataset.get_id_name()[0], 'transaction_id')
+        self.demolish_buildings = demolish_buildings
         
         if current_year is None:
             current_year = SimulationState().get_current_time()
@@ -74,7 +75,7 @@ class RefinementModel(Model):
         
         transactions = refinements_this_year.get_attribute('transaction_id')
         actions = refinements_this_year.get_attribute('action')
-        all_agent_datasets = []
+        #all_agent_datasets = []
         self.processed_locations = {}
         self.subtracted_from_demolished_buildings = {'job': {}, 'household': {}}
         bldgs = dataset_pool.get_dataset('building')
@@ -128,10 +129,10 @@ class RefinementModel(Model):
                         
                     agent_dataset.flush_dataset()
                     dataset_pool._remove_dataset(agent_dataset.get_dataset_name())
-                    if location_dataset is not None:
+                    if location_dataset is not None and self.demolish_buildings:
                         location_dataset.flush_dataset()
                         dataset_pool._remove_dataset(location_dataset.get_dataset_name())
-                    all_agent_datasets += [agent_dataset]
+                    #all_agent_datasets += [agent_dataset]
                 
             #for agents in all_agent_datasets:
             #    agents.flush_dataset()
@@ -145,7 +146,8 @@ class RefinementModel(Model):
                         
             logger.end_block()
 
-            
+        for key in self.processed_locations.keys():
+            self.processed_locations[key] = unique(self.processed_locations[key])
         return self.processed_locations
             
     def get_fit_agents_index(self, agent_dataset, 
@@ -312,7 +314,10 @@ class RefinementModel(Model):
                 bldgs_movers_index = array([])
             
         agents_index = where(agents_indicator)[0]
-        movers_index = concatenate((movers_index, agents_index[where(in1d(agent_dataset['building_id'][agents_index], bldgs.get_id_attribute()[bldgs_movers_index]))[0]]))
+        selected_agents_index_from_buildings = agents_index[where(in1d(agent_dataset['building_id'][agents_index], bldgs.get_id_attribute()[bldgs_movers_index]))[0]]
+        if not self.demolish_buildings and selected_agents_index_from_buildings.size > amount_from_bldgs :
+            selected_agents_index_from_buildings = sample_noreplace(selected_agents_index_from_buildings, amount_from_bldgs)
+        movers_index = concatenate((movers_index, selected_agents_index_from_buildings))
              
         if amount > (amount_from_bldgs + amount_from_unplaced):
             # unplace agents without demolishing buildings
@@ -339,30 +344,34 @@ class RefinementModel(Model):
         logger.log_status('agents pool size: ', len(agents_pool))
  
         # remove remaining agents from demolished buildings and update building_id
-        for synch_dataset_name in ['job', 'household']:
-            if synch_dataset_name <> agent_dataset.get_dataset_name():
-                synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
-                idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
-                idx = idxb
-                self.subtracted_from_demolished_buildings[synch_dataset_name][this_refinement.location_expression.split('.')[-1]] = idxb.size
-            else:
-                synch_dataset = agent_dataset
-                idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
-                idx = movers_index
-            synch_dataset.modify_attribute('building_id', 
-                                       -1 * ones( idx.size, dtype='int32' ),
-                                       index = idx)
-            logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, idxb.size))
-            if synch_dataset_name <> agent_dataset.get_dataset_name():
-                synch_dataset.flush_dataset()
+        if self.demolish_buildings:
+            for synch_dataset_name in ['job', 'household']:
+                if synch_dataset_name <> agent_dataset.get_dataset_name():
+                    synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
+                    idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
+                    idx = idxb
+                    self.subtracted_from_demolished_buildings[synch_dataset_name][this_refinement.location_expression.split('.')[-1]] = idxb.size
+                else:
+                    synch_dataset = agent_dataset
+                    idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
+                    idx = movers_index
+                synch_dataset.modify_attribute('building_id', 
+                                           -1 * ones( idx.size, dtype='int32' ),
+                                           index = idx)
+                logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, idxb.size))
+                if synch_dataset_name <> agent_dataset.get_dataset_name():
+                    synch_dataset.flush_dataset()
+            bldgs.remove_elements(bldgs_movers_index)
+            logger.log_status("%s buildings removed." % bldgs_movers_index.size)
+        else:
+            logger.log_status("%s %ss unplaced." % (movers_index.size, agent_dataset.get_dataset_name()))
                 
         if location_dataset.get_id_name()[0] <> 'building_id':
             agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
                                        -1 * ones( movers_index.size, dtype='int32' ),
                                        index = movers_index
                                        )
-        bldgs.remove_elements(bldgs_movers_index)
-        logger.log_status("%s buildings removed." % bldgs_movers_index.size)
+        
         self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=movers_index)
         
     def _delete(self, agents_pool, amount, 
@@ -429,9 +438,10 @@ class RefinementModel(Model):
         #    logger.log_status("Amount %s adjusted to %s because of agents being removed for demolished buildings in previous transactions." % (amount, amount_adj))
         #    amount = amount_adj 
         movers_index = array([],dtype="int32")
-        amount_from_agents_pool = min( amount, len(agents_pool) )
+        fitted_agents_pool = agents_pool[in1d(agents_pool, fit_index)]
+        amount_from_agents_pool = min( amount, len(fitted_agents_pool) )
         if amount_from_agents_pool > 0:
-            agents_index_from_agents_pool = sample_noreplace( agents_pool, amount_from_agents_pool )
+            agents_index_from_agents_pool = sample_noreplace( fitted_agents_pool, amount_from_agents_pool )
             [ agents_pool.remove(i) for i in agents_index_from_agents_pool ]
             if fit_index.size == 0:
                 ##cannot find agents to copy their location or clone them, place agents in agents_pool
