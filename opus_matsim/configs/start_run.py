@@ -37,9 +37,9 @@ class StartRunOptionGroup(object):
     if options.scenario_executable == None:
         logger.log_error("Missing name of executable scenario")
     
-    #config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
+    config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
     # tnicolai: debug
-    config = XMLConfiguration( '/Users/thomas/Desktop/brussels_zones_test.xml' ).get_run_configuration( 'brussels_baseline' )
+    #config = XMLConfiguration( '/Users/thomas/Desktop/brussels_zones_test.xml' ).get_run_configuration( 'brussels_baseline' )
         
     insert_auto_generated_cache_directory_if_needed(config)
      
