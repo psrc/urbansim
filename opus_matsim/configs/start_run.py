@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import sys, optparse
-
+import time
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.logger import logger
@@ -15,6 +15,9 @@ class StartRunOptionGroup(object):
     """
         
     logger.start_block("Starting UrbanSim")
+    
+    # strat time
+    start_time = time.time()
     
     # get program arguments from the command line
     program_arguments = sys.argv[1:]
@@ -34,9 +37,9 @@ class StartRunOptionGroup(object):
     if options.scenario_executable == None:
         logger.log_error("Missing name of executable scenario")
     
-    config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
+    #config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
     # tnicolai: debug
-    #config = XMLConfiguration( '/Users/thomas/Desktop/brussels_urbansim_zone_config_v2_with_travel_model_20120425.xml' ).get_run_configuration( 'brussels_baseline' )
+    config = XMLConfiguration( '/Users/thomas/Desktop/brussels_zones_test.xml' ).get_run_configuration( 'brussels_baseline' )
         
     insert_auto_generated_cache_directory_if_needed(config)
      
@@ -51,6 +54,12 @@ class StartRunOptionGroup(object):
 
     run_manager.run_run(config, run_as_multiprocess = True )
     
+    # elapsed time
+    elapsed_time = time.time() - start_time
+    
+    time = "This took %10.2f seconds" %elapsed_time
+    
     logger.end_block("UrbanSim simulation run done.")
+    logger.log_note(time)
 
         
