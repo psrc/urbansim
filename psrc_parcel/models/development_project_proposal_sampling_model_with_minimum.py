@@ -360,25 +360,51 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             if MU_same_weight:
                 # Set weights of mix-use proposals within the same parcel to the same value
                 parcels = self.dataset_pool.get_dataset('parcel')
-                parcels.compute_variables(['mu_ind = parcel.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12) + numpy.logical_or(development_project_proposal_component.building_type_id==3, development_project_proposal_component.building_type_id==13), intermediates=[development_project_proposal])'], 
+#                parcels.compute_variables(['mu_ind = parcel.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12) + numpy.logical_or(development_project_proposal_component.building_type_id==3, development_project_proposal_component.building_type_id==13), intermediates=[development_project_proposal])'], 
+#                                                    dataset_pool=self.dataset_pool)
+#                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 1]
+#                is_mu = logical_and(logical_and(self.weight > 0, 
+#                                self.proposal_set['status_id'] == self.proposal_set.id_tentative),
+#                                       in1d(self.proposal_set['parcel_id'], pcl_ids))
+#                where_mu = where(is_mu)[0]
+#                if where_mu.size <= 0:
+#                    return
+#                trans_weights = self.weight[where_mu]
+#                if transpose_interpcl_weight:
+#                    trans_weights = log(trans_weights)
+#                pcl_idx = parcels.get_id_index(self.proposal_set['parcel_id'][where_mu])
+#                upcl_idx = unique(pcl_idx)
+#                weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
+#                if transpose_interpcl_weight:
+#                    weight_mean = exp(weight_mean)
+#                weight_mean_tmp = zeros(upcl_idx.max()+1).astype(weight_mean.dtype)
+#                weight_mean_tmp[upcl_idx]=weight_mean
+#                self.weight[where_mu]=weight_mean_tmp[pcl_idx]
+                self.proposal_set.compute_variables(['is_mfres = development_project_proposal.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12))'],
                                                     dataset_pool=self.dataset_pool)
-                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 1]
-                is_mu = logical_and(logical_and(self.weight > 0, 
-                                self.proposal_set['status_id'] == self.proposal_set.id_tentative),
-                                       in1d(self.proposal_set['parcel_id'], pcl_ids))
-                where_mu = where(is_mu)[0]
-                if where_mu.size <= 0:
+                parcels.compute_variables(['mu_ind = (parcel.aggregate(development_project_proposal.is_mfres)>0) * (parcel.mix_split_id > 0)'], 
+                                                    dataset_pool=self.dataset_pool)
+                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 0]
+                egligible_props = logical_and(self.weight > 0, logical_and(
+                                self.proposal_set['status_id'] == self.proposal_set.id_tentative,
+                                self.proposal_set['is_mfres']>0))
+                where_prop_to_modify = where(logical_and(egligible_props,
+                                       in1d(self.proposal_set['parcel_id'], pcl_ids)))[0]
+                if where_prop_to_modify.size <= 0:
                     return
-                trans_weights = self.weight[where_mu]
+                upcl = unique(self.proposal_set['parcel_id'][where_prop_to_modify])               
+                npcl_to_modify = int(upcl.size/10.0)
+                if npcl_to_modify == 0:
+                    return
+                pcls_to_modify = sample_noreplace(upcl, npcl_to_modify)
+                where_prop_to_modify_final = where(logical_and(egligible_props,
+                                       in1d(self.proposal_set['parcel_id'], pcls_to_modify)))[0]
+                trans_weights = self.weight[where_prop_to_modify_final]
                 if transpose_interpcl_weight:
                     trans_weights = log(trans_weights)
-                pcl_idx = parcels.get_id_index(self.proposal_set['parcel_id'][where_mu])
-                upcl_idx = unique(pcl_idx)
-                weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
+                trans_weights = 1.2*trans_weights
                 if transpose_interpcl_weight:
-                    weight_mean = exp(weight_mean)
-                weight_mean_tmp = zeros(upcl_idx.max()+1).astype(weight_mean.dtype)
-                weight_mean_tmp[upcl_idx]=weight_mean
-                self.weight[where_mu]=weight_mean_tmp[pcl_idx]
+                    trans_weights = exp(trans_weights)
+                self.weight[where_prop_to_modify_final] = trans_weights
                 return
             
