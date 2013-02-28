@@ -22,8 +22,12 @@ class vacant_SSS_job_space(Variable):
         total = building.compute_one_variable_with_unknown_package("total_%s_job_space" % self.sector, dataset_pool=dataset_pool)
         occupied = building.compute_one_variable_with_unknown_package("occupied_%s_job_space" % self.sector, dataset_pool=dataset_pool)
         vacant = total - occupied
-        print(vacant)
+
+        # HACK
+        vacant = clip(vacant, a_min=0, a_max=1e100)
+        
         assert((vacant >= 0).all())
+        assert(sum(vacant) > 0)
         return vacant
 
     def post_check(self,  values, dataset_pool=None):
