@@ -22,7 +22,7 @@ class occupied_SSS_job_space(Variable):
                 "urbansim_parcel.building.building_sqft"]
 
     def compute(self,  dataset_pool):
-        sectors = dataset_pool.get_dataset("sector")
+        sectors = dataset_pool.get_dataset("employment_sector")
         name_equals_sector = sectors.get_attribute("name") == self.sector
         name_equals_sector_indexes = where(name_equals_sector)
         assert(len(name_equals_sector_indexes) == 1)
