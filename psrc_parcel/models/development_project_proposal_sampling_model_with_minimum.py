@@ -65,7 +65,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_n=0,
             within_parcel_selection_compete_among_types=False,
             within_parcel_selection_threshold=75,
-            within_parcel_selection_MU_same_weight=True,
+            within_parcel_selection_MU_same_weight=False,
             within_parcel_selection_transpose_interpcl_weight=True,
             run_config=None,
             debuglevel=0):
