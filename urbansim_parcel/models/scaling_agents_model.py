@@ -105,8 +105,8 @@ class ScalingAgentsModel(Model):
         if agents_index is not None:
             tmp = zeros(agent_set.size(), dtype='bool8')
             tmp[agents_index]=True
-            filtered_index = logical_and(filter, tmp)
-        return where(filtered_index)[0]
+            filter = logical_and(filter, tmp)
+        return where(filter)[0]
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, arange
