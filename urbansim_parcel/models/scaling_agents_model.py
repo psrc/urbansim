@@ -83,7 +83,9 @@ class ScalingAgentsModel(Model):
         if location_index.size <= 0:
             logger.log_status("No locations available. Nothing to be done.")
             return array(subm_agents_index.size*[-1], dtype="int32")
-        logger.log_status("Submodel %s: %s agents are scaled into %s locations." % (submodel, subm_agents_index.size, location_index.size))
+        logger.log_status("Submodel %s: %s %s(s) are scaled into %s %s(s)." % (submodel, 
+                                                    subm_agents_index.size, agent_set.get_dataset_name(), 
+                                                    location_index.size, location_set.get_dataset_name()))
         distr = agent_distr_in_loc[location_index]
         if ma.allclose(distr.sum(), 0):
             uniform_prob = 1.0/distr.size
