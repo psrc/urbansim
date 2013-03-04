@@ -346,6 +346,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             for i in range(nmax-1):
                 labels = (self.proposal_set['parcel_id'][wegligible])*incompetition 
                 valid_parcels = where(in1d(parcels_with_proposals, self.proposal_set['parcel_id'][wegligible][where(incompetition)]))[0]
+                if valid_parcels.size <= 0:
+                    break
                 chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                             labels=labels, 
                                             index=parcels_with_proposals[valid_parcels])).flatten().astype(int32)
