@@ -447,7 +447,7 @@ class RefinementModel(Model):
         amount_from_agents_pool = min( amount, fitted_agents_pool.size )
         prob_string = self.probability_attributes.get(agent_dataset.get_dataset_name(),None)
         if prob_string is not None:
-            probs_values = agent_dataset.compute_variables([prob_string], dataset_pool=dataset_pool)
+            probs_values = (agent_dataset.compute_variables([prob_string], dataset_pool=dataset_pool)).astype('int32')
             uprobs_values = unique(probs_values[fit_index])
             if uprobs_values.size > 0:
                 probs_existing = array(ndimage_sum(ones(fit_index.size), 
