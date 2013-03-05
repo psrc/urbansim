@@ -9,10 +9,11 @@ from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 import numpy
-from numpy import logical_and, logical_not, ones, zeros, concatenate, unique
+from numpy import logical_and, logical_not, ones, zeros, concatenate
 from numpy import where, histogram, round_, sort, array, in1d, arange
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.misc import safe_array_divide, unique
-from opus_core.sampling_toolbox import sample_replace, sample_noreplace
+from opus_core.sampling_toolbox import sample_replace, sample_noreplace, probsample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 from opus_core.variables.attribute_type import AttributeType
@@ -45,6 +46,7 @@ class RefinementModel(Model):
 
     def run(self, refinement_dataset=None, current_year=None, base_year=2000,
             action_order=['subtract', 'target', 'add', 'set_value', 'delete'],
+            probability_attributes={}, 
             dataset_pool=None, demolish_buildings=True):
         
         """'refinement_dataset' is a RefinementDataset object.  see unittest for its columns
@@ -54,6 +56,7 @@ class RefinementModel(Model):
             refinement_dataset = dataset_pool.get_dataset('refinement')
         self.id_names = (refinement_dataset.get_id_name()[0], 'transaction_id')
         self.demolish_buildings = demolish_buildings
+        self.probability_attributes = probability_attributes
         
         if current_year is None:
             current_year = SimulationState().get_current_time()
@@ -433,10 +436,6 @@ class RefinementModel(Model):
                                               this_refinement.agent_expression, 
                                               this_refinement.location_expression,
                                               dataset_pool)
-        #amount_adj = amount + self.subtracted_from_demolished_buildings[agent_dataset.get_dataset_name()].get(this_refinement.location_expression.split('.')[-1], 0)
-        #if amount_adj > amount:
-        #    logger.log_status("Amount %s adjusted to %s because of agents being removed for demolished buildings in previous transactions." % (amount, amount_adj))
-        #    amount = amount_adj 
         if this_refinement.agent_expression is not None and len(this_refinement.agent_expression) > 0:
             agents_index = where(agent_dataset.compute_variables(this_refinement.agent_expression, 
                                                                dataset_pool=dataset_pool)>0)[0]
@@ -446,8 +445,27 @@ class RefinementModel(Model):
         ar_pool = array(agents_pool)
         fitted_agents_pool = ar_pool[in1d(ar_pool, agents_index)]
         amount_from_agents_pool = min( amount, fitted_agents_pool.size )
-        if amount_from_agents_pool > 0:
-            agents_index_from_agents_pool = sample_noreplace( fitted_agents_pool, amount_from_agents_pool )
+        prob_string = self.probability_attributes.get(agent_dataset.get_dataset_name(),None)
+        if prob_string is not None:
+            probs_values = agent_dataset.compute_variables([prob_string], dataset_pool=dataset_pool)
+            uprobs_values = unique(probs_values[fit_index])
+            probs_existing = array(ndimage_sum(ones(fit_index.size), 
+                                         labels=probs_values[fit_index], 
+                                  index=uprobs_values))
+        if amount_from_agents_pool > 0:        
+            if prob_string is not None:                
+                prob_pool_values = probs_values[fitted_agents_pool]
+                probs_pool=zeros(prob_pool_values.size)
+                for i in range(uprobs_values.size):
+                    probpoolidx = where(prob_pool_values == uprobs_values[i])[0]
+                    if probpoolidx.size == 0:
+                        continue
+                    probs_pool[probpoolidx]=probs_existing[i]/float(probpoolidx.size)
+                probs_pool[probs_pool<=0] = (probs_existing.min()/10.0)/float((probs_pool<=0).sum())
+            else:
+                probs_pool=ones(fitted_agents_pool.size)
+            
+            agents_index_from_agents_pool = probsample_noreplace( fitted_agents_pool, amount_from_agents_pool, prob_array=probs_pool )
             [ agents_pool.remove(i) for i in agents_index_from_agents_pool ]
             if fit_index.size == 0:
                 ##cannot find agents to copy their location or clone them, place agents in agents_pool
