@@ -449,11 +449,11 @@ class RefinementModel(Model):
         if prob_string is not None:
             probs_values = agent_dataset.compute_variables([prob_string], dataset_pool=dataset_pool)
             uprobs_values = unique(probs_values[fit_index])
-            probs_existing = array(ndimage_sum(ones(fit_index.size), 
-                                         labels=probs_values[fit_index], 
-                                  index=uprobs_values))
+            if uprobs_values.size > 0:
+                probs_existing = array(ndimage_sum(ones(fit_index.size), 
+                                         labels=probs_values[fit_index], index=uprobs_values))
         if amount_from_agents_pool > 0:        
-            if prob_string is not None:                
+            if prob_string is not None and uprobs_values.size > 0:                
                 prob_pool_values = probs_values[fitted_agents_pool]
                 probs_pool=zeros(prob_pool_values.size)
                 for i in range(uprobs_values.size):
