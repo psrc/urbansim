@@ -39,7 +39,7 @@ class SchoolTypeChoiceModel(ChoiceModel):
         """Set sync_persons to True if the model is run on households level and the persons table 
         should be synchronized. 
         """       
-        results = ChoiceModel.run(self, specification, coefficients, agent_set, agents_index=None, **kwargs)
+        results = ChoiceModel.run(self, specification, coefficients, agent_set, agents_index=agents_index, **kwargs)
         if sync_persons:
             persons = self.dataset_pool.get_dataset('person')
             choice_id_name = self.choice_set.get_id_name()[0]
@@ -54,6 +54,7 @@ class SchoolTypeChoiceModel(ChoiceModel):
                 persons.add_primary_attribute(data=zeros(persons.size(), dtype=values.dtype), name=choice_id_name)
             persons.modify_attribute(data=values, name=choice_id_name, index=pers_idx)
             persons.delete_one_attribute('_tmp_')
+        agent_set.modify_attribute(data=results, name=self.choice_attribute_name.get_alias(), index=agents_index)
         return results
     
     def prepare_for_run(self, agent_set=None, agent_filter=None, agents_index=None, convert_index_to_person=False, 
