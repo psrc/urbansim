@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 'tsv': ['append_type_info'],
                 'csv': ['append_type_info'],
                 }
-    
+    create_output_directory = ['hdf5', 'tab', 'tsv', 'csv', 'dbf']
     if (directory is None or output_file is None or table_name is None):      
         parser.print_help()
         sys.exit(1)
@@ -74,6 +74,9 @@ if __name__ == '__main__':
     input_storage = StorageFactory().get_storage('%s_storage' % storage_intype, storage_location = directory)
     output_storage = StorageFactory().get_storage('%s_storage' % storage_outtype, storage_location = output_file)
     
+    if storage_outtype in create_output_directory and not os.path.exists(output_file):
+        os.makedirs(output_file)
+        
     logger.start_block("Converting table '%s' from %s into %s ..." % (table_name, storage_intype, storage_outtype))
     kwargs = {}
     for arg in arg_list.get(storage_outtype, []):
@@ -88,3 +91,22 @@ if __name__ == '__main__':
     finally:
         logger.end_block()
     
+# Examples:
+###########
+# Convert sql table 'my_table' in database 'my_database' into a cache directory my_cache/2000:
+# python convert_table.py sql flt -d my_database -t my_table -o my_cache/2000
+
+# Convert a table 'persons' from cache into a csv file in the current directory, without type info in the column names:
+# python convert_table.py flt csv -d my_cache/2000 -t persons -o . --no-type-info
+
+# Convert a tsv file my_file.tsv in the current directory into an hdf5 file with each attribute being an upper level hdf5 dataset:
+# python convert_table.py tsv hdf5 -d . -t my_file -o . 
+
+# Convert a dbf file my_table.dbf in the current directory into an hdf5 file with the table being an hdf5 group in an existing hdf5 file:
+# python convert_table.py dbf hdf5g -d . -t my_table -o my_existing_file.hdf5
+
+# Convert a table 'my_table' from an hdf5 file (with the table being a group) into a sql database 'my_database':
+# python convert_table.py hdf5g sql -d my_existing_file.hdf5 -t my_table -o my_database
+
+
+ 
