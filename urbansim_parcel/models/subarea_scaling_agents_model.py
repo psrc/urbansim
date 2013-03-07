@@ -5,7 +5,7 @@
 from numpy import arange, zeros, logical_and, where, array, ones, ma, resize
 from opus_core.logger import logger
 from opus_core.misc import unique
-from urbansim_parcel.models.scaling_agents_model import ScalingAgentsModel
+from urbansim.models.scaling_agents_model import ScalingAgentsModel
 
 
 class SubareaScalingAgentsModel(ScalingAgentsModel):

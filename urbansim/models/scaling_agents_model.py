@@ -20,7 +20,7 @@ class ScalingAgentsModel(Model):
     def __init__(self,  submodel_string=None,
                  filter = None, 
                  dataset_pool=None,
-                 package_order=["urbansim_parcel", "urbansim", "opus_core"],
+                 package_order=["urbansim", "opus_core"],
                  debuglevel=0):
         self.filter = filter
         self.submodel_string = submodel_string
