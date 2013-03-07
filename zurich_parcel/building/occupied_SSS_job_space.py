@@ -4,6 +4,7 @@
 
 from numpy import clip, ma, where
 from opus_core.variables.variable import Variable
+from opus_core.logger import logger
 
 class occupied_SSS_job_space(Variable):
     """Sum of jobs sqft per building. If job sqft is <= 0, it is replaced by zone-building_type average.
@@ -22,21 +23,23 @@ class occupied_SSS_job_space(Variable):
                 "urbansim_parcel.building.building_sqft"]
 
     def compute(self,  dataset_pool):
-        sectors = dataset_pool.get_dataset("employment_sector")
+        sectors = dataset_pool.get_dataset("sector")
         name_equals_sector = sectors.get_attribute("name") == self.sector
         name_equals_sector_indexes = where(name_equals_sector)
         assert(len(name_equals_sector_indexes) == 1)
         name_equals_sector_index = name_equals_sector_indexes[0]
         sector_ids = sectors.get_attribute("sector_id")
         sector_id = sector_ids[name_equals_sector_index][0]
+        sqft_per_jobs = sectors.get_attribute("sqft_per_job")
+        sqft_per_job = sqft_per_jobs[name_equals_sector_index][0]
 
         jobs = dataset_pool.get_dataset("job")
         buildings = self.get_dataset()
-        sqft = ma.masked_where(jobs.get_attribute('sector_id') == sector_id, jobs.get_attribute('sqft_imputed'), 0)
-        print clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft), 0,
+        job_sqft = ma.masked_where(jobs.get_attribute('sector_id') == sector_id, [sqft_per_job] * jobs.size(), 0)
+        job_area = clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), job_sqft), 0,
                         buildings.get_attribute("building_sqft"))
-        return clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft), 0,
-                        buildings.get_attribute("building_sqft"))
+        logger.log_note("job_area%s: %s" % (sector_id, sum(job_area)))
+        return job_area
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("job").get_attribute("sqft").sum()

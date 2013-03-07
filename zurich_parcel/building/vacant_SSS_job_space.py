@@ -4,6 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import ma, clip, where
+from opus_core.logger import logger
 
 class vacant_SSS_job_space(Variable):
     """ number of job spaces that is vacant/unoccupied"""
@@ -26,6 +27,7 @@ class vacant_SSS_job_space(Variable):
         # HACK
         vacant = clip(vacant, a_min=0, a_max=1e100)
         
+        logger.log_note("vacant: %s" % (sum(vacant)))
         assert((vacant >= 0).all())
         assert(sum(vacant) > 0)
         return vacant
