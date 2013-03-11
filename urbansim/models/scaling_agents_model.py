@@ -54,7 +54,7 @@ class ScalingAgentsModel(Model):
         
         for submodel in submodels:
             result[self.observations_mapping[submodel]] = self._simulate_submodel(submodel, 
-                                location_set, agent_set, agents_index)
+                                location_set, agent_set, agents_index).astype(result.dtype)
         return result
     
     def _simulate_submodel(self, submodel, location_set, agent_set, agents_index):
