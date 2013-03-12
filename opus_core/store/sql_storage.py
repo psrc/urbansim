@@ -382,12 +382,12 @@ else:
                             host_and_db = db.host_name
                         else:
                             host_and_db = '%s/misc' % db.host_name
-                        expected_url = '%s://%s:%s@%s'%(db.protocol,
+                        expected_url = '%s://%s:%s@%s'%("postgresql", #db.protocol,
                                    db.user_name, 
                                    db.password, 
                                    host_and_db)
                     else:
-                        expected_url = '%s://%s:%s@%s/%s'%("postgresql", #db.protocol,
+                        expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
                                    db.user_name, 
                                    db.password, 
                                    db.host_name, 
