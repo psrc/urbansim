@@ -387,7 +387,7 @@ else:
                                    db.password, 
                                    host_and_db)
                     else:
-                        expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
+                        expected_url = '%s://%s:%s@%s/%s'%("postgresql", #db.protocol,
                                    db.user_name, 
                                    db.password, 
                                    db.host_name, 
