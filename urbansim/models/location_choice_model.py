@@ -6,7 +6,7 @@ import re
 from opus_core.resources import Resources
 from opus_core.chunk_specification import ChunkSpecification
 from numpy import zeros, array, arange, ones, float32, concatenate, where, unique
-from numpy import int8, take, put, greater, resize, intersect1d
+from numpy import int8, take, put, greater, resize, intersect1d, newaxis
 from opus_core import ndimage
 from numpy.random import permutation
 from numpy import ma, ndarray
@@ -224,11 +224,18 @@ class LocationChoiceModel(ChoiceModel):
         """
         
         nchoices = self.get_choice_set_size()
+        sampling = True
+        iterate_by_submodels = False
+        if self.filter is not None and (isinstance(self.filter, dict) or re.search('SUBMODEL', self.filter) is not None):
+            iterate_by_submodels = True
+            
         ## apply (alternative) filter when alternative size equals to the size of choice set, or sampler class is None
         if (self.sampler_class is None) or (nchoices==self.choice_set.size()):
             if self.filter is None:
                 return ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
-            else:  # apply filter without doing sampling
+            elif iterate_by_submodels:
+                sampling = False                  
+            else: # apply filter without doing sampling if filter is not defined by submodels
                 filter_index = self.apply_filter(self.filter, agent_set, agents_index)
                 self.model_interaction.create_interaction_datasets(agents_index, filter_index)
                 self.update_choice_set_size(filter_index.size)
@@ -238,7 +245,7 @@ class LocationChoiceModel(ChoiceModel):
         interaction_dataset = None
         #if filter is specified by submodel in a dict, call sampler submodel by submodel
         sampling_by_groups = False
-        if isinstance(self.filter, dict) or config.get("sample_alternatives_by_submodel", False)  or config.get("sample_alternatives_by_group", False):
+        if iterate_by_submodels or config.get("sample_alternatives_by_submodel", False)  or config.get("sample_alternatives_by_group", False):
             groups_equal_submodels=True
             groups = submodels
             sampling_by_groups = True
@@ -271,35 +278,44 @@ class LocationChoiceModel(ChoiceModel):
                 choice_index = self.apply_filter(self.filter, agent_set=agent_set, 
                                                  agents_index=agents_index_in_group,  
                                                  submodel=group, 
-                                                 replace_string='SUBMODEL' if groups_equal_submodels else 'GROUP')
+                                                 replace_dict={'SUBMODEL':group} if groups_equal_submodels else {'GROUP': group})
                 if choice_index is not None and choice_index.size == 0:
                     logger.log_error("There is no alternative that passes filter %s for %s=%s; %s agents with id %s will remain unplaced." % \
                                      (self.filter, 'SUBMODEL' if groups_equal_submodels else 'GROUP',
                                       group, agents_index_in_group.size, agent_set.get_id_attribute()[agents_index_in_group]))
                     continue
                 
-                group_sampling_weights = sampling_weights
-                if isinstance(sampling_weights, str):
-                    group_sampling_weights = re.sub('SUBMODEL' if groups_equal_submodels else 'GROUP', 
+                if sampling:
+                    group_sampling_weights = sampling_weights
+                    if isinstance(sampling_weights, str):
+                        group_sampling_weights = re.sub('SUBMODEL' if groups_equal_submodels else 'GROUP', 
                                                        str(int(group)), sampling_weights)
                                       
-                chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
-                if type(chunk_specification) == str:
-                    chunk_specification = eval(chunk_specification)
-                chunk_specification = ChunkSpecification(chunk_specification)
-                nchunks = chunk_specification.nchunks(agents_index_in_group)
-                chunksize = chunk_specification.chunk_size(agents_index_in_group)
+                        chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
+                    if type(chunk_specification) == str:
+                        chunk_specification = eval(chunk_specification)
+                    chunk_specification = ChunkSpecification(chunk_specification)
+                    nchunks = chunk_specification.nchunks(agents_index_in_group)
+                    chunksize = chunk_specification.chunk_size(agents_index_in_group)
                 
-                interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index_in_group, 
+                    interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index_in_group, 
                                                   choice_index, nchoices,
                                                   weights=group_sampling_weights,
                                                   config=config,
                                                   nchunks=nchunks, chunksize=chunksize)
+                    filter_idx = interaction_dataset.index2
+                else:
+                    self.model_interaction.create_interaction_datasets(agents_index_in_group, choice_index)
+                    interaction_dataset = self.model_interaction.interaction_dataset
+                    filter_idx = -1 * ones((agents_index_in_group.size, nchoices), dtype='int32')
+                    filter_idx[:, interaction_dataset.index2] = interaction_dataset.index2
+
                 if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
                     raise StandardError, "There are no locations available for the given sampling weights for group %s." % group
                 if len(groups)>1 or (agents_index.size > agents_index_in_group.size):
                     if interaction_dataset.get_reduced_m() > 0:
-                        index2[where_group,:] = interaction_dataset.index2
+                        index2[where_group,:] = filter_idx
+
                         for name in interaction_dataset.get_known_attribute_names():
                             attr_val = interaction_dataset.get_attribute(name)
                             if not attributes.has_key(name):
@@ -312,13 +328,17 @@ class LocationChoiceModel(ChoiceModel):
                 self.model_interaction.interaction_dataset = None
                 return
             if len(groups)>1 or (agents_index.size > agents_index_in_group.size):  ## if there are more than 1 group, merge the data by submodel and recreate interaction_dataset
-                interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
+                if sampling:
+                    interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
                                                                                     interaction_dataset.dataset2, 
                                                                                     index1=agents_index, 
                                                                                     index2=index2)
-                for name in attributes.keys():
-                    interaction_dataset.add_primary_attribute(attributes[name], name)
-                
+                    for name in attributes.keys():
+                        interaction_dataset.add_primary_attribute(attributes[name], name)
+                else:
+                    self.model_interaction.create_interaction_datasets(agents_index, index2)
+                    interaction_dataset = self.model_interaction.interaction_dataset
+                    
             self.update_choice_set_size(interaction_dataset.get_reduced_m())
         if not sampling_by_groups: # no sampling by submodels/groups
             choice_index = self.apply_filter(self.filter, agent_set=agent_set, 
@@ -354,7 +374,7 @@ class LocationChoiceModel(ChoiceModel):
         self.filter_index = None
         return ChoiceModel.get_sampling_weights(self, config, **kwargs)
         
-    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2, replace_string='SUBMODEL', **kwargs):
+    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2, replace_dict={'SUBMODEL': -2}, **kwargs):
         """Return index to self.choice_set whose value for self.filter variable is true
         
         If filter is a dictionary, it chooses the one for the given submodel.
@@ -368,7 +388,9 @@ class LocationChoiceModel(ChoiceModel):
             filter = filter[submodel]
 
         if isinstance(filter, str):
-            submodel_filter = re.sub(replace_string, str(submodel), filter)
+            submodel_filter = filter
+            for key, value in  replace_dict.iteritems():
+                submodel_filter = re.sub(key, str(value), submodel_filter)
             filter_index = where(self.choice_set.compute_variables([submodel_filter], 
                                                                    dataset_pool=self.dataset_pool))[0]
         elif isinstance(filter, ndarray):
