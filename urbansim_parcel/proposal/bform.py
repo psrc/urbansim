@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 import numpy
 from math import ceil
 from numpy import array
@@ -89,7 +93,7 @@ class BForm:
             return sqft / MFBUILDEREFFICIENCY
 
         sqft = numpy.dot(my.mfunitsizes,X[:4])
-		# ground floor retail
+        # ground floor retail
         if len(X) == 5: sqft += X[4]*devmdl_optimize.SQFTFACTOR 
         return sqft / MFBUILDEREFFICIENCY
 
@@ -120,7 +124,7 @@ class BForm:
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         if my.parcelfees: 
             my.actualfees = numpy.sum(my.num_units)*\
-								my.parcelfees.resother_parcel_fee(my.parcel_id)
+                                my.parcelfees.resother_parcel_fee(my.parcel_id)
             cost += my.actualfees
         cost += numpy.dot(SFPARKING,my.num_units)*F
         return cost
@@ -177,7 +181,7 @@ class BForm:
         if my.isr: cost += numpy.sum(my.num_units)*my.isr.res_isr_fee(my.taz)
         if my.parcelfees: 
             my.actualfees = numpy.sum(my.num_units)*\
-								my.parcelfees.resmf_parcel_fee(my.parcel_id)
+                                my.parcelfees.resmf_parcel_fee(my.parcel_id)
             cost += my.actualfees
         cost += my.nonres_sqft*GROUNDFLOORRETAIL*F2
         return cost
