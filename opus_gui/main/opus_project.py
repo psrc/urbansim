@@ -306,6 +306,8 @@ class OpusProject(object):
                         clear_inherited_attribute_or_delete_inherited_nodes(node)
                     else:
                         nodes_to_delete.append(node)
+                else:
+                    clear_inherited_attribute_or_delete_inherited_nodes(node)
             
             for node in nodes_to_delete:
                 tree_node.remove(node)
