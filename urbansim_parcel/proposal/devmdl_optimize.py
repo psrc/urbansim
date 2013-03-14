@@ -2,13 +2,14 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from urbansim_parcel.proposal.pycel.excelutil import *
-from urbansim_parcel.proposal.pycel.excellib import *
+#from urbansim_parcel.proposal.pycel.excelutil import *
+#from urbansim_parcel.proposal.pycel.excellib import *
 from scipy.optimize import *
 from numpy import array
 from opus_core.logger import logger
 from proforma import proforma
 from constants import *
+import numpy
 import copy
 
 DEBUG = 0
@@ -185,6 +186,11 @@ def optimize(bform,prices,costdiscount,dataset_pool):
         #r2[1] = _objfunc(r2[0],btype)
    
     r = fmin_slsqp(_objfunc2,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[bform,btype,prices,costdiscount,dataset_pool],iter=150,acc=.01)
+    r = list(r)
+    logger.log_status("type r: %s" % (type(r)))
+    logger.log_status("len r: %s" % (len(r)))
+    logger.log_status("r0: %s" % (r[0]))
+    logger.log_status("r1: %s" % (r[1]))
     #if DEBUG > 0: print r
     #print r
     if r[3] <> 0: return r[0], -1

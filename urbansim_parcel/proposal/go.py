@@ -8,8 +8,8 @@ Simple example file showing how a spreadsheet can be translated to python and ex
 
 from __future__ import division
 import os, sys, cPickle, traceback
-from pycel.excelutil import *
-from pycel.excellib import *
+#from pycel.excelutil import *
+#from pycel.excellib import *
 from os.path import normpath,abspath
 import getopt
 from devmdl_zoning import *
@@ -20,7 +20,7 @@ import scipy
 from openopt import *
 sys.path.insert(1,'d:\urban_sim_ffoti')
 import proforma
-from pycel.excelcompiler import ExcelCompiler, Spreadsheet
+#from pycel.excelcompiler import ExcelCompiler, Spreadsheet
 from opus_core.logger import logger
 
 DEBUG = 0
