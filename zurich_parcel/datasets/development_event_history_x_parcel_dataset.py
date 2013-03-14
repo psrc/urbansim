@@ -4,5 +4,5 @@
 
 from urbansim.datasets.interactions import InteractionDataset
 
-class BuildingXParcelDataset(InteractionDataset):
+class DevelopmentEventHistoryXParcelDataset(InteractionDataset):
      pass
