@@ -1437,6 +1437,43 @@
           </submodel_group>
         </specification>
       </model>
+      <model name="sc_external_demographic_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">zurich_parcel.models.external_demographic_model</class_module>
+            <class_name type="string">ExternalDemographicModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ExternalDemographicModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="demographic_data_file" parser_action="quote_string" type="string">demography.hdf5</argument>
+            <argument model_dependency_type="dataset" name="household_dataset" type="string">household</argument>
+            <argument model_dependency_type="dataset" name="person_dataset" type="string">person</argument>
+            <argument name="keep_attributes" type="string">['cars', 'income', 'living_unit_id','household_vz_id']</argument>
+            <argument name="keep_attributes_p" type="string">['job_id', 'home2work_distance_meter', 'home2work_travel_time_min', 'work2home_distance_meter', 'work2home_travel_time_min', 'mode', ]</argument>
+            <argument name="fill_value" type="string">-1</argument>
+            <argument name="demographic_attributes" type="dictionary">
+              <attribute name="household_id" type="string">household.household_id</attribute>
+              <attribute name="age_of_head" type="string">household.aggregate(person.age, function=maximum)</attribute>
+              <attribute name="persons" type="string">household.number_of_agents(person)</attribute>
+              <attribute name="workers" type="string">household.aggregate(person.work_stat==1)</attribute>
+              <attribute name="race_id" type="string">household.aggregate(person.place_of_birth, function=median).astype(uint32)</attribute>
+            </argument>
+            <argument name="demographic_attributes_p" type="dictionary">
+              <attribute name="person_id" type="string">person.person_id</attribute>
+              <attribute name="work_at_home" type="string">(person.sex == 999).astype(float32)</attribute>
+              <attribute name="age" type="string">person.age</attribute>
+              <attribute name="household_id" type="string">person.household_id</attribute>
+              <attribute name="sex" type="string">person.sex</attribute>
+              <attribute name="worker" type="string">person.work_stat</attribute>
+              <attribute name="partner_id" type="string">person.partner_id</attribute>
+              <attribute name="workstat" type="string">person.work_stat</attribute>
+              <attribute name="finlevedu" type="string">person.loe</attribute>
+            </argument>
+          </run>
+        </structure>
+      </model>
     </models>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="dictionary">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
@@ -1571,15 +1608,15 @@
           <argument name="package_order" type="list">['zurich_parcel','urbansim_parcel', 'urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <selectable name="zone" type="selectable">False</selectable>
+          <selectable name="zone" type="selectable">True</selectable>
           <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="household" type="selectable">True</selectable>
+          <selectable name="household" type="selectable">False</selectable>
           <selectable name="living_unit" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
           <selectable name="buildings_for_estimation" type="selectable">False</selectable>
           <selectable name="parcel" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
           </selectable>
-          <selectable name="person" type="selectable">True<package_name type="string">zurich_parcel</package_name>
+          <selectable name="person" type="selectable">False<package_name type="string">zurich_parcel</package_name>
           </selectable>
           <selectable name="development_template" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
           </selectable>
@@ -1610,10 +1647,11 @@
       </creating_baseyear_cache_configuration>
       <base_year field_identifier="Base Year" name="" type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear field_identifier="First Year of Simulation" name="" type="integer">2001</firstyear>
+        <firstyear field_identifier="First Year of Simulation" name="" type="integer">2000</firstyear>
         <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2022</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
+        <selectable name="sc_external_demographic_model" type="selectable">True</selectable>
         <selectable name="sc_income_regression_model" type="selectable">False</selectable>
         <selectable name="sc_postprocess_income_regression_model" type="selectable">False</selectable>
         <selectable name="sc_car_availability_model" type="selectable">False</selectable>
@@ -1628,7 +1666,7 @@
         <selectable name="sc_employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
         </selectable>
         <selectable name="sc_workplace_location_choice" type="selectable">True</selectable>
-        <selectable name="sc_household_transition_model" type="selectable">True</selectable>
+        <selectable name="sc_household_transition_model" type="selectable">False</selectable>
         <selectable name="sc_household_relocation_model" type="selectable">True</selectable>
         <selectable name="sc_household_location_choice_model" type="selectable">True</selectable>
       </models_to_run>
