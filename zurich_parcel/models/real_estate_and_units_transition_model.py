@@ -75,8 +75,8 @@ class RealEstateTransitionModel(Model):
             sample_from_dataset = realestate_dataset
             living_units_from_dataset = living_units_dataset
             
-        #if dataset_pool is None:
-        #    dataset_pool = SessionConfiguration().get_dataset_pool()
+        if dataset_pool is None:
+            dataset_pool = SessionConfiguration().get_dataset_pool()
         if year is None:
             year = SimulationState().get_current_time()
         this_year_index = where(self.target_vancy_dataset.get_attribute('year')==year)[0]
@@ -179,9 +179,14 @@ class RealEstateTransitionModel(Model):
             #TODO: Make code more general to cover various stratifications in the real estate market.
             '''
             if criterion[col] == 1:
+                """ Option without demography model
                 idx = where(self.control_totals.get_attribute("year")==year + 1)[0]
                 this_years_control_totals = DatasetSubset(self.control_totals, idx)
                 expected_num = int(round( this_years_control_totals.get_attribute('total_number_of_households').sum() /\
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))""" 
+                hh_dataset = dataset_pool.get_dataset( 'household' )
+                number_of_hh = hh_dataset.size()
+                expected_num = int(round( number_of_hh /\
                                     (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) 
             if criterion[col] == 0:
                 # Getting control totals per sector in a dictionary
