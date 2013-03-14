@@ -19,7 +19,8 @@ aliases = [
            "s49 = urbansim_parcel.building.number_of_jobs_of_sector_49 * 50",
            "s99 = urbansim_parcel.building.number_of_jobs_of_sector_99 * 100",
            "occupied_non_residential_spaces = zurich_parcel.building.s1 + zurich_parcel.building.s2 + zurich_parcel.building.s3+ zurich_parcel.building.s4 + zurich_parcel.building.s5 + zurich_parcel.building.s6 + zurich_parcel.building.s7 + zurich_parcel.building.s8 + zurich_parcel.building.s49 + zurich_parcel.building.s99",
-           "sc_occupied_spaces_1 = urbansim_parcel.building.occupied_residential_units",
+           "occupied_residential_units = numpy.minimum(building.number_of_agents(household), building.number_of_agents(living_unit))",
+           "sc_occupied_spaces_1 = zurich_parcel.building.occupied_residential_units",
            "sc_occupied_spaces_0 = zurich_parcel.building.occupied_non_residential_spaces",
            "building_test = building.land_area",
            ]
