@@ -206,6 +206,7 @@
       <variable name="building.sc_is_residential_building" source="expression" type="variable_definition" use="both">building.building_type_id == 1</variable>
       <variable name="parcel.sc_plan_type_id_between_2999_and_7000" source="expression" type="variable_definition" use="both">numpy.logical_and(parcel.plan_type_id &gt; 2999, parcel.plan_type_id &lt; 7000)</variable>
       <variable name="parcel.sc_plan_type_id_smaller_3000" source="expression" type="variable_definition" use="both">parcel.plan_type_id &lt; 3000</variable>
+      <variable name="parcel.sc_plan_type_id_smaller_4000" source="expression" type="variable_definition" use="both">parcel.plan_type_id &lt; 4000</variable>
       <variable name="parcel.sc_retail_whithin_1km" source="primary attribute" type="variable_definition" use="both">parcel.bz05_g52_1km</variable>
       <variable name="parcel.sc_dist_to_school" source="primary attribute" type="variable_definition" use="both">parcel.dist_to_school</variable>
       <variable name="household.sc_dist_to_previous_loc" source="expression" type="variable_definition" use="both">household.aggregate(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.x_coord_sp_lag1, intermediates=[building, household]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.y_coord_sp_lag1, intermediates=[building, household]))**2)) / (household.number_of_agents(person))</variable>
@@ -291,6 +292,7 @@
       <variable name="household.sc_household_income" source="primary attribute" type="variable_definition" use="both">household.income</variable>
       <variable name="household.sc_households_number_of_cars" source="primary attribute" type="variable_definition" use="both">household.cars</variable>
       <variable name="household.sc_number_of_persons_in_household" source="primary attribute" type="variable_definition" use="both">household.persons</variable>
+      <variable name="building.sc_plan_type_id_of_building_location_smaller_4000" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.plan_type_id &lt; 4000, intermediates=[parcel])</variable>
     </expression_library>
     <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
@@ -487,6 +489,7 @@
             <argument name="sample_filter" type="string">None</argument>
             <argument name="resources" type="string">model_resources</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">target_vacancy_rate</argument>
+            <argument name="hh_dataset" parser_action="quote_string" type="string">household</argument>
           </run>
         </structure>
       </model>
@@ -502,7 +505,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(sc_plan_type_id_smaller_3000, numpy.logical_and(parcel.is_street==0, sc_has_floor_capacity))</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(sc_plan_type_id_smaller_4000, numpy.logical_and(parcel.is_street==0, sc_has_floor_capacity))</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">building_quality_id</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -538,7 +541,7 @@
             <argument convert_blank_to_none="True" name="index_to_unplace" type="string"></argument>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">1.0</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(sc_plan_type_id_of_building_location_smaller_3000, sc_quality_is_residential)</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">numpy.logical_and(sc_plan_type_id_of_building_location_smaller_4000, sc_quality_is_residential)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_variable" parser_action="quote_string" type="string">parcel_id</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
