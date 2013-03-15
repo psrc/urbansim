@@ -35,7 +35,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total DUs in Active Developments for year %s' % year
-            r = self.connection.execute('select sum(current_built_units) from %s_%s_activeDevelopments where building_type_id in (1,2)' % (self.run_name,year))
+            r = self.connection.execute('select sum(current_built_units) from %s_%s_activeDevelopments where building_type_id in (1,2,3)' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -55,13 +55,55 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+    def get_total_transient_households(self):
+        # get total transient households by year
+        self.worksheet.write(0,self.column_counter,'transient_hh')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total transient households for year %s' % year
+            r = self.connection.execute('''
+                                SELECT
+                                    sum(b.transient_households_in_hotels + b.transient_households_in_households) thhlds
+                                FROM %s_%s_buildings b
+                                left join %s_%s_zones z
+                                on b.zone_id = z.zone_id
+             ''' % (self.run_name,year,self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+        self.column_counter += 1
+
+    def get_total_construction_jobs(self):
+        # get the average age of the population by year
+        self.worksheet.write(0,self.column_counter,'const_jobs')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total construction jobs for year %s' % year
+            r = self.connection.execute('select sum(construction_jobs) from %s_%s_zones' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+        self.column_counter += 1
+        
+    def get_total_non_site_based_jobs(self):
+        # get the average age of the population by year
+        self.worksheet.write(0,self.column_counter,'nsb_jobs')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total non site based jobs for year %s' % year
+            r = self.connection.execute('select sum(non_site_jobs) from %s_%s_zones' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+        self.column_counter += 1
+
     def get_mean_age_of_population_by_year(self):
         # get the average age of the population by year
         self.worksheet.write(0,self.column_counter,'mean_pop_age')
         row_counter = 1
         for year in self.years:
             print 'Computing mean age of population for year %s' % year
-            r = self.connection.execute('select ROUND(AVG(CAST(age AS float)),1) from %s_%s_persons where is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select ROUND(AVG(CAST(age AS float)),2) from %s_%s_persons where is_seasonal = 0' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -285,14 +327,14 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
+
     def get_total_population_age_male_distribution_by_age_and_year(self):
-        # get male population in age brackets <5, 5-9, 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-49, 50-54,
-        # 55-59, 60-64, 65-69, 70-74, 75-79, 80-84, 85-89, 90-94, 95-99, 100+
+        # get population in age brackets <5, 5-9, 10-15, 16-18, 19-24, 25-34, 35-44, 45-54, 55-64, 65+
         self.worksheet.write(0,self.column_counter, 'm_pop_age_under_5')
         row_counter = 1
         for year in self.years:
             print 'Computing total male population under age 5 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -302,7 +344,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 5-9 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -312,17 +354,27 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 10-14 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_15_19')
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_15_17')
         row_counter = 1
         for year in self.years:
-            print 'Computing total male population ages 15-19 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 20 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total male population ages 15-17 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 18 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_18_19')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 18-19 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 17 and age < 20 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -332,7 +384,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 20-24 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -342,7 +394,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 25-29 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -352,7 +404,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 30-34 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -362,7 +414,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 35-39 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -372,7 +424,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 40-44 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -382,7 +434,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 45-49 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -392,7 +444,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 50-54 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -402,17 +454,27 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 55-59 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_60_64')
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_60_61')
         row_counter = 1
         for year in self.years:
-            print 'Computing total male population ages 60-64 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 65 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total male population ages 60-61 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 62 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_62_64')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total male population ages 62-64 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 61 and age < 65 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -422,7 +484,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 65-69 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -432,7 +494,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 70-74 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -442,7 +504,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 75-79 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -452,61 +514,31 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total male population ages 80-84 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_85_89')
+        self.worksheet.write(0,self.column_counter, 'm_pop_age_over_84')
         row_counter = 1
         for year in self.years:
-            print 'Computing total male population ages 85-89 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and age < 90 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total male population ages 85+ for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and is_seasonal = 0 and sex = 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_90_94')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total male population ages 90-94 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 89 and age < 95 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_95_99')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total male population ages 95-99 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 94 and age < 100 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'm_pop_age_100up')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total male population ages 100+ for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 99 and sex = 1 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1        
+
 
     def get_total_population_age_female_distribution_by_age_and_year(self):
-        # get female population in age brackets <5, 5-9, 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-49, 50-54,
-        # 55-59, 60-64, 65-69, 70-74, 75-79, 80-84, 85-89, 90-94, 95-99, 100+
+        # get population in age brackets <5, 5-9, 10-15, 16-18, 19-24, 25-34, 35-44, 45-54, 55-64, 65+
         self.worksheet.write(0,self.column_counter, 'f_pop_age_under_5')
         row_counter = 1
         for year in self.years:
             print 'Computing total female population under age 5 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age < 5 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -516,7 +548,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 5-9 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 4 and age < 10 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -526,17 +558,27 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 10-14 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 9 and age < 15 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_15_19')
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_15_17')
         row_counter = 1
         for year in self.years:
-            print 'Computing total female population ages 15-19 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 20 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total female population ages 15-17 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 14 and age < 18 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_18_19')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 18-19 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 17 and age < 20 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -546,7 +588,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 20-24 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 19 and age < 25 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -556,7 +598,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 25-29 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 24 and age < 30 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -566,7 +608,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 30-34 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 29 and age < 35 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -576,7 +618,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 35-39 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 34 and age < 40 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -586,7 +628,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 40-44 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 39 and age < 45 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -596,7 +638,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 45-49 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 44 and age < 50 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -606,7 +648,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 50-54 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 49 and age < 55 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -616,17 +658,27 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 55-59 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 54 and age < 60 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_60_64')
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_60_61')
         row_counter = 1
         for year in self.years:
-            print 'Computing total female population ages 60-64 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 65 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total female population ages 60-61 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 59 and age < 62 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_62_64')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total female population ages 62-64 for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 61 and age < 65 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -636,7 +688,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 65-69 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 64 and age < 70 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -646,7 +698,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 70-74 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 69 and age < 75 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -656,7 +708,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 75-79 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 74 and age < 80 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -666,52 +718,23 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total female population ages 80-84 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 79 and age < 85 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_85_89')
+        self.worksheet.write(0,self.column_counter, 'f_pop_age_over_84')
         row_counter = 1
         for year in self.years:
-            print 'Computing total female population ages 85-89 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and age < 90 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
+            print 'Computing total female population ages 85+ for year %s' % year
+            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 84 and is_seasonal = 0 and sex = 2' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_90_94')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total female population ages 90-94 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 89 and age < 95 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_95_99')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total female population ages 95-99 for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 94 and age < 100 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
-        self.worksheet.write(0,self.column_counter, 'f_pop_age_100up')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing total female population ages 100+ for year %s' % year
-            r = self.connection.execute('select COUNT(*) from %s_%s_persons where age > 99 and sex = 2 and is_seasonal = 0' % (self.run_name,year))
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-                row_counter += 1
-            r.close()
-        self.column_counter += 1
+
 
     def get_total_households_by_number_of_children(self):
         # Get the number of households by the number of children in the household
@@ -1120,7 +1143,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total SF residential DUs for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id = 1' % (self.run_name, year))
+            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id in (1,3)' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1659,6 +1682,46 @@ class RegionWideReport():
             column_counter += 1
         self.column_counter += len(races)
 
+
+    def get_total_households_by_income_quintile_and_year(self):
+        # Get total households by income quintile and year
+        
+        # compute temp tables
+        for year in self.years:
+            print 'Computing temp tables for household quintiles for year %s' % (year)
+            query = '''
+                        SELECT
+                            NTILE(5) OVER(ORDER BY h.income) AS qtile
+                        into #hhquintsregion%s
+                        FROM %s_%s_households h
+                        where h.is_seasonal = 0                        
+                    ''' % (year, self.run_name, year)
+            r = self.connection.execute(query)
+            r.close()
+        
+        # compute totals and put into worksheet
+        income_quintiles = [1,2,3,4,5]
+        column_counter = self.column_counter
+        for q in income_quintiles:
+            row_counter = 1
+            self.worksheet.write(0,column_counter,'hh_quint0%s' % q)
+            for year in self.years:
+                print 'Computing total households for year %s and income quintile %s' % (year, q)                
+                query = '''
+                        SELECT
+                            COUNT(*)
+                        FROM #hhquintsregion%s
+                        WHERE qtile = %s    
+                        ''' % (year, q)
+                r = self.connection.execute(query)
+                for row in r:
+                    self.worksheet.write(row_counter,column_counter,row[0])
+                r.close()
+                row_counter += 1
+            column_counter += 1
+        self.column_counter += len(income_quintiles)
+
+
     def get_mean_persons_per_household_by_race_of_hh_head_and_year(self):
         # Get mean persons per by race and year
         # Get races
@@ -1803,6 +1866,160 @@ def get_total_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_
             row_counter += 1
         column_counter += 1
         r.close()
+
+def get_total_transient_households_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total transient households by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('transhh_by_%s' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total transient households by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''
+                    SELECT
+                        z.%s_id,
+                        sum(b.transient_households_in_hotels + b.transient_households_in_households) thhlds
+                    INTO #numtranhh_%s
+                    FROM %s_%s_buildings b
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    group by z.%s_id
+                    order by z.%s_id
+                ''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.thhlds IS NULL THEN 0
+                                    ELSE u.thhlds
+                            END
+                        from #distinct_%s r
+                        left join #numtranhh_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+   
+def get_total_construction_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total construction jobs by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('const_jobs_by_%s' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total construction jobs by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''
+                    SELECT
+                        %s_id,
+                        sum(construction_jobs) numjobs
+                    INTO #numcnstjobs_%s
+                    FROM %s_%s_zones
+                    group by %s_id
+                    order by %s_id
+                    ''' % (subarea, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numjobs IS NULL THEN 0
+                                    ELSE u.numjobs
+                            END
+                        from #distinct_%s r
+                        left join #numcnstjobs_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_non_site_based_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total construction jobs by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('nonsite_jobs_by_%s' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total construction jobs by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''
+                    SELECT
+                        %s_id,
+                        sum(non_site_jobs) numjobs
+                    INTO #numnsbjobs_%s
+                    FROM %s_%s_zones
+                    group by %s_id
+                    order by %s_id
+                    ''' % (subarea, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numjobs IS NULL THEN 0
+                                    ELSE u.numjobs
+                            END
+                        from #distinct_%s r
+                        left join #numnsbjobs_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
 
 def get_total_hb_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total jobs by subarea in a separate sheet
@@ -2010,7 +2227,7 @@ def get_total_seasonal_households_by_year_and_subarea(subarea, years, workbook, 
 
 def get_total_jobs_by_land_use_sector_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     for sector in range(2,7):
-        # Get total households by income sectors by subarea in a separate sheet
+        # Get total jobs by income sectors by subarea in a separate sheet
         # write column headings (years)
         
         if sector == 2:
@@ -2081,20 +2298,25 @@ def get_total_jobs_by_land_use_sector_by_year_and_subarea(subarea, years, workbo
             column_counter += 1
             r.close()
 
-def get_total_households_by_income_quintile_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
-    for quintile in range(1,6):
-        # Get total households by income quintiles by subarea in a separate sheet
+
+def get_total_jobs_by_sector_and_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total jobs by employment sectors by subarea in separate sheets    
+    # get sectors
+    r = connection.execute('select sector_id from %s_%s_employmentSectors order by sector_id' % (run_name, base_year))
+    sectors = []
+    for row in r:
+        sectors.append(row[0])
+    r.close()    
+    
+    for sector in sectors:
         # write column headings (years)
-        worksheet = workbook.add_sheet('hh_inc_quint_%s_by_%s' % (quintile, subarea))
+        worksheet = workbook.add_sheet('jobs_empsec_%s' % (sector))
         worksheet.write(0,0,'%s_id' % (subarea))
         
-        # TODO: if subarea is mpa, write mpa_name
-    #    if subarea == 'mpa':
-    #        blah blah blah
         # write column labels:
         column_counter = 1
         for year in years:
-            worksheet.write(0,column_counter,'y'+str(year)+'q'+str(quintile))
+            worksheet.write(0,column_counter,'y'+str(year)+'sec'+str(sector))
             column_counter += 1
         # get distinct subareas and write to 1st column as IDs
         row_counter = 1
@@ -2103,45 +2325,166 @@ def get_total_households_by_income_quintile_by_year_and_subarea(subarea, years, 
             worksheet.write(row_counter,0,row[0])
             row_counter += 1
         
-        # TODO: if subarea is mpa, write mpa_name
-    #    if subarea == 'mpa':
-    #        blah blah blah
-        
         # get values and fill in table
         column_counter = 1
         for year in years:
-            print 'Computing total households for income quintile %s by %s for year %s' % (quintile, subarea, year)
+            print 'Computing total jobs by sector %s by %s for year %s' % (sector, subarea, year)
             row_counter = 1
             r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
             r.close()
             r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
             r.close()
-            query = '''select z.%s_id, count(*) as numhh
-                        into #numhh_%s_%s
-                        from %s_%s_households h
-                        left join %s_%s_buildings b
-                        on b.building_id = h.building_id
-                        left join %s_%s_zones z
-                        on b.zone_id = z.zone_id
-                        where h.income_quintiles = %s and h.is_seasonal = 0
-                        group by z.%s_id
-                        order by z.%s_id''' % (subarea, year, quintile, run_name, year, run_name, year, run_name, year, quintile, subarea, subarea)
-            r = connection.execute(query)
-            r.close()
-            r = connection.execute('''select
-                                CASE 
-                                        WHEN u.numhh IS NULL THEN 0
-                                        ELSE u.numhh
-                                END
-                            from #distinct_%s r
-                            left join #numhh_%s_%s u
-                            on r.%s_id = u.%s_id
-                            order by r.%s_id''' % (subarea, year, quintile, subarea, subarea, subarea))
+            r = connection.execute(
+                            '''
+                                SELECT
+                                    CASE
+                                        WHEN j.num_jobs is null THEN 0
+                                        ELSE j.num_jobs
+                                    END
+                                FROM #distinct_%s r
+                                left join (
+                                    SELECT
+                                        z.%s_id,
+                                        count(*) num_jobs
+                                    FROM %s_%s_jobs j
+                                    left join %s_%s_buildings b
+                                    on b.building_id = j.building_id
+                                    left join %s_%s_zones z
+                                    on b.zone_id = z.zone_id
+                                    where j.sector_id = %s
+                                    group by z.%s_id
+                                    ) j
+                                on r.%s_id = j.%s_id
+                            ''' % (subarea, subarea, run_name, year, run_name, year, run_name, year, sector, subarea, subarea, subarea))
             for row in r:
                 worksheet.write(row_counter,column_counter,row[0])
                 row_counter += 1
             column_counter += 1
             r.close()
+
+
+def get_total_households_by_income_quintile_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+
+    # create temp tables:
+    # create distinct subareas
+    r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+    r.close()
+    # create distinct quintiles
+    query = '''
+                SELECT 1 as quint into #quints;
+                INSERT INTO #quints
+                VALUES(2);
+                INSERT INTO #quints
+                VALUES(3);
+                INSERT INTO #quints
+                VALUES(4);
+                INSERT INTO #quints
+                VALUES(5);                
+            '''
+    r = connection.execute(query)
+    r.close()
+    # cross join for unique combinations
+    query = '''
+                SELECT * 
+                INTO #distinct_%s_quints
+                FROM #distinct_%s
+                cross join #quints
+                order by %s_id, quint                
+            ''' % (subarea, subarea, subarea)
+    r = connection.execute(query)
+    r.close()
+    
+    # create temporary tables for each year
+    for year in years:
+        # get quints on households
+        print 'Computing temp tables for total households for income quintiles for year %s' % (year)
+        query = '''
+                    SELECT
+                        h.*,
+                        NTILE(5) OVER (ORDER BY h.income) as 'income_quints'
+                    into #hhquints%s
+                    FROM %s_%s_households h
+                    WHERE h.is_seasonal = 0
+                ''' % (year, run_name, year)
+        r = connection.execute(query)
+        r.close()
+        # group up all hh w/quints by subarea
+        query = '''
+                    SELECT
+                        z.%s_id,
+                        h.income_quints,
+                        count(*) num_hh
+                    INTO #hhquints_by_%s_%s
+                    FROM #hhquints%s h
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    left join %s_%s_zones z
+                    on z.zone_id = b.zone_id
+                    group by z.%s_id, h.income_quints
+                    order by z.%s_id, h.income_quints
+                ''' % (subarea, subarea, year, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close() 
+        # join hh w/quints to unique quint/subarea combination
+        query = '''
+                    SELECT
+                        d.%s_id,
+                        d.quint as quintile,
+                        CASE
+                            WHEN h.num_hh is null THEN 0
+                            ELSE h.num_hh
+                        END num_hh
+                    INTO #hh_by_quint_by_%s_%s
+                    FROM #distinct_%s_quints d
+                    left join #hhquints_by_%s_%s h
+                    on d.%s_id = h.%s_id and d.quint = h.income_quints
+                    order by d.%s_id, h.income_quints            
+                ''' % (subarea, subarea, year, subarea, subarea, year, subarea, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+
+    # actually start putting the stuff into worksheets
+    for quintile in range(1,6):
+        # Get total households by income quintiles by subarea in a separate sheet
+        # write column headings (years)
+        worksheet = workbook.add_sheet('hh_inc_quint_%s_by_%s' % (quintile, subarea))
+        worksheet.write(0,0,'%s_id' % (subarea))
+
+        # write column labels:
+        column_counter = 1
+        for year in years:
+            worksheet.write(0,column_counter,'y'+str(year)+'hhq'+str(quintile))
+            column_counter += 1
+        # get distinct subareas and write to 1st column as IDs
+        row_counter = 1
+        r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+        for row in r:
+            worksheet.write(row_counter,0,row[0])
+            row_counter += 1
+        r.close()
+
+        # get values and fill in table
+        column_counter = 1
+        for year in years:
+            print 'Computing total households for income quintile %s by %s for year %s' % (quintile, subarea, year)
+            row_counter = 1
+#            r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+#            r.close()
+#            r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+#            r.close()
+            query = '''
+                        SELECT
+                            num_hh
+                        FROM #hh_by_quint_by_%s_%s
+                        where quintile = %s
+                        order by %s_id
+                    ''' % (subarea, year, quintile, subarea)
+            results = connection.execute(query)
+            for row in results:
+                worksheet.write(row_counter,column_counter,row[0])
+                row_counter += 1
+            column_counter += 1
+            results.close()
 
 def get_mean_persons_per_household_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get persons per household by subarea in a separate sheet
@@ -2207,6 +2550,62 @@ def get_mean_persons_per_household_by_year_and_subarea(subarea, years, workbook,
             row_counter += 1
         column_counter += 1
         r.close()
+
+
+def get_mean_age_of_population_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get persons per household by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('avg_age_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing mean population age by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select
+                        z.%s_id,
+                        round(avg(cast(p.age as float)),2) avg_age
+                    into #avg_age_%s
+                    from %s_%s_persons p
+                    left join %s_%s_households h
+                    on p.household_id = h.household_id
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    where p.is_seasonal = 0 and h.building_id > 0
+                    group by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, run_name, year, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    when h.avg_age IS null then 0
+                                    else h.avg_age
+                            END
+                        from #distinct_%s u
+                        left join #avg_age_%s h
+                        on h.%s_id = u.%s_id
+                        order by u.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
         
 def get_mean_household_income_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get mean household income by subarea in a separate sheet
@@ -2818,7 +3217,7 @@ def get_total_DUs_SF_by_year_and_subarea(subarea, years, workbook, run_name, bas
                         from %s_%s_buildings b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
-                        where b.building_type_id = 1
+                        where b.building_type_id in (1,3)
                         group by p.%s_id
                         order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
         else:
@@ -2827,7 +3226,7 @@ def get_total_DUs_SF_by_year_and_subarea(subarea, years, workbook, run_name, bas
                         from %s_%s_buildings b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
-                        where b.building_type_id = 1
+                        where b.building_type_id in (1,3)
                         group by p.%s_id
                         order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
         r = connection.execute(query)
@@ -3164,6 +3563,10 @@ def main():
                         , 'get_total_seasonal_population_by_year'
                         , 'get_total_seasonal_households_by_year'
                         , 'get_total_jobs_by_land_use_sector_and_year'
+                        , 'get_total_households_by_income_quintile_and_year'
+                        , 'get_total_construction_jobs'
+                        , 'get_total_non_site_based_jobs'
+                        , 'get_total_transient_households'
                         ]
         
         # Add subarea query choices if subarea was specified
@@ -3191,6 +3594,11 @@ def main():
                         , 'get_total_seasonal_households_by_year_and_subarea'
                         , 'get_total_seasonal_population_by_year_and_subarea'
                         , 'get_total_jobs_by_land_use_sector_by_year_and_subarea'
+                        , 'get_mean_age_of_population_by_year_and_subarea'
+                        , 'get_total_jobs_by_sector_and_year_and_subarea'
+                        , 'get_total_construction_jobs_by_year_and_subarea'
+                        , 'get_total_non_site_based_jobs_by_year_and_subarea'
+                        , 'get_total_transient_households_by_year_and_subarea'
                         ]
                                )
         report_list.sort()
