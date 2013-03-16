@@ -5,6 +5,22 @@
     <project_name hidden="True" type="string">zurich_kt_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable name="building.sc_acc_car_995033" source="expression" type="variable_definition" use="both">((building.disaggregate(parcel.car_accessibility)-995033)/281152)</variable>
+      <variable name="building.sc_city_has_station" source="expression" type="variable_definition" use="both">building.disaggregate((city.aggregate(parcel.dist_to_station, function=minimum)&lt;2000), intermediates=[zone])</variable>
+      <variable name="building.sc_city_has_highwayaccess" source="expression" type="variable_definition" use="both">building.disaggregate((city.aggregate(parcel.dist_to_highwayaccess, function=minimum)&lt;2000), intermediates=[zone])</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==99)*building.disaggregate(((zone.aggregate(job.sector_id==99, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==8)*building.disaggregate(((zone.aggregate(job.sector_id==8, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==7)*building.disaggregate(((zone.aggregate(job.sector_id==7, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==6)*building.disaggregate(((zone.aggregate(job.sector_id==6, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==5)*building.disaggregate(((zone.aggregate(job.sector_id==5, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==4)*building.disaggregate(((zone.aggregate(job.sector_id==4, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==3)*building.disaggregate(((zone.aggregate(job.sector_id==3, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==2)*building.disaggregate(((zone.aggregate(job.sector_id==2, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062" source="expression" type="variable_definition" use="model variable">(job.sector_id==1)*building.disaggregate(((zone.aggregate(job.sector_id==1, intermediates=[building, parcel], function=sum)/zone.number_of_agents(job))-0.062)/0.054)</variable>
+      <variable name="building.sc_degree_of_landuse_0456" source="expression" type="variable_definition" use="model variable">building.disaggregate(((zone.number_of_agents(job))+(zone.number_of_agents(household)))/(0.01*zone.zone_area)-0.456)/0.124</variable>
+      <variable name="job_x_building.sc_dist_to_previous_loc_0076" source="expression" type="variable_definition" use="both">exp(sqrt((building.disaggregate(parcel.x_coord_sp, intermediates=[building])-job.disaggregate(parcel.x_coord_sp_lag1, intermediates=[building]))**2+(job.disaggregate(parcel.y_coord_sp, intermediates=[building])-job.disaggregate(parcel.y_coord_sp_lag1, intermediates=[building]))**2)*-0.076)</variable>
+      <variable name="building.rh_zone_jobs_type99" source="expression" type="variable_definition" use="model variable">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_99)</variable>
+      <variable name="job_x_building.rh_ln_surf_sect99" source="expression" type="variable_definition" use="model variable">(job.sector_id == 99 ) * ln(building.sqm_sector99)</variable>
       <variable name="household.sc_dist_to_station_hh" source="expression" type="variable_definition" use="both">household.disaggregate(parcel.dist_to_station, intermediates=[building,living_unit])</variable>
       <variable name="household.sc_dist_to_zh_cbd_hh" source="expression" type="variable_definition" use="both">household.disaggregate(parcel.dist_to_zh_cbd, intermediates=[building,living_unit])</variable>
       <variable name="zone.sc_pop_ha_per_zone" source="expression" type="variable_definition" use="both">zone.aggregate(zurich_parcel.parcel.persons_within_56_of_parcel)</variable>
@@ -28,7 +44,7 @@
       <variable name="living_unit_x_household.sc_share_of_hh_age_40_65_within_300m_lu" source="expression" type="variable_definition" use="model variable">(numpy.logical_and(household.age_of_head&gt;40,household.age_of_head&lt;65))*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_40_to_60_within_300_of_parcel, intermediates=[building]))/ (living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])*1.0)</variable>
       <variable name="living_unit_x_household.sc_share_of_hh_age_65_99_within_300m_lu" source="expression" type="variable_definition" use="model variable">(household.age_of_head&gt;64)*(living_unit.disaggregate(zurich_parcel.parcel.households_from_age_65_to_150_within_300_of_parcel, intermediates=[building]))/ (living_unit.disaggregate(urbansim_parcel.parcel.households_within_300_of_parcel, intermediates=[building])*1.0)</variable>
       <variable name="living_unit.sc_dist_to_previous_loc_lu_0163" source="expression" type="variable_definition" use="both">living_unit.aggregate(household.aggregate(sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, living_unit, household])-person.disaggregate(parcel.x_coord_sp_lag1, intermediates=[building, living_unit, household]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, living_unit, household])-person.disaggregate(parcel.y_coord_sp_lag1, intermediates=[building, living_unit, household]))**2)**0.163) / (household.number_of_agents(person)))</variable>
-      <variable name="living_unit_x_household.sc_rent_price_to_income_lu" source="expression" type="variable_definition" use="both">((exp(living_unit.ln_rent_price) &gt; 0)* exp(living_unit.ln_rent_price))/(household.income * 1.0)</variable>
+      <variable name="living_unit_x_household.sc_rent_price_to_income_lu" source="expression" type="variable_definition" use="both">((exp(living_unit.ln_rent_price) &gt; 0)* exp(living_unit.ln_rent_price))/(household.income * 1.0) </variable>
       <variable name="living_unit.sc_dist_to_workplace_lu_0203" source="expression" type="variable_definition" use="both">living_unit.aggregate(household.aggregate((sqrt((person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.x_coord_sp, intermediates=[building, job]))**2+(person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])-person.disaggregate(parcel.y_coord_sp, intermediates=[building, job]))**2)**0.203))/ household.aggregate(person.worker))</variable>
       <variable name="living_unit_x_household.sc_dist_to_station_lu_x_no_car" source="expression" type="variable_definition" use="both">(household.cars==0)*(living_unit.disaggregate(parcel.dist_to_station, intermediates=[building]))</variable>
       <variable name="living_unit_x_household.sc_rooms_per_person_lu" source="expression" type="variable_definition" use="both">(living_unit.rooms*1.0)/(household.persons*1.0) # zurich_parcel.living_unit_x_household.rooms_per_person # #</variable>
@@ -1218,9 +1234,9 @@
         </structure>
       </model>
       <model name="sc_employment_location_choice_model" type="model">
-        <dependencies type="list">['sc_employment_relocation_model']</dependencies>
+        <dependencies type="list">['sc_employment_transition_model', 'sc_employment_relocation_model']</dependencies>
         <structure type="dictionary">
-          <group_by_attribute type="list">('home_based_status', 'name')<argument model_dependency_type="table" name="grouping_table" type="string">home_based_status</argument>
+          <group_by_attribute type="list">('sector', 'name')<argument model_dependency_type="table" name="grouping_table" type="string">sector</argument>
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
           <import hidden="True" name="import" type="dictionary">
@@ -1255,7 +1271,7 @@
           </run>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">EmploymentLocationChoiceModel</name>
-            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
+            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.sector_id</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
@@ -1263,16 +1279,16 @@
             <argument model_dependency_type="dataset" name="location_set" type="string">building</argument>
             <argument name="sample_size_locations" type="integer">50</argument>
             <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">zurich_parcel.building.vacant_SSS_job_space</argument>
-            <argument model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">vacant_SSS_job_space</argument>
+            <argument model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">zurich_parcel.building.vacant_SSS_job_space</argument>
             <argument model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">building.non_residential_sqft</argument>
             <argument name="estimation_size_agents" type="float">2</argument>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument model_dependency_type="variable" name="number_of_units_string" parser_action="quote_string" type="string">total_SSS_job_space</argument>
+            <argument model_dependency_type="variable" name="number_of_units_string" parser_action="quote_string" type="string">zurich_parcel.building.total_SSS_job_space</argument>
             <argument name="run_config" type="dictionary">
               <key convert_blank_to_none="True" model_dependency_type="variable" name="agent_units_string" type="string"></key>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>
-            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">zurich_parcel</argument>
           </init>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
@@ -1288,150 +1304,192 @@
           </prepare_for_estimate>
         </structure>
         <specification inherit_parent_values="False" type="dictionary">
-          <submodel_group name="non_home_based" type="submodel_group">
+          <submodel_group name="manufacturing" type="submodel_group">
             <submodel hidden="Children" name="manufacturing" submodel_id="1" type="submodel">
               <description type="string">manufacturing</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec ignore="True" name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
+          </submodel_group>
+          <submodel_group name="construction" type="submodel_group">
             <submodel hidden="Children" name="construction" submodel_id="2" type="submodel">
               <description type="string">construction</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect2"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
+          </submodel_group>
+          <submodel_group name="trade" type="submodel_group">
             <submodel hidden="Children" name="trade" submodel_id="3" type="submodel">
               <description type="string">trade</description>
               <variable_list type="variable_list">
-                <variable_spec name="job_x_building.rh_ln_surf_sect3"></variable_spec>
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
+          </submodel_group>
+          <submodel_group name="retail" type="submodel_group">
             <submodel hidden="Children" name="retail" submodel_id="4" type="submodel">
               <description type="string">retail</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect4"></variable_spec>
-                <variable_spec name="job_x_building.rh_pop_dens_trade"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="hotels_restaurants" submodel_id="5" type="submodel">
-              <description type="string">hotels_restaurants</description>
+          </submodel_group>
+          <submodel_group name="hotel_restaurant" type="submodel_group">
+            <submodel hidden="Children" name="hotel_restaurant" submodel_id="5" type="submodel">
+              <description type="string">hotel_restaurant</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect5"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
+          </submodel_group>
+          <submodel_group name="transport" type="submodel_group">
             <submodel hidden="Children" name="transport" submodel_id="6" type="submodel">
               <description type="string">transport</description>
               <variable_list type="variable_list">
-                <variable_spec name="job_x_building.rh_ln_surf_sect6"></variable_spec>
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
-            <submodel hidden="Children" name="services" submodel_id="7" type="submodel">
-              <description type="string">services</description>
+          </submodel_group>
+          <submodel_group name="service" type="submodel_group">
+            <submodel hidden="Children" name="service" submodel_id="7" type="submodel">
+              <description type="string">service</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect7"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type8"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
+          </submodel_group>
+          <submodel_group name="health" type="submodel_group">
             <submodel hidden="Children" name="health" submodel_id="8" type="submodel">
               <description type="string">health</description>
               <variable_list type="variable_list">
-                <variable_spec name="building.rh_zonal_income"></variable_spec>
-                <variable_spec name="job_x_building.rh_zone_jobs_same"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type1"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type2"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type3"></variable_spec>
-                <variable_spec name="job_x_building.rh_ln_surf_sect8"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type4"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type5"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type6"></variable_spec>
-                <variable_spec name="zone.rh_zone_jobs_type7"></variable_spec>
-                <variable_spec name="building.sc_dist_to_highway"></variable_spec>
-                <variable_spec name="building.sc_dist_to_station"></variable_spec>
-                <variable_spec name="building.rh_ln_surf"></variable_spec>
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
+              </variable_list>
+            </submodel>
+          </submodel_group>
+          <submodel_group name="other" type="submodel_group">
+            <submodel hidden="Children" name="other" submodel_id="99" type="submodel">
+              <description type="string">other</description>
+              <variable_list type="variable_list">
+                <variable_spec name="building.sc_acc_car_995033"></variable_spec>
+                <variable_spec name="building.sc_city_has_highwayaccess"></variable_spec>
+                <variable_spec name="building.sc_city_has_station"></variable_spec>
+                <variable_spec name="building.sc_degree_of_landuse_0456"></variable_spec>
+                <variable_spec name="job_x_building.sc_dist_to_previous_loc_0076"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector1_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector2_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector3_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector4_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector5_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector6_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector7_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector8_per_zone_0062"></variable_spec>
+                <variable_spec name="job_x_building.sc_share_of_jobs_sector99_per_zone_0062"></variable_spec>
               </variable_list>
             </submodel>
           </submodel_group>
