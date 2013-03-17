@@ -311,7 +311,7 @@ class proforma(Variable):
             # {
                 # "parcel_id":        array([1]),
                 # "property_tax":     array([0.01]),
-                "land_cost":        array([ 5]) * 1000000, #Land + other equity
+                # ###"land_cost":        array([ 5]) * 1000000, #Land + other equity
                 # "land_cost":        array([ 100000]), #Land + other equity                                
                  
             # },
