@@ -232,125 +232,125 @@ class proforma(Variable):
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
     
-from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
-from numpy import array
-from opus_core.tests.utils.variable_tester import VariableTester
+# from opus_core.tests import opus_unittest
+# from opus_core.datasets.dataset_pool import DatasetPool
+# from opus_core.storage_factory import StorageFactory
+# from numpy import array
+# from opus_core.tests.utils.variable_tester import VariableTester
 
-class Tests(opus_unittest.OpusTestCase):
-    def test_my_inputs(self):
-        tester = VariableTester(
-            __file__,
-            package_order=['urbansim_parcel','urbansim'],
-            test_data={
+# class Tests(opus_unittest.OpusTestCase):
+    # def test_my_inputs(self):
+        # tester = VariableTester(
+            # __file__,
+            # package_order=['urbansim_parcel','urbansim'],
+            # test_data={
             
-            'parcel':
-            {
-                "parcel_id":        array([1]),
-                "property_tax":     array([0.01]),
-                "land_cost":        array([ 5]) * 1000000, #Land + other equity                
+            # 'parcel':
+            # {
+                # "parcel_id":        array([1]),
+                # "property_tax":     array([0.01]),
+                # "land_cost":        array([ 5]) * 1000000, #Land + other equity                
                  
-            },
+            # },
             
-            'proposal_component':
-            {
-                "proposal_component_id": array([1,  2,  3,  4,  5]),
-                "proposal_id":           array([1,  1,  1,  1,  1]),
-           "building_type_id":           array([1,  1,  1,  1,  5]),  #Single Family, Single Family builder, Condo
-                   "bedrooms":           array([1,  2,  3,  4,  0]),
-                   "sales_revenue":      array([2,  3,  4,  5,  0]) * 1000000, #total
-                "sales_absorption":    array([.25,0.3,0.35,0.4,  0]) * 1000000, #per period
-                    "rent_revenue":    array([ .1,0.2,0.3,0.4,  0]) * 1000000, #per period
-                  "rent_absorption":   array([  8,  4,  4,  8,  0]),
-                 "leases_revenue":      array([  0,  0,  0,  0,  4]) * 1000000, #per period
-                  "leases_absorption":  array([  0,  0,  0,  0,  8]),                   
-              "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
-             "operating_cost":         array([0.2,0.2,0.2,0.2, 0.1]),
-             },
-            'proposal':
-            {
+            # 'proposal_component':
+            # {
+                # "proposal_component_id": array([1,  2,  3,  4,  5]),
+                # "proposal_id":           array([1,  1,  1,  1,  1]),
+           # "building_type_id":           array([1,  1,  1,  1,  5]),  #Single Family, Single Family builder, Condo
+                   # "bedrooms":           array([1,  2,  3,  4,  0]),
+                   # "sales_revenue":      array([2,  3,  4,  5,  0]) * 1000000, #total
+                # "sales_absorption":    array([.25,0.3,0.35,0.4,  0]) * 1000000, #per period
+                    # "rent_revenue":    array([ .1,0.2,0.3,0.4,  0]) * 1000000, #per period
+                  # "rent_absorption":   array([  8,  4,  4,  8,  0]),
+                 # "leases_revenue":      array([  0,  0,  0,  0,  4]) * 1000000, #per period
+                  # "leases_absorption":  array([  0,  0,  0,  0,  8]),                   
+              # "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
+             # "operating_cost":         array([0.2,0.2,0.2,0.2, 0.1]),
+             # },
+            # 'proposal':
+            # {
              
-                "proposal_id":array([1]),
-                  "parcel_id":array([1]),
-  "construction_start_period":array([ 1]),           #construction start date                  
-     "sales_start_period":    array([ 5]),           #Sales/Rent start date
-     "rent_sqft":             array([ 75]) * 1000,
-     "total_sqft":            array([ 75]) * 1000,  #TODO:fake it so that it pays taxes on all portions
-     "construction_cost":     array([ 30]) * 1000000,
-     "public_contribution":   array([ 0.0]),
-            },
+                # "proposal_id":array([1]),
+                  # "parcel_id":array([1]),
+  # "construction_start_period":array([ 1]),           #construction start date                  
+     # "sales_start_period":    array([ 5]),           #Sales/Rent start date
+     # "rent_sqft":             array([ 75]) * 1000,
+     # "total_sqft":            array([ 75]) * 1000,  #TODO:fake it so that it pays taxes on all portions
+     # "construction_cost":     array([ 30]) * 1000000,
+     # "public_contribution":   array([ 0.0]),
+            # },
             
-            }
-        )
+            # }
+        # )
         
-        should_be = array([-5406229.5])#array([-4938532.5]) #array([-5116654.78223655])
+        # should_be = array([-5406229.5])#array([-4938532.5]) #array([-5116654.78223655])
         
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
+        # tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
 
-    def test_external(self):
-        if not hasattr(self,'external_proforma_inputs'): return
-        tester = VariableTester(
-            __file__,
-            package_order=['urbansim_parcel','urbansim'],
-            test_data=self.external_proforma_inputs
-        )
-        should_be = array([-4938532.5]) #array([-5116654.78223655])
+    # def test_external(self):
+        # if not hasattr(self,'external_proforma_inputs'): return
+        # tester = VariableTester(
+            # __file__,
+            # package_order=['urbansim_parcel','urbansim'],
+            # test_data=self.external_proforma_inputs
+        # )
+        # should_be = array([-4938532.5]) #array([-5116654.78223655])
         
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
+        # tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
   
 
-    def test_visitacion(self):
-        return
-        tester = VariableTester(
-            __file__,
-            package_order=['urbansim_parcel','urbansim'],
-            test_data={
+    # def test_visitacion(self):
+        # return
+        # tester = VariableTester(
+            # __file__,
+            # package_order=['urbansim_parcel','urbansim'],
+            # test_data={
             
-            'parcel':
-            {
-                "parcel_id":        array([1]),
-                "property_tax":     array([0.01]),
-                #"land_cost":        array([ 5]) * 1000000, #Land + other equity
-                "land_cost":        array([ 100000]), #Land + other equity                                
+            # 'parcel':
+            # {
+                # "parcel_id":        array([1]),
+                # "property_tax":     array([0.01]),
+                "land_cost":        array([ 5]) * 1000000, #Land + other equity
+                # "land_cost":        array([ 100000]), #Land + other equity                                
                  
-            },
+            # },
             
-            'proposal_component':
-            {
-                "proposal_component_id": array([1,  2,  3,  4,  5]),
-                "proposal_id":           array([1,  1,  1,  1,  1]),
-           "building_type_id":           array([1,  1,  1,  1,  5]),  #Condo, non-residential
-                   "bedrooms":           array([1,  2,  3,  4,  0]),
-                   "sales_revenue":      array([0,  374800000,  0,  0,  0]), #total
-                "sales_absorption":      array([0,   26000000,  0,  0,  0]), #per period
-                    "rent_revenue":      array([0,    1173750,  0,  0,  0], dtype='f'), #per period
-                  "rent_absorption":   array([  0,          4,  0,  0,  0]),
-                 "leases_revenue":      array([  0,  0,  0,  0,  468563], dtype='f'), #per period
-                  "leases_absorption":  array([  0,  0,  0,  0,  12], dtype='f'),                   
-              "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
-             "operating_cost":         array([0.2,0.2,0.2,0.2, 0.1]),
-             },
-            'proposal':
-            {
+            # 'proposal_component':
+            # {
+                # "proposal_component_id": array([1,  2,  3,  4,  5]),
+                # "proposal_id":           array([1,  1,  1,  1,  1]),
+           # "building_type_id":           array([1,  1,  1,  1,  5]),  #Condo, non-residential
+                   # "bedrooms":           array([1,  2,  3,  4,  0]),
+                   # "sales_revenue":      array([0,  374800000,  0,  0,  0]), #total
+                # "sales_absorption":      array([0,   26000000,  0,  0,  0]), #per period
+                    # "rent_revenue":      array([0,    1173750,  0,  0,  0], dtype='f'), #per period
+                  # "rent_absorption":   array([  0,          4,  0,  0,  0]),
+                 # "leases_revenue":      array([  0,  0,  0,  0,  468563], dtype='f'), #per period
+                  # "leases_absorption":  array([  0,  0,  0,  0,  12], dtype='f'),                   
+              # "vacancy_rates":         array([ 1.0, 0.5, 0.25, 1.0,  0.6]) / 12,
+             # "operating_cost":         array([0.2,0.2,0.2,0.2, 0.1]),
+             # },
+            # 'proposal':
+            # {
              
-                "proposal_id":array([1]),
-                  "parcel_id":array([1]),
-  "construction_start_period":array([ 1]),           #construction start date                                    
-     "sales_start_period":    array([10]),           #Sales/Rent start date
-     "rent_sqft":             array([  375600 ]),
-     "total_sqft":            array([  1620000]),
-     "construction_cost":     array([ 448293833 ]),
-     "public_contribution":   array([ 365000000.0]),     
-            },
+                # "proposal_id":array([1]),
+                  # "parcel_id":array([1]),
+  # "construction_start_period":array([ 1]),           #construction start date                                    
+     # "sales_start_period":    array([10]),           #Sales/Rent start date
+     # "rent_sqft":             array([  375600 ]),
+     # "total_sqft":            array([  1620000]),
+     # "construction_cost":     array([ 448293833 ]),
+     # "public_contribution":   array([ 365000000.0]),     
+            # },
             
-            }
-        )
+            # }
+        # )
         
-        should_be = array([-5406229.5])  #array([-40036575])
+        # should_be = array([-5406229.5])  #array([-40036575])
         
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
+        # tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
         
-if __name__=='__main__':
-    opus_unittest.main()
+# if __name__=='__main__':
+    # opus_unittest.main()
     
