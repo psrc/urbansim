@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import os, sys
+import os, sys, re
 from opus_core.export_storage import ExportStorage
 from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
@@ -44,7 +44,7 @@ def opusRun(progressCB,logCB,params):
                              in_storage=AttributeCache())
         
         if opus_table_name != 'ALL':
-            opus_table_name_list = [opus_table_name]
+            opus_table_name_list = re.split(' +', opus_table_name.strip())
         else:
             opus_table_name_list = input_storage.get_table_names()
 
