@@ -30,7 +30,7 @@ class occupied_SSS_job_space(Variable):
         name_equals_sector_index = name_equals_sector_indexes[0]
         sector_ids = sectors.get_attribute("sector_id")
         sector_id = sector_ids[name_equals_sector_index][0]
-        sqft_per_jobs = sectors.get_attribute("sqft_per_job")
+        sqft_per_jobs = sectors.get_attribute("sqm_per_job")
         sqft_per_job = sqft_per_jobs[name_equals_sector_index][0]
 
         jobs = dataset_pool.get_dataset("job")
