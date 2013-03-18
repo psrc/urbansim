@@ -7,7 +7,7 @@ from opus_core.models.model import Model
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
-from numpy import ones, in1d, array, allclose, sort, unique
+from numpy import ones, in1d, array, allclose, sort, unique, empty, string_
 import os.path
 
 class ExternalDemographicModel(Model):
@@ -120,11 +120,16 @@ class ExternalDemographicModel(Model):
 
         is_existing = in1d(p_ids, person_dataset[person_id])
         for attr in keep_attributes_p:
-            dtype = person_dataset[attr].dtype
-            values = fill_value * ones(n_ps, dtype=dtype)
-            values[is_existing] = person_dataset.get_attribute_by_id(attr,
-                                                            p_ids[is_existing])
-            results_p[attr] = values
+            if attr in person_dataset.get_known_attribute_names():
+                dtype = person_dataset[attr].dtype
+
+                if dtype.type is string_:
+                    values = empty(n_ps, dtype=dtype)
+                else:
+                    values = fill_value * ones(n_ps, dtype=dtype)
+                values[is_existing] = person_dataset.get_attribute_by_id(attr,
+                                                                p_ids[is_existing])
+                results_p[attr] = values
 
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name='households', table_data=results)
