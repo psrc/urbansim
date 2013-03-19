@@ -28,7 +28,8 @@ class job_capacity_computed_if_necessary(Variable):
         if 'job_capacity' in known_names and 'year_built' in known_names:
             self.add_and_solve_dependencies(["building.job_capacity", "building.year_built"],
                                                 dataset_pool=dataset_pool)
-            base_year = SimulationState().get_start_time()
+            #base_year = SimulationState().get_start_time()
+            base_year = 2000 # This can't be taken from SimulationState because of running refinement with different base year
             job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
         return job_spaces
 
