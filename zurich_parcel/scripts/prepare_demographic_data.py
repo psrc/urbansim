@@ -69,7 +69,8 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
     h5data = out_fh.create_dataset(dataset_name, shape=(shape[0],), dtype=dtype, 
                                    compression='gzip', compression_opts=5)
     
-    nextdelta = None
+    GAP = 10000000
+    
     for i, in_fname in enumerate(in_fnamel):
         with open(in_fname, 'U') as fh:
             logger.log_note('Processing %s' % in_fnamel)
@@ -88,11 +89,7 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
                 # Adjust those attributes in rename_and_fix_attrs
                 # by the respective value of the first record
                 if irow == skiprows:
-                    if nextdelta:
-                        delta = dict( (n, nextdelta[n] + 1 - maxdelta[n]) for n in maxdelta.keys())
-                    else:
-                        delta = dict( (n, -maxdelta[n]) for n in maxdelta.keys())
-
+                    delta = dict( (n, GAP * i - maxdelta[n]) for n in maxdelta.keys())
                     logger.log_note('Adjusting IDs: %s' % delta)
                 for i, d in delta.iteritems():
                     vals[i] += d
@@ -100,8 +97,7 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
                 h5data[irow-1] = np.array([tuple(vals)], dtype=dtype)
                 
             logger.log_note('Processed %d rows in total' % (irow + 1))
-        
-        nextdelta = maxdelta
+
     out_fh.close()
     return h5data
 
