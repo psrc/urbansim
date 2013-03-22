@@ -88,7 +88,11 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
                 # Adjust those attributes in rename_and_fix_attrs
                 # by the respective value of the first record
                 if irow == skiprows:
-                    delta = dict( (n, nextdelta[n] + 1 - maxdelta[n]) for n in maxdelta.keys())
+                    if nextdelta:
+                        delta = dict( (n, nextdelta[n] + 1 - maxdelta[n]) for n in maxdelta.keys())
+                    else:
+                        delta = dict( (n, -maxdelta[n]) for n in maxdelta.keys())
+
                     logger.log_note('Adjusting IDs: %s' % delta)
                 for i, d in delta.iteritems():
                     vals[i] += d
@@ -109,7 +113,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         usage()
     
-    chunks = sys.argv[1]
+    chunks = int(sys.argv[1])
 
     if len(sys.argv) != 3 + 2 * chunks:
         usage()
