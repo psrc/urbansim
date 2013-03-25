@@ -397,16 +397,16 @@ class RealEstateTransitionModel(Model):
         
         '''Load household control totals table. Purpose: Anticipation of next year's household number.
         '''
-        control_totals_dataset = DatasetFactory().search_for_dataset('control_totals',
-                                                      package_order=SessionConfiguration().package_order,
-                                                      arguments={'in_storage':storage, 
-                                                                 'in_table_name':'annual_household_control_totals',
-                                                                 'id_name':[]
-                                                                 }
-                                                      )
-        
-        if self.control_totals is None:
-            self.control_totals = control_totals_dataset
+#        control_totals_dataset = DatasetFactory().search_for_dataset('control_totals',
+#                                                      package_order=SessionConfiguration().package_order,
+#                                                      arguments={'in_storage':storage, 
+#                                                                 'in_table_name':'annual_household_control_totals',
+#                                                                 'id_name':[]
+#                                                                 }
+#                                                      )
+#        
+#        if self.control_totals is None:
+#            self.control_totals = control_totals_dataset
             
         '''Load employment control totals table and building_sqft_per_job table. Purpose: Anticipation of next year's employment number.
         '''
