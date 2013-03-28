@@ -19,9 +19,6 @@
       <variable name="job_x_building.sc_dist_to_previous_loc_0076" source="expression" type="variable_definition" use="both">exp(sqrt((building.disaggregate(parcel.x_coord_sp, intermediates=[building])-job.disaggregate(parcel.x_coord_sp_lag1, intermediates=[building]))**2+(job.disaggregate(parcel.y_coord_sp, intermediates=[building])-job.disaggregate(parcel.y_coord_sp_lag1, intermediates=[building]))**2)*-0.076)</variable>
       <variable name="building.rh_zone_jobs_type99" source="expression" type="variable_definition" use="model variable">building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_99)</variable>
       <variable name="job_x_building.rh_ln_surf_sect99" source="expression" type="variable_definition" use="model variable">(job.sector_id == 99 ) * ln(building.sqm_sector99)</variable>
-      <variable name="household.sc_dist_to_station_hh" source="expression" type="variable_definition" use="both">household.disaggregate(parcel.dist_to_station, intermediates=[building,living_unit])</variable>
-      <variable name="household.sc_dist_to_zh_cbd_hh" source="expression" type="variable_definition" use="both">household.disaggregate(parcel.dist_to_zh_cbd, intermediates=[building,living_unit])</variable>
-      <variable name="living_unit_x_household.sc_rent_price_to_income_lu" source="expression" type="variable_definition" use="both">((exp(living_unit.ln_rent_price) &gt; 0)* exp(living_unit.ln_rent_price))/(household.income * 1.0) </variable>
     </expression_library>
   </general>
   <model_manager>
@@ -32,12 +29,6 @@
           <group_by_attribute type="list">('sector', 'name')<argument model_dependency_type="table" name="grouping_table" type="string">sector</argument>
             <argument name="grouping_column" type="string">name</argument>
           </group_by_attribute>
-          <init type="dictionary">
-            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.sector_id</argument>
-            <argument model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">zurich_parcel.building.vacant_SSS_job_space</argument>
-            <argument model_dependency_type="variable" name="number_of_units_string" parser_action="quote_string" type="string">zurich_parcel.building.total_SSS_job_space</argument>
-            <argument name="variable_package" parser_action="quote_string" type="string">zurich_parcel</argument>
-          </init>
         </structure>
         <specification inherit_parent_values="False" type="dictionary">
           <submodel_group name="manufacturing" type="submodel_group">
