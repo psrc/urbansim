@@ -9,6 +9,16 @@
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         </datasets_to_preload>
     </estimation_config>
+    <travel_model_configuration type="dictionary">
+      <matsim4urbansim type="dictionary">
+        <controler_parameter type="dictionary">
+          <bounding_box_bottom type="float">240200</bounding_box_bottom>
+          <bounding_box_top type="float">245600</bounding_box_top>
+          <bounding_box_left type="float">685000</bounding_box_left>
+          <bounding_box_right type="float">692300</bounding_box_right>
+        </controler_parameter>
+      </matsim4urbansim>
+    </travel_model_configuration>
   </model_manager>
   <scenario_manager>
     <scenario name="test_run" type="scenario" executable="True">
