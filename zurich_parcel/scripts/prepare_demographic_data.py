@@ -63,13 +63,20 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
     logger.log_note('Importing %s' % dataset_name)
     names, dtype = read_header(in_fnamel[0], rename_attrs=rename_and_fix_attrs)
 
-    shape = determine_dims(in_fnamel[0])
+    for i, in_fname in enumerate(in_fnamel):
+        shape1 = determine_dims(in_fname)
+        if i == 0:
+            shape = shape1
+        else:
+            assert (shape[1] == shape1[1])
+            shape = (shape[0] + shape1[0], shape[1])
 
     out_fh = h5py.File(out_fname)
     h5data = out_fh.create_dataset(dataset_name, shape=(shape[0],), dtype=dtype, 
                                    compression='gzip', compression_opts=5)
     
     GAP = 10000000
+    drow = 0
     
     for i, in_fname in enumerate(in_fnamel):
         with open(in_fname, 'U') as fh:
@@ -94,7 +101,8 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
                 for i, d in delta.iteritems():
                     vals[i] += d
                 
-                h5data[irow-1] = np.array([tuple(vals)], dtype=dtype)
+                h5data[drow] = np.array([tuple(vals)], dtype=dtype)
+                drow += 1
                 
             logger.log_note('Processed %d rows in total' % (irow + 1))
 
