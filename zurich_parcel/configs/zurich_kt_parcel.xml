@@ -309,8 +309,10 @@
       <variable name="household.sc_households_number_of_cars" source="primary attribute" type="variable_definition" use="both">household.cars</variable>
       <variable name="household.sc_number_of_persons_in_household" source="primary attribute" type="variable_definition" use="both">household.persons</variable>
       <variable name="building.sc_plan_type_id_of_building_location_smaller_4000" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.plan_type_id &lt; 4000, intermediates=[parcel])</variable>
+      <variable name="county.sc_workstat_1_without_job_id" source="expression" type="variable_definition" use="both">county.aggregate(numpy.logical_and(person.workstat==1, person.job_id&lt;0), intermediates=[household, living_unit, building, parcel])</variable>
+      <variable name="county.sc_workstat_0_with_job_id" source="expression" type="variable_definition" use="both">county.aggregate(numpy.logical_and(person.workstat==0, person.job_id&gt;=0), intermediates=[household, living_unit, building, parcel])</variable>
     </expression_library>
-    <available_datasets type="list">[ 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
+    <available_datasets type="list">['county', 'person', 'development_event_history_x_parcel', 'building_x_parcel', 'building', 'parcel', 'household', 'business', 'household_x_building', 'zone', 'tract', 'district14', 'district24', 'alldata', 'pdist', 'buildings_for_estimation', 'development_event_history', 'job_x_building', 'living_unit', 'city', 'living_unit_x_household', 'living_unit_x_person', 'building_x_person', 'person_x_job', ]</available_datasets>
     <spatial_datasets type="list">['parcel','zone','tract','district24','district14','city','county']</spatial_datasets>
     <dataset_pool_configuration hidden="False" type="class">
       <class_name type="string">DatasetPoolConfiguration</class_name>
@@ -1532,6 +1534,24 @@
           </run>
         </structure>
       </model>
+      <model name="sc_unset_job_id" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument model_dependency_type="dataset" name="dataset" type="string">person</argument>
+            <argument model_dependency_type="variable" name="expression" parser_action="quote_string" type="string">person.job_id - (person.job_id + 1) * (person.workstat==0)</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">job_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"></specification>
+      </model>
     </models>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="dictionary">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
@@ -1950,4 +1970,3 @@
     </indicator_batches>
   </results_manager>
 </opus_project>
-
