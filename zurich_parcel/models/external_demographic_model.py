@@ -149,7 +149,7 @@ class ExternalDemographicModel(Model):
                                      new_household_ds)
         dataset_pool.replace_dataset(person_dataset.dataset_name,
                                      new_person_ds)
-        return None
+        return (new_household_ds, new_person_ds)
 
 def compound_array_to_dataset(nparray, table_name, **dataset_kwargs):
     ds_dict = {}
