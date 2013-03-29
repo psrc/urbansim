@@ -1531,6 +1531,7 @@
               <attribute name="workstat" type="string">person.work_stat</attribute>
               <attribute name="finlevedu" type="string">person.loe</attribute>
             </argument>
+            <output name="output" type="string">(household, person)</output>
           </run>
         </structure>
       </model>
