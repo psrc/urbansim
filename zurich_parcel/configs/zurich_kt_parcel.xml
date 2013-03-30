@@ -1712,7 +1712,15 @@
         <selectable name="sc_postprocess_real_estate_price_model" type="selectable">True</selectable>
         <selectable name="sc_employment_transition_model" type="selectable">True</selectable>
         <selectable name="sc_employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="sc_employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
+        <selectable name="sc_employment_location_choice_model" type="selectable">True<group_members type="string">manufacturing</group_members>
+          <group_members type="string">construction</group_members>
+          <group_members type="string">trade</group_members>
+          <group_members type="string">retail</group_members>
+          <group_members type="string">hotel_restaurant</group_members>
+          <group_members type="string">transport</group_members>
+          <group_members type="string">service</group_members>
+          <group_members type="string">health</group_members>
+          <group_members type="string">other</group_members>
         </selectable>
         <selectable name="sc_workplace_location_choice" type="selectable">True</selectable>
         <selectable name="sc_household_transition_model" type="selectable">False</selectable>
