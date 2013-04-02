@@ -6,10 +6,11 @@ from numpy import unique, where, maximum, zeros, apply_along_axis, newaxis, logi
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 from urbansim.datasets.household_dataset import HouseholdDataset
-from urbansim.models.location_choice_model import LocationChoiceModel
+from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 
-class SchoolChoiceModel(LocationChoiceModel):
+class SchoolChoiceModel(AgentLocationChoiceModel):
     model_name = 'School Location Choice Model'
+                
     def prepare_for_estimate(self, estimation_storage, agents_for_estimation_table, agent_set, 
                              households_for_estimation_table=None, **kwargs):
         estimation_set = Dataset(in_storage = estimation_storage,
@@ -19,21 +20,21 @@ class SchoolChoiceModel(LocationChoiceModel):
         if households_for_estimation_table is not None:
             hhs = HouseholdDataset(in_storage=estimation_storage, in_table_name='households_for_estimation')
             self.dataset_pool.replace_dataset('household', hhs)
-        spec, index = LocationChoiceModel.prepare_for_estimate(self, estimation_set, **kwargs)
+        spec, index = AgentLocationChoiceModel.prepare_for_estimate(self, estimation_set, **kwargs)
         return (spec, index, estimation_set)
     
     def create_interaction_datasets(self, agent_set, agents_index, config, submodels=[-2], **kwargs):
         """Like the parent method but it also deals with filtering by groups.
         """
-        def myfun(x, index): 
-	    i = where(index == x)[0]
-	    if i.size == 0:
-		i=-1
-	    return i
+        def mywhere(x, index): 
+            i = where(index == x)[0]
+            if i.size == 0:
+                i=-1
+            return i
 	
         nchoices = self.get_choice_set_size()
         if nchoices <> self.choice_set.size() or self.filter is None:
-            return LocationChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config, submodels, **kwargs)
+            return AgentLocationChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config, submodels, **kwargs)
         
         # apply filter without doing sampling
 
@@ -75,7 +76,7 @@ class SchoolChoiceModel(LocationChoiceModel):
                 if config.get('include_chosen_choice', False):
                     chosen = self.choice_set.get_id_index(id=agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
                                                                                                        agents_index_in_group))
-                    chosen_choice[(submodel, group)] = apply_along_axis(myfun, 1, chosen[:,newaxis], choice_index[(submodel, group)])
+                    chosen_choice[(submodel, group)] = apply_along_axis(mywhere, 1, chosen[:,newaxis], choice_index[(submodel, group)])
                 maxsize = maximum(maxsize, choice_index[(submodel, group)].size)
                 
         filter_index = -1 + zeros((agents_index.size, maxsize), dtype="int32")
