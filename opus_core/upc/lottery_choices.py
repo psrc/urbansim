@@ -55,12 +55,7 @@ class lottery_choices(Choices):
             index = index.reshape((1,index.size))
             index = index.repeat(repeats=nobs, axis=0)
         resources.merge({"index":index})
-        zero_prob_sum = where(probability.sum(axis=1)==0)[0]
-        if zero_prob_sum.size > 0:            # agents with no availability of choices
-            probability[zero_prob_sum, 0] = 1 # to pass the random choices call
         choices = random_choices_from_index().run(probability, resources)
-        if zero_prob_sum.size > 0:
-            choices[zero_prob_sum] = -1
         hist = self.get_choice_histogram(units, choices, ncap)
         choice_capacity_diff = self.get_choice_capacity_difference(hist, capacity)
         fullarray = (choice_capacity_diff <= 0).astype("int8")
