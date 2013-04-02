@@ -8,7 +8,7 @@ from opus_core.logger import logger
 class ExportStorage(object):
     '''Manages the transfer of data from one storage object to another.'''
     
-    def export(self, in_storage, out_storage):
+    def export(self, in_storage, out_storage, **kwargs):
         
         dataset_names = in_storage.get_table_names()
         
@@ -20,11 +20,11 @@ class ExportStorage(object):
             logger.log_warning('Did you specify a location containing the data for a single year?')
         else:
             for dataset_name in dataset_names:
-                self.export_dataset(dataset_name, in_storage, out_storage)
+                self.export_dataset(dataset_name, in_storage, out_storage, **kwargs)
                 
         logger.end_block()
         
-    def export_dataset(self, dataset_name, in_storage, out_storage, overwrite=True, out_dataset_name=None):
+    def export_dataset(self, dataset_name, in_storage, out_storage, overwrite=True, out_dataset_name=None, **kwargs):
         if not overwrite and dataset_name in out_storage.get_table_names():
             logger.log_note('Dataset %s ignored because it already exists in OPUS' % dataset_name)
             return
@@ -36,7 +36,7 @@ class ExportStorage(object):
             if  length == 0:
                 logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
                 return
-            out_storage.write_table(out_dataset_name, values_from_storage)
+            out_storage.write_table(out_dataset_name, values_from_storage, **kwargs)
             logger.log_note("Exported %s records for dataset %s" % (length, dataset_name))
         
 from opus_core.tests import opus_unittest
