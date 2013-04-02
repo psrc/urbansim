@@ -291,7 +291,7 @@ class LocationChoiceModel(ChoiceModel):
                         group_sampling_weights = re.sub('SUBMODEL' if groups_equal_submodels else 'GROUP', 
                                                        str(int(group)), sampling_weights)
                                       
-                        chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
+                    chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
                     if type(chunk_specification) == str:
                         chunk_specification = eval(chunk_specification)
                     chunk_specification = ChunkSpecification(chunk_specification)
