@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import ma, clip, where
-from opus_core.logger import logger
+from opus_core.logger import logger, log_block
 
 class total_SSS_job_space(Variable):
     """ number of job spaces that is vacant/unoccupied"""
@@ -19,18 +19,23 @@ class total_SSS_job_space(Variable):
         return [
                 ]
 
+    @log_block(name='total_SSS_job_space.compute')
     def compute(self,  dataset_pool):
-        sectors = dataset_pool.get_dataset("sector")
-        name_equals_sector = sectors.get_attribute("name") == self.sector
-        name_equals_sector_indexes = where(name_equals_sector)
-        assert(len(name_equals_sector_indexes) == 1)
-        name_equals_sector_index = name_equals_sector_indexes[0]
-        sector_ids = sectors.get_attribute("sector_id")
-        sector_id = sector_ids[name_equals_sector_index][0]
+        with logger.block('Analyzing sector'):
+            sectors = dataset_pool.get_dataset("sector")
+            name_equals_sector = sectors.get_attribute("name") == self.sector
+            name_equals_sector_indexes = where(name_equals_sector)
+            assert(len(name_equals_sector_indexes) == 1)
+            name_equals_sector_index = name_equals_sector_indexes[0]
+            sector_ids = sectors.get_attribute("sector_id")
+            sector_id = sector_ids[name_equals_sector_index][0]
 
-        buildings = self.get_dataset()
-        sqm_our_sector = buildings.get_attribute("sqm_sector%s" % sector_id) #get column of observed jobs
-        logger.log_note("sqm_sector%s: %s" % (sector_id, sum(sqm_our_sector)))
+
+        with logger.block('Analyzing buildings'):
+            buildings = self.get_dataset()
+            sqm_our_sector = buildings.get_attribute("sqm_sector%s" % sector_id) #get column of observed jobs
+            logger.log_note("sqm_sector%s: %s" % (sector_id, sum(sqm_our_sector)))
+            
         return sqm_our_sector
 
     def post_check(self,  values, dataset_pool=None):

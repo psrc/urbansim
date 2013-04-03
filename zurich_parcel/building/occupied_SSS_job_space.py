@@ -19,10 +19,9 @@ class occupied_SSS_job_space(Variable):
     
     def dependencies(self):
         return ["urbansim_parcel.job.building_id",
-                "urbansim_parcel.job.sqft_imputed",
                 "urbansim_parcel.building.building_sqft"]
 
-    @log_block()
+    @log_block(name='occupied_SSS_job_space.compute')
     def compute(self,  dataset_pool):
         with logger.block('Analyzing sectors'):
             sectors = dataset_pool.get_dataset("sector")
