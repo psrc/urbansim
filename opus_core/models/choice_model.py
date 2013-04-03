@@ -318,7 +318,7 @@ class ChoiceModel(ChunkModel):
         self.upc_sequence.utilities = utilities[self.observations_mapping['mapped_index'],:]
         self.run_config["index"] = index[self.observations_mapping['mapped_index'],:]
         if self.availability is not None:
-            self.run_config["availability"] = availability[self.observations_mapping['mapped_index'],:]
+            self.run_config["availability"] = availability[self.observations_mapping['mapped_index'],:]*(self.run_config["index"]>=0)
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 

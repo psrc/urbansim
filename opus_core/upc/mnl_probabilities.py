@@ -40,7 +40,8 @@ class mnl_probabilities(Probabilities):
         else:
             exponentiated_utility = exp(utilities) * (availability).astype('b')
         sum_exponentiated_utility = sum(exponentiated_utility, axis=1, dtype="float64")
-        return exponentiated_utility/reshape(sum_exponentiated_utility,(utilities.shape[0], 1))
+        sum_exponentiated_utility = ma.masked_where(sum_exponentiated_utility==0, sum_exponentiated_utility)
+        return ma.filled(exponentiated_utility/reshape(sum_exponentiated_utility,(utilities.shape[0], 1)), 0)
 
     def get_demand(self, index, probability, nsupply):
         flat_index = index.ravel()
