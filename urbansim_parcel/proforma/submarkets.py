@@ -18,9 +18,6 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
             'proposal_component':
             {
                "proposal_component_id": array([1,  2,  3,  4,  5]),
-               "proposal_id":           array([1,  1,  1,  1,  1]),
-               "building_type_id":      array([1,  1,  1,  1,  5]),  
-               "bedrooms":              array([1,  2,  3,  4,  0]),
                "sales_revenue":         array([2,  3,  4,  5,  0]) * 1000000, 
                "sales_absorption":      array([.25,0.3,0.35,0.4,  0]), #* 1000000,
                "rent_revenue":          array([ .1,0.2,0.3,0.4,  0]) * 1000000,

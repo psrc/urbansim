@@ -52,7 +52,7 @@ class BForm:
         my.existing_sqft = existing_sqft
         my.existing_price = existing_price
         my.parcel_size = parcel_size
-        my.buildable_area = parcel_size*.8
+        my.buildable_area = parcel_size*.8 #####
         my.btype = None
         my.parking = None
     
@@ -171,20 +171,20 @@ class BForm:
         F2 = my.F2
         cost = 0
         MULT = 1.0
-        if btype in [9,10,11,12,13] and height > 14: MULT = 2.5
+        if btype in [9,10,11,12,13] and height > 14: MULT = 2.5 ### Add parking costs here
         if btype == 7 or btype == 8:
             if height < 25: cost += sqft*OFFICELOWRISE*F2
             elif height < 45: cost += sqft*OFFICEMIDRISE*F2
             elif height < 85: cost += sqft*OFFICEMID2RISE*F2
             elif height < 120: cost += sqft*OFFICEHIGHRISE*F2
-        elif btype == 9: cost += sqft*NEIGHBORHOODRETAIL*F2*MULT
+        elif btype == 9: cost += sqft*NEIGHBORHOODRETAIL*F2*MULT ####
         elif btype == 10: cost += sqft*AUTORETAIL*F2*MULT
         elif btype == 11: cost += sqft*BIGBOXRETAIL*F2*MULT
         elif btype == 12: cost += sqft*INDUSTRIAL*F2*MULT
         elif btype == 13: cost += sqft*WAREHOUSE*F2*MULT
         elif btype == 14: cost += sqft*LODGING*F2
         else: assert 0
-
+        
         if my.isr: cost += my.isr.nonres_isr_fee(my.taz)*sqft
         if my.parcelfees: 
             my.actualfees = sqft*my.parcelfees.nonres_parcel_fee(my.parcel_id)

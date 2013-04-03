@@ -2,9 +2,11 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from IPython import embed
+
 import os, sys, cPickle, traceback, time, string, StringIO, math, copy
 import numpy
-from numpy import array, zeros, repeat, arange, round, logical_not, concatenate, where
+from numpy import array, zeros, repeat, arange, round, logical_not, concatenate, where, logical_and
 
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
@@ -43,7 +45,10 @@ class DeveloperModel(Model):
     dataset_pool._remove_dataset('cost_shifter')
 
   def run(my, cache_dir=None, year=None):
-    global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount, building_sqft, building_price
+    global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount, building_sqft, building_price, i
+    
+    #parcel_counter
+    i = 0
         
     dataset_pool = SessionConfiguration().get_dataset_pool()
     current_year = SimulationState().get_current_time()
@@ -73,25 +78,25 @@ class DeveloperModel(Model):
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.parcel_sqft>800)")
     sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
     test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index))
-    test_parcels = sample_noreplace(test_parcels, int(.05 * 154877))  ##############################!!!
+    test_parcels = sample_noreplace(test_parcels, int(.05 * test_parcels.size))
     numpy.random.shuffle(test_parcels)
  
     building_sqft = parcel_set.compute_variables('parcel.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)')
     building_price_owner_residential=parcel_set.compute_variables('building_price_owner_res=parcel.aggregate((residential_unit.sale_price)*(residential_unit.sale_price>0),intermediates=[building])')
-    building_price_rental_residential=parcel_set.compute_variables('building_price_rental_res=parcel.aggregate((residential_unit.rent*12*17.9)*(residential_unit.rent>0),intermediates=[building])')
-    building_price_nonresidential = parcel_set.compute_variables('building_price_nonres = parcel.aggregate((building.non_residential_rent*7*building.non_residential_sqft))')
+    building_price_rental_residential=parcel_set.compute_variables('building_price_rental_res=parcel.aggregate((residential_unit.rent*12*17.9)*(residential_unit.rent>0),intermediates=[building])') ##change 17.9
+    building_price_nonresidential = parcel_set.compute_variables('building_price_nonres = parcel.aggregate((building.non_residential_rent*7*building.non_residential_sqft))') ##change 7
     sum_building_p = parcel_set.compute_variables('sum_building_price = parcel.building_price_owner_res + parcel.building_price_rental_res + building_price_nonres')
     
     vacant_parcel = parcel_set.compute_variables('parcel.sum_building_price == 0')
     price_per_sqft_land = parcel_set.compute_variables('safe_array_divide(parcel.land_value,parcel.parcel_sqft)')
     parcel_land_area = parcel_set.compute_variables('parcel.parcel_sqft')
     vacant_land_price = vacant_parcel*price_per_sqft_land*parcel_land_area
-    building_price = sum_building_p + vacant_land_price
+    building_price = sum_building_p + vacant_land_price #rename property price
 
     #info used to match from proposal_component to submarket
     parcel_set.compute_variables(["drcog.parcel.within_half_mile_transit", 
                                   "drcog.parcel.zone",
-                                 ]) ##############################!!!
+                                 ])
                                  
     logger.log_status("%s parcels to test" % (test_parcels.size))
 
@@ -121,7 +126,6 @@ class DeveloperModel(Model):
     for test_chunk in chunks(test_parcels,1000):
 
         print "Executing CHUNK"
-        logger.log_status("EXECUTING CHUNK OF SIZE %s!!"%(len(test_chunk)))
 
         sales_absorption = submarket.compute_variables('drcog.submarket.sales_absorption') ######################!!
         rent_absorption = submarket.compute_variables('drcog.submarket.rent_absorption')
@@ -139,9 +143,7 @@ class DeveloperModel(Model):
                 results = pool.map(process_parcel,test_chunk)
             else:
                 results = [process_parcel(p) for p in test_chunk]
-            logger.log_status("RESULTS!! %s" % (results))
             results_bldg = [list(x[0]) for x in results if x <> None and x[0] <> -1]
-            logger.log_status("RESULTS_BLDG!! %s" % (results_bldg))
             #each row of units represents number of units of [1, 2, 3, 4] bedrooms
             units = array([x[1][0] for x in results if x <> None and x[0] <> -1])
             sqft_per_unit = array([x[1][1] for x in results if x <> None and x[0] <> -1])
@@ -274,55 +276,38 @@ NOBUILDTYPES = 0
 
 def process_parcel(parcel):
 
-        global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount
+        global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount, i
         global NOZONINGCNT, NOBUILDTYPES
         global building_sqft
 
         debugoutput = ''
-        logger.log_status("PARCEL!! %s" % (parcel))
         current_year = SimulationState().get_current_time()
-        logger.log_status("YR!! %s" % (current_year))
         pid = parcel_set['parcel_id'][parcel]
-        logger.log_status("PID!! %s" % (pid))
         county_id = parcel_set['county_id'][parcel]
-        logger.log_status("COUNTY!! %s" % (county_id))
         taz = parcel_set['zone_id'][parcel]
-        logger.log_status("TAZ!! %s" % (taz))
         if NODES:
             node_id = parcel_set['node_id'][parcel]
-        logger.log_status("NODE!! %s" % (node_id))
         
         zoning_id = parcel_set['zoning_id'][parcel]
-        logger.log_status("ZONINGID!! %s" % (zoning_id))
         
         existing_sqft = building_sqft[parcel]
-        logger.log_status("EXISTING SQFT!! %s" % (existing_sqft))
 
         existing_price = building_price[parcel]
-        logger.log_status("EXISTING_PRICE!! %s" % (existing_price))
         if existing_sqft < 0: existing_sqft = 0
         if existing_price < 0: existing_price = 0
         if DEBUG: print "parcel_id is %d" % pid
         shape_area = parcel_set['parcel_sqft'][parcel]
-        logger.log_status("SHAPE_AREA!! %s" % (shape_area))
         v = float(shape_area) #*10.7639
-        logger.log_status("V!! %s" % (v))
         
         if URBANVISION:
             #try: zoning = z.get_zoning(pid)
             try: zoning = zoning_id
             except: 
-                logger.log_status("COULDNT FIND ZONING FOR PARCEL!!")
                 return
             if zoning < 1:
                 return
             btypes = z.get_building_types(zoning)
-            try:
-                print zoning
-                logger.log_status("ZONING!! %s" % (zoning))
-            except:
-                logger.log_status("COULDN'T PRINT ZONING!!")
-            logger.log_status("BTYPES!! %s" % (btypes))
+
             if not zoning:
                 NOZONINGCNT += 1
                 return
@@ -334,11 +319,8 @@ def process_parcel(parcel):
             if DEBUG > 0: print "Parcel size is %f" % v
             ####################### Not having max far , max height, max dua
             # far = z.get_attr(zoning,'max_far', 100)
-            # logger.log_status("FAR!! %s" % (far))
             # height = int(z.get_attr(zoning,'max_height', 1000))
-            # logger.log_status("HEIGHT!! %s" % (height))
             # max_dua = int(z.get_attr(zoning,'max_dua', 100))
-            # logger.log_status("MAXDUA!! %s" % (max_dua))
             # max_dua = min(max_dua,50)
             far = 2
             height = 80
@@ -372,19 +354,17 @@ def process_parcel(parcel):
         #print btypes
         if NODES:
             idx_node_parcel = numpy.where(node_set['node_id']==node_id)[0]
-            logger.log_status("IDX NODE!! %s" % (idx_node_parcel))
         else:
             idx_zone_parcel = numpy.where(zone_set['zone_id']==taz)[0]
-            logger.log_status("IDX ZONE!! %s" % (idx_zone_parcel))
 
         if DEBUG > 0: print "DEVMDL BTYPES:", btypes
-
+        
+        npv = 0
         maxnpv, maxbuilding = 0, -1
         ## number of units and sqft_per_unit by number of bedrooms (1, 2, 3, 4)
         units = zeros(4, dtype='i4')
         sqft_per_unit = zeros(4, dtype='i4')
 
-        logger.log_status("BTYPES!! %s" % (btypes))
         for btype in btypes:
             
             if DEBUG > 0: print "building type = %s" % btype
@@ -458,7 +438,7 @@ def process_parcel(parcel):
             #pschooldistrict = parcel_set['schooldistrict'][parcel]
             pzone = parcel_set['zone_id'][parcel]
             ptransit = parcel_set['within_half_mile_transit'][parcel]
-            from numpy import logical_and, where
+
             sub_idx = where(logical_and(submarket['zone_id'] == taz,
                                        submarket['within_half_mile_transit'] == ptransit)
                            )[0]
@@ -472,13 +452,11 @@ def process_parcel(parcel):
             for attr in esubmarket.get_known_attribute_names():
                 esubmarket_info[attr] = esubmarket[attr][esub_idx]
             
-            submarket_pool = submarkets.setup_dataset_pool(opus=False,btype=btype,submarket_info=submarket_info,esubmarket_info=esubmarket_info)
+            submarket_pool = submarkets.setup_dataset_pool(opus=False,btype=btype,submarket_info=submarket_info,esubmarket_info=esubmarket_info)  ###Look into this
             
             X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,
                                               submarket_pool)
             if DEBUG: print X, npv
-            logger.log_status("NPV!! %s" % (npv))
-            logger.log_status("X!! %s" % (X))
             bformdbg = (county_id,far,height,max_dua,bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
             pfeesstr = ''
             if parcelfees: pfeesstr = parcelfees.get(pid)
@@ -491,7 +469,7 @@ def process_parcel(parcel):
                 maxnpv = npv
                 nonres_sqft = bform.nonres_sqft
                 sqft = nonres_sqft # add residential below
-                if btype in [1,2,3,4,5,6]: # RESIDENTIAL
+                if btype in [1,2,3,4,5,6]: # RESIDENTIAL 
                     if btype in [1,2]: 
                         res_sqft = bform.sf_builtarea()
                         sqft_per_unit = bform.sfunitsizes
@@ -519,4 +497,8 @@ def process_parcel(parcel):
                 building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units, npv, bform.actualfees)
                 maxbuilding = building
                 units = bform.num_units
+        i = i + 1
+        print i
+        if npv>0:
+            embed()
         return maxbuilding, (units, sqft_per_unit), debugoutput
