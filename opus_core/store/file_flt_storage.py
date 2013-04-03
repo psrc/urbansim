@@ -291,9 +291,17 @@ class StorageTests(opus_unittest.OpusTestCase):
         self.assertDictsEqual(expected, actual)
         
     def test_get_table_names_1981(self):
+        self._do_test_get_table_names_1981(False)
+        
+    def test_get_table_names_1981_relpath(self):
+        self._do_test_get_table_names_1981(True)
+        
+    def _do_test_get_table_names_1981(self, relpath):
         opus_core_path = OpusPackage().get_opus_core_path()
         local_test_data_path = os.path.join(
             opus_core_path, 'data', 'test_cache', '1981')
+        if relpath:
+            local_test_data_path = os.path.relpath(local_test_data_path)
         storage = file_flt_storage(local_test_data_path)
         expected = ['base_year', 'cities', 'dumb_datasets']
         actual = storage.get_table_names()
