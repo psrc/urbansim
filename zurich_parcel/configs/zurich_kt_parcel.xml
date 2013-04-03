@@ -1604,9 +1604,9 @@
           <external_matsim_config type="dictionary">
             <matsim_config name="2005" type="file">project_configs/zurich_parcel/external_matsim_config_pt.xml</matsim_config>
             <matsim_config name="2010" type="file">project_configs/zurich_parcel/external_matsim_config_pt.xml</matsim_config>
-            <matsim_config name="2015" type="file">project_configs/zurich_parcel/external_matsim_config_pt_road_pricing.xml</matsim_config>
-            <matsim_config name="2020" type="file">project_configs/zurich_parcel/external_matsim_config_pt_road_pricing.xml</matsim_config>
-            <matsim_config name="2025" type="file">project_configs/zurich_parcel/external_matsim_config_pt_road_pricing.xml</matsim_config>
+            <matsim_config name="2015" type="file">project_configs/zurich_parcel/external_matsim_config_pt.xml</matsim_config>
+            <matsim_config name="2020" type="file">project_configs/zurich_parcel/external_matsim_config_pt.xml</matsim_config>
+            <matsim_config name="2025" type="file">project_configs/zurich_parcel/external_matsim_config_pt.xml</matsim_config>
           </external_matsim_config>
           <matsim_network_file type="file">data/zurich_kt_parcel/base_year_data/2000/matsim/network/network.multimodal-wu.xml.gz</matsim_network_file>
           <last_iteration type="integer">100</last_iteration>
