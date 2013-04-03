@@ -139,8 +139,8 @@ class OpusProject(object):
         if inherited_node is not None:
             self._shadowing_nodes[node] = inherited_node
 
-    def get_first_writable_parent_file(self):
-        return self.xml_config.get_first_writable_parent_file()
+    def get_last_writable_parent_file(self):
+        return self.xml_config.get_last_writable_parent_file()
 
     def insert_node(self, node, parent_node, row = 0):
         '''
@@ -255,7 +255,7 @@ class OpusProject(object):
     IMMUTABLE_NODE_IDS = ('/general:/description:', '/general:/parent:')
     
     def can_copy_to_parent(self, node):
-        if not self.get_first_writable_parent_file():
+        if not self.get_last_writable_parent_file():
             return False
         if node.get('inherited'):
             return False
@@ -319,7 +319,7 @@ class OpusProject(object):
         node = self.find_by_id_string(id_string, clone)
         
         #get parent project   
-        parent_file = self.get_first_writable_parent_file()
+        parent_file = self.get_last_writable_parent_file()
         parent_project = OpusProject()
         parent_project.open(parent_file)
         parent_name = parent_project.xml_config.name
