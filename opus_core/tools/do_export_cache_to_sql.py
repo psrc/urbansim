@@ -55,12 +55,9 @@ if __name__ == '__main__':
     output_storage = sql_storage(
                         storage_location = db)
             
-    logger.start_block('Exporting cache to sql...')
-    try:
+    with logger.block('Exporting cache to sql...'):
         if table_name is None:
             ExportStorage().export(in_storage=input_storage, out_storage=output_storage)
         else:
             db.drop_table(table_name)
             ExportStorage().export_dataset(table_name, in_storage=input_storage, out_storage=output_storage)        
-    finally:
-        logger.end_block()
