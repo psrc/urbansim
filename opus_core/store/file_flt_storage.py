@@ -163,7 +163,7 @@ class file_flt_storage(Storage):
         if os.path.exists(dataset_path):
             file_names = glob(os.path.join(dataset_path, '*'))
             return [os.path.basename(name) for name in file_names 
-                    if os.path.isdir(name) and len(self.get_column_names(name))>0]
+                    if os.path.isdir(name) and len(self.get_column_names(os.path.basename(name)))>0]
             
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
