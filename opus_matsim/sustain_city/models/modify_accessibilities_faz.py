@@ -24,19 +24,23 @@ class ModifyMatsimData(GetTravelModelDataIntoCache):
         self.matsim_controler = self.__get_matsim_controler_section(config)
         self.zone_table_name        = "zones"
         self.travel_data_table_name = "travel_data"
-        self.denominator            = 10.
-        self.faz_number             = 21004
-        self.faz_id          = "faz_id"
+        self.factor                 = 10.
+        self.faz_number_decrease_acc= 21004
+        self.faz_number_increase_acc_1= 55040
+        self.faz_number_increase_acc_2= 55050
+        self.faz_number_increase_acc_3= 64047
+        self.faz_number_increase_acc_4= 92142
+        self.faz_id                 = "faz_id"
 
     def get_travel_data_from_travel_model(self, config, year, zone_set):
         """ Reads the output from the travel model and imports the fresh computed travel data into the cache. 
         """
         logger.log_status('Starting ModifyMatsimData...')
 
-        #try: # tnicolai :for debugging
-        #    import pydevd
-        #    pydevd.settrace()
-        #except: pass
+        try: # tnicolai :for debugging
+            import pydevd
+            pydevd.settrace()
+        except: pass
         
         self.init(year, config);
         
@@ -63,25 +67,52 @@ class ModifyMatsimData(GetTravelModelDataIntoCache):
             index = existing_zone_data_set.get_id_index(id)
             faz_id = existing_zone_data_set.get_attribute_by_index(self.faz_id, index)
             
-            if int(faz_id) == int(self.faz_number) : 
+            # get original accessibility values
+            car_accessibility = existing_zone_data_set.get_attribute_by_index('car_accessibility', index)
+            walk_accessibility = existing_zone_data_set.get_attribute_by_index('walk_accessibility', index)
+            bike_accessibility = existing_zone_data_set.get_attribute_by_index('bike_accessibility', index)
+            freespeed_accessibility = existing_zone_data_set.get_attribute_by_index('freespeed_accessibility', index)
+            
+            # decrease accessibility 
+            if int(faz_id) == int(self.faz_number_decrease_acc):
                 
                 counter = counter + 1
                 
-                # get and modify car accessibility
-                car_accessibility = existing_zone_data_set.get_attribute_by_index('car_accessibility', index)
-                car_accessibility = car_accessibility / self.denominator 
+                # modify and store car accessibility
+                car_accessibility = car_accessibility / self.factor 
                 existing_zone_data_set.modify_attribute('car_accessibility', car_accessibility, index )
-                # get and modify walk accessibility
-                walk_accessibility = existing_zone_data_set.get_attribute_by_index('walk_accessibility', index)
-                walk_accessibility = walk_accessibility / self.denominator 
+                
+                # modify and store walk accessibility
+                walk_accessibility = walk_accessibility / self.factor 
                 existing_zone_data_set.modify_attribute('walk_accessibility', walk_accessibility, index )
-                # get and modify bike accessibility
-                bike_accessibility = existing_zone_data_set.get_attribute_by_index('bike_accessibility', index)
-                bike_accessibility = bike_accessibility / self.denominator 
+                
+                # modify and store bike accessibility 
+                bike_accessibility = bike_accessibility / self.factor 
                 existing_zone_data_set.modify_attribute('bike_accessibility', bike_accessibility, index )
-                # get and modify free accessibility
-                freespeed_accessibility = existing_zone_data_set.get_attribute_by_index('freespeed_accessibility', index)
-                freespeed_accessibility = freespeed_accessibility / self.denominator 
+                
+                # modify and store  free accessibility
+                freespeed_accessibility = freespeed_accessibility / self.factor 
+                existing_zone_data_set.modify_attribute('freespeed_accessibility', freespeed_accessibility, index )
+            
+            # increase accessibility
+            elif (int(faz_id) == int(self.faz_number_increase_acc_1)) or (int(faz_id) == int(self.faz_number_increase_acc_2)) or (int(faz_id) == int(self.faz_number_increase_acc_3)) or (int(faz_id) == int(self.faz_number_increase_acc_4)):
+                
+                counter = counter + 1
+                
+                # modify and store car accessibility
+                car_accessibility = car_accessibility * self.factor 
+                existing_zone_data_set.modify_attribute('car_accessibility', car_accessibility, index )
+                
+                # modify and store walk accessibility
+                walk_accessibility = walk_accessibility * self.factor 
+                existing_zone_data_set.modify_attribute('walk_accessibility', walk_accessibility, index )
+                
+                # modify and store bike accessibility 
+                bike_accessibility = bike_accessibility * self.factor 
+                existing_zone_data_set.modify_attribute('bike_accessibility', bike_accessibility, index )
+                
+                # modify and store  free accessibility
+                freespeed_accessibility = freespeed_accessibility * self.factor 
                 existing_zone_data_set.modify_attribute('freespeed_accessibility', freespeed_accessibility, index )
         
         logger.log_status('Writing modified zone data to cache ...')
