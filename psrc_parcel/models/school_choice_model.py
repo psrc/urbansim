@@ -86,7 +86,7 @@ class SchoolChoiceModel(AgentLocationChoiceModel):
         
         if config.get('include_chosen_choice', False):
             chosen_choice_attr = zeros((agents_index.size, maxsize), dtype="bool8")
-            for submodel, group in choice_index.keys():  
+            for submodel, group in chosen_choice.keys():  
                 chosen_choice_attr[where_group[(submodel, group)], chosen_choice[(submodel, group)].flat] = True
             self.model_interaction.interaction_dataset.add_attribute(data=chosen_choice_attr, name="chosen_choice")
                     
