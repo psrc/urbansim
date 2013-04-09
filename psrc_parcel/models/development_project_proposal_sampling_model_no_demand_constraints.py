@@ -5,7 +5,7 @@
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel as DevelopmentProjectProposalSamplingModelWithMinimum
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.simulation_state import SimulationState
-from numpy import where, intersect1d, in1d, array, unique, ones, logical_and
+from numpy import where, intersect1d, in1d, array, unique, ones, logical_and, logical_or, zeros
 from scipy.ndimage import maximum
 from opus_core import ndimage
 from collections import defaultdict
@@ -116,12 +116,15 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                 self.accounting[key]["proposed_spaces"] += value
                 targets_reached = self._are_targets_reached(key)
                 if targets_reached[0]:
-                    self.target_vacancy_reached.append(key)
+                    if key not in self.target_vacancy_reached:
+                        self.target_vacancy_reached.append(key)
                     component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+                    component_indexes = in1d(self.proposal_component_set['proposal_id'], self.proposal_component_set['proposal_id'][component_indexes])
+                    component_indexes2 = zeros(self.proposal_component_set.size(), dtype='bool8')                   
                     # get proposals for which all components have their target vacancy met
                     for bt in self.target_vacancy_reached:
-                        component_indexes = logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt))
-                    proposal_indexes = where(ndimage.sum(component_indexes, labels=self.proposal_component_set['proposal_id'], 
+                        component_indexes2 = logical_or(component_indexes2, logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt)))
+                    proposal_indexes = where(ndimage.sum(component_indexes2, labels=self.proposal_component_set['proposal_id'], 
                                     index=self.proposal_set.get_id_attribute()) == self.proposal_set["number_of_components"])[0]
                     #proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
                     if not targets_reached[1]:
