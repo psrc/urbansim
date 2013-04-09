@@ -14,7 +14,7 @@ aliases = [
     "tenure_id = 1*(building.tenure<2) + 2*(building.tenure==2)",
     "building_type_id = building.building_type_id",
     "within_half_mile_transit = building.disaggregate(parcel.dist_rail< 2640)",
-    "residential_building_type_id = 1*((building.residential_units>0)*(building.building_type_id==20)) + 2*((building.residential_units>0)*(building.building_type_id==24)) + 3*((building.residential_units>0)*(building.building_type_id==2))+ 4*((building.residential_units>0)*(building.building_type_id==3))+ 5*(building.residential_units==0)",
+    "residential_building_type_id = 1*((building.residential_units>0)*(building.building_type_id==20)) + 2*((building.residential_units>0)*(building.building_type_id==24)) + 3*((building.residential_units>0)*(building.building_type_id==2))+ 4*((building.residential_units>0)*(building.building_type_id==3))+ 5*(building.residential_units==0) + 6*(building.residential_units==0)*(numpy.in1d(building.building_type_id,[20,24,2,3]))",
     "number_of_non_home_based_jobs = building.aggregate((establishment.home_based_status==0)*(establishment.employees))",
     "occupied_spaces=urbansim_parcel.building.is_residential * urbansim_parcel.building.number_of_households + numpy.logical_not(urbansim_parcel.building.is_residential) * drcog.building.number_of_non_home_based_jobs *urbansim_parcel.building.building_sqft_per_job",
     "total_spaces=urbansim_parcel.building.is_residential * building.residential_units + numpy.logical_not(urbansim_parcel.building.is_residential) * building.non_residential_sqft",
