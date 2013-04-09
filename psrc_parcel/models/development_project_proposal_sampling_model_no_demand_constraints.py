@@ -17,6 +17,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
     """
       
     same_demand_group = [3, 13, 4, 12]
+    all_MU_groups = same_demand_group + [8, 21]
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,
@@ -35,6 +36,8 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
             raise IOError, 'No target vacancy defined for year %s.' % year
         self.all_btypes_size = target_vacancy_for_this_year.size()
         self.target_vacancy_reached = []
+        self.proposal_component_set.compute_variables(["percent_proposal = development_project_proposal_component.disaggregate(development_template_component.percent_building_sqft)"],
+                                                      dataset_pool=self.dataset_pool)
         return DevelopmentProjectProposalSamplingModelWithMinimum.run(self, n=n, realestate_dataset_name=realestate_dataset_name,
                                                                       current_year=current_year, **kwargs)
         
@@ -121,9 +124,18 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                     component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
                     component_indexes = in1d(self.proposal_component_set['proposal_id'], self.proposal_component_set['proposal_id'][component_indexes])
                     component_indexes2 = zeros(self.proposal_component_set.size(), dtype='bool8')                   
-                    # get proposals for which all components have their target vacancy met
+                    # mark components as 'exclude' that have target vacancy met
                     for bt in self.target_vacancy_reached:
                         component_indexes2 = logical_or(component_indexes2, logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt)))
+                    # for building types where there is demand, exclude components that are less than 40% of the proposals 
+                    for bt in self.all_MU_groups: 
+                        if bt in [item[0] for item in self.target_vacancy_reached]:
+                            continue
+                        component_indexes2 = logical_or(component_indexes2, 
+                                                        logical_and(component_indexes,
+                                                                    logical_and(self.proposal_component_set['percent_proposal'] <= 40, 
+                                                                                self.get_index_by_condition(self.proposal_component_set.column_values, bt))))
+                    # exclude proposals for which all components are marked as 'exclude' (component_index2)
                     proposal_indexes = where(ndimage.sum(component_indexes2, labels=self.proposal_component_set['proposal_id'], 
                                     index=self.proposal_set.get_id_attribute()) == self.proposal_set["number_of_components"])[0]
                     #proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
