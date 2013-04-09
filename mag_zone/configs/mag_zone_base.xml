@@ -1583,7 +1583,7 @@
             <name hidden="True" name="name" type="string">CapacityLocationModel</name>
             <argument hidden="False" name="capacity_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.building.weight_for_pub_federal_state_jobs</argument>
             <argument hidden="False" name="number_of_agents_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True"/>
-            <argument name="filter" parser_action="quote_string" type="string" convert_blank_to_none="True">numpy.logical_or(mag_zone.building.is_building_type_pub_fs, mag_zone.building.num_of_pub_federal_state_jobs &gt; 0)</argument>
+            <argument name="filter" parser_action="quote_string" type="string" convert_blank_to_none="True">(numpy.logical_not(mag_zone.building.is_residential))*(numpy.logical_or(mag_zone.building.is_building_type_pub_fs, mag_zone.building.num_of_pub_federal_state_jobs > 0))</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.job.is_pubfedstate_job</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
@@ -1604,7 +1604,7 @@
             <name hidden="True" name="name" type="string">CapacityLocationModel</name>
             <argument hidden="False" name="capacity_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.building.weight_for_pub_local_jobs</argument>
             <argument hidden="False" name="number_of_agents_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True"/>
-            <argument name="filter" parser_action="quote_string" type="string" convert_blank_to_none="True">numpy.logical_or(mag_zone.building.is_building_type_pub_local, mag_zone.building.num_of_pub_local_jobs &gt; 0)</argument>
+            <argument name="filter" parser_action="quote_string" type="string" convert_blank_to_none="True">(numpy.logical_not(mag_zone.building.is_residential))*(numpy.logical_or(mag_zone.building.is_building_type_pub_local, mag_zone.building.num_of_pub_local_jobs > 0))</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string" convert_blank_to_none="True">mag_zone.job.is_publocal_job</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </init>
