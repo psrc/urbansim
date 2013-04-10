@@ -5,6 +5,11 @@
     <project_name hidden="True" type="string">drcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable name="employment_submarket.median_resunits_sum_within_500m" source="expression" type="variable_definition" use="both">employment_submarket.aggregate(building.disaggregate(drcog.node.sum_residential_units_within_800_meters,intermediates=[parcel]),function=median)</variable>
+      <variable name="household_x_submarket.age_x_is_in_denver" source="expression" type="variable_definition" use="both">household.age_of_head*submarket.aggregate(building.disaggregate(parcel.county_id),function=median)==8031</variable>
+      <variable name="household_x_submarket.children_x_is_in_denver" source="expression" type="variable_definition" use="both">household.children*submarket.aggregate(building.disaggregate(parcel.county_id),function=median)==8031</variable>
+      <variable name="submarket.is_in_adams" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.county_id),function=median)==8001</variable>
+      <variable name="household.poor_hh" source="expression" type="variable_definition" use="both">household.income_group_id&lt;3</variable>
       <variable name="submarket.median_non_residential_sqft_sum_within_500m" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(drcog.node.sum_non_residential_sqft_within_500_meters,intermediates=[parcel]),function=median)</variable>
       <variable name="building.built_pre_1940" source="expression" type="variable_definition" use="both">building.year_built&lt;1940</variable>
       <variable name="county.county_parcels_near_capacity" source="expression" type="variable_definition" use="both">county.aggregate(((((parcel.parcel_sqft)*parcel.disaggregate(zoning.max_far)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))&lt;2000)</variable>
@@ -242,7 +247,7 @@
       <variable name="building.gov_jobs" source="expression" type="variable_definition" use="both">building.aggregate(job.sector_id==20)</variable>
       <variable name="household.head_is_asian" source="expression" type="variable_definition" use="both">household.aggregate((person.relation==1)*(person.race==4))</variable>
       <variable name="household.head_is_white" source="expression" type="variable_definition" use="both">household.aggregate((person.relation==1)*(person.race==1))</variable>
-      <variable name="household.wealthy_hh" source="expression" type="variable_definition" use="both">household.income_group&gt;6</variable>
+      <variable name="household.wealthy_hh" source="expression" type="variable_definition" use="both">household.income_group_id&gt;6</variable>
       <variable name="household.workers_per_person" source="expression" type="variable_definition" use="both">safe_array_divide(household.workers * 1.0,household.persons)</variable>
       <variable name="household.avg_edu_hh" source="expression" type="variable_definition" use="both">household.aggregate(person.education, function=mean)</variable>
       <variable name="zone.zone_proportion_hh_in_apartment" source="expression" type="variable_definition" use="both">safe_array_divide(zone.aggregate(building.aggregate(household.building_type_id==3) + building.aggregate(household.building_type_id==37)),zone.aggregate(building.number_of_agents(household)))</variable>
@@ -1504,7 +1509,9 @@
                 <variable_spec name="household.income"></variable_spec>
                 <variable_spec name="household.oldhead"></variable_spec>
                 <variable_spec name="household.persons"></variable_spec>
+                <variable_spec name="household.poor_hh"></variable_spec>
                 <variable_spec name="household.vehicles"></variable_spec>
+                <variable_spec name="household.wealthy_hh"></variable_spec>
                 <variable_spec name="household.workers_per_person"></variable_spec>
                 <variable_spec name="household.young_adults"></variable_spec>
               </variable_list>
@@ -1721,6 +1728,122 @@
           </submodel>
         </specification>
       </model>
+      <model name="submarket_household_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="maximum_runs" type="integer">5</argument>
+            <argument name="agents_index" type="string">hrm_index</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'(household.id&gt;0)'</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"></argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">drcog</argument>
+            <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string">drcog.household.submarket_id</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">drcog.household.income_4</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(submarket.residential_units-submarket.number_of_households)</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(submarket.residential_units&gt;0)</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">submarket.residential_units</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 10})</argument>
+            <argument name="location_set" type="string">submarket</argument>
+            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string">1</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument convert_blank_to_none="True" name="simulation_weight_string" parser_action="quote_string" type="string">None</argument>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation_with_diagnose</argument>
+            <argument name="sample_size_locations" type="integer">50</argument>
+            <argument name="estimate_config" type="string">Resources({})</argument>
+            <name name="name" type="string">HouseholdLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">submarket_household_location_choice_model_condo_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">submarket_household_location_choice_model_condo_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="portion_to_unplace" type="float">0.333333333333</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">submarket_household_location_choice_model_condo_specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="index_to_unplace" type="string">None</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string">'(household.building_id&gt;0)'</argument>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+        <specification inherit_parent_values="False" type="dictionary">
+          <submodel hidden="Children" inherit_parent_values="False" name="inc1" submodel_id="1" type="submodel">
+            <description type="string">condo</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_submarket.children_x_is_in_denver"></variable_spec>
+              <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.median_age_of_head"></variable_spec>
+              <variable_spec name="submarket.median_non_residential_sqft_sum_within_500m"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="inc2" submodel_id="2" type="submodel">
+            <description type="string">condo</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_submarket.children_x_is_in_denver"></variable_spec>
+              <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.median_age_of_head"></variable_spec>
+              <variable_spec name="submarket.median_non_residential_sqft_sum_within_500m"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="inc3" submodel_id="3" type="submodel">
+            <description type="string">condo</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_submarket.children_x_is_in_denver"></variable_spec>
+              <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.median_age_of_head"></variable_spec>
+              <variable_spec name="submarket.median_non_residential_sqft_sum_within_500m"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="inc4" submodel_id="4" type="submodel">
+            <description type="string">condo</description>
+            <variable_list type="variable_list">
+              <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.median_non_residential_sqft_sum_within_500m"></variable_spec>
+            </variable_list>
+          </submodel>
+        </specification>
+      </model>
       <model name="submarket_household_location_choice_model_condo" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
@@ -1883,10 +2006,10 @@
             <description type="string">apartment</description>
             <variable_list type="variable_list">
               <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.is_in_adams"></variable_spec>
               <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
               <variable_spec name="submarket.proportion_renter_hh_in_submarket"></variable_spec>
               <variable_spec name="submarket.submarket_avg_allpurpose_agglosum"></variable_spec>
-              <variable_spec name="submarket.submarket_avg_zone_jobs_within_30min_gc"></variable_spec>
             </variable_list>
           </submodel>
         </specification>
@@ -2218,13 +2341,9 @@
           <submodel hidden="Children" inherit_parent_values="False" name="owner_sf" submodel_id="-2" type="submodel">
             <description type="string">owner_sf</description>
             <variable_list type="variable_list">
-              <variable_spec name="submarket.average_stories"></variable_spec>
-              <variable_spec name="submarket.average_year_built"></variable_spec>
               <variable_spec name="household_x_submarket.hh_income_close_to_submarket_avginc"></variable_spec>
-              <variable_spec name="household_x_submarket.hh_income_x_average_unit_size"></variable_spec>
+              <variable_spec name="submarket.is_in_adams"></variable_spec>
               <variable_spec name="submarket.ln_avg_unit_price_submarket"></variable_spec>
-              <variable_spec name="submarket.median_age_of_head"></variable_spec>
-              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
             </variable_list>
           </submodel>
         </specification>
@@ -2358,11 +2477,11 @@
               <variable_spec name="building.allpurpose_agglosum_building"></variable_spec>
               <variable_spec name="building.built_pre_1940"></variable_spec>
               <variable_spec name="constant"></variable_spec>
-              <variable_spec name="building.ln_avg_hh_income"></variable_spec>
+              <!--<variable_spec name="building.ln_avg_hh_income"/>-->
               <variable_spec name="building.ln_jobs_within_30_min"></variable_spec>
               <variable_spec name="building.ln_land_per_unit"></variable_spec>
               <variable_spec name="building.num_floors"></variable_spec>
-              <variable_spec name="building.population_density"></variable_spec>
+              <!-- <variable_spec name="building.population_density"/>-->
               <variable_spec name="building.sqft_per_unit"></variable_spec>
             </variable_list>
           </submodel>
@@ -2375,9 +2494,9 @@
               <variable_spec name="building.ln_jobs_within_30_min"></variable_spec>
               <variable_spec name="building.ln_land_per_unit"></variable_spec>
               <variable_spec name="building.num_floors"></variable_spec>
-              <variable_spec name="building.population_density"></variable_spec>
+              <!-- <variable_spec name="building.population_density"/>-->
               <variable_spec name="building.sqft_per_unit"></variable_spec>
-              <variable_spec name="building.ln_avg_hh_income"></variable_spec>
+              <!--<variable_spec name="building.ln_avg_hh_income"/>-->
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="singlefamilyl" submodel_id="20" type="submodel">
@@ -2386,11 +2505,11 @@
               <variable_spec name="building.allpurpose_agglosum_building"></variable_spec>
               <variable_spec name="building.built_pre_1940"></variable_spec>
               <variable_spec name="constant"></variable_spec>
-              <variable_spec name="building.ln_avg_hh_income"></variable_spec>
+              <!--<variable_spec name="building.ln_avg_hh_income"/>-->
               <variable_spec name="building.ln_jobs_within_2_dollars_auto_travel_cost"></variable_spec>
               <variable_spec name="building.ln_land_per_unit"></variable_spec>
               <variable_spec name="building.num_floors"></variable_spec>
-              <variable_spec name="building.population_density"></variable_spec>
+              <!-- <variable_spec name="building.population_density"/>-->
               <variable_spec name="building.sqft_per_unit"></variable_spec>
             </variable_list>
           </submodel>
@@ -2403,9 +2522,9 @@
               <variable_spec name="building.ln_jobs_within_30_min"></variable_spec>
               <variable_spec name="building.ln_land_per_unit"></variable_spec>
               <variable_spec name="building.num_floors"></variable_spec>
-              <variable_spec name="building.population_density"></variable_spec>
+              <!-- <variable_spec name="building.population_density"/>-->
               <variable_spec name="building.sqft_per_unit"></variable_spec>
-              <variable_spec name="building.ln_avg_hh_income"></variable_spec>
+              <!--<variable_spec name="building.ln_avg_hh_income"/>-->
             </variable_list>
           </submodel>
         </specification>
@@ -2473,7 +2592,7 @@
               <variable_spec name="building.year_built_building"></variable_spec>
             </variable_list>
           </submodel>
-          <submodel hidden="Children" name="industrial_manufacture" submodel_id="5" type="submodel">
+          <submodel hidden="Children" name="office" submodel_id="5" type="submodel">
             <description type="string">industrial_manufacture</description>
             <variable_list type="variable_list">
               <variable_spec name="building.allpurpose_agglosum_building"></variable_spec>
@@ -2952,6 +3071,156 @@
             <variable_list type="variable_list">
               <variable_spec name="employment_submarket.allpurpose_agglosum"></variable_spec>
               <variable_spec name="employment_submarket.ln_residential_units_esubmarket"></variable_spec>
+            </variable_list>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>
+      <model name="business_location_choice_model_sixsector" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
+            <class_name type="string">AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+            <argument model_dependency_type="dataset" name="location_set" type="string">employment_submarket</argument>
+            <argument convert_blank_to_none="True" name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">opus_core.upc.lottery_choices</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">employment_submarket.aggregate(building.non_residential_sqft)&gt;0</argument>
+            <argument model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">drcog.establishment.sector_id_six</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">drcog.establishment.employment_submarket_id</argument>
+            <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero((employment_submarket.aggregate(building.non_residential_sqft)/500) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">'employment_submarket.aggregate(building.non_residential_sqft)'</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">AgentLocationChoiceModel</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">ESTLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">drcog</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">50</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
+              <key name="compute_capacity_flag" type="boolean">True</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((employment_submarket.aggregate(building.non_residential_sqft)/250) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">employment_submarket.aggregate(building.non_residential_sqft)/250</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">employment_submarket.aggregate(building.aggregate(establishment.employees))</key>
+              <key name="lottery_max_iterations" type="integer">3</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="weights_for_estimation_string" type="string"></key>
+              <key name="sample_size_locations" type="integer">50</key>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
+              <key name="estimation_size_agents" type="float">1</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(alcm_specification, alcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="specification_table" parser_action="quote_string" type="string">business_location_choice_model_specification</argument>
+            <argument model_dependency_type="dataset" name="agent_set" type="string">establishment</argument>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="agents_for_estimation_table" parser_action="quote_string" type="string">establishments</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"></argument>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">establishment.home_based_status==0</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_variable" parser_action="quote_string" type="string">drcog.establishment.employment_submarket_id</argument>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(alcm_coefficients, dummy)</output>
+            <argument model_dependency_type="dataset" name="agent_set" type="string">establishment</argument>
+            <argument name="agents_index" type="string">alcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="coefficients_table" parser_action="quote_string" type="string">business_location_choice_model_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument model_dependency_type="table" name="specification_table" parser_action="quote_string" type="string">business_location_choice_model_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument model_dependency_type="dataset" name="agent_set" type="string">establishment</argument>
+            <argument convert_blank_to_none="True" name="agents_filter" type="string">'establishment.home_based_status==0'</argument>
+            <argument convert_blank_to_none="True" hidden="True" name="agents_index" type="string">brm_index</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">alcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">alcm_specification</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="education" submodel_id="1" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.is_school_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.jobs61_edu_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="arts" submodel_id="2" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.is_recreation_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.jobs71_arts_entertain_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_residential_units_esubmarket"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="construction" submodel_id="3" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.is_office_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.jobs23_construction_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_construction_jobs_within_20_min_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_non_residential_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="accomodation_food4" submodel_id="4" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.allpurpose_agglosum"></variable_spec>
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"></variable_spec>
+              <variable_spec name="employment_submarket.is_restaurant_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.jobs7221_afs4_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"></variable_spec>
+              <variable_spec name="employment_submarket.median_resunits_sum_within_500m"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="accomodation_food1" submodel_id="5" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"></variable_spec>
+              <variable_spec name="employment_submarket.is_lodging_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.jobs7211_afs1_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="professional" submodel_id="6" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+              <variable_spec name="employment_submarket.esbumarket_close_to_transit"></variable_spec>
+              <variable_spec name="employment_submarket.is_office_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_average_value_per_sqft_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_sector54_20_min_esubmarket"></variable_spec>
+              <variable_spec name="employment_submarket.ln_residential_units_in_zone"></variable_spec>
             </variable_list>
           </submodel>
         </specification>
