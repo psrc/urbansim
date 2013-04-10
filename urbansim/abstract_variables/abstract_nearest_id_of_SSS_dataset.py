@@ -10,10 +10,8 @@ class abstract_nearest_id_of_SSS_dataset(abstract_nearest_element_of_SSS_dataset
     _return_type = "int32"
     
     def compute(self, dataset_pool):
-        result =  abstract_nearest_element_of_SSS_dataset._compute(self, dataset_pool)
-        distances, indices = result[0]
-        loc_index = result[1]
-        return dataset_pool.get_dataset(self.to_dataset).get_id_attribute()[loc_index[indices]]
+        distances, indices =  abstract_nearest_element_of_SSS_dataset._compute(self, dataset_pool)
+        return dataset_pool.get_dataset(self.to_dataset).get_id_attribute()[indices]
 
 
 

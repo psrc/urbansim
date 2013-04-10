@@ -10,8 +10,8 @@ class abstract_distance_to_SSS_dataset(abstract_nearest_element_of_SSS_dataset):
     _return_type = "float32"
     
     def compute(self, dataset_pool):
-        result =  abstract_nearest_element_of_SSS_dataset._compute(self, dataset_pool)
-        return result[0][0]
+        distances, indices =  abstract_nearest_element_of_SSS_dataset._compute(self, dataset_pool)
+        return distances
 
 
 

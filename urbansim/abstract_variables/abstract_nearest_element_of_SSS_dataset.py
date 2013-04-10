@@ -50,11 +50,12 @@ class abstract_nearest_element_of_SSS_dataset(Variable):
         coords = column_stack( (ds.get_attribute(self.my_x_coord), 
                                 ds.get_attribute(self.my_y_coord)) )
         kd_tree = KDTree(pgcoords, 10)
-        return kd_tree.query(coords), index
+        distances, indices = kd_tree.query(coords)
+        return distances, index[indices]
 
     def compute(self, dataset_pool):
-        result =  self._compute(dataset_pool)
-        return result[0][1]
+        distances, indices =  self._compute(dataset_pool)
+        return indices
     
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
