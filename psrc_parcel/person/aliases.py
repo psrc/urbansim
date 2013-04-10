@@ -30,5 +30,7 @@ aliases = [
            "has_older_sibling_in_private_or_home_school = numpy.logical_or(psrc_parcel.person.has_older_sibling_in_private_school, psrc_parcel.person.has_older_sibling_in_home_school)",
            "has_older_sibling = person.disaggregate(psrc_parcel.household.age_of_oldest_child) > person.age",
            "has_older_sibling_in_school = person.disaggregate(psrc_parcel.household.age_of_oldest_child_in_school) > person.age",
-           "private_schools_in_neighborhood = person.disaggregate(psrc_parcel.parcel.number_of_private_schools_within_1000_of_parcel, intermediates=[building, household])"
+           "private_schools_in_neighborhood = person.disaggregate(psrc_parcel.parcel.number_of_private_schools_within_1000_of_parcel, intermediates=[building, household])",
+           "age_category = (1 * (person.age < 6)) + (2 * numpy.logical_and(person.age >=6, person.age < 11)) + (3 * numpy.logical_and(person.age >= 11, person.age < 15)) + (4 * numpy.logical_and(person.age >= 15, person.age < 18)) + (5 * (person.age >= 18))",
+           "school_of_oldest_child_private = person.disaggregate(psrc_parcel.household.school_of_oldest_child_private)"
            ]
