@@ -1,0 +1,8 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">DRCOG parcel child configuration</description>
+    <project_name hidden="True" type="string">drcog</project_name>
+    <parent type="file">drcog/configs/drcog_parcel.xml</parent>
+  </general>
+</opus_project>
