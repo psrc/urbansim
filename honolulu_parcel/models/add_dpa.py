@@ -62,6 +62,8 @@ class AddDpa(Model):
         employment_submarket_set = dataset_pool.get_dataset('employment_submarket')
 
         building_set = dataset_pool.get_dataset('building')
+        
+        zone_set = dataset_pool.get_dataset('zone')
 
         employment_submarket_set.add_attribute(name='dpa_id', data=employment_submarket_set.compute_variables('employment_submarket.disaggregate(zone.dpa_id)'))
 
@@ -70,10 +72,14 @@ class AddDpa(Model):
         job_dpa = job_set.compute_variables('job.disaggregate(employment_submarket.dpa_id)')
 
         household_dpa = household_set.compute_variables('household.disaggregate(submarket.dpa_id)')
+        
+        household_zone = household_set.compute_variables('household.disaggregate(submarket.zone_id)')
 
         job_set.add_primary_attribute(name='dpa_id', data=job_dpa)
 
         household_set.add_primary_attribute(name='dpa_id', data=household_dpa)
+        
+        household_set.add_primary_attribute(name='household_zone', data=household_zone)
 
         # #logger.log_status("size: %s" % (nodes.size()))
 
