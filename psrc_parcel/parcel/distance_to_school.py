@@ -9,8 +9,8 @@ class distance_to_school(distance_to_SSS_dataset):
     """distance of parcel centroid to nearest school"""
 
     _return_type = "float32"
-    dataset_x_coord = "sxcoord"
-    dataset_y_coord = "sycoord"
+    dataset_x_coord = "school.disaggregate(parcel.x_coord_sp)"
+    dataset_y_coord = "school.disaggregate(parcel.y_coord_sp)"
     to_dataset = "school"
     
     def __init__(self):
@@ -28,18 +28,17 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'parcel':
             {
-                "parcel_id":  array([1,   2,    3,  4, 5]),
-                "x_coord_sp": array([1,   2,    3,  3, 1 ]),
-                "y_coord_sp": array([1,   1,    1,  2, 4 ]),
+                "parcel_id":  array([1,   2,    3,  4, 5, 7, 8 ]),
+                "x_coord_sp": array([1,   2,    3,  3, 1, 2, 3 ]),
+                "y_coord_sp": array([1,   1,    1,  2, 4, 2, 3 ]),
             },
             'school':
             {
-             "school_id":array([1,2,3,4,5,6,7]),
-             "sxcoord":array([1,2,3,2,2,1,3]),
-             "sycoord":array([1,1,1,2,2,1,3]),
+             "school_id": array([1, 2, 3, 4, 5, 6, 7]),
+             "parcel_id": array([1, 2, 3, 7, 7, 1, 8])
              },
         })
-        should_be = array([0, 0, 0, 1, 2.23607])
+        should_be = array([0, 0, 0, 1, 2.23607, 0, 0])
 
         instance_name = 'psrc_parcel.parcel.distance_to_school'
         tester.test_is_close_for_family_variable(self, should_be, instance_name, rtol=1e-5)

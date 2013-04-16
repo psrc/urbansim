@@ -32,3 +32,7 @@ aliases = [
                             "(household.persons==8)*(household.income > 286500)",
                             )
            ]
+for cat in range(1,6):
+    aliases.append("age_of_oldest_child_age_category_%s_in_private_school = household.aggregate(psrc_parcel.person.is_in_private_k12_school * (psrc_parcel.person.age_category == %s) * person.age, function=maximum)" % (cat, cat))
+    aliases.append("school_of_oldest_child_in_age_category_%s_private = household.aggregate((person.age==person.disaggregate(psrc_parcel.household.age_of_oldest_child_age_category_%s_in_private_school)) * person.school_id, function=maximum)" % (cat, cat))
+    

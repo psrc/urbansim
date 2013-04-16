@@ -6,5 +6,5 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-           "same_school_district = psrc_parcel.person.school_district_id == school.school_district_id",
+           "same_school_district = psrc_parcel.person.school_district_id == school.disaggregate(parcel.school_district_id)",
            ]
