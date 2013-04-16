@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import unique, where, maximum, zeros, apply_along_axis, newaxis, logical_and
+from numpy import unique, where, maximum, zeros, apply_along_axis, newaxis, logical_and, intersect1d
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 from urbansim.datasets.household_dataset import HouseholdDataset
@@ -12,7 +12,7 @@ class SchoolChoiceModel(AgentLocationChoiceModel):
     model_name = 'School Location Choice Model'
                 
     def prepare_for_estimate(self, estimation_storage, agents_for_estimation_table, agent_set, 
-                             households_for_estimation_table=None, **kwargs):
+                             agents_filter=None, households_for_estimation_table=None, **kwargs):
         estimation_set = Dataset(in_storage = estimation_storage,
                                  in_table_name=agents_for_estimation_table,
                                  id_name=agent_set.get_id_name(), dataset_name=agent_set.get_dataset_name())
@@ -21,6 +21,10 @@ class SchoolChoiceModel(AgentLocationChoiceModel):
             hhs = HouseholdDataset(in_storage=estimation_storage, in_table_name='households_for_estimation')
             self.dataset_pool.replace_dataset('household', hhs)
         spec, index = AgentLocationChoiceModel.prepare_for_estimate(self, estimation_set, **kwargs)
+        if agents_filter is not None:
+            filter_condition = estimation_set.compute_variables(agents_filter, 
+                                                                dataset_pool= self.dataset_pool)                                                       
+            index = intersect1d(where(filter_condition)[0], index)
         return (spec, index, estimation_set)
     
     def create_interaction_datasets(self, agent_set, agents_index, config, submodels=[-2], **kwargs):
