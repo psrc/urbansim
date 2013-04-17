@@ -28,7 +28,7 @@ class RateDataset(UrbansimDataset):
         
     def get_rate(self, dataset):
         probability_attribute = self.get_probability_attribute_name()
-        column_names = set( self.get_known_attribute_names() ) - set( [ probability_attribute, 'rate_id', '_hidden_id_'] )
+        column_names = set( self.get_known_attribute_names() ) - set( [ probability_attribute, 'rate_id', '_hidden_id_', 'future_' + probability_attribute] )
         self.independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
         ## rstip below could turn 'sex' --> 'se'
         ##self.independent_variables = list(set([col.rstrip('_min').rstrip('_max') for col in column_names]))
