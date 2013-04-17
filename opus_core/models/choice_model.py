@@ -24,7 +24,7 @@ from opus_core.model import get_specification_for_estimation, prepare_specificat
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64, newaxis, row_stack, asarray
+from numpy import int32, compress, float64, newaxis, row_stack, asarray, delete
 from numpy import isinf, isnan, inf, nan, nan_to_num
 from numpy.random import permutation
 import numpy as np
@@ -315,10 +315,14 @@ class ChoiceModel(ChunkModel):
             self.run_config.merge({'price': price, 
                                    'price_beta': price_coef_val,
                                    'utilities': utilities})
+        if self.availability is not None:
+            zero_avail_sum = where(availability[self.observations_mapping['mapped_index'], :].sum(axis=1)==0)[0]
+            if zero_avail_sum.size > 0:            # agents with no availability of choices - remove from mapped_index
+                self.observations_mapping['mapped_index'] = delete(self.observations_mapping['mapped_index'], self.observations_mapping['mapped_index'][zero_avail_sum])
+            self.run_config["availability"] = availability[self.observations_mapping['mapped_index'],:]*(index[self.observations_mapping['mapped_index'],:]>=0)
+        
         self.upc_sequence.utilities = utilities[self.observations_mapping['mapped_index'],:]
         self.run_config["index"] = index[self.observations_mapping['mapped_index'],:]
-        if self.availability is not None:
-            self.run_config["availability"] = availability[self.observations_mapping['mapped_index'],:]*(self.run_config["index"]>=0)
         self.upc_sequence.compute_probabilities(resources=self.run_config)
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
