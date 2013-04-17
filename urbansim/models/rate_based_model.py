@@ -72,9 +72,7 @@ class RateBasedModel(Model):
                         sample_rates=False, 
                         n=100, 
                         multiplicator=1, 
-                        flush_rates=True,
-                        future_probabilities=False,
-                        transition_years = None):
+                        flush_rates=True):
         """
         what - unused, argument kept to be compatible with old code 
         """
@@ -93,19 +91,6 @@ class RateBasedModel(Model):
                                                            }
                                                     )
         if probability_attribute is not None:
-            rates.probability_attribute = probability_attribute
-        if (future_probabilities is True) and (transition_years is not None):
-            current_year = SimulationState().get_current_time()
-            firstyear,lastyear = transition_years
-            if current_year >= firstyear:
-                base_rates = rates.get_attribute(probability_attribute)
-                future_rates = rates.get_attribute('future_' + probability_attribute)
-                if current_year < lastyear:
-                    number_of_interpolation_steps = lastyear - firstyear + 1
-                    step_size = (future_rates - base_rates) / number_of_interpolation_steps
-                    current_step_number = current_year - firstyear + 1
-                    future_rates = base_rates + step_size * current_step_number
-                rates.modify_attribute(probability_attribute, future_rates)
             rates.probability_attribute = probability_attribute
         if sample_rates:
             cache_storage=None
