@@ -345,13 +345,14 @@ class ChoiceModel(ChunkModel):
             self.compute_demand(self.upc_sequence.probabilities)
 
         choices = choices.astype(int32)
-        res_positive_idx = where(choices>=0)[0]
-        if index is not None:
-            if index.shape[1] <> coef[submodel].nequations():
-                choices[res_positive_idx] = array(map(lambda x:
-                    index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx)).astype(int32)
-        else:
-            choices[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]].astype(int32)
+        #comment out code that hasn't been run (which will not work anyway)
+        #res_positive_idx = where(choices>=0)[0]
+        #if index is not None:
+        #    if index.shape[1] <> coef[submodel].nequations():
+        #        choices[res_positive_idx] = array(map(lambda x:
+        #            index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx)).astype(int32)
+        #else:
+        #    choices[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]].astype(int32)
         return choices
 
     def compute_demand(self, probabilities):
