@@ -192,7 +192,7 @@ class ModelSystem(object):
                     datasets_to_preload = resources.get('datasets_to_preload',{})
                 for dataset_name in datasets_to_preload:
                     SessionConfiguration().get_dataset_from_pool(dataset_name)
-                models_configuration = resources['models_configuration']
+                models_configuration = resources.get('models_configuration', {})
                 dataset_pool = SessionConfiguration().get_dataset_pool()
                 datasets = {}
                 for dataset_name, its_dataset in dataset_pool.datasets_in_pool().iteritems():
