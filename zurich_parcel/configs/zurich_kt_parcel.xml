@@ -1701,7 +1701,7 @@
       </creating_baseyear_cache_configuration>
       <base_year field_identifier="Base Year" name="" type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear field_identifier="First Year of Simulation" name="" type="integer">2000</firstyear>
+        <firstyear field_identifier="First Year of Simulation" name="" type="integer">2001</firstyear>
         <lastyear field_identifier="Last Year of Simulation" name="" type="integer">2030</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
