@@ -8,4 +8,5 @@ aliases = [
     "within_half_mile_transit = parcel.dist_rail<2641",
     "parcel_acre = parcel.shape_area * 0.000247105381",
     "zone = parcel.zone_id",
+    "parks = parcel.land_use_type_id==14"
            ]

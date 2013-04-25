@@ -18,6 +18,8 @@ aliases = [
            "manufonejobs = zone.aggregate(establishment.employees*(establishment.sector_id==31), intermediates=[building,parcel])",
            "manuftwojobs = zone.aggregate(establishment.employees*(establishment.sector_id==32), intermediates=[building,parcel])",
            "manufthreejobs = zone.aggregate(establishment.employees*(establishment.sector_id==33), intermediates=[building,parcel])",
+           "manufjobs = zone.aggregate(establishment.employees*(numpy.in1d(establishment.sector_id,[31,32,33])), intermediates=[building,parcel])",
+           "prodjobs = zone.aggregate(establishment.employees*(numpy.in1d(establishment.sector_id,[11,21,22,23,31,32,33,42,48,49])), intermediates=[building,parcel])",
            "wholesalejobs = zone.aggregate(establishment.employees*(establishment.sector_id==42), intermediates=[building,parcel])",
            "sector44jobs = zone.aggregate(establishment.employees*(establishment.sector_id==44), intermediates=[building,parcel])",
            "sector45jobs = zone.aggregate(establishment.employees*(establishment.sector_id==45), intermediates=[building,parcel])",

@@ -22,4 +22,6 @@ aliases = [
     "vacant_job_spaces = clip_to_zero(drcog.building.total_job_spaces - drcog.building.employees)",
     "employees=building.aggregate(establishment.employees)",
     "building_sqft_per_employee=urbansim_parcel.building.building_sqft_per_job",
+    "parks = building.disaggregate(parcel.lu_type_id==14)",
+    "node_id = building.disaggregate(parcel.node_id)",
            ]
