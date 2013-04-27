@@ -45,7 +45,6 @@ class occupied_SSS_job_space(Variable):
                             buildings.get_attribute("building_sqft"))
             logger.log_note("job_area%s" % (sector_id))
             logger.log_note("job_area%s: %s" % (sector_id, repr(job_area)))
-            logger.log_note("job_area%s: %s, %s" % (sector_id, repr(job_area), sum(job_area)))
 
         return job_area
 
