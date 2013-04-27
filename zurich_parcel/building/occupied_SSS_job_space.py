@@ -43,7 +43,7 @@ class occupied_SSS_job_space(Variable):
             logger.log_note("job_sqft%s: %s, %s" % (sector_id, job_sqft.size(), sum(job_sqft)))
             job_area = clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), job_sqft), 0,
                             buildings.get_attribute("building_sqft"))
-            logger.log_note("job_area%s: %s, %s" % (sector_id, job_area.size, sum(job_area)))
+            logger.log_note("job_area%s: %s, %s" % (sector_id, job_area, sum(job_area)))
 
         return job_area
 
