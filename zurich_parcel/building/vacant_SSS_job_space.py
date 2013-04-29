@@ -3,8 +3,8 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from numpy import ma, clip, where
-from opus_core.logger import logger
+from numpy import clip
+from opus_core.logger import logger, log_block
 
 class vacant_SSS_job_space(Variable):
     """ number of job spaces that is vacant/unoccupied"""
@@ -18,11 +18,15 @@ class vacant_SSS_job_space(Variable):
     def dependencies(self):
         return []
 
+    @log_block(name='vacant_SSS_job_space.compute')
     def compute(self,  dataset_pool):
         building = self.get_dataset()
         total = building.compute_one_variable_with_unknown_package("total_%s_job_space" % self.sector, dataset_pool=dataset_pool)
+        logger.log_note("total: %s" % (repr(total)))
         occupied = building.compute_one_variable_with_unknown_package("occupied_%s_job_space" % self.sector, dataset_pool=dataset_pool)
+        logger.log_note("occupied: %s" % (repr(occupied)))
         vacant = total - occupied
+        logger.log_note("vacant: %s" % (repr(vacant)))
 
         # HACK
         vacant = clip(vacant, a_min=0, a_max=1e100)
