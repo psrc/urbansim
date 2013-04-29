@@ -41,7 +41,7 @@ class occupied_SSS_job_space(Variable):
             logger.log_note("jobs.size: %s" % jobs.size())
             buildings = self.get_dataset()
             logger.log_note("buildings.size: %s" % buildings.size())
-            job_sqft = ma.masked_where(jobs.get_attribute('sector_id') == sector_id, [sqft_per_job] * jobs.size(), 0)
+            job_sqft = ma.masked_where(jobs.get_attribute('sector_id') != sector_id, [sqft_per_job] * jobs.size(), 0)
             logger.log_note("job_sqft: %s" % repr(job_sqft))
             logger.log_note("job_sqft.sum(): %s" % (job_sqft.sum()))
             logger.log_note("job_sqft.sum() / sqft_per_job: %s" % (job_sqft.sum() / sqft_per_job))
