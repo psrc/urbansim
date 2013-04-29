@@ -42,12 +42,18 @@ class occupied_SSS_job_space(Variable):
             buildings = self.get_dataset()
             logger.log_note("buildings.size: %s" % buildings.size())
             job_sqft = ma.masked_where(jobs.get_attribute('sector_id') == sector_id, [sqft_per_job] * jobs.size(), 0)
-            logger.log_note("job_sqft: %s, %s" % (job_sqft.size(), sum(job_sqft)))
+            logger.log_note("job_sqft: %s" % repr(job_sqft))
+            logger.log_note("job_sqft.sum(): %s" % (job_sqft.sum()))
+            logger.log_note("job_sqft.sum() / sqft_per_job: %s" % (job_sqft.sum() / sqft_per_job))
             job_area_raw = buildings.sum_over_ids(jobs.get_attribute('building_id'), job_sqft)
-            logger.log_note("job_area_raw: %s, %s" % (job_area_raw.size(), sum(job_area_raw)))
+            logger.log_note("job_area_raw: %s" % repr(job_area_raw))
+            logger.log_note("job_area_raw.sum(): %s" % (job_area_raw.sum()))
+            logger.log_note("job_area_raw.sum() / sqft_per_job: %s" % (job_area_raw.sum() / sqft_per_job))
             job_area = clip(job_area_raw, 0,
                             buildings.get_attribute("building_sqft"))
-            logger.log_note("job_area: %s, %s" % (job_area.size(), sum(job_area)))
+            logger.log_note("job_area: %s" % repr(job_area))
+            logger.log_note("job_area.sum(): %s" % (job_area.sum()))
+            logger.log_note("job_area.sum() / sqft_per_job: %s" % (job_area.sum() / sqft_per_job))
 
         return job_area
 
