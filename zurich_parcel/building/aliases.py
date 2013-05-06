@@ -6,8 +6,8 @@
 
 aliases = [
            "building_cost = building.improvement_value",
-           "sc_total_spaces_1 = building.residential_units",
-           "sc_total_spaces_0 = building.non_residential_sqft",
+           "sc_total_spaces_1 = building.number_of_agents(living_unit)",
+           "sc_total_spaces_0 = building.sqm_sector1 + building.sqm_sector2 + building.sqm_sector3 + building.sqm_sector4 + building.sqm_sector5 + building.sqm_sector6 + building.sqm_sector7 + building.sqm_sector8 + building.sqm_sector99",
            "s1 = urbansim_parcel.building.number_of_jobs_of_sector_1 * 50",
            "s2 = urbansim_parcel.building.number_of_jobs_of_sector_2 * 35",
            "s3 = urbansim_parcel.building.number_of_jobs_of_sector_3 * 55",
