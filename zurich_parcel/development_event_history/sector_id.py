@@ -5,6 +5,7 @@
 from opus_core.variables.variable import Variable
 from numpy import ma, clip, where
 from opus_core.logger import logger, log_block
+import re
 
 class sector_id(Variable):
     """ number of job spaces that is vacant/unoccupied"""
@@ -20,6 +21,16 @@ class sector_id(Variable):
         dataset = self.get_dataset()
         residential_sqm = dataset.compute_variables(["sc_residential_sqm"], dataset_pool=dataset_pool)[:,0]
         logger.log_note("residential_sqm: %s" % sum(residential_sqm))
+        
+        attr_names_matches = [re.match('sqm_sector([0-9]+)', n) for n in dataset.get_known_attribute_names()]
+        sector_ids = sorted([int(m.group(1)) for m in attr_names_matches if m])
+        
+        sqm_sector_map = { 0: residential_sqm }
+        
+        for sector_id in sector_ids:
+            sqm_sector = dataset.compute_one_variable_with_unknown_package("sqm_sector%s" % sector_id, dataset_pool=dataset_pool)
+            logger.log_note("sqm_sector%s: %s" % (sector_id, sum(sqm_sector)))
+            sqm_sector_map[sector_id] = sqm_sector
 
     def post_check(self, values, dataset_pool=None):
         self.do_check("x >= 0", values)
