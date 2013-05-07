@@ -17,7 +17,9 @@ class sector_id(Variable):
 
     @log_block(name='sector_id.compute')
     def compute(self, dataset_pool):
-        pass
+        dataset = self.get_dataset()
+        residential_sqm = dataset.compute_variables(["sc_residential_sqm"], dataset_pool=dataset_pool)[:,0]
+        logger.log_note("residential_sqm: %s" % sum(residential_sqm))
 
     def post_check(self, values, dataset_pool=None):
         self.do_check("x >= 0", values)
