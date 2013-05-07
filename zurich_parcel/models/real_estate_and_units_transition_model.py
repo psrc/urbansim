@@ -6,9 +6,9 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
-from numpy import array, where, ones, zeros, logical_and, logical_not
-from numpy import arange, concatenate, resize, int32, float64, searchsorted, cumsum
-from opus_core.model import Model
+from numpy import array, where, ones, logical_and, logical_not
+from numpy import arange, concatenate, resize, int32, searchsorted, cumsum
+from opus_core.models.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_replace
 from opus_core.simulation_state import SimulationState
@@ -89,18 +89,15 @@ class RealEstateTransitionModel(Model):
         
         
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
-        dataset_known_attributes = realestate_dataset.get_known_attribute_names()
         sample_dataset_known_attributes = sample_from_dataset.get_known_attribute_names()
-        for variable in independent_variables:
-            if variable not in dataset_known_attributes:
-                realestate_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
-            if variable not in sample_dataset_known_attributes:
-                sample_from_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
+        for attribute in independent_variables:
+            if attribute not in sample_dataset_known_attributes:
+                sample_from_dataset.compute_one_variable_with_unknown_package(attribute, dataset_pool=dataset_pool)
+        sample_dataset_known_attributes = sample_from_dataset.get_known_attribute_names() #update after compute
                 
-        dataset_known_attributes = realestate_dataset.get_known_attribute_names() #update after compute
         if sample_filter:
             short_name = VariableName(sample_filter).get_alias()
-            if short_name not in dataset_known_attributes:
+            if short_name not in sample_dataset_known_attributes:
                 filter_indicator = sample_from_dataset.compute_variables(sample_filter, dataset_pool=dataset_pool)
             else:
                 filter_indicator = sample_from_dataset.get_attribute(short_name)
@@ -118,12 +115,10 @@ class RealEstateTransitionModel(Model):
         error_log = ''
         for index in range(target_vacancy_for_this_year.size()):
             this_sampled_index = array([], dtype=int32)
-            indicator = ones( realestate_dataset.size(), dtype='bool' )
             sample_indicator = ones( sample_from_dataset.size(), dtype='bool' )
             criterion = {}   # for logging
             for attribute in independent_variables:
-                if attribute in dataset_known_attributes:
-                    dataset_attribute = realestate_dataset.get_attribute(attribute)
+                if attribute in sample_dataset_known_attributes:
                     sample_attribute = sample_from_dataset.get_attribute(attribute)
                 else:
                     raise ValueError, "attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
@@ -132,13 +127,11 @@ class RealEstateTransitionModel(Model):
                     amin = target_vacancy_for_this_year.get_attribute(attribute+'_min')[index] 
                     criterion.update({attribute + '_min':amin})
                     if amin != -1:
-                        indicator *= dataset_attribute >= amin
                         sample_indicator *= sample_attribute >= amin
                 if attribute + '_max' in column_names: 
                     amax = target_vacancy_for_this_year.get_attribute(attribute+'_max')[index]
                     criterion.update({attribute + '_max':amax}) 
                     if amax != -1:
-                        indicator *= dataset_attribute <= amax
                         sample_indicator *= sample_attribute <= amax
                 if attribute in column_names: 
                     aval = column_values[attribute][index] 
@@ -146,10 +139,8 @@ class RealEstateTransitionModel(Model):
                     if aval == -1:
                         continue
                     elif aval == -2:  ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
-                        indicator *= logical_not(ismember(dataset_attribute, column_values[attribute]))
                         sample_indicator *= logical_not(ismember(sample_attribute, column_values[attribute]))
                     else:
-                        indicator *= dataset_attribute == aval
                         sample_indicator *= sample_attribute == aval
                         
             this_total_spaces_variable, this_occupied_spaces_variable = total_spaces_variable, occupied_spaces_variable
@@ -194,7 +185,7 @@ class RealEstateTransitionModel(Model):
                 # Getting control totals per sector in a dictionary
                 idx = where(self.employment_control_totals.get_attribute("year")==year)[0] # Create index to get the subset of control totals for the next simulation year.
                 this_years_control_totals = DatasetSubset(self.employment_control_totals, idx) # Create the subset of control totals.
-                idx_non_home_based = where(numpy.logical_and(this_years_control_totals['home_based_status'] == 0,this_years_control_totals['sector_id'] == criterion[col]))[0] # Create index of non home based control totals in current sector. Only non home based jobs are supported. TODO: Support home based jobs.
+                idx_non_home_based = where(logical_and(this_years_control_totals['home_based_status'] == 0,this_years_control_totals['sector_id'] == criterion[col]))[0] # Create index of non home based control totals in current sector. Only non home based jobs are supported. TODO: Support home based jobs.
                 this_years_control_totals = DatasetSubset(this_years_control_totals, idx_non_home_based)
 #                idx_current_sector = where(this_years_control_totals['sector_id'] == criterion[col])[0]
                 next_years_jobs = this_years_control_totals['number_of_jobs']
@@ -226,6 +217,8 @@ class RealEstateTransitionModel(Model):
             
             if diff > 0:
                 total_spaces_in_sample_dataset = sample_from_dataset.get_attribute(this_total_spaces_variable)
+                if len(total_spaces_in_sample_dataset.shape) > 1: # HACK
+                    total_spaces_in_sample_dataset = total_spaces_in_sample_dataset[:,0]
                 legit_index = where(logical_and(sample_indicator, filter_indicator) * total_spaces_in_sample_dataset > 0)[0]
                 if legit_index.size > 0:
                     mean_size = total_spaces_in_sample_dataset[legit_index].mean()
