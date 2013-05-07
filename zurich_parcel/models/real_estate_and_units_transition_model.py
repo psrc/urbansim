@@ -32,11 +32,12 @@ class RealEstateTransitionModel(Model):
     model_short_name = "RETM"
     
     def __init__(self, target_vancy_dataset=None, model_name=None, model_short_name=None,
-                 control_totals=None, employment_control_totals=None, building_sqft_per_job=None):
+                 control_totals=None, employment_control_totals=None, building_sqft_per_job=None, sectors=None):
         self.target_vancy_dataset = target_vancy_dataset
         self.control_totals = control_totals
         self.employment_control_totals = employment_control_totals
         self.building_sqft_per_job = building_sqft_per_job
+        self.sectors = sectors
         if model_name:
             self.model_name = model_name
         if model_short_name:
@@ -85,6 +86,7 @@ class RealEstateTransitionModel(Model):
         column_names = list(set( self.target_vancy_dataset.get_known_attribute_names() ) - set( [ target_attribute_name, occupied_spaces_variable, total_spaces_variable, 'year', '_hidden_id_'] ))
         column_names.sort(reverse=True)
         column_values = dict([ (name, target_vacancy_for_this_year.get_attribute(name)) for name in column_names + [target_attribute_name]])
+        
         
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
         dataset_known_attributes = realestate_dataset.get_known_attribute_names()
@@ -178,7 +180,7 @@ class RealEstateTransitionModel(Model):
             This version calculates the non residential spaces based on sqft requirements of jobs per sector. 
             #TODO: Make code more general to cover various stratifications in the real estate market.
             '''
-            if criterion[col] == 1:
+            if criterion[col] == 0:
                 """ Option without demography model
                 idx = where(self.control_totals.get_attribute("year")==year + 1)[0]
                 this_years_control_totals = DatasetSubset(self.control_totals, idx)
@@ -188,27 +190,34 @@ class RealEstateTransitionModel(Model):
                 number_of_hh = hh_dataset.size()
                 expected_num = int(round( number_of_hh /\
                                     (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) 
-            if criterion[col] == 0:
+            if criterion[col] > 0:
                 # Getting control totals per sector in a dictionary
-                idx = where(self.employment_control_totals.get_attribute("year")==year + 1)[0] # Create index to get the subset of control totals for the next simulation year.
-                next_years_control_totals = DatasetSubset(self.employment_control_totals, idx) # Create the subset of control totals.
-                idx_non_home_based = where(next_years_control_totals['home_based_status'] == 0)[0] # Create index of non home based control totals. Only non home based jobs are supported. TODO: Support home based jobs.
-                next_years_control_totals = DatasetSubset(next_years_control_totals, idx_non_home_based)
-                next_years_jobs = next_years_control_totals['number_of_jobs']
-                controled_sectors = next_years_control_totals['sector_id']                
+                idx = where(self.employment_control_totals.get_attribute("year")==year)[0] # Create index to get the subset of control totals for the next simulation year.
+                this_years_control_totals = DatasetSubset(self.employment_control_totals, idx) # Create the subset of control totals.
+                idx_non_home_based = where(numpy.logical_and(this_years_control_totals['home_based_status'] == 0,this_years_control_totals['sector_id'] == criterion[col]))[0] # Create index of non home based control totals in current sector. Only non home based jobs are supported. TODO: Support home based jobs.
+                this_years_control_totals = DatasetSubset(this_years_control_totals, idx_non_home_based)
+#                idx_current_sector = where(this_years_control_totals['sector_id'] == criterion[col])[0]
+                next_years_jobs = this_years_control_totals['number_of_jobs']
+                controled_sectors = this_years_control_totals['sector_id']                
                 sector_job_totals = dict(zip(controled_sectors, next_years_jobs.T)) # creating dictionary with sector id's as key and number of jobs as values to ensure multiplication with right requiremtents.
 
                 # Getting infos on required sqft per sector. 
-                a_zone_id = min(self.building_sqft_per_job['zone_id']) # Get a zone number from the definition table. Here choose to take the minimum which is arbitrary. This code assumes constant sqft requirements in all zones. TODO: Support different sqft requirements per zone.
-                idx_zone = where(self.building_sqft_per_job['zone_id'] == a_zone_id)[0]
-                subset_sqft_per_job = DatasetSubset(self.building_sqft_per_job, idx_zone)
-                sqft_per_job = subset_sqft_per_job['building_sqft_per_job']
-                sectors_with_requirements = subset_sqft_per_job['sector_id']
-                requirements_by_sector = dict(zip(sectors_with_requirements, sqft_per_job.T))
+#                a_zone_id = min(self.building_sqft_per_job['zone_id']) # Get a zone number from the definition table. Here choose to take the minimum which is arbitrary. This code assumes constant sqft requirements in all zones. TODO: Support different sqft requirements per zone.
+#                idx_zone = where(self.building_sqft_per_job['zone_id'] == a_zone_id)[0]
+#                subset_sqft_per_job = DatasetSubset(self.building_sqft_per_job, idx_zone)
+#                sqft_per_job = subset_sqft_per_job['building_sqft_per_job']
+#                sectors_with_requirements = subset_sqft_per_job['sector_id']
+#                requirements_by_sector = dict(zip(sectors_with_requirements, sqft_per_job.T))
+#                
+#                needed_sqft_over_all_sectors = sector_job_totals[criterion[col]] * requirements_by_sector[criterion[col]]
+#                expected_num = int(round( needed_sqft_over_all_sectors /\
+#                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
                 
-                needed_sqft_over_all_sectors = sum([sector_job_totals[sector] * requirements_by_sector[sector] for sector in controled_sectors])
-                expected_num = int(round( needed_sqft_over_all_sectors /\
-                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index]))) 
+                idx_sector = where(self.sectors['sector_id'] == criterion[col])
+                subset_sqft_per_job_sector = DatasetSubset(self.sectors, idx_sector)
+                needed_sqft_current_sector = sector_job_totals[criterion[col]] * subset_sqft_per_job_sector.get_attribute('sqm_per_job')
+                expected_num = int(round( needed_sqft_current_sector /\
+                                    (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])))
 
             diff = expected_num - actual_num
             
@@ -430,6 +439,23 @@ class RealEstateTransitionModel(Model):
                                                       )
         if self.building_sqft_per_job is None:
             self.building_sqft_per_job = building_sqft_per_job
+            
+        sectors = DatasetFactory().search_for_dataset('control_totals',
+                                                      package_order=SessionConfiguration().package_order,
+                                                      arguments={'in_storage':storage, 
+                                                                 'in_table_name':'sectors',
+                                                                 'id_name':[]
+                                                                 }
+                                                      )
+        if self.sectors is None:
+            self.sectors = sectors     
+#        sectors = dataset_pool.get_dataset("sector")
+#        name_equals_sector = sectors.get_attribute("name") == self.sector
+#        name_equals_sector_indexes = where(name_equals_sector)
+#        assert(len(name_equals_sector_indexes) == 1)
+#        name_equals_sector_index = name_equals_sector_indexes[0]
+#        sector_ids = sectors.get_attribute("sector_id")
+#        sector_id = sector_ids[name_equals_sector_index][0]
                 
         return dataset
         
