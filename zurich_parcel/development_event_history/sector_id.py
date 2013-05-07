@@ -3,8 +3,8 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from numpy import ma, clip, where
 from opus_core.logger import logger, log_block
+from numpy import append, reshape, argmax
 import re
 
 class sector_id(Variable):
@@ -25,12 +25,22 @@ class sector_id(Variable):
         attr_names_matches = [re.match('sqm_sector([0-9]+)', n) for n in dataset.get_known_attribute_names()]
         sector_ids = sorted([int(m.group(1)) for m in attr_names_matches if m])
         
-        sqm_sector_map = { 0: residential_sqm }
+        sqm_sector_array = reshape(residential_sqm, (-1, 1))
         
         for sector_id in sector_ids:
             sqm_sector = dataset.compute_one_variable_with_unknown_package("sqm_sector%s" % sector_id, dataset_pool=dataset_pool)
             logger.log_note("sqm_sector%s: %s" % (sector_id, sum(sqm_sector)))
-            sqm_sector_map[sector_id] = sqm_sector
+            sqm_sector_array = append(sqm_sector_array, reshape(sqm_sector, (-1, 1)), 1)
+        
+        sqm_sector_argmax = argmax(sqm_sector_array, 1)
+        #logger.log_note("sqm_sector_argmax: %s" % sqm_sector_argmax)
+        
+        sector_id_array = array([0] + sector_ids)
+        #logger.log_note("sector_id_array: %s" % sector_id_array)
+        
+        val = sector_id_array[sqm_sector_argmax]
+        #logger.log_note("val: %s" % val)
+        return val
 
     def post_check(self, values, dataset_pool=None):
         self.do_check("x >= 0", values)
