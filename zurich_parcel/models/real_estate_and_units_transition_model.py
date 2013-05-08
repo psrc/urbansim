@@ -9,7 +9,7 @@ from opus_core.datasets.dataset import Dataset, DatasetSubset
 from numpy import array, where, ones, logical_and, logical_not
 from numpy import arange, concatenate, resize, int32, searchsorted, cumsum
 from opus_core.models.model import Model
-from opus_core.logger import logger
+from opus_core.logger import logger, log_block
 from opus_core.sampling_toolbox import sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
@@ -114,7 +114,6 @@ class RealEstateTransitionModel(Model):
             logger.log_status("\t".join(column_names + ["actual", "target", "expected", "difference", "action"]))
         error_log = ''
         for index in range(target_vacancy_for_this_year.size()):
-            this_sampled_index = array([], dtype=int32)
             sample_indicator = ones( sample_from_dataset.size(), dtype='bool' )
             criterion = {}   # for logging
             for attribute in independent_variables:
@@ -215,10 +214,9 @@ class RealEstateTransitionModel(Model):
             #Previous version which is checking the current years occupation.
             #diff = target_num - actual_num
             
+            this_sampled_index = array([], dtype=int32)
             if diff > 0:
                 total_spaces_in_sample_dataset = sample_from_dataset.get_attribute(this_total_spaces_variable)
-                if len(total_spaces_in_sample_dataset.shape) > 1: # HACK
-                    total_spaces_in_sample_dataset = total_spaces_in_sample_dataset[:,0]
                 legit_index = where(logical_and(sample_indicator, filter_indicator) * total_spaces_in_sample_dataset > 0)[0]
                 if legit_index.size > 0:
                     mean_size = total_spaces_in_sample_dataset[legit_index].mean()
@@ -253,7 +251,9 @@ class RealEstateTransitionModel(Model):
             logger.log_status("\n" + status_log.get_string())
         if error_log:
             logger.log_error(error_log)
-            
+        
+        
+        #logger.log_note("Updating attributes of %s sampled development events." % sampled_index.size)
         result_data = {}
         result_dataset = None
         index = array([], dtype='int32')
@@ -286,13 +286,17 @@ class RealEstateTransitionModel(Model):
                                       dataset_name = dataset_name
                                       )
             index = arange(result_dataset.size())
-        
+
+        logger.start_block('Appending development events and living units')
+        logger.log_note("Append %d sampled development events to real estate dataset." % len(result_data[result_data.keys()[0]]))
         if append_to_realestate_dataset:
             if len(result_data) > 0:
                 index = realestate_dataset.add_elements(result_data, require_all_attributes=False,
                                                         change_ids_if_not_unique=True)
+                logger.start_block('Creating id mapping')
                 # remember the ids from the development_event_history dataset.
                 mapping_new_old = self.get_mapping_of_old_ids_to_new_ids(result_data, realestate_dataset, index)
+                logger.end_block()
                 
                 '''Getting living units associated to selected development events by iterating over the mapping dictionary and 
                 selecting each time all the living units according to the old building ids.
@@ -300,10 +304,17 @@ class RealEstateTransitionModel(Model):
                 added to living_units dataset. A dictionary is needed to use the add_elements method.
                 Creating a dictionary also clones the records. The subset is only a view on the original table.'''
                 selected_living_units_dict = {}
+                counter = 0
                 for new_id in mapping_new_old:
+                    if counter == 0:
+                        logger.log_note("Log assignment of every 100th development event")
+                    counter +=1
+                    if counter % 100 == 0:
+                        logger.log_note("Assembling living units for development event %s" % new_id)
                     sel_index = [i for i in range(0, len(living_units_from_dataset['building_id'])) if living_units_from_dataset['building_id'][i] == mapping_new_old[new_id]]
                     living_units_this_sampled_building = DatasetSubset(living_units_from_dataset, sel_index) 
                     if len(selected_living_units_dict) == 0:
+                        logger.start_block('Assign new building id')
                         for attribute_name in living_units_this_sampled_building.get_primary_attribute_names():
                             column = living_units_this_sampled_building.get_attribute(attribute_name)
                             if attribute_name == 'building_id':
@@ -311,6 +322,7 @@ class RealEstateTransitionModel(Model):
                                 selected_living_units_dict.update({attribute_name: new_ids})
                             else:
                                 selected_living_units_dict.update({attribute_name: column})
+                        logger.end_block()
                     else:
                         this_living_units_dict ={}
                         for attribute_name in living_units_this_sampled_building.get_primary_attribute_names():
@@ -342,6 +354,7 @@ class RealEstateTransitionModel(Model):
 #                        assert(building_id in realestate_dataset['building_id']), 'Living unit with building_id %d has no corresponding building.' % (building_id)
 
             result_dataset = realestate_dataset
+        logger.end_block()
 
         # It is recommended to derive all variables of buildings in relation to living units via expression variables.
         # However, if the building dataset contains attributes derived from living units these attributes should be consistent
