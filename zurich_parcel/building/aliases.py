@@ -6,7 +6,7 @@
 
 aliases = [
            "building_cost = building.improvement_value",
-           "sc_total_spaces_0 = building.number_of_agents(living_unit)",
+           "sc_total_spaces_0 = sc_number_of_living_units",
            "sc_total_spaces_1 = building.sqm_sector1",
            "sc_total_spaces_2 = building.sqm_sector2",
            "sc_total_spaces_3 = building.sqm_sector3",
