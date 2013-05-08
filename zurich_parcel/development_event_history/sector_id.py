@@ -21,7 +21,7 @@ class sector_id(Variable):
         dataset = self.get_dataset()
         with logger.block("Compute sc_residential_sqm", verbose=True):
             residential_sqm = dataset.compute_variables(["sc_residential_sqm"], dataset_pool=dataset_pool)
-        logger.log_note("residential_sqm: %s" % sum(residential_sqm))
+        logger.log_note("residential_sqm in development event history: %s" % sum(residential_sqm))
         
         attr_names_matches = [re.match('sqm_sector([0-9]+)', n) for n in dataset.get_known_attribute_names()]
         sector_ids = sorted([int(m.group(1)) for m in attr_names_matches if m])
@@ -30,7 +30,7 @@ class sector_id(Variable):
         
         for sector_id in sector_ids:
             sqm_sector = dataset.compute_one_variable_with_unknown_package("sqm_sector%s" % sector_id, dataset_pool=dataset_pool)
-            logger.log_note("sqm_sector%s: %s" % (sector_id, sum(sqm_sector)))
+            logger.log_note("sqm_sector%s in development event history: %s" % (sector_id, sum(sqm_sector)))
             sqm_sector_array = append(sqm_sector_array, reshape(sqm_sector, (-1, 1)), 1)
         
         sqm_sector_argmax = argmax(sqm_sector_array, 1)
