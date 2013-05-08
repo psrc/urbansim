@@ -19,7 +19,11 @@ class sector_id(Variable):
     @log_block(name='sector_id.compute')
     def compute(self, dataset_pool):
         dataset = self.get_dataset()
-        residential_sqm = dataset.compute_variables(["sc_residential_sqm"], dataset_pool=dataset_pool)[:,0]
+        with logger.block("Compute sc_residential_sqm", verbose=True):
+            residential_sqm = dataset.compute_variables(["sc_residential_sqm"], dataset_pool=dataset_pool)
+            logger.log_note("residential_sqm: %s" % residential_sqm)
+            #barf
+            # residential_sqm = residential_sqm[:,0]
         logger.log_note("residential_sqm: %s" % sum(residential_sqm))
         
         attr_names_matches = [re.match('sqm_sector([0-9]+)', n) for n in dataset.get_known_attribute_names()]

@@ -15,4 +15,4 @@ class DevelopmentEventHistoryDataset(DevelopmentEventDataset):
     in_table_name_default = "development_event_history"
     out_table_name_default = "development_event_history"
     dataset_name = "development_event_history"
-    id_name_default = ["building_id", "year_built"]
+    id_name_default = ["building_id"]
