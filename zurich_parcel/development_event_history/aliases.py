@@ -4,7 +4,7 @@
 
 aliases = [
            "is_residential = development_event_history.disaggregate(building_type.is_residential)",
-           "sc_total_spaces_0 = development_event_history.number_of_agents(living_units_history)",
+           "sc_total_spaces_0 = sc_number_of_living_units_dev",
            "sc_total_spaces_1 = development_event_history.sqm_sector1",
            "sc_total_spaces_2 = development_event_history.sqm_sector2",
            "sc_total_spaces_3 = development_event_history.sqm_sector3",
