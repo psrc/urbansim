@@ -35,15 +35,18 @@ computation_levels = ['person', 'zone', 'parcel']
 # Attention!! Use backslash '/' for paths !!
 # For Division in python (/) use decimal places on at least one of the inputs !! 
 
-policy_level = policy_levels[0]
+policy_level = policy_levels[1]
 
-case_study = case_studies[0]
+case_study = case_studies[1]
 
-base_year_path = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/data/brussels_zone_20130211/base_year_data/2001'
+opus_home = os.environ['OPUS_HOME']
+opus_data_path = os.environ['OPUS_DATA_PATH']
 
-run_path = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/data/brussels_zone_20130211/runs/run_11.run_2013_01_23_18_07'
+base_year_path = opus_data_path + '/zurich_kt_parcel/base_year_data/2000'
 
-storage_loc_save = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/output'
+run_path = opus_data_path + '/runs/run_55.2013_05_08_14_08'
+
+storage_loc_save = run_path
 
 out_table_name_computations_prefix = 'swf_' + case_study + '_' + policy_level + '_computations_'
 
