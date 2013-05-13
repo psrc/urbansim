@@ -22,9 +22,6 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import *
 from time import gmtime, strftime
 
-opus_home = os.environ['OPUS_HOME']
-opus_data_path = os.environ['OPUS_DATA_PATH']
-
 print 'Indicators Policy Script Started on: %s' % strftime("%a, %d %b %Y %X", gmtime())
 
 # Available policy levels
@@ -38,15 +35,15 @@ computation_levels = ['person', 'zone', 'parcel']
 # Attention!! Use backslash '/' for paths !!
 # For Division in python (/) use decimal places on at least one of the inputs !! 
 
-policy_level = policy_levels[1]
+policy_level = policy_levels[0]
 
-case_study = case_studies[1]
+case_study = case_studies[0]
 
-base_year_path = opus_data_path + '/zurich_kt_parcel/base_year_data/2000' #'/Network/Servers/kosrae.ethz.ch/Volumes/ivt-home/zoelligc/sustaincity/opushome/data/zurich_parcel/base_year_data/2000'
+base_year_path = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/data/brussels_zone_20130211/base_year_data/2001'
 
-run_path = opus_data_path + '/runs/run_177.run_2013_02_13_09_36' #'/Network/Servers/kosrae.ethz.ch/Volumes/ivt-home/zoelligc/sustaincity/opushome/data/runs/run_177.run_2013_02_13_09_36'
+run_path = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/data/brussels_zone_20130211/runs/run_11.run_2013_01_23_18_07'
 
-storage_loc_save = run_path #'/Network/Servers/kosrae.ethz.ch/Volumes/ivt-home/zoelligc/sustaincity/opushome/data/runs/run_177.run_2013_02_13_09_36'
+storage_loc_save = 'D:/eclipse.workspace/workspace_4.2/opus_ntua/output'
 
 out_table_name_computations_prefix = 'swf_' + case_study + '_' + policy_level + '_computations_'
 
@@ -56,13 +53,17 @@ out_table_name_swf_indicators = 'swf_' + case_study + '_' + policy_level + '_ind
 
 interest_rate = '0.03'
 
-vot = '1.5'
+vot = '5.0'
 
-percentage_of_agents = '20.0'
+percentage_of_agents = '100.0'
 
-start_year = 2006
+transport_cost_per_km = '2.00'
 
-end_year = 2010
+energy_consumption_rate = '1.50'
+
+start_year = 2015
+
+end_year = 2017
 
 year_interval = 1
 
@@ -81,6 +82,8 @@ print 'Output Path: %s' % storage_loc_save
 print 'Interest Rate: %s' % interest_rate
 print 'Value of Time: %s' % vot
 print 'Percentage of Agents (%%): %s' % percentage_of_agents
+print 'Transport Cost per Km (Euro/km): %s' % transport_cost_per_km
+print 'Energy Consumption Rate: %s' % energy_consumption_rate
 print 'Year of Implementation: %s' % start_year
 print 'Year of Evaluation: %s' % end_year
 print 'Year Interval: %s' % year_interval
@@ -140,6 +143,7 @@ swf_indicators = Dataset(in_storage = ram_storage,
 for year in years_list:
     print '-------------------------------------'
     print 'Data processing for year: %s' % year
+    print 'Started on: %s' % strftime("%a, %d %b %Y %X", gmtime())
     if year == 'base_year':
         storage_loc_load = base_year_path
     else:
@@ -148,6 +152,7 @@ for year in years_list:
     out_table_name_computations = out_table_name_computations_prefix + year
     print 'Data Input Path for year %s : %s' % (year, storage_loc_load)
     print 'Creating common datasets for year %s' % year
+    print 'Started on: %s' % strftime("%a, %d %b %Y %X", gmtime())
     # Create storage object for loading the data from
     storage_input = StorageFactory().get_storage('flt_storage', 
                                                  storage_location = storage_loc_load)
@@ -188,6 +193,10 @@ for year in years_list:
                         in_table_name = 'zones',
                         id_name = 'zone_id',
                         dataset_name = 'zone')
+        fazes = Dataset(in_storage = storage_input,
+                        in_table_name = 'fazes',
+                        id_name = 'faz_id',
+                        dataset_name = 'faz')
         print 'Additional dataset zones is created successfully!'
     elif case_study == 'zurich' and policy_level == 'parcel':
         print 'Creating additional datasets for zurich_parcel Case Study'
@@ -206,6 +215,7 @@ for year in years_list:
                         'zone': zones,
                         'household': households,
                         #'income_level': income_level,
+                        'faz':fazes,
                         'person':persons}
     elif case_study == 'zurich' and policy_level == 'parcel':
         package_order = ['zurich_parcel','urbansim_parcel','urbansim','opus_core']
@@ -225,42 +235,161 @@ for year in years_list:
     print '**********************'
     # Set expressions according to the case study
     if case_study == 'brussels' and policy_level == 'zone':
+        
         # expressions for brussels zone case study in interactive opus mode
+        
         zones.compute_variables("income_per_zone = \
         zone.aggregate(12 * household.income, \
         intermediates=[building])", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("tax_ipp_per_zone = \
+        zone.disaggregate(faz.tax_ipp)", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("local_taxes_on_property_per_zone = \
+        zone.tax_ipp_per_zone * \
+        zone.aggregate(where(building.disaggregate(building_type.is_residential==1),\
+        building.average_value_per_unit * building.residential_units, 0))" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         zones.compute_variables("housing_cost_per_zone = \
         zone.aggregate(where(household.disaggregate(building_type.is_residential==1),\
         household.disaggregate(building.average_value_per_unit *" + interest_rate + "), 0)\
-        )", dataset_pool = dataset_pool)    
+        )", dataset_pool = dataset_pool)   
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime()) 
+        
         persons.compute_variables("travel_cost_per_person = \
         where(person.home2work_travel_time_min>=0,\
         (" + vot + "*((person.home2work_travel_time_min+\
         person.work2home_travel_time_min)/60.0)*250*\
         (100/" + percentage_of_agents + ")),0)", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        print 'Persons Table Attributes: \n %s' \
+        % persons.get_multiple_attributes(["person_id", "travel_cost_per_person"])
+        
         zones.compute_variables("travel_cost_per_zone = \
         zone.aggregate(person.travel_cost_per_person,\
         intermediates=[household, building])", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        print 'Zone Table Attributes: \n %s' \
+        % zones.get_multiple_attributes(["zone_id", "travel_cost_per_zone"])
+        
+        
+        
+        persons.compute_variables("vehkm_per_person = \
+        (person.home2work_distance_meter + person.work2home_distance_meter)/1000.0" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        persons.compute_variables("transport_cost_per_person = " \
+        + transport_cost_per_km + " * person.vehkm_per_person", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables = ("transport_per_person_per_zone = \
+        zone.aggregate(person.transport_cost_per_person, \
+        intermediates=[household, building])")
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("travel_cost_car = zone.car_accessibility")
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables = ("transport_cost_pt = zone.pt_accessibility")
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        #zones.compute_variables("utility_of_residents_zone = \
+        #zone.income_per_zone-zone.local_taxes_on_property_per_zone-zone.housing_cost_per_zone-zone.travel_cost_per_zone" \
+        #, dataset_pool = dataset_pool)
+        #print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         zones.compute_variables("utility_of_residents_zone = \
-        zone.income_per_zone-zone.housing_cost_per_zone-zone.travel_cost_per_zone", dataset_pool = dataset_pool)
+        zone.income_per_zone-zone.local_taxes_on_property_per_zone-zone.housing_cost_per_zone+zone.travel_cost_car+zone.travel_cost_pt" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+    
+        buildings.compute_variables("building_energy_consumption = \
+        (building.residential_units * building.sqft_per_unit) * " + energy_consumption_rate, \
+        dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        print 'Building Table Attributes: \n %s' \
+        % buildings.get_multiple_attributes(["building_id", "building_energy_consumption"])
+        
+        zones.compute_variables("building_energy_consumption_per_zone = \
+        zone.aggregate(building.building_energy_consumption)" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("utility_of_the_rest_of_the_world = \
+        transport_per_person_per_zone + 100" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("utility_of_the_rest_of_the_world = \
+        travel_cost_car" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("utility_of_commuters = \
+        zone.utility_of_residents_zone", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
     elif case_study == 'zurich' and policy_level == 'parcel':
         # expressions for zurich parcel case study in interactive opus mode
         parcels.compute_variables("income_per_parcel = \
         parcel.aggregate(12 * household.income, \
         intermediates=[building])", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         parcels.compute_variables("housing_cost_per_parcel = \
         parcel.aggregate(where(building.disaggregate(building_type.is_residential==1),\
-        building.improvement_value*building.residential_units*" + interest_rate + ", 0))", dataset_pool = dataset_pool)    
+        building.improvement_value*building.residential_units*" + interest_rate + ", 0))", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         persons.compute_variables("travel_cost_per_person = \
         where(person.home2work_travel_time_min>=0,\
         (" + vot + "*((person.home2work_travel_time_min+\
         person.work2home_travel_time_min)/60.0)*250*\
         (100/" + percentage_of_agents + ")),0)", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         parcels.compute_variables("travel_cost_per_parcel = \
         parcel.aggregate(person.travel_cost_per_person,\
         intermediates=[household, building])", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        parcels.compute_variables = ("transport_cost_car_parcel = \
+        parcel.car_accessibility")
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        parcels.compute_variables = ("transport_cost_pt_parcel = \
+        parcel.pt_accessibility")
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        buildings.compute_variables("building_energy_consumption = \
+        (building.residential_units * building.sqft_per_unit) * " + energy_consumption_rate, \
+        dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("building_energy_consumption_per_zone = \
+        zone.aggregate(building.building_energy_consumption)", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        zones.compute_variables("utility_of_the_rest_of_the_world = \
+        transport_per_person_per_zone + 100" \
+        , dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        #parcels.compute_variables("utility_of_residents_parcel = \
+        #parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel", dataset_pool = dataset_pool)
+        #print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
         parcels.compute_variables("utility_of_residents_parcel = \
-        parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel", dataset_pool = dataset_pool)
+        parcel.income_per_parcel-parcel.housing_cost_per_parcel+parcel.transport_cost_car_parcel+parcel.transport_cost_pt_parcel", dataset_pool = dataset_pool)
+        print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        
+        
+        
     # export output to tab file
     print '*************************'
     print 'Exporting to tab files...'
@@ -268,26 +397,39 @@ for year in years_list:
     # export computations to tab file [person level]
     if export_computations_person == True:
         print '[Person Level] Exporting computations to: %s' % out_table_name_person_computations
+        print 'Time Start: %s' % strftime("%a, %d %b %Y %X", gmtime())
         persons.write_dataset(attributes = ['person_id', 'home2work_travel_time_min', 'work2home_travel_time_min', 'travel_cost_per_person'], 
                             out_storage = storage_output, 
                             out_table_name = out_table_name_person_computations)
+        print 'Time End: %s' % strftime("%a, %d %b %Y %X", gmtime())
     # Exports according to case study
     if case_study == 'brussels' and policy_level == 'zone':
         # export computations to tab file [zone level]
         if export_computations_zone == True:
             print '[Zone Level] Exporting computations to: %s' % out_table_name_computations
-            zones.write_dataset(attributes = ['income_per_zone', 'housing_cost_per_zone', 'travel_cost_per_zone', 'utility_of_residents_zone'], 
+            print 'Time Start: %s' % strftime("%a, %d %b %Y %X", gmtime())
+            zones.write_dataset(attributes = ['income_per_zone', 'housing_cost_per_zone', 
+                                              'travel_cost_car', 'travel_cost_pt',
+                                              'utility_of_residents_zone',
+                                              'utility_of_commuters','utility_of_the_rest_of_the_world'], 
                             out_storage = storage_output, 
                             out_table_name = out_table_name_computations)
-        # Summarize utility_of_residents_zone attributes
-        swf_per_year = zones.attribute_sum('utility_of_residents_zone')
+            print 'Time End: %s' % strftime("%a, %d %b %Y %X", gmtime())
+        # Compute social welfare per year by summarizing attributes
+        swf_per_year = zones.attribute_sum('utility_of_residents_zone') \
+        + zones.attribute_sum('utility_of_commuters') \
+        + zones.attribute_sum('utility_of_the_rest_of_the_world')
     elif case_study == 'zurich' and policy_level == 'parcel':
         # export computations to tab file [parcel level]
         if export_computations_parcel == True:
             print '[Parcel Level] Exporting computations to: %s' % out_table_name_computations
-            parcels.write_dataset(attributes = ['income_per_parcel', 'housing_cost_per_parcel', 'travel_cost_per_parcel', 'utility_of_residents_parcel'], 
+            print 'Time Start: %s' % strftime("%a, %d %b %Y %X", gmtime())
+            parcels.write_dataset(attributes = ['income_per_parcel', 'housing_cost_per_parcel','transport_cost_car_parcel',
+                                                'transport_cost_pt_parcel', 
+                                                'utility_of_residents_parcel'], 
                                 out_storage = storage_output, 
                                 out_table_name = out_table_name_computations)
+            print 'Time End: %s' % strftime("%a, %d %b %Y %X", gmtime())
         # Summarize utility_of_residents_zone attributes
         swf_per_year = parcels.attribute_sum('utility_of_residents_parcel')
     print 'Social Welfare for year %s: %s' % (year, swf_per_year)
@@ -307,8 +449,10 @@ swf_indicators.add_elements(data = {"swf_id":array([1]),
                                     "social_welfare":array([swf_summary])}, require_all_attributes = True, change_ids_if_not_unique = True)
 # export social welfare indicators to tab file 
 print 'Exporting Table of Social Welfare Indicators to: %s' % out_table_name_swf_indicators
+print 'Time Start: %s' % strftime("%a, %d %b %Y %X", gmtime())
 swf_indicators.write_dataset(attributes = ['swf_id', 'year', 'social_welfare'], 
                     out_storage = storage_output, 
                     out_table_name = out_table_name_swf_indicators)
+print 'Time End: %s' % strftime("%a, %d %b %Y %X", gmtime())
 print '-------------------------------------'
 print 'Indicators Policy Script Completed on %s !' % strftime("%a, %d %b %Y %X", gmtime())
