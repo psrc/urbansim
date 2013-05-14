@@ -35,9 +35,9 @@ class Employment2010Model(Model):
             building_set.delete_computed_attributes()
             job_set.delete_computed_attributes()
             parcel_set.delete_computed_attributes()
-            #index_zone = where(job_controls['zone_id']==zone_id)[0]
-            index_zone = where((job_controls['zone_id']==zone_id)*(in1d(job_controls['county_id'],(1,3,5))))[0]
-            for sector_id in arange(1, 4):
+            index_zone = where(job_controls['zone_id']==zone_id)[0]
+            #index_zone = where((job_controls['zone_id']==zone_id)*(in1d(job_controls['county_id'],(1,3,5))))[0]
+            for sector_id in [11, 21, 22, 23, 31, 32, 33, 42, 44, 45, 48, 49, 51, 52, 53, 54, 55, 56, 61, 62, 71, 81, 92, 99, 721, 722]:
                 sector_array_name = 'sector' + str(sector_id)
                 employment = job_controls["%s"%(sector_array_name)][index_zone]
                 logger.log_status("employment: %s" % (employment) )
@@ -76,6 +76,9 @@ class Employment2010Model(Model):
                             building_to_add['year_built'] = array([2010])
                             parcel_in_zone = parcel_set.compute_variables('_parcel_in_zone = (parcel.zone_id==%s)'%(zone_id))
                             idx_parcel = where(parcel_in_zone)[0]
+                            if idx_parcel.size<1:
+                                logger.log_status("Zone %s doesnt have a parcel!!!"%(zone_id))
+                                break
                             parcel_ids_in_zone=(parcel_set.get_attribute('parcel_id'))[idx_parcel]
                             shuffle(parcel_ids_in_zone)
                             parcel_id_to_assign = parcel_ids_in_zone[:1]
