@@ -350,7 +350,7 @@ for year in years_list:
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         persons.compute_variables("travel_cost_per_person = \
-        where(person.home2work_travel_time_min>=0,\
+        where(zurich_parcel.person.home2work_travel_time_min>=0,\
         (" + vot + "*((person.home2work_travel_time_min+\
         person.work2home_travel_time_min)/60.0)*250*\
         (100/" + percentage_of_agents + ")),0)", dataset_pool = dataset_pool)
