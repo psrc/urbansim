@@ -45,7 +45,7 @@ opus_data_path = os.environ['OPUS_DATA_PATH']
 
 base_year_path = opus_data_path + 'zurich_kt_parcel/base_year_data_indicator_module_test/2000'
 
-run_path = opus_data_path + 'runs/run_indicator_module_test'
+run_path = opus_data_path + 'zurich_kt_parcel/runs/run_indicator_module_test'
 
 storage_loc_save = run_path
 
@@ -163,7 +163,6 @@ for year in years_list:
     # Create storage object for exporting the output data
     storage_output = StorageFactory().get_storage('tab_storage', 
                                                   storage_location = storage_loc_save)
-    logger.log_note('storage_location: %s' % storage_loc_load)
     # Create household dataset
     households = Dataset(in_storage = storage_input,
                          in_table_name = 'households',
