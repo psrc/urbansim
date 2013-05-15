@@ -350,12 +350,12 @@ for year in years_list:
 
         parcels.compute_variables("income_per_parcel = \
         parcel.aggregate(12 * household.income, \
-        intermediates=[building])", dataset_pool = dataset_pool)
+        intermediates=[living_unit, building])", dataset_pool = dataset_pool)
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         parcels.compute_variables("housing_cost_per_parcel = \
         parcel.aggregate(where(building.disaggregate(building_type.is_residential==1),\
-        building.improvement_value*building.residential_units*" + interest_rate + ", 0))", dataset_pool = dataset_pool)
+        building.aggregate(living_unit.rent_price, function=sum)*" + interest_rate + ", 0))", dataset_pool = dataset_pool)
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         persons.compute_variables("travel_cost_per_person = \
@@ -384,7 +384,7 @@ for year in years_list:
         #print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         buildings.compute_variables("building_energy_consumption = \
-        (building.residential_units * building.sqft_per_unit) * " + energy_consumption_rate, \
+        (building.aggregate(living_unit.area, function=sum)) * " + energy_consumption_rate, \
         dataset_pool = dataset_pool)
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         print 'Building Table Attributes: \n %s' \
