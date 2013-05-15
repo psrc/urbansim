@@ -404,7 +404,7 @@ for year in years_list:
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())        
         
         parcels.compute_variables("utility_of_residents_parcel = \
-        parcel.income_per_parcel", dataset_pool = dataset_pool)
+        parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel", dataset_pool = dataset_pool)
         #-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
