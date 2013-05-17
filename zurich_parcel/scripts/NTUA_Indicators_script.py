@@ -2,7 +2,6 @@
 # Copyright (C) 2010-2013 National Technical University of Athens, Greece
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
-from opus_core.logger import logger, log_block
 
 '''
 Created on Feb 20, 2013
@@ -57,6 +56,8 @@ out_table_name_swf_indicators = 'swf_' + case_study + '_' + policy_level + '_ind
 
 interest_rate = '0.03'
 
+discounting_rate = 0.01
+
 vot = '5.0'
 
 percentage_of_agents = '100.0'
@@ -64,6 +65,12 @@ percentage_of_agents = '100.0'
 transport_cost_per_km = '2.00'
 
 energy_consumption_rate = '1.50'
+
+cost_of_investment = 1000000000
+
+revenue_per_year = 100000
+
+base_year = 2000
 
 start_year = 2015
 
@@ -88,6 +95,8 @@ print 'Value of Time: %s' % vot
 print 'Percentage of Agents (%%): %s' % percentage_of_agents
 print 'Transport Cost per Km (Euro/km): %s' % transport_cost_per_km
 print 'Energy Consumption Rate: %s' % energy_consumption_rate
+print 'Cost of investment: %s' % cost_of_investment
+print 'Revenue per year: %s' % revenue_per_year
 print 'Year of Implementation: %s' % start_year
 print 'Year of Evaluation: %s' % end_year
 print 'Year Interval: %s' % year_interval
@@ -355,7 +364,7 @@ for year in years_list:
         
         parcels.compute_variables("housing_cost_per_parcel = \
         parcel.aggregate(where(building.disaggregate(building_type.is_residential==1),\
-        building.aggregate(living_unit.rent_price, function=sum)*" + interest_rate + ", 0))", dataset_pool = dataset_pool)
+        building.aggregate(12 * living_unit.rent_price, function=sum), 0))", dataset_pool = dataset_pool)
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         persons.compute_variables("travel_cost_per_person = \
@@ -376,11 +385,6 @@ for year in years_list:
         
         #parcels.compute_variables = ("travel_benefit_pt = \
         #parcel.pt_accessibility")
-        #print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
-        
-        #buildings.compute_variables("building_energy_consumption = \
-        #(building.residential_units * building.sqft_per_unit) * " + energy_consumption_rate, \
-        #dataset_pool = dataset_pool)
         #print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         buildings.compute_variables("building_energy_consumption = \
@@ -404,7 +408,8 @@ for year in years_list:
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())        
         
         parcels.compute_variables("utility_of_residents_parcel = \
-        parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel", dataset_pool = dataset_pool)
+        parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel" \
+        , dataset_pool = dataset_pool)
         print 'Computed on: %s' % strftime("%a, %d %b %Y %X", gmtime())
         
         parcels.compute_variables("utility_of_commuters = \
@@ -461,16 +466,23 @@ for year in years_list:
         # Summarize utility_of_residents_zone attributes
         swf_per_year = parcels.attribute_sum('utility_of_residents_parcel') \
         + parcels.attribute_sum('utility_of_commuters') \
-        + parcels.attribute_sum('utility_of_the_rest_of_the_world')
+        + parcels.attribute_sum('utility_of_the_rest_of_the_world') \
+        + revenue_per_year
+        
+    if type(year) is str:
+          swf_per_year_disc = swf_per_year
+    else:
+        swf_per_year_disc = swf_per_year/((1 + discounting_rate)**(base_year - int(year)))
+        
     print 'Social Welfare for year %s: %s' % (year, swf_per_year)
     # Place swf idicator value for the running year into a dict storage
     # Add swf as primary attribute for the running year
     swf_indicators.add_elements(data = {"swf_id":array([1]),
                                         "year":array([year]),
-                                        "social_welfare":array([swf_per_year])}, require_all_attributes = True, change_ids_if_not_unique = True)
+                                        "social_welfare":array([swf_per_year_disc])}, require_all_attributes = True, change_ids_if_not_unique = True)
 
 # Summarize social_welfare attributes for all years
-swf_summary = swf_indicators.attribute_sum('social_welfare')
+swf_summary = swf_indicators.attribute_sum('social_welfare') - cost_of_investment
 print '-------------------------------------'
 print 'Total Social Welfare: %s' % swf_summary
 # Add swf_summary as primary attribute to table swf_indicators
