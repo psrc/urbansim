@@ -21,7 +21,16 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import *
 from time import gmtime, strftime
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.services.run_server.run_manager import RunManager
 
+class RestartRunOptionGroup(GenericOptionGroup):
+    def __init__(self):
+        GenericOptionGroup.__init__(self, usage="python %prog [options] base_year_bath run_path",
+               description="Run the indicator module on a given base year and a given run.")
+#        self.parser.add_option("-p", "--project-name", dest="project_name", 
+#                                default='',help="The name project name")
+        
 print 'Indicators Policy Script Started on: %s' % strftime("%a, %d %b %Y %X", gmtime())
 
 # Available policy levels
@@ -42,9 +51,14 @@ case_study = case_studies[1]
 opus_home = os.environ['OPUS_HOME']
 opus_data_path = os.environ['OPUS_DATA_PATH']
 
-base_year_path = opus_data_path + 'zurich_kt_parcel/base_year_data_indicator_module_test/2000'
+option_group = RestartRunOptionGroup()
+parser = option_group.parser
+options, args = option_group.parse()
+if len(args) < 2:
+    parser.print_help()
+base_year_path = opus_data_path + args[0] #'zurich_kt_parcel/base_year_data_indicator_module_test/2000'
 
-run_path = opus_data_path + 'zurich_kt_parcel/runs/run_indicator_module_test'
+run_path = opus_data_path + args[1] #'zurich_kt_parcel/runs/run_indicator_module_test'
 
 storage_loc_save = run_path
 
