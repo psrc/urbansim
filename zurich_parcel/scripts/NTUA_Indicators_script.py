@@ -48,17 +48,18 @@ policy_level = policy_levels[1]
 
 case_study = case_studies[1]
 
+working_dir = os.environ['PWD']
 opus_home = os.environ['OPUS_HOME']
-opus_data_path = os.environ['OPUS_DATA_PATH']
+opus_data_path = opus_home + 'data/' # os.environ['OPUS_DATA_PATH']
 
 option_group = RestartRunOptionGroup()
 parser = option_group.parser
 options, args = option_group.parse()
 if len(args) < 2:
     parser.print_help()
-base_year_path = opus_data_path + args[0] #'zurich_kt_parcel/base_year_data_indicator_module_test/2000'
+base_year_path = working_dir + '/' + args[0] #'zurich_kt_parcel/base_year_data_indicator_module_test/2000'
 
-run_path = opus_data_path + args[1] #'zurich_kt_parcel/runs/run_indicator_module_test'
+run_path = working_dir + '/' + args[1] #'zurich_kt_parcel/runs/run_indicator_module_test'
 
 storage_loc_save = run_path
 
