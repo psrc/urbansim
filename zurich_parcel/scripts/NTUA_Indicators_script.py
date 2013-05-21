@@ -26,7 +26,8 @@ from opus_core.services.run_server.run_manager import RunManager
 
 class RestartRunOptionGroup(GenericOptionGroup):
     def __init__(self):
-        GenericOptionGroup.__init__(self, usage="python %prog [options] base_year_bath run_path",
+        GenericOptionGroup.__init__(self, usage="Navigate in the console to your OPUS_HOME folder. Type: \
+                                                    python %prog [options] base_year_bath run_path",
                description="Run the indicator module on a given base year and a given run.")
 #        self.parser.add_option("-p", "--project-name", dest="project_name", 
 #                                default='',help="The name project name")
@@ -73,7 +74,7 @@ interest_rate = '0.03'
 
 discounting_rate = 0.01
 
-vot = '5.0'
+vot = '.4188' # [Currency / min], SN 641 822, for commuting: 31.45 [CHF / h]-> 0.4188 [EUR / min]
 
 percentage_of_agents = '100.0'
 
@@ -81,7 +82,9 @@ transport_cost_per_km = '2.00'
 
 energy_consumption_rate = '1.50'
 
-cost_of_investment = 1000000000
+cost_of_investment = 112000000 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr?, Zürcher Kantonalbank, Zürich. Seite 24.
+
+annual_operation_cost = 55 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr?, Zürcher Kantonalbank, Zürich. Seite 24.
 
 revenue_per_year = 100000
 
