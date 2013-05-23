@@ -287,10 +287,10 @@ class RealEstateTransitionModel(Model):
                                       )
             index = arange(result_dataset.size())
 
-        logger.start_block('Appending development events and living units')
-        logger.log_note("Append %d sampled development events to real estate dataset." % len(result_data[result_data.keys()[0]]))
         if append_to_realestate_dataset:
             if len(result_data) > 0:
+                logger.start_block('Appending development events and living units')
+                logger.log_note("Append %d sampled development events to real estate dataset." % len(result_data[result_data.keys()[0]]))
                 index = realestate_dataset.add_elements(result_data, require_all_attributes=False,
                                                         change_ids_if_not_unique=True)
                 logger.start_block('Creating id mapping')
