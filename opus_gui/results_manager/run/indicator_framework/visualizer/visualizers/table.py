@@ -298,7 +298,9 @@ class Table(Visualization):
                                      years = years,
                                      primary_keys = primary_keys)
             kwargs['format'] = format
-            
+        
+        if os.path.exists(self.storage_location + '\\' + table_name + '.tab'):
+            table_name = table_name + 'b'
         self.output_storage.write_table(
             table_name = table_name,
             table_data = table_data,
