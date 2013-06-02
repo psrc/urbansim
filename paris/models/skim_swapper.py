@@ -29,5 +29,10 @@ class SkimSwapper(Model):
         zones.modify_attribute('vpd', vpd)
         zones.modify_attribute('vpo', vpo)
         
+        z_scen0.delete_one_attribute('tcd')
+        z_scen0.delete_one_attribute('tco')
+        z_scen0.delete_one_attribute('vpd')
+        z_scen0.delete_one_attribute('vpo')
+        
         
         
