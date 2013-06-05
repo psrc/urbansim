@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.logger import logger
-
+from math import ceil
 
 class ExportStorage(object):
     '''Manages the transfer of data from one storage object to another.'''
@@ -22,21 +22,30 @@ class ExportStorage(object):
                 for dataset_name in dataset_names:
                     self.export_dataset(dataset_name, in_storage, out_storage, **kwargs)
         
-    def export_dataset(self, dataset_name, in_storage, out_storage, overwrite=True, out_dataset_name=None, **kwargs):
+    def export_dataset(self, dataset_name, in_storage, out_storage, overwrite=True, out_dataset_name=None, nchunks = 1, **kwargs):
         if not overwrite and dataset_name in out_storage.get_table_names():
             logger.log_note('Dataset %s ignored because it already exists in OPUS' % dataset_name)
             return
         with logger.block('Exporting dataset %s' % dataset_name):
             if out_dataset_name is None:
                 out_dataset_name = dataset_name
-            with logger.block('Loading %s' % dataset_name):
-                values_from_storage = in_storage.load_table(dataset_name)
-            length = len(values_from_storage) and len(values_from_storage.values()[0])
-            if  length == 0:
-                logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
-                return
-            with logger.block('Storing %s' % dataset_name):
-                out_storage.write_table(out_dataset_name, values_from_storage, **kwargs)
+            cols_in_this_chunk = in_storage.ALL_COLUMNS
+            if nchunks > 1:
+                colnames = in_storage.get_column_names(dataset_name)
+                chunk_size = int(ceil(len(colnames) / float(nchunks)))
+            for chunk in range(nchunks):
+                if nchunks > 1:
+                    cols_in_this_chunk = colnames[int(chunk*chunk_size):int((chunk+1)*chunk_size)]
+                with logger.block('Loading %s - chunk %s out of %s' % (dataset_name, chunk+1, nchunks)):
+                    values_from_storage = in_storage.load_table(dataset_name, column_names=cols_in_this_chunk)
+                    length = len(values_from_storage) and len(values_from_storage.values()[0])
+                    if  length == 0:
+                        logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
+                        return
+                with logger.block('Storing %s' % dataset_name):
+                    if chunk > 0:
+                        kwargs['mode'] = out_storage.APPEND
+                    out_storage.write_table(out_dataset_name, values_from_storage, **kwargs)
             logger.log_note("Exported %s records for dataset %s" % (length, dataset_name))
         
 from opus_core.tests import opus_unittest

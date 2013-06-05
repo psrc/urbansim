@@ -115,7 +115,7 @@ from numpy import array
 class TestHDF5Storage(TestStorageInterface):
     def setUp(self):
         self.temp_dir = mkdtemp(prefix='opus_core_test_hdf5g_storage')
-        self.temp_file = os.path.join(self.temp_dir, 'xxx.hdf5')         
+        self.temp_file = os.path.join(self.temp_dir, 'xxx.h5')         
         self.storage = hdf5g_storage(storage_location=self.temp_file)
         
     def tearDown(self):

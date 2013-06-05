@@ -28,6 +28,8 @@ if __name__ == '__main__':
                       help='No type info is added to column names. Available for tab and comma delimited output types.')
     parser.add_option('--compression', dest='compression', type='choice', default=None, choices=['gzip', 'lzf'],
                       help='Compression type for hdf5 and hdf5g output types. Available: gzip, lzf. Default is no compression.')
+    parser.add_option('--nchunks', dest='nchunks', default=1, type='int',
+                      help='Number of chunks for the conversion.')
     parser.add_option("--database_configuration", dest="database_configuration", default = "indicators_database_server",
             action="store", help="Name of the database server configuration in database_server_configurations.xml where the output database is to be created. Defaults to 'indicators_database_server'. Used only with sql output type.")
     (options, args) = parser.parse_args()
@@ -35,14 +37,16 @@ if __name__ == '__main__':
     directory = options.directory
     output_file = options.output
     table_name = options.table_name
+    nchunks = options.nchunks
     
     arg_list = {'hdf5': ['compression'],
                 'hdf5g': ['compression'],
                 'tab': ['append_type_info'],
                 'tsv': ['append_type_info'],
                 'csv': ['append_type_info'],
+                'dat': ['append_type_info'],
                 }
-    create_output_directory = ['hdf5', 'tab', 'tsv', 'csv', 'dbf']
+    create_output_directory = ['hdf5', 'tab', 'tsv', 'csv', 'dat', 'dbf']
     if (directory is None or output_file is None or table_name is None):      
         parser.print_help()
         sys.exit(1)
@@ -78,7 +82,7 @@ if __name__ == '__main__':
         os.makedirs(output_file)
         
     logger.start_block("Converting table '%s' from %s into %s ..." % (table_name, storage_intype, storage_outtype))
-    kwargs = {}
+    kwargs = {'nchunks': nchunks}
     for arg in arg_list.get(storage_outtype, []):
         kwargs[arg] = getattr(options, arg, None)
     try:

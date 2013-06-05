@@ -17,6 +17,7 @@ class hdf5_storage(Storage):
         """
     def __init__(self,  storage_location):
         self._base_directory = storage_location
+        self._file_extension = 'h5'
         
     def get_storage_location(self):
         return self._base_directory
@@ -30,7 +31,7 @@ class hdf5_storage(Storage):
         return os.path.join(dataset_path, file_name)
     
     def _get_file_path_for_table(self, table_name):
-        return self._get_file_path('%s.hdf5' % table_name)
+        return self._get_file_path('%s.%s' % (table_name, self._file_extension))
     
     def _load_columns(self, f, column_names, lowercase=True):
         result = {}
@@ -43,7 +44,7 @@ class hdf5_storage(Storage):
     
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         """
-        The table is loaded from a file called {table_name}.hdf5 assuming to have a 'flat' structure
+        The table is loaded from a file called {table_name}.h5 assuming to have a 'flat' structure
         (i.e. each table column is a hdf5 dataset on the most upper level).
         """        
         full_file_name = self._get_file_path_for_table(table_name)   
@@ -85,7 +86,7 @@ class hdf5_storage(Storage):
             
     def write_table(self, table_name, table_data, mode = Storage.OVERWRITE, table_meta={}, column_meta={}, driver=None, **kwargs):
         """
-        Argument table_name specifies the file name in the base storage directory (without the suffix '.hdf5'). 
+        Argument table_name specifies the file name in the base storage directory (without the suffix '.h5'). 
         table_data is a dictionary where keys are the column names and values 
             are value arrays of the corresponding columns.
         Each column is stored as an hdf5 dataset.
@@ -100,7 +101,7 @@ class hdf5_storage(Storage):
             logger.log_status("%s doesn't exist and is created" % dir)
             os.makedirs(dir)
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
-        f = h5py.File(os.path.join(dir, '%s.hdf5' % table_name), self._get_hdf5mode(mode), driver=driver)
+        f = h5py.File(os.path.join(dir, '%s.%s' % (table_name, self._file_extension)), self._get_hdf5mode(mode), driver=driver)
         self._write_columns(f, column_names, table_data, table_meta, column_meta, **kwargs)
         f.close()
 
@@ -114,7 +115,7 @@ class hdf5_storage(Storage):
         return result
 
     def get_table_names(self):
-        file_names = glob(os.path.join(self.get_storage_location(), '*.hdf5'))
+        file_names = glob(os.path.join(self.get_storage_location(), '*.%s' % self._file_extension))
         return [os.path.splitext(os.path.basename(file_name))[0] for file_name in file_names]
     
     def has_table(self, table_name):
@@ -152,7 +153,7 @@ class TestHDF5Storage(TestStorageInterface):
             table_meta = table_meta,
             column_meta = col_meta
             )          
-        filename = os.path.join(self.temp_dir, 'foo.hdf5')
+        filename = os.path.join(self.temp_dir, 'foo.h5')
         self.assert_(os.path.exists(filename))
               
         actual = self.storage.load_table(
