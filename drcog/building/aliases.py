@@ -24,4 +24,6 @@ aliases = [
     "building_sqft_per_employee=urbansim_parcel.building.building_sqft_per_job",
     "parks = building.disaggregate(parcel.lu_type_id==14)",
     "node_id = building.disaggregate(parcel.node_id)",
+    "is_office_id = building.building_type_id == 5",
+    "building_sqft = building.non_residential_sqft + building.residential_units*building.sqft_per_unit",
            ]

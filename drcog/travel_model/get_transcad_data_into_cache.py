@@ -8,7 +8,7 @@ from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from numpy import array, where, zeros, logical_and
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from honolulu_parcel.transcad.run_transcad_macro import run_transcad_macro, run_get_file_location_macro
+from drcog.transcad.run_transcad_macro import run_transcad_macro, run_get_file_location_macro
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
