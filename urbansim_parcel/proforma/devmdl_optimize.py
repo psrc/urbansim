@@ -9,6 +9,7 @@ from proforma import proforma
 from constants import *
 import numpy
 import copy
+from IPython import embed
 
 DEBUG = 0
 SQFTFACTOR = 300.0
@@ -62,6 +63,7 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
         #print d['leases_revenue']
     elif btype in [12,13]: # industrial
         d['leases_revenue'][4] = X[0]*prices[6]*SQFTFACTOR
+
         #print "X", X
         #print d['leases_revenue']
     else: assert 0
@@ -126,6 +128,7 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
     #                                 dataset_pool=dataset_pool)
  
     if DEBUG > 1: print "NPV=", npv, "\n\n"
+    
     return -1*npv/100000.0
 
 #cost discount should be .01 for 1% discount
@@ -199,5 +202,5 @@ def optimize(bform,prices,costdiscount,dataset_pool):
         print r
         numpy.testing.assert_approx_equal(r2[1],r[1],significant=1)
     r[1] *= -1*100000
-
+    
     return r[0], r[1]

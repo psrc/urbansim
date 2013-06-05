@@ -9,10 +9,10 @@ from bayarea.accessibility.pyaccess import PyAccess
 def compute_devmdl_accvars_nodal(node_set):
     node_ids = array(node_set.node_ids, dtype="int32")
 
-    node_sum_unit_sqft_sf = node_set.compute_variables('node.aggregate((building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(building.building_type_id==20),intermediates=[parcel])')
+    node_sum_unit_sqft_sf = node_set.compute_variables('node.aggregate((drcog.building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(building.building_type_id==20),intermediates=[parcel])')
     node_sum_unit_sqft_sf = array(node_sum_unit_sqft_sf, dtype="float32")
 
-    node_sum_unit_sqft_mf = node_set.compute_variables('node.aggregate((building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(numpy.in1d(building.building_type_id,[2,3,24])),intermediates=[parcel])')
+    node_sum_unit_sqft_mf = node_set.compute_variables('node.aggregate((drcog.building.building_sqft - building.non_residential_sqft)*(building.residential_units>0)*(numpy.in1d(building.building_type_id,[2,3,24])),intermediates=[parcel])')
     node_sum_unit_sqft_mf = array(node_sum_unit_sqft_mf, dtype="float32")
 
     node_sum_sf_parcel_area = node_set.compute_variables('node.aggregate((building.disaggregate(parcel.parcel_sqft))*(building.residential_units==1)*(building.building_type_id==20),intermediates=[parcel])')

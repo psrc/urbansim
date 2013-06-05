@@ -2,8 +2,6 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from IPython import embed
-
 import os, sys, cPickle, traceback, time, string, StringIO, math, copy
 import numpy
 from numpy import array, zeros, repeat, arange, round, logical_not, concatenate, where, logical_and
@@ -27,6 +25,8 @@ from devmdl_accvars import compute_devmdl_accvars_nodal, compute_devmdl_accvars_
 from constants import *
 import submarkets
 
+from IPython import embed
+
 DEBUG = 0
 MP = 0
 HOTSHOT = 0
@@ -45,10 +45,7 @@ class DeveloperModel(Model):
     dataset_pool._remove_dataset('cost_shifter')
 
   def run(my, cache_dir=None, year=None):
-    global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount, building_sqft, building_price, i
-    
-    #parcel_counter
-    i = 0
+    global parcel_set, z, node_set, zone_set, submarket, esubmarket, isr, parcelfees, costdiscount, building_sqft, building_price
         
     dataset_pool = SessionConfiguration().get_dataset_pool()
     current_year = SimulationState().get_current_time()
@@ -61,6 +58,10 @@ class DeveloperModel(Model):
     submarket = dataset_pool.get_dataset('submarket')
     esubmarket = dataset_pool.get_dataset('employment_submarket')
     
+    capped_rents = building_set.compute_variables('_adj_rent = building.non_residential_rent*(building.non_residential_rent<120) + 120*(building.non_residential_rent>=120)')
+    
+    building_set.modify_attribute('non_residential_rent', capped_rents)
+    
     if NODES:
         node_set = dataset_pool.get_dataset('node')
         compute_devmdl_accvars_nodal(node_set)
@@ -70,15 +71,16 @@ class DeveloperModel(Model):
 
     z = Zoning(my.scenario,current_year)
     costdiscount = 0.0
-    SAMPLE_RATE = 0.01
+    SAMPLE_RATE = 0.05
     isr = None
     parcelfees = None
     
     empty_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)==0)*(parcel.parcel_sqft>800)")
     res_parcels = parcel_set.compute_variables("(parcel.number_of_agents(building)>0)*(parcel.parcel_sqft>800)")
     sampled_res_parcels_index = sample_noreplace(where(res_parcels)[0], int(SAMPLE_RATE * parcel_set.size()))
-    test_parcels = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index))
-    test_parcels = sample_noreplace(test_parcels, int(.05 * test_parcels.size))
+    test_parcels1 = concatenate((where(empty_parcels==1)[0], sampled_res_parcels_index))
+    test_parcels = sample_noreplace(test_parcels1, int(.05 * test_parcels1.size))
+    
     numpy.random.shuffle(test_parcels)
  
     building_sqft = parcel_set.compute_variables('parcel.aggregate(building.non_residential_sqft + building.residential_units*building.sqft_per_unit)')
@@ -154,7 +156,7 @@ class DeveloperModel(Model):
             results = results_bldg
         for result in results:
             #print result
-            out_btype = devmdltypes[int(result[2])-1]
+            out_btype = int(result[2])
             outf.write(string.join([str(x) for x in result]+[str(out_btype)],sep=',')+'\n')
 
         ##TODO: id of buildings to be demolished
@@ -170,8 +172,9 @@ class DeveloperModel(Model):
                     "building_sqft","residential_sqft","non_residential_sqft",
                     "tenure","year_built","residential_units"]
         buildings_data = copy.deepcopy(results)
-        for i in range(len(buildings_data)):
-            buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
+
+        #for i in range(len(buildings_data)):
+            #buildings_data[i][2] = devmdltypes[int(buildings_data[i][2])-1]
         buildings_data = array(buildings_data)
         new_buildings = {}
         available_bldg_id = building_set['building_id'].max() + 1
@@ -188,7 +191,7 @@ class DeveloperModel(Model):
 
             new_buildings['building_id'] = new_bldg_ids
             # recode tenure: 1 - rent, 2 - own from 0 - own, 1 - rent
-            new_buildings['tenure'][new_buildings['tenure']==0] = 2
+            new_buildings['tenure'][new_buildings['tenure']==0] = 1
             ## pid is the index to parcel_set; convert them to actual parcel_id
             #new_buildings['parcel_id'] = parcel_set['parcel_id'][new_buildings['parcel_id']]
             building_set.add_elements(new_buildings, require_all_attributes=False,
@@ -318,13 +321,14 @@ def process_parcel(parcel):
                 return
             if DEBUG > 0: print "Parcel size is %f" % v
             ####################### Not having max far , max height, max dua
-            # far = z.get_attr(zoning,'max_far', 100)
+            far = z.get_far(pid)
             # height = int(z.get_attr(zoning,'max_height', 1000))
             # max_dua = int(z.get_attr(zoning,'max_dua', 100))
             # max_dua = min(max_dua,50)
-            far = 2
-            height = 80
-            max_dua = 30
+            
+            #far = 2
+            height = 400
+            max_dua = 100
             if DEBUG: print far, height, max_dua
             if far == 100 and height == 1000: far,height = .75,10
             bform = BForm(pid,v,far,height,max_dua,county_id,taz,isr,parcelfees,existing_sqft,existing_price)
@@ -336,16 +340,13 @@ def process_parcel(parcel):
         ################################################!!!!!!!!! Need to clarify the developer model's building typology
         if DEBUG > 0: print "ZONING BTYPES:", btypes
 
-        # right now we can't have MF-CONDO (type 5)
         devmdl_btypes = []
         if 20 in btypes: devmdl_btypes+=[1,2] ##sf detached
         if 24 in btypes or 3 in btypes or 2 in btypes: ##sf attached and multifamily
             devmdl_btypes+=[3,5] # MF to MF-rental and MF-condo
         if 5 in btypes: devmdl_btypes.append(7) # office to office
-        #if 5 in btypes: continue # hotel
-        #if 6 in btypes: continue # schools
         if 22 in btypes: # warehouse to warehouse
-            devmdl_btypes.append(13)  
+            devmdl_btypes.append(13)
         if 9 in btypes: devmdl_btypes.append(12) #industrial to manufacturing
         if 18 in btypes: devmdl_btypes+=[10,11,9] #retail to retail
         if 11 in btypes: devmdl_btypes+=[4,6] # mixed to MXD-MF and MXD-condo
@@ -431,7 +432,7 @@ def process_parcel(parcel):
             #parking = z.get_parking_requirements(pid, btype)
             parking = None
 
-            bform.set_parking(parking)
+            bform.set_parking(parking)  ############add parking info for DRCOG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             #if 1: print btype
             #pjurisdiction = parcel_set['jurisdiction_id'][parcel]
@@ -493,12 +494,17 @@ def process_parcel(parcel):
                 nonres_sqft = math.floor(nonres_sqft)
                 res_units = math.ceil(res_units) # these are partial units, but usually very close to one
                 # it's not mixed if the nonres gets optimized out
-                if btype in [4,6] and nonres_sqft == 0: btype = 3 ###############*****Check with fletcher, I changed 12 to [4,6]
+                #if btype in [4,6] and nonres_sqft == 0: btype = 3
+                if btype in [1,2]: btype = 20
+                if btype in [3,4]: btype = 2
+                if btype in [5,6]: btype = 3
+                if btype in [7,8]: btype = 5
+                if btype in [9,10,11]: btype = 18
+                if btype == 12: btype = 9
+                if btype == 13: btype = 22
+                if btype == 14: btype = 23
                 building = (pid, county_id, btype, stories, sqft, res_sqft, nonres_sqft, tenure, year_built, res_units, npv, bform.actualfees)
                 maxbuilding = building
                 units = bform.num_units
-        i = i + 1
-        print i
-        if npv>0:
-            embed()
+                
         return maxbuilding, (units, sqft_per_unit), debugoutput

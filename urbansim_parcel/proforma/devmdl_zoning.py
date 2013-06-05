@@ -4,6 +4,9 @@
 
 import psycopg2
 import os
+import pandas as pd
+import pandas.io.sql as sql
+import numpy as np
 
 class Zoning():
   def __init__(my,scenario,year):
@@ -86,6 +89,21 @@ class Zoning():
         parking = r[4]
         d[(zid,btype)] = parking
     my.zid2parking = d
+    
+    query = "select * from fars"
+    fars = sql.read_frame(query,conn)
+    
+    query = "select parcel_id, far_id, env_constr_park, env_constr_lake, env_constr_floodplain, env_constr_river, env_constr_landslide from parcels_for_reference"
+    parcels = sql.read_frame(query,conn)
+    
+    parcel_fars = pd.merge(fars,parcels,left_on='far_id',right_on='far_id')
+    
+    parcel_fars['proportion_constrained'] = parcel_fars.env_constr_park + parcel_fars.env_constr_lake + parcel_fars.env_constr_floodplain + parcel_fars.env_constr_river + parcel_fars.env_constr_landslide
+    parcel_fars.proportion_constrained[parcel_fars.proportion_constrained>1] = 1
+    parcel_fars.far = parcel_fars.far*1.2
+    parcel_fars.far = parcel_fars.far * (1 - parcel_fars.proportion_constrained)
+    
+    my.parcel_fars = parcel_fars
         
   def get_parking_requirements(my, parcel_id, btype):
         if parcel_id not in my.pid2zid: return None
@@ -115,3 +133,10 @@ class Zoning():
         v = zoning[ind]
         if not v: return default
         return v
+        
+  def get_far(my, parcel_id):
+        parcel_id = int(parcel_id)
+        if parcel_id not in my.parcel_fars.parcel_id:
+            return .2
+        far = my.parcel_fars.far[my.parcel_fars.parcel_id==parcel_id].values[0]
+        return far
