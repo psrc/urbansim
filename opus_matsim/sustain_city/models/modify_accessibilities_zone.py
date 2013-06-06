@@ -23,7 +23,7 @@ class ModifyMatsimData(GetTravelModelDataIntoCache):
         self.matsim_controler = self.__get_matsim_controler_section(config)
         self.zone_table_name        = "zones"
         self.travel_data_table_name = "travel_data"
-        self.denominator            = 10.
+        self.factor            = 10.
 
     def get_travel_data_from_travel_model(self, config, year, zone_set):
         """ Reads the output from the travel model and imports the fresh computed travel data into the cache. 
@@ -57,19 +57,19 @@ class ModifyMatsimData(GetTravelModelDataIntoCache):
             index = existing_zone_data_set.get_id_index(zone_id)
             # get and modify car accessibility
             car_accessibility = existing_zone_data_set.get_attribute_by_index('car_accessibility', index)
-            car_accessibility = car_accessibility / self.denominator 
+            car_accessibility = car_accessibility / self.factor 
             existing_zone_data_set.modify_attribute('car_accessibility', car_accessibility, index )
             # get and modify walk accessibility
             walk_accessibility = existing_zone_data_set.get_attribute_by_index('walk_accessibility', index)
-            walk_accessibility = walk_accessibility / self.denominator 
+            walk_accessibility = walk_accessibility / self.factor 
             existing_zone_data_set.modify_attribute('walk_accessibility', walk_accessibility, index )
             # get and modify bike accessibility
             #bike_accessibility = existing_zone_data_set.get_attribute_by_index('bike_accessibility', index)
-            #bike_accessibility = bike_accessibility / self.denominator 
+            #bike_accessibility = bike_accessibility / self.factor 
             #existing_zone_data_set.modify_attribute('bike_accessibility', bike_accessibility, index )
             # get and modify free accessibility
             #freespeed_accessibility = existing_zone_data_set.get_attribute_by_index('freespeed_accessibility', index)
-            #freespeed_accessibility = freespeed_accessibility / self.denominator 
+            #freespeed_accessibility = freespeed_accessibility / self.factor 
             #existing_zone_data_set.modify_attribute('freespeed_accessibility', freespeed_accessibility, index )
         
         logger.log_status('Writing modified zone data to cache ...')

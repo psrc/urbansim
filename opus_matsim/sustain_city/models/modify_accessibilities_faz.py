@@ -37,10 +37,10 @@ class ModifyMatsimData(GetTravelModelDataIntoCache):
         """
         logger.log_status('Starting ModifyMatsimData...')
 
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         self.init(year, config);
         
