@@ -11,9 +11,9 @@ import numpy as np
 class Zoning():
   def __init__(my,scenario,year):
     passwd = os.environ['OPUS_DBPASS']
-    host = os.environ['OPUS_HOST']
+    host = 'paris.urbansim.org'
     ##dbname should be an argument passed in from the GUI
-    conn_string = "host='%s' dbname='denver' port=5433 user='urbanvision' password='%s'" % (host,passwd)   ####Don't hard-code host, dbname
+    conn_string = "host='%s' dbname='denver' port=5433 user='drcog' password='%s'" % (host,passwd)   ####Don't hard-code host, dbname
     conn = psycopg2.connect(conn_string)
     cursor = conn.cursor()
 
