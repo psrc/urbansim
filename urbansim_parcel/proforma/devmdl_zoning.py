@@ -93,7 +93,7 @@ class Zoning():
     query = "select * from fars"
     fars = sql.read_frame(query,conn)
     
-    query = "select parcel_id, far_id, env_constr_park, env_constr_lake, env_constr_floodplain, env_constr_river, env_constr_landslide from parcels_for_reference"
+    query = "select parcel_id, county_id, far_id, env_constr_park, env_constr_lake, env_constr_floodplain, env_constr_river, env_constr_landslide from parcels_for_reference"
     parcels = sql.read_frame(query,conn)
     
     parcel_fars = pd.merge(fars,parcels,left_on='far_id',right_on='far_id')
@@ -101,6 +101,7 @@ class Zoning():
     parcel_fars['proportion_constrained'] = parcel_fars.env_constr_park + parcel_fars.env_constr_lake + parcel_fars.env_constr_floodplain + parcel_fars.env_constr_river + parcel_fars.env_constr_landslide
     parcel_fars.proportion_constrained[parcel_fars.proportion_constrained>1] = 1
     parcel_fars.far = parcel_fars.far*1.2
+    parcel_fars.far[parcel_fars.county_id==8031] = (parcel_fars.far[parcel_fars.county_id==8031])*1.5
     parcel_fars.far = parcel_fars.far * (1 - parcel_fars.proportion_constrained)
     
     my.parcel_fars = parcel_fars
@@ -119,6 +120,8 @@ class Zoning():
         # return my.zid2btype[zid]
         
   def get_building_types(my, zid):
+        if zid not in my.zid2btype:
+            return None
         return my.zid2btype[zid]
 
   def get_zoning(my, parcel_id):
