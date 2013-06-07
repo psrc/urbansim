@@ -4,7 +4,7 @@
 
 from numpy import array
 import numpy
-from bayarea.accessibility.pyaccess import PyAccess
+from drcog.accessibility.pyaccess import PyAccess
 
 def compute_devmdl_accvars_nodal(node_set):
     node_ids = array(node_set.node_ids, dtype="int32")
