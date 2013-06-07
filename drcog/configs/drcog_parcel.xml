@@ -495,7 +495,7 @@
         <tool name="csv_data_to_opus_tool">
           <params>
             <param name="csv_data_path" param_type="dir_path" required="True">C:/Users/janowicz/Desktop</param>
-            <param name="csv_table_name" param_type="string" required="True">hh_sf_zone_to_building_model_coefficients</param>
+            <param name="csv_table_name" param_type="string" required="True">price_shifter</param>
             <param name="opus_data_directory" param_type="dir_path" required="True">c:/opus/data/drcog/base_year_data</param>
             <param name="opus_data_year" param_type="string" required="True">2010</param>
           </params>
@@ -927,6 +927,34 @@
             <name name="name" type="string">TestAccess</name>
           </init>
           <run type="dictionary">
+          </run>
+        </structure>
+      </model>
+      <model name="establishment_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">drcog.models.establishment_allocation_model</class_module>
+            <class_name type="string">EstablishmentAllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">EstablishmentAllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="agents_index" type="string">brm_index</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="household_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">drcog.models.household_allocation_model</class_module>
+            <class_name type="string">HouseholdAllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">HouseholdAllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="agents_index" type="string">hrm_index</argument>
           </run>
         </structure>
       </model>
@@ -3187,11 +3215,11 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.upc.lottery_choices</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">employment_submarket.aggregate(building.non_residential_sqft)&gt;0</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">employment_submarket.aggregate(building.residential_units)&gt;0</argument>
             <argument model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">sector_id</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">drcog.establishment.employment_submarket_id</argument>
-            <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero((employment_submarket.aggregate(building.non_residential_sqft)/500) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">'employment_submarket.aggregate(building.non_residential_sqft)'</argument>
+            <argument model_dependency_type="variable" name="capacity_string" parser_action="quote_string" type="string">clip_to_zero((employment_submarket.aggregate(building.residential_units*3)) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="estimation_weight_string" parser_action="quote_string" type="string">'employment_submarket.aggregate(building.residential_units)'</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="model_name" parser_action="quote_string" type="string">AgentLocationChoiceModel</argument>
             <argument name="short_name" parser_action="quote_string" type="string">ESTLCM</argument>
@@ -3201,8 +3229,8 @@
               <key name="sample_size_locations" type="integer">50</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((employment_submarket.aggregate(building.non_residential_sqft)/250) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">employment_submarket.aggregate(building.non_residential_sqft)/250</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((employment_submarket.aggregate(building.residential_units*3)) - (employment_submarket.aggregate(building.aggregate(establishment.employees))))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">employment_submarket.aggregate(building.residential_units)*3</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">employment_submarket.aggregate(building.aggregate(establishment.employees))</key>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
@@ -5513,30 +5541,23 @@
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2015</firstyear>
+        <firstyear type="integer">2011</firstyear>
         <lastyear type="integer">2015</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="residential_price_model_1" return_value="residential_price_model" type="selectable">False</selectable>
-        <selectable name="non_residential_price_model_1" return_value="non_residential_price_model" type="selectable">False</selectable>
         <selectable name="household_transition_model_with_persons_1" return_value="household_transition_model_with_persons" type="selectable">True</selectable>
         <selectable name="household_relocation_model_1" return_value="household_relocation_model" type="selectable">True</selectable>
         <selectable name="tenure_choice_model_1" return_value="tenure_choice_model" type="selectable">True</selectable>
         <selectable name="submarket_household_location_choice_model_1" return_value="submarket_household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="household_allocation_to_building_model_1" return_value="household_allocation_to_building_model" type="selectable">True</selectable>
+        <selectable name="household_allocation_model_1" return_value="household_allocation_model" type="selectable">True</selectable>
+        <selectable name="household_allocation_to_building_model_1" return_value="household_allocation_to_building_model" type="selectable">False</selectable>
         <selectable name="business_transition_model_1" return_value="business_transition_model" type="selectable">True</selectable>
         <selectable name="business_relocation_model_1" return_value="business_relocation_model" type="selectable">True</selectable>
-        <selectable name="business_location_choice_model_capacity_1" return_value="business_location_choice_model_capacity" type="selectable">False</selectable>
         <selectable name="business_location_choice_model_capacity_rent_1" return_value="business_location_choice_model_capacity_rent" type="selectable">True</selectable>
         <selectable name="home_based_business_location_choice_model_1" return_value="home_based_business_location_choice_model" type="selectable">True</selectable>
-        <selectable name="establishment_allocation_to_building_model_1" return_value="establishment_allocation_to_building_model" type="selectable">True</selectable>
+        <selectable name="establishment_allocation_to_building_model_1" return_value="establishment_allocation_to_building_model" type="selectable">False</selectable>
+        <selectable name="establishment_allocation_model_1" return_value="establishment_allocation_model" type="selectable">True</selectable>
         <selectable name="developer_model_1" return_value="developer_model" type="selectable">True</selectable>
-        <selectable name="business_location_choice_model_1" return_value="business_location_choice_model" type="selectable">False</selectable>
-        <selectable name="drcog_building_transition_model_1" return_value="drcog_building_transition_model" type="selectable">False</selectable>
-        <selectable name="sf_building_location_choice_model_1" return_value="sf_building_location_choice_model" type="selectable">False</selectable>
-        <selectable name="mf_building_location_choice_model_1" return_value="mf_building_location_choice_model" type="selectable">False</selectable>
-        <selectable name="commercial_building_location_choice_model_1" return_value="commercial_building_location_choice_model" type="selectable">False</selectable>
-        <selectable name="industrial_building_location_choice_model_1" return_value="industrial_building_location_choice_model" type="selectable">False</selectable>
         <selectable name="residential_unit_rent_model_1" return_value="residential_unit_rent_model" type="selectable">True</selectable>
         <selectable name="nonres_office_rent_model_1" return_value="nonres_office_rent_model" type="selectable">True</selectable>
         <selectable name="nonres_industrial_rent_model_1" return_value="nonres_industrial_rent_model" type="selectable">True</selectable>
@@ -5600,10 +5621,10 @@
             <selectable name="persons" type="selectable">False</selectable>
             <selectable name="real_estate_price_model_coefficients" type="selectable">False</selectable>
             <selectable name="real_estate_price_model_specification" type="selectable">False</selectable>
-            <selectable name="target_vacancies" type="selectable">True</selectable>
+            <selectable name="target_vacancies" type="selectable">False</selectable>
             <selectable name="urbansim_constants" type="selectable">False</selectable>
             <selectable name="zones" type="selectable">False</selectable>
-            <selectable name="residential_building_types" type="selectable">True</selectable>
+            <selectable name="residential_building_types" type="selectable">False</selectable>
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
@@ -5640,8 +5661,8 @@
           </selectable>
           <selectable name="submarket" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">False</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="residential_building_type" type="selectable">True</selectable>
+          <selectable name="target_vacancy" type="selectable">False</selectable>
+          <selectable name="residential_building_type" type="selectable">False</selectable>
         </datasets_to_preload>
       </advanced>
     </scenario>
