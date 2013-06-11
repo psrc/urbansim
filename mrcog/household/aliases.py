@@ -33,6 +33,10 @@ aliases = [
                          " 10 * numpy.logical_and(household.income >= 25000, household.income < 45000)*(household.persons > 2) +" + \
                          " 11 * numpy.logical_and(household.income >= 45000, household.income < 75000)*(household.persons > 2) +" + \
                          " 12 * (household.income >= 75000)*(household.persons > 2)",
+    "income_2_tenure = 1 * (household.income < 63000)*(household.tenure==1) +" + \
+                         " 2 * (household.income >= 63000)*(household.tenure==1) +" +\
+                         " 3 * (household.income < 30000)*(household.tenure == 2) +" + \
+                         " 4 * (household.income >= 30000)*(household.tenure == 2)"
     "submarket_id = household.disaggregate(mrcog.building.submarket_id)",
     "zone_id = household.disaggregate(building.disaggregate(parcel.zone_id))",
     "residential_building_type_id = household.disaggregate(mrcog.building.residential_building_type_id)",
