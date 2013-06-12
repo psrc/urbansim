@@ -97,7 +97,7 @@
       <class_module type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['urbansim_parcel','urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <available_datasets type="list">['parcel','building', 'household', 'household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county']</spatial_datasets>
   </general>
   <data_manager>
