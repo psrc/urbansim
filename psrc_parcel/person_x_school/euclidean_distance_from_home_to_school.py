@@ -5,7 +5,7 @@
 from urbansim.abstract_variables.abstract_euclidean_distance_variable import abstract_euclidean_distance_variable
 
 class euclidean_distance_from_home_to_school(abstract_euclidean_distance_variable):
-    agent_attribute = "parcel_id = person.disaggregate(urbansim_parcel.person.building_id)"
+    agent_attribute = "urbansim_parcel.person.parcel_id"
     destination_attribute = "school.parcel_id"
     location_dataset_name = "parcel"
     coordinate_attributes = ("x_coord_sp", "y_coord_sp")
