@@ -5,6 +5,35 @@
     <project_name hidden="True" type="string">mrcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable name="building.jobs_within_15min" source="expression" type="variable_definition" use="both">building.disaggregate(mrcog.zone.employment_within_15_travel_time_threshold,intermediates=[parcel])</variable>
+      <variable name="household_x_submarket.workers_x_submarket_emp_45min" source="expression" type="variable_definition" use="both">household.workers*submarket.disaggregate(mrcog.zone.employment_within_45_travel_time_threshold)</variable>
+      <variable name="building.jobs_within_30min" source="expression" type="variable_definition" use="both">building.disaggregate(mrcog.zone.employment_within_30_travel_time_threshold,intermediates=[parcel])</variable>
+      <variable name="household_x_submarket.workers_x_submarket_emp_30min" source="expression" type="variable_definition" use="both">household.workers*submarket.disaggregate(mrcog.zone.employment_within_30_travel_time_threshold)</variable>
+      <variable name="submarket.job_density" source="expression" type="variable_definition" use="both">submarket.disaggregate(mrcog.zone.employment/zone.acres)</variable>
+      <variable name="submarket.eatdrink_jobs_within_30min" source="expression" type="variable_definition" use="both">submarket.disaggregate(mrcog.zone.eatdrinkjobs_within_30_travel_time_threshold)</variable>
+      <variable name="submarket.retail_jobs_within_30min" source="expression" type="variable_definition" use="both">submarket.disaggregate(mrcog.zone.retailjobs_within_30_travel_time_threshold)</variable>
+      <variable name="submarket.jobs_within_30min" source="expression" type="variable_definition" use="both">submarket.disaggregate(mrcog.zone.employment_within_30_travel_time_threshold)</variable>
+      <variable name="building.occupancy_rate_within_45_min" source="expression" type="variable_definition" use="both">safe_array_divide(building.disaggregate(mrcog.zone.hh_within_45_travel_time_threshold,intermediates=[parcel]),building.disaggregate(mrcog.zone.resunits_within_45_travel_time_threshold,intermediates=[parcel]))</variable>
+      <variable name="building.occupancy_rate_within_20_min" source="expression" type="variable_definition" use="both">safe_array_divide(building.disaggregate(mrcog.zone.hh_within_20_travel_time_threshold,intermediates=[parcel]),building.disaggregate(mrcog.zone.resunits_within_20_travel_time_threshold,intermediates=[parcel]))</variable>
+      <variable name="building.population_within_20min" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.disaggregate(mrcog.zone.population_within_20_travel_time_threshold))</variable>
+      <variable name="building.residential_vacancy" source="expression" type="variable_definition" use="both">building.disaggregate(safe_array_divide(zone.aggregate((household.household_id&gt;0),intermediates=[building,parcel]),zone.aggregate(building.residential_units,intermediates=[parcel])),intermediates=[parcel])</variable>
+      <variable name="zone.residential_vacancy" source="expression" type="variable_definition" use="both">safe_array_divide(zone.aggregate((household.household_id&gt;0),intermediates=[building,parcel]),zone.aggregate(building.residential_units,intermediates=[parcel]))</variable>
+      <variable name="submarket.county_valencia" source="expression" type="variable_definition" use="both">submarket.disaggregate(zone.county_id==5)</variable>
+      <variable name="submarket.county_torrance" source="expression" type="variable_definition" use="both">submarket.disaggregate(zone.county_id==4)</variable>
+      <variable name="submarket.county_santafe" source="expression" type="variable_definition" use="both">submarket.disaggregate(zone.county_id==3)</variable>
+      <variable name="submarket.county_sandoval" source="expression" type="variable_definition" use="both">submarket.disaggregate(zone.county_id==2)</variable>
+      <variable name="submarket.time_to_downtown" source="expression" type="variable_definition" use="both">submarket.disaggregate(zone.time_to_downtown)</variable>
+      <variable name="building.time_to_downtown" source="expression" type="variable_definition" use="both">building.disaggregate(zone.time_to_downtown,intermediates=[parcel])</variable>
+      <variable name="building.year_built_post_1990" source="expression" type="variable_definition" use="both">(building.year_built &gt; 1990) * (building.year_built &gt; 0)</variable>
+      <variable name="building.year_built_pre_1950" source="expression" type="variable_definition" use="both">(building.year_built &gt; 1950) * (building.year_built &gt; 0)</variable>
+      <variable name="building.parcel_acres_per_unit" source="expression" type="variable_definition" use="both">safe_array_divide(building.disaggregate(parcel.parcel_acres),building.residential_units)</variable>
+      <variable name="building.parcel_acres" source="expression" type="variable_definition" use="both">building.disaggregate(parcel.parcel_acres)</variable>
+      <variable name="building.average_household_income_in_zone" source="expression" type="variable_definition" use="both">building.disaggregate(zone.aggregate(household.income,intermediates=[building,parcel],function=mean),intermediates=[parcel])</variable>
+      <variable name="building.wealthyhh_in_zone" source="expression" type="variable_definition" use="both">building.disaggregate(mrcog.zone.wealthyhh)</variable>
+      <variable name="submarket.submarket_wealthyhh_within_20min" source="expression" type="variable_definition" use="both">submarket.disaggregate(mrcog.zone.wealthyhh_within_20_travel_time_threshold,function=mean)</variable>
+      <variable name="submarket.zonal_population_per_acre" source="expression" type="variable_definition" use="both">safe_array_divide(submarket.aggregate(household.persons,intermediates=[building]),submarket.disaggregate(zone.acres))</variable>
+      <variable name="submarket.multifamily" source="expression" type="variable_definition" use="both">submarket.residential_building_type_id==2</variable>
+      <variable name="submarket.avg_year_built" source="expression" type="variable_definition" use="both">submarket.aggregate(building.year_built, function=mean)</variable>
       <variable name="parcel.p_ln_parcel_acres" source="expression" type="variable_definition" use="both">ln(parcel.parcel_acres)</variable>
       <variable name="county.county_jobs" source="expression" type="variable_definition" use="both">county.aggregate(building.number_of_agents(job),intermediates=[parcel])</variable>
       <variable name="county.county_parcels_near_capacity" source="expression" type="variable_definition" use="both">county.aggregate(((((parcel.parcel_sqft)*parcel.disaggregate(zoning.max_far)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))&lt;2000)</variable>
@@ -31,7 +60,7 @@
       <variable name="submarket.submarket_avg_zone_population_within_40min" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(mrcog.zone.population_within_40_am_single_vehicle_to_work_travel_time_threshold)),function=mean)</variable>
       <variable name="submarket.submarket_avg_zone_jobs_within_15min" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(mrcog.zone.employment_within_15_minutes_am_single_vehicle_to_work_travel_time)),function=mean)</variable>
       <variable name="submarket.submarket_avg_zone_jobs_within_30min" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(mrcog.zone.employment_within_30_minutes_am_single_vehicle_to_work_travel_time)),function=mean)</variable>
-      <variable name="submarket.submarket_avg_zone_population_within_20min" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(mrcog.zone.population_within_20_am_single_vehicle_to_work_travel_time_threshold)),function=mean)</variable>
+      <variable name="submarket.submarket_avg_zone_population_within_20min" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(mrcog.zone.population_within_20_travel_time_threshold)),function=mean)</variable>
       <variable name="submarket.submarket_avg_persbus_agglosum" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(zone.persbus_agglogsum)),function=mean)</variable>
       <variable name="submarket.submarket_avg_socrec_agglosum" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(zone.socrec_agglogsum)),function=mean)</variable>
       <variable name="submarket.submarket_avg_meal_agglosum" source="expression" type="variable_definition" use="both">submarket.aggregate(building.disaggregate(parcel.disaggregate(zone.meal_agglogsum)),function=mean)</variable>
@@ -411,8 +440,8 @@
         </tool>
         <tool name="csv_data_to_opus_tool">
           <params>
-            <param name="csv_data_path" param_type="dir_path" required="True">C:\Users\janowicz\Dropbox\mrcog\to_cache</param>
-            <param name="csv_table_name" param_type="string" required="True">building_types</param>
+            <param name="csv_data_path" param_type="dir_path" required="True">C:\Users\janowicz\Dropbox\mrcog\data</param>
+            <param name="csv_table_name" param_type="string" required="True">zones</param>
             <param name="opus_data_directory" param_type="dir_path" required="True">c:/opus/data/mrcog/base_year_data</param>
             <param name="opus_data_year" param_type="string" required="True">2010</param>
           </params>
@@ -966,7 +995,7 @@
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"></argument>
             <argument name="variable_package" parser_action="quote_string" type="string">mrcog</argument>
             <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string">mrcog.household.submarket_id</argument>
-            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string"></argument>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">mrcog.household.income_2_tenure</argument>
             <argument name="capacity_string" parser_action="quote_string" type="string">clip_to_zero(submarket.residential_units-submarket.number_of_households)</argument>
             <argument name="filter" parser_action="quote_string" type="string">(submarket.residential_units&gt;0)*(mrcog.submarket.residential_building_type_id&lt;3)</argument>
             <argument name="estimation_weight_string" parser_action="quote_string" type="string">submarket.residential_units</argument>
@@ -975,11 +1004,11 @@
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 10})</argument>
             <argument name="location_set" type="string">submarket</argument>
-            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string">.1</argument>
+            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string">.2</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="simulation_weight_string" parser_action="quote_string" type="string">None</argument>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation_with_diagnose</argument>
-            <argument name="sample_size_locations" type="integer">50</argument>
+            <argument name="sample_size_locations" type="integer">100</argument>
             <argument name="estimate_config" type="string">Resources({})</argument>
             <name name="name" type="string">HouseholdLocationChoiceModel</name>
           </init>
@@ -1010,7 +1039,7 @@
             <argument name="agent_set" type="string">household</argument>
             <argument name="index_to_unplace" type="string">None</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument convert_blank_to_none="True" name="filter" type="string">'(household.building_id&gt;0)'</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string">'(household.building_id&gt;0)*(household.recent_mover==1)'</argument>
             <argument name="join_datasets" type="boolean">False</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
@@ -1019,9 +1048,50 @@
           </prepare_for_estimate>
         </structure>
         <specification inherit_parent_values="False" type="dictionary">
-          <submodel hidden="Children" inherit_parent_values="False" name="all_households" submodel_id="-2" type="submodel">
-            <description type="string">renter_sf</description>
+          <submodel hidden="Children" inherit_parent_values="False" name="low_income_owner" submodel_id="1" type="submodel">
+            <description type="string">low_income_owner</description>
             <variable_list type="variable_list">
+              <variable_spec name="submarket.average_year_built"></variable_spec>
+              <variable_spec name="submarket.avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.multifamily"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+              <variable_spec name="submarket.residential_units"></variable_spec>
+              <variable_spec name="household_x_submarket.workers_x_submarket_emp_30min"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="high_income_owner" submodel_id="2" type="submodel">
+            <description type="string">high_income_owner</description>
+            <variable_list type="variable_list">
+              <variable_spec name="submarket.average_income_in_submarket"></variable_spec>
+              <variable_spec name="submarket.average_year_built"></variable_spec>
+              <variable_spec name="submarket.avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.multifamily"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+              <variable_spec name="submarket.residential_units"></variable_spec>
+              <variable_spec name="household_x_submarket.workers_x_submarket_emp_45min"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="low_income_renter" submodel_id="3" type="submodel">
+            <description type="string">low_income_renter</description>
+            <variable_list type="variable_list">
+              <variable_spec name="submarket.average_unit_size"></variable_spec>
+              <variable_spec name="submarket.avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.jobs_within_30min"></variable_spec>
+              <variable_spec name="submarket.multifamily"></variable_spec>
+              <variable_spec name="submarket.proportion_renter_hh_in_submarket"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
+              <variable_spec name="submarket.residential_units"></variable_spec>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" inherit_parent_values="False" name="high_income_renter" submodel_id="4" type="submodel">
+            <description type="string">high_income_renter</description>
+            <variable_list type="variable_list">
+              <variable_spec name="submarket.average_unit_size"></variable_spec>
+              <variable_spec name="submarket.avg_unit_price_submarket"></variable_spec>
+              <variable_spec name="submarket.jobs_within_30min"></variable_spec>
+              <variable_spec name="submarket.multifamily"></variable_spec>
+              <variable_spec name="submarket.proportion_renter_hh_in_submarket"></variable_spec>
+              <variable_spec name="household_x_submarket.proportion_younghead_if_hh_younghead"></variable_spec>
               <variable_spec name="submarket.residential_units"></variable_spec>
             </variable_list>
           </submodel>
@@ -1076,15 +1146,28 @@
           <submodel hidden="Children" name="sf" submodel_id="1" type="submodel">
             <description type="string">sf_detached</description>
             <variable_list type="variable_list">
+              <variable_spec name="building.average_household_income_in_zone"></variable_spec>
               <variable_spec name="building.building_year_built"></variable_spec>
               <variable_spec name="constant"></variable_spec>
+              <variable_spec name="building.parcel_acres"></variable_spec>
+              <variable_spec name="building.population_within_20min"></variable_spec>
+              <variable_spec name="building.sqft_per_unit"></variable_spec>
+              <variable_spec name="building.time_to_downtown"></variable_spec>
+              <variable_spec name="building.year_built_post_1990"></variable_spec>
+              <variable_spec name="building.year_built_pre_1950"></variable_spec>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="mf" submodel_id="2" type="submodel">
             <description type="string">duplex</description>
             <variable_list type="variable_list">
-              <variable_spec name="building.building_year_built"></variable_spec>
+              <variable_spec name="building.average_household_income_in_zone"></variable_spec>
               <variable_spec name="constant"></variable_spec>
+              <variable_spec name="building.ln_residential_units"></variable_spec>
+              <variable_spec name="building.parcel_acres_per_unit"></variable_spec>
+              <variable_spec name="building.population_within_20min"></variable_spec>
+              <variable_spec name="building.sqft_per_unit"></variable_spec>
+              <variable_spec name="building.time_to_downtown"></variable_spec>
+              <variable_spec name="building.year_built_post_1990"></variable_spec>
             </variable_list>
           </submodel>
         </specification>
@@ -1836,24 +1919,25 @@
       <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2012</lastyear>
+        <lastyear type="integer">2011</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="residential_price_model_1" return_value="residential_price_model" type="selectable">True</selectable>
-        <selectable name="non_residential_price_model_1" return_value="non_residential_price_model" type="selectable">True</selectable>
-        <selectable name="household_transition_model_with_persons_1" return_value="household_transition_model_with_persons" type="selectable">True</selectable>
-        <selectable name="household_relocation_model_1" return_value="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="submarket_household_location_choice_model_1" return_value="submarket_household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="household_fast_allocation_to_building_model_1" return_value="household_fast_allocation_to_building_model" type="selectable">True</selectable>
-        <selectable name="emp_transition_model_1" return_value="emp_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model_1" return_value="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
+        <selectable name="residential_price_model_1" return_value="residential_price_model" type="selectable">False</selectable>
+        <selectable name="non_residential_price_model_1" return_value="non_residential_price_model" type="selectable">False</selectable>
+        <selectable name="household_transition_model_with_persons_1" return_value="household_transition_model_with_persons" type="selectable">False</selectable>
+        <selectable name="household_relocation_model_1" return_value="household_relocation_model" type="selectable">False</selectable>
+        <selectable name="submarket_household_location_choice_model_1" return_value="submarket_household_location_choice_model" type="selectable">False</selectable>
+        <selectable name="household_fast_allocation_to_building_model_1" return_value="household_fast_allocation_to_building_model" type="selectable">False</selectable>
+        <selectable name="emp_transition_model_1" return_value="emp_transition_model" type="selectable">False</selectable>
+        <selectable name="employment_relocation_model_1" return_value="employment_relocation_model" type="selectable">False</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">_all_</group_members>
         </selectable>
-        <selectable name="job_allocation_to_building_model_1" return_value="job_allocation_to_building_model" type="selectable">True</selectable>
-        <selectable name="mrcog_building_transition_model_1" return_value="mrcog_building_transition_model" type="selectable">True</selectable>
-        <selectable name="sf_building_location_choice_model_1" return_value="sf_building_location_choice_model" type="selectable">True</selectable>
-        <selectable name="mf_building_location_choice_model_1" return_value="mf_building_location_choice_model" type="selectable">True</selectable>
-        <selectable name="commercial_building_location_choice_model_1" return_value="commercial_building_location_choice_model" type="selectable">True</selectable>
+        <selectable name="job_allocation_to_building_model_1" return_value="job_allocation_to_building_model" type="selectable">False</selectable>
+        <selectable name="mrcog_building_transition_model_1" return_value="mrcog_building_transition_model" type="selectable">False</selectable>
+        <selectable name="sf_building_location_choice_model_1" return_value="sf_building_location_choice_model" type="selectable">False</selectable>
+        <selectable name="mf_building_location_choice_model_1" return_value="mf_building_location_choice_model" type="selectable">False</selectable>
+        <selectable name="commercial_building_location_choice_model_1" return_value="commercial_building_location_choice_model" type="selectable">False</selectable>
+        <selectable name="employment2010_model_1" return_value="employment2010_model" type="selectable">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mrcog/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
