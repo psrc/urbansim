@@ -38,19 +38,12 @@ class StartRunOptionGroup(object):
         logger.log_error("Missing name of executable scenario")
     
     config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
-    # tnicolai: debug
-    #config = XMLConfiguration( '/Users/thomas/Desktop/brussels_zones_test.xml' ).get_run_configuration( 'brussels_baseline' )
         
     insert_auto_generated_cache_directory_if_needed(config)
      
     run_manager = RunManager(ServicesDatabaseConfiguration())
         
     run_manager.setup_new_run(cache_directory = config['cache_directory'],configuration = config)
-    
-    #try: #tnicolai: for debugging
-    #    import pydevd
-    #    pydevd.settrace()
-    #except: pass
 
     run_manager.run_run(config, run_as_multiprocess = True )
     
