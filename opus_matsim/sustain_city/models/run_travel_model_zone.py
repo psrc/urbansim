@@ -32,16 +32,15 @@ class RunTravelModel(AbstractTravelModel):
         #    pydevd.settrace()
         #except: pass
         
-        config_obj = MATSimConfigObjectV3(config, year)
-        self.matsim_config_full = config_obj.marschall()
+        config_obj_v3 = MATSimConfigObjectV3(config, year)
+        self.matsim_config_full = config_obj_v3.marschall()
         
         # check for test parameter
         tmc = config['travel_model_configuration']
         if tmc['matsim4urbansim'].get('test_parameter') != None:
             self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
         # change to directory opus_matsim
-        os.chdir( config_obj.matsim4opus_path )
-        #os.chdir( paths.get_opus_home_path(matsim4opus) )
+        os.chdir( config_obj_v3.matsim4opus_path )
         
         # int cmd
         cmd = ""

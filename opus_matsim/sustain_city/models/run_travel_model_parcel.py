@@ -6,7 +6,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
-from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
+from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object_v3 import MATSimConfigObjectV3
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -32,15 +32,15 @@ class RunTravelModel(AbstractTravelModel):
         #    pydevd.settrace()
         #except: pass
         
-        config_obj = MATSimConfigObject(config, year)
-        self.matsim_config_full = config_obj.marschall()
+        config_obj_v3 = MATSimConfigObjectV3(config, year)
+        self.matsim_config_full = config_obj_v3.marschall()
         
         # check for test parameter
         tmc = config['travel_model_configuration']
         if tmc['matsim4urbansim'].get('test_parameter') != None:
             self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
         # change to directory opus_matsim
-        os.chdir( config_obj.matsim4opus_path )
+        os.chdir( config_obj_v3.matsim4opus_path )
         
         # int cmd
         cmd = ""
