@@ -6,9 +6,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os, sys
-from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
-#from opus_matsim.models.org.constants import matsim4opus
-#from opus_core import paths
+from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object_v3 import MATSimConfigObjectV3
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -34,7 +32,7 @@ class RunTravelModel(AbstractTravelModel):
         #    pydevd.settrace()
         #except: pass
         
-        config_obj = MATSimConfigObject(config, year)
+        config_obj = MATSimConfigObjectV3(config, year)
         self.matsim_config_full = config_obj.marschall()
         
         # check for test parameter
@@ -55,7 +53,7 @@ class RunTravelModel(AbstractTravelModel):
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim.jar;jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
+                'javaclass': "org.matsim.contrib.matsim4urbansim.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         else:
@@ -64,7 +62,7 @@ class RunTravelModel(AbstractTravelModel):
             cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': xmx, 
                 'classpath': "jar/matsim.jar:jar/contrib/matsim4urbansim.jar",
-                'javaclass': "org.matsim.contrib.matsim4opus.matsim4urbansim.MATSim4UrbanSimZone",
+                'javaclass': "org.matsim.contrib.matsim4urbansim.matsim4urbansim.MATSim4UrbanSimZone",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
