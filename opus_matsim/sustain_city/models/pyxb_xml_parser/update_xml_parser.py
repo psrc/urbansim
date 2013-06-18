@@ -35,7 +35,7 @@ class UpdateBindingClass(object):
         # name of output package, where the generated bindig classes will be stored
         if binding_class_name == None:
             logger.log_note('Name for PyXB binding class is None! ')
-            self.output_pyxb_package_name = 'pyxb_matsim_config_parser'
+            self.output_pyxb_package_name = 'pyxb_matsim_config_parser_v3'
             logger.log_note('Setting default name for PyXB binding class: %s' %self.output_pyxb_package_name)
         else:
             self.output_pyxb_package_name = binding_class_name

@@ -5,18 +5,20 @@
 import os
 from opus_core.logger import logger
 from lxml import etree
-from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser
 from opus_core import paths
+from opus_matsim.sustain_city.models.pyxb_xml_parser import pyxb_matsim_config_parser_v3
+from pyxb.utils.domutils import BindingDOMSupport
+import pyxb
 
 class MATSimConfigObjectV3(object):
     
     def __init__(self, config, year):
         """ Constructor
         """
-        try: # tnicolai :for debugging
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         self.config_dictionary = config
         self.sub_config_exists = False
@@ -29,74 +31,86 @@ class MATSimConfigObjectV3(object):
         self.checkAndCreateFolder(self.matsim4opus_path)
         cache_directory = config['cache_directory']
         matsim4opus_target_path = os.path.join(cache_directory, 'matsim4opus') 
+        self.matsim_config_path = os.path.join( matsim4opus_target_path, 'matsim_config' )
         
         
         # get sub dictionaries from travel model configuration
-        matsim4urbansim, matsim_config, accessibility, common, plan_calc_score = self.__get_travel_model_sub_dictionaries()
+
+        # get travel model parameter from the opus dictionary
+        travel_model_configuration = self.config_dictionary['travel_model_configuration']   # contains matsim4urbansim and matsim_config parameter
+        
+        # matsim4urbansim
+        self.matsim4urbansim_dict = travel_model_configuration['matsim4urbansim']                     # contains parameter for matsim/urbansim integration
+        
+        # matsim_config
+        self.matsim_config_dict = travel_model_configuration['matsim_config']                         # contains various matsim_config parameter 
+        self.accessibility_dict = self.matsim_config_dict['accessibility']
+        self.urbansim_zone_random_location_distribution_dict = self.matsim_config_dict['urbansim_zone_random_location_distribution']
+        self.common_dict = self.matsim_config_dict['common']
+        self.plan_calc_score_dict = self.matsim_config_dict['plan_calc_score']
         
         ###########################
         # matsim4urbansim parameter
         ###########################
-        self.matsim4urbansim.population_sampling_rate =  matsim4urbansim['population_sampling_rate']
-        self.matsim4urbansim.custom_parameter =  matsim4urbansim['custom_parameter']
-        self.matsim4urbansim.backup = self.__get_value_as_boolean('backup_run_data',  matsim4urbansim['backup'])
-        self.matsim4urbansim.matsim_data_to_compute.zone2zone_impedance = self.__get_value_as_boolean('zone2zone_impedance',  matsim4urbansim['matsim_data_to_compute'])
-        self.matsim4urbansim.matsim_data_to_compute.agent_performance = self.__get_value_as_boolean('agent_performance',  matsim4urbansim['matsim_data_to_compute'])
-        self.matsim4urbansim.matsim_data_to_compute.zone_based_accessibility = self.__get_value_as_boolean('zone_based_accessibility',  matsim4urbansim['matsim_data_to_compute'])
-        self.matsim4urbansim.matsim_data_to_compute.parcel_based_accessibility = self.__get_value_as_boolean('parcel_based_accessibility',  matsim4urbansim['matsim_data_to_compute'])
-        self.matsim4urbansim.year = year
-        self.matsim4urbansim.matsim_config_path = os.path.join( matsim4opus_target_path, 'matsim_config' )
-        self.checkAndCreateFolder(self.matsim_config_path)
-        self.matsim4urbansim.matsim_output_path = os.path.join( matsim4opus_target_path, 'output' )
-        self.checkAndCreateFolder(self.matsim_output_path)
-        self.matsim4urbansim.matsim_temp_path = os.path.join( matsim4opus_target_path, 'tmp' )
-        self.checkAndCreateFolder(self.matsim_temp_path)
+        self.matsim4urbansim_population_sampling_rate =   self.matsim4urbansim_dict['population_sampling_rate']
+        self.matsim4urbansim_custom_parameter =   self.matsim4urbansim_dict['custom_parameter']
+        self.matsim4urbansim_backup = self.__get_value_as_boolean('backup_run_data',   self.matsim4urbansim_dict['backup'])
+        self.matsim4urbansim_matsim_data_to_compute_zone2zone_impedance = self.__get_value_as_boolean('zone2zone_impedance',   self.matsim4urbansim_dict['matsim_data_to_compute'])
+        self.matsim4urbansim_matsim_data_to_compute_agent_performance = self.__get_value_as_boolean('agent_performance',  self.matsim4urbansim_dict['matsim_data_to_compute'])
+        self.matsim4urbansim_matsim_data_to_compute_zone_based_accessibility = self.__get_value_as_boolean('zone_based_accessibility',   self.matsim4urbansim_dict['matsim_data_to_compute'])
+        self.matsim4urbansim_matsim_data_to_compute_parcel_based_accessibility = self.__get_value_as_boolean('parcel_based_accessibility',   self.matsim4urbansim_dict['matsim_data_to_compute'])
+        self.matsim4urbansim_year = year
+        self.matsim4urbansim_matsim_config_path = os.path.join( matsim4opus_target_path, 'matsim_config' )
+        self.checkAndCreateFolder(self.matsim4urbansim_matsim_config_path)
+        self.matsim4urbansim_matsim_output_path = os.path.join( matsim4opus_target_path, 'output' )
+        self.checkAndCreateFolder(self.matsim4urbansim_matsim_output_path)
+        self.matsim4urbansim_matsim_temp_path = os.path.join( matsim4opus_target_path, 'tmp' )
+        self.checkAndCreateFolder(self.matsim4urbansim_matsim_temp_path)
         
         
         ###########################
         # matsim_config parameter
         ###########################
-        self.matsim_config.random_location_distribution_radius_for_urbansim_zone = matsim_config['random_location_distribution_radius_for_urbansim_zone']
-        self.matsim_config.random_location_distribution_shape_file_for_urbansim_zone =  matsim_config['random_location_distribution_shape_file_for_urbansim_zone']
+        self.matsim_config_urbansim_zone_random_location_distribution_by_radius = self.urbansim_zone_random_location_distribution_dict['by_radius']
+        self.matsim_config_urbansim_zone_random_location_distribution_by_shape_file = self.__get_string_value(self.urbansim_zone_random_location_distribution_dict['by_zone_shape_file'])
         
         # matsim_config/accessibility parameter
-        self.matsim_config.accessibility.cell_size = accessibility['cell_size']
-        self.matsim_config.accessibility.study_area_boundary_shape_file = accessibility['study_area_boundary_shape_file']
-        self.matsim_config.accessibility.bounding_box_left = accessibility['bounding_box_left']
-        self.matsim_config.accessibility.bounding_box_bottom = accessibility['bounding_box_bottom']
-        self.matsim_config.accessibility.bounding_box_top = accessibility['bounding_box_top']
-        self.matsim_config.accessibility.bounding_box_right = accessibility['bounding_box_right']
-        accessibility_computation_area = accessibility['accessibility_computation_area'] # loading sub directory ...
+        self.matsim_config_accessibility_cell_size = self.accessibility_dict['cell_size']
+        self.matsim_config_accessibility_study_area_boundary_shape_file = self.__get_string_value(self.accessibility_dict['study_area_boundary_shape_file'])
+        self.matsim_config_accessibility_bounding_box_left = self.accessibility_dict['bounding_box_left']
+        self.matsim_config_accessibility_bounding_box_bottom = self.accessibility_dict['bounding_box_bottom']
+        self.matsim_config_accessibility_bounding_box_top = self.accessibility_dict['bounding_box_top']
+        self.matsim_config_accessibility_bounding_box_right = self.accessibility_dict['bounding_box_right']
+        accessibility_computation_area = self.accessibility_dict['accessibility_computation_area'] # loading sub directory ...
         if not(accessibility_computation_area.__len__ != 1):
             logger.log_error("Please select ONE item in 'travel_model_configuration/matsim_config/accessibility/accessibility_computation_area' to determine how the study area for the accessibility computation!")
             exit()
-        self.matsim_config.accessibility.accessibility_computation_area.from_shapefile = self.__get_value_as_boolean( 'from_shapefile', accessibility_computation_area )
-        self.matsim_config.accessibility.accessibility_computation_area.from_bounding_box = self.__get_value_as_boolean( 'from_bounding_box', accessibility_computation_area )
-        self.matsim_config.accessibility.accessibility_computation_area.from_network = self.__get_value_as_boolean( 'from_network', accessibility_computation_area )
+        self.matsim_config_accessibility_accessibility_computation_area_from_shapefile = self.__get_value_as_boolean( 'from_shapefile', accessibility_computation_area )
+        self.matsim_config_accessibility_accessibility_computation_area_from_bounding_box = self.__get_value_as_boolean( 'from_bounding_box', accessibility_computation_area )
+        self.matsim_config_accessibility_accessibility_computation_area_from_network = self.__get_value_as_boolean( 'from_network', accessibility_computation_area )
         
         # matsim_config/common parameter
-        self.matsim_config.common.network_file = self.__get_file_location( common['matsim_network_file'], required=True)
-        self.matsim_config.common.first_iteration = 0
-        self.matsim_config.common.last_iteration = common['last_iteration']
-        self.matsim_config.common.matsim_configuration = self.__get_external_matsim_config_for_current_year(common['external_matsim_config'], year)
-        self.matsim_config.common.warm_start_plans_file = self.__get_plans_file(common, 'warm_start_plans_file')
-        self.matsim_config.common.use_hot_start = self.__get_value_as_boolean( 'use_hot_start', common['use_hot_start'] )
-        self.matsim_config.common.hot_start_plans_file = ''
-        if self.matsim_config.common.use_hot_start:
-            self.matsim_config.common.hot_start_plans_file = 'todo'
+        self.matsim_config_common_network_file = self.__get_file_location( self.common_dict['network'], required=True)
+        self.matsim_config_common_first_iteration = 0
+        self.matsim_config_common_last_iteration = self.common_dict['last_iteration']
+        self.matsim_config_common_external_matsim_configuration = self.__get_external_matsim_config_for_current_year(self.common_dict['external_matsim_config'], year)
+        self.matsim_config_common_warm_start_plans_file = self.__get_plans_file(self.common_dict, 'warm_start_plans_file')
+        self.matsim_config_common_use_hot_start = self.__get_value_as_boolean( 'use_hot_start', self.common_dict['hot_start'] )
+        self.matsim_config_common_hot_start_plans_file = ''
+        if self.matsim_config_common_use_hot_start:
+            self.matsim_config_common_hot_start_plans_file = os.path.join(matsim4opus_target_path, 'hot_start_plans_file.xml.gz')
         
         # matsim_config/plan_calc_score parameter
-        self.matsim_config.plan_calc_score.work_activity_opening_time = plan_calc_score['work_activity_opening_time']
-        self.matsim_config.plan_calc_score.home_activity_typical_duration = plan_calc_score['home_activity_typical_duration']
-        self.matsim_config.plan_calc_score.work_activity_typical_duration = plan_calc_score['work_activity_typical_duration']
-        self.matsim_config.plan_calc_score.work_activity_latest_start_time = plan_calc_score['work_activity_latest_start_time']
-        self.matsim_config.plan_calc_score.activityType_0 = 'home'
-        self.matsim_config.plan_calc_score.activityType_1 = 'work'
+        self.matsim_config_plan_calc_score_work_activity_opening_time = self.plan_calc_score_dict['work_activity_opening_time']
+        self.matsim_config_plan_calc_score_home_activity_typical_duration = self.plan_calc_score_dict['home_activity_typical_duration']
+        self.matsim_config_plan_calc_score_work_activity_typical_duration = self.plan_calc_score_dict['work_activity_typical_duration']
+        self.matsim_config_plan_calc_score_work_activity_latest_start_time = self.plan_calc_score_dict['work_activity_latest_start_time']
+        self.matsim_config_plan_calc_score_activityType_0 = 'home'
+        self.matsim_config_plan_calc_score_activityType_1 = 'work'
 
-        
-        
         # setting destination location for generated matsim config       
-        self.config_destination_location = self.__set_config_destination( self.config_dictionary )
+        self.config_destination_location = os.path.join( self.matsim_config_path, config['project_name'] + "_matsim_config.xml"  )
+        logger.log_status('MATSim4UrbanSim config file will be written to %s' %self.config_destination_location)
         
     def __get_external_matsim_config_for_current_year(self, external_matsim_config, year):
         
@@ -108,6 +122,11 @@ class MATSimConfigObjectV3(object):
                 logger.log_status("There is no external MATSim configuration set for the current year!")
         
         return ""   
+    
+    def __get_string_value(self, value):
+        if value == None:
+            return ""
+        return value
     
     def __get_file_location(self, file_path, required=False ):
         ''' checks if a given sub path exists
@@ -140,12 +159,6 @@ class MATSimConfigObjectV3(object):
         else:
             return ""
         
-    def __set_config_destination(self, config):
-        """ set destination for MATSim config
-        """
-        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
-        return os.path.join( self.matsim_config_path, self.matsim_config_name  )
-        
     def check_abolute_path(self, path):
         """ raises an exception if an absolute path is given
         """
@@ -173,124 +186,71 @@ class MATSimConfigObjectV3(object):
     def marschall(self):
         """ create a matsim config with the parameter from the travel model configuration with PyxB
         """
-
         # create/maschal matsim config file
         logger.log_status("Creating MATSim config file in " + self.config_destination_location)
         
         # xml root element
-        root = pyxb_matsim_config_parser.matsim_configType.Factory()
-
+        root = pyxb_matsim_config_parser_v3.matsim4urbansim_configType.Factory()
+        
         # main elements
-        config_elem = pyxb_matsim_config_parser.configType.Factory()
-        matsim4urbansim_elem = pyxb_matsim_config_parser.matsim4urbansimType.Factory()
+        matsim_config_elem   = pyxb_matsim_config_parser_v3.matsim_configType.Factory()
+        matsim4urbansim_elem = pyxb_matsim_config_parser_v3.matsim4urbansimType.Factory()
         
-        # different element sections for network, controler, planCalcScore, ect.
-        matsim_config_elem = pyxb_matsim_config_parser.fileType.Factory()
-        network_elem = pyxb_matsim_config_parser.fileType.Factory()
-        shapefile_elem = pyxb_matsim_config_parser.fileType.Factory()
-        input_plans_file_elem = pyxb_matsim_config_parser.inputPlansFileType.Factory()
-        hotstart_plans_file_elem = pyxb_matsim_config_parser.inputPlansFileType.Factory()
-        controler_elem = pyxb_matsim_config_parser.controlerType.Factory()
-        plan_calc_score_elem = pyxb_matsim_config_parser.planCalcScoreType.Factory()
-        strategy_elem = pyxb_matsim_config_parser.strategyType.Factory()
-        urbansim_parameter_elem = pyxb_matsim_config_parser.urbansimParameterType.Factory()
-        matsim4urbansim_controler_elem = pyxb_matsim_config_parser.matsim4urbansimContolerType.Factory()
-        accessibility_parameter_elem = pyxb_matsim_config_parser.accessibilityParameterType.Factory()
+        # init matsim config elem
+        matsim4urbansim_elem.populationSamplingRate = self.matsim4urbansim_population_sampling_rate
+        matsim4urbansim_elem.year                   = self.matsim4urbansim_year
+        matsim4urbansim_elem.opusHome               = self.opus_home
+        matsim4urbansim_elem.opusDataPath           = self.opus_data_path
+        matsim4urbansim_elem.matsim4opus            = self.matsim4opus_path
+        matsim4urbansim_elem.matsim4opusConfig      = self.matsim4urbansim_matsim_config_path
+        matsim4urbansim_elem.matsim4opusOutput      = self.matsim4urbansim_matsim_output_path
+        matsim4urbansim_elem.matsim4opusTemp        = self.matsim4urbansim_matsim_temp_path
+        matsim4urbansim_elem.customParameter        = self.matsim4urbansim_custom_parameter
+        matsim4urbansim_elem.zone2ZoneImpedance     = self.matsim4urbansim_matsim_data_to_compute_zone2zone_impedance
+        matsim4urbansim_elem.agentPerfomance        = self.matsim4urbansim_matsim_data_to_compute_agent_performance
+        matsim4urbansim_elem.zoneBasedAccessibility = self.matsim4urbansim_matsim_data_to_compute_zone_based_accessibility
+        matsim4urbansim_elem.parcelBasedAccessibility= self.matsim4urbansim_matsim_data_to_compute_parcel_based_accessibility
+        matsim4urbansim_elem.backupRunData          = self.matsim4urbansim_backup
         
-        # single elements containing values
-        matsim_config_elem.inputFile                        = self.matsim_configuration
-        network_elem.inputFile                              = self.network_file
-        shapefile_elem.inputFile                            = self.shape_file
+        # init matsim 4 urbansim config elem
+        matsim_config_elem.cellSize                                   = self.matsim_config_accessibility_cell_size
+        matsim_config_elem.accessibilityComputationAreaFromShapeFile  = self.matsim_config_accessibility_accessibility_computation_area_from_shapefile
+        matsim_config_elem.accessibilityComputationAreaFromBoundingBox= self.matsim_config_accessibility_accessibility_computation_area_from_bounding_box
+        matsim_config_elem.accessibilityComputationAreaFromNetwork    = self.matsim_config_accessibility_accessibility_computation_area_from_network
+        matsim_config_elem.studyAreaBoundaryShapeFile                 = self.matsim_config_accessibility_study_area_boundary_shape_file
+        matsim_config_elem.boundingBoxTop                             = self.matsim_config_accessibility_bounding_box_top
+        matsim_config_elem.boundingBoxLeft                            = self.matsim_config_accessibility_bounding_box_left
+        matsim_config_elem.boundingBoxRight                           = self.matsim_config_accessibility_bounding_box_right
+        matsim_config_elem.boundingBoxBottom                          = self.matsim_config_accessibility_bounding_box_bottom
+        matsim_config_elem.urbansimZoneRandomLocationDistributionByRadius = self.matsim_config_urbansim_zone_random_location_distribution_by_radius
+        matsim_config_elem.urbansimZoneRandomLocationDistributionByShapeFile=self.matsim_config_urbansim_zone_random_location_distribution_by_shape_file
+        matsim_config_elem.external_matsim_config                     = self.matsim_config_common_external_matsim_configuration
+        matsim_config_elem.network                                    = self.matsim_config_common_network_file
+        matsim_config_elem.warmStartPlansFile                         = self.matsim_config_common_warm_start_plans_file
+        matsim_config_elem.useHotStart                                = self.matsim_config_common_use_hot_start
+        matsim_config_elem.hotStartPlansFile                          = self.matsim_config_common_hot_start_plans_file
+        matsim_config_elem.activityType_0                             = self.matsim_config_plan_calc_score_activityType_0
+        matsim_config_elem.activityType_1                             = self.matsim_config_plan_calc_score_activityType_1
+        matsim_config_elem.homeActivityTypicalDuration                = self.matsim_config_plan_calc_score_home_activity_typical_duration
+        matsim_config_elem.workActivityTypicalDuration                = self.matsim_config_plan_calc_score_work_activity_typical_duration
+        matsim_config_elem.workActivityOpeningTime                    = self.matsim_config_plan_calc_score_work_activity_opening_time
+        matsim_config_elem.workActivityLatestStartTime                = self.matsim_config_plan_calc_score_work_activity_latest_start_time
+        matsim_config_elem.firstIteration                             = self.matsim_config_common_first_iteration
+        matsim_config_elem.lastIteration                              = self.matsim_config_common_last_iteration
         
-        input_plans_file_elem                               = self.input_plans_file
-        hotstart_plans_file_elem                            = self.hotstart_plans_file
         
-        controler_elem.firstIteration                       = self.first_iteration
-        controler_elem.lastIteration                        = self.last_iteration
-        
-        plan_calc_score_elem.activityType_0                 = self.activityType_0
-        plan_calc_score_elem.activityType_1                 = self.activityType_1
-        plan_calc_score_elem.homeActivityTypicalDuration    = self.home_activity_typical_duration
-        plan_calc_score_elem.workActivityTypicalDuration    = self.work_activity_typical_duration
-        plan_calc_score_elem.workActivityOpeningTime        = self.work_activity_opening_time
-        plan_calc_score_elem.workActivityLatestStartTime    = self.work_activity_latest_start_time
-        
-        strategy_elem.maxAgentPlanMemorySize                = self.max_agent_plan_memory_size
-        strategy_elem.timeAllocationMutatorProbability      = self.time_accocation_mutator_probability
-        strategy_elem.changeExpBetaProbability              = self.change_exp_beta_probability
-        strategy_elem.reRouteDijkstraProbability            = self.reroute_dijkstra_probability
-        
-        urbansim_parameter_elem.populationSamplingRate      = self.population_sampling_rate
-        urbansim_parameter_elem.randomLocationDistributionRadiusForUrbanSimZone = self.random_location_distribution_radius_for_urbansim_zone
-        urbansim_parameter_elem.year                        = self.year
-        urbansim_parameter_elem.opusHome                    = self.opus_home
-        urbansim_parameter_elem.opusDataPath                = self.opus_data_path
-        urbansim_parameter_elem.matsim4opus                 = self.matsim4opus_path
-        urbansim_parameter_elem.matsim4opusConfig           = self.matsim_config_path
-        urbansim_parameter_elem.matsim4opusOutput           = self.matsim_output_path
-        urbansim_parameter_elem.matsim4opusTemp             = self.matsim_temp_path
-        urbansim_parameter_elem.isTestRun                   = self.isTestRun
-        urbansim_parameter_elem.testParameter               = self.test_parameter
-        urbansim_parameter_elem.backupRunData               = self.backup_run_data
-        
-        matsim4urbansim_controler_elem.zone2zoneImpedance   = self.zone2zone_impedance
-        matsim4urbansim_controler_elem.zoneBasedAccessibility= self.zone_based_accessibility
-        matsim4urbansim_controler_elem.cellBasedAccessibility= self.cell_based_accessibility
-        matsim4urbansim_controler_elem.cellSizeCellBasedAccessibility= self.cell_size
-        matsim4urbansim_controler_elem.shapeFileCellBasedAccessibility= shapefile_elem
-        matsim4urbansim_controler_elem.useCustomBoundingBox = self.use_bounding_box
-        matsim4urbansim_controler_elem.boundingBoxTop       = self.bounding_box_top
-        matsim4urbansim_controler_elem.boundingBoxLeft      = self.bounding_box_left
-        matsim4urbansim_controler_elem.boundingBoxRight     = self.bounding_box_right
-        matsim4urbansim_controler_elem.boundingBoxBottom    = self.bounding_box_bottom
-        matsim4urbansim_controler_elem.agentPerformance     = self.agent_performance 
-        
-        accessibility_parameter_elem.accessibilityDestinationSamplingRate = self.accessibility_destination_sampling_rate
-        accessibility_parameter_elem.useLogitScaleParameterFromMATSim= self.use_logit_scale_parameter_from_MATSim
-        accessibility_parameter_elem.useCarParameterFromMATSim= self.use_car_parameter_from_MATSim
-        accessibility_parameter_elem.useWalkParameterFromMATSim= self.use_walk_parameter_from_MATSim
-        accessibility_parameter_elem.useRawSumsWithoutLn    = self.use_raw_sums_without_ln
-        accessibility_parameter_elem.logitScaleParameter    = self.logit_scale_parameter
-        accessibility_parameter_elem.betaCarTravelTime      = self.betacar_travel_time
-        accessibility_parameter_elem.betaCarTravelTimePower2= self.betacar_travel_time_power2
-        accessibility_parameter_elem.betaCarLnTravelTime    = self.betacar_ln_travel_time
-        accessibility_parameter_elem.betaCarTravelDistance  = self.betacar_travel_distance
-        accessibility_parameter_elem.betaCarTravelDistancePower2= self.betacar_travel_distance_power2
-        accessibility_parameter_elem.betaCarLnTravelDistance= self.betacar_ln_travel_distance
-        accessibility_parameter_elem.betaCarTravelCost      = self.betacar_travel_cost
-        accessibility_parameter_elem.betaCarTravelCostPower2= self.betacar_travel_cost_power2
-        accessibility_parameter_elem.betaCarLnTravelCost    = self.betacar_ln_travel_cost
-        accessibility_parameter_elem.betaWalkTravelTime     = self.betawalk_travel_time
-        accessibility_parameter_elem.betaWalkTravelTimePower2= self.betawalk_travel_time_power2
-        accessibility_parameter_elem.betaWalkLnTravelTime   = self.betawalk_ln_travel_time
-        accessibility_parameter_elem.betaWalkTravelDistance = self.betawalk_travel_distance
-        accessibility_parameter_elem.betaWalkTravelDistancePower2= self.betawalk_travel_distance_power2
-        accessibility_parameter_elem.betaWalkLnTravelDistance= self.betawalk_ln_travel_distance
-        accessibility_parameter_elem.betaWalkTravelCost     = self.betawalk_travel_cost
-        accessibility_parameter_elem.betaWalkTravelCostPower2= self.betawalk_travel_cost_power2
-        accessibility_parameter_elem.betaWalkLnTravelCost   = self.betawalk_ln_travel_cost
-        
-        # assemble single elements with dedicated section elements
-        config_elem.matsim_config                           = matsim_config_elem
-        config_elem.network                                 = network_elem
-        config_elem.inputPlansFile                          = input_plans_file_elem
-        config_elem.hotStartPlansFile                       = hotstart_plans_file_elem
-        config_elem.controler                               = controler_elem
-        config_elem.planCalcScore                           = plan_calc_score_elem
-        config_elem.strategy                                = strategy_elem
-        
-        matsim4urbansim_elem.urbansimParameter              = urbansim_parameter_elem
-        matsim4urbansim_elem.matsim4urbansimContoler        = matsim4urbansim_controler_elem
-        matsim4urbansim_elem.accessibilityParameter         = accessibility_parameter_elem
-        
-        # assemble with root element
-        root.config                                         = config_elem
-        root.matsim4urbansim                                = matsim4urbansim_elem
+        # assemble single elements to root
+        root.matsim_config  = matsim_config_elem
+        root.matsim4urbansim= matsim4urbansim_elem
         
         # content = root.content() # get children
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         # convert to dom object
-        dom = root.toDOM(element_name='matsim_config')
+        dom = root.toDOM(element_name='matsim4urbansim_config')
         # print on screen
         prettydom = dom.toprettyxml(encoding="UTF-8")
         
@@ -299,8 +259,7 @@ class MATSimConfigObjectV3(object):
         logger.log_status( 'Writing (marschalling) this matsim config xml to {0}'.format( self.config_destination_location ) )
         
         file_object = open(self.config_destination_location, 'w')
-        #dom.writexml(file_object, encoding="UTF-8") # no pretty format :-(
-        file_object.write(prettydom) # maybe the better way to save matsim config xml ?
+        file_object.write(prettydom)
         file_object.flush()
         if not file_object.closed:
             file_object.close()
@@ -308,25 +267,6 @@ class MATSimConfigObjectV3(object):
         logger.log_status( "Finished Marschalling" )
         
         return self.config_destination_location
-        
-        
-    def __get_travel_model_sub_dictionaries(self):
-        """ returns the configuration from the travel model configuration
-            for the MATSim4UrbanSim and common MATSim part
-        """
-        # get travel model parameter from the opus dictionary
-        travel_model_configuration = self.config_dictionary['travel_model_configuration']   # contains matsim4urbansim and matsim_config parameter
-        
-        # matsim4urbansim
-        matsim4urbansim = travel_model_configuration['matsim4urbansim']                     # contains parameter for matsim/urbansim integration
-        
-        # matsim_config
-        matsim_config = travel_model_configuration['matsim_config']                         # contains various matsim_config parameter 
-        accessibility = matsim_config['accessibility']
-        common = matsim_config['common']
-        plan_calc_score = matsim_config['plan_calc_score']
-        
-        return matsim4urbansim, matsim_config, accessibility, common, plan_calc_score
     
     
     def validate_xml(self, xml, xsd):
