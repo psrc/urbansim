@@ -25,15 +25,32 @@ print "creating indicators ..."
 
 indicators = {
 
+    #'zone__autogenvar1':Indicator(
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate( (urbansim_parcel.building.vacant_residential_units * urbansim_parcel.building.is_generic_building_type_1)/(building.residential_units * urbansim_parcel.building.is_generic_building_type_1) )'),
+              
+              
+    #'zone__autogenvar0':Indicator(
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment, function=mean)'),
+              
+    'alldata__autogenvar2':Indicator(
+       dataset_name = 'alldata',
+       attribute = 'alldata.aggregate_all(urbansim_parcel.building.vacant_residential_units*urbansim_parcel.building.is_generic_building_type_1)/alldata.aggregate_all(building.residential_units*urbansim_parcel.building.is_generic_building_type_1)'),
+
+    #'vacancy_rate_mfr_alldata':Indicator(
+    #   dataset_name = 'alldata',
+    #   attribute = 'alldata.aggregate_all(urbansim_parcel.building.vacant_residential_units * urbansim_parcel.building.is_generic_building_type_2) / alldata.aggregate_all(building.residential_units * urbansim_parcel.building.is_generic_building_type_2)'),
+
     # this gives the mean profit for each proposal aggregated on zone
-    'zone__autogenvar0':Indicator(
-       dataset_name = 'zone',
-       attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.profit,function=mean,intermediates=[parcel])'),
+    #'zone__autogenvar0':Indicator(
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.profit,function=mean,intermediates=[parcel])'),
     
     # this gives the mean profit for each proposal aggregated on zone
-    'zone__autogenvar1':Indicator(
-       dataset_name = 'zone',
-       attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.total_revenue,function=mean,intermediates=[parcel])'),
+    #'zone__autogenvar1':Indicator(
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.total_revenue,function=mean,intermediates=[parcel])'),
 }
 
 print "... done."
@@ -85,24 +102,37 @@ from opus_gui.results_manager.run.indicator_framework.visualizer.visualization_f
 visualizer = VisualizationFactory()
 visualizations = []
 
-for output_type in types: # profit
+#try: # tnicolai :for debugging
+#    import pydevd
+#    pydevd.settrace()
+#except: pass
+
+for output_type in types:
     visualizations += visualizer.visualize(
-        indicators_to_visualize = ['zone__autogenvar0'],
+        indicators_to_visualize = ['alldata__autogenvar2'],
         computed_indicators = computed_indicators,
         visualization_type = 'table',
         output_type = output_type,
-        name = 'zone__autogenvar0',
-        )
-    
-for output_type in types: # total_revenue
-    visualizations += visualizer.visualize(
-        indicators_to_visualize = ['zone__autogenvar1'],
-        computed_indicators = computed_indicators,
-        visualization_type = 'table',
-        output_type = output_type,
-        name = 'zone__autogenvar1',
+        name = 'alldata__autogenvar2',
         )
 
+#for output_type in types:
+#    visualizations += visualizer.visualize(
+#        indicators_to_visualize = ['zone__autogenvar1'],
+#        computed_indicators = computed_indicators,
+#        visualization_type = 'table',
+#        output_type = output_type,
+#        name = 'zone__autogenvar1',
+#        )
+
+#for output_type in types:
+#    visualizations += visualizer.visualize(
+#        indicators_to_visualize = ['vacancy_rate_mfr_alldata'],
+#        computed_indicators = computed_indicators,
+#        visualization_type = 'table',
+#        output_type = output_type,
+#        name = 'vacancy_rate_mfr_alldata',
+#        )
 
 end_time = time.time()
 
