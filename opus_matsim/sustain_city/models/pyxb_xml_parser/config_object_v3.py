@@ -253,7 +253,7 @@ class MATSimConfigObjectV3(object):
         dom = root.toDOM(element_name='matsim4urbansim_config')
         # print on screen
         prettydom = dom.toprettyxml(encoding="UTF-8")
-        prettydom = str.replace(prettydom, '<matsim4urbansim_config>', '<matsim_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.matsim.org/files/dtd/matsim4urbansim_v3.xsd">')
+        prettydom = str.replace(prettydom, '<matsim4urbansim_config>', '<matsim4urbansim_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.matsim.org/files/dtd/matsim4urbansim_v3.xsd">')
         
         logger.log_status( 'Generated MATSim configuration file:' )
         logger.log_status( prettydom )
