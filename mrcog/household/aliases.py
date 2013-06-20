@@ -38,6 +38,7 @@ aliases = [
                          " 3 * (household.income < 30000)*(household.tenure == 2) +" + \
                          " 4 * (household.income >= 30000)*(household.tenure == 2)",
     "submarket_id = household.disaggregate(mrcog.building.submarket_id)",
+    "employment_submarket_id = household.disaggregate(mrcog.building.employment_submarket_id)",
     "zone_id = household.disaggregate(building.disaggregate(parcel.zone_id))",
     "residential_building_type_id = household.disaggregate(mrcog.building.residential_building_type_id)",
 
