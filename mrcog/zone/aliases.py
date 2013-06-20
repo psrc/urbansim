@@ -50,4 +50,7 @@ aliases = [
            "wealthyhh = zone.aggregate((household.income>65000),intermediates=[building,parcel])",
            "hh = zone.aggregate((household.household_id>0),intermediates=[building,parcel])",
            "resunits = zone.aggregate((building.residential_units),intermediates=[parcel])",
+           "medianyearbuilt = zone.aggregate((building.year_built),function=median,intermediates=[parcel])",
+           "medianresyearbuilt = zone.aggregate(((building.building_type_id<3)*building.year_built),function=median,intermediates=[parcel])",
+           "buildings = zone.aggregate(building.building_id>0,intermediates=[parcel])",
 ]
