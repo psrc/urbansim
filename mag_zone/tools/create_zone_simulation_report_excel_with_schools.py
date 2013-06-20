@@ -70,7 +70,7 @@ class RegionWideReport():
                                     sum(b.gq_households_in_other_inst) + 
                                     sum(b.gq_households_in_other_noninst) + 
                                     sum(b.gq_households_in_prisons) sumgq
-                                FROM %s_%s_buildings b
+                                FROM %s_%s_buildingsWithSchools b
                                 left join %s_%s_zones z
                                 on b.zone_id = z.zone_id
              ''' % (self.run_name,year,self.run_name,year))
@@ -94,7 +94,7 @@ class RegionWideReport():
                                     sum(b.gq_pop_in_other_inst) + 
                                     sum(b.gq_pop_in_other_noninst) + 
                                     sum(b.gq_pop_in_prisons) sumgq
-                                FROM %s_%s_buildings b
+                                FROM %s_%s_buildingsWithSchools b
                                 left join %s_%s_zones z
                                 on b.zone_id = z.zone_id
              ''' % (self.run_name,year,self.run_name,year))
@@ -112,7 +112,7 @@ class RegionWideReport():
             r = self.connection.execute('''
                                 SELECT
                                     sum(b.transient_pop_in_hotels + b.transient_pop_in_households) thhlds
-                                FROM %s_%s_buildings b
+                                FROM %s_%s_buildingsWithSchools b
                                 left join %s_%s_zones z
                                 on b.zone_id = z.zone_id
              ''' % (self.run_name,year,self.run_name,year))
@@ -130,7 +130,7 @@ class RegionWideReport():
             r = self.connection.execute('''
                                 SELECT
                                     sum(b.transient_households_in_hotels + b.transient_households_in_households) thhlds
-                                FROM %s_%s_buildings b
+                                FROM %s_%s_buildingsWithSchools b
                                 left join %s_%s_zones z
                                 on b.zone_id = z.zone_id
              ''' % (self.run_name,year,self.run_name,year))
@@ -1157,7 +1157,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total residential DUs for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings' % (self.run_name,year))
+            r = self.connection.execute('select sum(residential_units) from %s_%s_buildingsWithSchools' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1170,7 +1170,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total non-residential sqft for year %s' % year
-            r = self.connection.execute('select sum(cast(non_residential_sqft as float)) from %s_%s_buildings' % (self.run_name,year))
+            r = self.connection.execute('select sum(cast(non_residential_sqft as float)) from %s_%s_buildingsWithSchools' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1194,7 +1194,7 @@ class RegionWideReport():
             self.worksheet.write(0,column_counter,'nonres_sqft_type_%s' % building_type)
             for year in self.years:
                 print 'Computing non-residential sqft for year %s and building type %s' % (year, building_type)
-                query = 'select SUM(CAST(non_residential_sqft AS FLOAT)) from %s_%s_buildings where building_type_id = %s' % (self.run_name, year, building_type)
+                query = 'select SUM(CAST(non_residential_sqft AS FLOAT)) from %s_%s_buildingsWithSchools where building_type_id = %s' % (self.run_name, year, building_type)
                 r = self.connection.execute(query)
                 for row in r:
                     self.worksheet.write(row_counter,column_counter,row[0])
@@ -1209,7 +1209,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total SF residential DUs for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id in (1,3)' % (self.run_name, year))
+            r = self.connection.execute('select sum(residential_units) from %s_%s_buildingsWithSchools where building_type_id in (1,3)' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1222,7 +1222,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total MF residential DUs for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id = 2' % (self.run_name, year))
+            r = self.connection.execute('select sum(residential_units) from %s_%s_buildingsWithSchools where building_type_id = 2' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1301,7 +1301,7 @@ class RegionWideReport():
                     select
                         count(*)
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     where b.building_type_id in (1,3) and h.is_seasonal = 0
                     ''' % (self.run_name, year, self.run_name, year)
@@ -1321,7 +1321,7 @@ class RegionWideReport():
                     select
                         count(*)
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     where b.building_type_id = 2 and h.is_seasonal = 0
                     ''' % (self.run_name, year, self.run_name, year)
@@ -1341,7 +1341,7 @@ class RegionWideReport():
                     select
                         sum(persons)
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     where b.building_type_id in (1,3) and h.is_seasonal = 0
                     ''' % (self.run_name, year, self.run_name, year)
@@ -1361,7 +1361,7 @@ class RegionWideReport():
                     select
                         sum(persons)
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     where b.building_type_id = 2 and h.is_seasonal = 0
                     ''' % (self.run_name, year, self.run_name, year)
@@ -1407,7 +1407,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total jobs for year %s' % year
-            r = self.connection.execute('select count(*) from %s_%s_jobs' % (self.run_name, year))
+            r = self.connection.execute('select count(*) from %s_%s_jobsWithSchools' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1
@@ -1419,7 +1419,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total home based jobs for year %s' % year
-            r = self.connection.execute('select count(*) from %s_%s_jobsWithSchools2 j join %s_%s_buildings b on j.building_id = b.building_id where b.building_type_id < 4' % (self.run_name, year, self.run_name, year))
+            r = self.connection.execute('select count(*) from %s_%s_jobsWithSchools j join %s_%s_buildingsWithSchools b on j.building_id = b.building_id where b.building_type_id < 4' % (self.run_name, year, self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1
@@ -1431,7 +1431,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing total non home based jobs for year %s' % year
-            r = self.connection.execute('select count(*) from %s_%s_jobs j join %s_%s_buildings b on j.building_id = b.building_id where b.building_type_id > 3' % (self.run_name, year))
+            r = self.connection.execute('select count(*) from %s_%s_jobsWithSchools j join %s_%s_buildingsWithSchools b on j.building_id = b.building_id where b.building_type_id > 3' % (self.run_name, year))
             for row in r:
                 self.worksheet.write(row_counter, self.column_counter, row[0])
                 row_counter += 1
@@ -1594,7 +1594,7 @@ class RegionWideReport():
         row_counter = 1
         for year in self.years:
             print 'Computing unplaced jobs for year %s' % year
-            r = self.connection.execute('select count(*) from %s_%s_jobs where building_id < 1' % (self.run_name,year))
+            r = self.connection.execute('select count(*) from %s_%s_jobsWithSchools where building_id < 1' % (self.run_name,year))
             for row in r:
                 self.worksheet.write(row_counter,self.column_counter,row[0])
                 row_counter += 1
@@ -1616,7 +1616,7 @@ class RegionWideReport():
             self.worksheet.write(0,column_counter,'unpl_job_sec%s' % sector)
             for year in self.years:
                 print 'Computing unplaced jobs for year %s and sector %s' % (year, sector)
-                query = 'select count(*) from %s_%s_jobs where building_id < 1 and sector_id = %s' % (self.run_name, year, sector)
+                query = 'select count(*) from %s_%s_jobsWithSchools where building_id < 1 and sector_id = %s' % (self.run_name, year, sector)
                 r = self.connection.execute(query)
                 for row in r:
                     self.worksheet.write(row_counter,column_counter,row[0])
@@ -1640,7 +1640,7 @@ class RegionWideReport():
             self.worksheet.write(0,column_counter,'job_sec%s' % sector)
             for year in self.years:
                 print 'Computing jobs for year %s and sector %s' % (year, sector)
-                query = 'select count(*) from %s_%s_jobs where sector_id = %s' % (self.run_name, year, sector)
+                query = 'select count(*) from %s_%s_jobsWithSchools where sector_id = %s' % (self.run_name, year, sector)
                 r = self.connection.execute(query)
                 for row in r:
                     self.worksheet.write(row_counter,column_counter,row[0])
@@ -1680,8 +1680,8 @@ class RegionWideReport():
                             select
                                 count(*)
                             from
-                                %s_%s_jobs j
-                            left join %s_%s_buildings b
+                                %s_%s_jobsWithSchools j
+                            left join %s_%s_buildingsWithSchools b
                             on j.building_id = b.building_id
                             left join basedata_zaReference_buildingTypes bt
                             on b.building_type_id = bt.building_type_id
@@ -1710,7 +1710,7 @@ class RegionWideReport():
             self.worksheet.write(0,column_counter,'job_hb_sec%s' % sector)
             for year in self.years:
                 print 'Computing home based jobs for year %s and sector %s' % (year, sector)
-                query = 'select count(*) from %s_%s_jobsWithSchools2 where sector_id = %s and home_based_status = 1' % (self.run_name, year, sector)
+                query = 'select count(*) from %s_%s_jobsWithSchools where sector_id = %s and home_based_status = 1' % (self.run_name, year, sector)
                 r = self.connection.execute(query)
                 for row in r:
                     self.worksheet.write(row_counter,column_counter,row[0])
@@ -1734,7 +1734,7 @@ class RegionWideReport():
             self.worksheet.write(0,column_counter,'job_nhb_sec%s' % sector)
             for year in self.years:
                 print 'Computing non home based jobs for year %s and sector %s' % (year, sector)
-                query = 'select count(*) from %s_%s_jobsWithSchools2 where sector_id = %s and home_based_status = 0' % (self.run_name, year, sector)
+                query = 'select count(*) from %s_%s_jobsWithSchools where sector_id = %s and home_based_status = 0' % (self.run_name, year, sector)
                 r = self.connection.execute(query)
                 for row in r:
                     self.worksheet.write(row_counter,column_counter,row[0])
@@ -1881,7 +1881,7 @@ class RegionWideReport():
                         into
                             #temp_bldgs_non_res_sqft
                         from
-                            %s_%s_buildings b1          
+                            %s_%s_buildingsWithSchools b1          
                     ''' % (self.run_name, year)
             r = self.connection.execute(query)
             r.close()
@@ -1891,7 +1891,7 @@ class RegionWideReport():
                         from
                             #temp_bldgs_non_res_sqft b1
                         left join
-                            %s_%s_buildingSqftPerJob b2
+                            %s_%s_buildingsqftPerJob b2
                         on
                             b1.building_type_id = b2.building_type_id and b1.zone_id = b2.zone_id            
                     ''' % (self.run_name, year)
@@ -1931,7 +1931,7 @@ def get_total_unplaced_jobs_by_year_and_subarea(subarea, years, workbook, run_na
         r.close()
         query = '''select h.%s_id, count(*) as numjobs
                     into #numunpljobs_%s
-                    from %s_%s_jobs h
+                    from %s_%s_jobsWithSchools h
                     where h.building_id < 1
                     group by h.%s_id
                     order by h.%s_id''' % (subarea, year, run_name, year, subarea, subarea)
@@ -1979,8 +1979,8 @@ def get_total_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_
         r.close()
         query = '''select z.%s_id, count(*) as numjobs
                     into #numjobs_%s
-                    from %s_%s_jobs h
-                    left join %s_%s_buildings b
+                    from %s_%s_jobsWithSchools h
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2032,7 +2032,7 @@ def get_total_transient_households_by_year_and_subarea(subarea, years, workbook,
                         z.%s_id,
                         sum(b.transient_households_in_hotels + b.transient_households_in_households) thhlds
                     INTO #numtranhh_%s
-                    FROM %s_%s_buildings b
+                    FROM %s_%s_buildingsWithSchools b
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
                     group by z.%s_id
@@ -2084,7 +2084,7 @@ def get_total_transient_population_by_year_and_subarea(subarea, years, workbook,
                         z.%s_id,
                         sum(b.transient_pop_in_hotels + b.transient_pop_in_households) thhlds
                     INTO #numtranpp_%s
-                    FROM %s_%s_buildings b
+                    FROM %s_%s_buildingsWithSchools b
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
                     group by z.%s_id
@@ -2144,7 +2144,7 @@ def get_total_group_quarters_population_by_year_and_subarea(subarea, years, work
                         sum(b.gq_pop_in_other_noninst) + 
                         sum(b.gq_pop_in_prisons) sumgq
                     INTO #numgqpop_%s
-                    FROM %s_%s_buildings b
+                    FROM %s_%s_buildingsWithSchools b
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
                     group by z.%s_id
@@ -2203,7 +2203,7 @@ def get_total_group_quarters_households_by_year_and_subarea(subarea, years, work
                         sum(b.gq_households_in_other_noninst) + 
                         sum(b.gq_households_in_prisons) sumgq
                     INTO #numgqhh_%s
-                    FROM %s_%s_buildings b
+                    FROM %s_%s_buildingsWithSchools b
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
                     group by z.%s_id
@@ -2354,8 +2354,8 @@ def get_total_jobs_nhb_by_sector_and_year_and_subarea(subarea, years, workbook, 
         r.close()
         query = '''select z.%s_id, count(*) as numjobs
                     into #numjobsnhb_%s
-                    from %s_%s_jobs h
-                    left join %s_%s_buildings b
+                    from %s_%s_jobsWithSchools h
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2405,8 +2405,8 @@ def get_total_jobs_hb_by_sector_and_year_and_subarea(subarea, years, workbook, r
         r.close()
         query = '''select z.%s_id, count(*) as numjobs
                     into #numjobshb_%s
-                    from %s_%s_jobs h
-                    left join %s_%s_buildings b
+                    from %s_%s_jobsWithSchools h
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2456,8 +2456,8 @@ def get_total_nhb_jobs_by_year_and_subarea(subarea, years, workbook, run_name, b
         r.close()
         query = '''select z.%s_id, count(*) as numjobs
                     into #numjobsnhb_%s
-                    from %s_%s_jobs h
-                    left join %s_%s_buildings b
+                    from %s_%s_jobsWithSchools h
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2508,8 +2508,8 @@ def get_total_hb_jobs_by_year_and_subarea(subarea, years, workbook, run_name, ba
         r.close()
         query = '''select z.%s_id, count(*) as numjobs
                     into #numjobshb_%s
-                    from %s_%s_jobs h
-                    left join %s_%s_buildings b
+                    from %s_%s_jobsWithSchools h
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2610,7 +2610,7 @@ def get_total_households_by_year_and_subarea(subarea, years, workbook, run_name,
         query = '''select z.%s_id, count(*) as numhh
                     into #numhh_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2661,7 +2661,7 @@ def get_total_seasonal_households_by_year_and_subarea(subarea, years, workbook, 
         query = '''select z.%s_id, count(*) as numhh
                     into #numhhse_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -2732,8 +2732,8 @@ def get_total_jobs_by_land_use_sector_by_year_and_subarea(subarea, years, workbo
                             z.%s_id,
                             count(*) as numjobs
                         into #numjlus_%s_%s
-                        from %s_%s_jobs j
-                        left join %s_%s_buildings b
+                        from %s_%s_jobsWithSchools j
+                        left join %s_%s_buildingsWithSchools b
                         on j.building_id = b.building_id
                         left join basedata_zaReference_buildingTypes bt
                         on b.building_type_id = bt.building_type_id
@@ -2808,8 +2808,8 @@ def get_total_nhb_jobs_by_sector_and_year_and_subarea(subarea, years, workbook, 
                                     SELECT
                                         z.%s_id,
                                         count(*) num_jobs
-                                    FROM %s_%s_jobs j
-                                    left join %s_%s_buildings b
+                                    FROM %s_%s_jobsWithSchools j
+                                    left join %s_%s_buildingsWithSchools b
                                     on b.building_id = j.building_id
                                     left join %s_%s_zones z
                                     on b.zone_id = z.zone_id
@@ -2873,8 +2873,8 @@ def get_total_hb_jobs_by_sector_and_year_and_subarea(subarea, years, workbook, r
                                     SELECT
                                         z.%s_id,
                                         count(*) num_jobs
-                                    FROM %s_%s_jobs j
-                                    left join %s_%s_buildings b
+                                    FROM %s_%s_jobsWithSchools j
+                                    left join %s_%s_buildingsWithSchools b
                                     on b.building_id = j.building_id
                                     left join %s_%s_zones z
                                     on b.zone_id = z.zone_id
@@ -2937,8 +2937,8 @@ def get_total_jobs_by_sector_and_year_and_subarea(subarea, years, workbook, run_
                                     SELECT
                                         z.%s_id,
                                         count(*) num_jobs
-                                    FROM %s_%s_jobs j
-                                    left join %s_%s_buildings b
+                                    FROM %s_%s_jobsWithSchools j
+                                    left join %s_%s_buildingsWithSchools b
                                     on b.building_id = j.building_id
                                     left join %s_%s_zones z
                                     on b.zone_id = z.zone_id
@@ -3008,7 +3008,7 @@ def get_total_households_by_income_quintile_by_year_and_subarea(subarea, years, 
                         count(*) num_hh
                     INTO #hhquints_by_%s_%s
                     FROM #hhquints%s h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     left join %s_%s_zones z
                     on z.zone_id = b.zone_id
@@ -3110,7 +3110,7 @@ def get_mean_persons_per_household_by_year_and_subarea(subarea, years, workbook,
                     from %s_%s_persons p
                     left join %s_%s_households h
                     on p.household_id = h.household_id
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3175,7 +3175,7 @@ def get_mean_age_of_population_by_year_and_subarea(subarea, years, workbook, run
                     from %s_%s_persons p
                     left join %s_%s_households h
                     on p.household_id = h.household_id
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on h.building_id = b.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3228,7 +3228,7 @@ def get_mean_household_income_by_year_and_subarea(subarea, years, workbook, run_
         query = '''select z.%s_id, round(AVG(cast(income as float)),2) as avghhinc
                     into #avghhinc_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3297,7 +3297,7 @@ def get_mean_household_income_by_year_and_subarea2(subarea, years, workbook, run
                                     (
                                     SELECT z.%s_id, ROUND(AVG(CAST(income AS FLOAT)),2) AS avghhinc
                                     FROM %s_%s_households h
-                                    LEFT JOIN %s_%s_buildings b
+                                    LEFT JOIN %s_%s_buildingsWithSchools b
                                     ON b.building_id = h.building_id
                                     LEFT JOIN %s_%s_zones z
                                     ON b.zone_id = z.zone_id
@@ -3349,7 +3349,7 @@ def get_median_household_income_by_year_and_subarea(subarea, years, workbook, ru
             query = '''select
                             income
                         from %s_%s_households h
-                        left join %s_%s_buildings b
+                        left join %s_%s_buildingsWithSchools b
                         on h.building_id = b.building_id
                         left join %s_%s_zones z
                         on b.zone_id = z.zone_id
@@ -3390,7 +3390,7 @@ def get_total_households_in_SFR_by_year_and_subarea(subarea, years, workbook, ru
         query = '''select z.%s_id, count(*) as numSFRhh
                     into #numSFRhh_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3441,7 +3441,7 @@ def get_total_households_in_MFR_by_year_and_subarea(subarea, years, workbook, ru
         query = '''select z.%s_id, count(*) as numMFRhh
                     into #numMFRhh_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3492,7 +3492,7 @@ def get_total_population_in_SFR_by_year_and_subarea(subarea, years, workbook, ru
         query = '''select z.%s_id, sum(persons) as numSFRpop
                     into #numSFRpop_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3543,7 +3543,7 @@ def get_total_population_in_MFR_by_year_and_subarea(subarea, years, workbook, ru
         query = '''select z.%s_id, sum(persons) as numMFRpop
                     into #numMFRpop_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3594,7 +3594,7 @@ def get_total_population_by_year_and_subarea(subarea, years, workbook, run_name,
         query = '''select z.%s_id, sum(persons) as numhh
                     into #numpp_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3695,7 +3695,7 @@ def get_total_seasonal_population_by_year_and_subarea(subarea, years, workbook, 
         query = '''select z.%s_id, sum(persons) as numhh
                     into #numppseas_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3746,7 +3746,7 @@ def get_total_population_by_year_and_subarea_stacked(subarea, years, workbook, r
         query = '''select z.%s_id, sum(persons) as numhh
                     into #numpp1_%s
                     from %s_%s_households h
-                    left join %s_%s_buildings b
+                    left join %s_%s_buildingsWithSchools b
                     on b.building_id = h.building_id
                     left join %s_%s_zones z
                     on b.zone_id = z.zone_id
@@ -3798,7 +3798,7 @@ def get_total_DU_capacity_by_year_and_subarea(subarea, years, workbook, run_name
         if year == base_year:
             query = '''select p.%s_id, sum(b.residential_units_capacity) as sum_res_units
                         into #res_unitscap_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -3806,7 +3806,7 @@ def get_total_DU_capacity_by_year_and_subarea(subarea, years, workbook, run_name
         else:
             query = '''select p.%s_id, sum(b.residential_units_capacity) as sum_res_units
                         into #res_unitscap_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -3857,7 +3857,7 @@ def get_total_DUs_by_year_and_subarea(subarea, years, workbook, run_name, base_y
         if year == base_year:
             query = '''select p.%s_id, sum(b.residential_units) as sum_res_units
                         into #res_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -3865,7 +3865,7 @@ def get_total_DUs_by_year_and_subarea(subarea, years, workbook, run_name, base_y
         else:
             query = '''select p.%s_id, sum(b.residential_units) as sum_res_units
                         into #res_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -3914,7 +3914,7 @@ def get_total_DUs_SF_by_year_and_subarea(subarea, years, workbook, run_name, bas
         if year == base_year:
             query = '''select p.%s_id, sum(b.residential_units) as sum_SF_res_units
                         into #sfres_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         where b.building_type_id in (1,3)
@@ -3923,7 +3923,7 @@ def get_total_DUs_SF_by_year_and_subarea(subarea, years, workbook, run_name, bas
         else:
             query = '''select p.%s_id, sum(b.residential_units) as sum_SF_res_units
                         into #sfres_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         where b.building_type_id in (1,3)
@@ -3973,7 +3973,7 @@ def get_total_DUs_MF_by_year_and_subarea(subarea, years, workbook, run_name, bas
         if year == base_year:
             query = '''select p.%s_id, sum(b.residential_units) as sum_MF_res_units
                         into #mfres_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         where b.building_type_id = 2
@@ -3982,7 +3982,7 @@ def get_total_DUs_MF_by_year_and_subarea(subarea, years, workbook, run_name, bas
         else:
             query = '''select p.%s_id, sum(b.residential_units) as sum_MF_res_units
                         into #mfres_units_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         where b.building_type_id = 2
@@ -4032,7 +4032,7 @@ def get_total_nonres_sqft_by_year_and_subarea(subarea, years, workbook, run_name
         if year == base_year:
             query = '''select p.%s_id, sum(b.non_residential_sqft) as sum_non_res_sqft
                         into #non_res_sqft_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -4040,7 +4040,7 @@ def get_total_nonres_sqft_by_year_and_subarea(subarea, years, workbook, run_name
         else:
             query = '''select p.%s_id, sum(b.non_residential_sqft) as sum_non_res_sqft
                         into #non_res_sqft_%s
-                        from %s_%s_buildings b
+                        from %s_%s_buildingsWithSchools b
                         left join %s_%s_zones p
                         on b.zone_id = p.zone_id
                         group by p.%s_id
@@ -4423,7 +4423,7 @@ if __name__ == "__main__":
 #        row_counter = 1
 #        for year in self.years:
 #            print 'Computing percent of DUs built for year %s' % year
-#            r = self.connection.execute('select SUM(residential_units)/SUM(residential_units_capacity) from %s_%s_buildings' % (self.run_name,year))
+#            r = self.connection.execute('select SUM(residential_units)/SUM(residential_units_capacity) from %s_%s_buildingsWithSchools' % (self.run_name,year))
 #            for row in r:
 #                self.worksheet.write(row_counter,self.column_counter,row[0])
 #                row_counter += 1
@@ -4436,7 +4436,7 @@ if __name__ == "__main__":
 #        row_counter = 1
 #        for year in self.years:
 #            print 'Computing percent of nonres sqft built for year %s' % year
-#            r = self.connection.execute('select SUM(non_residential_sqft)/SUM(non_residential_sqft_capacity) from %s_%s_buildings' % (self.run_name,year))
+#            r = self.connection.execute('select SUM(non_residential_sqft)/SUM(non_residential_sqft_capacity) from %s_%s_buildingsWithSchools' % (self.run_name,year))
 #            for row in r:
 #                self.worksheet.write(row_counter,self.column_counter,row[0])
 #                row_counter += 1
