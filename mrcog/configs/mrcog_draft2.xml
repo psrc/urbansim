@@ -5,6 +5,7 @@
     <project_name hidden="True" type="string">mrcog</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <expression_library type="dictionary">
+      <variable name="dasz.dasz_population" source="expression" type="variable_definition" use="both">dasz.aggregate(household.persons,intermediates=[building,parcel])</variable>
       <variable name="parcel.ln_jobs_within_10_min_parcel" source="expression" type="variable_definition" use="model variable">ln(parcel.disaggregate(mrcog.zone.employment_within_10_travel_time_threshold))</variable>
       <variable name="parcel.average_year_built_20min" source="expression" type="variable_definition" use="model variable">parcel.disaggregate((mrcog.zone.medianyearbuilt_within_20_travel_time_threshold*mrcog.zone.buildings_within_20_travel_time_threshold)/mrcog.zone.buildings_within_20_travel_time_threshold)</variable>
       <variable name="parcel.ln_hh_30_min_parcel" source="expression" type="variable_definition" use="model variable">ln_bounded(parcel.disaggregate(mrcog.zone.hh_within_30_travel_time_threshold))</variable>
@@ -435,7 +436,7 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['mrcog','urbansim_parcel','urbansim','opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','neighborhood_board']</available_datasets>
+    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','gridcell','city','county','alldata','node','household_x_submarket','residential_unit','submarket','residential_building_type','employment_submarket','job','building_type','dasz']</available_datasets>
     <spatial_datasets type="list">['parcel','zone','faz','gridcell','city','county','node']</spatial_datasets>
   </general>
   <data_manager>
@@ -2284,7 +2285,7 @@
       <base_year type="integer">2010</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2040</lastyear>
+        <lastyear type="integer">2012</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable name="residential_price_model_1" return_value="residential_price_model" type="selectable">True</selectable>
@@ -2408,6 +2409,18 @@
   </scenario_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="dasz">
+        <batch_visualization hidden="Children" name="New visualization" type="batch_visualization">
+          <settings>
+            <setting name="append_col_type">False</setting>
+            <setting name="output_style">1</setting>
+          </settings>
+          <visualization_type>tab</visualization_type>
+          <indicators>['dasz_population']</indicators>
+          <output_type>tab</output_type>
+          <dataset_name>dasz</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
       <indicator_batch name="county">
         <batch_visualization hidden="Children" name="New visualization" type="batch_visualization">
           <indicators>['county_jobs', 'county_households', 'county_resunits', 'county_nonres_sqft']</indicators>
