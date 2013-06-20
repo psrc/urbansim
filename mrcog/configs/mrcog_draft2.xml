@@ -548,7 +548,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">parcel.parcel_acres&gt;.1</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">(parcel.parcel_acres&gt;.1)*(parcel.allow_mf==1)*(parcel.pct_undevelopable&lt;1)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">(building.building_type_id)*(building.building_type_id==2)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -560,8 +560,8 @@
               <key name="sample_size_locations" type="integer">50</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero(((((parcel.parcel_acres*43560)*1.5).round().astype(int32)) - (parcel.aggregate(building.non_residential_sqft)))/1500 - (parcel.aggregate(building.residential_units)))</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">((((parcel.parcel_acres*43560)*1.5).round().astype(int32)) - (parcel.aggregate(building.non_residential_sqft)))/1500</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0) - (parcel.aggregate(building.residential_units)))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0)</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">(parcel.aggregate(building.residential_units))</key>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
@@ -643,7 +643,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">parcel.parcel_acres&gt;.1</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">(parcel.parcel_acres&gt;.05)*(parcel.allow_sf==1)*(parcel.pct_undevelopable&lt;1)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">(building.building_type_id)*(building.building_type_id==1)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -655,8 +655,8 @@
               <key name="sample_size_locations" type="integer">50</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero(((((parcel.parcel_acres*43560)*1.5).round().astype(int32)) - (parcel.aggregate(building.non_residential_sqft)))/1500 - (parcel.aggregate(building.residential_units)))</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">((((parcel.parcel_acres*43560)*1.5).round().astype(int32)) - (parcel.aggregate(building.non_residential_sqft)))/1500</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0) - (parcel.aggregate(building.residential_units)))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0)</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">(parcel.aggregate(building.residential_units))</key>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
@@ -739,7 +739,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
-            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">parcel.parcel_acres&gt;.1</argument>
+            <argument convert_blank_to_none="True" model_dependency_type="variable" name="filter" parser_action="quote_string" type="string">(parcel.parcel_acres&gt;.1)*(parcel.allow_comm==1)*(parcel.pct_undevelopable&lt;1)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="submodel_string" parser_action="quote_string" type="string">(building.building_type_id)*(building.building_type_id&gt;2)</argument>
             <argument convert_blank_to_none="True" model_dependency_type="variable" name="location_id_string" parser_action="quote_string" type="string">parcel_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -751,8 +751,8 @@
               <key name="sample_size_locations" type="integer">50</key>
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((((parcel.parcel_acres*43560)*1.5).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(((parcel.parcel_acres*43560)*1.5).round().astype(int32)-(parcel.aggregate(1500*building.residential_units)))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">clip_to_zero((((parcel.parcel_acres*43560)*parcel.max_far*(1-parcel.pct_undevelopable)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units))) - (parcel.aggregate(building.non_residential_sqft)))</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(((parcel.parcel_acres*43560)*parcel.max_far*(1-parcel.pct_undevelopable)).round().astype(int32)-(parcel.aggregate(1500*building.residential_units)))</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">(parcel.aggregate(building.non_residential_sqft))</key>
               <key name="lottery_max_iterations" type="integer">3</key>
             </argument>
