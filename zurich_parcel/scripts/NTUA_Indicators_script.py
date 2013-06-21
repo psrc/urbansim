@@ -82,9 +82,9 @@ transport_cost_per_km = '2.00'
 
 energy_consumption_rate = '1.50'
 
-cost_of_investment = 112000000 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr?, Zürcher Kantonalbank, Zürich. Seite 24.
+cost_of_investment = 112000000 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr, Zürcher Kantonalbank, Zürich. Seite 24.
 
-annual_operation_cost = 55 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr?, Zürcher Kantonalbank, Zürich. Seite 24.
+annual_operation_cost = 55 # Bruns, F., P. Kern and C. Abegg (2008) Wie weiter mit dem Verkehr, Zürcher Kantonalbank, Zürich. Seite 24.
 
 revenue_per_year = 100000
 
