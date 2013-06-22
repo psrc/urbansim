@@ -91,7 +91,9 @@
       <variable name="household_x_building.same_area_type" source="expression" type="variable_definition" use="model variable">urbansim_parcel.household.residence_area_type_id_lag1 == building.disaggregate(zone.area_type_id)</variable>
       <variable name="household_x_building.same_area" source="expression" type="variable_definition" use="model variable">urbansim_parcel.household.residence_large_area_id_lag1 == building.disaggregate(faz.large_area_id)</variable>
       <variable name="household_x_building.one_pers_x_not_sfr" source="expression" type="variable_definition" use="model variable">(household.persons &lt; 2) * numpy.logical_not(urbansim.building.is_single_family_residential)</variable>
-    </expression_library>
+    <variable name="household.size" source="expression" type="variable_definition" use="both">household.persons</variable>
+<variable name="household.number_of_children" source="expression" type="variable_definition" use="both">household.children</variable>
+</expression_library>
     <dataset_pool_configuration hidden="True" type="class">
       <class_name type="string">DatasetPoolConfiguration</class_name>
       <class_module type="string">opus_core.configurations.dataset_pool_configuration</class_module>
