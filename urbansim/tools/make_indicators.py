@@ -6,6 +6,7 @@ import sys, pickle
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_gui.main.opus_project import OpusProject
 from opus_gui.results_manager.results_manager_functions import get_batch_configuration
+from numpy import arange
 
 class MakeIndicatorsOptionGroup(GenericOptionGroup):
     def __init__(self):
