@@ -19,10 +19,11 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModel):
             capacity_string = "clip_to_zero((parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0) - parcel.aggregate(building.residential_units))",
             estimation_weight_string = "parcel_acres", 
             simulation_weight_string = None, # if this is None, weights are proportional to the capacity 
-            number_of_agents_string = "building.residential_units",
-            number_of_units_string = "clip_to_zero((parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0) - parcel.aggregate(building.residential_units))",            
+            ###number_of_agents_string = "building.residential_units",
+            #number_of_units_string = "clip_to_zero((parcel.parcel_acres*parcel.max_du_acre*(1-parcel.pct_undevelopable)) - (parcel.aggregate(building.non_residential_sqft)/1500.0) - parcel.aggregate(building.residential_units))",    
+            agent_units_string = "building.residential_units",            
             sample_proportion_locations = None, 
-            sample_size_locations = 30, 
+            sample_size_locations = 250, 
             estimation_size_agents = 1.0, 
             compute_capacity_flag = True, 
             filter=None,
@@ -38,10 +39,12 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModel):
                     ("sample_size_locations", sample_size_locations), 
                     ("compute_capacity_flag", compute_capacity_flag),
                     ("capacity_string", capacity_string),
-                    ("number_of_agents_string", number_of_agents_string),
-                    ("number_of_units_string", number_of_units_string),
+                    ###("number_of_agents_string", number_of_agents_string),
+                    ###("number_of_units_string", number_of_units_string),
+                    ("agent_units_string", agent_units_string),
                     ("weights_for_simulation_string", simulation_weight_string),
-                    ("demand_string", demand_string)                                                          
+                    ("demand_string", demand_string),
+                    ("lottery_max_iterations", 20)
                                           ])
         estimate_config = merge_resources_if_not_None(estimate_config, [ 
                     ("estimation", estimation), 
