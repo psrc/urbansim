@@ -1,0 +1,8 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# See opus_core/LICENSE 
+
+aliases = [
+    "county_id = household.disaggregate(zone.county_id, intermediates=[building])",
+    "type_tenure_county_id = 1*((household.building_type_id==1)*(household.tenure==1)*(household.county_id==1))+2*((household.building_type_id==1)*(household.tenure==1)*(household.county_id==2))+3*((household.building_type_id==1)*(household.tenure==1)*(household.county_id==3))+4*((household.building_type_id==1)*(household.tenure==1)*(household.county_id==4))+5*((household.building_type_id==1)*(household.tenure==2)*(household.county_id==1))+6*((household.building_type_id==1)*(household.tenure==2)*(household.county_id==2))+7*((household.building_type_id==1)*(household.tenure==2)*(household.county_id==3))+8*((household.building_type_id==1)*(household.tenure==2)*(household.county_id==4))+9*((household.building_type_id==2)*(household.tenure==1)*(household.county_id==1))+10*((household.building_type_id==2)*(household.tenure==1)*(household.county_id==2))+11*((household.building_type_id==2)*(household.tenure==1)*(household.county_id==3))+12*((household.building_type_id==2)*(household.tenure==1)*(household.county_id==4))+13*((household.building_type_id==2)*(household.tenure==2)*(household.county_id==1))+14*((household.building_type_id==2)*(household.tenure==2)*(household.county_id==2))+15*((household.building_type_id==2)*(household.tenure==2)*(household.county_id==3))+16*((household.building_type_id==2)*(household.tenure==2)*(household.county_id==4))",
+           ]
