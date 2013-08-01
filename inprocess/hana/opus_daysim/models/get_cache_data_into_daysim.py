@@ -45,10 +45,16 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
         variable_names = {}
         datasets = {}
         filenames = {}
+        in_table_names = {}
         for table_name in table_names:
             filter = data_to_export[table_name].get('__filter__', None)
             if filter is not None:
                 del data_to_export[table_name]['__filter__']
+            out_table_name = data_to_export[table_name].get('__out_table_name__', None)
+            if out_table_name is not None:
+                del data_to_export[table_name]['__out_table_name__']
+            else:
+                out_table_name = table_name
             variables_to_export = map(lambda alias: "%s = %s" % (alias, data_to_export[table_name][alias]), data_to_export[table_name].keys())
             dataset_name = None            
             for var in variables_to_export:
@@ -58,7 +64,8 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
                     ds = dataset_pool.get_dataset(dataset_name)
                     
                     datasets[dataset_name] = ds
-                    filenames[dataset_name] = table_name
+                    filenames[dataset_name] = out_table_name
+                    in_table_names[dataset_name] = table_name
                     if dataset_name not in variable_names.keys():
                         variable_names[dataset_name] = []
                 variable_names[dataset_name].append(var_name.get_alias())                
@@ -68,9 +75,9 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
                 ds = DatasetSubset(ds, index = filter_idx)
                 datasets[dataset_name] = ds
                 
-        return self._call_input_file_writer(year, datasets, filenames, variable_names, dataset_pool)
+        return self._call_input_file_writer(year, datasets, in_table_names, filenames, variable_names, dataset_pool)
 
-    def _call_input_file_writer(self, year, datasets, filenames, variable_names, dataset_pool):
+    def _call_input_file_writer(self, year, datasets, in_table_names, out_table_names, variable_names, dataset_pool):
         current_year_tm_dir = self.get_daysim_dir(year)
         file_config = self.config['travel_model_configuration'].get('daysim_file', {})
         file_format = file_config.get('format', 'tab')
@@ -86,17 +93,17 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
             kwargs['compression'] = file_config.get('hdf5_compression', None) 
         logger.start_block('Writing Daysim inputs.')
         for dataset_name, dataset in datasets.iteritems():
-            ds_meta = meta_data.get(filenames[dataset_name], {})
+            ds_meta = meta_data.get(in_table_names[dataset_name], {})
             if file_format.startswith('hdf5'):
                 kwargs['column_meta']  = ds_meta
             attr_vals = {}
             for attr in variable_names[dataset_name]:
                 attr_vals[attr] = dataset[attr]
-            storage.write_table(table_name = filenames[dataset_name], table_data = attr_vals, mode = mode[file_format], **kwargs)
+            storage.write_table(table_name = out_table_names[dataset_name], table_data = attr_vals, mode = mode[file_format], **kwargs)
             mode['hdf5g'] = Storage.APPEND
         logger.end_block()
         logger.log_status('Daysim inputs written into %s' % current_year_tm_dir)
-        return filenames.values()
+        return out_table_names.values()
     
 if __name__ == "__main__":
     try: import wingdbstub

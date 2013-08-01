@@ -20,6 +20,12 @@ class AbstractDaysimTravelModel(Model):
         """
         year_config = self.config['travel_model_configuration'][year]
         return os.path.join(self.get_daysim_base_dir(), year_config['daysim_exchange_dir'])
+    
+    def get_daysim_skim_dir(self, year):
+        """Returns the full path to the given subdirectory of the daysim skim data.
+        """
+        year_config = self.config['travel_model_configuration'][year]
+        return os.path.join(self.get_daysim_base_dir(), year_config['daysim_skim_dir'])
 
     def get_daysim_config_file(self, year):
         """Returns the full path to the config file for the specified year.
