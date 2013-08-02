@@ -13,7 +13,7 @@ class travel_distance_from_home_to_school_DDDtoDDD(abstract_travel_data_h5_incom
     origin_zone_id = "residence_zone_id = person.disaggregate(urbansim_parcel.household.zone_id)"
     destination_zone_id = "psrc_parcel.person.attending_school_zone_id"
     travel_data_attribute = "svtlINCd"
-    income_groups_attribute =  "income_groups = person.disaggregate(1*(household.income <= 50000) + 2*(household.income > 50000)*(household.income <= 100000) + 3*(household.income > 100000))"
+    income_groups_attribute =  "psrc_parcel.person.income_groups_for_tm"
 
     def __init__(self, from_time, to_time):
         abstract_travel_data_h5_income_variable_DDDtoDDD.__init__(self, from_time, to_time)
