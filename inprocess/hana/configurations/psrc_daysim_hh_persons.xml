@@ -36,9 +36,9 @@
          <urbansim_to_tm_variable_mapping type="dictionary">
 
         <households type="dictionary">
-        	<variable type="string" name="hhno">household.household_id</variable>
-        	<variable type="string" name="hhsize">household.persons</variable>
-        	<variable type="string" name="hhincome">household.income</variable>
+        	<variable type="string" name="hhno">(household.household_id).astype(int32)</variable>
+        	<variable type="string" name="hhsize">(household.persons).astype(int32)</variable>
+        	<variable type="string" name="hhincome">(household.income).astype(int32)</variable>
         	<variable type="string" name="hownrent">(numpy.logical_or(household.tenure == 1, household.tenure == 2) + 2*(household.tenure == 3) + 9*(household.tenure &gt; 3)).astype(int32)</variable>
         	<variable type="string" name="hhparcel">(urbansim_parcel.household.parcel_id).astype(int32)</variable>
         	<variable type="string" name="hhtaz">(urbansim_parcel.household.zone_id).astype(int32)</variable>
@@ -48,21 +48,21 @@
 			<variable type="string" name="__out_table_name__">Household</variable>
         </households>
         <persons type="dictionary">
-        	<variable type="string" name="hhno">person.household_id</variable>
-        	<variable type="string" name="pno">person.member_id</variable>
+        	<variable type="string" name="hhno">(person.household_id).astype(int32)</variable>
+        	<variable type="string" name="pno">(person.member_id).astype(int32)</variable>
         	<variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(person.student==1) * (psrc_parcel.person.age_category==5) + 6*(person.student &lt; 3) *(psrc_parcel.person.age_category==3) * (person.age &gt; 15)).astype(int32)</variable>
-        	<variable type="string" name="pagey">person.age</variable>
-        	<variable type="string" name="pgend">person.sex</variable>
-        	<variable type="string" name="pwtyp">1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)</variable>        	
+        	<variable type="string" name="pagey">(person.age).astype(int32)</variable>
+        	<variable type="string" name="pgend">(person.sex).astype(int32)</variable>
+        	<variable type="string" name="pwtyp">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>        	
         	<variable type="string" name="pwpcl">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
         	<variable type="string" name="pwtaz">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
-        	<variable type="string" name="pwautime">urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)</variable>
-        	<variable type="string" name="pwaudist">urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_5to6 - 1*(urbansim_parcel.person.is_worker==0)</variable>
+        	<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
+        	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_5to6 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
         	<variable type="string" name="pstyp">(person.student*(numpy.logical_or(person.student==1, person.student==2))).astype(int32)</variable>
 			<variable type="string" name="pspcl">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
 			<variable type="string" name="pstaz">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-			<variable type="string" name="psautime">psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)</variable>
-			<variable type="string" name="psaudist">psrc_parcel.person.travel_distance_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)</variable>
+			<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
+			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
 			<variable type="string" name="ptpass">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="ppaidprk">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="psexpfac">(person.person_id &gt; 0).astype(int32)</variable>
@@ -115,12 +115,12 @@
 		  <years_to_run key_name="year" type="category_with_special_keys">
 			<run_description type="dictionary">
 			  <year type="integer">2001</year>
-		  		<daysim_exchange_dir type="string">urbansim/2000/DSinputs06112013</daysim_exchange_dir> 
+		  		<daysim_exchange_dir type="string">urbansim/DSinputs06112013/2000</daysim_exchange_dir> 
 		  		<daysim_skim_dir type="string">skims/2000</daysim_skim_dir>
 			</run_description>
 			<run_description type="dictionary">
 			  <year type="integer">2011</year>
-			  <daysim_exchange_dir type="string">urbansim/2010/DSinputs07252013</daysim_exchange_dir>
+			  <daysim_exchange_dir type="string">urbansim/DSinputs08062013/2010</daysim_exchange_dir>
 			  <daysim_skim_dir type="string">skims/2010</daysim_skim_dir>
 			</run_description>
 		  </years_to_run>		
