@@ -10,9 +10,11 @@ from opus_core.logger import logger
 
 class Constants(dict):
     """ Load constants and sets some internal constants."""
-    def __init__(self, in_storage=None, in_table_name='urbansim_constants', set_values=True):
+    def __init__(self, in_storage=None, in_table_name='urbansim_constants', set_values=True, resources={}, **kwargs):
         self.set_internal_constants()
         if set_values:
+            if in_storage is None:
+                in_storage = resources.get('in_storage', None)
             self.load_constants(in_storage, in_table_name)
             self.set_computed_constants()
 
