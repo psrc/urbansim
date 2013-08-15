@@ -67,6 +67,12 @@ class TravelDataH5SkimDataset(UrbansimDataset):
             logger.log_warning('Skim file %s does not exist.' % file_name)
             return None
         f = h5py.File(file_name, "r")
+        if 'Skims' not in f.keys():
+            logger.log_warning('Wrong structure of the skim file %s' % file_name)
+            return None            
+        if name not in f['Skims'].keys():
+            logger.log_warning('Skim %s not found.' % name)
+            return None
         result = f['Skims'][name][...]
         f.close()
         return result 
@@ -92,7 +98,10 @@ class TravelDataH5SkimDataset(UrbansimDataset):
                               from_time=from_time, to_time=to_time)
     
     def _get_attribute(self, name, as_matrix=False, from_zone=None, to_zone=None, from_time=5, to_time=24):
-        """return attribute "name" of travel_data as a 2d array, index by (from_zone_id, to_zone_id)
+        """Return attribute "name" of travel_data as either a 2d array index by (from_zone, to_zone), if as_matrix is True,
+        or as a 1d array (default) in which case i-th element of from_zone is connected to the i-th element of to_zone,
+        thus from_zone and to_zone must have the same length.
+        The skims are averaged over the given time periods.
         """
         result = None
         time_index = self._get_time_index(from_time, to_time)
