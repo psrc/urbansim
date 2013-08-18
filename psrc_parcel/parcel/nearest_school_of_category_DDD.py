@@ -46,19 +46,23 @@ class Tests(opus_unittest.OpusTestCase):
             'school':
             {
              "school_id":array([1,2,3,4, 5, 6, 7]),
-             "parcel_id":array([1,2,3,7, 7, 1, 8]),
+             "parcel_id":array([1,2,3,7, 5, 6, 8]),
              #"sxcoord":array([1,2,3,2,2,1,3]),
              #"sycoord":array([1,1,1,2,2,1,3]),
              "category": array(['K', 'E', 'EMH', 'M', 'EM', 'E', 'E'])
              },
         })
-        should_be = array([6, 2, 3, 3, 5, 7, 5, 7])
+        should_be = array([1, 2, 3, 3, 5, 6, 2, 7])
 
         instance_name = 'psrc_parcel.parcel.nearest_school_of_category_2'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
         
-        instance_name = 'psrc_parcel.parcel.nearest_school_of_category_12'
-        should_be = array([1, 2, 3, 3, 5, 7, 5, 7])
+        instance_name = 'psrc_parcel.parcel.nearest_school_of_category_23'
+        should_be = array([1, 2, 3, 3, 5, 6, 4, 7])
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
+        
+        instance_name = 'psrc_parcel.parcel.nearest_school_of_category_4'
+        should_be = array([3, 3, 3, 3, 3, 3, 3, 3])
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 
