@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 #
-from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf, isnan, tile, transpose, concatenate, array
+from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf, isnan, tile, transpose, concatenate, array, take, put, newaxis
 from opus_core.misc import unique
 from opus_core.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
@@ -82,9 +82,12 @@ class nl_probabilities(Probabilities):
         if leaves.ndim < 3:
             for nest in range(M):
                 if not correct_for_sampling:
-                    altsidx = where(leaves == nest)
-                    nestutils = utils[altsidx]
-                    nestutils = array(reshape(nestutils,(N,nestutils.size/N)),dtype="float64")
+                    altsidx = where(leaves[nest,])[0]
+                    # construct a result of 'where' as if run on each agent
+                    altsidx_y = tile(altsidx, (N,))
+                    altsidx_x = tile(arange(N)[:,newaxis], (1, altsidx.size)).flatten()
+                    #altsidx = (altsidx_x, altsidx_y)         
+                    nestutils = take(utils, indices=altsidx, axis=1)               
                 else: 
                     altsidx = where(stratum_id == nesting_keys[nest])
                     nestutils = array(reshape(utils[altsidx],(N,sampling_size[nest])),dtype="float64")
@@ -115,12 +118,11 @@ class nl_probabilities(Probabilities):
 
                 if correct_for_sampling:
                     mcfaddencorrection = sampling_nest_size[nest]/sampling_size[nest]
+                    p = reshape(exp(nestutils+logG+log(mcfaddencorrection)),(nestutils.size,))
+                    Pnm[altsidx] = p
                 else:
-                    mcfaddencorrection = 1.0 
-
-                p = reshape(exp(nestutils+logG+log(mcfaddencorrection)),(nestutils.size,))
-
-                Pnm[altsidx] = p
+                    p = reshape(exp(nestutils+logG),(nestutils.size,))
+                    Pnm[(altsidx_x, altsidx_y)] = p
 
         else: # for 3D tree structure the index is handled differently
             for nest in range(M):
