@@ -2,10 +2,11 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import zeros, concatenate, array, where, ndarray, sort, ones, all
+from numpy import zeros, concatenate, array, where, ndarray, sort, ones, all,empty, isnan, isinf, asarray
 from opus_core.misc import unique
 from opus_core.models.choice_model import ChoiceModel
 from opus_core.samplers.constants import NO_STRATUM_ID
+from opus_core.logger import logger
 
 class HierarchicalChoiceModel(ChoiceModel):
     """ Choice model with hierarchical structure, such as nested logit."""
@@ -175,6 +176,59 @@ class HierarchicalChoiceModel(ChoiceModel):
         if nest is None:
             return data
         return data[:,:,:,self.model_interaction.specified_coefficients.other_dimensions_mapping['dim_%s' % self.nest_id_name][nest]]
+
+    def simulate_chunk(self):
+        """ Like ChoiceModel, but here we need to simulate probabilities directly in the submodel loop, 
+         because the logsums are passed directly from utilities to probabilities.
+         Does not work with availability and prices.
+         """
+        self.debug.print_debug("Compute variables ...",4)
+        self.increment_current_status_piece()
+        self.model_interaction.compute_variables()
+        
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        
+        coef = {}
+        index = self.run_config["index"]
+        self.debug.print_debug("Simulate ...",4)
+        choices = empty((self.observations_mapping["index"].size,), dtype='int32')
+
+        for submodel in self.model_interaction.get_submodels():
+            self.model_interaction.prepare_data_for_simulation(submodel)
+            coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
+            self.coefficient_names[submodel] = self.model_interaction.get_variable_names_for_simulation(submodel)
+            self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, self.observations_mapping[submodel].size), 5)
+            self.increment_current_status_piece()
+            if self.model_interaction.is_there_data(submodel): # observations for this submodel available
+                self.run_config.merge({"specified_coefficients": coef[submodel]})
+                coef_vals = coef[submodel].get_coefficient_values()
+                coef_names = coef[submodel].get_coefficient_names()
+                data = self.get_all_data(submodel)
+
+                nan_index = where(isnan(data))[2]
+                inf_index = where(isinf(data))[2]
+                vnames = asarray(coef[submodel].get_variable_names())
+                if nan_index.size > 0:
+                    nan_var_index = unique(nan_index)
+                    data = nan_to_num(data)
+                    logger.log_warning("NaN(Not A Number) is returned from variable %s; it is replaced with %s." % (vnames[nan_var_index], nan_to_num(nan)))
+                    #raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[nan_var_index]
+                if inf_index.size > 0:
+                    inf_var_index = unique(inf_index)
+                    data = nan_to_num(data)
+                    logger.log_warning("Inf is returned from variable %s; it is replaced with %s." % (vnames[inf_var_index], nan_to_num(inf)))                    
+                    #raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % vnames[inf_var_index]
+                    
+                choices[self.observations_mapping[submodel], :] = self.upc_sequence.run(data, coef_vals, resources=self.run_config)
+
+        if self.run_config.get("export_simulation_data", False):
+            self.export_probabilities(self.upc_sequence.probabilities, 
+                                      self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
+       
+        if self.compute_demand_flag:
+            self.compute_demand(self.upc_sequence.probabilities)
+
+        return choices
 
 from opus_core.choice_model import ModelInteraction
 class ModelInteractionHM(ModelInteraction):

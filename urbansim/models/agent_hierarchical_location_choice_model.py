@@ -42,6 +42,9 @@ class AgentHierarchicalLocationChoiceModel(AgentLocationChoiceModel, Hierarchica
     def get_number_of_elemental_alternatives(self):
         return HierarchicalChoiceModel.get_number_of_elemental_alternatives(self)
         
+    def simulate_chunk(self):
+        return HierarchicalChoiceModel.simulate_chunk(self)
+        
 from opus_core.hierarchical_choice_model import ModelInteractionHM
 class ModelInteractionHierLCM(ModelInteractionHM):
     def set_selected_choice_for_LCM(self, selected_choice):
