@@ -13,8 +13,8 @@
 	  <model_system type="string">urbansim.model_coordinators.model_system</model_system>
 	  <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
+        <firstyear type="integer">2007</firstyear>
+        <lastyear type="integer">2007</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
       </models_to_run>	  
@@ -22,7 +22,7 @@
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
         <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/daysim</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/run_21.base_year_data</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data_school_estimation</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -34,23 +34,10 @@
       </datasets_to_preload>
       <travel_model_configuration type="dictionary">
          <urbansim_to_tm_variable_mapping type="dictionary">
-
-        <households type="dictionary">
-        	<variable type="string" name="hhno">(household.household_id).astype(int32)</variable>
-        	<variable type="string" name="hhsize">(household.persons).astype(int32)</variable>
-        	<variable type="string" name="hhincome">(household.income).astype(int32)</variable>
-        	<variable type="string" name="hownrent">(numpy.logical_or(household.tenure == 1, household.tenure == 2) + 2*(household.tenure == 3) + 9*(household.tenure &gt; 3)).astype(int32)</variable>
-        	<variable type="string" name="hhparcel">(urbansim_parcel.household.parcel_id).astype(int32)</variable>
-        	<variable type="string" name="hhtaz">(urbansim_parcel.household.zone_id).astype(int32)</variable>
-        	<variable type="string" name="hrestype">(household.disaggregate(1*urbansim.building.is_single_family_residential + 2*urbansim.building.is_multi_family_residential + 3*urbansim.building.is_condo_residential + 4*urbansim.building.is_mobile_home)).astype(int32)</variable>
-			<variable type="string" name="hhexpfac">(household.household_id &gt; 0).astype(int32)</variable>
-			<variable type="string" name="__filter__"> urbansim_parcel.household.parcel_id &gt; 0 </variable>
-			<variable type="string" name="__out_table_name__">Household</variable>
-        </households>
         <persons type="dictionary">
         	<variable type="string" name="hhno">(person.household_id).astype(int32)</variable>
         	<variable type="string" name="pno">(person.member_id).astype(int32)</variable>
-        	<variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(person.student==1) * (psrc_parcel.person.age_category==5) + 6*(person.student &lt; 3) *(psrc_parcel.person.age_category==3) * (person.age &gt; 15)).astype(int32)</variable>
+        	<variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(psrc_parcel.person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(psrc_parcel.person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(psrc_parcel.person.student==1) * (psrc_parcel.person.age_category==5) + 6*(psrc_parcel.person.student &lt; 3) *(psrc_parcel.person.age_category==3) * (person.age &gt; 15)).astype(int32)</variable>
         	<variable type="string" name="pagey">(person.age).astype(int32)</variable>
         	<variable type="string" name="pgend">(person.sex).astype(int32)</variable>
         	<variable type="string" name="pwtyp">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>        	
@@ -58,11 +45,11 @@
         	<variable type="string" name="pwtaz">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
         	<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
         	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_5to6 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
-        	<variable type="string" name="pstyp">(person.student*(numpy.logical_or(person.student==1, person.student==2))).astype(int32)</variable>
-			<variable type="string" name="pspcl">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-			<variable type="string" name="pstaz">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-			<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
+        	<variable type="string" name="pstyp">(psrc_parcel.person.student*(numpy.logical_or(psrc_parcel.person.student==1, psrc_parcel.person.student==2))).astype(int32)</variable>
+			<variable type="string" name="pspcl">(psrc_parcel.person.attending_school_parcel_id * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(int32)</variable>
+			<variable type="string" name="pstaz">(psrc_parcel.person.attending_school_zone_id * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(int32)</variable>
+			<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(float32)</variable>
+			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_5to6 * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(float32)</variable>
 			<variable type="string" name="ptpass">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="ppaidprk">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="psexpfac">(person.person_id &gt; 0).astype(int32)</variable>
@@ -74,20 +61,11 @@
 			<variable type="string" name="__out_table_name__">Person</variable>
 			<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
 			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>
-			<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			
+			<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(float32)</variable>
+			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (psrc_parcel.person.student &lt; 3) -1*(psrc_parcel.person.student == 3)).astype(float32)</variable>
          </persons>
          </urbansim_to_tm_variable_mapping>
          <meta_data type="dictionary">
-         	<households type="dictionary">
-         		<column type="dictionary" name="hrestype">
-         			<item type="array" name="lookup">['1: Single-family', '2: Multi-family', '3: Condo', '4: Mobile home']</item>
-         		</column>
-         		<column type="dictionary" name="hownrent">
-         			<item type="array" name="lookup">['1: Owned', '2: Rented', '3: Other', '9: Missing']</item>
-         		</column>
-         	</households>
          	<persons type="dictionary">
          		<column type="dictionary" name="pgend">
          			<item type="array" name="lookup">['1: Male', '2: Female', '9: Missing']</item>
@@ -101,13 +79,16 @@
          		<column type="dictionary" name="pptyp">
          			<item type="array" name="lookup">['1: Full-time worker', '2: Part-time worker', '3: Non-working adult age 65+', '4: Non-working adult age &lt; 65', '5: University student', '6: High-school student age 15+', '7: Child age 5-15', '8: Child age 0-4']</item>
          		</column>
+         		<column type="dictionary" name="pschooltype">
+         			<item type="array" name="lookup">['0: No school', '1: Public school', '2: Private school', '3: Home-school']</item>
+         		</column>
          	</persons>
          </meta_data>
 		 <daysim_file type="dictionary" >
 		 	 <format type="string">hdf5g</format>
 		 	<!-- <format type="string">tsv</format>  -->
 		 	<hdf5_compression type="string" convert_blank_to_none="True">gzip</hdf5_compression>
-		 	<name type="string">hh_and_persons.h5</name>
+		 	<name type="string">persons_for_estimation.h5</name>
 		 </daysim_file>
       <models type="selectable_list">
         <selectable name="inprocess.hana.opus_daysim.models.get_cache_data_into_daysim" type="selectable">True</selectable>
@@ -124,8 +105,13 @@
 		  		<daysim_skim_dir type="string">skims/2000</daysim_skim_dir>
 			</run_description>
 			<run_description type="dictionary">
+			  <year type="integer">2007</year>
+		  		<daysim_exchange_dir type="string">urbansim/DSinputs08132013/2006</daysim_exchange_dir> 
+		  		<daysim_skim_dir type="string">skims/2010</daysim_skim_dir>
+			</run_description>
+			<run_description type="dictionary">
 			  <year type="integer">2011</year>
-			  <daysim_exchange_dir type="string">urbansim/DSinputs08202013/2010</daysim_exchange_dir>
+			  <daysim_exchange_dir type="string">urbansim/DSinputs08062013/2010</daysim_exchange_dir>
 			  <daysim_skim_dir type="string">skims/2010</daysim_skim_dir>
 			</run_description>
 		  </years_to_run>		
