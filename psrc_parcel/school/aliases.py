@@ -5,6 +5,7 @@
 aliases = [
    "zone_id = school.disaggregate(parcel.zone_id)",
    "faz_id = school.disaggregate(zone.faz_id, intermediates=[parcel])",
+   "large_area_id = school.disaggregate(urbansim_parcel.parcel.large_area_id)",
    "school_district_id = school.disaggregate(parcel.school_district_id)",
    "is_in_category_1 = (school.category == 'D')",
    "is_in_category_2 = (school.category == 'K') + (school.category == 'E') + (school.category == 'EM') + (school.category == 'EMH')",
