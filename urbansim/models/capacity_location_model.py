@@ -95,6 +95,9 @@ class CapacityLocationModel(Model):
         else:
             weights = ones(location_subset.size())
         
+        if weights.sum() <=0:
+            logger.log_status("Locations' capacity sums to zero. Nothing to be done.")
+            return array([])        
         distr = weights/float(weights.sum())
         random_sample = probsample_replace(location_subset.get_id_attribute(), size=asubset.size(), 
                                        prob_array=distr)
