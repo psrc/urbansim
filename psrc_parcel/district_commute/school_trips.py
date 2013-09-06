@@ -4,11 +4,11 @@
 
 from psrc_parcel.abstract_variables.abstract_commute_trips import abstract_commute_trips
 
-class commute_trips(abstract_commute_trips):
+class school_trips(abstract_commute_trips):
     """
     """
     origin_person_variable = "home_district_id = person.disaggregate(zone.district_id, intermediates=[parcel, building, household])"
-    destination_person_variable = "workplace_district_id = person.disaggregate(zone.district_id, intermediates=[parcel, building, job])"  
+    destination_person_variable = "school_district_id = person.disaggregate(zone.district_id, intermediates=[parcel, school])"  
  
 
 from opus_core.tests import opus_unittest
@@ -46,22 +46,22 @@ class Tests(opus_unittest.OpusTestCase):
                      'household_id': array([1, 2, 3, 4, 5, 6, 7]),
                      'building_id':  array([1, 1, 2, 3, 8, 4, 7])
                      },
-                'job':
+                'school':
                     {
-                     'job_id':      array([1, 2, 3, 4, 5, 6]),
-                     'building_id': array([2, 8, 7, 3, 1, 2])
+                     'school_id': array([1, 2, 3, 4, 5, 6]),
+                     'parcel_id': array([2, 8, 7, 3, 1, 2])
                      },
                 'person':
                     {
                      'person_id':    array([1, 2, 3, 4, 5, 6, 7, 8]),
-                     'household_id': array([1, 1, 7, 3, 4, 4, 5, 6]),  #home_district_id: 1, 1, 4, 1, 1, 1, 4, 3 
-                     'job_id':       array([-1,2,-1, 3, 1, 4,-1, 5])   #work_district_id:-1, 4,-1, 4, 1, 1,-1, 1 
+                     'household_id': array([1, 1, 7, 3, 4, 4, 5, 6]), #home_district_id:   1, 1, 4, 1, 1, 1, 4, 3 
+                     'school_id':    array([-1,2,-1, 3, 1, 4,-1, 5])  #school_district_id:-1, 4,-1, 4, 1, 3,-1, 1 
                      },
                      
                     }
         )
         
-        should_be = array([2, 0, 2, 1, 0, 0, 0, 0, 0])
+        should_be = array([1, 1, 2, 1, 0, 0, 0, 0, 0])
 
         tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
 
