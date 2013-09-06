@@ -54,6 +54,9 @@ class persons_within_DDD_of_parcel(Variable):
                     results = kd_tree.query_ball_tree(kd_tree, self.radius)
     
                 with logger.block(name="cache"):
+                    if not SimulationState().cache_directory_exists():
+                        logger.log_warning("Cache does not exist and is created.")
+                        SimulationState().create_cache_directory()
                     self._cache_results(results)
                     
             with logger.block(name="sum results", verbose=False):
@@ -85,7 +88,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['urbansim_parcel', 'urbansim'],
+            package_order=['zurich_parcel', 'urbansim_parcel', 'urbansim'],
             test_data={
             'parcel':
             {
@@ -107,7 +110,7 @@ class Tests(opus_unittest.OpusTestCase):
         })
         should_be = array([15, 18, 14])
 
-        instance_name = 'urbansim_parcel.parcel.persons_within_1_of_parcel'
+        instance_name = 'zurich_parcel.parcel.persons_within_1_of_parcel'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':
