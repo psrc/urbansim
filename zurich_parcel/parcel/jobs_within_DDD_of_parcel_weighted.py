@@ -20,6 +20,7 @@ class jobs_within_DDD_of_parcel_weighted(Variable):
     def __init__(self, radius):
         self.radius = radius
         self.cache_file_name = os.path.join(SimulationState().get_cache_directory(), 'jobs_%s.pkl' % radius)
+        self.cache_distances_file_name = os.path.join(SimulationState().get_cache_directory(), 'distances_%s.pkl' % radius)
         Variable.__init__(self)
     
     def dependencies(self):
@@ -31,17 +32,22 @@ class jobs_within_DDD_of_parcel_weighted(Variable):
     def compute(self, dataset_pool):
         with logger.block(name="compute variable jobs_within_DDD_of_parcel_weighted with DDD=%s" % self.radius, verbose=False):
             results = None
-            with logger.block(name="trying to read cache file %s" % self.cache_file_name, verbose=False):
+            distances = None
+            with logger.block(name="trying to read cache files", verbose=False):
                 try:
                     results = self._load_results()
                 except IOError:
-                    logger.log_warning("Cache file could not be loaded")
+                    logger.log_warning("Cache file %s could not be loaded" % self.cache_file_name)
+                try:
+                    distances = self._load_distances()
+                except IOError:
+                    logger.log_warning("Cache file %s could not be loaded" % self.cache_distances_file_name)
     
             with logger.block(name="initialize datasets", verbose=False):
                 parcels = self.get_dataset()
                 arr = parcels.sum_dataset_over_ids(dataset_pool.get_dataset('job'), constant=1)
     
-            if not results:
+            if not results or not distances:
                 with logger.block(name="initialize coords", verbose=False):
                     coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         
@@ -57,6 +63,7 @@ class jobs_within_DDD_of_parcel_weighted(Variable):
                         logger.log_warning("Cache does not exist and is created.")
                         SimulationState().create_cache_directory()
                     self._cache_results(results)
+                    self._cache_distances(distances)
                     
             with logger.block(name="Sum weighted jobs in neighbourhood", verbose=False):
 #                return_values = array(map(lambda l: arr[l].sum(), results))
@@ -75,6 +82,17 @@ class jobs_within_DDD_of_parcel_weighted(Variable):
 
     def _load_results(self):
         filename = self.cache_file_name
+        my_file = open(filename, 'r')
+        return pickle.load(my_file)
+
+    def _cache_distances(self, distances): 
+        filename = self.cache_distances_file_name
+        my_file = open(filename, 'w')
+        pickle.dump(distances, my_file)
+        my_file.close()
+
+    def _load_distances(self):
+        filename = self.cache_distances_file_name
         my_file = open(filename, 'r')
         return pickle.load(my_file)
     
