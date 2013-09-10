@@ -22,7 +22,7 @@
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
         <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/daysim</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/run_21.base_year_data</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_31.2013_09_04_with_school_models</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -44,13 +44,13 @@
         	<variable type="string" name="hhtaz">(urbansim_parcel.household.zone_id).astype(int32)</variable>
         	<variable type="string" name="hrestype">(household.disaggregate(1*urbansim.building.is_single_family_residential + 2*urbansim.building.is_multi_family_residential + 3*urbansim.building.is_condo_residential + 4*urbansim.building.is_mobile_home)).astype(int32)</variable>
 			<variable type="string" name="hhexpfac">(household.household_id &gt; 0).astype(int32)</variable>
-			<variable type="string" name="__filter__"> urbansim_parcel.household.parcel_id &gt; 0 </variable>
+			<variable type="string" name="__filter__"> (urbansim_parcel.household.parcel_id &gt; 0)*(household.number_of_agents(person) &gt; 0) </variable>
 			<variable type="string" name="__out_table_name__">Household</variable>
         </households>
         <persons type="dictionary">
         	<variable type="string" name="hhno">(person.household_id).astype(int32)</variable>
         	<variable type="string" name="pno">(person.member_id).astype(int32)</variable>
-        	<variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(person.student==1) * (psrc_parcel.person.age_category==5) + 6*(person.student &lt; 3) *(psrc_parcel.person.age_category==3) * (person.age &gt; 15)).astype(int32)</variable>
+        	<variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(person.student &lt; 3) * (psrc_parcel.person.age_category==5) + 6*(person.student &lt; 3) *(psrc_parcel.person.age_category==4) * (person.age &gt; 15)).astype(int32)</variable>
         	<variable type="string" name="pagey">(person.age).astype(int32)</variable>
         	<variable type="string" name="pgend">(person.sex).astype(int32)</variable>
         	<variable type="string" name="pwtyp">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>        	
@@ -120,12 +120,12 @@
 		  <years_to_run key_name="year" type="category_with_special_keys">
 			<run_description type="dictionary">
 			  <year type="integer">2001</year>
-		  		<daysim_exchange_dir type="string">urbansim/DSinputs06112013/2000</daysim_exchange_dir> 
+		  		<daysim_exchange_dir type="string">urbansim/DSinputs09032013/2000</daysim_exchange_dir> 
 		  		<daysim_skim_dir type="string">skims/2000</daysim_skim_dir>
 			</run_description>
 			<run_description type="dictionary">
 			  <year type="integer">2011</year>
-			  <daysim_exchange_dir type="string">urbansim/DSinputs08202013/2010</daysim_exchange_dir>
+			  <daysim_exchange_dir type="string">urbansim/DSinputs09102013/2010</daysim_exchange_dir>
 			  <daysim_skim_dir type="string">skims/2010</daysim_skim_dir>
 			</run_description>
 		  </years_to_run>		
