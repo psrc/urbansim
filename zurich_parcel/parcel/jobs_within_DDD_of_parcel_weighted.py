@@ -54,8 +54,10 @@ class jobs_within_DDD_of_parcel_weighted(Variable):
                 with logger.block(name="build KDTree", verbose=False):
                     kd_tree = KDTree(coords, 100)
         
-                with logger.block(name="compute neighbourhoods and euclidean distances"):
+                with logger.block(name="compute neighbourhoods"):
                     results = kd_tree.query_ball_tree(kd_tree, self.radius)
+                    
+                with logger.block(name="compute euclidean distances"):
                     distances = kd_tree.sparse_distance_matrix(kd_tree, self.radius)
     
                 with logger.block(name="cache neighbourhoods"):
