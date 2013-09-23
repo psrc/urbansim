@@ -30,7 +30,8 @@ aliases = [
                             "(household.persons==6)*(household.income > 228500)",
                             "(household.persons==7)*(household.income > 257500)",
                             "(household.persons==8)*(household.income > 286500)",
-                            )
+                            ),
+           "new_zone_id = household.disaggregate(parcel.new_zone_id, intermediates=[building])",
            ]
 for cat in range(1,6):
     aliases.append("age_of_oldest_child_age_category_%s_in_private_school = household.aggregate(psrc_parcel.person.is_in_private_k12_school * (psrc_parcel.person.age_category == %s) * person.age, function=maximum)" % (cat, cat))
