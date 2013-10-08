@@ -15,7 +15,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.upc_factory import UPCFactory
 from opus_core.sampler_factory import SamplerFactory
 from opus_core.model_component_creator import ModelComponentCreator
-from opus_core.misc import DebugPrinter, unique
+from opus_core.misc import DebugPrinter, unique, get_indices_of_matched_items
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.models.chunk_model import ChunkModel
 from opus_core.chunk_specification import ChunkSpecification
@@ -542,8 +542,19 @@ class ChoiceModel(ChunkModel):
     def estimate_submodel(self, data, submodel=0):
         if self.model_interaction.is_there_data(submodel):
             return self.procedure.run(data, upc_sequence=self.upc_sequence, resources=self.estimate_config)
-        return {}
+        return self.update_coef_with_fixed_values(data.shape)
 
+
+    def update_coef_with_fixed_values(self, data_shape):
+        coef_names = self.estimate_config.get("coefficient_names", None)
+        fixed_coefs, fixed_values = self.estimate_config.get("fixed_values", (array([]), array([])))
+        if (coef_names is not None) and (fixed_coefs.size > 0):
+            index_of_fixed_values = get_indices_of_matched_items(coef_names, fixed_coefs)
+            est=zeros(data_shape[2]).astype("float32")
+            est[index_of_fixed_values] = fixed_values.astype(est.dtype)
+            return{"estimators": est}
+        return {}        
+        
     def get_sampling_weights(self, config, agent_set=None, agents_index=None, **kwargs):
         """Return weights_string in the config
         which is the value for key
