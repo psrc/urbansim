@@ -270,20 +270,6 @@ class OpusModel(object):
             self.running = False
             succeeded = True
             
-            ## make a copy of the full tree to run directory
-            
-            xml_file_name = os.path.basename(self.xml_config.full_filename)
-            file_name, ext = os.path.splitext(xml_file_name)
-            xml_file = os.path.join(statusdir, file_name + "_flattened" + ext)
-            self.xml_config.full_tree.write(xml_file, pretty_print = True)
-            
-            ## it may be better to save it with the run in services/run_activity database table
-            from opus_core.version_numbers import get_opus_version_number
-            version_numbers = get_opus_version_number()
-            version_file = os.path.join(statusdir, "opus_version_number.txt")
-            with open(version_file, 'w') as f:
-                f.write(version_numbers)
-            
         except SimulationRunError:
             self.running = False
             succeeded = False
