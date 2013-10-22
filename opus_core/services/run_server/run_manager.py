@@ -14,6 +14,8 @@ from opus_core.database_management.database_server import DatabaseServer
 from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.abstract_service import AbstractService
+from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_core.version_numbers import get_opus_version_number
 
 NO_SEED = None
 
@@ -36,6 +38,9 @@ class RunManager(AbstractService):
                 resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
         else:
             CacheFltData().run(resources)
+            
+        assert(os.path.isdir(self.current_cache_directory))
+        self.write_run_config(resources)
 
     def setup_new_run(self, cache_directory, configuration):
         #compose unique cache directory based on the history_id
@@ -63,6 +68,23 @@ class RunManager(AbstractService):
             os.environ['OPUSPROJECTNAME'] = run_resources['project_name']
             self.services_db.close()
             self.services_db = self.create_storage()
+            
+    def write_run_config(self, run_resources):
+        statusdir = self.current_cache_directory
+        
+        xml_full_file_name = run_resources.get('xml_file')
+        if xml_full_file_name:
+            xml_config = XMLConfiguration(xml_full_file_name)
+            xml_file_name = os.path.basename(xml_full_file_name)
+            file_name, ext = os.path.splitext(xml_file_name)
+            xml_file_name_flattened = os.path.join(statusdir, file_name + "_flattened" + ext)
+            xml_config.full_tree.write(xml_file_name_flattened, pretty_print=True)
+        
+        # # it may be better to save it with the run in services/run_activity database table
+        version_numbers = get_opus_version_number()
+        version_file = os.path.join(statusdir, "opus_version_number.txt")
+        with open(version_file, 'w') as f:
+            f.write(version_numbers)
 
     def run_run(self, run_resources, run_name = None, scenario_name=None, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running

@@ -244,6 +244,7 @@ class XMLConfiguration(object):
             config = parent_config
 
         config['project_name'] = project_name
+        config['xml_file'] = self.full_filename
         return config
 
     def get_estimation_configuration(self, model_name = None, model_group = None):
