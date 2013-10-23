@@ -116,12 +116,15 @@ class RefinementModel(Model):
                     if location_dataset is not None and len(agents_pool) == 0: # add unplaced agents into the pool
                         agents_pool += (where(agent_dataset[location_dataset.get_id_name()[0]] < 0)[0]).tolist()
                         
+                    logger.start_block('Do action')
                     action_function( agents_pool, this_refinement.amount,
                                  agent_dataset, location_dataset, 
                                  this_refinement, 
                                  dataset_pool )
+                    logger.end_block()
                 
                     if location_dataset is not None:
+                        logger.start_block('Updating location dataset')
                         self.subarea_id_name = '%s_id' % self.subarea_name
                         if location_dataset.get_dataset_name() == self.subarea_name and self.subarea_id_name not in agent_dataset.get_primary_attribute_names():
                             regions = agent_dataset[self.subarea_id_name].copy()
@@ -129,9 +132,13 @@ class RefinementModel(Model):
                             agent_dataset.add_attribute(name=self.subarea_id_name, data=regions, metadata=1)
                         if location_dataset.get_dataset_name() <> self.subarea_name and self.subarea_id_name in agent_dataset.get_primary_attribute_names():
                             agent_dataset.delete_one_attribute(self.subarea_id_name)
-                        
+                        logger.end_block()
+                    logger.start_block('Flushing agent set')
                     agent_dataset.flush_dataset()
+                    logger.end_block()
+                    logger.start_block('Updating dataset pool')
                     dataset_pool._remove_dataset(agent_dataset.get_dataset_name())
+                    logger.end_block()
                     if location_dataset is not None and self.demolish_buildings:
                         location_dataset.flush_dataset()
                         dataset_pool._remove_dataset(location_dataset.get_dataset_name())
