@@ -1126,7 +1126,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'whitespace.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, {'project_name':'test_project',
-                          'description': 'a test configuration'})
+                          'description': 'a test configuration',
+                          'xml_file': f,
+                         })
 
     def test_str_and_unicode(self):
         # check that the keys in the config dictionary are str, and that
@@ -1159,21 +1161,23 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                   'file1': 'testfile',
                                   'file2': os.path.join(prefix, 'testfile'),
                                   'dir1': 'testdir',
-                                  'dir2': os.path.join(prefix, 'testdir')})
+                                  'dir2': os.path.join(prefix, 'testdir'),
+                                  'xml_file': f,
+                                 })
 
     def test_scenario_inheritance(self):
         # test inheritance of scenarios with a chain of xml configurations
         f = os.path.join(self.test_configs, 'child_scenarios.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
         self.assertEqual(config,
-            {'project_name':'test_project','description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
+            {'project_name':'test_project','description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel', 'xml_file': f})
 
     def test_scenario_inheritance_external_parent(self):
         # test inheritance of scenarios with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'grandchild_scenario_external_parent.xml')
         config1 = XMLConfiguration(f).get_run_configuration('grandchild')
         self.assertEqual(config1,
-            {'project_name':'test_project','description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
+            {'project_name':'test_project','description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel', 'xml_file': f})
 
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration
@@ -1199,14 +1203,18 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'chunksize': 12,
                           'years': (1980, 1981),
                           'bool2': False,
-                          'int2': 13})
+                          'int2': 13,
+                          'xml_file': f,
+                         })
 
     def test_list_to_dict(self):
         f = os.path.join(self.test_configs, 'list_to_dict.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config,
                          {'project_name':'test_project',
-                          'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
+                          'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}},
+                          'xml_file': f,
+                         })
 
     def test_include(self):
         f = os.path.join(self.test_configs, 'include_test.xml')
@@ -1218,7 +1226,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'lastyear': 2020,
                           'x': 10,
                           'y': 20,
-                          'morestuff': {'x': 10, 'y': 20}})
+                          'morestuff': {'x': 10, 'y': 20},
+                          'xml_file': f,
+                         })
 
     def test_class_element(self):
         # test a configuration element that is a specified class
@@ -1385,7 +1395,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                     { 'name': 'prepare_for_run', 'arguments':
                     {'specification_storage': 'base_cache_storage',
                      'specification_table': 'real_estate_price_model_specification'
-                    }}}}}}
+                    }}}}},
+                      'xml_file': f,
+                    }
         self.assertEqual(config, should_be)
 
     def test_travel_model_config(self):
@@ -1396,7 +1408,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = {'project_name': 'test_project', 'travel_model_configuration':
             {'travel_model_base_directory': 'base3',
              'emme2_batch_file_name': 'QUICKRUN.bat',
-              2000: {'bank': ['2000_06'], 'emme2_batch_file_name': None}}}
+              2000: {'bank': ['2000_06'], 'emme2_batch_file_name': None}},
+              'xml_file': f,
+            }
         self.assertEqual(config, should_be)
 
     def test_get_estimation_specification(self):
