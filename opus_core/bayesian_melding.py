@@ -669,7 +669,7 @@ class BayesianMelding(MultipleRuns):
         i = 2
         for cl in confidence_levels:
             ci = self.get_probability_interval(cl/100.0)
-            result[:,i:(i+2)] = transpose(ci)
+            result[:,i:(i+2)] = ci
             i = i+2
         write_table_to_text_file(filename, result, mode='a', delimiter=delimiter)
         
@@ -865,3 +865,126 @@ class BayesianMeldingFromFile(BayesianMelding):
         return MultipleRuns._compute_variable_for_one_run(self, run_index, variable, dataset_name, year)
 
 
+import os
+from opus_core.tests import opus_unittest
+import tempfile
+
+from shutil import rmtree
+
+from numpy import array, arange, allclose, array_equal
+
+from opus_core.cache.create_test_attribute_cache import CreateTestAttributeCache
+from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset import Dataset
+
+class Tests(opus_unittest.OpusTestCase):
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+        self.cache_dir = os.path.join(self.temp_dir, 'run_1')
+        self.observed_file = os.path.join(self.temp_dir, 'observed_data')
+        
+    def tearDown(self):
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir)
+            
+    def _create_cache_data(self):
+        test_data = {
+            2000: { # base year
+                'households':{
+                    'id': arange(50)+1,
+                    'location_id':array(10*[1] + 25*[2] + 15*[3])
+                    },
+                'locations': {
+                    'location_id': array([1,2,3]) # hhs: 10, 25, 15           
+                    }
+                },
+            2005: { # present year
+                'households':{
+                    'household_id': arange(60)+1,
+                    'location_id':array(5*[1] + 10*[3] + 15*[2] + 20*[3] + 10*[1])
+                    },
+                'locations': {
+                    'location_id': array([1,2,3])  # hhs: 15, 15, 30          
+                    }
+                },
+            2010: { # future year
+                'households':{
+                    'household_id': arange(80)+1,
+                    'location_id':array(15*[1] + 10*[3] + 20*[2] + 25*[3] + 10*[1])
+                    },
+                'locations': {
+                    'location_id': array([1,2,3])  # hhs: 25, 20, 35          
+                    }
+                }
+        }
+        cache_creator = CreateTestAttributeCache()
+        cache_creator.create_attribute_cache_with_data(self.cache_dir, test_data)
+        
+    def _create_observed_data_file(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name = 'locations',
+                        table_data = {'location_id': arange(3) + 1,
+                                      'number_of_households': array([18, 14, 32])
+                                      }
+                        )
+        dataset = Dataset(in_storage = storage, 
+                           in_table_name='locations',
+                           id_name='location_id' 
+                           )
+        outstorage = StorageFactory().get_storage('tab_storage', storage_location = self.temp_dir)
+        dataset.write_dataset(out_storage=outstorage, out_table_name=self.observed_file)
+        
+    def test_bayesian_melding(self):
+        # set up run cache and observed data file
+        self._create_cache_data() # here it contains only one run cache, but can have multiple caches
+        self._create_observed_data_file()
+        indicator = 'number_of_households = location.number_of_agents(household)'
+        # Initiate the observed data object
+        observed_data = ObservedData(self.temp_dir, 
+                                 year=2005, # from what year are the observed data 
+                                 storage_type='tab_storage', # in what format
+                                 package_order=['opus_core'])
+        # Do this for each quantity of interest
+        observed_data.add_quantity(
+                variable_name = indicator, # What variable does the observed data correspond to
+                filename = self.observed_file, # In what file are values of this variable
+                transformation = 'sqrt' # What transformation should be performed (can be set to None)
+        )
+        
+        bm = BayesianMelding(self.temp_dir, 
+                         observed_data,                        
+                         base_year=2000, 
+                         prefix='run_', # within 'cache_directory' filter only directories with this prefix
+                         overwrite_cache_directories_file=True,
+                         package_order=['opus_core'])
+        # Main computation
+        weights = bm.compute_weights()
+        self.assertEqual(weights.size, 1) # size one because only one run
+        self.assertEqual(weights[0], 1) 
+        
+        # get bias and variance
+        bias = bm.get_bias()
+        variance = bm.get_variance()
+        # the above are dictionaries for each indicator, here only one:
+        # bm.observed_data.get_variable_names()
+        
+        # Export results for later use
+        bm.export_bm_parameters(self.temp_dir, filename='bm_parameters')
+        # Reload results 
+        bmf = BayesianMeldingFromFile(os.path.join(self.temp_dir, 'bm_parameters'), package_order=['opus_core'],
+                                      cache_file_location=self.temp_dir, prefix='run_', 
+                                      overwrite_cache_directories_file=True, transformation_pair = ("sqrt", "**2"))
+        self.assert_(allclose(bmf.get_bias()[0], bias[0]))
+        self.assert_(allclose(bmf.get_variance()[0], variance[0]))
+        
+        # posterior distribution for future years
+        posterior = bmf.generate_posterior_distribution(year=2010, 
+                                    quantity_of_interest=indicator,
+                                    replicates=10, propagation_factor=[0,1])
+        self.assert_(array_equal(posterior.shape, [3,10])) # 3 rows (1 row per location), 10 samples
+        pi = bmf.get_probability_interval(80)
+        bmf.export_confidence_intervals([80, 95], os.path.join(self.temp_dir, 'CIs'))
+        
+if __name__=='__main__':
+    opus_unittest.main()
