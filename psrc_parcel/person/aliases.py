@@ -18,7 +18,8 @@ aliases = [
            "edu_college = numpy.in1d(person.edu, (3,6,7))",
            "edu_pg = numpy.in1d(person.edu, (7,))",
            "edu_adv = numpy.in1d(person.edu, (6, 7))",
-           "student = numpy.logical_or(person.stype == 2, person.stype == 6)", # to get a value of 1 in persons_for_estimation that corresponds to student=1 in the persons table
+           #"student = numpy.logical_or(person.stype == 2, person.stype == 6)", # to get a value of 1 in persons_for_estimation that corresponds to student=1 in the persons table 
+           "student = 1*((person.stype == 2) + (person.stype == 3) + (person.stype == 6)) + 2*((person.stype == 4) + (person.stype == 5)) + 3*((person.stype > 6) + (person.stype < 1))", # match student attribute in persons table (1: primary/secondary student, 2: post-secondary student, 3: no student)
            "attending_school_parcel_id = person.disaggregate(school.parcel_id)",
            "attending_school_zone_id = person.disaggregate(parcel.zone_id, intermediates=[school])",
            "school_district_id = person.disaggregate(parcel.school_district_id, intermediates=[building])", # school district of home location 
