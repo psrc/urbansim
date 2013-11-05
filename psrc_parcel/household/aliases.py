@@ -9,7 +9,7 @@ aliases = [
            "age_of_oldest_child = household.aggregate((person.age<=18) * person.age, function=maximum)",
            "age_of_oldest_child_in_private_school = household.aggregate(psrc_parcel.person.is_in_private_k12_school * person.age, function=maximum)",
            "age_of_oldest_child_in_home_school = household.aggregate(person.home_school * (person.age <= 18) * person.age, function=maximum)",
-           "age_of_oldest_child_in_school = household.aggregate((psrc_parcel.person.student<3) * (person.age <= 18) * person.age, function=maximum)",
+           "age_of_oldest_child_in_school = household.aggregate((psrc_parcel.person.student<3) * (psrc_parcel.person.student>0) * (person.age <= 18) * person.age, function=maximum)",
            "school_of_oldest_child_private = household.aggregate((person.age==person.disaggregate(psrc_parcel.household.age_of_oldest_child_in_private_school)) * person.school_id, function=maximum)",
            "is_poor = %s + %s + %s + %s + %s + %s + %s + %s" % (
                             "(household.persons==1)*(household.income < 8350)",
