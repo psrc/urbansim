@@ -17,7 +17,8 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
     """
       
     same_demand_group = [3, 13, 4, 12]
-    all_MU_groups = same_demand_group + [8, 21]
+    #all_MU_groups = same_demand_group + [8, 21] # for ExpCode
+    all_MU_groups = []
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,
@@ -122,21 +123,24 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                     if key not in self.target_vacancy_reached:
                         self.target_vacancy_reached.append(key)
                     component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
-                    component_indexes = in1d(self.proposal_component_set['proposal_id'], self.proposal_component_set['proposal_id'][component_indexes])
-                    component_indexes2 = zeros(self.proposal_component_set.size(), dtype='bool8')                   
+                    # uncomment lines marked as ExpCode to turn on previous experimental code (Revisions 19818 and 19819) 
+                    # ExpCode # component_indexes = in1d(self.proposal_component_set['proposal_id'], self.proposal_component_set['proposal_id'][component_indexes])
+                    # ExpCode # component_indexes2 = zeros(self.proposal_component_set.size(), dtype='bool8')                   
                     # mark components as 'exclude' that have target vacancy met
                     for bt in self.target_vacancy_reached:
-                        component_indexes2 = logical_or(component_indexes2, logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt)))
-                    # for building types where there is demand, exclude components that are less than 40% of the proposals 
-                    for bt in self.all_MU_groups: 
-                        if bt in [item[0] for item in self.target_vacancy_reached]:
-                            continue
-                        component_indexes2 = logical_or(component_indexes2, 
-                                                        logical_and(component_indexes,
-                                                                    logical_and(self.proposal_component_set['percent_proposal'] <= 40, 
-                                                                                self.get_index_by_condition(self.proposal_component_set.column_values, bt))))
+                        component_indexes = logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt))
+                        # ExpCode (turn previous line off) # component_indexes2 = logical_or(component_indexes2, logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt)))
+ #  ExpCode #                 for bt in self.all_MU_groups: 
+ #                       if bt in [item[0] for item in self.target_vacancy_reached]:
+ #                           continue
+ #                       component_indexes2 = logical_or(component_indexes2, 
+ #                                                       logical_and(component_indexes,
+ #                                                                   logical_and(self.proposal_component_set['percent_proposal'] <= 40, 
+ #                                                                               self.get_index_by_condition(self.proposal_component_set.column_values, bt))))
                     # exclude proposals for which all components are marked as 'exclude' (component_index2)
-                    proposal_indexes = where(ndimage.sum(component_indexes2, labels=self.proposal_component_set['proposal_id'], 
+                    proposal_indexes = where(ndimage.sum(# ExpCode # component_indexes2, 
+                                    component_indexes, 
+                                    labels=self.proposal_component_set['proposal_id'], 
                                     index=self.proposal_set.get_id_attribute()) == self.proposal_set["number_of_components"])[0]
                     #proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
                     if not targets_reached[1]:
