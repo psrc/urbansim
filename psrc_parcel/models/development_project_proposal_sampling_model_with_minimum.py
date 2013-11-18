@@ -404,7 +404,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 trans_weights = self.weight[where_prop_to_modify_final]
                 if transpose_interpcl_weight:
                     trans_weights = log(trans_weights)
-                trans_weights = 1.2*trans_weights
+                #trans_weights = 1.2*trans_weights
                 if transpose_interpcl_weight:
                     trans_weights = exp(trans_weights)
                 self.weight[where_prop_to_modify_final] = trans_weights
