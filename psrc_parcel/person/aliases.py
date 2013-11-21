@@ -23,7 +23,7 @@ aliases = [
            "attending_school_parcel_id = person.disaggregate(school.parcel_id)",
            "attending_school_zone_id = person.disaggregate(parcel.zone_id, intermediates=[school])",
            "school_district_id = person.disaggregate(parcel.school_district_id, intermediates=[building])", # school district of home location 
-           "is_in_private_or_public_k12_school = numpy.logical_and((person.stype == 2)* (person.age <= 18), numpy.logical_or(psrc_parcel.person.is_in_private_school, psrc_parcel.person.is_in_public_school))",
+           "is_in_private_or_public_k12_school = numpy.logical_and((person.stype == 2)* (person.age <= 18) * (person.age >= 5), numpy.logical_or(psrc_parcel.person.is_in_private_school, psrc_parcel.person.is_in_public_school))",
            "is_in_private_school = numpy.logical_and(person.is_in_school, person.school_type == 2)",
            "is_in_private_k12_school = numpy.logical_and(psrc_parcel.person.is_in_private_school, person.stype == 2)",
            "is_in_home_school = numpy.logical_and(person.is_in_school, person.stype == 6)",
