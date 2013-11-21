@@ -5,9 +5,8 @@
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel as DevelopmentProjectProposalSamplingModelWithMinimum
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.simulation_state import SimulationState
-from numpy import where, intersect1d, in1d, array, unique, ones, logical_and, logical_or, zeros
+from numpy import where, intersect1d, in1d, array, unique, ones
 from scipy.ndimage import maximum
-from opus_core import ndimage
 from collections import defaultdict
 
 class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSamplingModelWithMinimum):
@@ -17,8 +16,6 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
     """
       
     same_demand_group = [3, 13, 4, 12]
-    #all_MU_groups = same_demand_group + [8, 21] # for ExpCode
-    all_MU_groups = []
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,
@@ -36,9 +33,6 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
         if target_vacancy_for_this_year.size() == 0:
             raise IOError, 'No target vacancy defined for year %s.' % year
         self.all_btypes_size = target_vacancy_for_this_year.size()
-        self.target_vacancy_reached = []
-        self.proposal_component_set.compute_variables(["percent_proposal = development_project_proposal_component.disaggregate(development_template_component.percent_building_sqft)"],
-                                                      dataset_pool=self.dataset_pool)
         return DevelopmentProjectProposalSamplingModelWithMinimum.run(self, n=n, realestate_dataset_name=realestate_dataset_name,
                                                                       current_year=current_year, **kwargs)
         
@@ -120,29 +114,8 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                 self.accounting[key]["proposed_spaces"] += value
                 targets_reached = self._are_targets_reached(key)
                 if targets_reached[0]:
-                    if key not in self.target_vacancy_reached:
-                        self.target_vacancy_reached.append(key)
                     component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
-                    # uncomment lines marked as ExpCode to turn on previous experimental code (Revisions 19818 and 19819) 
-                    # ExpCode # component_indexes = in1d(self.proposal_component_set['proposal_id'], self.proposal_component_set['proposal_id'][component_indexes])
-                    # ExpCode # component_indexes2 = zeros(self.proposal_component_set.size(), dtype='bool8')                   
-                    # mark components as 'exclude' that have target vacancy met
-                    for bt in self.target_vacancy_reached:
-                        component_indexes = logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt))
-                        # ExpCode (turn previous line off) # component_indexes2 = logical_or(component_indexes2, logical_and(component_indexes, self.get_index_by_condition(self.proposal_component_set.column_values, bt)))
- #  ExpCode #                 for bt in self.all_MU_groups: 
- #                       if bt in [item[0] for item in self.target_vacancy_reached]:
- #                           continue
- #                       component_indexes2 = logical_or(component_indexes2, 
- #                                                       logical_and(component_indexes,
- #                                                                   logical_and(self.proposal_component_set['percent_proposal'] <= 40, 
- #                                                                               self.get_index_by_condition(self.proposal_component_set.column_values, bt))))
-                    # exclude proposals for which all components are marked as 'exclude' (component_index2)
-                    proposal_indexes = where(ndimage.sum(# ExpCode # component_indexes2, 
-                                    component_indexes, 
-                                    labels=self.proposal_component_set['proposal_id'], 
-                                    index=self.proposal_set.get_id_attribute()) == self.proposal_set["number_of_components"])[0]
-                    #proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
+                    proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
                     if not targets_reached[1]:
                         # disable proposals for all parcels with proposals of this BT 
                         proposal_indexes = intersect1d(where(self.get_index_by_condition(self.proposal_set['status_id'], self.proposal_set.id_tentative))[0], proposal_indexes)  
