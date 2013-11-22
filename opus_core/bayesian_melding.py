@@ -638,11 +638,13 @@ class BayesianMelding(MultipleRuns):
     def get_exact_quantile(self, alpha, transformed_back=True, **kwargs):
         vars = self.get_posterior_component_variance()
         means = self.get_posterior_component_mean()
+        if means.ndim < 2:
+            means = means[:,newaxis]
         weights = self.get_weights()
         sig = sqrt(vars)
-        res = zeros(means.size)
-        for i in range(means.size):
-            res[i] = bmaquant(alpha, weights, means[i], sig, **kwargs)
+        res = zeros(means.shape[0])
+        for i in range(means.shape[0]):
+            res[i] = bmaquant(alpha, weights, means[i,:], sig, **kwargs)
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): 
             res = try_transformation(res, self.transformation_pair_for_prediction[1])
         return res
