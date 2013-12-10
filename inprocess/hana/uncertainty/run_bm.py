@@ -38,12 +38,13 @@ if __name__ == "__main__":
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/observed_data"
     validation_year = 2010
-    #run = 223
-    run = 'MR223'
+    run = 223
+    #run = 'MR223'
+    #run = 'MR'
     run_name_prefix = 'run_%s' % run
     #validation_geography = 'large_area'
-    validation_geography = 'faz'
-    #validation_geography = 'city'
+    #validation_geography = 'faz'
+    validation_geography = 'city'
     output_dir_base = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal"
     output_directory = "%s/run%s_val%s_%s" % (output_dir_base, run, validation_year, validation_geography)
     
@@ -179,7 +180,7 @@ if __name__ == "__main__":
     from run_bm import export_quantiles
     from run_bm_from_file import export_quant
     output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)
-    export_quant(bm, output_directory, validation_geography)
+    #export_quant(bm, output_directory, validation_geography, years=[2040])
     #export_quantiles(bm, output_directory, years=[2010, 2015, 2020, 2030, 2040], validation_year=validation_year, validation_geography=validation_geography)
     #export_quantiles(bm, output_directory, years=[2040], validation_year=validation_year, validation_geography=validation_geography)
     #export_quantiles(bm, output_directory, years=[2010, 1013] + range(2015, 2026, 5), validation_year=validation_year, validation_geography=validation_geography)
@@ -188,7 +189,7 @@ if __name__ == "__main__":
 def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year=2010, validation_geography='faz', 
                         propfac_hh=0.95, propfac_jobs=3.5, propfac_pop=3.9, **kwargs):
     header_base = ['mean', 'median', 'lower_50', 'upper_50', 'lower_80', 'upper_80', 'lower_90', 'upper_90', 'lower_95', 'upper_95']
-    idcolname = {'zone': 'zone_id', 'faz': 'faz_id', 'large_area': 'large_area_id'}
+    idcolname = {'zone': 'zone_id', 'faz': 'faz_id', 'large_area': 'large_area_id', 'city': 'city_id'}
     header = {}
     for g in idcolname.keys():
         header[g] = array([idcolname[g]] + header_base)[newaxis,:]
