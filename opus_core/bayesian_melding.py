@@ -635,7 +635,7 @@ class BayesianMelding(MultipleRuns):
             return self.get_quantiles([alpha, 1-alpha])
         return concatenate((self.get_exact_quantile(alpha, **kwargs)[:,newaxis], self.get_exact_quantile(1-alpha, **kwargs)[:,newaxis]), axis=1)
         
-    def get_exact_quantile(self, alpha, transformed_back=True, **kwargs):
+    def get_exact_quantile(self, alpha, transformed_back=True, truncated=True, **kwargs):
         vars = self.get_posterior_component_variance()
         means = self.get_posterior_component_mean()
         if means.ndim < 2:
@@ -645,6 +645,8 @@ class BayesianMelding(MultipleRuns):
         res = zeros(means.shape[0])
         for i in range(means.shape[0]):
             res[i] = bmaquant(alpha, weights, means[i,:], sig, **kwargs)
+        if truncated: # truncate at 0
+            res = maximum(res, 0)
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): 
             res = try_transformation(res, self.transformation_pair_for_prediction[1])
         return res
