@@ -870,6 +870,15 @@ class ChoiceModel(ChunkModel):
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name=[])
         return ds
 
+    def get_agent_set(self):
+        return self.model_interaction.interaction_dataset.get_dataset(1)
+    
+    def get_agent_set_index(self):
+        return self.model_interaction.interaction_dataset.get_index(1)
+    
+    def get_agent_set_index_for_submodel(self, submodel):
+        return self.model_interaction.interaction_dataset.get_index(1)[self.observations_mapping[submodel]]
+    
     def get_all_data(self, submodel):
         return self.model_interaction.get_data(submodel)
         

@@ -52,6 +52,7 @@ class RegressionModel(ChunkModel):
             
         self.data = {}
         self.coefficient_names = {}
+        self.coefficient_names_all = {}
         ChunkModel.__init__(self)
         self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
@@ -81,7 +82,9 @@ class RegressionModel(ChunkModel):
         self.run_config.merge({"debug":self.debug})
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        self.dataset_pool.replace_dataset(dataset.get_dataset_name(), dataset)
+        self.dataset_name = dataset.get_dataset_name()
+        self.dataset_pool.replace_dataset(self.dataset_name, dataset)
+        
         if procedure is not None: 
             self.regression = RegressionModelFactory().get_model(name=procedure)
         if initial_values is None:
@@ -116,6 +119,7 @@ class RegressionModel(ChunkModel):
         for submodel in submodels:
             coef[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients,submodel)
             self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]
+            self.coefficient_names_all[submodel] = coef[submodel].get_coefficient_names()[0,:]
             self.debug.print_debug("Compute regression for submodel " +str(submodel),4)
             self.increment_current_status_piece()
             self.data[submodel] = dataset.create_regression_data(coef[submodel],
@@ -245,6 +249,7 @@ class RegressionModel(ChunkModel):
             self.data[submodel] = dataset.create_regression_data_for_estimation(coef[submodel],
                                                             index = estimation_idx[self.observations_mapping[submodel]])
             self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]
+            self.coefficient_names_all[submodel] = coef[submodel].get_coefficient_names()[0,:]
             if (self.data[submodel].shape[0] > 0) and (self.data[submodel].size > 0) and (self.procedure is not None): # observations for this submodel available
                 self.outcome[submodel] = dataset.get_attribute_by_index(outcome_variable_name.get_alias(), estimation_idx[self.observations_mapping[submodel]])   
                 regression_resources.merge({"outcome":  self.outcome[submodel]})
@@ -290,12 +295,12 @@ class RegressionModel(ChunkModel):
         return (spec, index)
     
     def get_data_as_dataset(self, submodel=-2):
-        """Like get_all_data, but the retuning value is a Dataset containing attributes that
+        """Like get_all_data, but the returning value is a Dataset containing attributes that
         correspond to the data columns. Their names are coefficient names."""
         all_data = self.get_all_data(submodel)
         if all_data is None:
             return None
-        names = self.get_coefficient_names(submodel)
+        names = self.coefficient_names_all[submodel]
         if names is None:
             return None
         dataset_data = {}
@@ -307,6 +312,15 @@ class RegressionModel(ChunkModel):
         ds = Dataset(in_storage=storage, id_name="id", in_table_name='dataset')
         return ds
 
+    def get_agent_set(self):
+        return self.dataset_pool.get_dataset(self.dataset_name)
+    
+    def get_agent_set_index(self):
+        return self.observations_mapping["index"]
+    
+    def get_agent_set_index_for_submodel(self, submodel):
+        return self.observations_mapping[submodel]
+    
     def save_predicted_values_and_errors(self, specification, coefficients, dataset, outcome_variable, index=None, data_objects=None):
         if self.estimate_config.get('save_predicted_values_and_errors', False):
             logger.log_status('Computing predicted values and residuals.')

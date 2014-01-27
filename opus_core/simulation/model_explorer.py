@@ -161,22 +161,19 @@ class ModelExplorer(object):
         return DatasetSubset(ds, choices)
                              
     def get_agent_set(self):
-        """Return a Dataset of all agents. Works only for the ChoiceModel class.
+        """Return a Dataset of all agents.
         """
-        return self.get_model().model_interaction.interaction_dataset.get_dataset(1)
+        return self.get_model().get_agent_set()
         
     def get_agent_set_index(self):
-        """Return an array of indices of agents that are the choosers. 
-        Works only for the ChoiceModel class.
+        """Return an array of indices of agents active in the model. 
         """
-        return self.get_model().model_interaction.interaction_dataset.get_index(1)
+        return self.get_model().get_agent_set_index()
         
     def get_agent_set_index_for_submodel(self, submodel):
-        """Return an array of indices of agents for the given submodel that are the choosers. 
-        Works only for the ChoiceModel class.
+        """Return an array of indices of agents for the given submodel. 
         """
-        model = self.get_model()
-        return model.model_interaction.interaction_dataset.get_index(1)[model.observations_mapping[submodel]]
+        return self.get_model().get_agent_set_index_for_submodel(submodel)
     
     def get_active_agent_set(self, submodel=None):
         """Return agent set that make choices in the model.
