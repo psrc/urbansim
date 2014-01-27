@@ -249,7 +249,7 @@ class RegressionModel(ChunkModel):
             self.data[submodel] = dataset.create_regression_data_for_estimation(coef[submodel],
                                                             index = estimation_idx[self.observations_mapping[submodel]])
             self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]
-            self.coefficient_names_all[submodel] = coef[submodel].get_coefficient_names()[0,:]
+            self.coefficient_names_all[submodel] = self.coefficient_names[submodel] # should correspond to the self.data array (which does not contain constant in estimation) 
             if (self.data[submodel].shape[0] > 0) and (self.data[submodel].size > 0) and (self.procedure is not None): # observations for this submodel available
                 self.outcome[submodel] = dataset.get_attribute_by_index(outcome_variable_name.get_alias(), estimation_idx[self.observations_mapping[submodel]])   
                 regression_resources.merge({"outcome":  self.outcome[submodel]})
