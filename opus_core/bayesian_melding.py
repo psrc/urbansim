@@ -775,19 +775,21 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.v = {}
         self.weight_components = {}
         self.package_order = package_order
+        if cache_file_location is not None: 
+            BayesianMelding.set_cache_attributes(self, cache_file_location, **kwargs)
+        self.number_of_runs = len(self.cache_set)
+        self.weights = array(self.number_of_runs * [1./float(self.number_of_runs)])
         counter = 1
         for i in range(nvar):
             self.variable_names.append(content[counter])
             counter += 1
             splitted_row = content[counter].split(' ')
             self.ahat[i], self.v[i] = map(lambda x: array([float(x)]), splitted_row)
-            self.weight_components[i] = array([1.])
+            self.ahat[i] = array(self.number_of_runs * [self.ahat[i][0]])
+            self.v[i] = array(self.number_of_runs * [self.v[i][0]])
+            self.weight_components[i] = array(self.number_of_runs * [1./float(self.number_of_runs)])
             counter += 1
-        self.weights = array([1.])
-        self.number_of_runs = 1
         self.additional_datasets = additional_datasets
-        if cache_file_location is not None: 
-            BayesianMelding.set_cache_attributes(self, cache_file_location, **kwargs)
         self.transformation_pair_for_prediction = transformation_pair
         self.propagation_factor = {}
         self.additive_propagation = {}
@@ -863,7 +865,8 @@ class BayesianMeldingFromFile(BayesianMelding):
                 m = zeros((ds.size(), self.cache_set.size), dtype=float32)
                 self.m_ids = ds.get_id_attribute()
             m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation_pair_for_prediction[0])
-        self.m = resize(average(m, axis=1), (m.shape[0], 1))
+        #self.m = resize(average(m, axis=1), (m.shape[0], 1))
+        self.m = m
             
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, dummy=None):
         return MultipleRuns._compute_variable_for_one_run(self, run_index, variable, dataset_name, year)
