@@ -31,9 +31,14 @@ class BuildingSqftPerJobDataset(UrbansimDataset):
         table[zone_ids, bts] = sqft
         return table
     
-def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximum_median=2000):
+def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximum_median=2000, 
+                                         percent_vacancy=10):
     buildings = dataset_pool.get_dataset('building')
-    jobs = dataset_pool.get_dataset('job')
+    jobs = dataset_pool.get_dataset('job')        
+    if 'sqft' not in jobs.get_known_attribute_names():
+        #  compute sqft for each job from buildings' non_residential_sqft and given vacancy
+        jobs.compute_variables("sqft = job.disaggregate(safe_array_divide((building.non_residential_sqft - building.non_residential_sqft/%s), (building.number_of_agents(job)).astype(float32)))" % percent_vacancy,
+                                    dataset_pool=dataset_pool)
     job_sqft = jobs.get_attribute('sqft')
     has_sqft = job_sqft > 0
     job_building_index = buildings.try_get_id_index(jobs.get_attribute('building_id'))
