@@ -105,8 +105,8 @@ class RefinementModel(Model):
                         location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
                     
                         if location_dataset.get_id_name()[0] not in agent_dataset.get_known_attribute_names():
-                            agent_dataset.compute_variables('urbansim_parcel.%s.%s' % 
-                                                            (agent_dataset.get_dataset_name(), location_dataset.get_id_name()[0]), dataset_pool=dataset_pool)
+                            agent_dataset.compute_one_variable_with_unknown_package('%s' % location_dataset.get_id_name()[0], dataset_pool=dataset_pool,
+                                                            package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
 
                     logger.log_status("Action: %s %i agents satisfying %s" % \
                                   (action_type, this_refinement.amount,
