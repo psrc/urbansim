@@ -203,9 +203,11 @@ class RefinementModel(Model):
         if location_expression is not None and len(location_expression) > 0:
             #location_exp_vname= VariableName("%s.disaggregate(%s)"  % ( agent_dataset.dataset_name, 
                                                                         #location_expression ))
-            location_indicator = bldgs.compute_variables( "%s.disaggregate(%s)"  % ( bldgs.dataset_name, 
-                                                                                             location_expression ),
-                                                                 dataset_pool=dataset_pool)
+            if VariableName(location_expression).get_dataset_name() == bldgs.dataset_name:
+                location_indicator_name = location_expression
+            else:
+                location_indicator_name = "%s.disaggregate(%s)"  % ( bldgs.dataset_name, location_expression )
+            location_indicator = bldgs.compute_variables(location_indicator_name, dataset_pool=dataset_pool)
         else:
             location_indicator = ones( bldgs.size(), dtype='bool' )
 
@@ -294,8 +296,8 @@ class RefinementModel(Model):
             agent_expr_unpl = ''
         agent_expr_unpl = '%s(%s.building_id <= 0)' % (agent_expr_unpl, agent_dataset.get_dataset_name())
         fit_index_unplaced = self.get_fit_agents_index(agent_dataset, 
-                                              agent_expr_unpl, 
-                                              '%s.%s' % (location_dataset.get_dataset_name(), this_refinement.location_expression.split('.')[-1]),
+                                              agent_expr_unpl, this_refinement.location_expression,
+                                              #'%s.%s' % (location_dataset.get_dataset_name(), this_refinement.location_expression.split('.')[-1]
                                               dataset_pool)
         count = bldgs.sum_dataset_over_ids(agent_dataset, constant=agents_indicator)[fit_index]
         amount_from_bldgs = amount
