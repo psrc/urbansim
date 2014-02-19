@@ -5,7 +5,7 @@
 from urbansim.abstract_variables.abstract_weighted_access import abstract_weighted_access
 
 class generalized_cost_weighted_access_to_population_hbw_am_drive_alone(abstract_weighted_access):
-    """sum of number of jobs in zone j divided by generalized cost from zone i to j,
+    """sum of population in zone j divided by generalized cost from zone i to j,
     The travel time used is for the home-based-work am trips by auto with 
     drive-alone.
     """
@@ -13,7 +13,7 @@ class generalized_cost_weighted_access_to_population_hbw_am_drive_alone(abstract
     def __init__(self):
         self.aggregate_by_origin = True
         self.travel_data_attribute  = "travel_data.single_vehicle_to_work_travel_cost"
-        self.zone_attribute_to_access = "zone.population"
+        self.zone_attribute_to_access = "urbansim_parcel.zone.population"
         
         abstract_weighted_access.__init__(self)
 

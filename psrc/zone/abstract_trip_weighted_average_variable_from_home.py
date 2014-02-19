@@ -4,7 +4,7 @@
 
 from urbansim.functions import attribute_label
 from opus_core.variables.variable import Variable
-from numpy import array, where, float32
+from numpy import array, where, float32, logical_and
 from opus_core.ndimage import sum as ndimage_sum
 from psrc.opus_package_info import package
 from opus_core.logger import logger
@@ -16,6 +16,8 @@ class Abstract_Trip_Weighted_Average_Variable_From_Home(Variable):
     Do the trip-weighted averaging used by several of our variables.
     """
     _return_type = "float32"
+    missing_value = 999 
+    
     def __init__(self, time_attribute_name, trips_attribute_name):
         self.time_attribute_name = time_attribute_name
         self.trips_attribute_name = trips_attribute_name
@@ -32,14 +34,15 @@ class Abstract_Trip_Weighted_Average_Variable_From_Home(Variable):
         zone_ids = zone_set.get_attribute('zone_id')
         time = travel_data.get_attribute(self.time_attribute_name)
         trips = travel_data.get_attribute(self.trips_attribute_name)
+        non_missing_idx = where(logical_and(time <> self.missing_value, trips <> self.missing_value))
+        numerator = array(ndimage_sum(time[non_missing_idx] * trips[non_missing_idx],
+                                       labels = from_zone_id[non_missing_idx], index=zone_ids))
+        denominator = array(ndimage_sum(trips[non_missing_idx],
+                                         labels = from_zone_id[non_missing_idx], index=zone_ids), 
+                            dtype=float32)
         
-        numerator = array(ndimage_sum(time * trips,
-                                       labels = from_zone_id, index=zone_ids))
-        denominator = array(ndimage_sum(trips,
-                                         labels = from_zone_id, index=zone_ids), dtype=float32)
-        
-        # if there is a divide by zero then subsititute the values from the zone one below that one
-        # if there are contigious places of zero division the values should propigate upon iteration
+        # if there is a divide by zero then substitute the values from the zone below that one
+        # if there are contiguous places of zero division the values should propagate upon iteration
         no_trips_from_here = where(denominator == 0)[0]
         while no_trips_from_here.size != 0:
             if no_trips_from_here.size == denominator.size:

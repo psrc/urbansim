@@ -13,7 +13,7 @@ class generalized_cost_weighted_access_to_employment_hbw_am_drive_alone(abstract
     def __init__(self):
         self.aggregate_by_origin = False
         self.travel_data_attribute  = "travel_data.single_vehicle_to_work_travel_cost"
-        self.zone_attribute_to_access = "zone.number_of_jobs"
+        self.zone_attribute_to_access = "urbansim_parcel.zone.number_of_jobs"
         
         abstract_weighted_access.__init__(self)
 

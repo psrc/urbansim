@@ -15,6 +15,8 @@ class AbstractTripMode(Variable):
     Calculates a mode split of a particular subset of modes over a different subset.
     """
     _return_type = "float32"
+    missing_value = 999
+    
     def __init__(self, matrices):
         self.matrices = ["psrc.travel_data.%s" % m for m in matrices]
         Variable.__init__(self)
@@ -30,6 +32,9 @@ class AbstractTripMode(Variable):
         
         results = zeros(len(zone_ids)).astype(float32)
         for matrix in self.matrices:
-            results += array(ndimage_sum(travel_data.get_attribute(matrix), labels = from_zone_id, index=zone_ids))
+            values = travel_data.get_attribute(matrix)
+            non_missing_idx = where(values <> self.missing_value)
+            results += array(ndimage_sum(values[non_missing_idx], labels = from_zone_id[non_missing_idx], 
+                                         index=zone_ids))
         return results
     

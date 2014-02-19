@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from numpy import array
+from numpy import array, where, logical_and
 from opus_core.ndimage import sum as ndimage_sum
 
 class vehicle_miles_traveled(Variable):
@@ -13,11 +13,13 @@ class vehicle_miles_traveled(Variable):
     """
     
     _return_type = "float32"
-   
+    missing_value = 999
+    
     _am_VMT_attr = 'am_vehicle_miles_traveled'
     _md_VMT_attr = 'md_vehicle_miles_traveled'
     _pm_ev_ni_VMT_attr = 'pm_ev_ni_vehicle_miles_traveled'
-        
+       
+    
     def dependencies(self):
         return [attribute_label("travel_data", self._am_VMT_attr), 
                 attribute_label("travel_data", self._md_VMT_attr),
@@ -40,9 +42,12 @@ class vehicle_miles_traveled(Variable):
         md_VMT_attr = travel_data.get_attribute(self._md_VMT_attr)  
         pm_ev_ni_VMT_attr = travel_data.get_attribute(self._pm_ev_ni_VMT_attr)  
         
-        results =   array(ndimage_sum(am_VMT_attr, labels = from_zone_id, index=zone_ids)) + \
-                    array(ndimage_sum(md_VMT_attr, labels = from_zone_id, index=zone_ids)) + \
-                    array(ndimage_sum(pm_ev_ni_VMT_attr, labels = from_zone_id, index=zone_ids))        
+        non_missing_idx = logical_and(logical_and(am_VMT_attr <> self.missing_value, 
+                                                  md_VMT_attr <> self.missing_value),
+                                      pm_ev_ni_VMT_attr <> self.missing_value)
+        results =   array(ndimage_sum(am_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids)) + \
+                    array(ndimage_sum(md_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids)) + \
+                    array(ndimage_sum(pm_ev_ni_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids))        
         
         return results
         
