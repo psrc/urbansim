@@ -30,8 +30,8 @@ class TravelModelOutput(ParentTravelModelOutput):
         in_storage.write_table(
                 table_name=table_name,
                 table_data={
-                    'from_zone_id':zone_set.get_id_attribute()[comb_index[0].ravel()],
-                    'to_zone_id':zone_set.get_id_attribute()[comb_index[1].ravel()],
+                    'from_zone_id':zone_set.get_id_attribute()[comb_index[0].ravel()].astype('int32'),
+                    'to_zone_id':zone_set.get_id_attribute()[comb_index[1].ravel()].astype('int32'),
                     }
             )
                                        
