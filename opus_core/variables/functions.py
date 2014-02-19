@@ -99,6 +99,9 @@ def zeros_like(v):
 def random_like(v):
     return numpy.random.random(v.size)
 
+def subtract_mean(v):
+    """Subtract overall average."""
+    return v - v.mean()
 
 # unit tests for all the functions
 
