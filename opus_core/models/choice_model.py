@@ -835,7 +835,7 @@ class ChoiceModel(ChunkModel):
                 index = where(values > 0)[0]
                 estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
 
-            if 'join_datasets' in kwargs and kwargs['join_dataset']:
+            if 'join_datasets' in kwargs and kwargs['join_datasets']:
                 agent_set.join_by_rows(estimation_set, require_all_attributes=False,
                                        change_ids_if_not_unique=True)
                 index = arange(agent_set.size()-estimation_set.size(),agent_set.size())
