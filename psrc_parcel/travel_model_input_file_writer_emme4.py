@@ -4,7 +4,7 @@
 
 import os
 import time
-from numpy import where, logical_and, abs, sort, round_
+from numpy import where, logical_and, abs, sort
 from opus_core.logger import logger
 from psrc_parcel.travel_model_input_file_writer import TravelModelInputFileWriter as ParentTravelModelInputFileWriter
 from opus_core.datasets.dataset import DatasetSubset
@@ -109,10 +109,10 @@ c %s
 t matrices
 m matrix="hhemp"
 """ % (time.strftime("%c", time.localtime(time.time())), tm_year))
-                line_template = "%s %s: %s \n"
+                line_template = "%s %s: %i \n"
                 for taz_id in sort(zone_set.get_id_attribute()):
                     for i in range(101, 125):
-                        newfile.write(line_template % (taz_id, i, round_(self._get_value_for_zone(taz_id, zone_set, variables_list[i-101]),2)))
+                        newfile.write(line_template % (taz_id, i, self._get_value_for_zone(taz_id, zone_set, variables_list[i-101])))
             finally:
                 newfile.close()
         finally:
