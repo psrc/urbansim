@@ -4,7 +4,7 @@
 
 import os
 import time
-from numpy import where, logical_and, abs
+from numpy import where, logical_and, abs, sort, round_
 from opus_core.logger import logger
 from psrc_parcel.travel_model_input_file_writer import TravelModelInputFileWriter as ParentTravelModelInputFileWriter
 from opus_core.datasets.dataset import DatasetSubset
@@ -13,19 +13,15 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
     """Write urbansim simulation information into a (file) format that the emme4 travel model understands. 
     """
     emme_version = 4
-    def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
-        """Writes emme4 input files into the [current_year_emme2_dir]/tripgen/inputtg/
+    def run(self, current_year_emme2_dir, current_year, dataset_pool, config):
+        """Writes emme4 input files into the appropriate place at [current_year_emme2_dir]
         """
-        tm_input_file_1 = self._write_input_file_1(current_year_emme2_dir, current_year, dataset_pool, config) # writes TAZDATA.MA2
-        self.compute_houshold_and_persons_variables(dataset_pool)
-        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
-        full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
-        tm_input_files = [os.path.join(full_path, 'tazdata.mf91'), os.path.join(full_path, 'tazdata.mf92'),
-                         os.path.join(full_path, 'tazdata.mf93'), os.path.join(full_path, 'tazdata.mf94')]
-        return [tm_input_file_1] + self._write_workplaces_to_files(dataset_pool.get_dataset("person"), 
-                                                                   tm_input_files)
+        input_dir = config['travel_model_configuration'].get('emme_input_directory', 
+                                os.path.join(current_year_emme2_dir, 'input', '4000', 'tripgeneration', 'landuse'))
+        tm_input_file_1 = self._write_input_file_1(current_year_emme2_dir, input_dir, current_year, dataset_pool, config) # writes tazdata.in
+        return [tm_input_file_1]
 
-    def _write_input_file_1(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
+    def _write_input_file_1(self, current_year_emme2_dir, input_dir, current_year, dataset_pool, config=None):
         missing_dataset = ''
         try:
             missing_dataset = 'group_quarter'
@@ -39,11 +35,10 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         except:
             raise Exception("Dataset %s is missing from dataset_pool" % missing_dataset)
         
-        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
-        full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
-        if not os.path.exists(full_path):
-            os.makedirs(full_path)
-        tm_input_file = os.path.join(full_path, 'tazdata.ma2')
+        """specify travel input file name """
+        if not os.path.exists(input_dir):
+            os.makedirs(input_dir)
+        tm_input_file = os.path.join(input_dir, 'tazdata.in')
         
         tm_year = self._get_tm_year(current_year, taz_col_set)
         
@@ -63,7 +58,7 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         
         zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
 
-        return self._write_to_file(zone_set, variables_list, tm_input_file)
+        return self._write_to_file(zone_set, variables_list, tm_input_file, tm_year)
 
     def get_variables_list(self, dataset_pool):
         first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
@@ -102,3 +97,24 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         years = gq['year']
         dif = abs(years - year)
         return years[where(dif == dif.min())[0]][0] 
+    
+    def _write_to_file(self, zone_set, variables_list, tm_input_file, tm_year):
+        logger.start_block("Writing to emme%s input file: %s" % (self.emme_version, tm_input_file))
+        try:
+            newfile = open(tm_input_file, 'w')
+            """write travel model input file into a particular file format emme2 can read"""
+            try:
+                newfile.write(r"""c prepared: %s
+c %s
+t matrices
+m matrix="hhemp"
+""" % (time.strftime("%c", time.localtime(time.time())), tm_year))
+                line_template = "%s %s: %s \n"
+                for taz_id in sort(zone_set.get_id_attribute()):
+                    for i in range(101, 125):
+                        newfile.write(line_template % (taz_id, i, round_(self._get_value_for_zone(taz_id, zone_set, variables_list[i-101]),2)))
+            finally:
+                newfile.close()
+        finally:
+            logger.end_block()
+        return tm_input_file
