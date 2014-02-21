@@ -18,19 +18,22 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
         """Writes emme2 input files into the [current_year_emme2_dir]/tripgen/inputtg/
         """
         tm_input_file_1 = HHJobsTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config) # writes TAZDATA.MA2
-        
+        self.compute_houshold_and_persons_variables(dataset_pool)
+        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
+        full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
+        tm_input_files = [os.path.join(full_path, 'tazdata.mf91'), os.path.join(full_path, 'tazdata.mf92'),
+                         os.path.join(full_path, 'tazdata.mf93'), os.path.join(full_path, 'tazdata.mf94')]
+        return [tm_input_file_1] + self._write_workplaces_to_files(dataset_pool.get_dataset("person"), 
+                                                                   tm_input_files)
+
+    def compute_houshold_and_persons_variables(self, dataset_pool):
         missing_dataset = ''
         try:
             missing_dataset = 'person'
             person_set = dataset_pool.get_dataset("person")
         except:
             raise "Dataset %s is missing from dataset_pool" % missing_dataset
-        
-        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
-        full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
-        tm_input_files = [os.path.join(full_path, 'tazdata.mf91'), os.path.join(full_path, 'tazdata.mf92'),
-                         os.path.join(full_path, 'tazdata.mf93'), os.path.join(full_path, 'tazdata.mf94')]
-                
+                        
         first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
         logger.log_status("calculating entries for emme2 *.mf9x input files")
 
@@ -48,13 +51,8 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
                                 "urbansim_parcel.person.zone_id",
                                 "urbansim_parcel.person.is_placed_non_home_based_worker_with_job",
                                 "job_zone_id = person.disaggregate(urbansim_parcel.job.zone_id)"
-                                ]
-        
+                                ]      
         person_set.compute_variables(person_variables_to_compute, dataset_pool=dataset_pool)
-
-        return [tm_input_file_1] + self._write_workplaces_to_files(person_set, tm_input_files)
-
-
         
     def _write_workplaces_to_files(self, person_set, tm_input_files):
         home_zones = person_set.get_attribute("zone_id")

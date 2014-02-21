@@ -220,6 +220,7 @@
             <selectable name="generic_land_use_types" type="selectable">True</selectable>
             <selectable name="grade" type="selectable">True</selectable>
             <selectable name="gridcells" type="selectable">True</selectable>
+            <selectable name="group_quarters" type="selectable">True</selectable>
             <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">False</selectable>
             <selectable name="home_based_employment_location_choice_model_specification" type="selectable">False</selectable>
             <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>

@@ -11,6 +11,7 @@ from opus_core.datasets.dataset import DatasetSubset
 class TravelModelInputFileWriter(object):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
 
+    emme_version = 2
     def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
         """Writes to the an emme2 input file in the [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2.
         """
@@ -36,7 +37,7 @@ class TravelModelInputFileWriter(object):
         
         tm_year = self._decade_floor(current_year)
         
-        logger.log_status("calculating entries for emme2 input file")
+        logger.log_status("calculating entries for emme%s input file" % self.emme_version)
         taz_col_set.compute_variables("zone_id=constant_taz_column.taz")
         current_taz_col = DatasetSubset(taz_col_set, index=where(taz_col_set.get_attribute("year")==tm_year)[0])
         
@@ -107,7 +108,7 @@ class TravelModelInputFileWriter(object):
         return (first_quarter, median_income, third_quarter)
     
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
-        logger.start_block("Writing to emme2 input file: " + tm_input_file)
+        logger.start_block("Writing to emme%s input file: %s" % (self.emme_version, tm_input_file))
         try:
             newfile = open(tm_input_file, 'w')
             """write travel model input file into a particular file format emme2 can read"""
