@@ -280,6 +280,8 @@ class RefinementModel(Model):
                   agent_dataset, location_dataset, 
                   this_refinement,
                   dataset_pool ):
+        if amount <= 0:
+            return
         bldgs = dataset_pool.get_dataset('building')
         #amount_adj = max(amount - self.subtracted_from_demolished_buildings[agent_dataset.get_dataset_name()].get(this_refinement.location_expression.split('.')[-1], 0), 0)
         #if amount_adj < amount:
