@@ -12,13 +12,14 @@ from opus_emme2.travel_model_output import TravelModelOutput as ParentTravelMode
 
 class TravelModelOutput(ParentTravelModelOutput):
     """
-    A class to access the output of emme/2 travel models in the format of hdf5 files.
+    A class to access the output of emme4 travel models in any format (e.g. hdf5 or directly from memory).
     """
 
-    def get_travel_data_set(self, zone_set, matrix_attribute_name_map, bank_file, bank, out_storage=None):
+    def get_travel_data_set(self, zone_set, matrix_attribute_name_map, 
+                            out_storage=None, **kwargs):
         """
-        Returns a new travel data set containing the given set of emme/2 matrices 
-        populated from hdf5 file.  The columns in the travel data set are 
+        Returns a new travel data set containing the given set of emme matrices 
+        populated from given storage. The columns in the travel data set are 
         those given in the attribute name of the map.
         """
         # Compute the from and to zone sets
@@ -39,11 +40,10 @@ class TravelModelOutput(ParentTravelModelOutput):
             in_table_name=table_name, out_storage=out_storage)
         travel_data_set.load_dataset_if_not_loaded()
         max_zone_id = zone_set.get_id_attribute().max()
-        h5storage = StorageFactory().get_storage('hdf5g_storage', 
-                                                 storage_location=bank_file)
+
         for matrix_name in matrix_attribute_name_map.keys():
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
-                                                     matrix_attribute_name_map[matrix_name], "Bank%s" % bank, h5storage)
+                                                     matrix_attribute_name_map[matrix_name], **kwargs)
         return travel_data_set
 
             
@@ -142,7 +142,8 @@ class TravelModelOutputTests(opus_unittest.OpusTestCase):
         matrix_attribute_map = {'au1tim':'single_vehicle_to_work_travel_time',
                                 'biketm':'bike_to_work_travel_time'}
         tm_output = TravelModelOutput()
-        travel_data_set = tm_output.get_travel_data_set(self.zone_set, matrix_attribute_map, self.bank_file, 1)
+        travel_data_set = tm_output.get_travel_data_set(self.zone_set, matrix_attribute_map, 
+                                                        in_storage=self.bank_storage, table_name='Bank1')
         self.assertEqual(travel_data_set.get_attribute('single_vehicle_to_work_travel_time').size, 9)
         self.assertEqual(travel_data_set.get_attribute('bike_to_work_travel_time').size, 9)
         self.assertEqual(False,
