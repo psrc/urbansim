@@ -13,14 +13,12 @@ from opus_core.storage_factory import StorageFactory
 from opus_emme2.models.get_emme2_data_into_cache import GetEmme2DataIntoCache as ParentGetEmme2DataIntoCache
 
 
-class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache):
-    """Class to get skims directly from emme into the UrbanSim cache using emme python api. 
+class GetEmme4DataIntoCache(ParentGetEmme2DataIntoCache):
+    """Class to get skims from emme4 into the UrbanSim cache. 
     """
     
     def run(self, year):
-        """Like its parent, but skims are stored locally in matrix_directory in hdf5 format.
-        It is one file per year, called xxxx-travelmodel.h5, where xxxx is the year. 
-        Each file has one group per bank, e.g. Bank1, which contains the matrices.
+        """Like its parent, but report files have different format and there are no banks.
         Zones are assumed to have no gaps.
         """
         cache_directory = self.config['cache_directory']
@@ -31,7 +29,6 @@ class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache):
         year_config = self.config['travel_model_configuration'][year]
         
         bank_path = os.path.sep.join([self.get_emme2_base_dir()] + self.config['travel_model_configuration'][year]['bank'])
-        #bank_file = os.path.join(matrix_directory, "%s-travelmodel.h5" % bank_year)
         for path, variable_dict in year_config['matrix_variable_map'].iteritems():
             path_name = os.path.sep.join([bank_path] + path.split('.'))
             self.get_needed_matrices_from_emme4(year, 
@@ -81,14 +78,6 @@ class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache):
         return tm_output.get_travel_data_set(zone_set, matrix_variable_map, in_storage=dstorage, 
                                              table_name=table_name, **kwargs)
     
-# The following is code from Stefan Coe
-####### Warning- Gaps in Emme Zone Numbers are not accounted for in Numpy Index.
-####### For example, Zones 3697, 3698, 3699, 3700, 3733 in Emme = 3696, 3697, 3698, 3699, 3700 in Numpy.  
-
-
-
-#example:
-#matrix = open_emmbank_matrix_in_numpy('D:/soundcast/soundcat/Banks/6to7/emmebank', 'svtl1t')
         
 if __name__ == "__main__":
     try: import wingdbstub
@@ -111,6 +100,6 @@ if __name__ == "__main__":
         
 #    logger.enable_memory_logging()
 
-    GetEmme4DataDirectlyIntoCache(resources).run(options.year)    
+    GetEmme4DataIntoCache(resources).run(options.year)    
 
 
