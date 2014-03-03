@@ -29,17 +29,18 @@ def export_quant(bm, output_directory, validation_geography, years):
                      propfac_hh=pf['pfhh'], propfac_jobs=pf['pfj'], propfac_pop=pf['pfp'])
     
 if __name__ == "__main__":
-    run = 235
+    run = 245
     #run = 213
-    #run = 'MR'
+    #run = 'MRr'
+    #run = 'MRr245'
     #cache_directory = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs"
     cache_directory = "/Users/hana/workspace/data/psrc_parcel/runs"
-    run_name_prefix = "run_%sref" % run
+    #run_name_prefix = "run_%sref" % run
     run_name_prefix = "run_%s" % run
     validation_geography = 'large_area'
-    #validation_geography = 'faz'
+    validation_geography = 'faz'
     #validation_geography = 'zone'
-    validation_geography = 'city'
+    #validation_geography = 'city'
     #pardir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/run213_val2010_%s" % validation_geography
     pardir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/run223_val2010_%s" % validation_geography
     #output_directory = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/paper_run%s_quantiles_%s" % (run, validation_geography)

@@ -40,7 +40,7 @@ if __name__ == "__main__":
     validation_year = 2010
     run = 223
     #run = 'MR223'
-    #run = 'MR'
+    #run = 'MRr'
     run_name_prefix = 'run_%s' % run
     #validation_geography = 'large_area'
     #validation_geography = 'faz'
@@ -79,11 +79,11 @@ if __name__ == "__main__":
                    #'filter': "urbansim_parcel.zone.number_of_jobs",
                    'id_name': "%s_id" % validation_geography
                    },
-                  {'variable_name': pop_vars[validation_geography],
-                   'filename': "population%s_%s" % (validation_year, validation_geography), 
-                   'transformation': "sqrt",
-                   'id_name': "%s_id" % validation_geography
-                   },
+                {'variable_name': pop_vars[validation_geography],
+                 'filename': "population%s_%s" % (validation_year, validation_geography), 
+                 'transformation': "sqrt",
+                 'id_name': "%s_id" % validation_geography
+                 },
 #                   {'variable_name': "urbansim_parcel.zone_x_employment_sector.number_of_jobs",
 #                   'filename': "jobs_by_zones_and_sectors_flatten", 
 #                   'transformation': "sqrt",
@@ -197,13 +197,15 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
     for year in years:
         if year < validation_year:
             continue
-        for nopropag in [True, False]:
+        #for nopropag in [True, False]:
+        for nopropag in [False]:
             if not nopropag and year == validation_year:
                 continue
             #for transform in [True, False]:
             transform = True
             propfac = {}
-            for additive_prop in [True, False]:
+            #for additive_prop in [True, False]:
+            for additive_prop in [True]:
                 if nopropag and not additive_prop:
                     continue
                 if additive_prop:
@@ -228,7 +230,8 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
                 if additive_prop:
                     suffix = suffix + "_add"
                 seed(1)
-                for bias in [False, True]:
+                #for bias in [False, True]:
+                for bias in [False]:
                     if bias:
                         suffix = suffix + "_bias"
                     addpropbias = not bias
