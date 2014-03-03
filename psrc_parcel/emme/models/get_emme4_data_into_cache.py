@@ -66,7 +66,7 @@ class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache):
         name, e.g. single_vehicle_to_work_travel_time, as in:
         {"au1tim":"single_vehicle_to_work_travel_time"}
         """
-        from psrc_parcel.emme.travel_model_output import TravelModelOutput
+        from psrc_parcel.emme.travel_model_output_from_emme_file import TravelModelOutput
         tm_output = TravelModelOutput(self.emme_cmd)
         
         
