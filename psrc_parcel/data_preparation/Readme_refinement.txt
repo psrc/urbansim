@@ -1,22 +1,23 @@
-Instructions for Running Refinement in 2010:
+Instructions for Running Refinement in 20x0 (x={1,2,3,4}):
 ===========================================
 
-- Copy 2000 and 2010 cache into a base year directory
-- Remove all *.computed sub-directories from 2000 and 2010
-- Copy all *_specification and *_coefficients tables from 2000 to 2010
-- Get an input table of refinements into 2010 cache
+- Copy 2000 and 20x0 cache into a base year directory
+- Remove all *.computed sub-directories from 2000 and 20x0
+- Copy all *_specification and *_coefficients tables from 2000 to 20x0
+- Get an input table of refinements into 20x0 cache
 - In project_configs/psrc_parcel_refinement.xml:
 	o make sure it inherits from the right parent,
 	o put the name of your cache directory into the scenario nodes existing_cache_to_copy and cache_directory.
 - run a simulation:
-python ~/workspace/src/opus_core/tools/start_run.py -x ~/workspace/project_configs/psrc_parcel_refinement_faz.xml -s '2010_refinement'
+python ~/workspace/src/opus_core/tools/start_run.py -x ~/workspace/project_configs/psrc_parcel_refinement_{faz|city}_20x0.xml -s '20x0_refinement'
 
 Postprocessing:
-- In the created 2013 run cache, delete all *.computed directories, households/zone_id, jobs/zone_id, jobs/transaction_id, and jobs/refinement_id.
-- Replace tables households, persons, jobs, buildings, parcels in the 2010 cache of the to-be-continued run by the tables from the newly created 2013 cache.
+- In the created 20x3 run cache, delete all *.computed directories, {households|jobs}/{zone_id, faz_id, city_id, transaction_id, refinement_id}.
+- If used for continuing a run (e.g. 2010 refinement), replace tables households, persons, jobs, buildings, parcels in the 20x0 cache 
+  of the to-be-continued run by the tables from the newly created 20x3 cache.
 
-Description of the Refinement Process:
-=====================================
+Description of the Refinement Process for 2010 on faz level:
+============================================================
 Goal is to create a spatial distribution of households and jobs that corresponds to observed distribution. 
 
 A refinements table should be created by differencing simulation results in 2010 and observed data on faz level. 
@@ -65,7 +66,8 @@ For workers whose jobs were re-located, it breaks all job links.
 10. Workplace choice model:
 Runs for workers who lost their job in the previous step.
 
-
+For refinements in 2020, 2030 and 2040, we also do scaling unplaced households and jobs in place at the end,
+since we do not care about the capacity. 
 
 
 
