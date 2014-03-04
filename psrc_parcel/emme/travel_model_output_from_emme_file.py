@@ -56,8 +56,15 @@ class TravelModelOutput(ParentTravelModelOutput):
         logger.start_block('Copying data for matrix %s into variable %s' %
                            (matrix_name, attribute_name))
         path = in_storage.load_table(table_name)['path']
+        use_postfix = None
+        for postfix in ['rpf', 'rp4', 'rp3', 'rp2', 'rp1', 'rp0']:
+            if os.path.exists(os.path.join(path, "mf%s.%s" % (matrix_name, postfix))):
+                use_postfix = postfix
+                break
+        if use_postfix is None:
+            raise IOError, "Skim %s not available in %s" % (matrix_name, path)
         try:
-            file_contents = self._get_emme2_data_from_file(os.path.join(path, "mf%s.rpf" % matrix_name))                      
+            file_contents = self._get_emme2_data_from_file(os.path.join(path, "mf%s.%s" % (matrix_name, use_postfix)))                      
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
                                                   name=attribute_name)
             file_contents = [line.replace(':', ' ') for line in file_contents]
