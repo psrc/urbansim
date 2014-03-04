@@ -59,7 +59,7 @@ class TravelModelOutput(ParentTravelModelOutput):
                       
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
                                                   name=attribute_name)
-            if attr[matrix_name].size == 0:
+            if matrix_name not in attr.keys() or attr[matrix_name].size == 0:
                 logger.log_error("Skipped exporting travel_data attribute %s: No data is exported from EMME matrix." % attribute_name)
             else:
                 nzones = attr[matrix_name].shape[0]
