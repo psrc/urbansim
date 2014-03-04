@@ -35,14 +35,14 @@ class GetEmme4DataIntoCache(ParentGetEmme2DataIntoCache):
                                                 year_config['cache_directory'],
                                                 path_name, variable_dict)
                 
-    def get_needed_matrices_from_emme4(self, year, cache_directory, path, matrix_variable_map):
+    def get_needed_matrices_from_emme4(self, year, cache_directory, path, matrix_variable_map, **kwargs):
         """Copies the specified emme4 matrices into the specified travel_data variable names.
         """
         logger.start_block('Getting matrices from emme4')
         try:    
             zone_set = SessionConfiguration().get_dataset_from_pool('zone')
             zone_set.load_dataset()
-            travel_data_set = self.get_travel_data_from_emme4(zone_set, path, matrix_variable_map)
+            travel_data_set = self.get_travel_data_from_emme4(zone_set, path, matrix_variable_map, **kwargs)
         finally:
             logger.end_block()
         

@@ -10,16 +10,17 @@ from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
-from opus_emme2.models.get_emme2_data_into_cache import GetEmme2DataIntoCache as ParentGetEmme2DataIntoCache
+from psrc_parcel.emme.models.get_emme4_data_into_cache import GetEmme4DataIntoCache as ParentGetEmme4DataIntoCache
 
-class GetEmme2DataIntoCache(ParentGetEmme2DataIntoCache):
+class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache):
     """Class to copy skims stored in hdf5 format into the UrbanSim cache. 
     """
     
     def run(self, year):
         """Like its parent, but skims are stored locally in matrix_directory in hdf5 format.
         It is one file per year, called xxxx-travelmodel.h5, where xxxx is the year. 
-        Each file has one group per bank, e.g. Bank1, which contains the matrices.
+        Each file has one group per directory name in matrix_variable_map, e.g. 'skims.auto.am', 
+        which contains the matrices.
         Zones are assumed to have no gaps.
         """
         cache_directory = self.config['cache_directory']
@@ -27,45 +28,20 @@ class GetEmme2DataIntoCache(ParentGetEmme2DataIntoCache):
         simulation_state.set_current_time(year)
         simulation_state.set_cache_directory(cache_directory)
         
-        year_config = self.config['travel_model_configuration'][year]
-        matrix_directory = self.config['travel_model_configuration'].get('matrix_h5_directory', None)
-        if matrix_directory is None:
-            raise AttributeError, "matrix_directory must be given."
-        
-        bank_year = self.config['travel_model_configuration'][year]['bank'][0]
+        tmconfig = self.config['travel_model_configuration']
+        year_config = tmconfig[year]
+        matrix_directory = tmconfig.get('matrix_h5_directory', self.get_emme2_base_dir())        
+        bank_year = tmconfig[year]['bank'][0]
         bank_file = os.path.join(matrix_directory, "%s-travelmodel.h5" % bank_year)
-        for x in 1,2,3:
-            if "bank%i" % x in year_config['matrix_variable_map']:
-                self.get_needed_matrices_from_emme2(year, 
+        for path, variable_dict in year_config['matrix_variable_map'].iteritems():
+            self.get_needed_matrices_from_emme4(year, 
                                                 year_config['cache_directory'],
-                                                bank_file, x,
-                                                year_config['matrix_variable_map']["bank%i" % x])
-                
-    def get_needed_matrices_from_emme2(self, year, cache_directory, bank_file, bank, matrix_variable_map):
-        """Copies the specified emme/2 matrices into the specified travel_data variable names.
-        """
-        logger.start_block('Getting matrices from hdf5')
-        try:    
-            zone_set = SessionConfiguration().get_dataset_from_pool('zone')
-            zone_set.load_dataset()
-            travel_data_set = self.get_travel_data_from_emme2(zone_set, bank_file, bank, matrix_variable_map)
-        finally:
-            logger.end_block()
-        
-        logger.start_block('Writing data to cache')
-        try:
-            next_year = year + 1
-            out_storage = AttributeCache().get_flt_storage_for_year(next_year)
-            travel_data_set.write_dataset(attributes='*', 
-                                          out_storage=out_storage, 
-                                          out_table_name='travel_data')
-        finally:
-            logger.end_block()
-                  
-    def get_travel_data_from_emme2(self, zone_set, bank_file, bank, matrix_variable_map, **kwargs):
-        """Create a new travel_data from the emme2 output.
+                                                path, variable_dict, bank_file=bank_file)
+                     
+    def get_travel_data_from_emme4(self, zone_set, path, matrix_variable_map, bank_file=None, **kwargs):
+        """Create a new travel_data from the emme4 output.
         Include the matrices listed in matrix_variable_map, which is a dictionary
-        mapping the emme2 matrix name, e.g. au1tim, to the Opus variable
+        mapping the emme4 matrix name, e.g. au1tim, to the Opus variable
         name, e.g. single_vehicle_to_work_travel_time, as in:
         {"au1tim":"single_vehicle_to_work_travel_time"}
         """
@@ -74,7 +50,7 @@ class GetEmme2DataIntoCache(ParentGetEmme2DataIntoCache):
         h5storage = StorageFactory().get_storage('hdf5g_storage', 
                                                  storage_location=bank_file)
         return tm_output.get_travel_data_set(zone_set, matrix_variable_map,
-                                             table_name="Bank%s" % bank, in_storage=h5storage, **kwargs)
+                                             table_name=path, in_storage=h5storage, **kwargs)
     
 
         
@@ -99,6 +75,6 @@ if __name__ == "__main__":
         
 #    logger.enable_memory_logging()
 
-    GetEmme2DataIntoCache(resources).run(options.year)    
+    GetEmme4DataFromH5IntoCache(resources).run(options.year)    
 
 
