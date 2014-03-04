@@ -68,6 +68,7 @@ class TravelModelOutput(ParentTravelModelOutput):
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
                                                   name=attribute_name)
             file_contents = [line.replace(':', ' ') for line in file_contents]
+            file_contents = [line.replace('*****', '999') for line in file_contents]
             attr = zeros((max_zone_id, max_zone_id), dtype=float32)
             
             ind = arange(1,14,2)
