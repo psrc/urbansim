@@ -13,15 +13,33 @@ from opus_core.storage_factory import StorageFactory
 from psrc_parcel.emme.models.get_emme4_data_into_cache import GetEmme4DataIntoCache as ParentGetEmme4DataIntoCache
 
 class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache):
-    """Class to copy skims stored in hdf5 format into the UrbanSim cache. 
-    """
+    
+    """Copy skims stored in hdf5 format into the UrbanSim cache."""
     
     def run(self, year):
-        """Like its parent, but skims are stored locally in matrix_directory in hdf5 format.
-        It is one file per year, called xxxx-travelmodel.h5, where xxxx is the year. 
-        Each file has one group per directory name in matrix_variable_map, e.g. 'skims.auto.am', 
-        which contains the matrices.
+        """
+        Copy skims stored in hdf5 format into the UrbanSim cache.
+        
+        Should run after psrc_parcel.emme.models.run_export_skims which creates the skims hdf5 file.
+        It creates a travel_model dataset with each skim being an attribute of it. 
         Zones are assumed to have no gaps.
+        
+        Arguments:
+        year -- year of the urbansim run. Used to extract the TM year from the bank configuration.
+        
+        Configuration entries (in travel_model_configuration) used:
+        matrix_variable_map -- dictionary of bank names and corresponding skim names.
+                Bank names are the path where (back-)slashes are replaced by dots, e.g. skims.auto.am.
+                A value for each of such bank name is a dictionary with keys being skim names and 
+                values being the desired urbansim attribute name. E.g.
+                {'skims.nonmotorized.am':
+                      {'abketm': 'am_bike_to_work_travel_time',
+                       'awlktm': 'am_walk_time_in_minutes'
+                      }
+                }
+        matrix_h5_directory -- path to the hdf5 file called xxxx-travelmodel.h5  
+                where xxxx is replaced by the TM year (default is the Emme base directory), 
+                which contains the skims as n x n matrices.
         """
         cache_directory = self.config['cache_directory']
         simulation_state = SimulationState()
@@ -39,11 +57,18 @@ class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache):
                                                 path, variable_dict, bank_file=bank_file)
                      
     def get_travel_data_from_emme4(self, zone_set, path, matrix_variable_map, bank_file=None, **kwargs):
-        """Create a new travel_data from the emme4 output.
-        Include the matrices listed in matrix_variable_map, which is a dictionary
-        mapping the emme4 matrix name, e.g. au1tim, to the Opus variable
-        name, e.g. single_vehicle_to_work_travel_time, as in:
-        {"au1tim":"single_vehicle_to_work_travel_time"}
+        """Return a dataset travel_data with set of attributes from one bank.
+        
+        Creates an hdf5g storage with data corresponding to one bank in 
+        matrix_variable_map. It calls the method get_travel_data_set from 
+        psrc_parcel.emme.travel_model_output which is expected to return a travel_data 
+        dataset with the set of attributes stored in the hdf5g storage.
+
+        Arguments:
+        zone_set -- dataset of zones
+        path -- group name in the hdf5 file (i.e. the bank name, e.g. skims.auto.am)
+        matrix_variable_map -- dictionary of skim names and corresponding attribute names
+        bank_file -- full name of the hdf5 file        
         """
         from psrc_parcel.emme.travel_model_output import TravelModelOutput
         tm_output = TravelModelOutput(self.emme_cmd)

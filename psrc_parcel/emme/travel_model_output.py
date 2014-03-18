@@ -11,16 +11,20 @@ import os
 from opus_emme2.travel_model_output import TravelModelOutput as ParentTravelModelOutput
 
 class TravelModelOutput(ParentTravelModelOutput):
-    """
-    A class to access the output of emme4 travel models in any format (e.g. hdf5 or directly from memory).
-    """
+    
+    """Access the output of emme4 travel model in any format (e.g. hdf5 or directly from memory)."""
 
     def get_travel_data_set(self, zone_set, matrix_attribute_name_map, 
                             out_storage=None, **kwargs):
-        """
-        Returns a new travel data set containing the given set of emme matrices 
+        """Create and return a travel data set containing the given set of emme matrices 
         populated from given storage. The columns in the travel data set are 
         those given in the attribute name of the map.
+        
+        Arguments:
+        zone_set -- dataset of zones
+        matrix_attribute_name_map -- dictionary of skim names and corresponding attribute names
+        out_storage -- output storage for the resulting travel_data set
+        kwargs -- it should contain an argument in_storage containing the emme matrices 
         """
         # Compute the from and to zone sets
         nzones = zone_set.size()
@@ -49,9 +53,8 @@ class TravelModelOutput(ParentTravelModelOutput):
             
     def _put_one_matrix_into_travel_data_set(self, travel_data_set, max_zone_id, matrix_name, 
                                             attribute_name, table_name, in_storage):
-        """
-        Adds to the given travel_data_set the data for the given matrix.
-        """
+        """Add data from one matrix to the given travel data set."""
+        
         logger.start_block('Copying data for matrix %s into variable %s' %
                            (matrix_name, attribute_name))
         try:

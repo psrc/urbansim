@@ -7,15 +7,38 @@ import os, re, pickle, tempfile
 from opus_emme2.models.run_export_macros import RunExportMacros
 
 class RunExportSkims(RunExportMacros):
-    """Class to export Emme4 skims into an hdf5 file. It should run before 
-       psrc_parcel.emme.models.get_emme4_data_from_h5_into_cache. 
-       The skims should be defined in matrix_variable_map of the travel_model_configuration.
-       The skim names are put into a pickle file and passed to a batch file
-       defined by 'export_skims_batch_file_name', which is 'skims2h5.bat' by default.
-       This script invokes a python script that handles the export.
+    
+    """Export Emme4 skims into an hdf5 file. 
+    
+    It should run before psrc_parcel.emme.models.get_emme4_data_from_h5_into_cache. 
+    The skims should be defined in matrix_variable_map of the travel_model_configuration.
+    The skim names are put into a pickle file and passed to a batch file
+    defined by 'export_skims_batch_file_name', which is 'skims2h5.bat' by default.
+    That script invokes a python script that handles the export.
     """
 
-    def run(self, year, output_file=None):
+    def run(self, year):
+        """Export Emme4 skims into an hdf5 file. 
+        
+        Arguments:
+        year -- year of the urbansim run. Used to extract the TM year from the bank configuration.
+        
+        Configuration entries (in travel_model_configuration) used:
+        matrix_variable_map -- dictionary of bank names and corresponding skim names.
+                Bank names are the path where (back-)slashes are replaced by dots, e.g. skims.auto.am.
+                A value for each of such bank name is a dictionary with keys being skim names and 
+                values being the desired urbansim attribute name. E.g.
+                {'skims.nonmotorized.am':
+                      {'abketm': 'am_bike_to_work_travel_time',
+                       'awlktm': 'am_walk_time_in_minutes'
+                      }
+                }
+        export_skims_batch_file_name -- batch file name living on the TM path that invokes 
+                the python exporting script (default skims2h5.bat).
+        matrix_h5_directory -- path to the resulting hdf5 file called xxxx-travelmodel.h5 
+                where xxxx is replaced by the TM year (default is the Emme base directory).
+        
+        """
         tmconfig = self.config['travel_model_configuration']
         bank_year = tmconfig[year]['bank'][0]
         skimnames_config = tmconfig.get('matrix_variable_map', {})
@@ -48,4 +71,4 @@ if __name__ == "__main__":
     from opus_emme2.models.run_macros_abstract import prepare_for_running_macro
     parser = OptionParser()
     resources, options = prepare_for_running_macro(parser)
-    RunExportSkims(resources).run(options.year, options.output_file)    
+    RunExportSkims(resources).run(options.year)    
