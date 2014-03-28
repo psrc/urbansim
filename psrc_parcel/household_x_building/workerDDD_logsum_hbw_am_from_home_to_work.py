@@ -12,15 +12,15 @@ class workerDDD_logsum_hbw_am_from_home_to_work(abstract_logsum_variable):
            $45 to $75K;
            More than $75K.
     """
-    
-    def __init__(self, number):
-        self.default_value = -9
-        self.agent_zone_id = "work%s_workplace_zone_id = household.aggregate((psrc.person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id).astype(int32)" % (number, number)
-        self.agent_category_attribute = "(psrc.household.logsum_income_break).astype(int32)"
-        self.location_zone_id = "urbansim_parcel.building.zone_id"
-        self.travel_data_attributes = {1: "travel_data.logsum_hbw_am_income_1", 
+    default_value = -9
+    agent_category_attribute = "(psrc.household.logsum_income_break).astype(int32)"
+    location_zone_id = "urbansim_parcel.building.zone_id"
+    travel_data_attributes = {1: "travel_data.logsum_hbw_am_income_1", 
                                        2: "travel_data.logsum_hbw_am_income_2", 
                                        3: "travel_data.logsum_hbw_am_income_3", 
                                        4: "travel_data.logsum_hbw_am_income_4" }
-        self.direction_from_home = False
+    direction_from_home = False
+    
+    def __init__(self, number):
+        self.agent_zone_id = "work%s_workplace_zone_id = household.aggregate((psrc.person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id).astype(int32)" % (number, number)
         abstract_logsum_variable.__init__(self)
