@@ -13,6 +13,6 @@ class workerDDD_logsum_hbw_am_from_home_to_work_4k(workerDDD_logsum_hbw_am_from_
            $64 to $102K;
            More than $102K.
     """
-    default_value = -99
+    default_value = -20
     agent_category_attribute = "(psrc_parcel.household.income_breaks_34000_64000_102000).astype(int32)"
 
