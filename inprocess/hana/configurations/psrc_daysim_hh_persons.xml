@@ -31,8 +31,8 @@
 	  <model_system type="string">urbansim.model_coordinators.model_system</model_system>
 	  <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2011</firstyear>
-        <lastyear type="integer">2011</lastyear>
+        <firstyear type="integer">2041</firstyear>
+        <lastyear type="integer">2041</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
       <selectable name="create_travel_data_link" type="model_choice">True</selectable>
@@ -42,7 +42,7 @@
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
         <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/daysim</argument>
        <!-- <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_31.2013_09_04_with_school_models</argument>-->
-       <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_54.2013_11_15_17_02</argument>
+       <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_219_final_with_school_models</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -95,8 +95,7 @@
 			<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
 			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>
 			<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			
+			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>			
          </persons>
          </urbansim_to_tm_variable_mapping>
          <meta_data type="dictionary">
@@ -144,8 +143,8 @@
 		  		<daysim_skim_dir type="string">skims/2000</daysim_skim_dir>
 			</run_description>
 			<run_description type="dictionary">
-			  <year type="integer">2011</year>
-			  <daysim_exchange_dir type="string">urbansim/DSinputs11152013_54/2010</daysim_exchange_dir>
+			  <year type="integer">2041</year>
+			  <daysim_exchange_dir type="string">urbansim/DSinputs02182014/2040</daysim_exchange_dir>
 			  <daysim_skim_dir type="string">skims/2010</daysim_skim_dir>
 			</run_description>
 		  </years_to_run>		
