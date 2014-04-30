@@ -8,7 +8,7 @@ from run_bm import export_quantiles
 import run_bm
 
 
-def export_quant(bm, output_directory, validation_geography, years):
+def export_quant(bm, output_directory, validation_geography, years, **kwargs):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     propfac = {'faz': {#'pfhh195'=1.0,
@@ -21,12 +21,13 @@ def export_quant(bm, output_directory, validation_geography, years):
                     'pfj':10.4,
                     'pfp':12.1}}
     propfac['zone'] = propfac['faz']
-    propfac['large_area'] = propfac['faz']
+    #propfac['large_area'] = propfac['faz']
     propfac['city'] = propfac['faz']
+    propfac['tract10'] = propfac['faz']
     pf = propfac[validation_geography]
     export_quantiles(bm, output_directory, years=years,
                      validation_geography=validation_geography,
-                     propfac_hh=pf['pfhh'], propfac_jobs=pf['pfj'], propfac_pop=pf['pfp'])
+                     propfac_hh=pf['pfhh'], propfac_jobs=pf['pfj'], propfac_pop=pf['pfp'], **kwargs)
     
 if __name__ == "__main__":
     run = 245
@@ -38,9 +39,13 @@ if __name__ == "__main__":
     #run_name_prefix = "run_%sref" % run
     run_name_prefix = "run_%s" % run
     validation_geography = 'large_area'
-    validation_geography = 'faz'
-    #validation_geography = 'zone'
+    #validation_geography = 'faz'
+    validation_geography = 'zone'
     #validation_geography = 'city'
+    #validation_geography = 'tract10'
+    aggregate_to = None
+    aggregate_to = 'reggeo'
+    store_simulated=True
     #pardir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/run213_val2010_%s" % validation_geography
     pardir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/run223_val2010_%s" % validation_geography
     #output_directory = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal/paper_run%s_quantiles_%s" % (run, validation_geography)
@@ -55,8 +60,9 @@ if __name__ == "__main__":
     
     #export_quantiles(bmf, output_directory, years=[2010, 2015, 2020, 2025, 2030, 2035, 2040], propfac_hh=0.95, propfac_jobs=3.5)
     #export_quantiles(bmf, output_directory, years=[2040], propfac_hh=0.95, propfac_jobs=3.5)
-    years=[2020, 2025, 2030, 2035, 2040] 
-    #years=[2040]
-    export_quant(bmf, output_directory, validation_geography, years)
+    #years=[2020, 2025, 2030, 2035, 2040] 
+    years=[2040]
+    export_quant(bmf, output_directory, validation_geography, years, 
+                 aggregate_to = aggregate_to, store_simulated=store_simulated)
     
     
