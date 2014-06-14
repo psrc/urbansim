@@ -103,6 +103,22 @@ def subtract_mean(v):
     """Subtract overall average."""
     return v - v.mean()
 
+def mean_with_exclude(v, exclude=None):
+    """Compute mean after excluding elements with values equal to 'exclude'.
+    The resulting array has identical values.
+    """
+    from numpy import repeat
+    if exclude is None:
+        return v.mean()
+    return repeat(v[v <> exclude].mean(), v.size).reshape(v.shape)
+    
+def replace_value_with_mean(v, value=0):
+    """Compute mean of the 'v' array while excluding 'value'. Replace all cells 
+    that are equal to 'value' with the computed mean.
+    """
+    return v*(v<>value) + mean_with_exclude(v, value)*(v==value)
+
+
 # unit tests for all the functions
 
 from opus_core.tests import opus_unittest
@@ -223,5 +239,12 @@ class Tests(opus_unittest.OpusTestCase):
         self.assert_(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
         self.assertEqual(result.dtype, should_be.dtype, "Error in ones_like")
         
+    def test_mean_with_exclude(self):
+        self.function_tester('mean_with_exclude', [4, 0, 0, 8, 0, 0], array(6*[6]), 'exclude=0')
+        self.function_tester('mean_with_exclude', [4, 0, 0, 8, 0, 0], array(6*[2]))
+        
+    def test_replace_value_with_mean(self):
+        self.function_tester('replace_value_with_mean', [4, 0, 0, 8, 0, 0], array([4, 6, 6, 8, 6, 6]))
+
 if __name__=='__main__':
     opus_unittest.main()
