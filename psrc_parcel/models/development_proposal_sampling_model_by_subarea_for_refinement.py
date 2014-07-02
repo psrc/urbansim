@@ -16,7 +16,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         self.intermediates_to_realestate = intermediates_to_realestate
         
     def run(self, location_ids_to_process=None, type=None, year=2000, n=500, 
-            realestate_dataset_name = 'building', **kwargs):
+            realestate_dataset_name = 'building', process_planned=False, **kwargs):
         """If 'type' is None, the model runs for both, residential and non-residential space. Alternatively,
         it can be set to 'residential' or 'non_residential'.
         """
@@ -30,7 +30,8 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         
         regions = self.dataset_pool.get_dataset(self.subarea_name)
         self.subarea_id_name = regions.get_id_name()[0]
-        self.proposal_set.id_planned = 99999 # to switch processing of planned proposals of
+        if not process_planned:
+            self.proposal_set.id_planned = 99999 # to switch processing of planned proposals of
         
         target_vacancies = self.dataset_pool.get_dataset('target_vacancy')
         tv_building_types = unique(target_vacancies.get_attribute('building_type_id'))
