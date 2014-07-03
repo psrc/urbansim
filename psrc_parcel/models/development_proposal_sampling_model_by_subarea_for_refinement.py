@@ -120,7 +120,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             idx_out_subarea_not_active_not_refused = where(logical_and(logical_and(status != self.proposal_set.id_active, 
                                                                                status != self.proposal_set.id_refused),
                                                                     logical_not(where_subarea)))[0]
-            status[idx_subarea_in_prop] = self.proposal_set.id_tentative
+            status[idx_subarea_in_prop] = self.proposal_set['original_status_id'][idx_subarea_in_prop]
             status[idx_out_subarea_not_active_not_refused] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
             
