@@ -66,11 +66,14 @@ if __name__ == '__main__':
         logger.log_status('Caching all tables in database...')
         lst = input_storage.get_table_names()
         for i in lst:
-            ExportStorage().export_dataset(
-                dataset_name = i,
-                in_storage = input_storage,
-                out_storage = output_storage,
-            )
+            try:
+                ExportStorage().export_dataset(
+                                               dataset_name = i,
+                                               in_storage = input_storage,
+                                               out_storage = output_storage,
+                                               )
+            except:
+                logger.log_warning('Error in exporting %s.' % i)
         sys.exit(1)
 
     logger.start_block("Exporting table '%s' to year %s of cache located at %s..." %
