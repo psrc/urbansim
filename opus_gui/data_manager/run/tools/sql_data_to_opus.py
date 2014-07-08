@@ -53,12 +53,15 @@ def opusRun(progressCB,logCB,params):
     for j, i in enumerate(lst, start=1):
         logCB("Exporting table '%s' to year %s of cache located at %s...\n" %
                    (i, opus_data_year, opus_data_directory))
-        ExportStorage().export_dataset(
-            dataset_name = i,
-            in_storage = input_storage,
-            out_storage = output_storage,
-            overwrite = overwrite,
-        )
+        try:
+            ExportStorage().export_dataset(
+                                           dataset_name = i,
+                                           in_storage = input_storage,
+                                           out_storage = output_storage,
+                                           overwrite = overwrite,
+                                           )
+        except:
+            logCB('Error in exporting %s.' % i)
         progressCB(100 * j / tables)
 
     logCB('successfully cached tables:\n%s\n' % lst_out)
