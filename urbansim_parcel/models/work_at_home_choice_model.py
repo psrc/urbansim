@@ -25,7 +25,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
     def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', 
                  location_id_name='urbansim_parcel.person.building_id', match_number_of_jobs=False, **kwargs):
         """If match_number_of_jobs is True, the choices are drawn from the probability distribution in a way 
-           that the final number matches teh number of jobs.
+           that the final number matches the number of jobs.
         """
         self.job_set = choice_set
         self.filter = filter
@@ -38,7 +38,8 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         #    self.upc_sequence.choice_class = None # no choices are made, since we only want the probabilities
     
         
-    def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, *args, **kwargs):
+    def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, 
+            residence_id='zone_id', *args, **kwargs):
         agent_set = kwargs['agent_set']
         agents_index = kwargs.get('agents_index', None)
         if agents_index is None:
@@ -87,15 +88,15 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         if not choose_job_only_in_residence_zone:
             assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
         else:
-            agent_set.compute_variables("urbansim_parcel.person.zone_id")
-            self.job_set.compute_variables("urbansim_parcel.job.zone_id")
-            agent_zone_ids = agent_set.get_attribute_by_index('zone_id', at_home_worker_index)
-            job_zone_ids = self.job_set.get_attribute_by_index('zone_id', jobs_set_index)
+            agent_set.compute_one_variable_with_unknown_package(residence_id, dataset_pool=self.dataset_pool)
+            self.job_set.compute_one_variable_with_unknown_package(residence_id, dataset_pool=self.dataset_pool)
+            agent_zone_ids = agent_set.get_attribute_by_index(residence_id, at_home_worker_index)
+            job_zone_ids = self.job_set.get_attribute_by_index(residence_id, jobs_set_index)
             unique_zones = unique(job_zone_ids)
             assigned_worker_index = array([], dtype="int32")
             assigned_job_index = array([], dtype="int32")
             for this_zone in unique_zones:
-                logger.log_status("zone_id: %s" % this_zone)
+                logger.log_status("%s: %s" % (residence_id, this_zone))
                 if this_zone <= 0: continue
                 at_home_worker_in_this_zone = where(agent_zone_ids == this_zone)[0]
                 job_set_in_this_zone = where(job_zone_ids == this_zone)[0]
