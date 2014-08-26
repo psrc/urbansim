@@ -242,7 +242,7 @@ class InteractionDataset(Dataset):
             return self.dataset1
         if name==self.dataset2.get_dataset_name():
             return self.dataset2
-        raise ValueError, 'trying to get an interaction set component named %s but it does not exist' % name
+        raise ValueError, "trying to get an interaction set component named %s but it does not exist" % name
 
     def get_index(self, nr):
         if (nr == 1):
