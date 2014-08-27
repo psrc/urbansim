@@ -224,4 +224,28 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             building_type_distribution[itype] = alldata['number_of_households_for_bt_%s' % building_type_ids[itype]][0]/float(sumhhs)
         return building_type_distribution
         
-        
+    def consider_proposals(self, proposal_indexes, force_accepting=False):
+        if proposal_indexes.size == 0:
+            return
+        is_proposal_rejected = zeros(proposal_indexes.size, dtype="bool")
+        sites = self.proposal_set["parcel_id"][proposal_indexes]
+        self.proposal_set.compute_variables(['is_res = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0',
+                                             'total_spaces = development_project_proposal.aggregate(psrc_parcel.development_project_proposal_component.total_spaces)'],
+                                                    dataset_pool=self.dataset_pool)
+        self.realestate_dataset.compute_variables(['urbansim_parcel.building.is_residential', 'psrc_parcel.building.total_spaces'], dataset_pool=self.dataset_pool)
+        for i, proposal_index in enumerate(proposal_indexes):
+            if not is_proposal_rejected[i] and ((self.weight[proposal_index] > 0) or force_accepting):
+                accepted = self.has_more_cubicles(proposal_index, force_accepting=force_accepting) and self.consider_proposal(proposal_index, force_accepting=force_accepting)
+                if accepted:
+                    is_proposal_rejected[ sites == sites[i]] = True
+                    
+    def has_more_cubicles(self, proposal_index, force_accepting=False):
+        if force_accepting or not self.proposal_set["is_redevelopment"][proposal_index] or self.proposal_set["is_res"][proposal_index]:
+            return True
+        # check this only for non-residential redevelopment proposals
+        this_site = self.proposal_set["parcel_id"][proposal_index]
+        building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
+        if self.realestate_dataset['is_residential'][building_indexes].any():
+            return True
+        # only accept if it fits more jobs then the existing structure
+        return self.proposal_set["total_spaces"][proposal_index] >= self.realestate_dataset["total_spaces"][building_indexes].sum()
