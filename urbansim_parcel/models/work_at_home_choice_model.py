@@ -115,7 +115,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                       index=assigned_job_index)
 
     def _assign_job_to_worker(self, worker_index, job_index):
-        logger.log_status("Attempt to assign %s jobs to %s workers" % (worker_index.size, job_index.size))
+        logger.log_status("Attempt to assign %s jobs to %s workers" % (job_index.size, worker_index.size))
         if worker_index.size >= job_index.size: 
            #number of at home workers is greater than the available choice (home_based jobs by default)
             assigned_worker_index = sample_noreplace(worker_index, job_index.size)
@@ -123,7 +123,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         else:
             assigned_worker_index = worker_index
             assigned_job_index=sample_noreplace(job_index,worker_index.size)
-        logger.log_status("Assigned %s jobs to %s workers" % (assigned_worker_index.size, assigned_job_index.size))
+        logger.log_status("Assigned %s jobs to %s workers" % (assigned_job_index.size, assigned_worker_index.size))
         
         return (assigned_worker_index, assigned_job_index)
  
