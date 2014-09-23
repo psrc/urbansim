@@ -19,10 +19,18 @@ class ScalingAgentsModel(Model):
     
     def __init__(self,  submodel_string=None,
                  filter = None, 
+                 weights = None,
                  dataset_pool=None,
                  package_order=["urbansim", "opus_core"],
                  debuglevel=0):
+        """
+        'filter' is a location expression to restrict scaling to a subset of locations. 
+        The model scales only in locations for which the filter > 0.
+        'weights' is a location expression by which the agents distribution in locations is multiplied.
+        It can be used to give some locations more weight than others. They must be non-negative.
+        """
         self.filter = filter
+        self.weights = weights
         self.submodel_string = submodel_string
         self.dataset_pool = self.create_dataset_pool(dataset_pool, package_order)
         self.debug = DebugPrinter(debuglevel)
@@ -74,12 +82,17 @@ class ScalingAgentsModel(Model):
                                          labels=agent_set[location_id_name][all_agents_in_subm], 
                                   index=location_set.get_id_attribute()))
  
-        if self.filter is None:
-            location_index = arange(location_set.size())
-        else:
+        location_ind = ones(location_set.size(), dtype='bool')
+        if self.filter is not None:
             submodel_filter = re.sub('SUBMODEL', str(submodel), self.filter)
             filter_values = location_set.compute_variables([submodel_filter], dataset_pool=self.dataset_pool)
-            location_index = where(filter_values > 0)[0]
+            location_ind = logical_and(location_ind, filter_values > 0)
+        if self.weights is not None:
+            submodel_weights = re.sub('SUBMODEL', str(submodel), self.weights)
+            weight_values = location_set.compute_variables([submodel_weights], dataset_pool=self.dataset_pool)
+            location_ind = logical_and(location_ind, weight_values > 0)
+        
+        location_index = where(location_ind)[0]
         if location_index.size <= 0:
             logger.log_status("No locations available. Nothing to be done.")
             return array(subm_agents_index.size*[-1], dtype="int32")
@@ -87,6 +100,8 @@ class ScalingAgentsModel(Model):
                                                     subm_agents_index.size, agent_set.get_dataset_name(), 
                                                     location_index.size, location_set.get_dataset_name()))
         distr = agent_distr_in_loc[location_index]
+        if self.weights is not None:
+            distr = distr * weight_values[location_index]
         if ma.allclose(distr.sum(), 0):
             uniform_prob = 1.0/distr.size
             distr = resize(array([uniform_prob], dtype='float64'), distr.size)
@@ -198,6 +213,42 @@ class Test(opus_unittest.OpusTestCase):
         res_incr = result - array([10, 60]) # building increments
         # second building should get many more HHs than the first building (at least twice as much)
         self.assertEqual(res_incr[1] > 2*res_incr[0], True)
+        
+    def test_scaling_households_model_with_weights(self):       
+        storage = StorageFactory().get_storage('dict_storage')
+
+        hhs_table_name = 'households'        
+        storage.write_table(
+            table_name=hhs_table_name,
+            table_data={
+                "household_id": arange(100)+1,
+                "building_id":array(10*[1]+50*[2]+10*[3]+30*[-1])
+                }
+            )
+        households = HouseholdDataset(in_storage=storage, in_table_name=hhs_table_name)
+        
+        buildings_table_name = 'buildings'        
+        storage.write_table(
+            table_name=buildings_table_name,
+            table_data={"building_id":arange(3)+1}
+            )
+        buildings = BuildingDataset(in_storage=storage, in_table_name=buildings_table_name)
+        
+        # run model: Give the first building ten times as much weight as building 2. No weight for building 3.
+        model = ScalingAgentsModel(weights="10*(building.building_id == 1) + (building.building_id == 2)", 
+                                   debuglevel=4)
+        model.run(buildings, households, agents_index = arange(70, 100))
+        # all households are placed
+        self.assertEqual((households['building_id']>0).all(), True)
+        # get results
+        buildings.compute_variables(["urbansim_parcel.building.number_of_households"], 
+                                        resources = Resources({"household":households}))
+        result = buildings["number_of_households"]
+        self.assertEqual(result.sum(), 100)
+        res_incr = result - array([10, 50, 10]) # building increments
+        self.assertEqual(res_incr[2], 0) # third building should have no increment
+        # first building should get more HHs than the second building
+        self.assertEqual(res_incr[1] < res_incr[0], True)
  
 
 
