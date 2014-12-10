@@ -78,7 +78,7 @@
 		 	<!-- <format type="string">hdf5</format> -->
 		 	 <format type="string">tsv</format>  
 		 	<hdf5_compression type="string" convert_blank_to_none="True">gzip</hdf5_compression>
-		 	<name type="string">parcels.txt</name>
+		 	<name type="string">parcels_urbansim</name>
 		 </daysim_file>
       <models type="selectable_list">
         <selectable name="inprocess.hana.opus_daysim.models.get_cache_data_into_daysim" type="selectable">True</selectable>
