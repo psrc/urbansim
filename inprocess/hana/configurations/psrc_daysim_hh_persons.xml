@@ -40,8 +40,7 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/daysim</argument>
-       <!-- <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_31.2013_09_04_with_school_models</argument>-->
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs</argument>
        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_ref245_with_school_models</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
@@ -76,13 +75,13 @@
         	<variable type="string" name="pwtyp">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>        	
         	<variable type="string" name="pwpcl">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
         	<variable type="string" name="pwtaz">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
-        	<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
-        	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_5to6 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
+        	<!--<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
+        	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_7to8 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>-->
         	<variable type="string" name="pstyp">(person.student*(numpy.logical_or(person.student==1, person.student==2))).astype(int32)</variable>
 			<variable type="string" name="pspcl">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
 			<variable type="string" name="pstaz">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-			<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
+			<!--<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
+			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_7to8 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
 			<variable type="string" name="ptpass">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="ppaidprk">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="psexpfac">(person.person_id &gt; 0).astype(int32)</variable>
@@ -134,17 +133,17 @@
         <selectable name="inprocess.hana.opus_daysim.models.get_daysim_data_into_cache" type="selectable">False</selectable>
         
       </models>
-		  <daysim_base_directory type="directory" parser_action="prefix_with_opus_data_path">SoundCastLT</daysim_base_directory>
+		  <daysim_base_directory type="directory" parser_action="prefix_with_opus_data_path">soundcast</daysim_base_directory>
 
 		  <years_to_run key_name="year" type="category_with_special_keys">
 			<run_description type="dictionary">
 			  <year type="integer">2001</year>
-		  		<daysim_exchange_dir type="string">urbansim/DSinputs09032013/2000</daysim_exchange_dir> 
+		  		<daysim_exchange_dir type="string">urbansim_outputs/2000</daysim_exchange_dir> 
 		  		<daysim_skim_dir type="string">skims/2000</daysim_skim_dir>
 			</run_description>
 			<run_description type="dictionary">
 			  <year type="integer">2041</year>
-			  <daysim_exchange_dir type="string">urbansim/DSinputs05122014/2040</daysim_exchange_dir>
+			  <daysim_exchange_dir type="string">urbansim_outputs/2040</daysim_exchange_dir>
 			  <daysim_skim_dir type="string">skims/2040</daysim_skim_dir>
 			</run_description>
 		  </years_to_run>		
