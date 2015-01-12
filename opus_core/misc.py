@@ -871,8 +871,8 @@ def lookup(subarray, fullarray, index_if_not_found=-1):
     >>> lookup(b, a)
     array([-1, 4, 2, 1, 3, -1])
     """
-    from numpy import arange, searchsorted, not_equal, rank
-    if rank(subarray)!=1 or rank(fullarray)!=1:
+    from numpy import arange, searchsorted, not_equal
+    if subarray.ndim !=1 or fullarray.ndim !=1:
         raise ValueError, "lookup only works with 1-d input arrays."
     
     array_size = fullarray.size

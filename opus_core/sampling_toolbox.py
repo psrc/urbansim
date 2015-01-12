@@ -5,7 +5,7 @@
 import numpy
 from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
 from numpy import where, equal, ndarray, clip, sort, searchsorted, cumsum
-from numpy import float32, float64, newaxis, rank, take, ma, argmax
+from numpy import float32, float64, newaxis, take, ma, argmax
 from numpy import logical_not
 from opus_core.misc import ncumsum, is_masked_array, unique, ismember
 from opus_core.logger import logger
@@ -274,7 +274,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                     raise TypeError, "exclude_index must be of type ndarray"
             if exclude_index.shape[0] <> rows:
                 raise ValueError, "exclude_index should have the same number of rows as sample_size[0]"
-            if rank(exclude_index) == 1:
+            if exclude_index.ndim == 1:
                 exclude_index = exclude_index[:, newaxis]
             #sampled_choiceset_index = concatenate((exclude_index,sampled_choiceset_index),axis=1)
                       #attach exclude_index to the beginning of sampled_choiceset_index
@@ -374,11 +374,11 @@ def find_duplicates_others(source_array, other_array):
 
     if other_array.shape[0] <> source_array.shape[0]:
         raise ValueError, "Arrays have incompatible shapes"
-    source_array_rank = rank(source_array)
-    if rank(source_array) < rank(other_array):
+    source_array_rank = source_array.ndim
+    if source_array_rank < other_array.ndim:
         src_array = source_array[:, newaxis]
         oth_array = other_array
-    elif rank(source_array) > rank(other_array):
+    elif source_array_rank > other_array.ndim:
         src_array = source_array
         oth_array = other_array[:, newaxis]
 
