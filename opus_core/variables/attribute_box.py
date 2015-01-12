@@ -30,7 +30,7 @@ class AttributeBox(object):
         """Set 'values' as values of this attribute. Optional 'index' specifies indices
         of 'values' within the data array. Both arguments should be numpy arrays.
         """
-        if index <> None:
+        if index is not None:
             self._data[index] = values.astype(self._data.dtype)
         else:
             self._data = values

@@ -403,7 +403,7 @@ class ChoiceModel(ChunkModel):
         if agent_set.size()<=0:
             agent_set.get_id_attribute()
 
-        if agents_index==None:
+        if agents_index is None:
             agents_index=arange(agent_set.size())
 
         if not isinstance(agents_index,ndarray):

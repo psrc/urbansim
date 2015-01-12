@@ -68,7 +68,7 @@ def sqrt(v):
 def zscore(v):
     """Returns a 1D array of z-scores, one for each score in the passed array, computed relative to the passed array.
     """
-    if rank(v) > 1:
+    if v.ndim > 1:
         shape = v.shape
         z = scipy_zscore(v.ravel())
         return z.reshape(shape)

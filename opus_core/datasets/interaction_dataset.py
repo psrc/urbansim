@@ -56,7 +56,7 @@ class InteractionDataset(Dataset):
             self.dataset_name = self.dataset1.get_dataset_name() + '_x_' + self.dataset2.get_dataset_name()
         self._primary_attribute_names=[]
         self.index1_mapping = {}
-        if self.index1 <> None:
+        if self.index1 is not None:
             self.index1_mapping = do_id_mapping_dict_from_array(self.index1)
         self._id_names = None # for compatibility with Dataset
         self.variable_factory = VariableFactory()
@@ -96,7 +96,7 @@ class InteractionDataset(Dataset):
         reduced_n or reduced_m.
         """
         index = self.get_index(dataset_number)
-        if index <> None:
+        if index is not None:
             return self.get_dataset(dataset_number).get_attribute_by_index(name, index)
         return self.get_dataset(dataset_number).get_attribute(name)
         
@@ -104,7 +104,7 @@ class InteractionDataset(Dataset):
         """Like 'get_attribute_of_dataset' where name is the id_name of the given dataset.
         """
         index = self.get_index(dataset_number)
-        if index <> None:
+        if index is not None:
             return self.get_dataset(dataset_number).get_id_attribute()[index]
         return self.get_dataset(dataset_number).get_id_attribute()
 
@@ -211,14 +211,14 @@ class InteractionDataset(Dataset):
         return self.dataset2.size()
 
     def get_reduced_n(self):
-        if self.index1 == None:
+        if self.index1 is None:
             return self.get_n()
         if isinstance(self.index1, ndarray):
             return self.index1.shape[0]
         return self.get_n()
 
     def get_reduced_m(self):
-        if self.index2 == None:
+        if self.index2 is None:
             return self.get_m()
         if isinstance(self.index2, ndarray):
             if self.index2.ndim == 1:
@@ -292,7 +292,7 @@ class InteractionDataset(Dataset):
     def get_2d_index(self):
         n = self.get_reduced_n()
         m = self.get_reduced_m()
-        if self.index2 == None:
+        if self.index2 is None:
             index = indices((n,m))[1]
         elif isinstance(self.index2, ndarray):
             if self.index2.ndim == 1: # one-dim array
@@ -309,7 +309,7 @@ class InteractionDataset(Dataset):
         n = self.get_reduced_n()
         m = self.get_reduced_m()
         index = self.get_index(1)
-        if index == None:
+        if index is None:
             index = arange(n)
         return repeat(reshape(index, (index.size,1)), m, 1)
 
@@ -387,7 +387,7 @@ class InteractionDataset(Dataset):
 
         mapping = coefficients.get_coefmap_alt()
         ncoef = mapping.size
-        if index <> None:
+        if index is not None:
             nobs = index.size
         else:
             nobs = self.get_reduced_n()

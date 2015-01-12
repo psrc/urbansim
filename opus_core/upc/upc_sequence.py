@@ -35,10 +35,10 @@ class upc_sequence(object):
                                              coefficients=coefficients, 
                                              resources=local_resources)
         this_result = self.compute_probabilities(resources=local_resources)
-        if this_result <> None:
+        if this_result is not None:
             last_result = this_result
         this_result = self.compute_choices(resources=local_resources)
-        if this_result <> None:
+        if this_result is not None:
             last_result = this_result
         return last_result
 
