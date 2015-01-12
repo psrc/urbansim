@@ -90,7 +90,9 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
             ]
         
     def _get_income_group_quartiles(self, dataset_pool):
-        return (34000, 68000, 102000)
+        #return (34000, 68000, 102000)
+        return (25000, 51000, 78000)
+        #return (30000, 59000, 90000) # removes real income growth
     
     def _get_tm_year(self, year, gq):
         """Get the closest year to the current year in the group_quarters table."""

@@ -13,5 +13,6 @@ class logsum_hbw_am_from_home_to_work_4k(logsum_hbw_am_from_home_to_work):
            More than $102K.
     """
     default_value = -20
-    agent_category_attribute = "logsum_income_break = (person.disaggregate(psrc_parcel.household.income_breaks_34000_64000_102000)).astype(int32)"
+    #agent_category_attribute = "logsum_income_break = (person.disaggregate(psrc_parcel.household.income_breaks_34000_64000_102000)).astype(int32)"
+    agent_category_attribute = "logsum_income_break = (person.disaggregate(psrc_parcel.household.income_breaks_25000_51000_78000)).astype(int32)"
 
