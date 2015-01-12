@@ -173,7 +173,7 @@ class LocationChoiceModel(ChoiceModel):
         """ Computes capacity if required and calls the estimate method of ChoiceModel.
         See ChoiceModel.estimate for details on arguments.
         """
-        if agents_index==None:
+        if agents_index is None:
             agents_index=arange(agent_set.size())
         if agents_index.size <= 0:
             logger.log_status("Nothing to be done.")
