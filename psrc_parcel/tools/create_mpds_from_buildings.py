@@ -1,4 +1,4 @@
-from numpy import where, all, unique, array, zeros, logical_not, round
+from numpy import where, all, unique, array, zeros, logical_not, round, arange, in1d
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 
@@ -26,7 +26,10 @@ class InverseMPDs:
         self.input_buildings.compute_variables(["land_use_type_id = building.disaggregate(parcel.land_use_type_id)",
                                                 "urbansim_parcel.building.is_residential"], 
                                                dataset_pool=self.dataset_pool)
-                                               
+                       
+    def is_residential_building(self, idx):
+        return self.input_buildings["is_residential"][idx] and self.input_buildings["residential_units"][idx] > 0
+                      
     def preprocess_datasets(self):
         self.compute_building_variables()
         # consolidate buildings of the same type on the same parcel
@@ -44,12 +47,13 @@ class InverseMPDs:
                 cons_idx = bidx[0]
                 for attr in ["non_residential_sqft", "land_area", "residential_units"]:
                     self.input_buildings[attr][cons_idx] = self.input_buildings[attr][bidx].sum()
-                if self.input_buildings["is_residential"][cons_idx]:
+                if self.is_residential_building(cons_idx):
                     unitattr = "residential_units"
                 else:
                     unitattr = "non_residential_sqft"
                 totsqft = self.input_buildings[unitattr][bidx] * self.input_buildings["sqft_per_unit"][bidx]
-                self.input_buildings[unitattr][cons_idx] = round(totsqft.sum()/self.input_buildings[unitattr][cons_idx].astype("float32"))
+                if self.input_buildings[unitattr][cons_idx] > 0:
+                    self.input_buildings["sqft_per_unit"][cons_idx] = round(totsqft.sum()/self.input_buildings[unitattr][cons_idx].astype("float32"))
                 bldgs_to_remove[bidx[1:]] = True
                 consolidated = consolidated + array([1, bidx.size])
                 continue
@@ -62,7 +66,19 @@ class InverseMPDs:
         print "Updated total: %s buildings." % self.input_buildings.size()
         
     def run(self):
-        pass
+        templates = self.dataset_pool.get_dataset("development_templates")
+        template_comps = self.dataset_pool.get_dataset("development_template_components")
+        land_sqft = self.input_buildings["land_area"]*43560.00
+        for bidx in arange(self.input_buildings.size()):
+            # match by land use type and building type
+            templ_match = templates["land_use_type_id"] == self.input_buildings["land_use_type_id"][bidx]
+            comp_match = template_comps["building_type_id"] == self.input_buildings["building_type_id"][bidx]
+            templ_match = logical_and(templ_match, in1d(templates["template_id"], template_comps["template_id"]))
+            # match land area
+            
+            templ_match = logical_and(templ_match, 
+                                      logical_and(land_sqft[bidx] <= templates["land_sqft_max"],
+                                                  land_sqft[bidx] >= templates["land_sqft_min"])) 
         
 if __name__ == '__main__':
     ### User's settings:
