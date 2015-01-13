@@ -1,4 +1,4 @@
-from numpy import where, arange, all, unique, concatenate, array
+from numpy import where, all, unique, array, zeros, logical_not, round
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 
@@ -22,20 +22,21 @@ class InverseMPDs:
             raise InputError, "Either input_table or filter must be given."
         self.parcels_not_processed = []
         
-    def compute_land_use_type(self):
-        self.input_buildings.compute_variables("land_use_type_id = building.disaggregate(parcel.land_use_type_id)", 
+    def compute_building_variables(self):
+        self.input_buildings.compute_variables(["land_use_type_id = building.disaggregate(parcel.land_use_type_id)",
+                                                "urbansim_parcel.building.is_residential"], 
                                                dataset_pool=self.dataset_pool)
                                                
     def preprocess_datasets(self):
-        print "Original total: %s buildings" % self.input_buildings.size()
-        self.compute_land_use_type()
+        self.compute_building_variables()
         # consolidate buildings of the same type on the same parcel
         parcels = self.dataset_pool.get_dataset('parcel')
         number_of_buildings = parcels.compute_variables("number_of_buildings = parcel.number_of_agents(building)", 
                                                dataset_pool=self.dataset_pool)
         multiple_bldg_parcels = where(number_of_buildings > 1)[0]
-        bldgs_to_remove = array([], dtype='int32')
+        bldgs_to_remove = zeros(self.input_buildings.size(), dtype='bool8')
         consolidated = array([0, 0])
+        print "Original total: %s buildings" % self.input_buildings.size()
         for i in multiple_bldg_parcels:
             bidx = where(self.input_buildings['parcel_id'] == parcels["parcel_id"][i])[0]
             bts = unique(self.input_buildings["building_type_id"][bidx])         
@@ -43,12 +44,18 @@ class InverseMPDs:
                 cons_idx = bidx[0]
                 for attr in ["non_residential_sqft", "land_area", "residential_units"]:
                     self.input_buildings[attr][cons_idx] = self.input_buildings[attr][bidx].sum()
-                #TODO: ? sqft_per_unit
-                bldgs_to_remove = concatenate((bldgs_to_remove, bidx[1:]))
+                if self.input_buildings["is_residential"][cons_idx]:
+                    unitattr = "residential_units"
+                else:
+                    unitattr = "non_residential_sqft"
+                totsqft = self.input_buildings[unitattr][bidx] * self.input_buildings["sqft_per_unit"][bidx]
+                self.input_buildings[unitattr][cons_idx] = round(totsqft.sum()/self.input_buildings[unitattr][cons_idx].astype("float32"))
+                bldgs_to_remove[bidx[1:]] = True
                 consolidated = consolidated + array([1, bidx.size])
                 continue
+            bldgs_to_remove[bidx] = True
             self.parcels_not_processed = self.parcels_not_processed + [parcels["parcel_id"][i]]
-        self.input_buildings.subset_by_index(bldgs_to_remove)
+        self.input_buildings.subset_by_index(where(logical_not(bldgs_to_remove))[0])
         
         print "%s buildings consolidated into %s." % (consolidated[1], consolidated[0])
         print "%s parcels were not processed." % len(self.parcels_not_processed)
