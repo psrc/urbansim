@@ -66,8 +66,8 @@ class InverseMPDs:
         print "Updated total: %s buildings." % self.input_buildings.size()
         
     def run(self):
-        templates = self.dataset_pool.get_dataset("development_templates")
-        template_comps = self.dataset_pool.get_dataset("development_template_components")
+        templates = self.dataset_pool.get_dataset("development_template")
+        template_comps = self.dataset_pool.get_dataset("development_template_component")
         land_sqft = self.input_buildings["land_area"]*43560.00
         for bidx in arange(self.input_buildings.size()):
             # match by land use type and building type
