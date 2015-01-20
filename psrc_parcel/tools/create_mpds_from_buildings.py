@@ -75,7 +75,8 @@ class InverseMPDs:
         templates.compute_variables(["urbansim_parcel.development_template.density_converter", 
                                      "number_of_components = (development_template.number_of_agents(development_template_component)).astype(int32)",
                                      # careful with the construction cost if there are more than one component (here we consider only one component)
-                                     "construction_cost_per_unit = development_template.aggregate(development_template_component.construction_cost_per_unit)"], 
+                                     "construction_cost = development_template.aggregate(development_template_component.construction_cost_per_unit * development_template_component.building_sqft_per_unit)",
+                                     ], 
                                             dataset_pool=self.dataset_pool)
         land_sqft = self.input_buildings["land_area"]
         results = self.input_buildings["template_id"]
@@ -99,7 +100,7 @@ class InverseMPDs:
             for i in arange(templ_idx.size):
                 units[i] = self.input_buildings["land_area"][bidx]*(1-templates["percent_land_overhead"][templ_idx[i]]/100.0)*templates["density"][templ_idx[i]]*templates["density_converter"][templ_idx[i]]
             units = maximum(1, round_(units, 0))    
-            improvement_value = templates["construction_cost_per_unit"][templ_idx] * units
+            improvement_value = templates["construction_cost"][templ_idx] * units
             unitattr = self.get_units(bidx)
             winner_templ = argmin(abs(units - self.input_buildings[unitattr][bidx]))
             all_winners = units == units[winner_templ]
