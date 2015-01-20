@@ -72,17 +72,18 @@ class InverseMPDs:
     def run(self, outstorage, output_table=None):
         templates = self.dataset_pool.get_dataset("development_template")
         template_comps = self.dataset_pool.get_dataset("development_template_component")
-        templates.compute_variables("urbansim_parcel.development_template.density_converter", 
-                                               dataset_pool=self.dataset_pool)
+        templates.compute_variables(["urbansim_parcel.development_template.density_converter", 
+                                     "number_of_components = (development_template.number_of_agents(development_template_component)).astype(int32)"],
+                                            dataset_pool=self.dataset_pool)
         land_sqft = self.input_buildings["land_area"]
         results = self.input_buildings["template_id"]
         no_template_found = []
         for bidx in arange(self.input_buildings.size()):
             # match by land use type and building type
             #templ_match = templates["land_use_type_id"] == self.input_buildings["land_use_type_id"][bidx]
+            templ_match = templates["number_of_components"] == 1
             comp_match = template_comps["building_type_id"] == self.input_buildings["building_type_id"][bidx]
-            #templ_match = logical_and(templ_match, in1d(templates["template_id"], template_comps["template_id"]))
-            templ_match = in1d(templates["template_id"], template_comps["template_id"])
+            templ_match = logical_and(templ_match, in1d(templates["template_id"], template_comps["template_id"][where(comp_match)]))
             # match land area            
             templ_match = logical_and(templ_match, 
                                       logical_and(land_sqft[bidx] <= templates["land_sqft_max"],
