@@ -95,9 +95,16 @@ class InverseMPDs:
                 continue
             units = zeros(templ_idx.size, dtype='float32')
             for i in arange(templ_idx.size):
-                units[i] = self.input_buildings["land_area"][bidx]*(1-templates["percent_land_overhead"][templ_idx[i]])/100.0*templates["density"][templ_idx[i]]*templates["density_converter"][templ_idx[i]]
+                units[i] = self.input_buildings["land_area"][bidx]*(1-templates["percent_land_overhead"][templ_idx[i]]/100.0)*templates["density"][templ_idx[i]]*templates["density_converter"][templ_idx[i]]
             unitattr = self.get_units(bidx)
             winner_templ = argmin(abs(units - self.input_buildings[unitattr][bidx]))
+            all_winners = units == units[winner_templ]
+            if all_winners.sum() > 1: # more than 1 winner
+                # choose the one with matching land use type
+                lut_match = templates["land_use_type_id"] == self.input_buildings["land_use_type_id"][bidx]
+                winners = logical_and(all_winners, lut_match[templ_idx])
+                if winners.any():
+                    winner_templ = where(winners)[0][0]
             results[bidx] = templates["template_id"][templ_idx[winner_templ]]
         # write results
         if self.original_templates is not None:
@@ -112,10 +119,10 @@ if __name__ == '__main__':
     #input_buildings_table = "buildings1999"
     input_buildings_table = None
     #buildings_filter = None # if input_buildings_table is None, use this to filter out buildings from the input cache 
-    buildings_filter = "building.year_built==2005"
+    buildings_filter = "building.year_built==2025"
     output_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/inverse_templates"
     output_buildings_table = "buildings1999out"
-    output_buildings_table = "buildings2005out"
+    output_buildings_table = "buildings2025out"
     ### End of user's settings
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
