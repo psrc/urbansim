@@ -1,5 +1,5 @@
 from numpy import where, all, unique, array, zeros, logical_not, logical_and, round, arange
-from numpy import in1d, argmin, abs
+from numpy import in1d, argmin, abs, maximum, round_
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 
@@ -73,7 +73,9 @@ class InverseMPDs:
         templates = self.dataset_pool.get_dataset("development_template")
         template_comps = self.dataset_pool.get_dataset("development_template_component")
         templates.compute_variables(["urbansim_parcel.development_template.density_converter", 
-                                     "number_of_components = (development_template.number_of_agents(development_template_component)).astype(int32)"],
+                                     "number_of_components = (development_template.number_of_agents(development_template_component)).astype(int32)",
+                                     # careful with the construction cost if there are more than one component (here we consider only one component)
+                                     "construction_cost_per_unit = development_template.aggregate(development_template_component.construction_cost_per_unit)"], 
                                             dataset_pool=self.dataset_pool)
         land_sqft = self.input_buildings["land_area"]
         results = self.input_buildings["template_id"]
@@ -96,6 +98,8 @@ class InverseMPDs:
             units = zeros(templ_idx.size, dtype='float32')
             for i in arange(templ_idx.size):
                 units[i] = self.input_buildings["land_area"][bidx]*(1-templates["percent_land_overhead"][templ_idx[i]]/100.0)*templates["density"][templ_idx[i]]*templates["density_converter"][templ_idx[i]]
+            units = maximum(1, round_(units, 0))    
+            improvement_value = templates["construction_cost_per_unit"][templ_idx] * units
             unitattr = self.get_units(bidx)
             winner_templ = argmin(abs(units - self.input_buildings[unitattr][bidx]))
             all_winners = units == units[winner_templ]
@@ -104,7 +108,11 @@ class InverseMPDs:
                 lut_match = templates["land_use_type_id"] == self.input_buildings["land_use_type_id"][bidx]
                 winners = logical_and(all_winners, lut_match[templ_idx])
                 if winners.any():
-                    winner_templ = where(winners)[0][0]
+                    winner_templ = where(winners)[0]
+                if winners.sum() > 1:
+                    # if still multiple winners choose one that matches improvement value
+                    impr_winner = argmin(abs(improvement_value[winner_templ] - self.input_buildings["improvement_value"][bidx]))
+                    winner_templ = winner_templ[impr_winner]
             results[bidx] = templates["template_id"][templ_idx[winner_templ]]
         # write results
         if self.original_templates is not None:
