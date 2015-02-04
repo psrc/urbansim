@@ -22,7 +22,7 @@ class AttributeBox(object):
 
     def get_data(self, index = None):
         """Return an array which this attribute represents"""
-        if index <> None:
+        if index is not None:
             return self._data[index]
         return self._data
 

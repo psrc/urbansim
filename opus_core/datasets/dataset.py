@@ -578,7 +578,7 @@ class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
     def __init__(self, parent, index):
         self.parent = parent
-        if index == None:
+        if index is None:
             index = arange(self.parent.size())
         self.n = len(index)
         self.index = index

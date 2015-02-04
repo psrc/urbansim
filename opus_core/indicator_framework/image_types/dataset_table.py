@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
+from numpy import array, logical_and, logical_not, concatenate, newaxis
 
 
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
@@ -77,7 +77,7 @@ class DatasetTable(AbstractIndicator):
                         for attribute_name in self.attributes]
 
         cols = self._get_indicator(year)
-        if id_attributes.size == 1 and rank(cols) == 1:
+        if id_attributes.size == 1 and cols.ndim == 1:
             cols = concatenate((id_attributes, cols))[:, newaxis]
         else:
             cols = concatenate((id_attributes[newaxis,:], cols))

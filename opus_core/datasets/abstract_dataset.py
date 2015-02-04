@@ -420,7 +420,7 @@ class AbstractDataset(object):
     def remove_elements(self, index):
         """Remove individuals from Dataset, given by 'index'. In order to avoid problems with
         lazy loading, all attributes are loaded."""
-        if index == None or index.size == 0:
+        if index is None or index.size == 0:
             return
         attributes = self.get_nonloaded_attribute_names()
         if attributes:

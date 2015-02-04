@@ -6,7 +6,7 @@ from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import where, arange, take, ones, concatenate, searchsorted
-from numpy import newaxis, ndarray, zeros, array, rank, float32 
+from numpy import newaxis, ndarray, zeros, array, float32 
 from opus_core.misc import lookup, unique
 from opus_core.samplers.constants import NO_STRATUM_ID, UNPLACED_ID, DTYPE
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
@@ -244,8 +244,8 @@ class stratified_sampler(Sampler):
         """agent by agent and stratum by stratum stratified sampling, suitable for 2d prob_array and/or sample_size varies for agents
         this method is slower than _sample_by_stratum, for simpler stratified sampling use _sample_by_stratum instead"""
 
-        rank_of_prob = rank(prob_array)
-        rank_of_strata = rank(strata_sample_setting)
+        rank_of_prob = prob_array.ndim
+        rank_of_strata = strata_sample_setting.ndim
 
         J = self.__determine_sampled_index_size(strata_sample_setting, rank_of_strata)
         sampled_index = zeros((index1.size,J), dtype=DTYPE) - 1
