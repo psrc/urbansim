@@ -20,7 +20,9 @@ class BuildingConstructionModel(Model):
     model_name = "BuildingConstructionModel"
 
     def run (self, development_proposal_set, building_dataset, dataset_pool, buildings_to_be_demolished=[], 
-             consider_amount_built_in_parcels = False, current_year=None):
+             consider_amount_built_in_parcels = False, current_year=None,
+             development_proposal_component_set = None
+             ):
         
         self.demolish_buildings(buildings_to_be_demolished, building_dataset, dataset_pool)
 
@@ -55,10 +57,12 @@ class BuildingConstructionModel(Model):
         active_proposal_set = DatasetSubset(development_proposal_set, active_idx)
         
         # create proposal_component_set from the active proposals
-        proposal_component_set = create_from_proposals_and_template_components(active_proposal_set, 
+        if development_proposal_component_set is None:
+            proposal_component_set = create_from_proposals_and_template_components(active_proposal_set, 
                                                    dataset_pool.get_dataset('development_template_component'))
+        else:
+            proposal_component_set = development_proposal_component_set
         dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
-        
         # determine building types and corresponding unit names of the involved building_types
         building_type_id = proposal_component_set.get_attribute("building_type_id")
         building_type_set = dataset_pool.get_dataset("building_type")
@@ -81,9 +85,12 @@ class BuildingConstructionModel(Model):
                                   dataset_pool=dataset_pool)
         parcel_lut = parcels.get_attribute("land_use_type_id")
         parcel_lut_before = parcel_lut.copy()
-        component_land_use_types = proposal_component_set.compute_variables([
+        if 'land_use_type_id' not in proposal_component_set.get_known_attribute_names():
+            component_land_use_types = proposal_component_set.compute_variables([
               'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
                       dataset_pool=dataset_pool)
+        else:
+            component_land_use_types = proposal_component_set['land_use_type_id']
         component_is_redevelopment = proposal_component_set.compute_variables([
               'development_project_proposal_component.disaggregate(development_project_proposal.is_redevelopment)'],
                       dataset_pool=dataset_pool)
