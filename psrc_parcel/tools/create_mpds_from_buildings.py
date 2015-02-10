@@ -2,6 +2,8 @@ from numpy import where, all, unique, array, zeros, logical_not, logical_and, ro
 from numpy import in1d, argmin, abs, maximum, round_
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
+from opus_core.models.model import Model
+from opus_core.logger import logger
 
 
 class FltStorage:
@@ -9,7 +11,16 @@ class FltStorage:
         storage = StorageFactory().get_storage('flt_storage', storage_location=location)
         return storage
     
-class InverseMPDs:
+class TabStorage:
+    def get(self, location):
+        storage = StorageFactory().get_storage('tab_storage', storage_location=location)
+        return storage
+    
+class InverseMPDs(Model):
+    """
+    Model for assessing which template id can be used to generate given buildings. 
+    Output is a buildings table with assigned template_id.
+    """
     def __init__(self, storage, input_table=None, filter=None):
         self.dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
         if input_table is not None:
@@ -35,6 +46,7 @@ class InverseMPDs:
         return "non_residential_sqft"
                       
     def preprocess_datasets(self):
+        logger.start_block('Pre-processing buildings')
         self.compute_building_variables()
         # consolidate buildings of the same type on the same parcel
         parcels = self.dataset_pool.get_dataset('parcel')
@@ -43,7 +55,7 @@ class InverseMPDs:
         multiple_bldg_parcels = where(number_of_buildings > 1)[0]
         bldgs_to_remove = zeros(self.input_buildings.size(), dtype='bool8')
         consolidated = array([0, 0])
-        print "Original total: %s buildings" % self.input_buildings.size()
+        logger.log_status("Original total: %s buildings" % self.input_buildings.size())
         for i in multiple_bldg_parcels:
             bidx = where(self.input_buildings['parcel_id'] == parcels["parcel_id"][i])[0]
             bts = unique(self.input_buildings["building_type_id"][bidx])         
@@ -65,11 +77,12 @@ class InverseMPDs:
             self.original_templates = self.input_buildings["template_id"].copy()
         self.input_buildings.add_attribute(zeros(self.input_buildings.size(), dtype="int32"), name="template_id",
                                            metadata=1)
-        print "%s buildings consolidated into %s." % (consolidated[1], consolidated[0])
-        print "%s parcels were not processed." % len(self.parcels_not_processed)
-        print "Updated total: %s buildings." % self.input_buildings.size()
+        logger.log_status("%s buildings consolidated into %s." % (consolidated[1], consolidated[0]))
+        logger.log_status("%s parcels were not processed." % len(self.parcels_not_processed))
+        logger.end_block()
         
     def run(self, outstorage, output_table=None):
+        logger.log_status('Processing %s buildings' % self.input_buildings.size())
         templates = self.dataset_pool.get_dataset("development_template")
         template_comps = self.dataset_pool.get_dataset("development_template_component")
         templates.compute_variables(["urbansim_parcel.development_template.density_converter", 
@@ -134,28 +147,47 @@ class InverseMPDs:
                     impr_winner = argmin(abs(improvement_value[where(all_winners)] - self.input_buildings["improvement_value"][bidx].sum()))
                     winner_templ = where(all_winners)[0][impr_winner]
             results[bidx] = templates["template_id"][templ_idx[winner_templ]]
+        if len(no_template_found) > 0:
+            logger.log_status("No template found for %s buildings." % len(no_template_found))
+        else:
+            logger.log_status("A template assigned to all buildings.")
         # write results
         if self.original_templates is not None:
             self.input_buildings.add_attribute(self.original_templates, name="original_template_id", metadata=1)
         self.input_buildings.write_dataset(out_storage=outstorage, out_table_name=output_table, attributes=1)
-        print "No template found for %s buildings." % len(no_template_found)
             
 if __name__ == '__main__':
     ### User's settings:
+    # input_cache must have tables: 
+    #    parcels, development_templates, development_template_components, building_types,
+    #    buildings (optional)
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
     input_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/inverse_templates"
+    
+    # Name of the dataset from which the MPDs are generated.
+    # It should live in input_cache and should have all attributes that a buildings dataset has.
+    # Set it to None if the standard 'buildings' dataset should be used.
     #input_buildings_table = "buildings1999"
     input_buildings_table = None
-    #buildings_filter = None # if input_buildings_table is None, use this to filter out buildings from the input cache 
+    
+    # If input_buildings_table is None, use this to filter out buildings from the input cache 
+    #buildings_filter = None 
     buildings_filter = "building.year_built==2025"
+    
+    # Where the output is going to go and name of the output table.
     output_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/inverse_templates"
-    output_buildings_table = "buildings1999out"
-    output_buildings_table = "buildings2025out"
-    ### End of user's settings
+    #output_buildings_table = "buildings1999out"
+    output_buildings_table = "buildings2025outtest"
+    
+    # type of storage
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
+    # for an ascii output, use:
+    #outstorage = TabStorage().get(output_cache)
+    ### End of user's settings
+    
     model = InverseMPDs(instorage, input_buildings_table, buildings_filter)
     model.preprocess_datasets()
     model.run(outstorage, output_table=output_buildings_table)
-    #TODO: Compare templates id (2004 buildings)
+
     
