@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import where, in1d, ones
+from numpy import where, in1d, ones, logical_and
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -24,6 +24,9 @@ class BuildingConstructionModelMPDs(BuildingConstructionModel):
         proposal_component_set = dataset_pool.get_dataset('development_project_proposal_component')
         is_active_comp = in1d(proposal_component_set['proposal_id'], proposal_set['proposal_id'][is_active])
         proposal_component_set.remove_elements(where(is_active_comp==0)[0])
-        to_be_demolished = building_dataset['building_id'][in1d(building_dataset['parcel_id'], proposal_set['parcel_id'][is_active])]
+        demolishing_allowed = ones(building_dataset.size(), dtype='bool8')
+        if 'not_demolish' in building_dataset.get_known_attribute_names():
+            demolishing_allowed = building_dataset['not_demolish'] == 0
+        to_be_demolished = building_dataset['building_id'][logical_and(in1d(building_dataset['parcel_id'], proposal_set['parcel_id'][is_active]), demolishing_allowed)]
         return (proposal_set, proposal_component_set, to_be_demolished)
     
