@@ -16,9 +16,11 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         self.intermediates_to_realestate = intermediates_to_realestate
         
     def run(self, location_ids_to_process=None, type=None, year=2000, n=500, 
-            realestate_dataset_name = 'building', process_planned=False, **kwargs):
+            realestate_dataset_name = 'building', process_planned=False, modify_start_year=True, **kwargs):
         """If 'type' is None, the model runs for both, residential and non-residential space. Alternatively,
         it can be set to 'residential' or 'non_residential'.
+        modify_start_year should be set to True if the model is run in a different year than start_year 
+        of projects that should be processed.
         """
 
         self.type = {"residential": False,
@@ -91,8 +93,9 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         region_ids = regions.get_id_attribute()
         # keep copy of the weights
         original_weight = self.weight.copy()
-        start_year = year
-        self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
+        if modify_start_year:
+            start_year = year
+            self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
         status = self.proposal_set.get_attribute("status_id")
         self.proposal_set.add_primary_attribute(name='original_status_id', data=status.copy())
         self.all_demolished_buildings = []
