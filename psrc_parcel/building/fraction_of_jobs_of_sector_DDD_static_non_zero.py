@@ -12,8 +12,7 @@ class fraction_of_jobs_of_sector_DDD_static_non_zero(fraction_of_jobs_of_sector_
 
     def __init__(self, *args):
         super(fraction_of_jobs_of_sector_DDD_static_non_zero, self).__init__(*args)
-        for sector, values in self.sector_building_type_distribution.iteritems():
-            self.sector_building_type_distribution[sector][where(self.sector_building_type_distribution[sector] == 0)] = 0.01
+        self.sector_building_type_distribution[self.sector_id][where(self.sector_building_type_distribution[self.sector_id] == 0)] = 0.1
                 
 
 from opus_core.tests import opus_unittest
@@ -41,7 +40,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         values = buildings.compute_variables(self.variable_name, dataset_pool=dataset_pool)
         
-        should_be = array([21.1, 0.01, 21.1, 1.2, 40.4, 40.4, 2.3 ])/100.0
+        should_be = array([21.1, 0.1, 21.1, 1.2, 40.4, 40.4, 2.3 ])/100.0
         self.assert_(ma.allclose(values, should_be),
             'Error in ' + self.variable_name)
 
