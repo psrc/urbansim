@@ -302,7 +302,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                 else:
                     ino_change = 0
                 # assure that this loop is not going indefinitely; break after slots_to_be_sampled.size doesn't change 100 times
-                if ino_chang > 100: 
+                if ino_change > 100: 
                     do_replace = True
                     break
                 slots_to_be_sampled = slots_to_be_sampled[duplicate_indicator>0]
