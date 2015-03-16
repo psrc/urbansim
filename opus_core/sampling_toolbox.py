@@ -280,10 +280,12 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                       #attach exclude_index to the beginning of sampled_choiceset_index
         else:
             exclude_index = zeros(shape=(sample_size[0],1), dtype="int32")
-
+            
+        do_replace = False
         for j in range(columns):
             slots_to_be_sampled = arange(rows)
             #proposed_index = zeros((rows,1)) - 1
+            ino_change = 0
             while True:
                 proposed_index = probsample_replace(arange(source_array_size), slots_to_be_sampled.size, p_array)
                 try:
@@ -295,10 +297,18 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                 sampled_choiceset_index[valid_index, j] = proposed_index[duplicate_indicator==0]
                 if nonzerocounts(duplicate_indicator) == 0:
                     break
-
+                if (duplicate_indicator>0).sum() == slots_to_be_sampled.size:
+                    ino_change = ino_change + 1
+                else:
+                    ino_change = 0
+                # assure that this loop is not going indefinitely; break after slots_to_be_sampled.size doesn't change 100 times
+                if ino_chang > 100: 
+                    do_replace = True
+                    break
                 slots_to_be_sampled = slots_to_be_sampled[duplicate_indicator>0]
-
             exclude_index = concatenate((exclude_index, take(sampled_choiceset_index,(j,), axis=1)), axis = 1)
+        if do_replace:
+            logger.log_warning("Unable to sample without replacement. Some columns sampled with replacement.") 
     else:
         for j in range(columns):
             sampled_choiceset_index[:,j] = probsample_replace(arange(source_array_size), rows, p_array)
