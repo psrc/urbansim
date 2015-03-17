@@ -295,16 +295,15 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                 duplicate_indicator = find_duplicates_others(proposed_index, exclude_array)
                 valid_index = slots_to_be_sampled[duplicate_indicator==0]
                 sampled_choiceset_index[valid_index, j] = proposed_index[duplicate_indicator==0]
-                if nonzerocounts(duplicate_indicator) == 0:
+                if do_replace or nonzerocounts(duplicate_indicator) == 0:
                     break
                 if (duplicate_indicator>0).sum() == slots_to_be_sampled.size:
                     ino_change = ino_change + 1
+                    # assure that this loop is not going indefinitely; break after slots_to_be_sampled.size doesn't change 100 times
+                    if ino_change > 100: 
+                        do_replace = True                    
                 else:
                     ino_change = 0
-                # assure that this loop is not going indefinitely; break after slots_to_be_sampled.size doesn't change 100 times
-                if ino_change > 100: 
-                    do_replace = True
-                    break
                 slots_to_be_sampled = slots_to_be_sampled[duplicate_indicator>0]
             exclude_index = concatenate((exclude_index, take(sampled_choiceset_index,(j,), axis=1)), axis = 1)
         if do_replace:
