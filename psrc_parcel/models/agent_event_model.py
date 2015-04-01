@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from numpy import array, where, resize, logical_and, zeros, arange
+from numpy import array, where, resize, logical_and, zeros, arange, ones
 from opus_core.model import Model
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.logger import logger
@@ -13,7 +13,8 @@ class AgentEventModel(Model):
     """
     model_name = "Agent Event Model"
           
-    def run(self, location_set, agent_event_set, agent_set, current_year, disaggregate_to=None, dataset_pool=None):
+    def run(self, location_set, agent_event_set, agent_set, current_year, disaggregate_to=None, 
+            location_characteristics=[], dataset_pool=None):
         """ The agent_event_set is expected to have attributes:
                 grid_id, scheduled_year, total_number, is_percentage, change_type, (optionally other agent characteristics)
             'grid_id' is not a mandatory name, but it must match to the id name of the location_set.
@@ -21,7 +22,7 @@ class AgentEventModel(Model):
             disaggregate the agents into lower geography, set the dataset to be disaggregated to in the 
             'disaggregate_to' argument (e.g. location_set=zone, disaggregate_to=building).
             'is_percentage' (bool) determines if the 'total_number' is a percentage of existing agents (True) or 
-            an absolute number (False) - it is relevant only when deleting agents.
+            an absolute number (False).
             'change_type' can have values 'D' (delete), 'A' (add) and determines the type
             of change for the agents. If this column is missing, the model considers 'D' as default
             for all entries in the agent_event_set.
@@ -31,6 +32,11 @@ class AgentEventModel(Model):
             If other characteristics columns are contained in the agent_event_set, their names
             must match column names in the agent_set (e.g. 'sector_id' for jobs).
             In such a case the deletion is done among agents that match the given characteristics.
+            If the change of type is 'A', the agent_event_set can contain attributes of the location set.
+            It determines agents used for sampling missing characteristics of the added agents, for example
+            values of income or persons. Values of these characteristics can be -1 if no restriction 
+            for the sampling is desired. Such location attributes must be passed in the argument 
+            'location_characteristics'. 
         """        
         if not agent_event_set or (agent_event_set.size() == 0): 
             logger.log_status("No %s agents for event processing." % agent_set.get_dataset_name())
@@ -49,7 +55,7 @@ class AgentEventModel(Model):
         
         other_characteristics = agent_event_set.get_known_attribute_names()
         for name in agent_event_set.get_id_name() + [location_id_name, 
-                                "scheduled_year", "total_number", "is_percentage", "change_type"]:
+                    "scheduled_year", "total_number", "is_percentage", "change_type"] + location_characteristics:
             if name in other_characteristics:
                 other_characteristics.remove(name)
         
@@ -121,6 +127,19 @@ class AgentEventModel(Model):
                     characteristics_value = agent_event_set[characteristics][idx_of_events_this_year][ilocation_id]
                     data[characteristics] = array([characteristics_value] * number_of_agents)
                 
+                # determine agents with the desire characteristics to impute missing characteristics to the new agents
+                loc_indicator = ones(agent_set.size(), dtype='bool8')
+                for locchar in location_characteristics:
+                    if agent_event_set[locchar][idx_of_events_this_year][ilocation_id] == -1:
+                        continue
+                    var = agent_set.compute_one_variable_with_unknown_package(locchar, self.dataset_pool)
+                    loc_indicator = logical_and(loc_indicator, var == agent_event_set[locchar][idx_of_events_this_year][ilocation_id])
+                clone_attr_index = sample_replace(where(loc_indicator)[0], number_of_agents)
+                # impute remaining attributes
+                for attr in agent_set.get_primary_attribute_names():
+                    if attr not in data.keys():
+                        data[attr] = agent_set[attr][clone_attr_index]
+                
                 agent_set.add_elements(data, require_all_attributes=False)
                 if location_id_name not in agent_set.get_known_attribute_names():
                     # re-compute agents locations, because the add_elements method deleted all computed attributes
@@ -129,7 +148,7 @@ class AgentEventModel(Model):
                     
                             
 from opus_core.tests import opus_unittest
-from numpy import ma, arange
+from numpy import ma, arange, in1d
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from psrc_parcel.datasets.jobs_event_dataset import JobsEventDataset
@@ -140,7 +159,8 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         self.storage = StorageFactory().get_storage('dict_storage')
         self.storage.write_table(table_name='gridcells',
             table_data = {
-                'grid_id': arange(10) + 1
+                'grid_id': arange(10) + 1,
+                'zone_id': array([1,1]+8*[2])
                 }
             )
         # There are 10 jobs in each gridcell
@@ -156,7 +176,8 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         self.storage.write_table(table_name='households',
             table_data = {
                 'household_id': arange(50) + 1,
-                'grid_id': array(10*[1] + 30*[3] + 10*[-1])
+                'grid_id': array(10*[1] + 30*[3] + 10*[-1]),
+                'persons': array(5*[1] + 5*[2] + 40*[3])
                 }
             )
       
@@ -212,13 +233,29 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
                table_data = {
                 "households_event_id": arange(1,7),
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
-                "grid_id": array([1, 5, 3, 5, 2, 1]),
+                "grid_id":      array([1, 5, 3, 5, 2, 1]),
                 "total_number": array([6, 5, 25, 0, 0, 50]),
                 "is_percentage": array([0,0, 0,  0, 0,  1], dtype="bool8"),
                 "change_type":array(['A','A','A','A','A','A'])
                 }
             )
         return HouseholdsEventDataset(in_storage=storage, in_table_name='events')
+    
+    def _create_household_addition_event_set_with_location(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='events', 
+                            table_data = {
+                                "households_event_id": arange(1,7),
+                                "scheduled_year": array([2000, 2000, 2001, 2001, 2001, 2001]),
+                                "grid_id":      array([1, 5, 3, 5, 2, 1]),
+                                "total_number": array([6, 5, 25, 0, 0, 50]),
+                                "is_percentage": array([0,0, 0,  0, 0,  1], dtype="bool8"),
+                                "change_type":array(['A','A','A','A','A','A']),
+                                "zone_id": array([1, 1, -1, -1, -1, -1])
+                            }
+                            )
+        return HouseholdsEventDataset(in_storage=storage, in_table_name='events')    
         
     def _create_job_deletion_event_set_with_characteristics(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -314,6 +351,26 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
                                                               dataset_pool=dataset_pool)
         # the model should add 50% from gridcell 1 (8) and 25 households to gridcell 3
         self.assert_(ma.allclose(number_of_households, array( [24,0,55,0,5,0,0,0,0,0])))
+        
+    def test_addition_of_households_with_location(self):
+            dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
+            gridcell_set = dataset_pool.get_dataset('gridcell')
+            event_set = self._create_household_addition_event_set_with_location()
+            households = dataset_pool.get_dataset("household")
+            AgentEventModel().run(gridcell_set, event_set, households, 2000, 
+                                  location_characteristics=['zone_id'], dataset_pool=dataset_pool)
+            
+            # the model should add 6 households to gridcell 1 and 5 to gridcell 5, i.e. 11 new households
+            # all new households should have persons either 1 or 2, but not 3
+            self.assert_(in1d(households['persons'][50:61], array([1,2])).all())
+     
+            AgentEventModel().run(gridcell_set, event_set, households, 2001, 
+                                  location_characteristics=['zone_id'], dataset_pool=dataset_pool)
+            number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
+                                                                  dataset_pool=dataset_pool)
+            # the model should add 50% from gridcell 1 (8) and 25 households to gridcell 3, i.e. 33 new HHs
+            # new households should have persons 1,2,3
+            self.assert_(in1d(households['persons'][61:94], array([1,2,3])).all())    
         
     def test_deletion_of_jobs_with_one_characteristics(self):
         dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
