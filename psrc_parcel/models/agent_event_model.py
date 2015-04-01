@@ -134,6 +134,8 @@ class AgentEventModel(Model):
                         continue
                     var = agent_set.compute_one_variable_with_unknown_package(locchar, self.dataset_pool)
                     loc_indicator = logical_and(loc_indicator, var == agent_event_set[locchar][idx_of_events_this_year][ilocation_id])
+                if loc_indicator.sum() == 0:
+                    loc_indicator[:] = True
                 clone_attr_index = sample_replace(where(loc_indicator)[0], number_of_agents)
                 # impute remaining attributes
                 for attr in agent_set.get_primary_attribute_names():
