@@ -62,7 +62,8 @@ class RefinementModel(Model):
             current_year = SimulationState().get_current_time()
         
         # get MPDs
-        SimulationState().set_current_time(base_year)
+        self.base_year = base_year
+        SimulationState().set_current_time(self.base_year)
         base_storage = AttributeCache(SimulationState().get_cache_directory())
         self.mpds = Dataset(in_storage=base_storage, dataset_name='development_project_proposal', 
                                 in_table_name='development_project_proposals',
@@ -211,7 +212,7 @@ class RefinementModel(Model):
         else:
             location_indicator = ones( bldgs.size(), dtype='bool' )
 
-        fit_index = where ( bldgs_indicator * location_indicator * (in1d(bldgs['parcel_id'], self.mpds['parcel_id'])==0) * (bldgs['year_built'] > 2000))[0]
+        fit_index = where ( bldgs_indicator * location_indicator * (in1d(bldgs['parcel_id'], self.mpds['parcel_id'])==0) * (bldgs['year_built'] > self.base_year))[0]
         
         return (fit_index, agents_indicator)
     
