@@ -66,7 +66,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(btdistr[ibt]*to_be_placed_households)
                 self.occupied_estimate_residential = self.occupied_estimate_residential + self.occuppied_estimate[(bt,)]
             # add 5%
-            self.occupied_estimate_residential = self.occupied_estimate_residential*1.05
+            self.occupied_estimate_residential = self.occupied_estimate_residential*1.07
                 
         if self.type["non_residential"]:    
             regions.compute_variables(["number_of_all_nhb_jobs = %s.aggregate(job.home_based_status==0)" % self.subarea_name],
@@ -81,7 +81,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(to_be_placed_jobs * btdistr[ibt])
                 self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential + self.occuppied_estimate[(bt,)]
             # add 5%
-            self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential*1.05
+            self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential*1.02
                       
         self.is_residential_bt = {}
         for ibt in range(all_building_types.size):
@@ -254,6 +254,10 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                                              'total_spaces = development_project_proposal.aggregate(psrc_parcel.development_project_proposal_component.total_spaces)'],
                                                     dataset_pool=self.dataset_pool)
         self.realestate_dataset.compute_variables(['urbansim_parcel.building.is_residential', 'psrc_parcel.building.total_spaces'], dataset_pool=self.dataset_pool)
+        #is_res_prop = self.proposal_set['is_res'][proposal_indexes]
+        #proposal_indexes_copy = proposal_indexes.copy()
+        #proposal_indexes[0:is_res_prop.sum()] = proposal_indexes_copy[is_res_prop]
+        #proposal_indexes[is_res_prop.sum():]=proposal_indexes_copy[logical_not(is_res_prop)]
         for i, proposal_index in enumerate(proposal_indexes):
             if not is_proposal_rejected[i] and ((self.weight[proposal_index] > 0) or force_accepting):
                 accepted = self.has_more_cubicles(proposal_index, force_accepting=force_accepting) and self.consider_proposal(proposal_index, force_accepting=force_accepting)
