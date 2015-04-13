@@ -20,7 +20,7 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
     def run(self, specification=None, coefficients=None, dataset=None,  **kwargs):
         outcome = RegressionModel.run(self, specification, coefficients, dataset, **kwargs)
         
-        if (outcome == None) or (outcome.size <= 0):
+        if (outcome is None) or (outcome.size <= 0):
             return outcome
         if re.search("^ln_", self.outcome_attribute_name): # if the outcome attr. name starts with 'ln_'
                                                       # the results will be exponentiated.

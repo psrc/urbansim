@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones, isinf, round
+from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones, isinf, round, in1d
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed, unique, safe_array_divide
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel
@@ -53,6 +53,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         self.occupied_estimate_residential = 0
         self.occupied_estimate_nonresidential = 0
         btdistr = self.compute_building_type_distribution(bts, realestate_dataset_name, regions)
+        btdistr_nonres = self.compute_job_building_type_distribution(bts, realestate_dataset_name, regions)
         if self.type["residential"]: 
             regions.compute_variables(["total_number_of_households = %s.number_of_agents(household)" % self.subarea_name
                                      ], dataset_pool=self.dataset_pool)
@@ -65,7 +66,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                 self.occuppied_estimate[(bt,)] = regions.sum_over_ids(bldgs[self.subarea_id_name], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(btdistr[ibt]*to_be_placed_households)
                 self.occupied_estimate_residential = self.occupied_estimate_residential + self.occuppied_estimate[(bt,)]
-            # add 5%
+            # add 7%
             self.occupied_estimate_residential = self.occupied_estimate_residential*1.07
                 
         if self.type["non_residential"]:    
@@ -78,9 +79,9 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                     continue
                 # serves as target
                 self.occuppied_estimate[(bt,)] = regions.sum_over_ids(bldgs[self.subarea_id_name], 
-                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(to_be_placed_jobs * btdistr[ibt])
+                        bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(to_be_placed_jobs * btdistr_nonres[ibt])
                 self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential + self.occuppied_estimate[(bt,)]
-            # add 5%
+            # add 2%
             self.occupied_estimate_nonresidential = self.occupied_estimate_nonresidential*1.02
                       
         self.is_residential_bt = {}
@@ -206,29 +207,36 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         return all(results)
         
 
-    def compute_job_building_type_distribution(self, building_type_dataset, realestate_dataset_name):
-        alldata = self.dataset_pool.get_dataset('alldata')
+    def compute_job_building_type_distribution(self, building_type_dataset, realestate_dataset_name, regions):
         building_type_ids = building_type_dataset.get_id_attribute()
-        alldata.compute_variables(map(lambda type: 
-            "number_of_jobs_for_bt_%s = alldata.aggregate_all(psrc_parcel.%s.number_of_non_home_based_jobs * (%s.building_type_id == %s))" % (type, realestate_dataset_name, realestate_dataset_name, type),
-                building_type_ids) + 
-              ["number_of_nhb_jobs = alldata.aggregate_all(psrc_parcel.%s.number_of_non_home_based_jobs)" % realestate_dataset_name], 
+        
+        regions.compute_variables(map(lambda type: 
+            "number_of_jobs_for_bt_%s = %s.aggregate(psrc_parcel.%s.number_of_non_home_based_jobs * (%s.building_type_id == %s))" % (type, self.subarea_name, realestate_dataset_name, realestate_dataset_name, type),
+                building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]) + 
+              ["number_of_nhb_jobs = %s.aggregate(psrc_parcel.%s.number_of_non_home_based_jobs)" % (self.subarea_name, realestate_dataset_name)], 
                                   dataset_pool=self.dataset_pool)
-        job_building_type_distribution = zeros(building_type_ids.size)
+        building_type_distribution = {}
         for itype in range(building_type_ids.size):
-            job_building_type_distribution[itype] = alldata.get_attribute(
-              'number_of_jobs_for_bt_%s' % building_type_ids[itype])[0]/float(alldata.get_attribute('number_of_nhb_jobs')[0])
-        return job_building_type_distribution
+            building_type_distribution[itype] = zeros(regions.size())
+            if building_type_ids[itype] in self.bt_do_not_count:
+                continue            
+            building_type_distribution[itype] = safe_array_divide(
+                    regions['number_of_jobs_for_bt_%s' % building_type_ids[itype]], regions['number_of_nhb_jobs'])
+        return building_type_distribution
     
     def compute_building_type_distribution(self, building_type_dataset, realestate_dataset_name, regions):
         parcels = self.dataset_pool.get_dataset('parcel')        
         building_type_ids = building_type_dataset.get_id_attribute()
+        regions.compute_variables(map(lambda type:
+            "units_proposed_for_bt_%s = %s.aggregate(psrc_parcel.parcel.units_proposed_for_building_type_%s)" % (type, self.subarea_name, type), 
+            building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]),
+                    dataset_pool=self.dataset_pool)
         sumunits_residential = zeros(regions.size(), dtype='float32')        
         sumunits_nonresidential = zeros(regions.size(), dtype='float32')
         for itype in range(building_type_ids.size):
             if building_type_ids[itype] in self.bt_do_not_count:
                 continue
-            potential_units = regions.compute_variables("units_proposed_for_bt_%s = %s.aggregate(psrc_parcel.parcel.units_proposed_for_building_type_%s)" % (building_type_ids[itype], self.subarea_name, building_type_ids[itype]), dataset_pool=self.dataset_pool)
+            potential_units = regions["units_proposed_for_bt_%s" % building_type_ids[itype]]
             if building_type_dataset['is_residential'][itype]:
                 sumunits_residential = sumunits_residential + potential_units
             else:

@@ -16,7 +16,7 @@ class expected_sales_price_per_sqft_luv(Variable):
         
     zone_dict = {
             "res-increase": {
-                    "zone_id": [2151, 2286, 2293, 2481, 2475, 2657, 2116, 2598],
+                    "zone_id": [2151, 2286, 2293, 2481, 2475, 2657, 2116, 2598, 6316],
                     "faz_id": [705]
                    },
             "res-decrease": {
