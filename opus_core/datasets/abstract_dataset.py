@@ -2087,7 +2087,7 @@ class AbstractDataset(object):
             self._raise_error(StandardError, "Coefficients' shape (%d,%d) must have '1' for first number!"
                               % (neqs, nvar))
 
-        if index <> None:
+        if index is not None:
             nobs = index.size
         else:
             nobs = self.size()

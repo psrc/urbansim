@@ -46,8 +46,8 @@ class ParcelDataset(UrbansimDataset):
         i.e. minimum and maximum default to -1 (equivalent to minimum = 0, and maximum = positive infinite). 
         
         """
-        if (self.development_constraints <> None) and (not recompute_flag):
-            if (index <> None) and alltrue(self.development_constraints["index"] == index):
+        if (self.development_constraints is not None) and (not recompute_flag):
+            if (index is not None) and alltrue(self.development_constraints["index"] == index):
                 return self.development_constraints
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
@@ -57,7 +57,7 @@ class ParcelDataset(UrbansimDataset):
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         attributes = map(lambda attr: VariableName(attr), attributes)
         
-        if index == None:
+        if index is None:
             index = arange(self.size())
 
         self.development_constraints = {"index": index}
