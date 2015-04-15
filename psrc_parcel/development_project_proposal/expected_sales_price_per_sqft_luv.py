@@ -23,8 +23,7 @@ class expected_sales_price_per_sqft_luv(Variable):
     res = 0
     nonres = 1
     zone_based_weights[[2598, 2657], res] = 15
-    zone_based_weights[[2145, 2309], nonres] = 15
-    zone_based_weights[[2151, 2286, 2293, 2481, 2475,  2116, 6316], res] = 18 # double increase
+    zone_based_weights[[2151, 2286, 2293, 2481, 2475,  2116], res] = 18 # double increase
     zone_based_weights[[2172, 2127, 2284, 2570, 2520, 2487, 2554, 2249, 2169], nonres] = 18
     zone_based_weights[2147, nonres] = 27 # 3x increase
     zone_based_weights[[2145, 2309], nonres] = 36 # 4x increase
