@@ -26,6 +26,9 @@ class expected_sales_price_per_sqft_luv(Variable):
         weight_factor[id] = -1*ones((max_value+1,2), dtype='float32')
     res = 0
     nonres = 1
+    weight_factor['growth_center_id'][[506, 511, 520], res] = 18
+    weight_factor['growth_center_id'][[520], nonres] = 18
+    weight_factor['zone_id'][[2598, 2657], res] = 15
     weight_factor['zone_id'][[2598, 2657], res] = 15
     weight_factor['zone_id'][[2151, 2286, 2293, 2481, 2475,  2116], res] = 18 # double increase
     weight_factor['zone_id'][[2172, 2127, 2284, 2570, 2520, 2487, 2554, 2249, 2169], nonres] = 18
