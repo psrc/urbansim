@@ -107,7 +107,12 @@ class expected_sales_price_per_sqft_luv(Variable):
         for city in cities:
             idx = where(dpp["city_id"][wis_res]==city)[0]
             if idx.size > 0:
-                quant_matrix_res[city,0:-1] = percentile(values_res[idx], percentiles)  
+                # this does not work for older numpy
+                #quant_matrix_res[city,0:-1] = percentile(values_res[idx], percentiles)
+                res = [] 
+                for p in percentiles:
+                     res = res + [percentile(values_res[idx], p)]
+                quant_matrix_res[city,0:-1] = array(res)
             idx = where(dpp["city_id"][wis_non_res]==city)[0]
             if idx.size > 0:            
                 quant_matrix_nonres[city,0:-1] = percentile(values_nonres[idx], percentiles)
