@@ -84,10 +84,11 @@ class expected_sales_price_per_sqft_luv(Variable):
         percentiles = []
         for geo, p in  self.weight_factor.iteritems():
             percentiles = percentiles + list(unique(p))
-        percentiles = array(percentiles+[50])
+        percentiles = unique(array(percentiles))
         percentiles = percentiles[percentiles > 0]
         allperc = concatenate((percentiles, array([-1])))
         # convert percentiles into indices for faster lookup
+        # these indices are relative to allperc
         weight_factor_idx = {}
         #is_increase = {}
         for geoitem in self.geo_settings:
@@ -98,8 +99,9 @@ class expected_sales_price_per_sqft_luv(Variable):
             #is_increase[geo] = self.weight_factor[geo] > 50
                 
         cities = unique(dpp['city_id'])
-        quant_matrix_res = zeros((cities.max()+1, percentiles.size+1), dtype='float32')
-        quant_matrix_nonres = zeros((cities.max()+1, percentiles.size+1), dtype='float32')
+        # last column is for "no change", i.e. when weight_factor is -1.
+        quant_matrix_res = -1*ones((cities.max()+1, percentiles.size+1), dtype='float32')
+        quant_matrix_nonres = -1*ones((cities.max()+1, percentiles.size+1), dtype='float32')
         values_res = price[wis_res]
         values_nonres = price[wis_non_res]
         for city in cities:
@@ -110,25 +112,25 @@ class expected_sales_price_per_sqft_luv(Variable):
             if idx.size > 0:            
                 quant_matrix_nonres[city,0:-1] = percentile(values_nonres[idx], percentiles)
         
-        quant_matrix_res[:, -1] = quant_matrix_res[:, -2]
-        quant_matrix_nonres[:, -1] = quant_matrix_nonres[:, -2]
+        #quant_matrix_res[:, -1] = quant_matrix_res[:, -2]
+        #quant_matrix_nonres[:, -1] = quant_matrix_nonres[:, -2]
         for geoitem in self.geo_settings:
             geo = geoitem[0]
             # residential
             if self.weight_factor[geo][dpp[geo][wis_res], self.res].size > 0:
                 index2d = concatenate((dpp["city_id"][wis_res][newaxis], weight_factor_idx[geo][dpp[geo][wis_res], self.res][newaxis]), axis=0)                
-                all_perc = quant_matrix_res[(index2d[0,:], index2d[1,:])]
+                city_perc = quant_matrix_res[(index2d[0,:], index2d[1,:])]
                 zone_mean = nd.mean(price[wis_res], labels=dpp[geo][wis_res], index=arange(geoitem[1]+1))                
-                where_weight = where(self.weight_factor[geo][dpp[geo][wis_res], self.res] >= 0)[0]
-                price[wis_res[where_weight]] = price[wis_res[where_weight]] + all_perc[where_weight] - zone_mean[dpp[geo][wis_res[where_weight]]]
+                where_weight = where(city_perc >= 0)[0]
+                price[wis_res[where_weight]] = price[wis_res[where_weight]] + city_perc[where_weight] - zone_mean[dpp[geo][wis_res[where_weight]]]
             # non-residential
             if self.weight_factor[geo][dpp[geo][wis_non_res], self.nonres].size > 0:
                 index2d = concatenate((dpp["city_id"][wis_non_res][newaxis], weight_factor_idx[geo][dpp[geo][wis_non_res], self.nonres][newaxis]), axis=0) 
-                all_perc = quant_matrix_nonres[(index2d[0,:], index2d[1,:])]
+                city_perc = quant_matrix_nonres[(index2d[0,:], index2d[1,:])]
                 zone_mean = nd.mean(price[wis_non_res], labels=dpp[geo][wis_non_res], index=arange(geoitem[1]+1))
                 #zone_median = quant_matrix_nonres[dpp["city_id"][wis_non_res],-2]
-                where_weight = where(self.weight_factor[geo][dpp[geo][wis_non_res], self.nonres] >= 0)[0]
-                price[wis_non_res[where_weight]] = price[wis_non_res[where_weight]] + all_perc[where_weight] - zone_mean[dpp[geo][wis_non_res[where_weight]]]                                      
+                where_weight = where(city_perc >= 0)[0]
+                price[wis_non_res[where_weight]] = price[wis_non_res[where_weight]] + city_perc[where_weight] - zone_mean[dpp[geo][wis_non_res[where_weight]]]                                      
             
 #         rev = 9*ones(dpp.size(), dtype="float32")        
 #         # largest geography
