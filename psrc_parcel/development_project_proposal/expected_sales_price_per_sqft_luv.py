@@ -115,7 +115,11 @@ class expected_sales_price_per_sqft_luv(Variable):
                 quant_matrix_res[city,0:-1] = array(res)
             idx = where(dpp["city_id"][wis_non_res]==city)[0]
             if idx.size > 0:            
-                quant_matrix_nonres[city,0:-1] = percentile(values_nonres[idx], percentiles)
+                #quant_matrix_nonres[city,0:-1] = percentile(values_nonres[idx], percentiles)
+                res = [] 
+                for p in percentiles:
+                     res = res + [percentile(values_nonres[idx], p)]
+                quant_matrix_nonres[city,0:-1] = array(res)
         
         #quant_matrix_res[:, -1] = quant_matrix_res[:, -2]
         #quant_matrix_nonres[:, -1] = quant_matrix_nonres[:, -2]
