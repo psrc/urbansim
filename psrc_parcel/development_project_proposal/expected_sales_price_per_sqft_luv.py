@@ -2,7 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import where, logical_not, logical_and, zeros, ones, percentile, concatenate, array, unique, isclose, newaxis, arange
+from numpy import where, logical_not, logical_and, zeros, ones, percentile, concatenate
+from numpy import in1d, array, unique, isclose, newaxis, arange
 from scipy import ndimage as nd
 from opus_core.variables.variable import Variable
 from opus_core.variables.functions import expfin
@@ -13,13 +14,14 @@ from ctypes.test import is_resource_enabled
 class expected_sales_price_per_sqft_luv(Variable):
     """
     Exponentiated proposals' expected revenue per sqft used for LUV. 
-    The base is 9% of the expected sales price per sqft. For fine-tuning we give some zones (TAZ or FAZ)
-    an advantage or disadvantage. The numbers below determine the percentile of the city distribution. 
-    If it's above 50 (median) it means all proposals in those zones will get a shift up. Below 50 means a shift down.
+    The base is 9% of the expected sales price per sqft. For fine-tuning we give some zones (TAZ, FAZ, RGC)
+    an advantage or disadvantage. The numbers below (values of weight_factor) determine a percentile of the city distribution. 
+    If it's above 50 (median) it means all proposals in those zones will get a shift up, so that the zonal mean 
+    matches the city percentile. Below 50 means a shift down.
     """
     _return_type="float32"
         
-    status_id = 4
+    status_id = [4] # consider only proposals of this status
     weight_factor = {}
     # The order of the geographies below should correspond to the order in which they should be processed.
     # The number gives the maximum id number for that geography that can be find in the parcel dataset
@@ -28,36 +30,24 @@ class expected_sales_price_per_sqft_luv(Variable):
         weight_factor[id] = -1*ones((max_value+1,2), dtype='float32')
     res = 0
     nonres = 1
-#     weight_factor['growth_center_id'][[506, 511, 520], res] = 18
-#     weight_factor['growth_center_id'][[520], nonres] = 18
-#     weight_factor['zone_id'][[2598, 2657], res] = 15
-#     weight_factor['zone_id'][[2598, 2657], res] = 15
-#     weight_factor['zone_id'][[2151, 2286, 2293, 2481, 2475,  2116], res] = 18 # double increase
-#     weight_factor['zone_id'][[2172, 2127, 2284, 2570, 2520, 2487, 2554, 2249, 2169], nonres] = 18
-#     weight_factor['zone_id'][2147, nonres] = 27 # 3x increase
-#     weight_factor['zone_id'][[2145, 2309], nonres] = 36 # 4x increase
-#     weight_factor['zone_id'][[2311, 2310, 2312, 2121, 2282, 2257, 2409, 2171, 2597], nonres] = 4.5 # half decrease
-#     weight_factor['zone_id'][2214, res] = 1 # only 1% revenue 
-#     weight_factor['zone_id'][[2118, 2252, 2251, 2564], nonres] = 1    
-#     weight_factor['faz_id'][705, res] = 18
-#     weight_factor['faz_id'][[505, 705, 6216], nonres] = 18
-#     weight_factor['faz_id'][5925, nonres] = 36
-#     weight_factor['faz_id'][[5825, 5915, 6114, 6115, 6125], nonres] = 1
 
     weight_factor['growth_center_id'][[506, 511, 520], res] = 90
     weight_factor['growth_center_id'][[520], nonres] = 90
-    weight_factor['zone_id'][[2598, 2657], res] = 90
-    weight_factor['zone_id'][[2151, 2286, 2293, 2481, 2475,  2116], res] = 90
-    weight_factor['zone_id'][[2172, 2127, 2284, 2570, 2520, 2487, 2554, 2249, 2169], nonres] = 90
-    weight_factor['zone_id'][2147, nonres] = 90 
-    weight_factor['zone_id'][[2145, 2309], nonres] = 90
-    weight_factor['zone_id'][[2311, 2310, 2312, 2121, 2282, 2257, 2409, 2171, 2597], nonres] = 10 
-    weight_factor['zone_id'][2214, res] = 10 
-    weight_factor['zone_id'][[2118, 2252, 2251, 2564], nonres] = 10
+    
+    weight_factor['zone_id'][[2151, 2286], res] = 95
+    weight_factor['zone_id'][[2598, 2657, 2293, 2481, 2475, 2116], res] = 90
+    weight_factor['zone_id'][2214, res] = 5
+    weight_factor['zone_id'][2570, nonres] = 99
+    weight_factor['zone_id'][[2172, 2145, 2487], nonres] = 95
+    weight_factor['zone_id'][[2127, 2284, 2520, 2554, 2249, 2309], nonres] = 90
+    weight_factor['zone_id'][2169, nonres] = 85
+    weight_factor['zone_id'][2147, nonres] = 80    
+    weight_factor['zone_id'][[2118, 2252, 2564, 2311, 2310, 2312, 2121, 2282,  2409, 2171, 2597], nonres] = 10    
+    weight_factor['zone_id'][[2251, 2257], nonres] = 1
+    
     weight_factor['faz_id'][705, res] = 90
-    weight_factor['faz_id'][[505, 705, 6216], nonres] = 90
-    weight_factor['faz_id'][5925, nonres] = 90
-    weight_factor['faz_id'][[5825, 5915, 6114, 6115, 6125], nonres] = 10
+    weight_factor['faz_id'][[505, 705, 6216, 5925, 6225], nonres] = 90
+    weight_factor['faz_id'][[6114, 6115, 6125, 5915, 5825, 5826, 5815], nonres] = 3
         
     def dependencies(self):
         return ["development_project_proposal.expected_sales_price_per_sqft", 
@@ -73,7 +63,7 @@ class expected_sales_price_per_sqft_luv(Variable):
     def compute(self,  dataset_pool):
         dpp = self.get_dataset()
         if self.status_id is not None:
-            filter = dpp['status_id'] == self.status_id
+            filter = in1d(dpp['status_id'], self.status_id)
         else:
             filter = ones(dpp.size(), dtype="bool8")
         is_res = logical_and(dpp['is_res'], filter)
@@ -111,14 +101,14 @@ class expected_sales_price_per_sqft_luv(Variable):
                 #quant_matrix_res[city,0:-1] = percentile(values_res[idx], percentiles)
                 res = [] 
                 for p in percentiles:
-                     res = res + [percentile(values_res[idx], p)]
+                    res = res + [percentile(values_res[idx], p)]
                 quant_matrix_res[city,0:-1] = array(res)
             idx = where(dpp["city_id"][wis_non_res]==city)[0]
             if idx.size > 0:            
                 #quant_matrix_nonres[city,0:-1] = percentile(values_nonres[idx], percentiles)
                 res = [] 
                 for p in percentiles:
-                     res = res + [percentile(values_nonres[idx], p)]
+                    res = res + [percentile(values_nonres[idx], p)]
                 quant_matrix_nonres[city,0:-1] = array(res)
         
         #quant_matrix_res[:, -1] = quant_matrix_res[:, -2]
