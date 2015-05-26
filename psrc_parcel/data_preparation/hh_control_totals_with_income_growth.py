@@ -5,132 +5,109 @@
 from numpy import arange, array, where, zeros, ones, logical_and, reshape, concatenate, clip, indices
 from opus_core.ndimage import sum as ndimage_sum
 from copy import copy
-from urbansim.models.household_transition_model import HouseholdTransitionModel
+from urbansim.models.transition_model import TransitionModel
+from opus_core.datasets.dataset import DatasetSubset
+from opus_core.session_configuration import SessionConfiguration
 
-class HHControlTotalsWithIncomeGrowth(HouseholdTransitionModel):
-
+class HHControlTotalsWithIncomeGrowth(TransitionModel):
+    """
+    The model updates the control totals table by increasing households' income by a given factor.
+    It assumes that an ordinary transition model ran prior to this model. Thus, number of households 
+    in each category match the control totals. In this model, households income is increased and the 
+    number of households in each category defined in the control totals is computed. Then the control totals 
+    table is updated with these counts.
+    """
     model_name = "HHControlTotalsWithIncomeGrowth"
         
     def __init__(self, income_growth_factor, base_year, **kwargs):
-        HouseholdTransitionModel.__init__(self, **kwargs)
+        TransitionModel.__init__(self, **kwargs)
         self.income_growth_factor = income_growth_factor
         self.base_year = base_year
         
-    def run(self, year, household_set, control_totals, *args, **kwargs):
-        self.control_totals = control_totals
+    def run(self, year, target_attribute_name="total_number_of_households", **kwargs):
         self.factor_exponent = year-self.base_year
-        HouseholdTransitionModel.run(self, year, household_set, control_totals, *args, **kwargs)
+        self._do_initialize_for_run(target_attribute_name)
+        self._IGrun(year=year, target_attribute_name=target_attribute_name, **kwargs)
+        self._update_dataset()
+        pass
         
-    def _update_household_set(self, household_set):
-        household_set['income'] = self.orig_income
-        self.control_totals.load_and_flush_dataset()
-        return None
+    def _update_dataset(self):
+        self.dataset['income'] = self.orig_income
+        self.control_totals_all.load_and_flush_dataset()
 
-    def _do_initialize_for_run(self, household_set):
-        new_income = household_set['income']*(self.income_growth_factor**self.factor_exponent)
-        self.orig_income = household_set['income'].copy()
-        household_set['income'] = new_income
-        HouseholdTransitionModel._do_initialize_for_run(self, household_set)
-        if not "total_number_of_households_orig" in self.control_totals.get_known_attribute_names():
-            orig_values = self.control_totals.get_attribute("total_number_of_households").copy()
-            self.control_totals.add_primary_attribute(data=orig_values,
-                                                      name="total_number_of_households_orig")
+    def _do_initialize_for_run(self, target_attribute_name):
+        new_income = self.dataset['income']*(self.income_growth_factor**self.factor_exponent)
+        #new_income = self.dataset['income']*self.income_growth_factor
+        self.orig_income = self.dataset['income'].copy()
+        self.dataset['income'] = new_income
+        if not "%s_orig" % target_attribute_name in self.control_totals_all.get_known_attribute_names():
+            orig_values = self.control_totals_all.get_attribute(target_attribute_name).copy()
+            self.control_totals_all.add_primary_attribute(data=orig_values,
+                                                      name="%s_orig" % target_attribute_name)
 
+    
+    def _IGrun(self, year=None, target_attribute_name='number_of_households', dataset_pool=None):
 
-                
-    def _do_run_for_this_year(self, household_set):
-        self.household_set = household_set
-        groups = self.control_totals_for_this_year.get_id_attribute()
-        self.create_arrays_from_categories(self.household_set)
-
-        all_characteristics = self.arrays_from_categories.keys()
-        self.household_set.load_dataset_if_not_loaded(attributes = all_characteristics) # prevents from lazy loading to save runtime
-        idx_shape = []
-        number_of_combinations=1
-        num_attributes=len(all_characteristics)
-        for iattr in range(num_attributes):
-            attr = all_characteristics[iattr]
-            max_bins = self.arrays_from_categories[attr].max()+1
-            idx_shape.append(max_bins)
-            number_of_combinations=number_of_combinations*max_bins
-            if attr not in self.new_households.keys():
-                self.new_households[attr] = array([], dtype=self.household_set.get_data_type(attr, "float32"))
-
-        self.number_of_combinations = int(number_of_combinations)
-        idx_tmp = indices(tuple(idx_shape))
         
-        categories_index = zeros((self.number_of_combinations,num_attributes))
+        ## NOTE: always call compute_variables method on self.control_total_all instead of
+        ## self.control_total, because there is a problem with DataSubset to handle index
 
-        for i in range(num_attributes): #create indices of all combinations
-            categories_index[:,i] = idx_tmp[i].ravel()
+        id_name = 'control_total_id'
+        ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
 
-        categories_index_mapping = {}
-        for i in range(self.number_of_combinations):
-            categories_index_mapping[tuple(categories_index[i,].tolist())] = i
+        if target_attribute_name not in ct_known_attributes:
+            raise AttributeError, "Target attribute %s must be an attribute of control_total dataset" % target_attribute_name
+        
+        if id_name not in ct_known_attributes:
+            self.control_totals_all.add_attribute(name=id_name,
+                                                  data = arange(1, self.control_totals_all.size()+1)
+                                                  )
+        if self.control_totals_all.get_id_name() != [id_name]:
+            self.control_totals_all._id_names = [id_name]
 
-        def get_category(values):
-            bins = map(lambda x, y: self.arrays_from_categories[x][int(y)], all_characteristics, values)
+        if year is None:
+            year = SimulationState().get_current_time()
+        this_year_index = where(self.control_totals_all['year']==year)[0]
+        self.control_totals = DatasetSubset(self.control_totals_all, this_year_index)
+        dtype = self.control_totals_all[target_attribute_name].dtype
+        if dataset_pool is None:
             try:
-                return categories_index_mapping[tuple(bins)]
-            except KeyError, msg: 
-                where_error = where(array(bins) == -1)[0]
-                if where_error.size > 0:
-                    raise KeyError, \
-                        "Invalid value of %s for attribute %s. It is not included in the characteristics groups." % (
-                                                                               array(values)[where_error], 
-                                                                               array(all_characteristics)[where_error])
-                raise KeyError, msg
+                dataset_pool = SessionConfiguration().get_dataset_pool()
+            except AttributeError:
+                dataset_pool = DatasetPool(datasets_dict={
+                                           self.dataset.dataset_name:self.dataset,
+                                           #sync_dataset.dataset_name:sync_dataset,
+                                           'control_total': self.control_totals
+                                            })
+        column_names = list( set( ct_known_attributes  ) \
+                           - set( [ target_attribute_name, 
+                                   'year', 
+                                   '_hidden_id_',
+                                   id_name, 
+                                   '_actual_',
+                                   'sampling_threshold',
+                                   'sampling_hierarchy',
+                                   "%s_orig" % target_attribute_name
+                                  ] )
+                           )
+        column_names.sort(reverse=True)
+        self._code_control_total_id(column_names,
+                                    dataset_pool=dataset_pool)
+        
+        if self.dataset_accounting_attribute is None:
+            self.dataset_accounting_attribute = '_one_'
+            self.dataset.add_attribute(name = self.dataset_accounting_attribute,
+                                       data = ones(self.dataset.size(), 
+                                                   dtype=dtype))
 
-        if num_attributes > 0:
-            # the next array must be a copy of the household values, otherwise, it changes the original values
-            values_array = reshape(array(self.household_set.get_attribute(all_characteristics[0])), (self.household_set.size(),1))
-            if num_attributes > 1:
-                for attr in all_characteristics[1:]:
-                    values_array = concatenate((values_array, reshape(array(self.household_set.get_attribute(attr)),
-                                                                      (self.household_set.size(),1))), axis=1)
-            for i in range(values_array.shape[1]):
-                if values_array[:,i].max() > 10000:
-                    values_array[:,i] = values_array[:,i]/10
-                values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
-    
-            # determine for each household to what category it belongs to
-            self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
-    
-            number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
-                                                                    labels=self.household_categories+1,
-                                                                    index = arange(self.number_of_combinations)+1))
-        else:
-            # no marginal characteristics; consider just one group
-            self.household_categories = zeros(self.household_set.size(), dtype='int32')
-            number_of_households_in_categories = array([self.household_set.size()])
+        exp_actual = '_actual_ = control_total.aggregate(%s.%s)' % \
+                        (self.dataset.dataset_name,
+                         self.dataset_accounting_attribute)
+        
+        actual = self.control_totals_all.compute_variables(exp_actual,
+                                    dataset_pool=dataset_pool)[this_year_index]
+        actual = actual.astype(dtype)
 
-        g=arange(num_attributes)
-
-        #iterate over marginal characteristics
-        for group in groups:
-            if groups.ndim <= 1: # there is only one group (no marginal char.)
-                id = group
-            else:
-                id = tuple(group.tolist())
-            group_element = self.control_totals_for_this_year.get_data_element_by_id(id)
-            total = group_element.total_number_of_households
-            for i in range(g.size):
-                g[i] = eval("group_element."+self.arrays_from_categories.keys()[i])
-            if g.size <= 0:
-                l = ones((number_of_households_in_categories.size,))
-            else:
-                l = categories_index[:,0] == g[0]
-                for i in range(1,num_attributes):
-                    l = logical_and(l, categories_index[:,i] == g[i])
-            # l has 1's for combinations of this group
-            number_in_group = array(ndimage_sum(number_of_households_in_categories, labels=l, index = 1))
-            self.control_totals.set_value_of_attribute_by_id("total_number_of_households", number_in_group, id)
-
-    def prepare_for_run(self, base_storage, run_storage):
-        from urbansim.datasets.control_total_dataset import ControlTotalDataset
-        from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
-        control_totals = ControlTotalDataset(in_storage=run_storage, what="household")
-        characteristics = HouseholdCharacteristicDataset(in_storage=base_storage)
-        return (control_totals, characteristics)
-    
-    
+        self.control_totals_all.set_values_of_one_attribute(target_attribute_name, actual, index=this_year_index)
+            
+        return self.dataset    
