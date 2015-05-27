@@ -23,6 +23,7 @@ from collections import defaultdict
 try:
     ## if installed, use PrettyTable module for status logging
     from prettytable import PrettyTable
+    import prettytable
 except:
     PrettyTable = None
     
@@ -260,8 +261,13 @@ class DevelopmentProjectProposalSamplingModel(Model):
         
         if PrettyTable is not None:
             status_log = PrettyTable()
-            status_log.set_field_names(self.column_names + logging_header)
-            [status_log.set_field_align(header, 'r') for header in logging_header]
+            if prettytable.__version__ >= 0.6: # compatibility issue
+                status_log.field_names = self.column_names + logging_header
+                for header in logging_header:
+                    status_log.align[header] = 'r' 
+            else:
+                status_log.set_field_names(self.column_names + logging_header)
+                [status_log.set_field_align(header, 'r') for header in logging_header]
         else:
             logger.log_status("\t".join(self.column_names + logging_header))
 #        error_log = ''

@@ -19,6 +19,7 @@ import re
 try:
     ## if installed, use PrettyTable module for status logging
     from prettytable import PrettyTable
+    import prettytable
 except:
     PrettyTable = None
 
@@ -97,7 +98,10 @@ class RealEstateTransitionModel(Model):
         #log header
         if PrettyTable is not None:
             status_log = PrettyTable()
-            status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
+            if prettytable.__version__ >= 0.6: # compatibility issue
+                status_log.field_names = column_names + ["actual", "target", "difference", "action"]
+            else:
+                status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
         else:
             logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action"]))
         error_log = ''
