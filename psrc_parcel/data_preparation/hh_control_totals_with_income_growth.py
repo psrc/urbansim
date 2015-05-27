@@ -25,15 +25,15 @@ class HHControlTotalsWithIncomeGrowth(TransitionModel):
         self.base_year = base_year
         
     def run(self, year, target_attribute_name="total_number_of_households", **kwargs):
-        self.factor_exponent = year-self.base_year
-        self._do_initialize_for_run(target_attribute_name)
-        self._IGrun(year=year, target_attribute_name=target_attribute_name, **kwargs)
-        self._update_dataset()
-        pass
+        if year is not None:
+            self.factor_exponent = year-self.base_year
+            self._do_initialize_for_run(target_attribute_name)
+            self._IGrun(year=year, target_attribute_name=target_attribute_name, **kwargs)
+            self._update_dataset()
+        self.control_totals_all.load_and_flush_dataset()
         
     def _update_dataset(self):
         self.dataset['income'] = self.orig_income
-        self.control_totals_all.load_and_flush_dataset()
 
     def _do_initialize_for_run(self, target_attribute_name):
         new_income = self.dataset['income']*(self.income_growth_factor**self.factor_exponent)

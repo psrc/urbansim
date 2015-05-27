@@ -6,30 +6,6 @@
   </general>
   <model_manager inherit_parent_values="False">
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary" inherit_parent_values="False">
-      <model name="household_transition_model_not_used" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary" hidden="True">
-            <class_module>urbansim.models.household_transition_model</class_module>
-            <class_name>HouseholdTransitionModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string" hidden="True">HouseholdTransitionModel</name>
-            <argument name="location_id_name" type="string" parser_action="quote_string">building_id</argument>
-            <argument name="debuglevel" type="string" hidden="True">debuglevel</argument>
-          </init>
-          <prepare_for_run type="dictionary" hidden="True">
-            <output name="output" type="string">(control_totals, characteristics)</output>
-            <name name="name" type="string">prepare_for_run</name>
-            <argument name="storage" type="string">base_cache_storage</argument>
-          </prepare_for_run>
-          <run type="dictionary">
-            <argument name="characteristics" type="string">characteristics</argument>
-            <argument name="household_set" type="string">household</argument>
-            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
-            <argument name="year" type="string">year</argument>
-          </run>
-        </structure>
-      </model>
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
            <import name="import" type="dictionary">
@@ -72,7 +48,7 @@
           <prepare_for_run type="dictionary" hidden="True">
             <name name="name" type="string">prepare_for_run</name>
             <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
-            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+            <argument name="control_total_storage" type="string">cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary" hidden="True">
             <argument name="year" type="string">year</argument>
@@ -80,10 +56,35 @@
           </run>
         </structure>
       </model>
+      <model name="hh_flush_controls" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary" hidden="True">
+            <class_module>psrc_parcel.data_preparation.hh_control_totals_with_income_growth</class_module>
+            <class_name>HHControlTotalsWithIncomeGrowth</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string" hidden="True">HHControlTotalsWithIncomeGrowth</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="income_growth_factor" type="string">0</argument>
+            <argument name="base_year" type="string">base_year</argument>
+            <argument name="model_name" type="string" parser_action="quote_string">Flush Control Totals</argument>
+            <argument name="model_short_name" type="string" parser_action="quote_string">FlushControls</argument>
+          </init>
+          <prepare_for_run type="dictionary" hidden="True">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary" hidden="True">
+            <argument name="year" type="string" convert_blank_to_none="True"></argument>
+          </run>
+        </structure>
+      </model>
      </models>
   </model_manager>
   <scenario_manager inherit_parent_values="False">
-    <scenario executable="True" name="update_control_totals" type="scenario">
+    <scenario executable="True" name="update_control_totals_luv" type="scenario">
+    <description type="string">Update HHs control totals for all years except anker years.</description>
       <base_year type="integer" field_identifier="Base Year">2000</base_year>
       <years_to_run config_name="years" type="tuple">
           <firstyear type="integer">2001</firstyear>
@@ -93,6 +94,34 @@
       <selectable name="household_transition_model" type="model_choice">True</selectable>
       <selectable name="hh_control_totals_with_income_growth" type="model_choice">True</selectable>
     </models_to_run>
+     <models_in_year type="dictionary">
+    <models_in_year_category  key_name="year" key_value="models_list" type="category_with_special_keys">
+       <yearset type="dictionary">
+          <year type="integer">2015</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+        <yearset type="dictionary">
+          <year type="integer">2020</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+              <yearset type="dictionary">
+          <year type="integer">2025</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+        <yearset type="dictionary">
+          <year type="integer">2030</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+        <yearset type="dictionary">
+          <year type="integer">2035</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+              <yearset type="dictionary">
+          <year type="integer">2040</year>
+		  <models_list type="list">["hh_flush_controls"]</models_list>
+       </yearset>
+    </models_in_year_category>
+    </models_in_year>
     <seed type="integer" convert_blank_to_none="True">1</seed>
     <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
