@@ -87,7 +87,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
         storage = StorageFactory().get_storage('%s_storage' % file_format, storage_location = current_year_tm_dir)
         kwargs = {}
         mode={file_format: Storage.OVERWRITE}
-        if file_format == 'csv' or file_format == 'tab' or file_format == 'tsv':
+        if file_format == 'csv' or file_format == 'tab' or file_format == 'tsv' or file_format == 'dat':
             kwargs['append_type_info'] = False
         if file_format.startswith('hdf5'):
             kwargs['compression'] = file_config.get('hdf5_compression', None) 
