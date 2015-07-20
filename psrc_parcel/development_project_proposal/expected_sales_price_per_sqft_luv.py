@@ -25,7 +25,7 @@ class expected_sales_price_per_sqft_luv(Variable):
     weight_factor = {}
     # The order of the geographies below should correspond to the order in which they should be processed.
     # The number gives the maximum id number for that geography that can be find in the parcel dataset
-    geo_settings = (('growth_center_id', 535), ('faz_id', 9916), ('zone_id', 3700))
+    geo_settings = (('growth_center_id', 537), ('faz_id', 9916), ('zone_id', 3700))
     for id, max_value in geo_settings:
         weight_factor[id] = -1*ones((max_value+1,2), dtype='float32')
     res = 0
