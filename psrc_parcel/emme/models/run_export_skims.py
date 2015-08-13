@@ -5,8 +5,9 @@
 from opus_core.logger import logger
 import os, re, pickle, tempfile
 from opus_emme2.models.run_export_macros import RunExportMacros
+from psrc_parcel.emme.models.abstract_emme4_travel_model import AbstractEmme4TravelModel
 
-class RunExportSkims(RunExportMacros):
+class RunExportSkims(RunExportMacros, AbstractEmme4TravelModel):
     
     """Export Emme4 skims into an hdf5 file. 
     
@@ -52,7 +53,7 @@ class RunExportSkims(RunExportMacros):
         logger.start_block('Exporting emme4 skims into hdf5')
         try:
             cmd = "%s %s %s %s" % (os.path.join(self.get_emme2_base_dir(), tmconfig.get('export_skims_batch_file_name', 'skims2h5.bat')),
-                                os.path.join(self.get_emme2_base_dir(), bank_year),
+                                os.path.join(self.get_emme2_base_dir(), "inputs", bank_year),
                                 os.path.join(tmconfig.get('matrix_h5_directory', self.get_emme2_base_dir()), "%s-travelmodel.h5" % bank_year),
                                 skimfile
                                 )

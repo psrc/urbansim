@@ -11,8 +11,9 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
 from psrc_parcel.emme.models.get_emme4_data_into_cache import GetEmme4DataIntoCache as ParentGetEmme4DataIntoCache
+from psrc_parcel.emme.models.abstract_emme4_travel_model import AbstractEmme4TravelModel
 
-class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache):
+class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache, AbstractEmme4TravelModel):
     
     """Copy skims stored in hdf5 format into the UrbanSim cache."""
     

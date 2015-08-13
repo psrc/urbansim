@@ -11,9 +11,9 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
 from opus_emme2.models.get_emme2_data_into_cache import GetEmme2DataIntoCache as ParentGetEmme2DataIntoCache
+from psrc_parcel.emme.models.abstract_emme4_travel_model import AbstractEmme4TravelModel
 
-
-class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache):
+class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache, AbstractEmme4TravelModel):
     """Class to get skims directly from emme into the UrbanSim cache using emme python api. 
     """
     
