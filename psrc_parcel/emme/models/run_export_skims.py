@@ -53,7 +53,7 @@ class RunExportSkims(RunExportMacros, AbstractEmme4TravelModel):
         logger.start_block('Exporting emme4 skims into hdf5')
         try:
             cmd = "%s %s %s %s" % (os.path.join(self.get_emme2_base_dir(), tmconfig.get('export_skims_batch_file_name', 'skims2h5.bat')),
-                                os.path.join(self.get_emme2_base_dir(), "results"),
+                                os.path.join(self.get_emme2_base_dir(), "src", "results"),
                                 os.path.join(tmconfig.get('matrix_h5_directory', self.get_emme2_base_dir()), "%s-travelmodel.h5" % bank_year),
                                 skimfile
                                 )
