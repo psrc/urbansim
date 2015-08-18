@@ -49,6 +49,7 @@ aliases = [
        "district_id = building.disaggregate(zone.district_id, intermediates=[parcel])",
        "city_id = building.disaggregate(parcel.city_id)",
       "new_zone_id = building.disaggregate(parcel.new_zone_id)",
+      "tractcity_id = building.disaggregate(parcel.tractcity_id)",
       "number_of_home_based_jobs = building.aggregate(job.home_based_status==1)",
       "number_of_non_home_based_jobs = building.aggregate(job.home_based_status==0)",
       "total_home_based_job_space = urbansim_parcel.building.total_home_based_job_space",
