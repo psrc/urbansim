@@ -159,6 +159,12 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         return (self.proposal_set, bldgs.get_id_attribute()[self.all_demolished_buildings])
     
     def _is_target_reached(self, column_value=()):
+        if column_value:
+            if self.is_residential_bt[column_value] and not self.build_in_subarea["residential"]:
+                return True
+            if not self.is_residential_bt[column_value] and not self.build_in_subarea["non_residential"]:
+                return True
+            
         if column_value and not self.second_pass.has_key(column_value):
             self.second_pass[column_value] = True
             # set total spaces, occupied spaces and target spaces
@@ -169,10 +175,6 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             self.accounting[column_value]["target_spaces"] = int(round(self.occuppied_estimate[column_value][self.subarea_index]))
                 
         if column_value:
-            if self.is_residential_bt[column_value] and not self.build_in_subarea["residential"]:
-                return True
-            if not self.is_residential_bt[column_value] and not self.build_in_subarea["non_residential"]:
-                return True
             if self.accounting.has_key(column_value):
                 column_values = [column_value]
             else:
@@ -199,9 +201,15 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                     prop = prop + accounting.get("proposed_spaces",0)
                     demol = demol + accounting.get("demolished_spaces",0)
             if self.is_residential_bt[column_value]:
-                target = self.occupied_estimate_residential[self.subarea_index]
-            else:
-                target = self.occupied_estimate_nonresidential[self.subarea_index]
+                if not self.build_in_subarea["residential"]:
+                    target = 0
+                else:
+                    target = self.occupied_estimate_residential[self.subarea_index]
+            else: # non-residential
+                if not self.build_in_subarea["non_residential"]:
+                    target = 0
+                else:                
+                    target = self.occupied_estimate_nonresidential[self.subarea_index]
             is_target_met[column_value] = target <= (tot + prop - demol)
         results = is_target_met.values()
         return all(results)
