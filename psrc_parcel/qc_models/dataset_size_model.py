@@ -50,6 +50,7 @@ class DatasetSizeModel(Model):
             logger.log_status("Inconsistency in table ", table, ":\n", df)
             counts[table] = df.shape[0] - 1
         SimulationState().set_current_time(year_orig)
+        logger.log_status("Model total:", counts.sum(), ' size inconsistencies found.')
         return counts
 
     
