@@ -34,7 +34,7 @@ class ExpressionModel(Model):
         all_expressions = expressions
         if use_default_expressions:
             all_expressions = all_expressions + self.default_expressions
-        df = pd.DataFrame(index=np.arange(len(expressions)), columns=["condition", "True", "False"])
+        df = pd.DataFrame(index=np.arange(len(all_expressions)), columns=["condition", "True", "False"])
         for iexpr in np.arange(len(all_expressions)):
             values = self.compute_expression(all_expressions[iexpr], allow_missing=allow_missing)
             if values is None:
