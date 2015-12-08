@@ -129,17 +129,22 @@ class AttributeCache(Storage):
         return result
         
     
-    def _get_sorted_list_of_years(self):
-        """Returns a sorted list (descending order) of the current and prior years 
-        having directories in the cache directory.
+    def _get_sorted_list_of_years(self, start_with_current_year=True):
+        """Returns a sorted list (descending order) of the years 
+        that have directories in the cache directory, starting with
+        the current year of the simulation (if "start_with_current_year" is True) 
+        and its prior years. If "start_with_current_year" is False, all years are returned.
         """
         from os import listdir
-        current_year = SimulationState().get_current_time()
+        if start_with_current_year:
+            current_year = SimulationState().get_current_time()
         dirs = flt_storage(self.get_storage_location()).listdir_in_base_directory()
         years = []
         for dir_name in dirs:
             try:
                 year = int(dir_name)
+                if not start_with_current_year:
+                    current_year = year + 1
                 if (year <= current_year):
                     years.append(year)
             except:
