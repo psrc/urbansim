@@ -18,7 +18,12 @@ class ExpressionModel(Model):
         "building.building_id > 0",
         "building.parcel_id > 0",
         "parcel.parcel_id > 0",
-        "parcel.zone_id > 0"
+        "parcel.zone_id > 0",
+        # check the connection between buildings and parcels
+        "building.disaggregate(parcel.parcel_id) > 0",
+        "building.disaggregate(parcel.parcel_id) == building.parcel_id",
+        # do all household buildings exist
+        "household.disaggregate(building.building_id) > 0"
     ]
     
     def __init__(self, dataset_pool=None):
@@ -59,7 +64,7 @@ class ExpressionModel(Model):
             raise
         try:
             return ds.compute_variables([var_name], dataset_pool=self.dataset_pool)
-        except LookupError:
+        except (LookupError, FileNotFoundError, StandardError):
             if allow_missing:
                 return np.zeros(ds.size(), dtype="bool8")
             raise
@@ -78,7 +83,7 @@ class TestExpressionModel(opus_unittest.OpusTestCase):
         return DatasetPool(package_order, storage=storage)
     
     def test_default_expressions(self):
-        dspool = self.get_dataset_pool()
+        dspool = self.get_dataset_pool(['urbansim'])
         model = ExpressionModel(dspool)
         res = model.run(allow_missing=True)
         self.assertEqual(res.shape[0], len(model.default_expressions))
