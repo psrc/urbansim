@@ -22,7 +22,7 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
         geographies_of_agents = agent_set.get_attribute(self.geography_id_name)
         orig_filter = self.filter
         for geography_id in geography_ids:
-        #for geography_id in [11]:
+        #for geography_id in [197]:
             new_index = where(logical_and(cond_array, geographies_of_agents == geography_id))[0]
             if orig_filter is not None:
                 self.filter = "(building.%s == %s) * %s" % (self.geography_id_name, geography_id, orig_filter)
@@ -33,17 +33,20 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
                 EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
                 if irun==1:
+                    # increase buildings job_capacity to fit all jobs
                     unplaced_size = (agent_set['building_id'][agent_set[self.geography_id_name]==geography_id] <= 0).sum()
-                    if unplaced_size <= 0 or not self.compute_capacity_flag:
+                    if unplaced_size <= 0 or not 'job_capacity' in self.choice_set.get_known_attribute_names():
                         break
                     filt = where(self.choice_set.compute_variables(self.filter, dataset_pool=self.dataset_pool)>0)[0]
+                    if filt.size <= 0:
+                        break
                     noa = self.choice_set.compute_variables('noj = building.number_of_agents(job)', 
                                                                     dataset_pool=self.dataset_pool)
-                    cap = maximum(self.capacity[filt], self.choice_set['noj'][filt])
+                    cap = maximum(self.choice_set['job_capacity'][filt], self.choice_set['noj'][filt])
                     if unplaced_size <= cap.sum():
                         break
-                    self.capacity[filt]=ceil(cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype)
-                    logger.log_warning('Capacity increased by %s jobs.' % round(unplaced_size/float(cap.sum())))
+                    self.choice_set.modify_attribute('job_capacity', data=ceil(cap + cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype), index=filt)
+                    logger.log_warning('Capacity increased by %s jobs.' % round(cap*unplaced_size/float(cap.sum())))
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()
         # set the right parcels

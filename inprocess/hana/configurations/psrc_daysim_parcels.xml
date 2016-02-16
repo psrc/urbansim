@@ -53,8 +53,8 @@
         	<variable type="string" name="empofc_p">(parcel.aggregate((job.sector_id &gt; 9) * (job.sector_id &lt; 14), intermediates=[building])).astype(int32)</variable>
         	<variable type="string" name="empret_p">(parcel.aggregate(job.sector_id==7, intermediates=[building])).astype(int32)</variable>
         	<variable type="string" name="empsvc_p">(parcel.aggregate(job.sector_id==17, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="emprsc_p">(parcel.aggregate((job.sector_id==1) + (job.sector_id==2), intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empoth_p">(parcel.aggregate(job.sector_id &gt; 19, intermediates=[building])).astype(int32)</variable>
+        	<variable type="string" name="empoth_p">(parcel.aggregate((job.sector_id==1) + (job.sector_id==2), intermediates=[building])).astype(int32)</variable>
+        	<variable type="string" name="emprsc_p">(parcel.aggregate(job.sector_id &gt; 19, intermediates=[building])).astype(int32)</variable> # zeros
          	<variable type="string" name="emptot_p">(urbansim_parcel.parcel.number_of_jobs).astype(int32)</variable>
          	<variable type="string" name="parkdy_p">(parcel.parking_space_daily).astype(int32)</variable>
 			<variable type="string" name="parkhr_p">(parcel.parking_space_hourly).astype(int32)</variable>

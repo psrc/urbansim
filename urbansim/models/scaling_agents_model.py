@@ -36,11 +36,13 @@ class ScalingAgentsModel(Model):
         self.debug = DebugPrinter(debuglevel)
         
      
-    def run(self, location_set, agent_set, agents_index=None):
+    def run(self, location_set, agent_set, agents_index=None, ignore_agents_distribution=False):
         """
             'location_set', 'agent_set' are of type Dataset,
             'agent_index' are indices of individuals in the agent_set for which 
             the model runs. If it is None, the whole agent_set is considered.
+            If ignore_agents_distribution is True, the agents in place are ignored and 
+            the scaling is done proportionally to the weights only.
         """
         if agents_index is None:
             agents_index=arange(agent_set.size())
@@ -62,10 +64,10 @@ class ScalingAgentsModel(Model):
         
         for submodel in submodels:
             result[self.observations_mapping[submodel]] = self._simulate_submodel(submodel, 
-                                location_set, agent_set, agents_index).astype(result.dtype)
+                                location_set, agent_set, agents_index, ignore_agents_distribution=ignore_agents_distribution).astype(result.dtype)
         return result
     
-    def _simulate_submodel(self, submodel, location_set, agent_set, agents_index):
+    def _simulate_submodel(self, submodel, location_set, agent_set, agents_index, ignore_agents_distribution=False):
         location_id_name = location_set.get_id_name()[0]
         subm_agents_index = agents_index[self.observations_mapping[submodel]]
         if self.submodel_string is not None:
@@ -78,9 +80,12 @@ class ScalingAgentsModel(Model):
         agent_set.set_values_of_one_attribute(location_id_name, 
                                 resize(array([-1]), subm_agents_index.size), subm_agents_index)
         
-        agent_distr_in_loc = array(ndimage_sum(ones(all_agents_in_subm.size), 
+        if not ignore_agents_distribution:
+            agent_distr_in_loc = array(ndimage_sum(ones(all_agents_in_subm.size), 
                                          labels=agent_set[location_id_name][all_agents_in_subm], 
                                   index=location_set.get_id_attribute()))
+        else:
+            agent_distr_in_loc = ones(location_set.size(), dtype="int32")
  
         location_ind = ones(location_set.size(), dtype='bool')
         if self.filter is not None:
