@@ -218,6 +218,7 @@ class CreateJobsFromQCEW:
         processed_bindicator[idx_sngl_wrk_fit] = True
         # sample buildings to businesses by parcels 
         bpcls = unique(businesses["parcel_id"][idx_sngl_wrk_fit])
+        # TODO: this approach includes businesses larger than 30. Fix
         for ipcl in range(bpcls.size):
             bidx = where(buildings['parcel_id'] == bpcls[ipcl])[0]
             bldgids = buildings['building_id'][bidx]
