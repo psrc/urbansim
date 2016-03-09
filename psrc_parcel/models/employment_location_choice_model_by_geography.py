@@ -13,7 +13,7 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
         self.geography_id_name = geography_dataset.get_id_name()[0]
         EmploymentLocationChoiceModel.__init__(self, group_member, location_set, *args, **kwargs)
         
-    def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
+    def run(self, specification, coefficients, agent_set, agents_index=None, increase_job_capacity_if_needed=True, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         cond_array = zeros(agent_set.size(), dtype="bool8")
@@ -32,21 +32,22 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
             for irun in [1,2]:
                 EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
-                if irun==1:
-                    # increase buildings job_capacity to fit all jobs
-                    unplaced_size = (agent_set['building_id'][agent_set[self.geography_id_name]==geography_id] <= 0).sum()
-                    if unplaced_size <= 0 or not 'job_capacity' in self.choice_set.get_known_attribute_names():
-                        break
-                    filt = where(self.choice_set.compute_variables(self.filter, dataset_pool=self.dataset_pool)>0)[0]
-                    if filt.size <= 0:
-                        break
-                    noa = self.choice_set.compute_variables('noj = building.number_of_agents(job)', 
+                if not increase_job_capacity_if_needed or irun > 1:
+                    break
+                # increase buildings job_capacity to fit all jobs
+                unplaced_size = (agent_set['building_id'][agent_set[self.geography_id_name]==geography_id] <= 0).sum()
+                if unplaced_size <= 0 or not 'job_capacity' in self.choice_set.get_known_attribute_names():
+                    break
+                filt = where(self.choice_set.compute_variables(self.filter, dataset_pool=self.dataset_pool)>0)[0]
+                if filt.size <= 0:
+                    break
+                noa = self.choice_set.compute_variables('noj = building.number_of_agents(job)', 
                                                                     dataset_pool=self.dataset_pool)
-                    cap = maximum(self.choice_set['job_capacity'][filt], self.choice_set['noj'][filt])
-                    if unplaced_size <= cap.sum():
-                        break
-                    self.choice_set.modify_attribute('job_capacity', data=ceil(cap + cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype), index=filt)
-                    logger.log_warning('Capacity increased by %s jobs.' % round(cap*unplaced_size/float(cap.sum())))
+                cap = maximum(self.choice_set['job_capacity'][filt], self.choice_set['noj'][filt])
+                if unplaced_size <= cap.sum():
+                    break
+                self.choice_set.modify_attribute('job_capacity', data=ceil(cap + cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype), index=filt)
+                logger.log_warning('Capacity increased by %s jobs.' % round(cap*unplaced_size/float(cap.sum())))
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()
         # set the right parcels

@@ -1,5 +1,7 @@
-from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile
+import os
+from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile, concatenate
 from numpy.random import shuffle, seed
+from opus_core.ndimage import maximum as ndmax
 from math import ceil
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -13,6 +15,32 @@ class FltStorage:
         storage = StorageFactory().get_storage('flt_storage', storage_location=location)
         return storage
     
+def sector2building_type(sectors):
+    transl = {
+    1: 8, #      Natural resources and mining    TO   industrial
+    2: 8,  #      Construction    TO      industrial
+    3: 8,  #       Aerospace      TO       industrial
+    4: 8,  #      Other durable goods     TO       industrial
+    5:21,  #      Nondurable goods        TO       warehousing
+    6:21,  #       Wholesale trade TO       warehousing
+    7: 3,  #     Retail trade    TO       commercial
+    8: 21, #      Transportation and warehousing  TO      warehousing
+    9: 13, #      Utilities       TO      office
+    10:13, #      Telecommunications      TO      office
+    11:13, #      Other information       TO      office
+    12:13, #      Financial activities    TO      office
+    13:13, #      Professional and business services      TO      office
+    14: 3, #      Food services and drinking places       TO       commercial
+    15:13, #      Educational services    TO      office
+    16:13, #      Health services TO       office
+    17: 3, #      Other services  TO      commercial
+    18: 5, #      Government      TO government         
+    19:18  #      Education    TO School
+    }
+    trans_array = zeros(max(transl.keys())+1, dtype='int32')
+    for sector, bt in transl.iteritems():
+        trans_array[sector] = bt
+    return trans_array[sectors]
     
 class CreateJobsFromQCEW:
     number_of_jobs_attr = "job_count"
@@ -50,7 +78,7 @@ class CreateJobsFromQCEW:
             logger.log_warning(message="%s businesses are of size 0." % sum(zero_size))
         
         businesses = DatasetSubset(allbusinesses, index=where(is_valid_business)[0])
-            
+        
         parcels.add_attribute(name="number_of_workplaces", data=parcels.sum_dataset_over_ids(businesses, constant=1))
         
         has_single_res_buildings = logical_and(parcels["number_of_buildings"] == 1, parcels["number_of_res_buildings"] == 1) # 1 (1 residential)
@@ -268,14 +296,30 @@ class CreateJobsFromQCEW:
             business_sizes[idx_mult_wrkplace_2plus_workers].sum(), idx_mult_wrkplace_2plus_workers.size))
         
         
+        # 15. 3+ workers in residential parcel with no building
+        idx_wrk_vacant_res = where(logical_and(logical_and(processed_bindicator==0, business_sizes > 2), business_codes == 7))[0]
+        jidx = in1d(job_array_labels, business_ids[idx_wrk_vacant_res])
+        job_assignment_case[jidx] = 15
+        processed_bindicator[idx_wrk_vacant_res] = True
+        logger.log_status("15. %s jobs (%s businesses of 3+ workers) could not be placed due to non-existing buildings in parcels with residential LU type." % (
+            business_sizes[idx_wrk_vacant_res].sum(), idx_wrk_vacant_res.size))
+        
+        # 16. nonresidential parcel with no building
+        idx_wrk_vacant_nonres = where(logical_and(processed_bindicator==0, business_codes == 8))[0]
+        jidx = in1d(job_array_labels, business_ids[idx_wrk_vacant_nonres])
+        job_assignment_case[jidx] = 16
+        processed_bindicator[idx_wrk_vacant_nonres] = True
+        logger.log_status("16. %s jobs (%s businesses) could not be placed due to non-existing buildings in parcels with non-esidential LU type." % (
+            business_sizes[idx_wrk_vacant_nonres].sum(), idx_wrk_vacant_nonres.size))        
+        
         # 17. 31+ workers in single residential building. Do not place - will go into ELCM.
         idx_wrk_fit = where(logical_and(logical_and(processed_bindicator==0, business_sizes > 30), business_codes == 1))[0]
         jidx = in1d(job_array_labels, business_ids[idx_wrk_fit])
         job_assignment_case[jidx] = 17
         processed_bindicator[idx_wrk_fit] = True        
         logger.log_status("17. %s jobs (%s businesses) in 31+ workers x single residential building." % (
-                business_sizes[idx_wrk_fit].sum(), idx_wrk_fit.size))         
-        
+            business_sizes[idx_wrk_fit].sum(), idx_wrk_fit.size))         
+    
         # 18. 31+ workers in multiple residential buildings.
         idx_wrk_fit = where(logical_and(logical_and(processed_bindicator==0, business_sizes > 30), business_codes == 2))[0]
         jidx = in1d(job_array_labels, business_ids[idx_wrk_fit])
@@ -284,70 +328,65 @@ class CreateJobsFromQCEW:
         logger.log_status("18. %s jobs (%s businesses) in 31+ workers x multiple residential building." % (
             business_sizes[idx_wrk_fit].sum(), idx_wrk_fit.size))                
 
-        # 15. 3+ workers in residential parcel with no building
-        idx_wrk_vacant_res = where(logical_and(logical_and(processed_bindicator==0, business_sizes > 2), business_codes == 7))[0]
-        jidx = in1d(job_array_labels, business_ids[idx_wrk_vacant_res])
-        job_assignment_case[jidx] = 15
-        processed_bindicator[idx_wrk_vacant_res] = True
-        logger.log_status("15. %s jobs (%s businesses of 3+ workers) could not be placed due to non-existing buildings in parcels with residential LU type." % (
-            business_sizes[idx_wrk_vacant_res].sum(), idx_wrk_vacant_res.size))
-
-        
-        # 16. nonresidential parcel with no building
-        idx_any_workers = where(processed_bindicator==0)[0]
-        bcode = parcels.get_attribute_by_id("buildings_code", businesses["parcel_id"][idx_any_workers]) 
-        idx_wrk_vacant_nonres = where(bcode == 8)[0]
-        jidx = in1d(job_array_labels, business_ids[idx_any_workers[idx_wrk_vacant_nonres]])
-        job_assignment_case[jidx] = 16
-        processed_bindicator[idx_any_workers[idx_wrk_vacant_nonres]] = True
-        logger.log_status("16. %s jobs (%s businesses) could not be placed due to non-existing buildings in parcels with non-esidential LU type." % (
-            business_sizes[idx_any_workers[idx_wrk_vacant_nonres]].sum(), idx_wrk_vacant_nonres.size))        
-        
+        # jobs in messy buildings
+        idx_messy_fit = where(logical_and(logical_and(processed_bindicator==0, business_sizes > 0), business_codes == 0))[0]
+        processed_bindicator[idx_messy_fit] = True
+        logger.log_status("%s jobs (%s businesses) could not be placed due to messy buildings." % (
+            business_sizes[idx_messy_fit].sum(), idx_messy_fit.size))         
          
-        # build governmental buildings for public jobs for cases 7, 15 and 16
-        jidx = where((job_assignment_case == 16) + (job_assignment_case == 15) + (job_assignment_case == 7))[0]
-        bus = unique(job_array_labels[jidx])
+        # build new buildings for jobs in cases 7, 15 and 16
+        jidx_no_bld = where((job_assignment_case == 16) + (job_assignment_case == 15) + (job_assignment_case == 7))[0]
+        bus = unique(job_array_labels[jidx_no_bld])
         bsidx = businesses.get_id_index(bus)
-        bsidx = bsidx[in1d(businesses['sector_id'][bsidx], [18,19])]
-        newbids = arange(buildings.get_id_attribute().max()+1, buildings.get_id_attribute().max()+bsidx.size+1)
-        newbldgs = {'building_id': newbids,
-                    'parcel_id': businesses['parcel_id'][bsidx],
-                    'building_type_id': array(bsidx.size*[5], dtype='int32'),
+        # first create buildings for single workplaces per parcel
+        single_workplace_idx = where(business_nworkplaces[bsidx] == 1)[0]
+        newbld_parcel_id = businesses['parcel_id'][bsidx][single_workplace_idx]
+        newbld_bt = sector2building_type(businesses['sector_id'][bsidx][single_workplace_idx])
+        newbids = arange(buildings.get_id_attribute().max()+1, buildings.get_id_attribute().max()+single_workplace_idx.size+1)
+        bbldid = zeros(bsidx.size, dtype='int32')
+        bbldid[single_workplace_idx] = newbids
+        # for parcels with multiple workplaces select the largest business to determine its building type
+        mult_bsidx = bsidx[where(business_nworkplaces[bsidx] > 1)[0]]
+        empty_parcels = businesses['parcel_id'][mult_bsidx]
+        uempty_parcels = unique(empty_parcels)
+        bsize_on_empty_pcl = ndmax(business_sizes[mult_bsidx], labels=empty_parcels, index=uempty_parcels)
+        newbld2_sec = zeros(uempty_parcels.size, dtype='int32')
+        newbids2 = arange(newbids.max()+1, newbids.max()+uempty_parcels.size+1)
+        for ipcl in range(uempty_parcels.size):
+            newbld2_sec[ipcl] = businesses['sector_id'][mult_bsidx][logical_and(businesses['parcel_id'][mult_bsidx] == uempty_parcels[ipcl], 
+                                                                                business_sizes[mult_bsidx]==bsize_on_empty_pcl[ipcl])][0]
+            this_bidx = where(businesses['parcel_id'][bsidx] == uempty_parcels[ipcl])
+            bbldid[this_bidx] = newbids2[ipcl]
+            
+        newbld_parcel_id = concatenate((newbld_parcel_id, uempty_parcels))
+        newbld_bt = concatenate((newbld_bt, sector2building_type(newbld2_sec)))    
+        
+        newbldgs = {'building_id': concatenate((newbids, newbids2)),
+                    'parcel_id': newbld_parcel_id,
+                    'building_type_id': newbld_bt,
                     }
         buildings.add_elements(newbldgs, require_all_attributes=False)
         jidx = where(in1d(job_array_labels, business_ids[bsidx]))[0]
-        job_building_id[jidx] = newbids        
-        logger.log_status("Build %s new governmental buildings to accommodate %s jobs from cases 7, 15, 16." % (newbids.size, jidx.size))
+        job_building_id[jidx] = bbldid.repeat(business_sizes[bsidx])
+        logger.log_status("Build %s new buildings to accommodate %s jobs (out of which %s are governmental) from cases 7, 15, 16." % (
+            newbld_parcel_id.size, jidx.size, business_sizes[bsidx][where(in1d(businesses['sector_id'][bsidx], [18,19]))].sum()))
         
         
-        # jobs in messy buildings
-        idx_worker = where(logical_and(processed_bindicator==0, business_sizes > 0))[0]
-        bcode = parcels.get_attribute_by_id("buildings_code", businesses["parcel_id"][idx_worker])
-        idx_messy_fit = where(bcode == 0)[0]
-        processed_bindicator[idx_worker[idx_messy_fit]] = True
-        logger.log_status("%s jobs (%s businesses) could not be placed due to messy buildings." % (
-            business_sizes[idx_worker[idx_messy_fit]].sum(), idx_messy_fit.size))         
-
-        
-        logger.log_status("So far %s (%s percent) home-based jobs." % (home_based.sum(), round(home_based.sum()/(home_based.size/100.),2)))
-        logger.log_status("So far %s percent (%s) jobs (%s businesses) processed. %s jobs (%s businesses) remain to be processed." % \
+        logger.log_status("Assigned %s (%s percent) home-based jobs." % (home_based.sum(), round(home_based.sum()/(home_based.size/100.),2)))
+        logger.log_status("Finished %s percent (%s) jobs (%s businesses) processed. %s jobs (%s businesses) remain to be processed." % \
                           (round(business_sizes[processed_bindicator].sum()/(home_based.size/100.),2),
                            business_sizes[processed_bindicator].sum(), processed_bindicator.sum(),
                           business_sizes[logical_not(processed_bindicator)].sum(), business_sizes[logical_not(processed_bindicator)].size))
         
+        logger.start_block("Storing jobs data.")
         # create job dataset
-        job_data = {"job_id": arange(job_building_id.size)+1,
-                    "home_based" : home_based,
+        job_data = {"job_id": (arange(job_building_id.size)+1).astype("int32"),
+                    "home_based_status" : home_based,
                     "building_id": job_building_id,
-                    "business_id": job_array_labels,
-                    "sector_id": zeros(job_building_id.size),
-                    "parcel_id": zeros(job_building_id.size),
+                    "business_id": job_array_labels.astype("int32"),
+                    "sector_id": businesses['sector_id'].repeat(business_sizes).astype("int32"), 
+                    "parcel_id": businesses['parcel_id'].repeat(business_sizes).astype("int32"), 
                     "assignment_case": job_assignment_case}
-        
-        for ib in range(businesses.size()):
-            idx = where(job_data['business_id'] == business_ids[ib])
-            job_data["sector_id"][idx] = businesses['sector_id'][ib]
-            job_data["parcel_id"][idx] = businesses['parcel_id'][ib]
 
         # join with zones
         if zone_dsname is not None:
@@ -363,7 +402,7 @@ class CreateJobsFromQCEW:
         if out_storage is not None:
             jobs.write_dataset(out_storage=out_storage, out_table_name="jobs")
             buildings.write_dataset(out_storage=out_storage, attributes=AttributeType.PRIMARY)
-        
+        logger.end_block()
         return jobs
         
     
@@ -380,7 +419,7 @@ if __name__ == '__main__':
        written into the output_cache.
     """
     business_dataset_name = "workplaces"
-    zones_dataset_name="zone"
+    zones_dataset_name = 'city' # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
     input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
     write_to_csv = False
