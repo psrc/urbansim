@@ -1,7 +1,8 @@
 import os
-from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile, concatenate
+from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile, concatenate, minimum
 from numpy.random import shuffle, seed
 from opus_core.ndimage import maximum as ndmax
+from opus_core.ndimage import sum as ndsum
 from math import ceil
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -403,9 +404,54 @@ class CreateJobsFromQCEW:
         if out_storage is not None:
             jobs.write_dataset(out_storage=out_storage, out_table_name="jobs")
             buildings.write_dataset(out_storage=out_storage, attributes=AttributeType.PRIMARY)
-        logger.end_block()
+        logger.end_block()        
         return jobs
-        
+ 
+
+class MatchHouseholdsToJobs:
+    def run(self, jobs, in_storage, out_storage=None):
+        dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
+        if jobs is None:
+            jobs =  dataset_pool.get_dataset('job')
+        else:
+            dataset_pool.replace_dataset('job', jobs)
+        hhs = dataset_pool.get_dataset('household')
+        buildings = dataset_pool.get_dataset('building')
+        buildings.compute_variables(["psrc_parcel.building.census_block_group_id", "psrc_parcel.building.number_of_home_based_jobs",
+                                     "urbansim_parcel.building.number_of_households", "urbansim_parcel.building.residential_units"
+                                           ], 
+                                          dataset_pool=dataset_pool)
+        ubusiness, ubusiness_idx = unique(jobs['business_id']*(jobs['home_based_status']==1), return_index=True)
+        jobs_ubusiness = zeros(jobs.size(), dtype='bool8')
+        jobs_ubusiness[ubusiness_idx] = True
+        jobs_ubusiness[jobs['home_based_status']==0] = False
+        nhbbus = minimum(ndsum(jobs_ubusiness, labels=jobs['building_id'], index=buildings['building_id']), buildings["residential_units"])        
+        affected_buildings_ind = logical_and((buildings["number_of_households"] - nhbbus) < 0, buildings["number_of_households"] < buildings["residential_units"])
+        not_affected_buildings_ind = logical_and(logical_not(affected_buildings_ind), buildings["number_of_home_based_jobs"] == 0)
+        blocks = unique(buildings["census_block_group_id"][where(affected_buildings_ind)])
+
+        hh_building_id = hhs['building_id'].copy()
+        seed(1)
+        logger.log_status("%s buildings in %s census block affected in moving households to jobs." % (affected_buildings_ind.sum(), blocks.size))
+        logger.start_block("Moving households to jobs.")
+        for block in blocks:
+            bidx = where(logical_and(affected_buildings_ind, buildings["census_block_group_id"] == block))[0]
+            bidx_out = where(logical_and(not_affected_buildings_ind, buildings["census_block_group_id"] == block))[0]
+            if bidx_out.size == 0:
+                continue
+            hh_idx = where(in1d(hhs['building_id'], buildings['building_id'][bidx_out]))[0]
+            if hh_idx.size == 0:
+                continue
+            nhh_needed = maximum(nhbbus[bidx] - buildings["number_of_households"][bidx], 0)
+            if nhh_needed.sum() <= 0:
+                continue
+            for i in arange(bidx.size):
+                if nhh_needed[i] == 0:
+                    continue
+                hh_idx_sampled = sample_noreplace(hh_idx, nhh_needed[i])
+                hh_building_id[hh_idx_sampled] = buildings['building_id'][bidx[i]]
+        logger.end_block()   
+        logger.log_status("%s households re-located." % (hh_building_id <> hhs['building_id']).sum())
     
 if __name__ == '__main__':
     """
@@ -421,19 +467,25 @@ if __name__ == '__main__':
     """
     business_dataset_name = "workplaces"
     zones_dataset_name = 'city' # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
-    input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
+    input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014test"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
+    create_jobs = False
     write_to_csv = False
+    match_with_households = True
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
-    jobs = CreateJobsFromQCEW().run(instorage, out_storage=outstorage, business_dsname=business_dataset_name, zone_dsname=zones_dataset_name)    
-    if write_to_csv:
-        csv_storage = StorageFactory().get_storage('csv_storage', storage_location = output_cache)
-        data = {}
-        for attr in jobs.get_primary_attribute_names():
-            data[attr] = jobs[attr]
-        csv_storage.write_table(table_name="jobs", table_data=data, append_type_info=False)
-
+    jobs = None
+    if create_jobs:
+        jobs = CreateJobsFromQCEW().run(instorage, out_storage=outstorage, business_dsname=business_dataset_name, zone_dsname=zones_dataset_name)    
+        if write_to_csv:
+            csv_storage = StorageFactory().get_storage('csv_storage', storage_location = output_cache)
+            data = {}
+            for attr in jobs.get_primary_attribute_names():
+                data[attr] = jobs[attr]
+            csv_storage.write_table(table_name="jobs", table_data=data, append_type_info=False)
+        
+    if match_with_households:
+        MatchHouseholdsToJobs().run(jobs, instorage, out_storage=outstorage)
 
 # write a subset of workplaces into a file
 #cases = [7,15,16]
