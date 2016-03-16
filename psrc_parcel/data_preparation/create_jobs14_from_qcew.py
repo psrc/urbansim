@@ -432,8 +432,8 @@ class MatchHouseholdsToJobs:
 
         hh_building_id = hhs['building_id'].copy()
         seed(1)
-        logger.log_status("%s buildings in %s census block affected in moving households to jobs." % (affected_buildings_ind.sum(), blocks.size))
-        logger.start_block("Moving households to jobs.")
+        logger.log_status("%s buildings in %s census block affected for moving households to jobs." % (affected_buildings_ind.sum(), blocks.size))
+        logger.start_block("Moving households to jobs")
         for block in blocks:
             bidx = where(logical_and(affected_buildings_ind, buildings["census_block_group_id"] == block))[0]
             bidx_out = where(logical_and(not_affected_buildings_ind, buildings["census_block_group_id"] == block))[0]
@@ -450,7 +450,9 @@ class MatchHouseholdsToJobs:
                     continue
                 hh_idx_sampled = sample_noreplace(hh_idx, nhh_needed[i])
                 hh_building_id[hh_idx_sampled] = buildings['building_id'][bidx[i]]
-        logger.end_block()   
+        logger.end_block() 
+        if out_storage is not None:
+            households.write_dataset(out_storage=out_storage, out_table_name="households")                  
         logger.log_status("%s households re-located." % (hh_building_id <> hhs['building_id']).sum())
     
 if __name__ == '__main__':
@@ -467,11 +469,11 @@ if __name__ == '__main__':
     """
     business_dataset_name = "workplaces"
     zones_dataset_name = 'city' # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
-    input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014test"
+    input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
-    create_jobs = False
+    create_jobs = True
     write_to_csv = False
-    match_with_households = True
+    match_with_households = False
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     jobs = None
