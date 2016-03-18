@@ -46,8 +46,9 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
                 cap = maximum(self.choice_set['job_capacity'][filt], self.choice_set['noj'][filt])
                 if unplaced_size <= cap.sum():
                     break
-                self.choice_set.modify_attribute('job_capacity', data=ceil(cap + cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype), index=filt)
-                logger.log_warning('Capacity increased by %s jobs.' % round(cap*unplaced_size/float(cap.sum())))
+# TODO: make these two lines optional
+#                self.choice_set.modify_attribute('job_capacity', data=ceil(cap + cap*(unplaced_size/float(cap.sum()))).astype(cap.dtype), index=filt)
+#                logger.log_warning('Capacity increased by %s jobs.' % round(cap*unplaced_size/float(cap.sum())))
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()
         # set the right parcels

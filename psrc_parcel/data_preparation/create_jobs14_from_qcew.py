@@ -1,5 +1,5 @@
 import os
-from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile, concatenate, minimum
+from numpy import cumsum, zeros, where, in1d, logical_and, logical_not, logical_or, ones, arange, unique, maximum, vstack, array, tile, concatenate, minimum, intersect1d
 from numpy.random import shuffle, seed
 from opus_core.ndimage import maximum as ndmax
 from opus_core.ndimage import sum as ndsum
@@ -223,7 +223,7 @@ class CreateJobsFromQCEW:
         for ipcl in range(bpcls.size):
             bidx = where(buildings['parcel_id'] == bpcls[ipcl])[0]
             bldgids = buildings['building_id'][bidx]
-            bussids = business_ids[businesses["parcel_id"] == bpcls[ipcl]]
+            bussids = intersect1d(business_ids[businesses["parcel_id"] == bpcls[ipcl]], business_ids[idx_sngl_wrk_fit])
             # multiply by units for sampling prop. to units rather than buildings
             bldgids = bldgids.repeat(maximum(1, buildings['residential_units'][bidx].astype('int32'))) 
             if bldgids.size < bussids.size:
@@ -394,8 +394,8 @@ class CreateJobsFromQCEW:
         if zone_dsname is not None:
             zones = dataset_pool.get_dataset(zone_dsname)
             idname = zones.get_id_name()[0]
-            jpcls = buildings.get_attribute_by_id('parcel_id', job_building_id)
-            job_data[idname] = parcels.get_attribute_by_id(idname, jpcls)
+            #jpcls = buildings.get_attribute_by_id('parcel_id', job_building_id)
+            job_data[idname] = parcels.get_attribute_by_id(idname, job_data["parcel_id"])
             
             
         dictstorage = StorageFactory().get_storage('dict_storage')
