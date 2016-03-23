@@ -282,7 +282,7 @@ class CreateJobsFromQCEW:
         #hbasedsum = home_based.sum()
         for ipcl in range(bpcls.size):
             bldgids = buildings['building_id'][buildings['parcel_id'] == bpcls[ipcl]]
-            bussids = business_ids[businesses["parcel_id"] == bpcls[ipcl]]
+            bussids = intersect1d(business_ids[businesses["parcel_id"] == bpcls[ipcl]], business_ids[idx_mult_wrkplace_2plus_workers])
             if bldgids.size < bussids.size:
                 bldarray = bldgids.repeat(1+ceil((bussids.size - bldgids.size)/float(bldgids.size)))
             else:
@@ -291,7 +291,7 @@ class CreateJobsFromQCEW:
             is_res = in1d(bldarray, restypes)
             for ib in range(bussids.size):
                 jidx = where(job_array_labels == bussids[ib])
-                job_building_id[jidx] = bldarray[ib]   
+                job_building_id[jidx] = bldarray[ib]
                 #home_based[jidx] = is_res
                 job_assignment_case[jidx] = 14
         logger.log_status("14. %s jobs (%s businesses) could be placed due to multiple workplaces x 3+ workers x multiple non-res/mixed building fit." % (
