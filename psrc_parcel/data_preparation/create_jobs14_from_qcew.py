@@ -200,6 +200,15 @@ class CreateJobsFromQCEW:
         logger.log_status("7. %s jobs (%s businesses of size 1-2) could not be placed due to non-existing buildings in parcels with residential LU type." % (
             business_sizes[idx_sngl_wrk_vacant_res].sum(), idx_sngl_wrk_vacant_res.size))        
 
+        # 8. 3+ workers of governmental workplaces in 1+ residential building
+        ind_bussiness_case8 = logical_and(logical_and(processed_bindicator==0, logical_and(business_sizes > 2, in1d(businesses['sector_id'], [18,19]))), in1d(business_codes, [1,2]))
+        idx_wrk_fit = where(ind_bussiness_case8)[0]
+        jidx = in1d(job_array_labels, business_ids[idx_wrk_fit])
+        job_assignment_case[jidx] = 8
+        processed_bindicator[idx_wrk_fit] = True
+        logger.log_status("8. %s governmental jobs (%s businesses of size 3+) could not be placed due to residing in residential buildings only." % (
+                    business_sizes[idx_wrk_fit].sum(), idx_wrk_fit.size))
+        
         # 9. 3-30 workers in single residential building. Make two of them home based.
         idx_sngl_wrk_fit = where(logical_and(logical_and(processed_bindicator==0, logical_and(business_sizes > 2, business_sizes <= 30)), business_codes == 1))[0]
         jidx = in1d(job_array_labels, business_ids[idx_sngl_wrk_fit])
@@ -219,7 +228,6 @@ class CreateJobsFromQCEW:
         processed_bindicator[idx_sngl_wrk_fit] = True
         # sample buildings to businesses by parcels 
         bpcls = unique(businesses["parcel_id"][idx_sngl_wrk_fit])
-        # TODO: this approach includes businesses larger than 30. Fix
         for ipcl in range(bpcls.size):
             bidx = where(buildings['parcel_id'] == bpcls[ipcl])[0]
             bldgids = buildings['building_id'][bidx]
@@ -336,8 +344,8 @@ class CreateJobsFromQCEW:
         logger.log_status("%s jobs (%s businesses) could not be placed due to messy buildings." % (
             business_sizes[idx_messy_fit].sum(), idx_messy_fit.size))         
          
-        # build new buildings for jobs in cases 7, 15 and 16
-        jidx_no_bld = where((job_assignment_case == 16) + (job_assignment_case == 15) + (job_assignment_case == 7))[0]
+        # build new buildings for jobs in cases 7, 8, 15 and 16
+        jidx_no_bld = where(in1d(job_assignment_case, [7,8,15,16]))[0]
         bus = unique(job_array_labels[jidx_no_bld])
         bsidx = businesses.get_id_index(bus)
         # first create buildings for single workplaces per parcel
