@@ -75,10 +75,10 @@
         </buildings> -->
          </urbansim_to_tm_variable_mapping>
 		 <daysim_file type="dictionary" >
-		 	<!-- <format type="string">hdf5</format> -->
-		 	 <format type="string">dat</format>  
+		 	 <format type="string">hdf5g</format> 
+		 	 <!--<format type="string">dat</format>  -->
 		 	<hdf5_compression type="string" convert_blank_to_none="True">gzip</hdf5_compression>
-		 	<name type="string">parcels_urbansim</name>
+		 	<name type="string">parcels_urbansim.h5</name>
 		 </daysim_file>
       <models type="selectable_list">
         <selectable name="inprocess.hana.opus_daysim.models.get_cache_data_into_daysim" type="selectable">True</selectable>
