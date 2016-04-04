@@ -91,8 +91,8 @@
 			<variable type="string" name="puwmode">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
 			<variable type="string" name="__filter__">urbansim_parcel.person.parcel_id &gt; 0</variable>
 			<variable type="string" name="__out_table_name__">Person</variable>
-			<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
-			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>
+			<!--<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
+			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>-->
 			<!--<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
 			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->			
          </persons>
