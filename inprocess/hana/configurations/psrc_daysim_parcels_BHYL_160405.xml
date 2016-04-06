@@ -61,10 +61,8 @@
          	  <variable name="emptot_p" type="string">(urbansim_parcel.parcel.number_of_jobs).astype(int32)</variable>
             <variable name="parkdy_p" type="string">(parcel.parking_space_daily).astype(int32)</variable>
             <variable name="parkhr_p" type="string">(parcel.parking_space_hourly).astype(int32)</variable>
-            <variable name="ppricdyp" type="string">(parcel.parking_price_daily).astype(int32)</variable>
-            <variable name="pprichrp" type="string">(parcel.parking_price_hourly).astype(int32)</variable>
-            <!-- <variable name="ppricdyp" type="string">(parcel.parking_price_daily * 100).astype(int32)</variable>
-            <variable name="pprichrp" type="string">(parcel.parking_price_hourly * 100).astype(int32)</variable> -->
+            <variable name="ppricdyp" type="string">(parcel.parking_price_daily * 100).astype(int32)</variable>
+            <variable name="pprichrp" type="string">(parcel.parking_price_hourly * 100).astype(int32)</variable>
           </parcels>
           <!-- <buildings type="dictionary">
         	<variable type="string" name="building_id">building.building_id</variable>
