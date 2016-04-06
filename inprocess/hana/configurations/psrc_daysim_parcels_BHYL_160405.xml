@@ -47,8 +47,8 @@
             <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
             <!-- <variable name="stugrd_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
             <variable name="stuhgh_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
-            <variable name="stuuni_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable> --> 
-            <variable name="empedu_p" type="string">(parcel.aggregate((job.sector_id==15) + (job.sector_id==19), intermediates=[building])).astype(int32)</variabl>
+            <variable name="stuuni_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable> -->
+            <variable name="empedu_p" type="string">(parcel.aggregate((job.sector_id==15) + (job.sector_id==19), intermediates=[building])).astype(int32)</variable>
             <variable name="empfoo_p" type="string">(parcel.aggregate(job.sector_id==14, intermediates=[building])).astype(int32)</variable>
             <variable name="empgov_p" type="string">(parcel.aggregate(job.sector_id==18, intermediates=[building])).astype(int32)</variable>
             <variable name="empind_p" type="string">(parcel.aggregate((job.sector_id &gt; 2) * (job.sector_id &lt; 10) * (job.sector_id &lt;&gt; 7), intermediates=[building])).astype(int32)</variable>
@@ -88,22 +88,36 @@
           <selectable name="inprocess.hana.opus_daysim.models.run_daysim_travel_model" type="selectable">False</selectable>
           <selectable name="inprocess.hana.opus_daysim.models.get_daysim_data_into_cache" type="selectable">False</selectable>
         </models>
-        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">soundcast</daysim_base_directory>
+        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData</daysim_base_directory>
         <years_to_run key_name="year" type="category_with_special_keys">
           <run_description type="dictionary">
-            <year type="integer">2011</year>
-            <daysim_exchange_dir type="string">urbansim_outputs/2010</daysim_exchange_dir>
+            <year type="integer">2014</year>
+            <daysim_exchange_dir type="string">urbansim_outputs/2014</daysim_exchange_dir>
           </run_description>
-          <run_description type="dictionary">
+          <!-- <run_description type="dictionary">
             <year type="integer">2041</year>
             <daysim_exchange_dir type="string">urbansim_outputs/2040</daysim_exchange_dir>
-          </run_description>
+          </run_description> -->
         </years_to_run>
       </travel_model_configuration>
     </scenario>
   </scenario_manager>
   <results_manager>
-    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data">
+    <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" name="run_2016_04_06_11_15" run_id="1" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_1.run_2016_04_06_11_15</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">running</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_11_07" run_id="1" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">c:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_1.run_2016_04_06_11_07</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">running</status>
+      </run>
     </simulation_runs>
   </results_manager>
 </opus_project>
