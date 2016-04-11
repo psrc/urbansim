@@ -481,6 +481,8 @@ if __name__ == '__main__':
     zones_dataset_name = ['tractcity', 'city'] # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
     input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
+    #input_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014"
+    #output_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014out"
     create_jobs = True
     write_to_csv = False
     match_with_households = False

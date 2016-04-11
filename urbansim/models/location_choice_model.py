@@ -344,10 +344,13 @@ class LocationChoiceModel(ChoiceModel):
             choice_index = self.apply_filter(self.filter, agent_set=agent_set, 
                                              agents_index=agents_index)
             if choice_index is not None and choice_index.size == 0:
-                logger.log_error("There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
-                                 (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index]))
+                message = "There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
+                                 (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index])
+                if not config.get("accept_unavailability_of_choices", False):
+                    raise StandardError, message
+                logger.log_error(message)
                 self.model_interaction.interaction_dataset = None
-                return #OR raise?
+                return
             
             chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
             if type(chunk_specification) == str:
