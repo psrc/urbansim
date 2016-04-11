@@ -346,6 +346,7 @@ class LocationChoiceModel(ChoiceModel):
             if choice_index is not None and choice_index.size == 0:
                 logger.log_error("There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
                                  (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index]))
+                self.model_interaction.interaction_dataset = None
                 return #OR raise?
             
             chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})

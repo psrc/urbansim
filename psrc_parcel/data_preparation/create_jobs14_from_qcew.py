@@ -400,10 +400,12 @@ class CreateJobsFromQCEW:
 
         # join with zones
         if zone_dsname is not None:
-            zones = dataset_pool.get_dataset(zone_dsname)
-            idname = zones.get_id_name()[0]
-            #jpcls = buildings.get_attribute_by_id('parcel_id', job_building_id)
-            job_data[idname] = parcels.get_attribute_by_id(idname, job_data["parcel_id"])
+            if not isinstance(zone_dsname, list):
+                zone_dsname = [zone_dsname]
+            for dsname in zone_dsname:
+                zones = dataset_pool.get_dataset(dsname)
+                idname = zones.get_id_name()[0]
+                job_data[idname] = parcels.get_attribute_by_id(idname, job_data["parcel_id"])
             
             
         dictstorage = StorageFactory().get_storage('dict_storage')
@@ -476,7 +478,7 @@ if __name__ == '__main__':
        written into the output_cache.
     """
     business_dataset_name = "workplaces"
-    zones_dataset_name = 'city' # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
+    zones_dataset_name = ['tractcity', 'city'] # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
     input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
     create_jobs = True
