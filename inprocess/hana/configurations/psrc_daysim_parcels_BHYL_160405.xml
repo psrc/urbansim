@@ -42,8 +42,8 @@
             <variable name="taz_p" type="string">parcel.zone_id</variable>
             <variable name="lutype_p" type="string">parcel.land_use_type_id</variable>
             <variable name="hh_p" type="string">(urbansim_parcel.parcel.number_of_households).astype(int32)</variable>
-            <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
-            <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
+            <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * ((school.category == 'K') + (school.category == 'E') + (school.category == 'M') + (school.category == 'EM')) + school.student_count/2.0 * (school.category == 'MH') + school.student_count * 2/3.0 *(school.category == 'EMH'))).astype(int32)</variable>
+            <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * (school.category == 'H') + school.student_count/2.0 * (school.category == 'MH') + school.student_count/3.0 * (school.category == 'EMH'))).astype(int32)</variable>
             <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
             <!-- <variable name="stugrd_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
             <variable name="stuhgh_p" type="string">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
@@ -63,6 +63,8 @@
             <variable name="parkhr_p" type="string">(parcel.parking_space_hourly).astype(int32)</variable>
             <variable name="ppricdyp" type="string">(parcel.parking_price_daily * 100).astype(int32)</variable>
             <variable name="pprichrp" type="string">(parcel.parking_price_hourly * 100).astype(int32)</variable>
+            <variable name="nparks" type="string">(numpy.logical_or(parcel.land_use_type_id==6, parcel.land_use_type_id==19)).astype(int32)</variable>
+            <variable name="aparks" type="string">(parcel.parcel_sqft * (numpy.logical_or(parcel.land_use_type_id==6, parcel.land_use_type_id==19))).astype(int32)</variable>
           </parcels>
           <!-- <buildings type="dictionary">
         	<variable type="string" name="building_id">building.building_id</variable>
@@ -104,6 +106,76 @@
   </scenario_manager>
   <results_manager>
     <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" name="run_2016_04_07_12_14" run_id="10" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_10.run_2016_04_07_12_14</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">failed</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_07_12_19" run_id="11" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_11.run_2016_04_07_12_19</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">running</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_15_17" run_id="8" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_8.run_2016_04_06_15_17</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">done</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_15_29" run_id="9" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_9.run_2016_04_06_15_29</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">running</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_13_07" run_id="6" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_6.run_2016_04_06_13_07</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">done</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_13_06" run_id="5" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_5.run_2016_04_06_13_06</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">done</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_13_01" run_id="4" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_4.run_2016_04_06_13_01</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">done</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_12_49" run_id="3" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_3.run_2016_04_06_12_49</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">failed</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_12_15" run_id="2" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_2.run_2016_04_06_12_15</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">failed</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_06_14_44" run_id="7" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_7.run_2016_04_06_14_44</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">running</status>
+      </run>
       <run hidden="Children" name="run_2016_04_06_11_15" run_id="1" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
         <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_1.run_2016_04_06_11_15</cache_directory>
