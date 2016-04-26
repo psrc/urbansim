@@ -5,7 +5,7 @@
 from opus_core.variables.variable import Variable
 from numpy import ma
 from opus_core.misc import safe_array_divide
-from opus_core.simulation_state import SimulationState
+#from opus_core.simulation_state import SimulationState
 
 class job_capacity_computed_if_necessary(Variable):
     """get job_capacity either from base_year job_capacity or computed from non_residential_sqft / building_sqft_per_job for new buildings
@@ -25,12 +25,14 @@ class job_capacity_computed_if_necessary(Variable):
         job_spaces = safe_array_divide(buildings['non_residential_sqft'], buildings['building_sqft_per_job'])
         ## only do this when job_capacity and year_built are primary attributes of buildings
         known_names = buildings.get_known_attribute_names()
-        if 'job_capacity' in known_names and 'year_built' in known_names:
-            self.add_and_solve_dependencies(["building.job_capacity", "building.year_built"],
-                                                dataset_pool=dataset_pool)
+        if 'job_capacity' in known_names: # and 'year_built' in known_names:
+            self.add_and_solve_dependencies(["building.job_capacity"#, "building.year_built"
+                                             ], dataset_pool=dataset_pool)
             #base_year = SimulationState().get_start_time()
-            base_year = 2000 # This can't be taken from SimulationState because of running refinement with different base year
-            job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
+            #base_year = 2000 # This can't be taken from SimulationState because of running refinement with different base year
+            #job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
+            # Rather than using year_built we can do the following because the building construction model assigns -1 to new buildings
+            job_spaces[buildings['job_capacity'] >= 0] = buildings['job_capacity'][buildings['job_capacity'] >= 0] 
         return job_spaces
 
     def post_check(self,  values, dataset_pool=None):
@@ -49,8 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
             "building":{"building_id":         array([1,2,3,4,5,6,7,8,9,10]),
                        "zone_id":              array([1,1,2,2,1,3,3,3,2,2]),
                        "building_type_id":     array([1,3,1,2,2,1,2,3,2,4]),
-                       "job_capacity":         array([0,1,2,0,0,1,2,2,0,5])*10,
-                       "year_built":          array([-1,0,1,1,1,2,2,2,0,0])+2000,
+                       "job_capacity":         array([0,1,-1,-1,-1,-1,-1,-1,0,5])*10,
                        "non_residential_sqft": array([1,2,2,1,7,0,3,5,4,6])*1000,
                 },
             "building_sqft_per_job":{
@@ -60,7 +61,6 @@ class Tests(opus_unittest.OpusTestCase):
                 },                
         }
         )
-        SimulationState().set_start_time(2000)
         # mean over "building_sqft_per_job" is 127.5
         should_be = array([0, 10, 2000/80., 1000/60., 7000/50., 0/200, 3000/127.5 ,
                            5000/10., 0, 50]).astype("int32")
