@@ -193,6 +193,7 @@ class BuildingConstructionModel(Model):
         buildings_id_name = building_dataset.get_id_name()[0]
         new_buildings[buildings_id_name] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
         new_buildings['year_built'] = resize(array([current_year], dtype="int32"), new_buildings["parcel_id"].size)
+        new_buildings['job_capacity'] = resize(array([-1], dtype="int32"), new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
         if "zone_id" in building_dataset.get_known_attribute_names():
             zone_ids = building_dataset.compute_variables(['building.disaggregate(parcel.zone_id)'], dataset_pool=dataset_pool)
