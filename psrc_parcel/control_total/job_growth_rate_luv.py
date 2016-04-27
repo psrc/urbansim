@@ -4,7 +4,7 @@
 
 from psrc_parcel.control_total.household_growth_rate_luv import household_growth_rate_luv
 
-class job_growth_rate_luv(household_growth_rate):
+class job_growth_rate_luv(household_growth_rate_luv):
     """The rate of growth for the total column between the 5-years LUV totals.
     """
     
