@@ -14,10 +14,8 @@ class CapDevelopmentModel(TransitionModel):
     """ 
     Model can be used to cap development if a geography-based growth rate is achieved.
     It compares the actual growth rate to the one derived from the control totals table.
-    It adds a logical attribute to the dataset (e.g. parcels) with True for records where the growth rate
-    has been achieved and thus the development should be capped. 
-    Existing values are not overwritten be False, so that the model can be called multiple times with a cummulative effect.
-        
+    It adds a logical primary attribute to the dataset (e.g. parcels) with True for records where the growth rate
+    has been achieved and thus the development should be capped, and False otherwise.    
     """
     
     model_name = "Cap Development Model"
@@ -104,8 +102,8 @@ class CapDevelopmentModel(TransitionModel):
         
         cap_pcl = df.index[df[ct_growth_rate_attribute_name] < df['geo_growth_rate']]
         dataset_idx = self.dataset.get_id_index(cap_pcl)
-        if cap_attribute_name not in self.dataset.get_known_attribute_names():
-            self.dataset.add_attribute(name=cap_attribute_name, data=zeros(self.dataset.size(), dtype='bool8'))
+        #if cap_attribute_name not in self.dataset.get_known_attribute_names():
+        self.dataset.add_primary_attribute(name=cap_attribute_name, data=zeros(self.dataset.size(), dtype='bool8'))
         self.dataset.modify_attribute(cap_attribute_name, ones(dataset_idx.size, dtype='bool8'), index=dataset_idx)
             
         return self.dataset
