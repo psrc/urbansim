@@ -24,6 +24,7 @@ class DevelopmentProjectProposalSamplingModelLuv2(DevelopmentProjectProposalSamp
         remove_ind = logical_or(logical_and(self.proposal_set['is_res'], self.proposal_set['residential_target_reached']),
                                 logical_and(self.proposal_set['is_nonres'], self.proposal_set['nonresidential_target_reached']))
         is_proposal_rejected = logical_or(is_proposal_rejected, remove_ind[proposal_indexes])
+        logger.log_status("Blocked %s proposals due to sufficient growth." % remove_ind[proposal_indexes].sum())
         for i, proposal_index in enumerate(proposal_indexes):
             if not is_proposal_rejected[i] and ((self.weight[proposal_index] > 0) or force_accepting):
                 accepted = self.consider_proposal(proposal_index, force_accepting=force_accepting)
