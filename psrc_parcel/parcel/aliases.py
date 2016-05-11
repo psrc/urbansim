@@ -34,7 +34,7 @@ aliases = [
        "existing_units = (urbansim_parcel.parcel.building_sqft > 0)*urbansim_parcel.parcel.building_sqft + (urbansim_parcel.parcel.building_sqft <= 0)*parcel.parcel_sqft",
        "building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)/ (parcel.parcel_sqft).astype(float32)",
        "non_residential_building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft * urbansim_parcel.building.is_non_residential)/ (parcel.parcel_sqft).astype(float32)",
-
+       "job_capacity=parcel.aggregate(psrc_parcel.building.job_capacity_computed_if_necessary)"
            ]
 
 
