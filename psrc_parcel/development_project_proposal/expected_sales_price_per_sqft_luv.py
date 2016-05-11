@@ -31,23 +31,23 @@ class expected_sales_price_per_sqft_luv(Variable):
     res = 0
     nonres = 1
 
-    weight_factor['growth_center_id'][[506, 511, 520], res] = 90
-    weight_factor['growth_center_id'][[520], nonres] = 90
+    #weight_factor['growth_center_id'][[506, 511, 520], res] = 90
+    #weight_factor['growth_center_id'][[520], nonres] = 90
     
-    weight_factor['zone_id'][[2151, 2286], res] = 95
-    weight_factor['zone_id'][[2598, 2657, 2293, 2481, 2475, 2116], res] = 90
-    weight_factor['zone_id'][2214, res] = 5
-    weight_factor['zone_id'][2570, nonres] = 99
-    weight_factor['zone_id'][[2172, 2145, 2487], nonres] = 95
-    weight_factor['zone_id'][[2127, 2284, 2520, 2554, 2249, 2309], nonres] = 90
-    weight_factor['zone_id'][2169, nonres] = 85
-    weight_factor['zone_id'][2147, nonres] = 80    
-    weight_factor['zone_id'][[2118, 2252, 2564, 2311, 2310, 2312, 2121, 2282,  2409, 2171, 2597], nonres] = 10    
-    weight_factor['zone_id'][[2251, 2257], nonres] = 1
+    #weight_factor['zone_id'][[2151, 2286], res] = 95
+    #weight_factor['zone_id'][[2598, 2657, 2293, 2481, 2475, 2116], res] = 90
+    #weight_factor['zone_id'][2214, res] = 5
+    #weight_factor['zone_id'][2570, nonres] = 99
+    #weight_factor['zone_id'][[2172, 2145, 2487], nonres] = 95
+    #weight_factor['zone_id'][[2127, 2284, 2520, 2554, 2249, 2309], nonres] = 90
+    #weight_factor['zone_id'][2169, nonres] = 85
+    #weight_factor['zone_id'][2147, nonres] = 80    
+    #weight_factor['zone_id'][[2118, 2252, 2564, 2311, 2310, 2312, 2121, 2282,  2409, 2171, 2597], nonres] = 10    
+    #weight_factor['zone_id'][[2251, 2257], nonres] = 1
     
-    weight_factor['faz_id'][705, res] = 90
-    weight_factor['faz_id'][[505, 705, 6216, 5925, 6225], nonres] = 90
-    weight_factor['faz_id'][[6114, 6115, 6125, 5915, 5825, 5826, 5815], nonres] = 3
+    #weight_factor['faz_id'][705, res] = 90
+    #weight_factor['faz_id'][[505, 705, 6216, 5925, 6225], nonres] = 90
+    #weight_factor['faz_id'][[6114, 6115, 6125, 5915, 5825, 5826, 5815], nonres] = 3
         
     def dependencies(self):
         return ["development_project_proposal.expected_sales_price_per_sqft", 
