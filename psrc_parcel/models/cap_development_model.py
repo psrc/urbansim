@@ -22,9 +22,10 @@ class CapDevelopmentModel(TransitionModel):
     model_short_name = "CapDM"
     
     
-    def run(self, target_attribute_name, year=None, ct_growth_attribute_name="control_total.growth_rate", 
-            ct_geo_id_name='city_id', geo_id_name='faz_id', 
-            cap_attribute_name="cap_development", annual=True, growth_rate=True, dataset_pool=None
+    def run(self, target_attribute_name, ct_attribute_name, year=None, 
+            ct_geo_id_name='city_id', geo_id_name='city_id', 
+            cap_attribute_name="cap_development", compare_absolute_numbers=True, 
+            annual=True, growth_rate=True, dataset_pool=None
             ):
         """ 
 
@@ -38,28 +39,36 @@ class CapDevelopmentModel(TransitionModel):
                         e.g. urbansim_parcel.parcel.number_of_households_lag1.
                         Note that the dataset (here parcels) is passed to the init method.
                         
-                **year** : int, optional
-                
-                        Simulation year. If unspecified, gets value from SimulationState
-
-                **ct_growth_attribute_name**: string, optional
-                        Fully qualified name of control totals attribute that gives the target growth 
-                        (either as a rate or total value).
+                **ct_attribute_name**: string
+                        Fully qualified name of control totals attribute. 
+                        If compare_absolute_numbers is True (default) it should be the column that 
+                        gives the control toal, e.g. 'total_number_of_households'.
+                        If compare_absolute_numbers is False, it should be a variable giving the growth
+                        between two CTs (either as a rate or total value), e.g. 
+                        'psrc_parcel.control_total.household_growth_rate_luv'.
                         The control totals dataset is passed to the init method.
-                        
+                  
+                **year** : int, optional
+                        Simulation year. If unspecified, gets value from SimulationState.      
                 
                 **ct_geo_id_name** : string, optional
                         Geography id name contained in the control totals dataset.
                         
                 **geo_id_name** : string, optional
-                        Geography id name for which the actual growth rate is computed.
+                        Geography id name for which the actual growth rate is computed. 
+                        If compare_absolute_numbers is True, it should be the same as ct_geo_id_name.
                         
                 **cap_attribute_name** : string, optional
                         Attribute name of the final results. It is attached/modified to the main dataset.
-                        
-                **annual** : Logical specifying if the growth should be annually prorated.
                 
-                **growth_rate** : Logical specifying if the ct_growth_attribute_name is a rate or total value.
+                **compare_absolute_numbers** : boolean, optional
+                        If True, the model compares absolute numbers (i.e. what's on the ground) instead of growth.
+                
+                **annual** : boolean, optional
+                        Specifies if the growth should be annually prorated (used only if compare_absolute_numbers is False).
+                
+                **growth_rate** : boolean, optional
+                        Specifies if the ct_attribute_name is a rate or total value (used only if compare_absolute_numbers is False).
                 
                 **dataset_pool** : OPUS DatasetPool object, optional                                                        
         
@@ -68,15 +77,21 @@ class CapDevelopmentModel(TransitionModel):
         ## NOTE: always call compute_variables method on self.control_total_all instead of
         ## self.control_total, because there is a problem with DataSubset to handle index
         
-        ct_growth = self.control_totals_all.compute_variables(ct_growth_attribute_name, dataset_pool=dataset_pool)
+        if compare_absolute_numbers and ct_geo_id_name <> geo_id_name:
+            logger.log_warning("ct_geo_id_name should be the same as geo_id_name if comparing absolute numbers. Using %s and %s." % (ct_geo_id_name, geo_id_name))
+        
+        ct_values = self.control_totals_all.compute_variables(ct_attribute_name, dataset_pool=dataset_pool)
         
         if year is None:
             year = SimulationState().get_current_time()
         
         ctyear = self.control_totals_all['year'][(self.control_totals_all['year']<=year)*(self.control_totals_all[ct_geo_id_name]>0)].max()
         ctyear_next = self.control_totals_all['year'][(self.control_totals_all['year']>year)*(self.control_totals_all[ct_geo_id_name]>0)].min()
-        ctyear_dif = ctyear_next - ctyear
-        lag = year-ctyear
+        if compare_absolute_numbers:
+            ctyear = ctyear_next # compare to the next time period; for growth the growth rate should be assigned to the current year
+        else:
+            ctyear_dif = ctyear_next - ctyear
+            lag = year-ctyear
         
         ct_year_index = where((self.control_totals_all['year']==ctyear)*(self.control_totals_all[ct_geo_id_name]>0))[0]
         self.control_totals = DatasetSubset(self.control_totals_all, ct_year_index)        
@@ -84,30 +99,38 @@ class CapDevelopmentModel(TransitionModel):
         self.dataset.compute_one_variable_with_unknown_package(geo_id_name, dataset_pool=dataset_pool)
         self.dataset.compute_one_variable_with_unknown_package(ct_geo_id_name, dataset_pool=dataset_pool)
         target_values = self.dataset.compute_variables(target_attribute_name, dataset_pool=dataset_pool)
-        target_values_lag = self.dataset.compute_variables("%s_lag%s" %(target_attribute_name, lag), dataset_pool=dataset_pool)
         
         data_df = {
             ct_geo_id_name: self.dataset[ct_geo_id_name],
             geo_id_name: self.dataset[geo_id_name],
-            "target_attribute": target_values,
-            "target_attribute_lag": target_values_lag  
+            "target_attribute": target_values
         }
+        should_be = self.control_totals[ct_attribute_name]
+        if not compare_absolute_numbers: # compare growth (rate or total)
+            target_values_lag = self.dataset.compute_variables("%s_lag%s" %(target_attribute_name, lag), dataset_pool=dataset_pool)        
+            data_df["target_attribute_lag"] = target_values_lag 
+            if annual:
+                should_be = lag*should_be/float(ctyear_dif)            
+            
+            
         df = pd.DataFrame(data_df, index=self.dataset.get_id_attribute())
         group_geo = df.groupby(geo_id_name).sum()
-        group_geo['geo_growth'] = group_geo["target_attribute"]-group_geo["target_attribute_lag"]
-        if growth_rate:
-            group_geo['geo_growth'] = group_geo['geo_growth']/group_geo["target_attribute_lag"].astype('float32')
-        should_grow = self.control_totals[ct_growth_attribute_name]
-        if annual:
-            should_grow = lag*should_grow/float(ctyear_dif)
+        group_geo['geo_growth'] = group_geo["target_attribute"]
+        
+        if not compare_absolute_numbers: 
+            group_geo['geo_growth'] = group_geo['geo_growth']-group_geo["target_attribute_lag"]
+            if growth_rate:
+                group_geo['geo_growth'] = group_geo['geo_growth']/group_geo["target_attribute_lag"].astype('float32')
 
-        ctdf = pd.DataFrame({ct_growth_attribute_name: should_grow}, 
+            
+        ctdf = pd.DataFrame({ct_attribute_name: should_be}, 
                             index=self.control_totals[ct_geo_id_name])
         
         df = df.merge(ctdf, how='left', left_on=ct_geo_id_name, right_index=True)
         df = df.merge(pd.DataFrame(group_geo['geo_growth']), how='left', left_on=geo_id_name, right_index=True)
         
-        cap_pcl = df.index[df[ct_growth_attribute_name] < df['geo_growth']]
+        cap_pcl = df.index[df[ct_attribute_name] < df['geo_growth']]
+            
         dataset_idx = self.dataset.get_id_index(cap_pcl)
         #if cap_attribute_name not in self.dataset.get_known_attribute_names():
         self.dataset.add_primary_attribute(name=cap_attribute_name, data=zeros(self.dataset.size(), dtype='bool8'))
@@ -172,8 +195,8 @@ class Tests(opus_unittest.OpusTestCase):
                                       id_name=[])
         
         model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
-        model.run(year=2016, ct_growth_attribute_name='psrc_parcel.control_total.household_growth_rate_luv', 
-                  target_attribute_name="urbansim_parcel.parcel.number_of_households",
+        model.run(year=2016, ct_attribute_name='psrc_parcel.control_total.household_growth_rate_luv', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=False,
                   geo_id_name='faz_id', cap_attribute_name="target_achieved", dataset_pool=dataset_pool                
                   )
         # Only two parcels from faz 1 and city 1 exceeded the growth rate
@@ -195,8 +218,8 @@ class Tests(opus_unittest.OpusTestCase):
                                       id_name=[])
         
         model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
-        model.run(year=2016, ct_growth_attribute_name='psrc_parcel.control_total.household_growth_rate_luv', 
-                  target_attribute_name="urbansim_parcel.parcel.number_of_households",
+        model.run(year=2016, ct_attribute_name='psrc_parcel.control_total.household_growth_rate_luv', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=False,
                   geo_id_name='city_id', cap_attribute_name="target_achieved", dataset_pool=dataset_pool                
                   )
         # All parcels from city 1 exceeded the growth rate
@@ -218,13 +241,37 @@ class Tests(opus_unittest.OpusTestCase):
                                       id_name=[])
         
         model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
-        model.run(year=2016, ct_growth_attribute_name='total_growth=0.95*psrc_parcel.control_total.household_total_growth_luv', 
-                  target_attribute_name="urbansim_parcel.parcel.number_of_households", annual=False, growth_rate=False,
-                  geo_id_name='city_id', cap_attribute_name="target_achieved", dataset_pool=dataset_pool                
+        model.run(year=2016, ct_attribute_name='total_growth=0.95*psrc_parcel.control_total.household_total_growth_luv', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=False, 
+                  annual=False, growth_rate=False, geo_id_name='city_id', cap_attribute_name="target_achieved", 
+                  dataset_pool=dataset_pool                
                   )
         # All parcels from city 1 exceeded the growth
         should_be = array([True, True, False, False, False, True, True])
-        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))       
+        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))
+        
+    def test_cap_development_city_absolute_numbers(self):
+        """ Test of comparing CTs with what's on the ground.
+        """
+                
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='parcels', table_data=self.parcels_data)
+        pcl = ParcelDataset(in_storage=storage, in_table_name='parcels')
+        pcl.modify_attribute("number_of_households", 0, index=3)
+        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim', 'opus_core'],
+                                   datasets_dict={'parcel': pcl})
+        storage.write_table(table_name='ct', table_data=self.annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='ct', what='household',
+                                      id_name=[])
+        
+        model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
+        model.run(year=2016, ct_attribute_name='control_total.total_number_of_households', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=True, 
+                  cap_attribute_name="target_achieved", dataset_pool=dataset_pool                
+                  )
+        # All parcels from city 1 exceeded the growth
+        should_be = array([True, True, False, False, False, True, True])
+        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))         
 
         
 if __name__=='__main__':
