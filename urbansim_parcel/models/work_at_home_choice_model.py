@@ -39,7 +39,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
     
         
     def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, 
-            residence_id='zone_id', *args, **kwargs):
+            residence_id='zone_id', match_choice_attribute_to_jobs=True, *args, **kwargs):
         agent_set = kwargs['agent_set']
         agents_index = kwargs.get('agents_index', None)
         if agents_index is None:
@@ -78,12 +78,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                         )[0]
         
             
-        logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s workers to %s jobs." % 
-                          (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
-                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size,
-                          at_home_worker_index.size,
-                          jobs_set_index.size
-                          ))
+        logger.log_status("Will try to assign %s workers to %s jobs." % (at_home_worker_index.size, jobs_set_index.size))
 
         if not choose_job_only_in_residence_zone:
             assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
@@ -103,6 +98,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                 assigned_worker_in_this_zone, assigned_job_set_in_this_zone = self._assign_job_to_worker(at_home_worker_in_this_zone, job_set_in_this_zone)
                 assigned_worker_index = concatenate((assigned_worker_index, at_home_worker_index[assigned_worker_in_this_zone]))
                 assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
+            
             logger.log_status("Total for all zones: Assigned %s jobs to %s workers (out of %s jobs and %s workers)" % (
                                   assigned_job_index.size, assigned_worker_index.size, jobs_set_index.size, at_home_worker_index.size))
 
@@ -115,6 +111,16 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
                                       index=assigned_job_index)
+        if match_choice_attribute_to_jobs:
+            choices = zeros(agent_set.size(), dtype='int32')
+            choices[assigned_worker_index] = 1    
+            agent_set.set_values_of_one_attribute(self.choice_attribute_name, choices[agents_index], index=agents_index)  
+            
+        logger.log_status("Total: %s workers work at home, (%s workers work out of home)" % 
+                                      (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
+                                       where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size
+                                      )) 
+        
 
     def _assign_job_to_worker(self, worker_index, job_index):
         logger.log_status("Attempt to assign %s jobs to %s workers" % (job_index.size, worker_index.size))
