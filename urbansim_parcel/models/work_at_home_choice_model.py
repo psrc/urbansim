@@ -103,6 +103,8 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                 assigned_worker_in_this_zone, assigned_job_set_in_this_zone = self._assign_job_to_worker(at_home_worker_in_this_zone, job_set_in_this_zone)
                 assigned_worker_index = concatenate((assigned_worker_index, at_home_worker_index[assigned_worker_in_this_zone]))
                 assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
+            logger.log_status("Total for all zones: Assigned %s jobs to %s workers (out of %s jobs and %s workers)" % (
+                                  assigned_job_index.size, assigned_worker_index.size, jobs_set_index.size, at_home_worker_index.size))
 
         ## each worker can only be assigned to 1 job
         #assert assigned_worker_index.size == unique(assigned_worker_index).size

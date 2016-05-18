@@ -418,7 +418,8 @@ class CreateJobsFromQCEW:
         return jobs
  
 
-class MatchHouseholdsToJobs:
+class MoveHouseholdsToJobs:
+    """Moves households to buildings with HB jobs for which there are no workers. The relocation is done within block groups."""
     def run(self, jobs, in_storage, out_storage=None):
         dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
         if jobs is None:
@@ -428,7 +429,8 @@ class MatchHouseholdsToJobs:
         hhs = dataset_pool.get_dataset('household')
         buildings = dataset_pool.get_dataset('building')
         buildings.compute_variables(["psrc_parcel.building.census_block_group_id", "psrc_parcel.building.number_of_home_based_jobs",
-                                     "urbansim_parcel.building.number_of_households", "urbansim_parcel.building.residential_units"
+                                     "urbansim_parcel.building.number_of_households", "urbansim_parcel.building.residential_units",
+                                     "number_of_workers = building.aggregate(household.workers)"
                                            ], 
                                           dataset_pool=dataset_pool)
         ubusiness, ubusiness_idx = unique(jobs['business_id']*(jobs['home_based_status']==1), return_index=True)
@@ -436,8 +438,8 @@ class MatchHouseholdsToJobs:
         jobs_ubusiness[ubusiness_idx] = True
         jobs_ubusiness[jobs['home_based_status']==0] = False
         nhbbus = minimum(ndsum(jobs_ubusiness, labels=jobs['building_id'], index=buildings['building_id']), buildings["residential_units"])        
-        affected_buildings_ind = logical_and((buildings["number_of_households"] - nhbbus) < 0, buildings["number_of_households"] < buildings["residential_units"])
-        not_affected_buildings_ind = logical_and(logical_not(affected_buildings_ind), buildings["number_of_home_based_jobs"] == 0)
+        affected_buildings_ind = logical_and((buildings["number_of_workers"] - nhbbus) < 0, buildings["number_of_households"] < buildings["residential_units"]) # move HHs into
+        not_affected_buildings_ind = logical_and(logical_not(affected_buildings_ind), buildings["number_of_home_based_jobs"] == 0) # take households from
         blocks = unique(buildings["census_block_group_id"][where(affected_buildings_ind)])
 
         hh_building_id = hhs['building_id'].copy()
@@ -449,21 +451,65 @@ class MatchHouseholdsToJobs:
             bidx_out = where(logical_and(not_affected_buildings_ind, buildings["census_block_group_id"] == block))[0]
             if bidx_out.size == 0:
                 continue
-            hh_idx = where(in1d(hhs['building_id'], buildings['building_id'][bidx_out]))[0]
+            hh_idx = where(logical_and(in1d(hhs['building_id'], buildings['building_id'][bidx_out]), hhs['workers'] > 0))[0]            
             if hh_idx.size == 0:
                 continue
-            nhh_needed = maximum(nhbbus[bidx] - buildings["number_of_households"][bidx], 0)
+            hh_idx = hh_idx.repeat(hhs['workers'][hh_idx])
+            nhh_needed = maximum(nhbbus[bidx] - buildings["number_of_workers"][bidx], 0)
             if nhh_needed.sum() <= 0:
                 continue
             for i in arange(bidx.size):
                 if nhh_needed[i] == 0:
                     continue
                 hh_idx_sampled = sample_noreplace(hh_idx, nhh_needed[i])
-                hh_building_id[hh_idx_sampled] = buildings['building_id'][bidx[i]]
+                hh_idx_sampled = unique(hh_idx_sampled)
+                hh_idx_sampled = hh_idx_sampled[0:minimum(buildings["residential_units"][bidx[i]]-buildings["number_of_households"][bidx[i]], hh_idx_sampled.size)]
+                hh_building_id[unique(hh_idx_sampled)] = buildings['building_id'][bidx[i]]
+        logger.log_status("%s households re-located." % (hh_building_id <> hhs['building_id']).sum())
+        hhs.modify_attribute('building_id', data=hh_building_id)
         logger.end_block() 
         if out_storage is not None:
-            households.write_dataset(out_storage=out_storage, out_table_name="households")                  
-        logger.log_status("%s households re-located." % (hh_building_id <> hhs['building_id']).sum())
+            hhs.write_dataset(out_storage=out_storage, out_table_name="households")
+        return hhs
+        
+        
+class MatchWorkersWithHBJobs:
+    def run(self, jobs, households, in_storage, out_storage=None):
+        dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
+        if jobs is None:
+            jobs =  dataset_pool.get_dataset('job')
+        else:
+            dataset_pool.replace_dataset('job', jobs) 
+
+        if households is not None:
+            dataset_pool.replace_dataset('household', households)
+                
+        persons =  dataset_pool.get_dataset('person')
+        buildings = dataset_pool.get_dataset('building')
+
+        persons.compute_variables(["urbansim_parcel.person.is_worker_without_job",
+                                   "urbansim_parcel.person.building_id"                                   
+                                   ], dataset_pool=dataset_pool)
+        
+        memberids = unique(persons["member_id"]*persons["is_worker_without_job"])
+        memberids = memberids[memberids>0]
+        for member in memberids:
+            buildings.compute_variables("maxid_hbjob = building.aggregate(job.job_id * (urbansim_parcel.job.is_untaken_home_based_job), function=maximum)", 
+                                        dataset_pool=dataset_pool)
+            persons.compute_variables("maxid_hbjob = person.disaggregate(building.maxid_hbjob)", dataset_pool=dataset_pool)
+            persidx = where(logical_and(logical_and(persons["member_id"]==member, persons["is_worker_without_job"]), persons["maxid_hbjob"]>0))[0]
+            if persidx.size == 0:
+                continue
+            # select unique values (only one job per worker)
+            ui = unique(persons["maxid_hbjob"][persidx], return_index=True)[1]
+            persidx = persidx[ui]
+            persons.modify_attribute("job_id", data=persons["maxid_hbjob"][persidx].copy(), index=persidx)
+            logger.log_status("Assigned %s workers of member_id %s" % (persidx.size, member))
+        if out_storage is not None:
+            persons.write_dataset(out_storage=out_storage, out_table_name="persons")
+        logger.log_status("Total assigned %s workers to home-based jobs." % (persons['job_id']>0).sum())
+        return persons
+  
     
 if __name__ == '__main__':
     """
@@ -481,11 +527,14 @@ if __name__ == '__main__':
     zones_dataset_name = ['tractcity', 'city'] # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
     input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
+    input_cache = "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/hana_test/2014"
+    output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/test"
     #input_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014"
     #output_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014out"
-    create_jobs = True
+    create_jobs = False
     write_to_csv = False
     match_with_households = False
+    match_workers_with_hb_jobs = True
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     jobs = None
@@ -498,8 +547,13 @@ if __name__ == '__main__':
                 data[attr] = jobs[attr]
             csv_storage.write_table(table_name="jobs", table_data=data, append_type_info=False)
         
+    hhs = None
     if match_with_households:
-        MatchHouseholdsToJobs().run(jobs, instorage, out_storage=outstorage)
+        hhs = MoveHouseholdsToJobs().run(jobs, instorage, out_storage=outstorage)
+        
+    
+    if match_workers_with_hb_jobs: 
+        MatchWorkersWithHBJobs().run(jobs=jobs, households=hhs, in_storage=instorage, out_storage=outstorage)
 
 # write a subset of workplaces into a file
 #cases = [7,15,16]
