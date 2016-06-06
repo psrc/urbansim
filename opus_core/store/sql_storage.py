@@ -281,9 +281,9 @@ class sql_storage(Storage):
 
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
         specified_type_mapping = {
-                    'BIGINT': dtype('i8'), 
-                    'SMALLINT': dtype('i'),
-                    'TINYINT': dtype('i'),
+                    'BIGINT': dtype('i8'),
+                    'SMALLINT': dtype('int16'),
+                    'TINYINT': dtype('int8'),
                     'INTEGER': dtype('i'),
                     'NUMERIC': dtype('f'),
                     'FLOAT': dtype('f'),
@@ -338,6 +338,7 @@ else:
 
             db_configs = []
             for engine in get_testable_engines():
+            #for engine in ['sqlite']:
                 config = TestDatabaseConfiguration(protocol = engine)
                 db_configs.append(config)
             
@@ -640,7 +641,7 @@ else:
                 try:
 
                     schema = {
-                        'a': 'INTEGER',
+                        'a': 'SHORT',
                         'b': 'INTEGER',
                         'c': 'INTEGER'
                     }
@@ -651,7 +652,7 @@ else:
                     db.execute(i)
         
                     expected_data = {
-                        'a': array([1], dtype='i'),
+                        'a': array([1], dtype='int16'),
                         'b': array([2], dtype='i'),
                         'c': array([3], dtype='i'),
                         }
