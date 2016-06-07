@@ -183,6 +183,14 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         sum1 = sum1 + parcels_acc_by_constr[glu].sum()
         sum2 = sum2 + parcels_acc_by_constr_wo_templ[glu].sum()      
     logger.log_status("\nall\t%7i\t\t%7i" % (sum1, sum2))
+    
+    if strict:
+        parcels_wo_templ_all = zeros(parcel_ids.size, dtype='bool8')
+        for glu in unique_glu:
+            parcels_wo_templ_all = logical_or(parcels_wo_templ_all, parcels_acc_by_constr_wo_templ[glu])
+    else:
+        parcels_wo_templ_all = parcels_wo_templ
+    
     #if len(no_glu_templ) > 0:
     #    logger.log_status("\nNo templates for GLUs: %s" % no_glu_templ)
         
@@ -305,7 +313,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         logger.end_block()
 
     logger.log_status('Resulting figures stored into %s' % output_dir)               
-    return parcel_ids[index1][parcels_wo_templ]
+    return parcel_ids[index1][parcels_wo_templ_all]
     
 class FltStorage:
     def get(self, location):
@@ -317,10 +325,10 @@ if __name__ == '__main__':
     ### User's settings:
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_with_income_growth_NHoust/2000"
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
-    input_cache =  "/Users/hana/workspace/data/psrc_parcel/runs/run_bm_2.tmod1/2040"
+    input_cache =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/2014_match_cache"
     output_data_points = False # If true a text files are created that contain the x and y of the points in the figures
     output_dir =  "/Users/hana/match_templ2" # where the resulting figures are going to be stored
-    output_dir =  "/Users/hana/workspace/data/psrc_parcel/constraints"
+    output_dir =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/match_output"
     log_scale = True
     ### End of user's settings
     instorage = FltStorage().get(input_cache)
@@ -330,5 +338,5 @@ if __name__ == '__main__':
     development_templates = dataset_pool.get_dataset('development_template')
     res = match_parcels_to_constraints_and_templates(parcel_dataset, development_templates, output_dir=output_dir, 
                     log_scale=log_scale, strict=True, output_points=output_data_points, dataset_pool=dataset_pool)
-    #write_to_text_file(os.path.join(output_dir, 'dev_parcels_wo_templ.txt'), res[0:100], delimiter='\n')
-    
+    write_to_text_file(os.path.join(output_dir, 'dev_parcels_wo_templ.txt'), res, delimiter='\n')
+    pass

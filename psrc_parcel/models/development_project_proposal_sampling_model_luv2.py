@@ -2,13 +2,26 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import zeros, logical_and, where, logical_not, logical_or
+from numpy import zeros, logical_and, where, logical_not, logical_or, arange
 from opus_core.logger import logger
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel
+from opus_core.simulation_state import SimulationState
 
 class DevelopmentProjectProposalSamplingModelLuv2(DevelopmentProjectProposalSamplingModel):
     """ In addition to its parent considers parcels attributes that can shut off development depending on the current growth. 
     """
+    
+    #def run(self, n=500, 
+            #realestate_dataset_name = 'building',
+            #current_year=None, **kwargs):
+        #if current_year is None:
+            #year = SimulationState().get_current_time()
+        #else:
+            #year = current_year
+        #next_years = arange(year+1, year+5)
+        #next_luv_year = next_years[where(next_years % 5 == 0)][0]
+        #self.cap_res_variable = "development_project_proposal.disaggregate(city.aggregate(urbansim_parcel.parcel.number_of_households), intermediates=[parcel]) < 1.01*building.disaggregate(psrc_parcel.city.household_control_total_2015, intermediates=[parcel])"
+        #return DevelopmentProjectProposalSamplingModel.run(self, n=n, realestate_dataset_name=realestate_dataset_name, current_year=year, **kwargs)
         
     def consider_proposals(self, proposal_indexes, force_accepting=False):
         if proposal_indexes.size == 0:
