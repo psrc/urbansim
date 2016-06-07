@@ -66,8 +66,8 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                 self.occuppied_estimate[(bt,)] = regions.sum_over_ids(bldgs[self.subarea_id_name], 
                         bldgs['occupied_spaces']*(bldgs['building_type_id']==bt)) + round(btdistr[ibt]*to_be_placed_households)
                 self.occupied_estimate_residential = self.occupied_estimate_residential + self.occuppied_estimate[(bt,)]
-            # add 7%
-            self.occupied_estimate_residential = self.occupied_estimate_residential*1.07
+            # add 2%
+            self.occupied_estimate_residential = self.occupied_estimate_residential*1.02
                 
         if self.type["non_residential"]:    
             regions.compute_variables(["number_of_all_nhb_jobs = %s.aggregate(job.home_based_status==0)" % self.subarea_name],
