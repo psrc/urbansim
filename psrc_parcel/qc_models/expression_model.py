@@ -25,7 +25,9 @@ class ExpressionModel(Model):
        9: "(household.disaggregate(building.building_id) > 0)*(household.disaggregate(building.building_id) == household.building_id)",
        10: "parcel.city_id > 0",
        11: "(parcel.disaggregate(city.county_id) > 0)*(parcel.disaggregate(city.county_id) == parcel.county_id)",
-       12: ("is_element", ["parcel.city_id", "city.city_id"])
+       12: ("is_element", ["parcel.city_id", "city.city_id"]),
+       # check that there are as many persons as the households attribute persons says
+       13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)"
     }
     
     
