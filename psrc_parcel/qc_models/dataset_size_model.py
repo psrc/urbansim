@@ -15,7 +15,9 @@ class DatasetSizeModel(Model):
             directory = SimulationState().get_cache_directory()
         self.cache = AttributeCache(directory)
     
-    def run(self):
+    def run(self, target_size={}):
+        """Argument target_size can specify tables and the number of records it should have."""
+        
         year_orig = SimulationState().get_current_time()
         years = self.years_in_cache()
         SimulationState().set_current_time(years[0])
@@ -25,6 +27,7 @@ class DatasetSizeModel(Model):
         tables = self.cache.get_table_names()
         counts = pd.Series(np.zeros(len(tables), dtype="int32"), index=tables)
         for table in tables:
+            target = target_size.get(table)
             columns = self.cache._get_column_names_and_years(table)
             values = []
             names = []
@@ -37,16 +40,20 @@ class DatasetSizeModel(Model):
                 names.append(col)
                 colyears.append(year)
             values = np.array(values)
-            if(all(values == values[0])):
-                continue # all attributes have the same size
+            if all(values == values[0]): # all attributes have the same size
+                if is_equal_to_target(values[0], target): # size corresponds to target
+                    continue
+                logger.log_status("Size of table ", table, " (", values[0], ") does not match target (", target, ")\n")
+                counts[table] = counts[table] + 1
+                continue
             # there is an inconsistency in attributes length
             names = np.array(names)
             colyears = np.array(colyears)
             uc = np.unique(values, return_counts=True)
             imax = np.argmax(uc[1])
             idx = np.where(values <> uc[0][imax])[0]
-            df = pd.DataFrame({"column": names[idx],  "year": colyears[idx], "size": values[idx]})
-            df = df.append(pd.DataFrame({"column": np.array(["all other columns"]), "year": np.array([years[0]]), "size": np.array([uc[0][imax]])}))
+            df = pd.DataFrame({"column": names[idx],  "year": colyears[idx], "size": values[idx], "target": target})
+            df = df.append(pd.DataFrame({"column": np.array(["all other columns"]), "year": np.array([years[0]]), "size": np.array([uc[0][imax]]), "target": target}))
             logger.log_status("Inconsistency in table ", table, ":\n", df)
             counts[table] = df.shape[0] - 1
         SimulationState().set_current_time(year_orig)
@@ -57,6 +64,10 @@ class DatasetSizeModel(Model):
     def years_in_cache(self):
         return self.cache._get_sorted_list_of_years(start_with_current_year=False)
 
+def is_equal_to_target(value, target):
+    if target is None:
+        return True
+    return value == target
                                                     
 import tempfile
 from shutil import rmtree
@@ -76,20 +87,19 @@ class QCDataSizeTests(opus_unittest.OpusTestCase):
         # create cache where a table has attributes of different length,
         # namely size 2 in 1980 and size 3 in 1979 
         SimulationState().set_current_time(1980)
-        table_data = {'int_column': np.array([100, 70], dtype="int32"),
+        table_data1 = {'int_column': np.array([100, 70], dtype="int32"),
                       'bool_column': np.array([False, True])}
-        # file name will be e.g. 'int_column.li4' for a little-endian machine
-        self.storage.write_table(self.table_name, table_data)
+        self.storage.write_table(self.table_name, table_data1)       
         SimulationState().set_current_time(1979)
         table_data = {'flt_column': np.array([10, 70, 5.7], dtype="float32")}
         self.storage.write_table(self.table_name, table_data)        
         res = DatasetSizeModel(self.temp_dir).run()
-        SimulationState().set_current_time(2000)
         self.assertEqual(res.sum(), 1)
-        # reset time to the original one
-        self.assertEqual(SimulationState().get_current_time(), 2000)
-   
-    
+        # test with target
+        self.storage.write_table("test_table2", table_data1)
+        res = DatasetSizeModel(self.temp_dir).run(target_size={"test_table2":3})        
+        self.assertEqual(res.sum(), 2)
+        
     
 if __name__=="__main__":
     #dir = "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/test"
