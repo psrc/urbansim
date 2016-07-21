@@ -83,7 +83,7 @@ class RefinementModel(Model):
         self.processed_locations = {}
         self.subtracted_from_demolished_buildings = {'job': {}, 'household': {}}
         bldgs = dataset_pool.get_dataset('building')
-        bldgs.modify_attribute('template_id', bldgs['template_id'].astype('int32'))
+        #bldgs.modify_attribute('template_id', bldgs['template_id'].astype('int32'))
         bldgs.load_and_flush_dataset()
         for this_transaction in sort( unique(transactions) ):
             #transaction_list = [] # list of each action in this transaction
