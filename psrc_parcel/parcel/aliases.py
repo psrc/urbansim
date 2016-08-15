@@ -5,6 +5,9 @@
 # this is a test of the expression alias file
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
+
+
+
 aliases = [
        "is_redevelopable=(parcel.number_of_agents(building)>0)*(urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1)*(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean)>30)",       
        "total_price=parcel.land_value+parcel.aggregate(building.improvement_value)",
@@ -34,7 +37,38 @@ aliases = [
        "existing_units = (urbansim_parcel.parcel.building_sqft > 0)*urbansim_parcel.parcel.building_sqft + (urbansim_parcel.parcel.building_sqft <= 0)*parcel.parcel_sqft",
        "building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)/ (parcel.parcel_sqft).astype(float32)",
        "non_residential_building_sqft_per_parcel_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft * urbansim_parcel.building.is_non_residential)/ (parcel.parcel_sqft).astype(float32)",
-       "job_capacity=parcel.aggregate(psrc_parcel.building.job_capacity_computed_if_necessary)"
+       "job_capacity=parcel.aggregate(psrc_parcel.building.job_capacity_computed_if_necessary)",       
            ]
 
 
+luv_rgc_capacity_hh = {
+    "1": "[526, 521, 531, 505]",
+    "1.35": "[515, 511, 501, 534, 508, 533]"
+}
+
+luv_rgc_capacity_emp = {
+    "1": "[503, 521, 533]",
+    "1.35": "[522, 524, 501, 508, 514, 534]"
+}
+
+rgc_alias_hh = ""
+for w, rgc in luv_rgc_capacity_hh.iteritems():
+    if len(rgc_alias_hh) > 0:
+        rgc_alias_hh = "%s + " % rgc_alias_hh
+    rgc_alias_hh = "%s%s * numpy.in1d(parcel.growth_center_id, %s)" % (rgc_alias_hh, w, rgc)
+
+rgc_alias_emp = ""
+for w, rgc in luv_rgc_capacity_emp.iteritems():
+    if len(rgc_alias_emp) > 0:
+        rgc_alias_emp = "%s + " % rgc_alias_emp
+    rgc_alias_emp = "%s%s * numpy.in1d(parcel.growth_center_id, %s)" % (rgc_alias_emp, w, rgc)
+
+aliases = aliases + [
+    "modify_rgc_hh_capacity_special = %s" % rgc_alias_hh,
+    "modify_rgc_emp_capacity_special = %s" % rgc_alias_emp,
+    "modify_rgc_hh_capacity_default = 1.25 * numpy.logical_and(numpy.logical_not(psrc_parcel.parcel.modify_rgc_hh_capacity_special))",
+    "modify_rgc_emp_capacity_default = 1.25 * numpy.logical_and(numpy.logical_not(psrc_parcel.parcel.modify_rgc_emp_capacity_special))",
+    "modify_rgc_hh_capacity = psrc_parcel.parcel.modify_rgc_hh_capacity_special + psrc_parcel.parcel.modify_rgc_hh_capacity_default",
+    "modify_rgc_emp_capacity = psrc_parcel.parcel.modify_rgc_emp_capacity_special + psrc_parcel.parcel.modify_rgc_emp_capacity_default",
+     
+]
