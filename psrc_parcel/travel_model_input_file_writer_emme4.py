@@ -17,7 +17,7 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         """Writes emme4 input files into the appropriate place at [current_year_emme2_dir]
         """
         input_dir = config['travel_model_configuration'].get('emme_input_directory', 
-                                os.path.join(current_year_emme2_dir, 'tripgeneration', 'landuse'))
+                                os.path.join('tripgen', current_year_emme2_dir, 'landuse'))
         tm_input_file_1 = self._write_input_file_1(current_year_emme2_dir, input_dir, current_year, dataset_pool, config) # writes tazdata.in
         return [tm_input_file_1]
 
@@ -91,8 +91,9 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         
     def _get_income_group_quartiles(self, dataset_pool):
         #return (34000, 68000, 102000)
-        return (25000, 51000, 78000)
+        #return (25000, 51000, 78000)
         #return (30000, 59000, 90000) # removes real income growth
+        return (37000, 74000, 111000)
     
     def _get_tm_year(self, year, gq):
         """Get the closest year to the current year in the group_quarters table."""
