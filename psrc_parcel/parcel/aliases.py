@@ -66,8 +66,8 @@ for w, rgc in luv_rgc_capacity_emp.iteritems():
 aliases = aliases + [
     "modify_rgc_hh_capacity_special = %s" % rgc_alias_hh,
     "modify_rgc_emp_capacity_special = %s" % rgc_alias_emp,
-    "modify_rgc_hh_capacity_default = 1.25 * numpy.logical_and(numpy.logical_not(psrc_parcel.parcel.modify_rgc_hh_capacity_special))",
-    "modify_rgc_emp_capacity_default = 1.25 * numpy.logical_and(numpy.logical_not(psrc_parcel.parcel.modify_rgc_emp_capacity_special))",
+    "modify_rgc_hh_capacity_default = 1.25 * numpy.logical_not(psrc_parcel.parcel.modify_rgc_hh_capacity_special)",
+    "modify_rgc_emp_capacity_default = 1.25 * numpy.logical_not(psrc_parcel.parcel.modify_rgc_emp_capacity_special)",
     "modify_rgc_hh_capacity = psrc_parcel.parcel.modify_rgc_hh_capacity_special + psrc_parcel.parcel.modify_rgc_hh_capacity_default",
     "modify_rgc_emp_capacity = psrc_parcel.parcel.modify_rgc_emp_capacity_special + psrc_parcel.parcel.modify_rgc_emp_capacity_default",
      
