@@ -17,7 +17,7 @@ class AbstractEmme4TravelModel(AbstractEmme2TravelModel):
         year_config = self.config['travel_model_configuration'][year]
         bank_path_parts = year_config['bank']  # a list by path parts
         bank_path = os.path.sep.join(bank_path_parts)
-        path = os.path.join(self.get_emme2_base_dir(), "tripgen", bank_path, "inputs")
+        path = os.path.join(self.get_emme2_base_dir(),  "inputs",  "tripgen", bank_path)
         if subdir <> None:
             path = os.path.join(path, subdir)
         return path
