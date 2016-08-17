@@ -17,9 +17,7 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         """Writes emme4 input files into the appropriate place at [current_year_emme2_dir]
         """
         input_dir = config['travel_model_configuration'].get('emme_input_directory', 
-                                os.path.join("tripgen", current_year_emme2_dir, "landuse"))
-        logger.log_status("input dir: ", input_dir, 
-                        os.path.join("tripgen", current_year_emme2_dir, "landuse"), current_year_emme2_dir)
+                                os.path.join(current_year_emme2_dir, "landuse"))
         tm_input_file_1 = self._write_input_file_1(current_year_emme2_dir, input_dir, current_year, dataset_pool, config) # writes tazdata.in
         return [tm_input_file_1]
 
