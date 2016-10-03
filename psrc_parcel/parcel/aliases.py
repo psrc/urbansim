@@ -41,6 +41,12 @@ aliases = [
            ]
 
 
+# Factors for increasing capacity in RGCs relative to their zoning
+# 1.25: 25% increase (default)
+# 1: no change (i.e. the same as given by FLU)
+# 1.35: 10% increase relative to the default 
+# The factors are determined separately for households (hh) and employment (emp)
+ 
 luv_rgc_capacity_hh = {
     "1": "[526, 521, 531, 505]",
     "1.35": "[515, 511, 501, 534, 508, 533]"

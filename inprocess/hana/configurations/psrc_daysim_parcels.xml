@@ -11,10 +11,10 @@
   <scenario_manager>
     <scenario executable="True" name="daysim_scenario" type="scenario">
 	  <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-	  <base_year type="integer">2010</base_year>
+	  <base_year type="integer">2014</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2041</firstyear>
-        <lastyear type="integer">2041</lastyear>
+        <firstyear type="integer">2015</firstyear>
+        <lastyear type="integer">2015</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
       </models_to_run>	  
@@ -22,7 +22,7 @@
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
         <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs/run_133ref_with_school_models</argument> 
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/job_data/lodes/runs/run_154.2016_08_22_16_28</argument> 
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -42,9 +42,15 @@
             <variable type="string" name="taz_p">parcel.zone_id</variable>
             <variable type="string" name="lutype_p">parcel.land_use_type_id</variable>
             <variable type="string" name="hh_p">(urbansim_parcel.parcel.number_of_households).astype(int32)</variable>
-            <variable type="string" name="stugrd_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
-         	<variable type="string" name="stuhgh_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
-         	<variable type="string" name="stuuni_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable>
+	    <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
+	    <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
+	    <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
+            <!--<variable type="string" name="stugrd_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
+	    <variable type="string" name="stuhgh_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
+	    <variable type="string" name="stuuni_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable>-->
+	    <!--<variable type="string" name="stugrd_p">0*parcel.parcel_id</variable>
+	    <variable type="string" name="stuhgh_p">0*parcel.parcel_id</variable>
+	    <variable type="string" name="stuuni_p">0*parcel.parcel_id</variable>-->
         	<variable type="string" name="empedu_p">(parcel.aggregate((job.sector_id==15) + (job.sector_id==19), intermediates=[building])).astype(int32)</variable>
         	<variable type="string" name="empfoo_p">(parcel.aggregate(job.sector_id==14, intermediates=[building])).astype(int32)</variable>
         	<variable type="string" name="empgov_p">(parcel.aggregate(job.sector_id==18, intermediates=[building])).astype(int32)</variable>
@@ -57,9 +63,9 @@
         	<variable type="string" name="emprsc_p">(parcel.aggregate(job.sector_id &gt; 19, intermediates=[building])).astype(int32)</variable> # zeros
          	<variable type="string" name="emptot_p">(urbansim_parcel.parcel.number_of_jobs).astype(int32)</variable>
          	<variable type="string" name="parkdy_p">(parcel.parking_space_daily).astype(int32)</variable>
-			<variable type="string" name="parkhr_p">(parcel.parking_space_hourly).astype(int32)</variable>
-			<variable type="string" name="ppricdyp">(parcel.parking_price_daily * 100).astype(int32)</variable>
-			<variable type="string" name="pprichrp">(parcel.parking_price_hourly * 100).astype(int32)</variable>
+		<variable type="string" name="parkhr_p">(parcel.parking_space_hourly).astype(int32)</variable>
+		<variable type="string" name="ppricdyp">(parcel.parking_price_daily * 100).astype(int32)</variable>
+		<variable type="string" name="pprichrp">(parcel.parking_price_hourly * 100).astype(int32)</variable>
         </parcels>
         <!-- <buildings type="dictionary">
         	<variable type="string" name="building_id">building.building_id</variable>
@@ -85,11 +91,11 @@
         <selectable name="inprocess.hana.opus_daysim.models.run_daysim_travel_model" type="selectable">False</selectable>
         <selectable name="inprocess.hana.opus_daysim.models.get_daysim_data_into_cache" type="selectable">False</selectable>
       </models>
-		  <daysim_base_directory type="directory" parser_action="prefix_with_opus_data_path">soundcast</daysim_base_directory>
+		  <daysim_base_directory type="directory" parser_action="prefix_with_opus_data_path">psrc_parcel/2014SoundCastData</daysim_base_directory>
 		  <years_to_run key_name="year" type="category_with_special_keys">
 			<run_description type="dictionary">
-			  <year type="integer">2011</year>
-		  		<daysim_exchange_dir type="string">urbansim_outputs/2010</daysim_exchange_dir> 
+			  <year type="integer">2015</year>
+		  		<daysim_exchange_dir type="string">urbansim_outputs/2014</daysim_exchange_dir> 
 			</run_description>
 			<run_description type="dictionary">
 			  <year type="integer">2041</year>
