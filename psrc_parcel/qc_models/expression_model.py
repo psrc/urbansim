@@ -36,8 +36,10 @@ class ExpressionModel(Model):
        14: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)",
        # all parcel.plan_type_id present in constraints table
        15: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"]),
-       # sectors are in range 1-19
+       # job sectors are in range 1-19
        16: ("is_element", ["job.sector_id", None, np.arange(1,20)]),
+       # do all job's buildings exist or job is unplaced
+       17: ("is_element", ["job.building_id", "building.building_id", [-1, 0]]),       
     }
     
     # non-critical checks (code will throw a warning if there is any False, otherwise an error)
