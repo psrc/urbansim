@@ -16,29 +16,32 @@ class ExpressionModel(Model):
     
     default_expressions = {
        1: "job.job_id > 0",
-       2: "household.household_id > 0",
-       3: "household.building_id > 0",
-       4: "building.building_id > 0",
-       5: "building.parcel_id > 0",
-       6: "parcel.parcel_id > 0",
-       7: "parcel.zone_id > 0",
+       2: "job.building_id > 0",
+       3: "household.household_id > 0",
+       4: "household.building_id > 0",
+       5: "building.building_id > 0",
+       6: "building.parcel_id > 0",
+       7: "parcel.parcel_id > 0",
+       8: "parcel.zone_id > 0",
+       9: "parcel.city_id > 0",
        # check the connection between buildings and parcels
-       8: "(building.disaggregate(parcel.parcel_id) > 0)*(building.disaggregate(parcel.parcel_id) == building.parcel_id)",
-       # do all household buildings exist or household is unplaced
-       9: ("is_element", ["household.building_id", "building.building_id", [-1, 0]]),
-       10: "parcel.city_id > 0",
+       10: ("is_element", ["building.parcel_id", "parcel.parcel_id"]),
+       # do all household's buildings exist or household is unplaced
+       11: ("is_element", ["household.building_id", "building.building_id", [-1, 0]]),       
        # check county_id in parcels
-       11: "(parcel.disaggregate(city.county_id) > 0)*(parcel.disaggregate(city.county_id) == parcel.county_id)",
+       12: ("is_element", ["parcel.county_id", "city.county_id"]),
        # are all parcel.city_id present in the cities table 
-       12: ("is_element", ["parcel.city_id", "city.city_id"]),
+       13: ("is_element", ["parcel.city_id", "city.city_id"]),
        # check that there are as many persons as the households attribute persons says
-       13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)",
+       14: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)",
        # all parcel.plan_type_id present in constraints table
-       14: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"])
+       15: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"]),
+       # sectors are in range 1-19
+       16: ("is_element", ["job.sector_id", None, np.arange(1,20)]),
     }
     
-    # not critical checks (code will throw a warning if there is any False, otherwise an error)
-    not_critical = [3]
+    # non-critical checks (code will throw a warning if there is any False, otherwise an error)
+    not_critical = [2,4]
     
     
     def __init__(self, dataset_pool=None):
@@ -117,7 +120,10 @@ class ExpressionModel(Model):
         
     def is_element(self, first, second, additional_values=[], fault_tolerant=False):
         v1 = self.compute_expression(first, fault_tolerant=fault_tolerant)
-        v2 = self.compute_expression(second, fault_tolerant=fault_tolerant)
+        if not second is None:
+            v2 = self.compute_expression(second, fault_tolerant=fault_tolerant)
+        else:
+            v2 = []
         return np.logical_or(np.in1d(v1, v2), np.in1d(v1, additional_values))
         
     
@@ -165,10 +171,13 @@ class TestExpressionModel(opus_unittest.OpusTestCase):
         storage.write_table(table_name='buildings', table_data=buildings_data) 
         storage.write_table(table_name='cities', table_data=cities_data) 
         dspool = DatasetPool(['urbansim_parcel', 'urbansim'], storage=storage)
-        res = ExpressionModel(dspool).run(which_default_expressions=range(4,9), fault_tolerant=True)
-        self.assertEqual(res.shape[0], 5) # 5 rows
-        self.assertEqual(res.loc[8,"False"], 3) # 3 values of building.parcel_id are non-existing
-
+        res = ExpressionModel(dspool).run(which_default_expressions=range(5,11)+[13], fault_tolerant=True)
+        self.assertEqual(res.shape[0], 7) # 7 rows
+        self.assertEqual(res.loc[10,"False"], 3) # 3 values of building.parcel_id are non-existing
+        self.assertEqual(res.loc[6,"False"], 2) # 2 buildings in no parcel
+        self.assertEqual(res.loc[9,"False"], 1) # 1 wrong city_id in parcels
+        self.assertEqual(res.loc[13,"False"], 2) # 2 non-existing city_id in parcels
+        
         
         
     
