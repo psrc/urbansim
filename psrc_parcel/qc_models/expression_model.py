@@ -8,7 +8,10 @@ from opus_core.opus_error import FileNotFoundError
 class ExpressionModel(Model):
     """
     Use this model to check values of various attributes that can be expressed in the Opus expression form.
-    Expressions should be written in form of conditions. The resulting summary counts the number of Trues and Falses of the expressions.
+    Expressions should be written in form of conditions. Alternatively, they can be defined as a tuple, 
+    where the first value is a name of a function defined in this class which retuns an array of True and False, 
+    and the second value is a list of arguments passed to that function (see the use of "is_element").
+    The model results in a summary which counts the number of Trues and Falses of each expression.
     """
     
     default_expressions = {
@@ -24,7 +27,9 @@ class ExpressionModel(Model):
        # do all household buildings exist
        9: "(household.disaggregate(building.building_id) > 0)*(household.disaggregate(building.building_id) == household.building_id)",
        10: "parcel.city_id > 0",
+       # check county_id in parcels
        11: "(parcel.disaggregate(city.county_id) > 0)*(parcel.disaggregate(city.county_id) == parcel.county_id)",
+       # are all parcel.city_id present in the cities table 
        12: ("is_element", ["parcel.city_id", "city.city_id"]),
        # check that there are as many persons as the households attribute persons says
        13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)"
