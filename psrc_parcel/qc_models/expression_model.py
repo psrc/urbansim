@@ -32,7 +32,9 @@ class ExpressionModel(Model):
        # are all parcel.city_id present in the cities table 
        12: ("is_element", ["parcel.city_id", "city.city_id"]),
        # check that there are as many persons as the households attribute persons says
-       13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)"
+       13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)",
+	   # all parcel.plan_type_id present in constraints table
+	   14: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"])
     }
     
     
