@@ -24,8 +24,8 @@ class ExpressionModel(Model):
        7: "parcel.zone_id > 0",
        # check the connection between buildings and parcels
        8: "(building.disaggregate(parcel.parcel_id) > 0)*(building.disaggregate(parcel.parcel_id) == building.parcel_id)",
-       # do all household buildings exist
-       9: "(household.disaggregate(building.building_id) > 0)*(household.disaggregate(building.building_id) == household.building_id)",
+       # do all household buildings exist or household is unplaced
+       9: ("is_element", ["household.building_id", "building.building_id", [-1, 0]]),
        10: "parcel.city_id > 0",
        # check county_id in parcels
        11: "(parcel.disaggregate(city.county_id) > 0)*(parcel.disaggregate(city.county_id) == parcel.county_id)",
@@ -33,23 +33,28 @@ class ExpressionModel(Model):
        12: ("is_element", ["parcel.city_id", "city.city_id"]),
        # check that there are as many persons as the households attribute persons says
        13: "alldata.aggregate_all(household.persons) == alldata.aggregate_all(person.person_id > 0)",
-	   # all parcel.plan_type_id present in constraints table
-	   14: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"])
+       # all parcel.plan_type_id present in constraints table
+       14: ("is_element", ["parcel.plan_type_id", "development_constraint.plan_type_id"])
     }
     
+    # not critical checks (code will throw a warning if there is any False, otherwise an error)
+    not_critical = [3]
     
     
     def __init__(self, dataset_pool=None):
         self.dataset_pool = dataset_pool
 
-    def run(self, expressions={}, use_default_expressions=True, which_default_expressions=None, allow_missing=False):
+    def run(self, expressions={}, not_critical=[], use_default_expressions=True, which_default_expressions=None, 
+             fault_tolerant=False):
         """
-        Argument expressions should be dictionary of "name: condition" (same format as default_expressions). 
+        Argument expressions should be a dictionary of "name: condition", or
+        "name: (function_name, [args])" (i.e. the same format as default_expressions). 
+        The argument "not_critical" is a list of names of expressions that are not critical to throw an error.
         By default the default_expressions above are included in the check. To switch it off, set
         "use_default_expressions" to False. To extract only a subset, which_default_expressions can be set to a list 
         of the expression names (keys in the expression dictionary).
-        If the function should end gracefully without failing even if some datasets or attributes are missing,
-        set "allow_missing" to True.
+        If the function should end gracefully without failing if some datasets or attributes are missing, 
+        or if any of the critical conditions has Falses, set "fault_tolerant" to True.
         """
         exprs = {}
         if use_default_expressions:
@@ -57,19 +62,34 @@ class ExpressionModel(Model):
             if which_default_expressions is not None: # subset default expressions
                 exprs = {x: exprs[x] for x in which_default_expressions if x in exprs}
         exprs.update(expressions)
+        not_critical = not_critical + self.not_critical
         df = pd.DataFrame(index=exprs.keys(), columns=["condition", "True", "False"])
+        warnings = []
+        errors = []
         for name, expr in exprs.iteritems():
-            values = self.compute_expression(expr, allow_missing=allow_missing)
+            values = self.compute_expression(expr, fault_tolerant=fault_tolerant)
             if values is None:
                 df.loc[name, 'condition'] = expr
+                warnings = warnings + [name]
                 continue
             df.loc[name] = [expr, (values <> 0).sum(), (values == 0).sum()]
+            if df.loc[name, "False"] > 0:
+                if name in not_critical:
+                    warnings = warnings + [name]
+                else:
+                    errors = errors + [name]
         logger.log_status(df)
+        if len(warnings) > 0:
+            logger.log_warning("False values found in conditions: %s" % warnings)
+        if len(errors) > 0:
+            logger.log_error("False values found in conditions: %s" % errors)        
+            if not fault_tolerant:
+                raise ValueError, "QC resutls: Found problems with the data."
         return df
 
-    def compute_expression(self, attribute_name, allow_missing=False):
+    def compute_expression(self, attribute_name, fault_tolerant=False):
         """Compute any expression and return its values. 
-        If allow_missing is True, the code does not break if an attribute cannot be computed
+        If fault_tolerant is True, the code does not break if an attribute cannot be computed
         or a dataset is missing.
         """
         if isinstance(attribute_name, tuple): # method of this model
@@ -78,27 +98,27 @@ class ExpressionModel(Model):
             except AttributeError:
                 print 'Method "%s" not found.' % (attribute_name[0])
             else:
-                return func(*attribute_name[1], allow_missing=allow_missing)            
+                return func(*attribute_name[1], fault_tolerant=fault_tolerant)            
             
         var_name = VariableName(attribute_name)
         dataset_name = var_name.get_dataset_name()
         try:
             ds = self.dataset_pool.get_dataset(dataset_name)
         except FileNotFoundError:
-            if allow_missing:
+            if fault_tolerant:
                 return None
             raise
         try:
             return ds.compute_variables([var_name], dataset_pool=self.dataset_pool)
         except (LookupError, FileNotFoundError, StandardError):
-            if allow_missing:
+            if fault_tolerant:
                 return np.zeros(ds.size(), dtype="bool8")
             raise
         
-    def is_element(self, first, second, allow_missing=False):
-        v1 = self.compute_expression(first, allow_missing=allow_missing)
-        v2 = self.compute_expression(second, allow_missing=allow_missing)
-        return np.in1d(v1, v2)
+    def is_element(self, first, second, additional_values=[], fault_tolerant=False):
+        v1 = self.compute_expression(first, fault_tolerant=fault_tolerant)
+        v2 = self.compute_expression(second, fault_tolerant=fault_tolerant)
+        return np.logical_or(np.in1d(v1, v2), np.in1d(v1, additional_values))
         
     
 import os
@@ -118,7 +138,7 @@ class TestExpressionModel(opus_unittest.OpusTestCase):
     def test_default_expressions(self):
         dspool = self.get_dataset_pool(['urbansim'])
         model = ExpressionModel(dspool)
-        res = model.run(allow_missing=True)
+        res = model.run(fault_tolerant=True)
         self.assertEqual(res.shape[0], len(model.default_expressions))
         
     def test_users_expressions(self):
@@ -145,7 +165,7 @@ class TestExpressionModel(opus_unittest.OpusTestCase):
         storage.write_table(table_name='buildings', table_data=buildings_data) 
         storage.write_table(table_name='cities', table_data=cities_data) 
         dspool = DatasetPool(['urbansim_parcel', 'urbansim'], storage=storage)
-        res = ExpressionModel(dspool).run(which_default_expressions=range(4,9), allow_missing=True)
+        res = ExpressionModel(dspool).run(which_default_expressions=range(4,9), fault_tolerant=True)
         self.assertEqual(res.shape[0], 5) # 5 rows
         self.assertEqual(res.loc[8,"False"], 3) # 3 values of building.parcel_id are non-existing
 
