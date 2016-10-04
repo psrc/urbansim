@@ -39,7 +39,11 @@ class ExpressionModel(Model):
        # job sectors are in range 1-19
        16: ("is_element", ["job.sector_id", None, np.arange(1,20)]),
        # do all job's buildings exist or job is unplaced
-       17: ("is_element", ["job.building_id", "building.building_id", [-1, 0]]),       
+       17: ("is_element", ["job.building_id", "building.building_id", [-1, 0]]),
+       # all constraints have higher max than min
+       18: "development_constraint.maximum > development_constraint.minimum",
+       # non-residential constraints don't exceed a floor area ratio of 60
+       19: "development_constraint.constraint_type=='units_per_acre' + development_constraint.maximum < 60", 
     }
     
     # non-critical checks (code will throw a warning if there is any False, otherwise an error)
