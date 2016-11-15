@@ -52,8 +52,10 @@ class CompareCaches(Model):
         
 if __name__ == '__main__':
     # Cache directories
-    dir1 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/luv_scenario_test'
-    dir2 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/luv_flu_updated'
+    #dir1 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/luv_scenario_test'
+    dir1 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_144.run_2016_10_20_19_59'
+    dir2 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_32.run_2016_10_17_15_00'
+    #dir2 = '/Volumes/d$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/luv_flu_updated'
     #dir2 = '/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_13_16_56'
     # Run the model
     CompareCaches(dir1, dir2).run(year=2014)

@@ -46,10 +46,13 @@ def sector2building_type(sectors):
 class CreateJobsFromQCEW:
     number_of_jobs_attr = "job_count"
     
-    def run(self, in_storage, out_storage=None, business_dsname="business", zone_dsname=None):
+    def run(self, in_storage, out_storage=None, business_dsname="business", zone_dsname=None, business_id_name=None):
         dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
         seed(1)
-        allbusinesses = dataset_pool.get_dataset(business_dsname)
+        business_args = {}
+        if business_id_name is not None:
+            business_args['id_name'] = business_id_name
+        allbusinesses = dataset_pool.get_dataset(business_dsname, dataset_arguments=business_args)
         parcels = dataset_pool.get_dataset('parcel')
         buildings = dataset_pool.get_dataset('building')
         parcels.compute_variables(["urbansim_parcel.parcel.residential_units", "number_of_buildings = parcel.number_of_agents(building)", 
@@ -346,40 +349,43 @@ class CreateJobsFromQCEW:
          
         # build new buildings for jobs in cases 7, 8, 15 and 16
         jidx_no_bld = where(in1d(job_assignment_case, [7,8,15,16]))[0]
-        bus = unique(job_array_labels[jidx_no_bld])
-        bsidx = businesses.get_id_index(bus)
-        # first create buildings for single workplaces per parcel
-        single_workplace_idx = where(business_nworkplaces[bsidx] == 1)[0]
-        newbld_parcel_id = businesses['parcel_id'][bsidx][single_workplace_idx]
-        newbld_bt = sector2building_type(businesses['sector_id'][bsidx][single_workplace_idx])
-        newbids = arange(buildings.get_id_attribute().max()+1, buildings.get_id_attribute().max()+single_workplace_idx.size+1)
-        bbldid = zeros(bsidx.size, dtype='int32')
-        bbldid[single_workplace_idx] = newbids
-        # for parcels with multiple workplaces select the largest business to determine its building type
-        mult_bsidx = bsidx[where(business_nworkplaces[bsidx] > 1)[0]]
-        empty_parcels = businesses['parcel_id'][mult_bsidx]
-        uempty_parcels = unique(empty_parcels)
-        bsize_on_empty_pcl = ndmax(business_sizes[mult_bsidx], labels=empty_parcels, index=uempty_parcels)
-        newbld2_sec = zeros(uempty_parcels.size, dtype='int32')
-        newbids2 = arange(newbids.max()+1, newbids.max()+uempty_parcels.size+1)
-        for ipcl in range(uempty_parcels.size):
-            newbld2_sec[ipcl] = businesses['sector_id'][mult_bsidx][logical_and(businesses['parcel_id'][mult_bsidx] == uempty_parcels[ipcl], 
-                                                                                business_sizes[mult_bsidx]==bsize_on_empty_pcl[ipcl])][0]
-            this_bidx = where(businesses['parcel_id'][bsidx] == uempty_parcels[ipcl])
-            bbldid[this_bidx] = newbids2[ipcl]
-            
-        newbld_parcel_id = concatenate((newbld_parcel_id, uempty_parcels))
-        newbld_bt = concatenate((newbld_bt, sector2building_type(newbld2_sec)))    
-        
-        newbldgs = {'building_id': concatenate((newbids, newbids2)),
-                    'parcel_id': newbld_parcel_id,
-                    'building_type_id': newbld_bt,
-                    }
-        buildings.add_elements(newbldgs, require_all_attributes=False)
-        jidx = where(in1d(job_array_labels, business_ids[bsidx]))[0]
-        job_building_id[jidx] = bbldid.repeat(business_sizes[bsidx])
-        logger.log_status("Build %s new buildings to accommodate %s jobs (out of which %s are governmental) from cases 7, 15, 16." % (
-            newbld_parcel_id.size, jidx.size, business_sizes[bsidx][where(in1d(businesses['sector_id'][bsidx], [18,19]))].sum()))
+        if jidx_no_bld.size > 0:
+            bus = unique(job_array_labels[jidx_no_bld])
+            bsidx = businesses.get_id_index(bus)
+            # first create buildings for single workplaces per parcel
+            single_workplace_idx = where(business_nworkplaces[bsidx] == 1)[0]
+            newbld_parcel_id = businesses['parcel_id'][bsidx][single_workplace_idx]
+            newbld_bt = sector2building_type(businesses['sector_id'][bsidx][single_workplace_idx])
+            newbids = arange(buildings.get_id_attribute().max()+1, buildings.get_id_attribute().max()+single_workplace_idx.size+1)
+            bbldid = zeros(bsidx.size, dtype='int32')
+            bbldid[single_workplace_idx] = newbids
+            # for parcels with multiple workplaces select the largest business to determine its building type
+            mult_bsidx = bsidx[where(business_nworkplaces[bsidx] > 1)[0]]
+            if mult_bsidx.size > 0:
+                empty_parcels = businesses['parcel_id'][mult_bsidx]
+                uempty_parcels = unique(empty_parcels)
+                bsize_on_empty_pcl = ndmax(business_sizes[mult_bsidx], labels=empty_parcels, index=uempty_parcels)
+                newbld2_sec = zeros(uempty_parcels.size, dtype='int32')
+                newbids2 = arange(newbids.max()+1, newbids.max()+uempty_parcels.size+1)
+                for ipcl in range(uempty_parcels.size):
+                    newbld2_sec[ipcl] = businesses['sector_id'][mult_bsidx][logical_and(businesses['parcel_id'][mult_bsidx] == uempty_parcels[ipcl], 
+                                                                                        business_sizes[mult_bsidx]==bsize_on_empty_pcl[ipcl])][0]
+                    this_bidx = where(businesses['parcel_id'][bsidx] == uempty_parcels[ipcl])
+                    bbldid[this_bidx] = newbids2[ipcl]
+                    
+                newbld_parcel_id = concatenate((newbld_parcel_id, uempty_parcels))
+                newbld_bt = concatenate((newbld_bt, sector2building_type(newbld2_sec)))
+                newbids = concatenate((newbids, newbids2))
+                
+            newbldgs = {'building_id': newbids,
+                        'parcel_id': newbld_parcel_id,
+                        'building_type_id': newbld_bt,
+                        }
+            buildings.add_elements(newbldgs, require_all_attributes=False)
+            jidx = where(in1d(job_array_labels, business_ids[bsidx]))[0]
+            job_building_id[jidx] = bbldid.repeat(business_sizes[bsidx])
+            logger.log_status("Build %s new buildings to accommodate %s jobs (out of which %s are governmental) from cases 7, 15, 16." % (
+                newbld_parcel_id.size, jidx.size, business_sizes[bsidx][where(in1d(businesses['sector_id'][bsidx], [18,19]))].sum()))
         
         
         logger.log_status("Assigned %s (%s percent) home-based jobs." % (home_based.sum(), round(home_based.sum()/(home_based.size/100.),2)))
@@ -523,23 +529,26 @@ if __name__ == '__main__':
        If write_to_csv, the jobs table is also converted into a csv file and 
        written into the output_cache.
     """
-    business_dataset_name = "workplaces"
+    business_dataset_name = "workplaces_noncov14"
+    business_id_name = "workplaces_id"
     zones_dataset_name = ['tractcity', 'city'] # only needed if a disaggregation of a higher level geography id is desired (e.g. for a later run of ELCM)
+    zones_dataset_name = ['census_block']
     input_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/qcew_data/2014out"
-    input_cache = "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/hana_test/2014"
+    input_cache = "/Volumes/d$/opusgit/urbansim_data/data/psrc_parcel/base_year_2014_inputs/parcelize_LODES_BY14/2014"
     output_cache = "/Users/hana/workspace/data/psrc_parcel/job_data/test"
     #input_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014"
     #output_cache = "E:/opusgit/urbansim_data/data/psrc_parcel/job_data/qcew_data_elcm/base_year_data/2014out"
-    create_jobs = False
+    create_jobs = True
     write_to_csv = False
     match_with_households = False
-    match_workers_with_hb_jobs = True
+    match_workers_with_hb_jobs = False
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     jobs = None
     if create_jobs:
-        jobs = CreateJobsFromQCEW().run(instorage, out_storage=outstorage, business_dsname=business_dataset_name, zone_dsname=zones_dataset_name)    
+        jobs = CreateJobsFromQCEW().run(instorage, out_storage=outstorage, business_dsname=business_dataset_name, 
+                                        zone_dsname=zones_dataset_name, business_id_name=business_id_name)    
         if write_to_csv:
             csv_storage = StorageFactory().get_storage('csv_storage', storage_location = output_cache)
             data = {}
@@ -572,3 +581,9 @@ if __name__ == '__main__':
 #filename = 'workplaces_on_empty_parcels.txt'
 #write_to_text_file(filename, ['workplaces_id', 'parcel_id', 'job_count', 'sector_id'], delimiter="\t")
 #write_table_to_text_file(filename, d, mode='a', delimiter="\t")
+
+#concatenate the new jobs dataset with the jobs dataset in the input cache
+pool = DatasetPool(storage=instorage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
+orig_jobs = pool.get_dataset('job')
+orig_jobs.join_by_rows(jobs, change_ids_if_not_unique=True)
+orig_jobs.write_dataset(out_storage=out_storage, out_table_name="jobs_joined")
