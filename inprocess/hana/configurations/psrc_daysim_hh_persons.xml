@@ -68,24 +68,20 @@
           <persons type="dictionary">
             <variable name="hhno" type="string">(person.household_id).astype(int32)</variable>
             <variable name="pno" type="string">(person.member_id).astype(int32)</variable>
-            <variable name="pptyp" type="string">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==0) + 3*(person.employment_status &lt; 1)*(person.student==0)*(person.age &gt; 64) + 4*(person.employment_status &lt; 1)*(person.student==0)*(person.age &gt; 15)*(person.age &lt; 65) + 5*(person.employment_status!=1)*(person.student==1)*(person.age &gt; 18) + 6*(person.employment_status!=1)*(person.student==1)*(person.age &gt; 15)*(person.age &lt; 19) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 8*(person.age &lt; 5)).astype(int32)</variable>
+            <!-- <variable type="string" name="pptyp">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*((person.employment_status==0)*(person.age &gt; 64)) + 4*((person.employment_status==0)*(person.age &lt; 65)*(person.age &gt; 15)*(person.student==3)) + 8*(person.age &lt; 5) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 5*(person.student &lt; 3) * (psrc_parcel.person.age_category==5) + 6*(person.student &lt; 3) *(psrc_parcel.person.age_category==4) * (person.age &gt; 15)).astype(int32)</variable> -->
+            <variable name="pptyp" type="string">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==3) + 3*(person.employment_status==0)*(person.student==3)*(person.age &gt; 64) + 4*(person.employment_status==0)*(person.student==3)*(person.age &gt; 15)*(person.age &lt; 65) + 5*(person.employment_status!=1)*(person.student!=3)*(person.age &gt; 18) + 6*(person.employment_status!=1)*(person.student!=3)*(person.age &gt; 15)*(person.age &lt; 19) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 8*(person.age &lt; 5)).astype(int32)</variable>
             <variable name="pagey" type="string">(person.age).astype(int32)</variable>
             <variable name="pgend" type="string">(person.sex).astype(int32)</variable>
-            <variable name="pwtyp" type="string">(1*(person.employment_status==1) + 2*(person.employment_status==2)).astype(int32)</variable>
-            <!-- <variable name="pwtyp" type="string">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable> -->
-            <variable name="pwpcl" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
-            <variable name="pwtaz" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
-            <!-- <variable name="pwpcl" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
-            <variable name="pwtaz" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable> -->
+            <variable name="pwtyp" type="string">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>
+            <variable name="pwpcl" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
+            <variable name="pwtaz" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
             <!--<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
-        	  <variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_7to8 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>-->
+        	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_7to8 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>-->
             <variable name="pstyp" type="string">(person.student*(numpy.logical_or(person.student==1, person.student==2))).astype(int32)</variable>
-            <variable name="pspcl" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
-            <variable name="pstaz" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
-            <!-- <variable name="pspcl" type="string">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-            <variable name="pstaz" type="string">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable> -->
+            <variable name="pspcl" type="string">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
+            <variable name="pstaz" type="string">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
             <!--<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			      <variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_7to8 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
+			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_7to8 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
             <variable name="ptpass" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <variable name="ppaidprk" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <variable name="psexpfac" type="string">(person.person_id &gt; 0).astype(int32)</variable>
@@ -96,9 +92,9 @@
             <variable name="__filter__" type="string">urbansim_parcel.person.parcel_id &gt; 0</variable>
             <variable name="__out_table_name__" type="string">Person</variable>
             <!--<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
-			      <variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>-->
+			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>-->
             <!--<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			      <variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
+			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
           </persons>
         </urbansim_to_tm_variable_mapping>
         <meta_data type="dictionary">
@@ -145,16 +141,44 @@
             <daysim_skim_dir type="string">skims/2014</daysim_skim_dir>
           </run_description>
           <!-- <run_description type="dictionary">
-            <year type="integer">2041</year>
-            <daysim_exchange_dir type="string">urbansim_outputs/2040</daysim_exchange_dir>
-            <daysim_skim_dir type="string">skims/2040</daysim_skim_dir>
-          </run_description> -->
+			  <year type="integer">2041</year>
+			  <daysim_exchange_dir type="string">urbansim_outputs/2040</daysim_exchange_dir>
+			  <daysim_skim_dir type="string">skims/2040</daysim_skim_dir>
+			</run_description> -->
         </years_to_run>
       </travel_model_configuration>
     </scenario>
   </scenario_manager>
   <results_manager>
     <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" name="run_2016_04_25_17_29" run_id="20" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_20.run_2016_04_25_17_29</cache_directory>
+        <start_year type="integer">2010</start_year>
+        <end_year type="integer">2010</end_year>
+        <status type="integer">running</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_25_17_00" run_id="18" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\runs\run_18.run_2016_04_25_17_00</cache_directory>
+        <start_year type="integer">1997</start_year>
+        <end_year type="integer">2040</end_year>
+        <status type="integer">started</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_25_16_35" run_id="17" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\runs\run_17.run_2016_04_25_16_35</cache_directory>
+        <start_year type="integer">2010</start_year>
+        <end_year type="integer">2010</end_year>
+        <status type="integer">done</status>
+      </run>
+      <run hidden="Children" name="run_2016_04_20_17_16" run_id="15" type="source_data">
+        <scenario_name type="string">daysim_scenario</scenario_name>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_15.run_2016_04_20_17_16</cache_directory>
+        <start_year type="integer">2014</start_year>
+        <end_year type="integer">2014</end_year>
+        <status type="integer">done</status>
+      </run>
       <run hidden="Children" name="run_2016_04_20_16_53" run_id="14" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
         <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_14.run_2016_04_20_16_53</cache_directory>
@@ -211,12 +235,12 @@
         <end_year type="integer">2014</end_year>
         <status type="integer">done</status>
       </run>
-      <run hidden="Children" name="run_2016_04_20_17_16" run_id="15" type="source_data">
+      <run hidden="Children" name="run_2016_04_06_13_07" run_id="6" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
-        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_15.run_2016_04_20_17_16</cache_directory>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_6.run_2016_04_06_13_07</cache_directory>
         <start_year type="integer">2014</start_year>
         <end_year type="integer">2014</end_year>
-        <status type="integer">running</status>
+        <status type="integer">done</status>
       </run>
       <run hidden="Children" name="run_2016_04_06_13_06" run_id="5" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
@@ -239,12 +263,12 @@
         <end_year type="integer">2014</end_year>
         <status type="integer">failed</status>
       </run>
-      <run hidden="Children" name="run_2016_04_06_13_07" run_id="6" type="source_data">
+      <run hidden="Children" name="run_2016_04_06_12_15" run_id="2" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
-        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_6.run_2016_04_06_13_07</cache_directory>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_2.run_2016_04_06_12_15</cache_directory>
         <start_year type="integer">2014</start_year>
         <end_year type="integer">2014</end_year>
-        <status type="integer">running</status>
+        <status type="integer">failed</status>
       </run>
       <run hidden="Children" name="run_2016_04_06_11_15" run_id="1" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
@@ -253,11 +277,11 @@
         <end_year type="integer">2014</end_year>
         <status type="integer">done</status>
       </run>
-      <run hidden="Children" name="run_2016_04_06_12_15" run_id="2" type="source_data">
+      <run hidden="Children" name="run_2016_04_25_17_27" run_id="19" type="source_data">
         <scenario_name type="string">daysim_scenario</scenario_name>
-        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_2.run_2016_04_06_12_15</cache_directory>
-        <start_year type="integer">2014</start_year>
-        <end_year type="integer">2014</end_year>
+        <cache_directory type="string">e:\opusgit\urbansim_data\data\psrc_parcel\2014SoundCastData\run_19.run_2016_04_25_17_27</cache_directory>
+        <start_year type="integer">2010</start_year>
+        <end_year type="integer">2010</end_year>
         <status type="integer">running</status>
       </run>
     </simulation_runs>
