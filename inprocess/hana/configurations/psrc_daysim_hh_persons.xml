@@ -73,15 +73,19 @@
             <variable name="pagey" type="string">(person.age).astype(int32)</variable>
             <variable name="pgend" type="string">(person.sex).astype(int32)</variable>
             <variable name="pwtyp" type="string">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>
-            <variable name="pwpcl" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
-            <variable name="pwtaz" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
+            <variable name="pwpcl" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
+            <variable name="pwtaz" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
+            <!--<variable name="pwpcl" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
+            <variable name="pwtaz" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * urbansim_parcel.person.workplace_zone_id + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.zone_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>-->            
             <!--<variable type="string" name="pwautime">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_time_from_home_to_work_6to9 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>
-        	<variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_7to8 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>-->
+        	  <variable type="string" name="pwaudist">(urbansim_parcel.person.is_worker * psrc_parcel.person.travel_distance_from_home_to_work_7to8 - 1*(urbansim_parcel.person.is_worker==0)).astype(float32)</variable>-->
             <variable name="pstyp" type="string">(person.student*(numpy.logical_or(person.student==1, person.student==2))).astype(int32)</variable>
-            <variable name="pspcl" type="string">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
-            <variable name="pstaz" type="string">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
+            <variable name="pspcl" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
+            <variable name="pstaz" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
+            <!-- <variable name="pspcl" type="string">(psrc_parcel.person.attending_school_parcel_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable>
+            <variable name="pstaz" type="string">(psrc_parcel.person.attending_school_zone_id * (person.student &lt; 3) -1*(person.student == 3)).astype(int32)</variable> -->
             <!--<variable type="string" name="psautime">(psrc_parcel.person.travel_time_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_7to8 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
+			      <variable type="string" name="psaudist">(psrc_parcel.person.travel_distance_from_home_to_school_7to8 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
             <variable name="ptpass" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <variable name="ppaidprk" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <variable name="psexpfac" type="string">(person.person_id &gt; 0).astype(int32)</variable>
@@ -92,9 +96,9 @@
             <variable name="__filter__" type="string">urbansim_parcel.person.parcel_id &gt; 0</variable>
             <variable name="__out_table_name__" type="string">Person</variable>
             <!--<variable type="string" name="pagecat">(psrc_parcel.person.age_category).astype(int32)</variable>
-			<variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>-->
+			      <variable type="string" name="pschooltype">(person.school_type).astype(int32)</variable>-->
             <!--<variable type="string" name="psautimeh3">(psrc_parcel.person.travel_time_hov3_from_home_to_school_7to9 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>
-			<variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
+			      <variable type="string" name="psaudisth3">(psrc_parcel.person.travel_distance_hov3_from_home_to_school_5to6 * (person.student &lt; 3) -1*(person.student == 3)).astype(float32)</variable>-->
           </persons>
         </urbansim_to_tm_variable_mapping>
         <meta_data type="dictionary">
