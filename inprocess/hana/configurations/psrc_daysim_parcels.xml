@@ -42,30 +42,32 @@
             <variable type="string" name="taz_p">parcel.zone_id</variable>
             <variable type="string" name="lutype_p">parcel.land_use_type_id</variable>
             <variable type="string" name="hh_p">(urbansim_parcel.parcel.number_of_households).astype(int32)</variable>
-	    <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
-	    <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
-	    <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
+	          <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
+	          <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
+	          <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
             <!--<variable type="string" name="stugrd_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
-	    <variable type="string" name="stuhgh_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
-	    <variable type="string" name="stuuni_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable>-->
-	    <!--<variable type="string" name="stugrd_p">0*parcel.parcel_id</variable>
-	    <variable type="string" name="stuhgh_p">0*parcel.parcel_id</variable>
-	    <variable type="string" name="stuuni_p">0*parcel.parcel_id</variable>-->
-        	<variable type="string" name="empedu_p">(parcel.aggregate((job.sector_id==15) + (job.sector_id==19), intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empfoo_p">(parcel.aggregate(job.sector_id==14, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empgov_p">(parcel.aggregate(job.sector_id==18, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empind_p">(parcel.aggregate((job.sector_id &gt; 2) * (job.sector_id &lt; 10) * (job.sector_id &lt;&gt; 7), intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empmed_p">(parcel.aggregate(job.sector_id==16, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empofc_p">(parcel.aggregate((job.sector_id &gt; 9) * (job.sector_id &lt; 14), intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empret_p">(parcel.aggregate(job.sector_id==7, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empsvc_p">(parcel.aggregate(job.sector_id==17, intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="empoth_p">(parcel.aggregate((job.sector_id==1) + (job.sector_id==2), intermediates=[building])).astype(int32)</variable>
-        	<variable type="string" name="emprsc_p">(parcel.aggregate(job.sector_id &gt; 19, intermediates=[building])).astype(int32)</variable> # zeros
-         	<variable type="string" name="emptot_p">(urbansim_parcel.parcel.number_of_jobs).astype(int32)</variable>
-         	<variable type="string" name="parkdy_p">(parcel.parking_space_daily).astype(int32)</variable>
-		<variable type="string" name="parkhr_p">(parcel.parking_space_hourly).astype(int32)</variable>
-		<variable type="string" name="ppricdyp">(parcel.parking_price_daily * 100).astype(int32)</variable>
-		<variable type="string" name="pprichrp">(parcel.parking_price_hourly * 100).astype(int32)</variable>
+	          <variable type="string" name="stuhgh_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
+	          <variable type="string" name="stuuni_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable>-->
+	          <!--<variable type="string" name="stugrd_p">0*parcel.parcel_id</variable>
+	          <variable type="string" name="stuhgh_p">0*parcel.parcel_id</variable>
+	          <variable type="string" name="stuuni_p">0*parcel.parcel_id</variable>-->
+        	  <variable type="string" name="empedu_p">(parcel.aggregate((job.sector_id==15) + (job.sector_id==19), intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empfoo_p">(parcel.aggregate(job.sector_id==14, intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empgov_p">(parcel.aggregate(job.sector_id==18, intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empind_p">(parcel.aggregate((job.sector_id &gt; 2) * (job.sector_id &lt; 10) * (job.sector_id &lt;&gt; 7), intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empmed_p">(parcel.aggregate(job.sector_id==16, intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empofc_p">(parcel.aggregate((job.sector_id &gt; 9) * (job.sector_id &lt; 14), intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empret_p">(parcel.aggregate(job.sector_id==7, intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empsvc_p">(parcel.aggregate(job.sector_id==17, intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="empoth_p">(parcel.aggregate((job.sector_id==1) + (job.sector_id==2), intermediates=[building])).astype(int32)</variable>
+        	  <variable type="string" name="emprsc_p">(parcel.aggregate(job.sector_id &gt; 19, intermediates=[building])).astype(int32)</variable> # zeros
+         	  <variable type="string" name="emptot_p">(urbansim_parcel.parcel.number_of_jobs).astype(int32)</variable>
+         	  <variable type="string" name="parkdy_p">(parcel.parking_space_daily).astype(int32)</variable>
+		        <variable type="string" name="parkhr_p">(parcel.parking_space_hourly).astype(int32)</variable>
+		        <variable type="string" name="ppricdyp">(parcel.parking_price_daily * 100).astype(int32)</variable>
+		        <variable type="string" name="pprichrp">(parcel.parking_price_hourly * 100).astype(int32)</variable>
+            <variable type="string" name="nparks">(parcel.aggregate(land_use_type_id==19)).astype(int32)</variable>
+            <variable type="string" name="aparks">(parcel.aggregate((land_use_type_id==19) * (parcel_sqft))).astype(int32)</variable>
         </parcels>
         <!-- <buildings type="dictionary">
         	<variable type="string" name="building_id">building.building_id</variable>
