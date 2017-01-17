@@ -586,4 +586,4 @@ if __name__ == '__main__':
 pool = DatasetPool(storage=instorage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'] )
 orig_jobs = pool.get_dataset('job')
 orig_jobs.join_by_rows(jobs, change_ids_if_not_unique=True)
-orig_jobs.write_dataset(out_storage=out_storage, out_table_name="jobs_joined")
+orig_jobs.write_dataset(out_storage=outstorage, out_table_name="jobs_joined")
