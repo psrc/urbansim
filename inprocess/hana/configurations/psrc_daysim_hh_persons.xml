@@ -56,7 +56,8 @@
           <households type="dictionary">
             <variable name="hhno" type="string">(household.household_id).astype(int32)</variable>
             <variable name="hhsize" type="string">(household.persons).astype(int32)</variable>
-            <variable name="hhincome" type="string">(household.income).astype(int32)</variable>
+            <variable name="hhincome" type="string">(household.income / 1.005^(2040-2014)).astype(int32)</variable>
+            <!-- The income variable is divided by a factor to account for real income growth. The exponent is the difference between the end year and the start year. -->
             <variable name="hownrent" type="string">(numpy.logical_or(household.tenure == 1, household.tenure == 2) + 2*(household.tenure == 3) + 9*(household.tenure &gt; 3)).astype(int32)</variable>
             <variable name="hhparcel" type="string">(urbansim_parcel.household.parcel_id).astype(int32)</variable>
             <variable name="hhtaz" type="string">(urbansim_parcel.household.zone_id).astype(int32)</variable>
