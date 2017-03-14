@@ -42,9 +42,9 @@
             <variable type="string" name="taz_p">parcel.zone_id</variable>
             <variable type="string" name="lutype_p">parcel.land_use_type_id</variable>
             <variable type="string" name="hh_p">(urbansim_parcel.parcel.number_of_households).astype(int32)</variable>
-	          <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
-	          <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
-	          <variable name="stuuni_p" type="string">(parcel.aggregate(school.student_count * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
+	          <variable name="stugrd_p" type="string">(parcel.aggregate(school.student_count2014 * (psrc_parcel.school.is_in_category_2 + psrc_parcel.school.is_in_category_3))).astype(int32)</variable>
+	          <variable name="stuhgh_p" type="string">(parcel.aggregate(school.student_count2014 * psrc_parcel.school.is_in_category_4)).astype(int32)</variable>
+	          <variable name="stuuni_p" type="string">(parcel.aggregate(school.fte2014 * psrc_parcel.school.is_in_category_5)).astype(int32)</variable>
             <!--<variable type="string" name="stugrd_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * ((psrc_parcel.person.age_category==1) +  (psrc_parcel.person.age_category==2) + (psrc_parcel.person.age_category==3)), intermediates=[school])).astype(int32)</variable>
 	          <variable type="string" name="stuhgh_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==4), intermediates=[school])).astype(int32)</variable>
 	          <variable type="string" name="stuuni_p">(parcel.aggregate((psrc_parcel.person.student &lt; 3) * (psrc_parcel.person.age_category==5), intermediates=[school])).astype(int32)</variable>-->
