@@ -125,6 +125,8 @@ class CapDevelopmentModel(TransitionModel):
             
         ctdf = pd.DataFrame({ct_attribute_name: should_be}, 
                             index=self.control_totals[ct_geo_id_name])
+        # sum control totals over geography
+        ctdf = ctdf.groupby(ctdf.index).sum()
         
         df = df.merge(ctdf, how='left', left_on=ct_geo_id_name, right_index=True)
         df = df.merge(pd.DataFrame(group_geo['geo_growth']), how='left', left_on=geo_id_name, right_index=True)
