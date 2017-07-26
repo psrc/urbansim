@@ -52,9 +52,9 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
                                                                  index, chunk_specification=chunk_specification,
                                                                  run_config=run_config, debuglevel=debuglevel,
                                                                  **kwargs)
-        if (outcome == None) or (outcome.size <= 0):
+        if (outcome is None) or (outcome.size <= 0):
             return outcome
-        if index == None:
+        if index is None:
             index = arange(dataset.size())
         if re.search("^ln_", self.outcome_attribute.get_alias()): # if the outcome attr. name starts with 'ln_'
                                                       # the results will be exponentiated.

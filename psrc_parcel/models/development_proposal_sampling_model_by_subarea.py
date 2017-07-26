@@ -11,7 +11,7 @@ from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum
 class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSamplingModel):
 
     def __init__(self, proposal_set, subarea_id_name, **kwargs):
-        super(SubareaDevelopmentProposalSamplingModel, self).__init__(proposal_set, **kwargs)
+        super(DevelopmentProposalSamplingModelBySubarea, self).__init__(proposal_set, **kwargs)
         self.subarea_id_name = subarea_id_name
      
     def run(self, **kwargs):
@@ -19,6 +19,8 @@ class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSampli
         """
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
+            "psrc_parcel.building.occupied_spaces",
+            "psrc_parcel.building.total_spaces",
                                 "occupied_units_for_jobs = psrc_parcel.building.number_of_non_home_based_jobs",
                                 "units_for_jobs = psrc_parcel.building.total_non_home_based_job_space",
                                 "occupied_residential_units = urbansim_parcel.building.number_of_households",

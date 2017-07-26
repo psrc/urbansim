@@ -33,7 +33,7 @@ class GeneralResources(dict):
         def check_and_raise_exception(self, key):
             if not self.is_in(key):
                 raise StandardError, "Key '" + key + "' not contained in the resources."
-            if self[key] == None:
+            if self[key] is None:
                 raise StandardError, "None value for key '" + key + "' not allowed."
             
         map(lambda(x): check_and_raise_exception(self, x), keys)

@@ -95,7 +95,7 @@ class RegressionModel(ChunkModel):
             
         if dataset.size()<=0: # no data loaded yet
             dataset.get_id_attribute()
-        if index == None:
+        if index is None:
             index = arange(dataset.size())
             
         result = ChunkModel.run(self, chunk_specification, dataset, index, float32,
