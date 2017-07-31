@@ -6,6 +6,7 @@ from numpy import logical_and, where, logical_not, array, concatenate
 from opus_core.logger import logger
 from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.simulation_state import SimulationState
 from psrc_parcel.models.development_project_proposal_sampling_model_with_minimum import DevelopmentProjectProposalSamplingModel
 
 class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSamplingModel):
@@ -35,8 +36,13 @@ class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSampli
 
         unique_regions = unique(regions)
         original_status = self.proposal_set.get_attribute("status_id").copy()
+        logger.log_status("Total number of proposals:")
+        for st in [self.proposal_set.id_planned, self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
+            logger.log_status("Status %s: %s" %  (st, (original_status == st).sum()))
         self.proposal_set.add_primary_attribute(name='original_status_id', data=original_status)
         bldgs_regions = buildings.get_attribute(self.subarea_id_name)
+        flush_variables_current = SimulationState().get_flush_datasets()
+        SimulationState().set_flush_datasets(False)        
         for area_index in range(unique_regions.size):
             self.area_id = unique_regions[area_index]            
             status = self.proposal_set.get_attribute("status_id")
@@ -70,4 +76,5 @@ class DevelopmentProposalSamplingModelBySubarea(DevelopmentProjectProposalSampli
         idx = where(status != self.proposal_set.id_active)[0]
         self.proposal_set.set_values_of_one_attribute("status_id", original_status[idx], idx)
         self.dataset_pool.replace_dataset('building', buildings)
+        SimulationState().set_flush_datasets(flush_variables_current)
         return (self.proposal_set, self.all_demolished_buildings)

@@ -32,7 +32,7 @@ class JoinAttributeModificationModel(Model):
         members_idx = where(ismember(dataset.get_attribute(join_attribute), ids))[0]
         if attribute_to_be_modified is None:
             attribute_to_be_modified = join_attribute
-        dataset.modify_attribute(name=attribute_to_be_modified, data=array(index.size*[value]), index=members_idx)
+        dataset.modify_attribute(name=attribute_to_be_modified, data=array(members_idx.size*[value]), index=members_idx)
         logger.log_status("%s values of %s.%s are set to %s." % (members_idx.size, dataset.get_dataset_name(), attribute_to_be_modified, value))
         
 from opus_core.tests import opus_unittest
