@@ -67,6 +67,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_threshold=75,
             within_parcel_selection_MU_same_weight=False,
             within_parcel_selection_transpose_interpcl_weight=True,
+            within_parcel_selection_include_no_demand_proposals=False,
             run_config=None,
             debuglevel=0):
         """
@@ -222,7 +223,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                  compete_among_types=within_parcel_selection_compete_among_types, 
                                                  filter_threshold=within_parcel_selection_threshold,
                                                  MU_same_weight=within_parcel_selection_MU_same_weight,
-                                                 transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight)
+                                                 transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight,
+                                                 include_no_demand_proposals=within_parcel_selection_include_no_demand_proposals)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -290,7 +292,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         return all(results)
 
     def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75, 
-                                        MU_same_weight=False, transpose_interpcl_weight=True):
+                                        MU_same_weight=False, transpose_interpcl_weight=True, 
+                                        include_no_demand_proposals=False):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
@@ -300,8 +303,10 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         else:
             within_parcel_weights = self.weight
         
-        egligible = logical_and(self.weight > 0, 
-                                self.proposal_set['status_id'] == self.proposal_set.id_tentative)
+        egligible_by_status = self.proposal_set['status_id'] == self.proposal_set.id_tentative
+        if include_no_demand_proposals:
+            egligible_by_status = logical_or(egligible_by_status, self.proposal_set['status_id'] == self.proposal_set.id_no_demand)
+        egligible = logical_and(self.weight > 0, egligible_by_status)
         wegligible = where(egligible)[0]
         if wegligible.size <=0:
             return
