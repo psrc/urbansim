@@ -17,7 +17,7 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         """Writes emme4 input files into the appropriate place at [current_year_emme2_dir]
         """
         input_dir = config['travel_model_configuration'].get('emme_input_directory', 
-                                os.path.join(current_year_emme2_dir, 'tripgeneration', 'landuse'))
+                                os.path.join(current_year_emme2_dir, "landuse"))
         tm_input_file_1 = self._write_input_file_1(current_year_emme2_dir, input_dir, current_year, dataset_pool, config) # writes tazdata.in
         return [tm_input_file_1]
 
@@ -54,14 +54,14 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
         zone_set.join(current_taz_col, "fteuniv", join_attribute='zone_id')
               
         """specify which variables are passing from urbansim to travel model; the order matters"""
-        variables_list = self.get_variables_list(dataset_pool)
+        variables_list = self.get_variables_list(dataset_pool, tm_year)
         
         zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
 
         return self._write_to_file(zone_set, variables_list, tm_input_file, tm_year)
 
-    def get_variables_list(self, dataset_pool):
-        first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
+    def get_variables_list(self, dataset_pool, year):
+        first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool, year)
         return [
             "0 * zone.zone_id",  #101
             "hhs_of_first_quarter = zone.aggregate(household.income < %s)" % first_quarter, #102
@@ -89,10 +89,16 @@ class TravelModelInputFileWriterEmme4(ParentTravelModelInputFileWriter):
             'zone.gqoth'       #124
             ]
         
-    def _get_income_group_quartiles(self, dataset_pool):
+    def _get_income_group_quartiles(self, dataset_pool, year):
         #return (34000, 68000, 102000)
-        return (25000, 51000, 78000)
+        #return (25000, 51000, 78000)
         #return (30000, 59000, 90000) # removes real income growth
+        default_groups = (37000, 74000, 111000)
+        income_groups = {
+            2014: default_groups,
+            2020: default_groups
+        }
+        return income_groups.get(year, default_groups)
     
     def _get_tm_year(self, year, gq):
         """Get the closest year to the current year in the group_quarters table."""

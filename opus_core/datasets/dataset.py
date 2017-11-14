@@ -510,13 +510,13 @@ class Dataset(AbstractDataset):
         self.set_values_of_one_attribute(attribute=attr, values=values)
 
     def to_dataframe(self):
-       from pandas import DataFrame
-       df = {}
-       for attr in self.get_known_attribute_names():
-           df[attr] = self.get_attribute(attr)
+        from pandas import DataFrame
+        df = {}
+        for attr in self.get_known_attribute_names():
+            df[attr] = self.get_attribute(attr)
 
-       df = DataFrame(df)
-       return df
+        df = DataFrame(df)
+        return df
        
 
 #    def __getattribute__(self, attr):

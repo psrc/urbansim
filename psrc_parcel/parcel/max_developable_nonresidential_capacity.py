@@ -5,9 +5,10 @@
 from opus_core.variables.variable import Variable
 from numpy import zeros, maximum
 
-class max_developable_residential_capacity(Variable):
-    """ Maximum residential capacity (in units) over all generic land use types and units_per_acre 
+class max_developable_nonresidential_capacity(Variable):
+    """ Maximum capacity over all generic land use types and over far 
         allowed by development constraints. 
+        The median of building sqft per unit (1553) is used.
     """
 
     def dependencies(self):
@@ -22,6 +23,5 @@ class max_developable_residential_capacity(Variable):
         for glu in parcels.development_constraints.keys():
             if  glu == 'index':
                 continue
-            res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'] # median of building sqft per unit
-            result = maximum(result, res_constraints)
+            result = maximum(result, parcels.development_constraints[glu]['far'][:, 1]*parcels['parcel_sqft'])  #max constraint
         return result

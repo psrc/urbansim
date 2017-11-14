@@ -330,7 +330,7 @@ class InteractionDataset(Dataset):
         if (neqs <> self.get_reduced_m()) and (nparenteqs <> self.get_reduced_m()):
             self._raise_error(StandardError, "create_logit_data: Mismatch in number of equations and size of dataset2.")
 
-        if index <> None:
+        if index is not None:
             nobs = index.size
         else:
             nobs = self.get_reduced_n()

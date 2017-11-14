@@ -164,7 +164,7 @@ class ChoiceModel(ChunkModel):
         self.run_config = run_config.merge_with_defaults(self.run_config)
 
         self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
-        if agents_index==None:
+        if agents_index is None:
             agents_index=arange(agent_set.size())
 
         ## compute_variables is not meaningful given it's going to be overwritten by run()

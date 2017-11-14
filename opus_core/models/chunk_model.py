@@ -35,7 +35,7 @@ class ChunkModel(Model):
             The method chunks dataset_index in the desired number of chunks (minimum is 1) and for each chunk it calls the method
             'run_chunk'. The order of the individuals entering the chunking is determined by the method 'get_agents_order'.
         """
-        if dataset_index==None:
+        if dataset_index is None:
             dataset_index=arange(dataset.size())
         if not isinstance(dataset_index,ndarray):
             dataset_index=array(dataset_index)
