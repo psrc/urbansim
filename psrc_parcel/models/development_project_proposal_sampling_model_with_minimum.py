@@ -303,13 +303,15 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         else:
             within_parcel_weights = self.weight
         
-        egligible_by_status = self.proposal_set['status_id'] == self.proposal_set.id_tentative
-        if include_no_demand_proposals:
-            egligible_by_status = logical_or(egligible_by_status, self.proposal_set['status_id'] == self.proposal_set.id_no_demand)
-        egligible = logical_and(self.weight > 0, egligible_by_status)
+        egligible = logical_and(self.weight > 0, self.proposal_set['status_id'] == self.proposal_set.id_tentative)
         wegligible = where(egligible)[0]
         if wegligible.size <=0:
             return
+        
+        if include_no_demand_proposals:
+            wegligible_for_max_proposal = where(logical_or(egligible, self.proposal_set.id_no_demand))[0]
+        else:
+            wegligible_for_max_proposal = wegligible
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible])
         #min_type = {}
         #egligible_proposals = {}
@@ -341,13 +343,14 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                         type_is_value_ind[chosen_prop] = False
         else:
             parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible]).astype(int32)
-            max_prop = array(maximum_position(within_parcel_weights[wegligible], 
-                                            labels=self.proposal_set['parcel_id'][wegligible], 
+            max_prop = array(maximum_position(within_parcel_weights[wegligible_for_max_proposal], 
+                                            labels=self.proposal_set['parcel_id'][wegligible_for_max_proposal], 
                                             index=parcels_with_proposals)).flatten().astype(int32)                                            
-            max_value_by_parcel = within_parcel_weights[wegligible][max_prop]
+            max_value_by_parcel = within_parcel_weights[wegligible_for_max_proposal][max_prop]
             incompetition = ones(wegligible.size, dtype='bool8')
-            incompetition[max_prop] = False
-            egligible[wegligible[max_prop]] = False            
+            wmaxprop = where(in1d(wegligible, wegligible_for_max_proposal[max_prop]))[0]
+            incompetition[wmaxprop] = False
+            egligible[wegligible[wmaxprop]] = False            
             for i in range(nmax-1):
                 labels = (self.proposal_set['parcel_id'][wegligible])*incompetition 
                 valid_parcels = where(in1d(parcels_with_proposals, self.proposal_set['parcel_id'][wegligible][where(incompetition)]))[0]
