@@ -7,6 +7,7 @@ from opus_core.resources import Resources
 from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
+from opus_core.variables.functions import safe_array_divide
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue, setdiff1d, union1d
 from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate, in1d, argsort, log, exp
@@ -225,6 +226,14 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                  MU_same_weight=within_parcel_selection_MU_same_weight,
                                                  transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight,
                                                  include_no_demand_proposals=within_parcel_selection_include_no_demand_proposals)
+            # number of proposals per parcel
+            nproposals_per_parcel = ndimage.sum(logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
+                                                           self.proposal_set["status_id"] == self.proposal_set.id_proposed),
+                                                labels=self.proposal_set['parcel_id'], 
+                                                index=self.proposal_set.get_id_attribute()
+                                                )
+            # adjust weights by the number of proposals per parcel
+            self.weight = safe_array_divide(self.weight, nproposals_per_parcel)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
