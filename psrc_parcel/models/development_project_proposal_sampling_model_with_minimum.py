@@ -230,7 +230,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             nproposals_per_parcel = ndimage.sum(logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
                                                            self.proposal_set["status_id"] == self.proposal_set.id_proposed),
                                                 labels=self.proposal_set['parcel_id'], 
-                                                index=self.proposal_set.get_id_attribute()
+                                                index=self.proposal_set['parcel_id']
                                                 )
             # adjust weights by the number of proposals per parcel
             self.weight = safe_array_divide(self.weight, nproposals_per_parcel)
