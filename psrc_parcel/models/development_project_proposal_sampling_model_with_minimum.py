@@ -226,14 +226,6 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                  MU_same_weight=within_parcel_selection_MU_same_weight,
                                                  transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight,
                                                  include_no_demand_proposals=within_parcel_selection_include_no_demand_proposals)
-            # number of proposals per parcel
-            nproposals_per_parcel = ndimage.sum(logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
-                                                           self.proposal_set["status_id"] == self.proposal_set.id_proposed),
-                                                labels=self.proposal_set['parcel_id'], 
-                                                index=self.proposal_set['parcel_id']
-                                                )
-            # adjust weights by the number of proposals per parcel
-            self.weight = safe_array_divide(self.weight, nproposals_per_parcel)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -425,5 +417,33 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 if transpose_interpcl_weight:
                     trans_weights = exp(trans_weights)
                 self.weight[where_prop_to_modify_final] = trans_weights
+            
+            # adjust for number of proposals per parcel by building type
+            to_adjust = logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
+                                   self.proposal_set["status_id"] == self.proposal_set.id_proposed)
+            for key in self.column_names:
+                utypes_all = unique(self.proposal_component_set[key])
+                adjfactor = ones(self.proposal_set.size(), dtype='float32')
+                for btype in utypes_all:
+                    is_bt = ndimage.sum(self.proposal_component_set[key] == btype,
+                                        labels=self.proposal_component_set['proposal_id'], 
+                                        index=self.proposal_set.get_id_attribute()
+                                        )  == self.proposal_set["number_of_components"]
+                    toadj = logical_and(to_adjust, is_bt)                   
+                    # number of proposals per parcel of this building type
+                    nbtprops = ndimage.sum(toadj, labels=self.proposal_set['parcel_id'], 
+                                           index=self.proposal_set['parcel_id']
+                                        )
+                    wadj = where(toadj)[0]
+                    adjfactor[wadj] = 1./nbtprops[wadj]
+                    # mix-used type with components of different type should have adjfactor equal one             
+            
+            # rescale the adjustment factor to sum up to 1
+            adjfactor[where(to_adjust == False)] = 0
+            sadjfactor = ndimage.sum(adjfactor, labels=self.proposal_set['parcel_id'], 
+                                                   index=self.proposal_set['parcel_id'])  
+            adjfactor_scaled = safe_array_divide(adjfactor, sadjfactor)
+            wto_adjust = where(to_adjust)[0]
+            self.weight[wto_adjust] = self.weight[wto_adjust] * adjfactor_scaled[wto_adjust]   
             return
             
