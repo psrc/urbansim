@@ -198,7 +198,7 @@ class BayesianMelding(MultipleRuns):
     
     def __init__(self, cache_file_location, observed_data,
                  base_year=0,  prefix='run_', package_order=['core'], additional_datasets={},
-                 overwrite_cache_directories_file=False):
+                 overwrite_cache_directories_file=False, output_dir='bm_output'):
         """ Class used in the Bayesian melding analysis.
         'cache_file_location' is location (either file or directory) with information about all caches
         (see doc string for MultipleRuns).
@@ -207,7 +207,7 @@ class BayesianMelding(MultipleRuns):
         MultipleRuns.__init__(self, cache_file_location, prefix=prefix, package_order=package_order, 
                               additional_datasets=additional_datasets,
                               overwrite_cache_directories_file=overwrite_cache_directories_file)
-        self.output_directory = os.path.join(os.path.split(self.full_cache_file_name)[0], 'bm_output')
+        self.output_directory = os.path.join(os.path.split(self.full_cache_file_name)[0], output_dir)
         logger.log_status('Output directory set to %s.' % self.output_directory)
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
