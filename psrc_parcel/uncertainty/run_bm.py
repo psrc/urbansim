@@ -16,110 +16,69 @@ if __name__ == "__main__":
     # What directory contains the multiple runs'
     cache_directory = "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs"
     #cache_directory = "/Users/hana/d$/opusgit/urbansim_data/data/psrc_parcel/runs"
+    #cache_directory = "d:/opusgit/urbansim_data/data/psrc_parcel/runs"
     cache_dir_file = "cache_directories_local.txt"
+    #cache_dir_file = "cache_directories.txt"
 
     result_directory = "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/bm33_32"
+    #result_directory = "d:/opusgit/urbansim_data/data/psrc_parcel/runs/bm_36_37"
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/opus/urbansim_data/data/psrc_parcel/observed_data"
-    observed_data_dir = "/Users/hana/psrc/R/uncertainty"
-
-    observed_data_zone = ObservedData(observed_data_dir, 
-                                 year=2017, # from what year are the observed data 
-                                 storage_type='csv_storage', # in what format
-                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
-    
-    observed_data_faz = ObservedData(observed_data_dir, 
-                                 year=2017, # from what year are the observed data 
-                                 storage_type='csv_storage', # in what format
-                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
-    
-    observed_data_city = ObservedData(observed_data_dir, 
-                                year=2017, # from what year are the observed data 
-                                 storage_type='csv_storage', # in what format
-                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])     
+    observed_data_dir = "/Users/hana/psrc/R/uncertainty/data"
+    #observed_data_dir = "d:/opusgit/urbansim_data/data/psrc_parcel/observed_data"
 
     variables = {"households": {"zone": "urbansim_parcel.zone.number_of_households",
                                 "faz": "number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
-                                "city": "number_of_households = city.aggregate(urbansim_parcel.parcel.number_of_households)"},
+                                "city": "number_of_households = city.aggregate(urbansim_parcel.parcel.number_of_households)",
+                                "fips_rgs": "number_of_households = fips_rgs.aggregate(urbansim_parcel.parcel.number_of_households, intermediates=[city])"},
                  "employment": {"zone": "urbansim_parcel.zone.number_of_jobs",
                                 "faz": "number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
-                                "city": "number_of_jobs = city.aggregate(urbansim_parcel.parcel.number_of_jobs)"}
+                                "city": "number_of_jobs = city.aggregate(urbansim_parcel.parcel.number_of_jobs)",
+                                "fips_rgs": "number_of_jobs = fips_rgs.aggregate(urbansim_parcel.parcel.number_of_jobs, intermediates=[city])"}
                  }
-    known_output_zone=[
-                  {'variable_name': variables["households"]["zone"], # What variable does the observed data correspond to
-                   'filename': "ofm_hh17_zone", # In what file are values of this variable
-                   'transformation': "sqrt", # What transformation should be performed (can be set to None)
-                   # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
-                   #'filter': "urbansim_parcel.zone.number_of_households", 
-                   },
-                  {'variable_name': variables["employment"]["zone"],
-                   'filename': "jobs2016_zone", 
-                   'transformation': "sqrt",
-                   #'filter': "urbansim_parcel.zone.number_of_jobs",
-                   },
-                  ]
-    known_output_faz=[
-        {'variable_name': variables["households"]["faz"], # What variable does the observed data correspond to
-                   'filename': "ofm_hh17_faz", # In what file are values of this variable
-                   'transformation': "sqrt", # What transformation should be performed (can be set to None)
-                   # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
-                   #'filter': "urbansim_parcel.zone.number_of_households", 
-                   },
-        {'variable_name': variables["employment"]["faz"],
-                   'filename': "jobs2016_faz", 
-                   'transformation': "sqrt",
-                   #'filter': "urbansim_parcel.zone.number_of_jobs",
-                   },
-    ]
-    known_output_city=[
-        {'variable_name': variables["households"]["city"], # What variable does the observed data correspond to
-                   'filename': "ofm_hh17_city", # In what file are values of this variable
-                   'transformation': "sqrt", # What transformation should be performed (can be set to None)
-                   # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
-                   #'filter': "urbansim_parcel.zone.number_of_households", 
-                   },
-        {'variable_name': variables["employment"]["city"],
-                   'filename': "jobs2016_city", 
-                   'transformation': "sqrt",
-                   #'filter': "urbansim_parcel.zone.number_of_jobs",
-                   },
-    ]    
-          
-    for quantity in known_output_zone:
-        observed_data_zone.add_quantity(**quantity)
+
+    geos = ["zone", "faz", "city", "fips_rgs"]
+    geos = ["fips_rgs"]
+    observed_data = {}
+    known_output = {}
+    bmgeos = {}
+    for geo in geos:
+        observed_data[geo] = ObservedData(observed_data_dir, 
+                                 year=2017, # from what year are the observed data 
+                                 storage_type='csv_storage', # in what format
+                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
+  
+        known_output[geo] = [
+            {
+                'variable_name': variables["households"][geo], # What variable does the observed data correspond to
+                'filename': "ofm_hh17_%s" % geo, # In what file are values of this variable
+                'transformation': "sqrt", # What transformation should be performed (can be set to None)
+                # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
+                #'filter': "urbansim_parcel.zone.number_of_households", 
+            },
+            {
+                'variable_name': variables["employment"][geo],
+                'filename': "jobs2016_%s" % geo, 
+                'transformation': "sqrt",
+                #'filter': "urbansim_parcel.zone.number_of_jobs",
+            }]
+    
+        for quantity in known_output[geo]:
+            observed_data[geo].add_quantity(**quantity)    
         
-    for quantity in known_output_faz:
-        observed_data_faz.add_quantity(**quantity)  
-        
-    for quantity in known_output_city:
-        observed_data_city.add_quantity(**quantity)     
-        
-    bm_zone = BayesianMelding(
+        bmgeos[geo] = BayesianMelding(
                          os.path.join(result_directory, cache_dir_file),
-                         observed_data_zone,                        
+                         observed_data[geo],                        
                          base_year=2014, 
                          #prefix='run_32.', # within 'cache_directory' filter only directories with this prefix
                          #overwrite_cache_directories_file=True,
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                         output_dir = "bm_output_zone")
-    
-    bm_faz = BayesianMelding(os.path.join(result_directory, cache_dir_file),
-                         observed_data_faz,                        
-                         base_year=2014, 
-                         package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                         output_dir = "bm_output_faz")
-    
-    bm_city = BayesianMelding(os.path.join(result_directory, cache_dir_file),
-                             observed_data_city,                        
-                         base_year=2014, 
-                         package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                         output_dir = "bm_output_city")     
+                         output_dir = "bm_output_%s" % geo) 
     
     if not os.path.exists(result_directory):
         os.mkdir(result_directory)
         
     indicators = {"households": "number_of_households", "employment": "number_of_jobs"}
-    bmgeos = {"zone": bm_zone, "faz": bm_faz, "city": bm_city}
     for geo, bm in bmgeos.iteritems():
         print geo
         print "======="
@@ -127,7 +86,7 @@ if __name__ == "__main__":
         weights = bm.compute_weights()
         print weights 
         # compute and export CIs
-        for year in [2017, 2040]:
+        for year in [2017, 2040, 2050]:
             for indkey, indvalue in indicators.iteritems():
                 bm.set_posterior(year, quantity_of_interest=variables[indkey][geo],
                                  propagation_factor=[0,1])
