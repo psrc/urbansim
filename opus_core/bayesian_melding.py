@@ -91,7 +91,7 @@ class ObservedDataOneQuantity:
     an object of class ObservedData.
     """
     # pairs of inverse transformations
-    transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
+    transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt", "cbrt": "**3", "**(1/3.)": "**3"}
 
     def __init__(self, variable_name, observed_data, filename=None,  transformation=None, inverse_transformation=None, 
                  filter=None, match=False, dependent_datasets={}, **kwargs):

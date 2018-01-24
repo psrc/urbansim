@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
     result_directory = "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/bm33_32"
     #result_directory = "d:/opusgit/urbansim_data/data/psrc_parcel/runs/bm_36_37"
+    #result_directory = "d:/opusgit/urbansim_data/data/psrc_parcel/runs/bm_40"
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/opus/urbansim_data/data/psrc_parcel/observed_data"
     observed_data_dir = "/Users/hana/psrc/R/uncertainty/data"
@@ -52,14 +53,16 @@ if __name__ == "__main__":
             {
                 'variable_name': variables["households"][geo], # What variable does the observed data correspond to
                 'filename': "ofm_hh17_%s" % geo, # In what file are values of this variable
-                'transformation': "sqrt", # What transformation should be performed (can be set to None)
+                #'transformation': "sqrt", # What transformation should be performed (can be set to None)
+                'transformation': "**(1/3.)",
                 # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
                 #'filter': "urbansim_parcel.zone.number_of_households", 
             },
             {
                 'variable_name': variables["employment"][geo],
                 'filename': "jobs2016_%s" % geo, 
-                'transformation': "sqrt",
+                #'transformation': "sqrt",
+                'transformation': "**(1/3.)",
                 #'filter': "urbansim_parcel.zone.number_of_jobs",
             }]
     
@@ -97,7 +100,11 @@ if __name__ == "__main__":
                 write_to_text_file(filename, array(["id", "median", "lower_80", "upper_80", "lower_95", "upper_95"]), delimiter="\t")
                 write_table_to_text_file(filename, round_(concatenate((bm.get_m_ids()[:,newaxis], med[:,newaxis], ci80, ci95), axis=1)), mode = "a", delimiter="\t")
     
-    
+    for year in [2040, 2050]:
+        posterior = bmgeos["zone"].generate_posterior_distribution(year=year, quantity_of_interest="urbansim_parcel.zone.number_of_households",
+                                                               aggregate_to="faz", replicates=1000, propagation_factor=[0,1])
+        ci = bm["zone"].export_confidence_intervals([80, 95], os.path.join(result_directory, "aggregatedCI_%s_faz_households.txt" % year))
+                                                      
         
     #bm.export_confidence_intervals([80, 95], "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/testCI")
     #bm.export_weights_posterior_mean_and_variance([2017, 2040], quantity_of_interest="urbansim_parcel.zone.number_of_households", 
