@@ -82,7 +82,7 @@ class ModelExplorer(object):
         """
         model = self.get_model()
         #if isinstance(model, ChoiceModel):
-        return model.get_probabilities_and_choices(submodel)
+        return model.get_probabilities_and_choices(submodel=submodel)
         #print '\nMethod is implemented only for ChoiceModels.\n'
 
     def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
@@ -90,7 +90,7 @@ class ModelExplorer(object):
         
         model = self.get_model()
         #if isinstance(model, ChoiceModel):
-        model.export_probabilities(submodel, file_name=filename)
+        model.export_probabilities(probabilities=None, file_name=filename, submodel=submodel)
         #else:
         #    print '\nMethod is implemented only for ChoiceModels.\n'
             

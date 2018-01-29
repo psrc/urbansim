@@ -644,15 +644,21 @@ class ChoiceModel(ChunkModel):
         out_file_choices = "%s_choices%s" % (file_name_root, file_name_ext)
         return (out_file_probs, out_file_choices)
                 
-    def get_probabilities_and_choices(self, probabilities):
+    def get_probabilities_and_choices(self, probabilities=None, submodel=None):
         """Return a tuple of probabilities (2d array, first column are the agent ids, remaining columns
         are probabilities for each choice) and choices (2d array of [possibly sampled] choice ids, 
                                                         where the first column are the agent ids)."""
         from numpy import argsort
         agent_ids = self.model_interaction.interaction_dataset.get_id_attribute_of_dataset(1)
+        if probabilities is None:
+            probabilities = self.upc_sequence.probabilities
         probs = concatenate((agent_ids[...,newaxis], probabilities), axis=1)
         choice_ids = concatenate((agent_ids[...,newaxis], 
-                                  self.model_interaction.get_choice_index()), axis=1)
+                                  self.model_interaction.interaction_dataset.get_id_attribute_of_dataset(2)), axis=1)
+        if submodel is not None:
+            probs = probs[self.observations_mapping[submodel], :]
+            choice_ids = choice_ids[self.observations_mapping[submodel], :]   
+            agent_ids = agent_ids[self.observations_mapping[submodel]]
         # sort results
         order_idx = argsort(agent_ids)
         probs = probs[order_idx,:]
@@ -660,7 +666,7 @@ class ChoiceModel(ChunkModel):
         return (probs, choice_ids)
                                 
                 
-    def export_probabilities(self, probabilities, file_name):
+    def export_probabilities(self, probabilities, file_name, submodel=None):
         """Export the current probabilities into a file.
         """
         from opus_core.misc import write_table_to_text_file
@@ -671,7 +677,7 @@ class ChoiceModel(ChunkModel):
             mode = 'a'
 
         export_file_probs, export_file_choices = self.get_export_simulation_file_names(file_name)
-        probs, choice_ids = self.get_probabilities_and_choices(probabilities)
+        probs, choice_ids = self.get_probabilities_and_choices(probabilities, submodel=submodel)
         logger.start_block('Exporting probabilities (%s x %s) into %s' % (probs.shape[0], probs.shape[1], export_file_probs))
         write_table_to_text_file(export_file_probs, probs, mode=mode, delimiter='\t')
         logger.end_block()
@@ -946,7 +952,7 @@ class ModelInteraction:
         if self.interaction_dataset is None:
             return array([])
         return self.interaction_dataset.get_2d_index()
-
+        
     def get_choice_index_for_submodel(self, submodel):
         index = self.get_choice_index()
         if index is not None:

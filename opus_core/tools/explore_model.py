@@ -69,3 +69,4 @@ if __name__ == '__main__':
     try: import wingdbstub
     except: pass
     ex = main()
+    #ex.export_probabilities(submodel=1, filename="elcm_probs_1.txt")
