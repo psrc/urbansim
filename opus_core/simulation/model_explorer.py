@@ -85,12 +85,12 @@ class ModelExplorer(object):
         return model.get_probabilities_and_choices(submodel=submodel)
         #print '\nMethod is implemented only for ChoiceModels.\n'
 
-    def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
+    def export_probabilities(self, submodel=-2, filename='./choice_model.txt', **kwargs):
         """Export probabilities and choices into a file. Works only for the ChoiceModel class"""
         
         model = self.get_model()
         #if isinstance(model, ChoiceModel):
-        model.export_probabilities(probabilities=None, file_name=filename, submodel=submodel)
+        model.export_probabilities(probabilities=None, file_name=filename, submodel=submodel, **kwargs)
         #else:
         #    print '\nMethod is implemented only for ChoiceModels.\n'
             

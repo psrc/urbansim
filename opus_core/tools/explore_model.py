@@ -69,4 +69,4 @@ if __name__ == '__main__':
     try: import wingdbstub
     except: pass
     ex = main()
-    #ex.export_probabilities(submodel=1, filename="elcm_probs_1.txt")
+    #ex.export_probabilities(submodel=13, filename="elcm_13.txt", attributes_ds1=["sector_id"], attributes_ds2=["parcel_id"])

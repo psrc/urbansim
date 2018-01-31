@@ -19,6 +19,6 @@ class random_choices_from_index(Choices):
         """ 
         choice_idx = random_choices().run(probability, resources)
         index = resources.get("index", None)
-        if index <> None:
+        if index is not None:
             choice_idx = take_choices(index, choice_idx) # transfer random choices to indices
         return choice_idx

@@ -666,7 +666,7 @@ class ChoiceModel(ChunkModel):
         return (probs, choice_ids)
                                 
                 
-    def export_probabilities(self, probabilities, file_name, submodel=None):
+    def export_probabilities(self, probabilities, file_name, submodel=None, attributes_ds1=[], attributes_ds2=[]):
         """Export the current probabilities into a file.
         """
         from opus_core.misc import write_table_to_text_file
@@ -685,7 +685,35 @@ class ChoiceModel(ChunkModel):
         logger.start_block('Exporting choices into %s' % export_file_choices)
         write_table_to_text_file(export_file_choices, choice_ids, mode=mode, delimiter='\t')
         logger.end_block()
+        self.export_other_attributes(file_name, attributes_ds1, attributes_ds2, submodel=submodel, mode=mode)
         
+    def export_other_attributes(self, file_name, attributes_ds1=[], attributes_ds2=[], submodel=None, mode='w'):
+        import os
+        from opus_core.misc import write_table_to_text_file
+        
+        if len(attributes_ds1) == 0 and len(attributes_ds2) == 0:
+            return
+        agent_ids = self.model_interaction.interaction_dataset.get_id_attribute_of_dataset(1)
+        if submodel is not None:
+            agent_ids = agent_ids[self.observations_mapping[submodel]]
+        order_idx = np.argsort(agent_ids)
+        file_name_root, file_name_ext = os.path.splitext(file_name)
+          
+        for attr in attributes_ds1 + attributes_ds2:
+            if attr in attributes_ds2:
+                values = self.model_interaction.interaction_dataset.get_2d_dataset_attribute(attr)
+            else:
+                values = self.model_interaction.interaction_dataset.get_attribute(attr)
+            if submodel is not None:
+                values = values[self.observations_mapping[submodel], :]    
+            values = concatenate((agent_ids[...,newaxis], values), axis=1)
+            # sort results
+            values = values[order_idx,:]
+            export_file = "%s_%s%s" % (file_name_root, attr, file_name_ext)  
+            logger.start_block('Exporting %s into %s' % (attr, export_file))
+            write_table_to_text_file(export_file, values, mode=mode, delimiter='\t')
+            logger.end_block()
+            
     def export_estimation_data(self, submodel, is_chosen_choice, data, coef_names, file_name, use_biogeme_data_format=False):
         from numpy import reshape, repeat
         import os
