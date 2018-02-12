@@ -8,6 +8,7 @@ from urbansim_parcel.models.development_project_proposal_regression_model import
 from opus_core.model import get_specification_for_estimation
 from opus_core.datasets.dataset import Dataset
 from opus_core.models.regression_model import RegressionModel
+from opus_core.logger import logger
 from numpy import where, exp, zeros, minimum, maximum
 import re
 
@@ -54,9 +55,13 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
                                         "parcel_bld_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)"],
                                        dataset_pool=self.dataset_pool)
         units_proposed = proposal_set["units_proposed"]
+        total_res_units = units_proposed[proposal_set["is_res"]].sum()
+        total_nonres_units = units_proposed[proposal_set["is_nonres"]].sum()
         units_proposed[proposal_set["is_res"]] = minimum(units_proposed[proposal_set["is_res"]], maximum(proposal_set["parcel_res_units"] + 1000))
         units_proposed[proposal_set["is_nonres"]] = minimum(units_proposed[proposal_set["is_nonres"]], maximum(proposal_set["parcel_bld_sqft"] + 1000000))
         proposal_set.modify_attribute("units_proposed", units_proposed)
+        logger.log_status("Res. units_proposed reduced from %s to %s. Dif = %s" %(total_res_units, proposal_set["units_proposed"][proposal_set["is_res"]].sum(), total_res_units - proposal_set["units_proposed"][proposal_set["is_res"]].sum()))
+        logger.log_status("Non-res. units_proposed reduced from %s to %s. Dif = %s" %(total_nonres_units, proposal_set["units_proposed"][proposal_set["is_nonres"]].sum(), total_nonres_units - proposal_set["units_proposed"][proposal_set["is_nonres"]].sum()))        
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         return (proposal_set, proposal_component_set, specification, coefficients)
