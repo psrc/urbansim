@@ -8,7 +8,7 @@ from urbansim_parcel.models.development_project_proposal_regression_model import
 from opus_core.model import get_specification_for_estimation
 from opus_core.datasets.dataset import Dataset
 from opus_core.models.regression_model import RegressionModel
-from numpy import where, exp, zeros
+from numpy import where, exp, zeros, minimum, maximum
 import re
 
 class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, RegressionModel):
@@ -45,6 +45,18 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
         proposal_set, specification, coefficients = DevelopmentProjectProposalRegressionModel.prepare_for_run(self, *args, **kwargs)
         proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
                                                 self.dataset_pool.get_dataset('development_template_component'))
+        self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
+        self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
+        # reduce units_proposed 
+        proposal_set.compute_variables(["is_res = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0",
+                                        "is_nonres = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential==0) > 0",
+                                        "parcel_res_units = development_project_proposal.disaggregate(urbansim_parcel.parcel.residential_units)",
+                                        "parcel_bld_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)"],
+                                       dataset_pool=self.dataset_pool)
+        units_proposed = proposal_set["units_proposed"]
+        units_proposed[proposal_set["is_res"]] = minimum(units_proposed[proposal_set["is_res"]], maximum(proposal_set["parcel_res_units"] + 1000))
+        units_proposed[proposal_set["is_nonres"]] = minimum(units_proposed[proposal_set["is_nonres"]], maximum(proposal_set["parcel_bld_sqft"] + 1000000))
+        proposal_set.modify_attribute("units_proposed", units_proposed)
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         return (proposal_set, proposal_component_set, specification, coefficients)
