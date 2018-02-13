@@ -9,7 +9,7 @@ from opus_core.model import get_specification_for_estimation
 from opus_core.datasets.dataset import Dataset
 from opus_core.models.regression_model import RegressionModel
 from opus_core.logger import logger
-from numpy import where, exp, zeros, minimum, maximum
+from numpy import where, exp, zeros, minimum, logical_not
 import re
 
 class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, RegressionModel):
@@ -49,19 +49,20 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         # reduce units_proposed 
-        proposal_set.compute_variables(["is_res = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0",
-                                        "is_nonres = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential==0) > 0",
+        proposal_set.compute_variables(["is_res = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) == urbansim_parcel.development_project_proposal.number_of_components",
                                         "parcel_res_units = development_project_proposal.disaggregate(urbansim_parcel.parcel.residential_units)",
                                         "parcel_bld_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)"],
                                        dataset_pool=self.dataset_pool)
         units_proposed = proposal_set["units_proposed"]
-        total_res_units = units_proposed[proposal_set["is_res"]].sum()
-        total_nonres_units = units_proposed[proposal_set["is_nonres"]].sum()
-        units_proposed[proposal_set["is_res"]] = minimum(units_proposed[proposal_set["is_res"]], proposal_set["parcel_res_units"][proposal_set["is_res"]] + 1000)
-        units_proposed[proposal_set["is_nonres"]] = minimum(units_proposed[proposal_set["is_nonres"]], proposal_set["parcel_bld_sqft"][proposal_set["is_nonres"]] + 1000000)
+        is_res = proposal_set["is_res"] == 1
+        is_nonres = logical_not(is_res)
+        total_res_units = units_proposed[is_res].sum()
+        total_nonres_units = units_proposed[is_nonres].sum()
+        units_proposed[is_res] = minimum(units_proposed[is_res], proposal_set["parcel_res_units"][is_res] + 1000)
+        units_proposed[is_nonres] = minimum(units_proposed[is_nonres], proposal_set["parcel_bld_sqft"][is_nonres] + 1000000)
         proposal_set.modify_attribute("units_proposed", units_proposed)
-        logger.log_status("Res. units_proposed reduced from %s to %s. Dif = %s" %(total_res_units, proposal_set["units_proposed"][proposal_set["is_res"]].sum(), total_res_units - proposal_set["units_proposed"][proposal_set["is_res"]].sum()))
-        logger.log_status("Non-res. units_proposed reduced from %s to %s. Dif = %s" %(total_nonres_units, proposal_set["units_proposed"][proposal_set["is_nonres"]].sum(), total_nonres_units - proposal_set["units_proposed"][proposal_set["is_nonres"]].sum()))        
+        logger.log_status("Res. units_proposed reduced from %s to %s. Dif = %s" %(total_res_units, proposal_set["units_proposed"][is_res].sum(), total_res_units - proposal_set["units_proposed"][is_res].sum()))
+        logger.log_status("Non-res. units_proposed reduced from %s to %s. Dif = %s" %(total_nonres_units, proposal_set["units_proposed"][is_nonres].sum(), total_nonres_units - proposal_set["units_proposed"][is_nonres].sum()))        
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         return (proposal_set, proposal_component_set, specification, coefficients)
