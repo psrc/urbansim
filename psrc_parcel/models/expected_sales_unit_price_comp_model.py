@@ -57,8 +57,8 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
         units_proposed = proposal_set["units_proposed"]
         total_res_units = units_proposed[proposal_set["is_res"]].sum()
         total_nonres_units = units_proposed[proposal_set["is_nonres"]].sum()
-        units_proposed[proposal_set["is_res"]] = minimum(units_proposed[proposal_set["is_res"]], proposal_set["parcel_res_units"] + 1000)
-        units_proposed[proposal_set["is_nonres"]] = minimum(units_proposed[proposal_set["is_nonres"]], proposal_set["parcel_bld_sqft"] + 1000000)
+        units_proposed[proposal_set["is_res"]] = minimum(units_proposed[proposal_set["is_res"]], proposal_set["parcel_res_units"][proposal_set["is_res"]] + 1000)
+        units_proposed[proposal_set["is_nonres"]] = minimum(units_proposed[proposal_set["is_nonres"]], proposal_set["parcel_bld_sqft"][proposal_set["is_nonres"]] + 1000000)
         proposal_set.modify_attribute("units_proposed", units_proposed)
         logger.log_status("Res. units_proposed reduced from %s to %s. Dif = %s" %(total_res_units, proposal_set["units_proposed"][proposal_set["is_res"]].sum(), total_res_units - proposal_set["units_proposed"][proposal_set["is_res"]].sum()))
         logger.log_status("Non-res. units_proposed reduced from %s to %s. Dif = %s" %(total_nonres_units, proposal_set["units_proposed"][proposal_set["is_nonres"]].sum(), total_nonres_units - proposal_set["units_proposed"][proposal_set["is_nonres"]].sum()))        
