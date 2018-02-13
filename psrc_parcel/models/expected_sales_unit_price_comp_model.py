@@ -54,6 +54,7 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
                                         "parcel_bld_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.building_sqft)"],
                                        dataset_pool=self.dataset_pool)
         units_proposed = proposal_set["units_proposed"]
+        proposal_set.add_primary_attribute(units_proposed.copy(), "units_proposed_orig")
         is_res = proposal_set["is_res"] == 1
         is_nonres = logical_not(is_res)
         total_res_units = units_proposed[is_res].sum()
