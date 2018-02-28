@@ -56,5 +56,7 @@ aliases = [
              "profit = psrc_parcel.development_project_proposal.total_revenue - psrc_parcel.development_project_proposal.total_investment",
              "expected_rate_of_return_on_investment = safe_array_divide(psrc_parcel.development_project_proposal.profit, psrc_parcel.development_project_proposal.total_investment)",
              "land_value = development_project_proposal.disaggregate(parcel.land_value)",
-             "prcl_imp_value = development_project_proposal.disaggregate(parcel.land_value + urbansim_parcel.parcel.improvement_value)"
+             "prcl_imp_value = development_project_proposal.disaggregate(parcel.land_value + urbansim_parcel.parcel.improvement_value)",
+             "has_residential_component = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0",
+             "is_full_residential = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential == 0) == 0",
            ]
