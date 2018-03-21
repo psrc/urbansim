@@ -378,10 +378,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.logging[key]["proposed_spaces"] += value
             else:
                 self.accounting[key]["proposed_spaces"] += value
-                if self._is_target_reached(key):  ## disable sampling from proposals
-                    component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
-                    proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
-                    self.weight[proposal_indexes] = 0.0
+                self.eliminate_proposals_if_target_reached(key)
                                      
         if building_indexes.size > 0: self.demolished_buildings.extend(building_indexes.tolist())
         self.accepted_proposals.append(proposal_index)
@@ -391,6 +388,13 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.weight[self.proposal_set["parcel_id"] == this_site] = 0.0
         return True
     
+    def eliminate_proposals_if_target_reached(self, key):
+        if self._is_target_reached(key):  ## disable proposals from sampling
+            component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+            proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
+            self.weight[proposal_indexes] = 0.0
+        return
+        
     def _is_target_reached(self, column_value=()):
         if column_value:
             if self.accounting.has_key(column_value):

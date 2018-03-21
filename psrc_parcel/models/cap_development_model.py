@@ -85,8 +85,21 @@ class CapDevelopmentModel(TransitionModel):
         if year is None:
             year = SimulationState().get_current_time()
         
-        ctyear = self.control_totals_all['year'][(self.control_totals_all['year']<=year)*(self.control_totals_all[ct_geo_id_name]>0)].max()
-        ctyear_next = self.control_totals_all['year'][(self.control_totals_all['year']>year)*(self.control_totals_all[ct_geo_id_name]>0)].min()
+        is_below = (self.control_totals_all['year']<=year)*(self.control_totals_all[ct_geo_id_name]>0)
+        if is_below.sum() == 0:
+            logger.log_warning("No local controls before or at %s" % year)
+        else:
+            ctyear = self.control_totals_all['year'][is_below].max()
+            is_above = (self.control_totals_all['year']>year)*(self.control_totals_all[ct_geo_id_name]>0)
+            if is_above.sum() == 0:
+                logger.log_warning("No local controls after %s" % year)
+            else:
+                ctyear_next = self.control_totals_all['year'][is_above].min()
+                
+        if is_below.sum() == 0 or is_above.sum() == 0:
+            self.dataset.add_primary_attribute(name=cap_attribute_name, data=zeros(self.dataset.size(), dtype='bool8'))
+            return self.dataset
+        
         if compare_absolute_numbers:
             ctyear = ctyear_next # compare to the next time period; for growth the growth rate should be assigned to the current year
         else:
@@ -181,6 +194,12 @@ class Tests(opus_unittest.OpusTestCase):
         # growth rate    0.4    0.833   0.08  0.17
         # tot growth     2       5      0.4    1
         
+        self.annual_household_control_totals_data_no_local = {
+            'year':                        array([2014, 2014, 2015,  2020, 2020, 2021]),
+            'city_id':                     array([  -1,   -1,    -1,   2,   1,    -1]),
+            'total_number_of_households':  array([  10,   20,    40,   11,  7,    17]),
+            "income":                      array([ 100,  200,   -1,    -1, -1,    100]),
+        }        
         
     def test_cap_development_faz_growth_rate(self):
         """ Test using faz  and growth rate for controlling the growth.
@@ -274,6 +293,39 @@ class Tests(opus_unittest.OpusTestCase):
         # All parcels from city 1 exceeded the growth
         should_be = array([True, True, False, False, False, True, True])
         self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))         
+
+    def test_cap_do_nothing(self):
+        """ If no local-level controls before the target year, do nothing.
+        """
+                
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='parcels', table_data=self.parcels_data)
+        pcl = ParcelDataset(in_storage=storage, in_table_name='parcels')
+        pcl.modify_attribute("number_of_households", 20, index=0)
+        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim', 'opus_core'],
+                                   datasets_dict={'parcel': pcl})
+        storage.write_table(table_name='ct', table_data=self.annual_household_control_totals_data_no_local)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='ct', what='household',
+                                      id_name=[])
+        
+        model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
+        model.run(year=2015, ct_attribute_name='total_growth=0.95*psrc_parcel.control_total.household_total_growth_luv', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=False, 
+                  annual=False, growth_rate=False, geo_id_name='city_id', cap_attribute_name="target_achieved", 
+                  dataset_pool=dataset_pool                
+                  )
+        # No parcel exceeded the growth
+        should_be = array(7*[False])
+        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))
+
+        model.run(year=2020, ct_attribute_name='total_growth=0.95*psrc_parcel.control_total.household_total_growth_luv', 
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=False, 
+                  annual=False, growth_rate=False, geo_id_name='city_id', cap_attribute_name="target_achieved", 
+                  dataset_pool=dataset_pool                
+                  )
+        # No parcel exceeded the growth
+        should_be = array(7*[False])
+        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))
 
         
 if __name__=='__main__':

@@ -69,6 +69,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_MU_same_weight=False,
             within_parcel_selection_transpose_interpcl_weight=True,
             within_parcel_selection_include_no_demand_proposals=False,
+            between_parcel_selection_elimination_threshold=0,
             run_config=None,
             debuglevel=0):
         """
@@ -103,6 +104,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         self.accepted_proposals = []
         self.demolished_buildings = []  #id of buildings to be demolished
 
+        self.elimination_threshold = between_parcel_selection_elimination_threshold
+        
         if self.proposal_set.n <= 0:
             logger.log_status("The size of proposal_set is 0; no proposals to consider, skipping DPPSM.")
             return (self.proposal_set, self.demolished_buildings)
@@ -276,6 +279,14 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 
         return (self.proposal_set, self.realestate_dataset.get_id_attribute()[self.demolished_buildings])
 
+    def eliminate_proposals_if_target_reached(self, key):
+        if self._is_target_reached(key):  ## disable proposals from sampling
+            component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+            component_indexes = logical_and(component_indexes, self.proposal_component_set["percent_building_sqft"] > self.elimination_threshold)
+            proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
+            self.weight[proposal_indexes] = 0.0
+        return
+    
     def _is_target_reached(self, column_value=()):
         if column_value:
             if self.accounting.has_key(column_value):
