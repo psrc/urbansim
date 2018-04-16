@@ -39,7 +39,8 @@ aliases = [
            "income_groups_for_tm = person.disaggregate(1*(household.income <= 20000) + 2*(household.income > 20000)*(household.income <= 80000) + 3*(household.income > 80000))",
            "new_zone_id = person.disaggregate(parcel.new_zone_id, intermediates=[building, household])",
            "city_id = person.disaggregate(parcel.city_id, intermediates=[building, household])",
-           "tractcity_id = person.disaggregate(parcel.tractcity_id, intermediates=[building, household])"
+           "tractcity_id = person.disaggregate(parcel.tractcity_id, intermediates=[building, household])",
+           "county_id = person.disaggregate(psrc_parcel.household.county_id)"
            ]
 has_older_sibl_of_same_age_cat = "has_older_sibling_own_age_category_in_private_school = ((psrc_parcel.person.age_category == 1) * (person.disaggregate(psrc_parcel.household.age_of_oldest_child_age_category_1_in_private_school) > person.age))" 
 school_of_older_sibl_of_same_age_cat = "school_of_older_sibling_own_age_category_private = ((psrc_parcel.person.age_category == 1) * (person.disaggregate(psrc_parcel.household.age_of_oldest_child_age_category_1_in_private_school) > person.age) * person.disaggregate(psrc_parcel.household.school_of_oldest_child_in_age_category_1_private))" 
