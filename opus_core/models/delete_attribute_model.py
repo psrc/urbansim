@@ -17,13 +17,20 @@ class DeleteAttributeModel(Model):
         if model_name is not None:
             self.model_name = model_name
 
-    def run(self, dataset, attribute):
+    def run(self, dataset, attribute, write_to_cache = False):
         """
         If 'attribute' is not a known attribute of 'dataset', the model does nothing.
         Otherwise the attribute is deleted.
         """
         if attribute in dataset.get_known_attribute_names():
             dataset.delete_one_attribute(attribute)
+            if write_to_cache:
+                # in order not to have the deleted attributes in cache from previous flushings
+                table_name = dataset._get_in_table_name_for_cache()
+                dataset.attribute_cache.delete_table(table_name)
+                dataset.write_dataset(attributes=dataset.get_primary_attribute_names(), 
+                                      out_storage = dataset.attribute_cache, 
+                                      out_table_name = table_name)        
         return
     
 from opus_core.tests import opus_unittest

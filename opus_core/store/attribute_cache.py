@@ -70,9 +70,16 @@ class AttributeCache(Storage):
 
         return result
 
-    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
+    def get_current_storage(self):
         year = SimulationState().get_current_time()
-        storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
+        return flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
+    
+    def delete_table(self, table_name):
+        storage = self.get_current_storage()
+        storage.delete_table(table_name)
+        
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
+        storage = self.get_current_storage()
         return storage.write_table(table_name, table_data, mode)
 
     def delete_computed_tables(self):
