@@ -178,7 +178,7 @@ class RegressionModel(ChunkModel):
         """
         #import wingdbstub
         self.debug.flag = debuglevel
-        if estimate_config == None:
+        if estimate_config is None:
             estimate_config = Resources()
         if not isinstance(estimate_config,Resources) and isinstance(estimate_config, dict):
             estimate_config = Resources(estimate_config)
@@ -186,7 +186,7 @@ class RegressionModel(ChunkModel):
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.procedure=procedure
-        if self.procedure == None:
+        if self.procedure is None:
             self.procedure = self.estimate_config.get("estimation", None)
         if self.procedure is not None:
             self.procedure = ModelComponentCreator().get_model_component(self.procedure)
@@ -196,13 +196,13 @@ class RegressionModel(ChunkModel):
         compute_resources = Resources({"debug":self.debug})
         if dataset.size()<=0: # no data loaded yet
             dataset.get_id_attribute()
-        if index == None:
+        if index is None:
             index = arange(dataset.size())
         if not isinstance(index,ndarray):
             index=array(index)
 
         estimation_size_agents = self.estimate_config.get("estimation_size_agents", None) # should be a proportion of the agent_set
-        if estimation_size_agents == None:
+        if estimation_size_agents is None:
             estimation_size_agents = 1.0
         else:
             estimation_size_agents = max(min(estimation_size_agents,1.0),0.0) # between 0 and 1
