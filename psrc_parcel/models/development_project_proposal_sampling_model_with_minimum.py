@@ -62,6 +62,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             occupied_spaces_variable="occupied_spaces",
             total_spaces_variable="total_spaces",
             minimum_spaces_attribute="minimum_spaces",
+            targets_attributes_to_remove = [],
             within_parcel_selection_weight_string=None,
             within_parcel_selection_n=0,
             within_parcel_selection_compete_among_types=False,
@@ -127,7 +128,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                             set( [ target_vacancy.target_attribute_name, 
                                    'year', '_hidden_id_', minimum_spaces_attribute,
                                    occupied_spaces_variable, total_spaces_variable
-                                   ] )
+                                   ] + targets_attributes_to_remove)
                             )
         self.column_names.sort(reverse=True)
             
