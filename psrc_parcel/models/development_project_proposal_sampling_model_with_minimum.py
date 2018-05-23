@@ -70,6 +70,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             within_parcel_selection_MU_same_weight=False,
             within_parcel_selection_transpose_interpcl_weight=True,
             within_parcel_selection_include_no_demand_proposals=False,
+            within_parcel_selection_residential_preference = 50, # as percentage; 50 means no preference
             between_parcel_selection_elimination_threshold=0,
             run_config=None,
             debuglevel=0):
@@ -229,7 +230,8 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                                  filter_threshold=within_parcel_selection_threshold,
                                                  MU_same_weight=within_parcel_selection_MU_same_weight,
                                                  transpose_interpcl_weight=within_parcel_selection_transpose_interpcl_weight,
-                                                 include_no_demand_proposals=within_parcel_selection_include_no_demand_proposals)
+                                                 include_no_demand_proposals=within_parcel_selection_include_no_demand_proposals,
+                                                 residential_preference = within_parcel_selection_residential_preference)
             logger.end_block()
         
         # consider proposals (in this order: proposed, tentative)
@@ -306,7 +308,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
 
     def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75, 
                                         MU_same_weight=False, transpose_interpcl_weight=True, 
-                                        include_no_demand_proposals=False):
+                                        include_no_demand_proposals=False, residential_preference = 50):
         # Allow only nmax proposals per parcel in order to not disadvantage parcels with small amount of proposals.
         # It takes proposals with the highest weights.
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'])
@@ -379,83 +381,95 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 if incompetition.sum() <= 0:
                     break
              
-            self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
-            if MU_same_weight:
-                # Set weights of mix-use proposals within the same parcel to the same value
-                parcels = self.dataset_pool.get_dataset('parcel')
-#                parcels.compute_variables(['mu_ind = parcel.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12) + numpy.logical_or(development_project_proposal_component.building_type_id==3, development_project_proposal_component.building_type_id==13), intermediates=[development_project_proposal])'], 
+        self.proposal_set['status_id'][where(egligible)] = self.proposal_set.id_eliminated_in_within_parcel_selection
+        if MU_same_weight:
+            # Set weights of mix-use proposals within the same parcel to the same value
+            parcels = self.dataset_pool.get_dataset('parcel')
+#            parcels.compute_variables(['mu_ind = parcel.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12) + numpy.logical_or(development_project_proposal_component.building_type_id==3, development_project_proposal_component.building_type_id==13), intermediates=[development_project_proposal])'], 
 #                                                    dataset_pool=self.dataset_pool)
-#                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 1]
-#                is_mu = logical_and(logical_and(self.weight > 0, 
+#            pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 1]
+#            is_mu = logical_and(logical_and(self.weight > 0, 
 #                                self.proposal_set['status_id'] == self.proposal_set.id_tentative),
 #                                       in1d(self.proposal_set['parcel_id'], pcl_ids))
-#                where_mu = where(is_mu)[0]
-#                if where_mu.size <= 0:
-#                    return
-#                trans_weights = self.weight[where_mu]
-#                if transpose_interpcl_weight:
-#                    trans_weights = log(trans_weights)
-#                pcl_idx = parcels.get_id_index(self.proposal_set['parcel_id'][where_mu])
-#                upcl_idx = unique(pcl_idx)
-#                weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
-#                if transpose_interpcl_weight:
-#                    weight_mean = exp(weight_mean)
-#                weight_mean_tmp = zeros(upcl_idx.max()+1).astype(weight_mean.dtype)
-#                weight_mean_tmp[upcl_idx]=weight_mean
-#                self.weight[where_mu]=weight_mean_tmp[pcl_idx]
-                self.proposal_set.compute_variables(['is_mfres = development_project_proposal.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12))'],
-                                                    dataset_pool=self.dataset_pool)
-                parcels.compute_variables(['mu_ind = (parcel.aggregate(development_project_proposal.is_mfres)>0) * (parcel.mix_split_id > 0)'], 
-                                                    dataset_pool=self.dataset_pool)
-                pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 0]
-                egligible_props = logical_and(self.weight > 0, logical_and(
-                                self.proposal_set['status_id'] == self.proposal_set.id_tentative,
-                                self.proposal_set['is_mfres']>0))
-                where_prop_to_modify = where(logical_and(egligible_props,
-                                       in1d(self.proposal_set['parcel_id'], pcl_ids)))[0]
-                if where_prop_to_modify.size <= 0:
-                    return
-                upcl = unique(self.proposal_set['parcel_id'][where_prop_to_modify])               
-                npcl_to_modify = int(upcl.size/10.0)
-                if npcl_to_modify == 0:
-                    return
-                pcls_to_modify = sample_noreplace(upcl, npcl_to_modify)
-                where_prop_to_modify_final = where(logical_and(egligible_props,
-                                       in1d(self.proposal_set['parcel_id'], pcls_to_modify)))[0]
-                trans_weights = self.weight[where_prop_to_modify_final]
-                if transpose_interpcl_weight:
-                    trans_weights = log(trans_weights)
-                #trans_weights = 1.2*trans_weights
-                if transpose_interpcl_weight:
-                    trans_weights = exp(trans_weights)
-                self.weight[where_prop_to_modify_final] = trans_weights
+#            where_mu = where(is_mu)[0]
+#            if where_mu.size <= 0:
+#                return
+#            trans_weights = self.weight[where_mu]
+#            if transpose_interpcl_weight:
+#               trans_weights = log(trans_weights)
+#            pcl_idx = parcels.get_id_index(self.proposal_set['parcel_id'][where_mu])
+#            upcl_idx = unique(pcl_idx)
+#            weight_mean = array(ndimage_mean(trans_weights, labels=pcl_idx,  index=upcl_idx))
+#            if transpose_interpcl_weight:
+#                weight_mean = exp(weight_mean)
+#            weight_mean_tmp = zeros(upcl_idx.max()+1).astype(weight_mean.dtype)
+#            weight_mean_tmp[upcl_idx]=weight_mean
+#            self.weight[where_mu]=weight_mean_tmp[pcl_idx]
+            self.proposal_set.compute_variables(['is_mfres = development_project_proposal.aggregate(numpy.logical_or(development_project_proposal_component.building_type_id==4, development_project_proposal_component.building_type_id==12))'],
+                                                dataset_pool=self.dataset_pool)
+            parcels.compute_variables(['mu_ind = (parcel.aggregate(development_project_proposal.is_mfres)>0) * (parcel.mix_split_id > 0)'], 
+                                                dataset_pool=self.dataset_pool)
+            pcl_ids = parcels.get_id_attribute()[parcels['mu_ind'] > 0]
+            egligible_props = logical_and(self.weight > 0, logical_and(
+                            self.proposal_set['status_id'] == self.proposal_set.id_tentative,
+                            self.proposal_set['is_mfres']>0))
+            where_prop_to_modify = where(logical_and(egligible_props,
+                                   in1d(self.proposal_set['parcel_id'], pcl_ids)))[0]
+            if where_prop_to_modify.size <= 0:
+                return
+            upcl = unique(self.proposal_set['parcel_id'][where_prop_to_modify])               
+            npcl_to_modify = int(upcl.size/10.0)
+            if npcl_to_modify == 0:
+                return
+            pcls_to_modify = sample_noreplace(upcl, npcl_to_modify)
+            where_prop_to_modify_final = where(logical_and(egligible_props,
+                                   in1d(self.proposal_set['parcel_id'], pcls_to_modify)))[0]
+            trans_weights = self.weight[where_prop_to_modify_final]
+            if transpose_interpcl_weight:
+                trans_weights = log(trans_weights)
+            #trans_weights = 1.2*trans_weights
+            if transpose_interpcl_weight:
+                trans_weights = exp(trans_weights)
+            self.weight[where_prop_to_modify_final] = trans_weights
+        
+        # adjust for number of proposals per parcel by building type
+        to_adjust = logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
+                               self.proposal_set["status_id"] == self.proposal_set.id_proposed)
+        for key in self.column_names:
+            utypes_all = unique(self.proposal_component_set[key])
+            adjfactor = ones(self.proposal_set.size(), dtype='float32')
+            for btype in utypes_all:
+                is_bt = ndimage.sum(self.proposal_component_set[key] == btype,
+                                    labels=self.proposal_component_set['proposal_id'], 
+                                    index=self.proposal_set.get_id_attribute()
+                                    )  == self.proposal_set["number_of_components"]
+                toadj = logical_and(to_adjust, is_bt)                   
+                # number of proposals per parcel of this building type
+                nbtprops = ndimage.sum(toadj, labels=self.proposal_set['parcel_id'], 
+                                       index=self.proposal_set['parcel_id']
+                                    )
+                wadj = where(toadj)[0]
+                adjfactor[wadj] = 1./nbtprops[wadj]
+                # mix-used type with components of different type should have adjfactor equal one             
             
-            # adjust for number of proposals per parcel by building type
-            to_adjust = logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
-                                   self.proposal_set["status_id"] == self.proposal_set.id_proposed)
-            for key in self.column_names:
-                utypes_all = unique(self.proposal_component_set[key])
-                adjfactor = ones(self.proposal_set.size(), dtype='float32')
-                for btype in utypes_all:
-                    is_bt = ndimage.sum(self.proposal_component_set[key] == btype,
-                                        labels=self.proposal_component_set['proposal_id'], 
-                                        index=self.proposal_set.get_id_attribute()
-                                        )  == self.proposal_set["number_of_components"]
-                    toadj = logical_and(to_adjust, is_bt)                   
-                    # number of proposals per parcel of this building type
-                    nbtprops = ndimage.sum(toadj, labels=self.proposal_set['parcel_id'], 
-                                           index=self.proposal_set['parcel_id']
-                                        )
-                    wadj = where(toadj)[0]
-                    adjfactor[wadj] = 1./nbtprops[wadj]
-                    # mix-used type with components of different type should have adjfactor equal one             
-            
-            # rescale the adjustment factor to sum up to 1
-            adjfactor[where(to_adjust == False)] = 0
-            sadjfactor = ndimage.sum(adjfactor, labels=self.proposal_set['parcel_id'], 
-                                                   index=self.proposal_set['parcel_id'])  
-            adjfactor_scaled = safe_array_divide(adjfactor, sadjfactor)
-            wto_adjust = where(to_adjust)[0]
-            self.weight[wto_adjust] = self.weight[wto_adjust] * adjfactor_scaled[wto_adjust]   
-            return
-            
+        # rescale the adjustment factor to sum up to 1
+        adjfactor[where(to_adjust == False)] = 0
+        sadjfactor = ndimage.sum(adjfactor, labels=self.proposal_set['parcel_id'], 
+                                               index=self.proposal_set['parcel_id'])  
+        adjfactor_scaled = safe_array_divide(adjfactor, sadjfactor)
+        wto_adjust = where(to_adjust)[0]
+        self.weight[wto_adjust] = self.weight[wto_adjust] * adjfactor_scaled[wto_adjust]
+        
+        if residential_preference <> 50: 
+            # give preference to res or nonres proposals (makes sense if proposals on the same parcel have the same weight)
+            res_factor = 2*residential_preference/100.
+            nonres_factor = 2*(1-residential_preference/100.)
+            self.proposal_set.compute_variables(["psrc_parcel.development_project_proposal.is_full_residential", 
+                                                 "is_full_nonresidential = (psrc_parcel.development_project_proposal.has_residential_component == 0)"],
+                                                dataset_pool=self.dataset_pool)
+            wres = where(logical_and(to_adjust, self.proposal_set['is_full_residential'] > 0))[0]
+            wnres = where(logical_and(to_adjust, self.proposal_set['is_full_nonresidential'] > 0))[0]
+            self.weight[wres] = self.weight[wres]*res_factor
+            self.weight[wnres] = self.weight[wnres]*nonres_factor
+        return
+    
