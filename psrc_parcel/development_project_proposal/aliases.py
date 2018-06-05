@@ -59,4 +59,6 @@ aliases = [
              "prcl_imp_value = development_project_proposal.disaggregate(parcel.land_value + urbansim_parcel.parcel.improvement_value)",
              "has_residential_component = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0",
              "is_full_residential = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential == 0) == 0",
-           ]
+             "fraction_residential = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential * urbansim_parcel.development_project_proposal_component.percent_building_sqft)/100.0",
+             "fraction_non_residential = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_non_residential * urbansim_parcel.development_project_proposal_component.percent_building_sqft)/100.0",
+]
