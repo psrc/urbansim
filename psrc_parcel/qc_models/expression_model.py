@@ -43,7 +43,7 @@ class ExpressionModel(Model):
        # all constraints have higher max than min
        18: "development_constraint.maximum > development_constraint.minimum",
        # non-residential constraints don't exceed a floor area ratio of 60
-       19: "development_constraint.constraint_type=='units_per_acre' + development_constraint.maximum < 60", 
+       19: "numpy.logical_or(development_constraint.constraint_type=='units_per_acre', development_constraint.maximum < 60)",
     }
     
     # non-critical checks (code will throw a warning if there is any False, otherwise an error)
