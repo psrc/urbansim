@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from numpy import newaxis, concatenate
+from numpy import newaxis, concatenate, where
 
 class avg_network_distance_from_home_to_work(Variable):
     """avg_network_distance_from_home_to_work between worker1 & worker2"""
@@ -18,5 +18,7 @@ class avg_network_distance_from_home_to_work(Variable):
         interaction_dataset = self.get_dataset()
         data1 = interaction_dataset.get_attribute("worker1_network_distance_from_home_to_work")
         data2 = interaction_dataset.get_attribute("worker2_network_distance_from_home_to_work")
-
+        # if no worker2, use worker1 distance
+        missing = where(data2 == 0)
+        data2[missing] = data1[missing]
         return concatenate((data1[...,newaxis], data2[...,newaxis]), axis=2).mean(axis=2)

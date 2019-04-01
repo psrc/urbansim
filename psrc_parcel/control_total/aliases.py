@@ -3,5 +3,5 @@
 # See opus_core/LICENSE
 
 aliases = [
-           'county_id = control_total.disaggregate(city.county_id)',
+           'county_id = control_total.disaggregate(subreg.county_id)'
            ]

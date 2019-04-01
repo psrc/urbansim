@@ -10,4 +10,5 @@ aliases = ["building_type_id = job.disaggregate(building.building_type_id)",
            "city_id = job.disaggregate(parcel.city_id, intermediates=[building])",
            "tractcity_id = job.disaggregate(parcel.tractcity_id, intermediates=[building])",
            "county_id = job.disaggregate(city.county_id, intermediates=[parcel, building])", 
+           "subreg_id = job.disaggregate(parcel.subreg_id, intermediates=[building])",
            ]

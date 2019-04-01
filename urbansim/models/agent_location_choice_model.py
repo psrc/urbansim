@@ -225,7 +225,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                                                    self.estimate_config["weights_for_estimation_string"],
                                                    resources=Resources(data_objects))
 
-        specification, index = prepare_for_estimate(agent_set=agent_set,
+        specification, index = prepare_for_estimate(agent_set=agent_set, data_objects=data_objects,
                                                     *args, **kwargs)
 
         return (specification, index)
