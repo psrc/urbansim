@@ -61,5 +61,6 @@ aliases = [
       "fraction_occupied_by_non_home_based_jobs = safe_array_divide(psrc_parcel.building.number_of_non_home_based_jobs, psrc_parcel.building.total_non_home_based_job_space)",
       "has_vacancy_for_new_sector = numpy.logical_or(numpy.logical_and(psrc_parcel.building.fraction_occupied_by_non_home_based_jobs < 0.5, psrc_parcel.building.vacant_non_home_based_job_space > 20), psrc_parcel.building.number_of_non_home_based_jobs == 0)",
       "residential_land_area = building.disaggregate(safe_array_divide(psrc_parcel.parcel.total_residential_land_area_from_constraints, psrc_parcel.parcel.residential_units)) * building.residential_units",
-      "census_tract_id = building.disaggregate(census_block_group.census_tract_id, intermediates=[census_block, parcel])"
+      "census_tract_id = building.disaggregate(census_block_group.census_tract_id, intermediates=[census_block, parcel])",
+      "subreg_id = building.disaggregate(parcel.subreg_id)",
            ]
