@@ -42,6 +42,7 @@ aliases = [
            "tractcity_id = person.disaggregate(parcel.tractcity_id, intermediates=[building, household])",
            "county_id = person.disaggregate(psrc_parcel.household.county_id)",
            "faz_id = person.disaggregate(urbansim_parcel.household.faz_id)",
+           "subreg_id = person.disaggregate(parcel.subreg_id, intermediates=[building, household])",
            ]
 has_older_sibl_of_same_age_cat = "has_older_sibling_own_age_category_in_private_school = ((psrc_parcel.person.age_category == 1) * (person.disaggregate(psrc_parcel.household.age_of_oldest_child_age_category_1_in_private_school) > person.age))" 
 school_of_older_sibl_of_same_age_cat = "school_of_older_sibling_own_age_category_private = ((psrc_parcel.person.age_category == 1) * (person.disaggregate(psrc_parcel.household.age_of_oldest_child_age_category_1_in_private_school) > person.age) * person.disaggregate(psrc_parcel.household.school_of_oldest_child_in_age_category_1_private))" 
