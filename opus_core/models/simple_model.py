@@ -19,12 +19,16 @@ class SimpleModel(Model):
             self.model_name = model_name
 
     def run(self, dataset, expression=None, outcome_attribute=None, outcome_values=None, 
-            dataset_filter=None, dataset_pool=None):
+            dataset_filter=None, dataset_pool=None, year = None, year_condition = None):
         """
         dataset_filter - if it is specified and outcome_attribute exists, only update values for dataset records whose dataset_filter is True.
         outcome_values - if expression is None and outcome_values is an numpy array of the same size as dataset, 
                         the outcome_values are assigned to outcome_attribute.
+        year, year_condition - if both are given, the model is applied only if eval(year + year_condition) is true.
         """
+        if year is not None and year_condition is not None:
+            if not eval(year + year_condition):
+                return
         if not expression:
             if isinstance(outcome_values, ndarray) and outcome_values.size == dataset.size():
                 values = outcome_values
