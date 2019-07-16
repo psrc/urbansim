@@ -27,7 +27,7 @@ class SimpleModel(Model):
         year, year_condition - if both are given, the model is applied only if eval(year + year_condition) is true.
         """
         if year is not None and year_condition is not None:
-            if not eval(year + year_condition):
+            if not eval(str(year) + year_condition):
                 return
         if not expression:
             if isinstance(outcome_values, ndarray) and outcome_values.size == dataset.size():
