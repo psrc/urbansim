@@ -62,8 +62,10 @@ class ExpectedSalesUnitPriceModel(DevelopmentProjectProposalRegressionModel, Reg
         units_proposed[is_res] = minimum(units_proposed[is_res], proposal_set["parcel_res_units"][is_res] + 1000)
         units_proposed[is_nonres] = minimum(units_proposed[is_nonres], proposal_set["parcel_bld_sqft"][is_nonres] + 1000000)
         proposal_set.modify_attribute("units_proposed", units_proposed)
-        logger.log_status("Res. units_proposed reduced from %s to %s. Dif = %s" %(total_res_units, proposal_set["units_proposed"][is_res].sum(), total_res_units - proposal_set["units_proposed"][is_res].sum()))
-        logger.log_status("Non-res. units_proposed reduced from %s to %s. Dif = %s" %(total_nonres_units, proposal_set["units_proposed"][is_nonres].sum(), total_nonres_units - proposal_set["units_proposed"][is_nonres].sum()))        
+        logger.log_status("Res. units_proposed reduced from %s to %s (in thousands). Dif = %s" %(int(round(total_res_units/1000.)), int(round(proposal_set["units_proposed"][is_res].sum()/1000.)), 
+                                                                                                 round((total_res_units - proposal_set["units_proposed"][is_res].sum())/1000.,3)))
+        logger.log_status("Non-res. units_proposed reduced from %s to %s (in million). Dif = %s" %(int(round(total_nonres_units/1000000.)), int(round(proposal_set["units_proposed"][is_nonres].sum()/1000000.)), 
+                                                                                                   round((total_nonres_units - proposal_set["units_proposed"][is_nonres].sum())/1000000.,3)))        
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         self.dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         return (proposal_set, proposal_component_set, specification, coefficients)
