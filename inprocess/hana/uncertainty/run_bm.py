@@ -13,11 +13,12 @@ from opus_core.misc import unique_values, write_table_to_text_file
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 
-hhs_vars = {'zone': "urbansim_parcel.zone.number_of_households",
-            'faz': "number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
-            'large_area': "number_of_households = large_area.aggregate(urbansim_parcel.zone.number_of_households, intermediates=[faz])",
-            'city': "number_of_households = city.aggregate(urbansim_parcel.parcel.number_of_households)",
-            'tract10': "number_of_households = tract10.aggregate(urbansim_parcel.parcel.number_of_households)",
+hhs_vars = {#'zone': "urbansim_parcel.zone.number_of_households",
+            #'faz': "number_of_households = faz.aggregate(urbansim_parcel.zone.number_of_households)",
+            #'large_area': "number_of_households = large_area.aggregate(urbansim_parcel.zone.number_of_households, intermediates=[faz])",
+            #'city': "number_of_households = city.aggregate(urbansim_parcel.parcel.number_of_households)",
+            #'tract10': "number_of_households = tract10.aggregate(urbansim_parcel.parcel.number_of_households)",
+            'census_block_group': "number_of_households = census_block_group.aggregate(urbansim_parcel.parcel.number_of_households)",
             }
 jobs_vars = {'zone': "urbansim_parcel.zone.number_of_jobs",
              'faz': "number_of_jobs = faz.aggregate(urbansim_parcel.zone.number_of_jobs)",
@@ -37,21 +38,25 @@ if __name__ == "__main__":
     except: pass
     # What directory contains the multiple runs'
     cache_directory = "/Users/hana/workspace/data/psrc_parcel/runs"
+    cache_directory = "/Volumes/d$/opusgit/urbansim_data/data/psrc_parcel/MRuns"
     #cache_directory = "/Volumes/D Drive TMOD3/opus/data/psrc_parcel/runs"
     # Where the observed data is stored
-    observed_data_dir = "/Users/hana/psrc3656/workspace/data/psrc_parcel/observed_data"
-    validation_year = 2010
-    run = 223
+    observed_data_dir = "/Users/hana/workspace/data/psrc_parcel/observed_data"
+    validation_year = 2018
+    run = ''
     #run = 'MR223'
     #run = 'MRr'
     #run = 10
     run_name_prefix = 'run_%s' % run
-    validation_geography = 'large_area'
+    #run_name_prefix = 'run_'
+    #validation_geography = 'large_area'
     #validation_geography = 'faz'
     #validation_geography = 'city'
     #validation_geography = 'tract10'
-    validation_geography = 'zone'
-    output_dir_base = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal"
+    #validation_geography = 'zone'
+    validation_geography = 'census_block_group'
+    #output_dir_base = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal"
+    output_dir_base = "/Users/hana/workspace/data/psrc_parcel/BMforTM"
     output_directory = "%s/run%s_val%s_%s" % (output_dir_base, run, validation_year, validation_geography)
     
     
@@ -60,7 +65,7 @@ if __name__ == "__main__":
  
     observed_data = ObservedData(observed_data_dir, 
                                  year=validation_year, # from what year are the observed data 
-                                 storage_type='tab_storage', # in what format
+                                 storage_type='csv_storage', # in what format
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
     known_output=[
@@ -77,19 +82,19 @@ if __name__ == "__main__":
 #                     'transformation': "sqrt",
 #                   #'filter': "urbansim_parcel.zone.number_of_households",
 #                   },
-                  {#'variable_name': "urbansim_parcel.zone.number_of_jobs",
-                   'variable_name': jobs_vars[validation_geography],
-                   #'filename': "jobs2008", 
-                   'filename': "jobs%s_%s" % (validation_year, validation_geography), 
-                   'transformation': "sqrt",
-                   #'filter': "urbansim_parcel.zone.number_of_jobs",
-                   'id_name': "%s_id" % validation_geography
-                   },
-                {'variable_name': pop_vars[validation_geography],
-                 'filename': "population%s_%s" % (validation_year, validation_geography), 
-                 'transformation': "sqrt",
-                 'id_name': "%s_id" % validation_geography
-                 },
+                  #{#'variable_name': "urbansim_parcel.zone.number_of_jobs",
+                   #'variable_name': jobs_vars[validation_geography],
+                   ##'filename': "jobs2008", 
+                   #'filename': "jobs%s_%s" % (validation_year, validation_geography), 
+                   #'transformation': "sqrt",
+                   ##'filter': "urbansim_parcel.zone.number_of_jobs",
+                   #'id_name': "%s_id" % validation_geography
+                   #},
+                #{'variable_name': pop_vars[validation_geography],
+                 #'filename': "population%s_%s" % (validation_year, validation_geography), 
+                 #'transformation': "sqrt",
+                 #'id_name': "%s_id" % validation_geography
+                 #},
 #                   {'variable_name': "urbansim_parcel.zone_x_employment_sector.number_of_jobs",
 #                   'filename': "jobs_by_zones_and_sectors_flatten", 
 #                   'transformation': "sqrt",
@@ -134,7 +139,7 @@ if __name__ == "__main__":
         
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
-                         base_year=2000, 
+                         base_year=2014, 
                          prefix=run_name_prefix, # within 'cache_directory' filter only directories with this prefix
                          overwrite_cache_directories_file=True,
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
@@ -185,7 +190,8 @@ if __name__ == "__main__":
 #                            directory="/Users/hana/bm/psrc_parcel/simulation_results")
     from run_bm import export_quantiles
     #from run_bm_from_file import export_quant
-    output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)
+    #output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)  
+    export_quantiles(bm, output_directory, years=[2025], validation_geography=validation_geography, propfac_hh = (2025 - 2014)/4., store_simulated=True, repl = 100)
     #export_quantiles(bm, output_directory, years=[2010], validation_geography=validation_geography, no_propagation=[True])
     #export_quantiles(bm, output_directory, years=[2010, 2015, 2020, 2030, 2040], validation_year=validation_year, validation_geography=validation_geography)
     #export_quantiles(bm, output_directory, years=[2040], validation_year=validation_year, validation_geography=validation_geography)
@@ -196,13 +202,15 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
                         propfac_hh=0.95, propfac_jobs=3.5, propfac_pop=3.9, no_propagation=[False], aggregate_to=None, 
                         store_simulated=False, **kwargs):
     header_base = ['mean', 'median', 'lower_50', 'upper_50', 'lower_80', 'upper_80', 'lower_90', 'upper_90', 'lower_95', 'upper_95']
-    idcolname = {'zone': 'zone_id', 'faz': 'faz_id', 'large_area': 'large_area_id', 'city': 'city_id', 'tract10': 'tract10_id', 'reggeo': 'reggeo_id'}
+    idcolname = {'zone': 'zone_id', 'faz': 'faz_id', 'large_area': 'large_area_id', 'city': 'city_id', 'tract10': 'tract10_id', 
+                 'reggeo': 'reggeo_id', 'census_block_group': 'census_block_group_id'}
     header = {}
     for g in idcolname.keys():
         header[g] = array([idcolname[g]] + header_base)[newaxis,:]
     if aggregate_to is not None:
         header[validation_geography] = header[aggregate_to]
-    vars = {'household':hhs_vars, 'job':jobs_vars, 'population':pop_vars}
+    #vars = {'household':hhs_vars, 'job':jobs_vars, 'population':pop_vars}
+    vars = {'household':hhs_vars}
     for year in years:
         if year < validation_year:
             continue
@@ -213,8 +221,8 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
             #for transform in [True, False]:
             transform = True
             propfac = {}
-            for additive_prop in [True, False]:
-            #for additive_prop in [True]:
+            #for additive_prop in [True, False]:
+            for additive_prop in [False]:
                 if nopropag and not additive_prop:
                     continue
                 if additive_prop:
@@ -257,7 +265,14 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
                             hhids = bm.get_m_ids()
                             if transform:
                                 mean_hhs = mean_hhs**2
-                            file_geo = validation_geography                         
+                            file_geo = validation_geography
+                            if store_simulated:
+                                posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest=vars[indicator][validation_geography], 
+                                                       replicates=repl, omit_bias=not bias, no_propagation=nopropag, additive_propagation=[addpropbias, additive_prop], 
+                                                       propagation_factor=[0, propfac[indicator]], transformed_back=transform, **kwargs)
+                                write_table_to_text_file(os.path.join(outdir, "simulated_values_%s" % indicator), round(concatenate((hhids[:,newaxis], bm.simulated_values), axis=1)).astype('int32'), delimiter='\t')
+                                #bm.write_simulated_values(os.path.join(outdir, "simulated_values_%s" % indicator))
+                                #write_table_to_text_file(os.path.join(outdir, 'ids_%s' % indicator), bm.simulated_values_ids[:,newaxis], delimiter='\t')
                         else: # aggregation
                             exact = False
                             posterior_hhs = bm.generate_posterior_distribution(year=year, quantity_of_interest=vars[indicator][validation_geography], aggregate_to=aggregate_to,
@@ -313,8 +328,8 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
     #bm.write_simulated_values("/Users/hana/simulated_values")
     #bm.write_values_from_multiple_runs("/Users/hana/multiple_run_values")
 
-    #bm.write_simulated_values("/home/hana/BM/psrc_analysis/data/simulated_values")
-    #bm.write_values_from_multiple_runs("/home/hana/BM/psrc_analysis/data/multiple_run_values")
+    #bm.write_simulated_values(os.path.join(outdir, "simulated_values"))
+    #bm.write_values_from_multiple_runs(os.path.join(outdir, "multiple_run_values"))
 
     #bm.compute_y()
     #bm.compute_and_write_true_data(2002, "urbansim.zone.population", "/Users/hana/observations")
