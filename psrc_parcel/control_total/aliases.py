@@ -3,5 +3,6 @@
 # See opus_core/LICENSE
 
 aliases = [
-           'county_id = control_total.disaggregate(subreg.county_id)'
+           'county_id = control_total.disaggregate(subreg.county_id)',
+           'region_id = control_total.year >= 0', # we want here just the number 1 for all records
            ]

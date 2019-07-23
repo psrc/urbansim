@@ -190,6 +190,10 @@ class Dataset(AbstractDataset):
             
         table_name = local_resources['in_table_name']
         column_names = local_resources['attributes']
+        if column_names == AttributeType.PRIMARY:
+            column_names = self.get_primary_attribute_names()
+        elif column_names == AttributeType.COMPUTED:
+            column_names = self.get_computed_attribute_names()
         nchunks = local_resources['nchunks']
         # determine set of attributes for each chunk (a list of nchunks lists)
         chunked_attributes = self.chunk_columns(storage=in_storage,

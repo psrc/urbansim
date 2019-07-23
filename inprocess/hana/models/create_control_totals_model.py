@@ -9,7 +9,8 @@ class CreateControlTotalsModel(Model):
     model_name = 'Create Control Totals Model'
     
     def run(self, ct_directory, storage_type = 'csv_storage', in_table_prefix = "control_totals_", sample_range = None,
-            dataset_name = "annual_household_control_total", dataset_pool = None, **kwargs):
+            dataset_name = "annual_household_control_total", out_table_name = None,
+            dataset_pool = None, what =  "household", **kwargs):
         #sc = SessionConfiguration()
         existing_ct = dataset_pool.get_dataset(dataset_name, dataset_arguments={"id_name": []})
         ctstorage = StorageFactory().get_storage(storage_type, storage_location = ct_directory)
@@ -18,16 +19,21 @@ class CreateControlTotalsModel(Model):
         else:
             rn = ''
         in_table_name = "%s%s" % (in_table_prefix, rn)
-        kwargs.update({'in_storage':ctstorage, 'in_table_name': in_table_name})
+        logger.log_status("Using %s" % in_table_name)
+        kwargs.update({'in_storage':ctstorage, 'in_table_name': in_table_name, 'id_name': []})
+        kwargsCT = kwargs.copy()
+        kwargsCT.update({"what": what})
         try:
-            ct_dataset = DatasetFactory().search_for_dataset(dataset_name, dataset_pool.get_package_order(), arguments=kwargs)
+            ct_dataset = DatasetFactory().search_for_dataset(dataset_name, dataset_pool.get_package_order(), arguments=kwargsCT)
         except: # take generic dataset
             ct_dataset = Dataset(dataset_name=dataset_name, **kwargs)
         # write values into the cache 
         ct_dataset.load_dataset()
         dataset_pool._remove_dataset(dataset_name)
+        if out_table_name is None:
+            out_table_name = existing_ct.resources["in_table_name"]
         ct_dataset.write_dataset(out_storage=dataset_pool.get_storage(),
-                                 out_table_name=existing_ct.resources["in_table_name"])
+                                 out_table_name=out_table_name)
         ct = dataset_pool.get_dataset(dataset_name, dataset_arguments={"id_name": []})
         return ct
 
@@ -58,8 +64,9 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name='annual_household_control_totals', table_data=annual_household_control_totals_data)
         dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'], storage = storage)
         model = CreateControlTotalsModel()
-        model.run(ct_directory = "/Users/hana/opus/urbansim_data/data/psrc_parcel/BMforTM/run_val2018_census_block_group/control_totals",
-                  sample_range = [1,101], dataset_pool = dataset_pool, id_name = [])
+        new_ct = model.run(ct_directory = "/Users/hana/opus/urbansim_data/data/psrc_parcel/BMforTM/run_val2018_census_block_group/control_totals",
+                  sample_range = [1,101], dataset_pool = dataset_pool)
+        new_ct["year"].size == new_ct["persons_min"].size
 
 if __name__=='__main__':
     opus_unittest.main()

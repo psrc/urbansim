@@ -37,6 +37,8 @@ aliases = [
            "tractcity_id = household.disaggregate(parcel.tractcity_id, intermediates=[building])",
            "county_id = household.disaggregate(city.county_id, intermediates=[parcel, building])", 
            "subreg_id = household.disaggregate(parcel.subreg_id, intermediates=[building])", 
+           "census_block_group_id = household.disaggregate(parcel.census_block_group_id, intermediates=[building])",
+           "region_id = household.household_id > 0" # we want here the number 1 for all records
            ]
 for cat in range(1,6):
     aliases.append("age_of_oldest_child_age_category_%s_in_private_school = household.aggregate(psrc_parcel.person.is_in_private_k12_school * (psrc_parcel.person.age_category == %s) * person.age, function=maximum)" % (cat, cat))
