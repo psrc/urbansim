@@ -42,6 +42,7 @@ if __name__ == "__main__":
     cache_directory = "/Volumes/Model Data 2/Uncertainty/urbansim_data/MRuns/baseline"
     cache_directory = "G:/Model Data 2/Uncertainty/urbansim_data/MRuns/baseline"
     #cache_directory = "/Volumes/Model Data 2/Uncertainty/urbansim_data/MRuns/tod"
+    cache_directory = "G:/Model Data 2/Uncertainty/urbansim_data/MRuns/tod"
     #cache_directory = "/Volumes/D Drive TMOD3/opus/data/psrc_parcel/runs"
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/workspace/data/psrc_parcel/observed_data"
@@ -59,10 +60,12 @@ if __name__ == "__main__":
     #validation_geography = 'tract10'
     #validation_geography = 'zone'
     validation_geography = 'census_block_group'
+    scenario = "baseline"
+    scenario = "tod"
     #output_dir_base = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal"
     output_dir_base = "/Users/hana/workspace/data/psrc_parcel/BMforTM"
     output_dir_base = "G:/Model Data 2/Uncertainty/BMforTM"
-    output_directory = "%s/run%s_val%s_%s" % (output_dir_base, run, validation_year, validation_geography)
+    output_directory = "%s/run%s_val%s_%s_%s" % (output_dir_base, run, validation_year, scenario, validation_geography)
     
     
     if not os.path.exists(output_directory):
