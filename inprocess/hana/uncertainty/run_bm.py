@@ -39,9 +39,13 @@ if __name__ == "__main__":
     # What directory contains the multiple runs'
     cache_directory = "/Users/hana/workspace/data/psrc_parcel/runs"
     cache_directory = "/Volumes/d$/opusgit/urbansim_data/data/psrc_parcel/MRuns"
+    cache_directory = "/Volumes/Model Data 2/Uncertainty/urbansim_data/MRuns/baseline"
+    cache_directory = "G:/Model Data 2/Uncertainty/urbansim_data/MRuns/baseline"
+    #cache_directory = "/Volumes/Model Data 2/Uncertainty/urbansim_data/MRuns/tod"
     #cache_directory = "/Volumes/D Drive TMOD3/opus/data/psrc_parcel/runs"
     # Where the observed data is stored
     observed_data_dir = "/Users/hana/workspace/data/psrc_parcel/observed_data"
+    observed_data_dir = "G:/Model Data 2/Uncertainty/observed_data"
     validation_year = 2018
     run = ''
     #run = 'MR223'
@@ -57,6 +61,7 @@ if __name__ == "__main__":
     validation_geography = 'census_block_group'
     #output_dir_base = "/Users/hana/psrc3656/workspace/data/psrc_parcel/runs/bmanal"
     output_dir_base = "/Users/hana/workspace/data/psrc_parcel/BMforTM"
+    output_dir_base = "G:/Model Data 2/Uncertainty/BMforTM"
     output_directory = "%s/run%s_val%s_%s" % (output_dir_base, run, validation_year, validation_geography)
     
     
@@ -169,6 +174,7 @@ if __name__ == "__main__":
 #        maxi = argsort(wc)[-1]
 #        print "%s: max = %s, index = %s, w[%s] = %s" % (name, wc[maxi], maxi, maxiall, wc[maxiall])
 #        print wc[maxi3all], wc[miniall]
+    
     bm.export_bm_parameters(output_directory, filename='bm_parameters')
     #bmf = BayesianMeldingFromFile("/Users/hana/bm/psrc_parcel/simulation_results/0818/2005/bm_parameters", package_order=['urbansim_parcel', 'urbansim', 'core'])
     
@@ -190,8 +196,8 @@ if __name__ == "__main__":
 #                            directory="/Users/hana/bm/psrc_parcel/simulation_results")
     from run_bm import export_quantiles
     #from run_bm_from_file import export_quant
-    #output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)  
-    export_quantiles(bm, output_directory, years=[2025], validation_geography=validation_geography, propfac_hh = (2025 - 2014)/4., store_simulated=True, repl = 100)
+    output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)  
+    export_quantiles(bm, output_directory, years=[2040], validation_geography=validation_geography, propfac_hh = (2040 - 2014)/4., store_simulated=True, repl = 500)
     #export_quantiles(bm, output_directory, years=[2010], validation_geography=validation_geography, no_propagation=[True])
     #export_quantiles(bm, output_directory, years=[2010, 2015, 2020, 2030, 2040], validation_year=validation_year, validation_geography=validation_geography)
     #export_quantiles(bm, output_directory, years=[2040], validation_year=validation_year, validation_geography=validation_geography)
