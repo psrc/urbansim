@@ -196,7 +196,7 @@ if __name__ == "__main__":
 #                            directory="/Users/hana/bm/psrc_parcel/simulation_results")
     from run_bm import export_quantiles
     #from run_bm_from_file import export_quant
-    output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)  
+    #output_directory = "%s/run%s_quantiles_%s" % (output_dir_base, run, validation_geography)  
     export_quantiles(bm, output_directory, years=[2040], validation_geography=validation_geography, propfac_hh = (2040 - 2014)/4., store_simulated=True, repl = 500)
     #export_quantiles(bm, output_directory, years=[2010], validation_geography=validation_geography, no_propagation=[True])
     #export_quantiles(bm, output_directory, years=[2010, 2015, 2020, 2030, 2040], validation_year=validation_year, validation_geography=validation_geography)
