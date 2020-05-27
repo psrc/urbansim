@@ -113,9 +113,9 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
                                       index=assigned_job_index)
         if modify_home_based_status:
-            self.job_set.set_values_of_one_attribute(name="home_based_status", ones(assigned_job_index.size, 
-                                                                                    dtype = self.job_set["home_based_status"].dtype),
-                                      index = assigned_job_index)
+            self.job_set.set_values_of_one_attribute("home_based_status", ones(assigned_job_index.size, 
+                                                                               dtype = self.job_set["home_based_status"].dtype),
+                                                     index = assigned_job_index)
         if match_choice_attribute_to_jobs:
             choices = zeros(agent_set.size(), dtype='int32')
             choices[assigned_worker_index] = 1    
