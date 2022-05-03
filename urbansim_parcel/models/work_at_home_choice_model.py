@@ -7,7 +7,7 @@ from opus_core.resources import Resources
 from opus_core.choice_model import ChoiceModel
 from opus_core.model import prepare_specification_and_coefficients
 from opus_core.model import get_specification_for_estimation
-from numpy import array, arange, where, ones, concatenate, logical_and, zeros
+from numpy import array, arange, where, ones, concatenate, logical_and, zeros, setdiff1d
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.misc import unique
@@ -84,23 +84,27 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         if not choose_job_only_in_residence_zone:
             assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
         else:
-            agent_set.compute_one_variable_with_unknown_package(residence_id, dataset_pool=self.dataset_pool)
-            self.job_set.compute_one_variable_with_unknown_package(residence_id, dataset_pool=self.dataset_pool)
-            agent_zone_ids = agent_set.get_attribute_by_index(residence_id, at_home_worker_index)
-            job_zone_ids = self.job_set.get_attribute_by_index(residence_id, jobs_set_index)
-            unique_zones = unique(job_zone_ids)
+            if not isinstance(residence_id, list):
+                residence_id = [residence_id]
             assigned_worker_index = array([], dtype="int32")
-            assigned_job_index = array([], dtype="int32")
-            for this_zone in unique_zones:
-                logger.log_status("%s: %s" % (residence_id, this_zone))
-                if this_zone <= 0: continue
-                at_home_worker_in_this_zone = where(agent_zone_ids == this_zone)[0]
-                job_set_in_this_zone = where(job_zone_ids == this_zone)[0]
-                assigned_worker_in_this_zone, assigned_job_set_in_this_zone = self._assign_job_to_worker(at_home_worker_in_this_zone, job_set_in_this_zone)
-                assigned_worker_index = concatenate((assigned_worker_index, at_home_worker_index[assigned_worker_in_this_zone]))
-                assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
+            assigned_job_index = array([], dtype="int32")                
+            for residence_geo in residence_id:
+                agent_set.compute_one_variable_with_unknown_package(residence_geo, dataset_pool=self.dataset_pool)
+                self.job_set.compute_one_variable_with_unknown_package(residence_geo, dataset_pool=self.dataset_pool)
+                agent_zone_ids = agent_set.get_attribute_by_index(residence_geo, at_home_worker_index)
+                job_zone_ids = self.job_set.get_attribute_by_index(residence_geo, jobs_set_index)
+                unique_zones = unique(job_zone_ids)
+
+                for this_zone in unique_zones:
+                    logger.log_status("%s: %s" % (residence_geo, this_zone))
+                    if this_zone <= 0: continue
+                    at_home_worker_in_this_zone = setdiff1d(where(agent_zone_ids == this_zone)[0], assigned_worker_index)
+                    job_set_in_this_zone = setdiff1d(where(job_zone_ids == this_zone)[0], assigned_job_index)
+                    assigned_worker_in_this_zone, assigned_job_set_in_this_zone = self._assign_job_to_worker(at_home_worker_in_this_zone, job_set_in_this_zone)
+                    assigned_worker_index = concatenate((assigned_worker_index, at_home_worker_index[assigned_worker_in_this_zone]))
+                    assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
             
-            logger.log_status("Total for all zones: Assigned %s jobs to %s workers (out of %s jobs and %s workers)" % (
+            logger.log_status("Total for all residence zones: Assigned %s jobs to %s workers (out of %s jobs and %s workers)" % (
                                   assigned_job_index.size, assigned_worker_index.size, jobs_set_index.size, at_home_worker_index.size))
 
         ## each worker can only be assigned to 1 job
