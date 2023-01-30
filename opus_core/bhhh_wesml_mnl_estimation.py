@@ -25,6 +25,8 @@ class bhhh_wesml_mnl_estimation(bhhh_mnl_estimation):
         """
         model = resources.get("_model_")
         self.wesml_weights = model.get_attribute_for_submodel(resources.get("wesml_sampling_correction_variable"), resources)
+        if resources.get("submodel") in model.model_interaction.data_include_rows.keys(): # data rows could have been reduced because no choice was made by agents
+            self.wesml_weights = self.wesml_weights[model.model_interaction.data_include_rows[resources.get("submodel")]]
         return bhhh_mnl_estimation.run(self, data, upc_sequence, resources)
 
     def mnl_gradient(self, data, b, depm, index_of_not_fixed_values):

@@ -1578,7 +1578,7 @@ class AbstractDataset(object):
         import matplotlib
         #matplotlib.use('Agg')  # why is this here?
         
-        from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
+        from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,Normalize
         from matplotlib.pylab import rot90
         
         if name not in self.get_known_attribute_names():

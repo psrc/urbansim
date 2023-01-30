@@ -16,7 +16,8 @@ class ParcelDataset(UrbansimDataset):
     in_table_name_default = "parcels"
     out_table_name_default = "parcels"
     dataset_name = "parcel"
-    _coordinate_system = ('x_coord_utm', 'y_coord_utm')
+    #_coordinate_system = ('x_coord_utm', 'y_coord_utm')
+    _coordinate_system = ('x_coord_sp', 'y_coord_sp')
     
     def __init__(self, id_values=None, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
