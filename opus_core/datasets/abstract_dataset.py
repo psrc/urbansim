@@ -718,7 +718,7 @@ class AbstractDataset(object):
             if isnegative.sum() > 0:
                 raise KeyError, "No negative ids allowed in dataset."
             result = self.id_mapping[ids - self.id_mapping_shift]
-            if any(result < 0):
+            if any(result < 0) or any((ids - self.id_mapping_shift) < 0):
                 raise KeyError, "Some ids not found in dataset %s." % self.get_dataset_name()
         else:
             result = array(map(lambda x: self.id_mapping[x], ids), dtype=ids.dtype.char)
@@ -1767,7 +1767,7 @@ class AbstractDataset(object):
 
     def _get_one_id_index(self, id):
         if self.id_mapping_type == "A":
-            if id < 0:
+            if id - self.id_mapping_shift < 0:
                 raise KeyError, "No id " + str(id) + " in dataset."
             idx = self.id_mapping[id - self.id_mapping_shift]
         else:
