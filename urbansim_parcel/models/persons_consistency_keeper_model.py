@@ -86,29 +86,30 @@ class PersonDatasetConsistencyKeeperModel(Model):
 
 
                 hh_indices = where(logical_not(in1d(household_ids, person_hh_id_array)))[0]
-                npersons = household_set.get_attribute("persons")
-                age_of_head = household_set.get_attribute("age_of_head")
-                for index in hh_indices:
-                    household_id = household_ids[index]
-                    hh_ids += [household_id] * npersons[index]
-                    member_ids += range(1, npersons[index]+1)
-                    ages += [age_of_head[index]]
-                    if npersons[index] > 1:
-                        ages += [age_of_head[index] - sample_replace(arange(5), 1)[0]]
-                        if npersons[index] > 2:
-                            ages += (max(28, age_of_head[index]) - 20 - sample_replace(arange(8), npersons[index] - 2)).tolist()
-
-
-                new_persons = {"person_id":arange(len(hh_ids)) + person_set.get_id_attribute().max() + 1,
-                               "household_id":array(hh_ids),
-                               "member_id":array(member_ids),
-                               #"job_id":array(job_ids),
-                               "job_id": [-1] * len(hh_ids),
-                               "age": ages
-                               }
-                if "work_at_home" in person_set.get_known_attribute_names():
-                    new_persons["work_at_home"] = [-1] * len(hh_ids)
-                person_set.add_elements(new_persons, require_all_attributes=False)
+                if hh_indices.size > 0:
+                    npersons = household_set.get_attribute("persons")
+                    age_of_head = household_set.get_attribute("age_of_head")
+                    for index in hh_indices:
+                        household_id = household_ids[index]
+                        hh_ids += [household_id] * npersons[index]
+                        member_ids += range(1, npersons[index]+1)
+                        ages += [age_of_head[index]]
+                        if npersons[index] > 1:
+                            ages += [age_of_head[index] - sample_replace(arange(5), 1)[0]]
+                            if npersons[index] > 2:
+                                ages += (max(28, age_of_head[index]) - 20 - sample_replace(arange(8), npersons[index] - 2)).tolist()
+    
+    
+                    new_persons = {"person_id":arange(len(hh_ids)) + person_set.get_id_attribute().max() + 1,
+                                   "household_id":array(hh_ids),
+                                   "member_id":array(member_ids),
+                                   #"job_id":array(job_ids),
+                                   "job_id": [-1] * len(hh_ids),
+                                   "age": ages
+                                   }
+                    if "work_at_home" in person_set.get_known_attribute_names():
+                        new_persons["work_at_home"] = [-1] * len(hh_ids)
+                    person_set.add_elements(new_persons, require_all_attributes=False)
 
             #delete a person from person set if its household_id is not in households
             person_attr_index = household_set.try_get_id_index(person_hh_id_array, return_value_if_not_found=-9)
@@ -119,8 +120,7 @@ class PersonDatasetConsistencyKeeperModel(Model):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.misc import ismember
-from numpy import array, logical_and, int32, int8, ma, all, allclose, zeros, ones
+from numpy import array, int32, int8, ma, all, allclose, zeros, ones
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim_parcel.datasets.person_dataset import PersonDataset
