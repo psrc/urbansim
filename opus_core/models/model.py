@@ -273,7 +273,11 @@ def prepare_for_estimate(specification_dict=None,
             index = agent_set.get_id_index(estimation_set.get_id_attribute()[filter_index])
     else:
         if agent_set is not None:
-            index = arange(agent_set.size())
+            if agents_filter:
+                index = where(agent_set.compute_variables(agents_filter, 
+                                                          resources=Resources(data_objects)))[0]
+            else:
+                index = arange(agent_set.size())
         else:
             index = None
             

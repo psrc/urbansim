@@ -56,3 +56,4 @@ if __name__ == '__main__':
     try: import wingdbstub
     except: pass
     er = main()
+    #er.plot_choice_set_attribute('percent_non_white_wwd', agents_index=range(5))
