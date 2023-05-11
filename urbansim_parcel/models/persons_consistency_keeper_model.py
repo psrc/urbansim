@@ -104,11 +104,11 @@ class PersonDatasetConsistencyKeeperModel(Model):
                                    "household_id":array(hh_ids),
                                    "member_id":array(member_ids),
                                    #"job_id":array(job_ids),
-                                   "job_id": [-1] * len(hh_ids),
-                                   "age": ages
+                                   "job_id": array([-1] * len(hh_ids)),
+                                   "age": array(ages)
                                    }
                     if "work_at_home" in person_set.get_known_attribute_names():
-                        new_persons["work_at_home"] = [-1] * len(hh_ids)
+                        new_persons["work_at_home"] = array([-1] * len(hh_ids))
                     person_set.add_elements(new_persons, require_all_attributes=False)
 
             #delete a person from person set if its household_id is not in households
