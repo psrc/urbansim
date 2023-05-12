@@ -155,6 +155,8 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from psrc_parcel.datasets.jobs_event_dataset import JobsEventDataset
 from psrc_parcel.datasets.households_event_dataset import HouseholdsEventDataset
+from psrc_parcel.datasets.households_zone_event_dataset import HouseholdsZoneEventDataset
+from psrc_parcel.datasets.zone_control_hct_dataset import ZoneControlHctDataset
         
 class AgentEventsTests(opus_unittest.OpusTestCase):
     def setUp(self):

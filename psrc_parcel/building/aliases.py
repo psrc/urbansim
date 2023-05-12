@@ -63,6 +63,7 @@ aliases = [
       "residential_land_area = building.disaggregate(safe_array_divide(psrc_parcel.parcel.total_residential_land_area_from_constraints, psrc_parcel.parcel.residential_units)) * building.residential_units",
       "census_tract_id = building.disaggregate(census_block_group.census_tract_id, intermediates=[census_block, parcel])",
       "subreg_id = building.disaggregate(parcel.subreg_id)",
+	  "zone_control_hct_id = building.disaggregate(parcel.zone_control_hct_id)",
       "percent_white_wwd = building.disaggregate(psrc_parcel.parcel.percent_white_wwd)",
       "percent_non_white_wwd = building.disaggregate(psrc_parcel.parcel.percent_non_white_wwd)",
            ]
