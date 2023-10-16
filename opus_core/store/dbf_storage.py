@@ -103,7 +103,7 @@ else:
                            "support Numeric (N), Integer (I), Float (F), "
                            "Logical (L), and Character (C) types.  "
                            "DBF file is '%s' ") % (
-                               field_descriptor.typeCode, 
+                               dbf_type_code_for_column,
                                self._get_file_path_for_table(table_name)
                            )
                     raise TypeError(msg)
