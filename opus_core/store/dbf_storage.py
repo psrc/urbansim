@@ -92,18 +92,16 @@ else:
             # Convert the row data into numpy containers.
             for column_name in column_names:
                 dbf_type_code_for_column = available_column_descriptors[column_name].typeCode
-                if dbf_type_code_for_column in ('N', 'I', 'F'):
+                if dbf_type_code_for_column in ('N', 'I', 'F', 'L', 'C'):
                     result[column_name] = array(result[column_name])
-                elif dbf_type_code_for_column in ('L'):
-                    result[column_name] = array(result[column_name])     
-                elif dbf_type_code_for_column in ('C'):
-                    result[column_name] = array(result[column_name])                
+                elif dbf_type_code_for_column in ('D'): # date
+                    result[column_name] = array(map(lambda x: x.ctime() if x is not None else "", result[column_name]))
                 else:
-                    msg = ("Unsupported data type '%s' found in DBF file.  We "
+                    msg = ("Unsupported data type '%s' found in DBF file (column %s).  We "
                            "support Numeric (N), Integer (I), Float (F), "
-                           "Logical (L), and Character (C) types.  "
+                           "Logical (L), Character (C) and Date (D) types.  "
                            "DBF file is '%s' ") % (
-                               dbf_type_code_for_column,
+                               dbf_type_code_for_column, column_name,
                                self._get_file_path_for_table(table_name)
                            )
                     raise TypeError(msg)
