@@ -464,13 +464,13 @@ Returns: formatted string created from inlist
 def list2string (inlist,delimit=' '):
     """
 Converts a 1D list to a single long string for file output, using
-the string.join function.
+the str.join function.
 
 Usage:   list2string (inlist,delimit=' ')
 Returns: the string created from inlist
 """
     stringlist = list(map(makestr,inlist))
-    return string.join(stringlist,delimit)
+    return delimit.join(stringlist)
 
 
 def makelol(inlist):

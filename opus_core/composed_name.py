@@ -22,7 +22,7 @@ class ComposedName(object):
         lsplit = len(splitname)
         if (lsplit <= 1):
             return (None, fullname) 
-        pkg_name = string.join(splitname[0:(lsplit-1)],'.')
+        pkg_name = '.'.join(splitname[0:(lsplit-1)])
         short_name = splitname[lsplit-1]
         return (pkg_name, short_name) 
     

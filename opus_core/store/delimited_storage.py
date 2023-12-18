@@ -107,7 +107,7 @@ class delimited_storage(Storage):
             header.append(column_header)
             values.append(table_data[column_name])
             
-        output = open(file_path, 'wb')
+        output = open(file_path, 'w')
         try:
             writer = csv.writer(output, self._dialect_name)
             
@@ -137,7 +137,7 @@ class delimited_storage(Storage):
         if lowercase:
             available_column_names = self._lower_case(available_column_names)
         
-        input = open(file_path, 'rb')
+        input = open(file_path, 'r')
         try:
             reader = csv.reader(input, self._dialect_name)
             
@@ -252,7 +252,7 @@ class delimited_storage(Storage):
             raise NameError("Table '%s' could not be found in %s." 
                 % (table_name, self._output_directory))
         
-        input = open(file_path, 'rb')
+        input = open(file_path, 'r')
         try:
             reader = csv.reader(input, self._dialect_name)
             
@@ -282,7 +282,7 @@ class delimited_storage(Storage):
             raise NameError("Table '%s' could not be found in %s." 
                 % (table_name, self._output_directory))
         
-        input = open(file_path, 'rb')
+        input = open(file_path, 'r')
         try:
             reader = csv.reader(input, self._dialect_name)
             
@@ -503,7 +503,7 @@ class TestDelimitedStorage(TestStorageInterface):
         file_path = self.storage._get_file_path_for_table('foo')
         self.assertTrue(os.path.exists(file_path))
         
-        input = open(file_path, 'rb')
+        input = open(file_path, 'r')
         try:
             input.readline()
             input.readline()
@@ -636,7 +636,7 @@ class TestDelimitedStorage(TestStorageInterface):
         self.assertEqual(expected_column_types, column_types)
         # Make a file with no header information:
         file_path = self.storage._get_file_path_for_table('foo')
-        foo = open(file_path, 'wb')
+        foo = open(file_path, 'w')
         try:
             foo.write("attribute1,attribute2,attribute3\n1,1.1,a")
            # attribute1,attribute2,attribute3
@@ -669,7 +669,7 @@ class TestDelimitedStorage(TestStorageInterface):
         expected_file_path = os.path.join(base_dir, 'foo.bang')
         self.assertTrue(os.path.exists(expected_file_path))
         
-        foo_file = open(storage._get_file_path_for_table('foo'), 'rb')
+        foo_file = open(storage._get_file_path_for_table('foo'), 'r')
         try:
             for line in foo_file:
                 self.assertTrue('!' in line)

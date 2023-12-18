@@ -256,7 +256,7 @@ class DeveloperModel(Model):
         for result in results:
             #print result
             out_btype = devmdltypes[int(result[2])-1]
-            outf.write(string.join([str(x) for x in result]+[str(out_btype)],sep=',')+'\n')
+            outf.write(','.join([str(x) for x in result]+[str(out_btype)])+'\n')
 
         ##TODO: id of buildings to be demolished
     
@@ -343,7 +343,7 @@ class DeveloperModel(Model):
     aggf = open('county_aggregations-%d.csv' % current_year,'w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
     btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC',7:'OF',8:'MXO',9:'CHOOD',10:'CAUTO',11:'CBOX',12:'MANU',13:'WHE'}
-    aggf.write('county,total,'+string.join(list(btype_names.values()),sep=',')+'\n')
+    aggf.write('county,total,'+ ','.join(list(btype_names.values()))+'\n')
     for county in [38,41,43,1,7,48,28,49,21]:
         aggf.write(county_names[county]+','+str(aggd.get(county,0)))
         for btype in list(btype_names.keys()):
@@ -554,9 +554,10 @@ def process_parcel(parcel):
             pfeesstr = ''
             if parcelfees: pfeesstr = parcelfees.get(pid)
 
-            otherdbg = (isr,pfeesstr,existing_sqft,existing_price,lotsize,unitsize,unitsize2,string.join([str(x) for x in bform.sales_absorption],'|'),string.join([str(x) for x in bform.rent_absorption],'|'),string.join([str(x) for x in bform.leases_absorption],'|'),string.join([str(x) for x in bform.sales_vacancy_rates],'|'),string.join([str(x) for x in bform.vacancy_rates],'|'))
-            debugoutput += string.join([str(x) for x in [pid,btype,npv,bform.actualfees]+list(prices)+list(bformdbg)+list(otherdbg)]
-,sep=',')+'\n'
+            otherdbg = (isr,pfeesstr,existing_sqft,existing_price,lotsize,unitsize,unitsize2, '|'.join([str(x) for x in bform.sales_absorption]),
+                        '|'.join([str(x) for x in bform.rent_absorption]), '|'.join([str(x) for x in bform.leases_absorption]), 
+                        '|'.join([str(x) for x in bform.sales_vacancy_rates]), '|'.join([str(x) for x in bform.vacancy_rates]))
+            debugoutput += ','.join([str(x) for x in [pid,btype,npv,bform.actualfees]+list(prices)+list(bformdbg)+list(otherdbg)])+'\n'
             #if npv == -1: return # error code
             if npv > maxnpv:
                 maxnpv = npv
