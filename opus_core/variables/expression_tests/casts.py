@@ -27,13 +27,13 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
         result1 = dataset.compute_variables([expr1])
         self.assertEqual( type(result1[0]), int32, error_msg)
-        self.assert_(ma.allclose(result1, array([10, 50, 100]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result1, array([10, 50, 100]), rtol=1e-6), error_msg)
         result2 = dataset.compute_variables([expr2])
         self.assertEqual( type(result2[0]), int32, error_msg)
-        self.assert_(ma.allclose(result2, array([100, 2500, 10000]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result2, array([100, 2500, 10000]), rtol=1e-6), error_msg)
         result3 = dataset.compute_variables([expr3])
         self.assertEqual( type(result3[0]), int32, error_msg)
-        self.assert_(ma.allclose(result3, array([20, 100, 200]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result3, array([20, 100, 200]), rtol=1e-6), error_msg)
          
     def test_casts_dataset_qualified_attribute(self):
         expr1 = "tests.persons.astype(float64)"
@@ -51,13 +51,13 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
         result1 = dataset.compute_variables([expr1])
         self.assertEqual( type(result1[0]), float64, error_msg)
-        self.assert_(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6), error_msg)
         result2 = dataset.compute_variables([expr2])
         self.assertEqual( type(result2[0]), float64, error_msg)
-        self.assert_(ma.allclose(result2, array([1, 25, 100]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result2, array([1, 25, 100]), rtol=1e-6), error_msg)
         result3 = dataset.compute_variables([expr3])
         self.assertEqual( type(result3[0]), float64, error_msg)
-        self.assert_(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), error_msg)
         
     def test_casts_attribute(self):
         expr1 = "persons.astype(float64)"
@@ -75,13 +75,13 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
         result1 = dataset.compute_variables([expr1])
         self.assertEqual( type(result1[0]), float64, error_msg)
-        self.assert_(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6), error_msg)
         result2 = dataset.compute_variables([expr2])
         self.assertEqual( type(result2[0]), float64, error_msg)
-        self.assert_(ma.allclose(result2, array([1, 25, 100]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result2, array([1, 25, 100]), rtol=1e-6), error_msg)
         result3 = dataset.compute_variables([expr3])
         self.assertEqual( type(result3[0]), float64, error_msg)
-        self.assert_(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), error_msg)
+        self.assertTrue(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), error_msg)
 
 if __name__=='__main__':
     opus_unittest.main()

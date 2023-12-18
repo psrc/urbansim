@@ -20,7 +20,7 @@ class max_developable_nonresidential_capacity(Variable):
         parcels.get_development_constraints(constraints, dataset_pool, consider_constraints_as_rules=True)
         result = zeros(parcels.size())
         # iterate over GLU types
-        for glu in parcels.development_constraints.keys():
+        for glu in list(parcels.development_constraints.keys()):
             if  glu == 'index':
                 continue
             result = maximum(result, parcels.development_constraints[glu]['far'][:, 1]*parcels['parcel_sqft'])  #max constraint

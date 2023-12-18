@@ -48,11 +48,11 @@ class CommuteTravelDataDataset(UrbansimNodeTravelDataDataset):
         """ Return attribute derived from the travel_data dataset, where values along the path given by 
         connection_mapping are subtracted.
         """
-        if from_node not in self.connection_mapping.keys():
+        if from_node not in list(self.connection_mapping.keys()):
             from_zone, path_to_from_zone = from_node, ()
         else:
             from_zone, path_to_from_zone = (self.connection_mapping[from_node]['zone'], self.connection_mapping[from_node]['path'])
-        if to_node not in self.connection_mapping.keys():
+        if to_node not in list(self.connection_mapping.keys()):
             to_zone, path_to_to_zone = to_node, ()
         else:
             to_zone, path_to_to_zone = (self.connection_mapping[to_node]['zone'], self.connection_mapping[to_node]['path'])

@@ -6,13 +6,14 @@ import os, re
 import glob
 from opus_core.misc import list2string
 from opus_core.logger import logger
+from functools import reduce
 
 class OpusSyntaxChecker(object):
     """We want to avoid using tabs in .py files, and the files also need to have the GNU license. """
     
     def _py_file_names(self, prev, dir):
         """Returns a list of the .py files in this directory. """
-        prev.extend(map(lambda file: os.path.join(dir[0], file), glob.glob1(dir[0], '*.py' )))
+        prev.extend([os.path.join(dir[0], file) for file in glob.glob1(dir[0], '*.py' )])
         return prev
         
     def check_syntax_for_opus_package(self, opus_package_name, file_names_that_do_not_need_gpl=[]):
@@ -93,7 +94,7 @@ class TestSyntaxChecker(opus_unittest.OpusTestCase):
         mock_python_file.write('\t This line has a tab on it')
         mock_python_file.close()
         logger.be_quiet()
-        self.failUnlessRaises(SyntaxError, OpusSyntaxChecker()._check_syntax_for_dir, self.temp_dir)
+        self.assertRaises(SyntaxError, OpusSyntaxChecker()._check_syntax_for_dir, self.temp_dir)
         logger.talk()
         
     def test_GPL_finder(self):
@@ -101,7 +102,7 @@ class TestSyntaxChecker(opus_unittest.OpusTestCase):
         mock_python_file.write('This line is okay and does not have a tab on it')
         mock_python_file.close()
         logger.be_quiet()
-        self.failUnlessRaises(SyntaxError, OpusSyntaxChecker()._check_syntax_for_dir, self.temp_dir)
+        self.assertRaises(SyntaxError, OpusSyntaxChecker()._check_syntax_for_dir, self.temp_dir)
         logger.talk()
         
     def test_no_syntax_violations(self):

@@ -33,13 +33,11 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         # verify that the base directory exists and there's a runbatch in it, or we're a nogo
         base_dir    = tm_config['travel_model_base_directory']    
         if not os.path.exists(base_dir):
-            raise StandardError, \
-                "Travel model base directory '%s' must exist with standard %s" % (base_dir, tm_config[year]["RUNBATCH"])
+            raise Exception("Travel model base directory '%s' must exist with standard %s" % (base_dir, tm_config[year]["RUNBATCH"]))
                  
         src_runmodelfile = os.path.join(base_dir, tm_config[year]["RUNBATCH"])
         if not os.path.exists(src_runmodelfile):
-            raise StandardError, \
-                "Travel model base directory '%s' must exist with a standard %s" % (base_dir, tm_config[year]["RUNBATCH"])            
+            raise Exception("Travel model base directory '%s' must exist with a standard %s" % (base_dir, tm_config[year]["RUNBATCH"]))            
         
         run_dir     = os.path.join(base_dir, tm_config[year]['year_dir'])
         if not os.path.exists(run_dir):
@@ -62,7 +60,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
           [r"(set LANDUSE=)(\S*)",    r"\1.\%s" % (self.SUBDIR_LANDUSE_INPUTS)],
         ]
         
-        print tm_config[year]
+        print(tm_config[year])
         # if these are specified in the config use them
         for varname in ["BASEDEMAND", "MTCDEMAND", "NETWORKS"]:
             if varname in tm_config[year]:
@@ -92,7 +90,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         tmret  = tmproc.wait()
         logger.log_status("Returned %d" % (tmret))
         # TODO - why does it return 1 when it seems ok?!?!
-        if tmret != 0 and tmret != 1: raise StandardError, "%s exited with bad return code" % (cmd)
+        if tmret != 0 and tmret != 1: raise Exception("%s exited with bad return code" % (cmd))
         logger.end_block()
 
     def _run_TazDataProcessor(self, tm_config, year, run_dir):
@@ -170,7 +168,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
             logger.log_status(line.strip('\r\n'))
         tazdataret  = tazdataproc.wait()
         logger.log_status("Returned %d" % (tazdataret))
-        if tazdataret != 0: raise StandardError,"TazDataProcessor exited with bad return code"
+        if tazdataret != 0: raise Exception("TazDataProcessor exited with bad return code")
         logger.end_block()
         
         # clean the Allocate_nhb.csv file.  This should really be fixed in the TazDataProcessor
@@ -248,7 +246,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         dbfin       = dbf.Dbf(src_dbf_file+".bak", readOnly=1, ignoreErrors=True)
         dbfin2      = dbf.Dbf(append_dbf_file, readOnly=1)
         if len(dbfin) != len(dbfin2):
-            raise StandardError, "%s and %s have different number of records" % (src_dbf_file, append_dbf_file)
+            raise Exception("%s and %s have different number of records" % (src_dbf_file, append_dbf_file))
        
         # read the append dbf file
         dist22 = {}
@@ -323,7 +321,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
             indexcolnum     = src_columns.index(indexcolname)
         except:
             logger.log_error("Column named %s not found in %s" % (indexcolname, src_csv))
-            raise StandardError, "Column named %s not found in %s" % (indexcolname, src_csv)
+            raise Exception("Column named %s not found in %s" % (indexcolname, src_csv))
         
         try:
             popcolnum       = src_columns.index("POP")
@@ -331,7 +329,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
             hhpopcolnum     = src_columns.index("HHPOP")
         except:
             logger.log_error("Column named POP,GQPOP or HHPOP not found in %s" % (src_csv))
-            raise StandardError, "Column named POP,GQPOP or HHPOP not found in %s" % (src_csv)
+            raise Exception("Column named POP,GQPOP or HHPOP not found in %s" % (src_csv))
 
         overwrite_colset    = []
         new_colset          = []
@@ -436,7 +434,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
                 logger.log_status(line.strip('\r\n'))
             popsynret  = popsynproc.wait()
             logger.log_status("Returned %d" % (popsynret))
-            if popsynret != 0: raise StandardError, "Population Synthesizer exited with bad return code"
+            if popsynret != 0: raise Exception("Population Synthesizer exited with bad return code")
 
         # put the output files in place
         shutil.move(sfsampfile, os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS))

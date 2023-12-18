@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_SSS_DDD_SSS_le_DDD(Variable):
     """total number of jobs for zones within DDD minutes travel time,
@@ -65,13 +65,13 @@ class Tests(opus_unittest.OpusTestCase):
     def test_to_2_le_9(self):
         values = self.get_values(2, 9)
         should_be = array([1, 0])
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
     def test_to_4_le_11(self):
         values = self.get_values(4,11)
         should_be = array([1, 1])
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
 

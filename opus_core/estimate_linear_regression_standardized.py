@@ -18,7 +18,7 @@ class estimate_linear_regression_standardized(estimate_linear_regression):
 
     def run(self, data, regression=None, resources=None):
         if data.ndim < 2:
-            raise StandardError, "Argument 'data' must be a 2D numpy array."
+            raise Exception("Argument 'data' must be a 2D numpy array.")
         
         scale = resources.get("scale_for_data_standardization", 2)
         for i in range(data.shape[1]):

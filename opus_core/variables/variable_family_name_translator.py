@@ -5,6 +5,7 @@
 import os
 import re
 from glob import glob1
+from functools import reduce
 
 class VariableFamilyNameTranslator(object):
     """Convert between variable names with wildcards 
@@ -18,7 +19,7 @@ class VariableFamilyNameTranslator(object):
         """returns a list of the types that the expression substitutes 
         ie devSSS_DDD -> [str, int]"""
         types = []
-        patterns = self._variable_family_patterns.keys()
+        patterns = list(self._variable_family_patterns.keys())
         while string:
             for p in patterns:
                 if string.startswith(p):
@@ -33,18 +34,18 @@ class VariableFamilyNameTranslator(object):
         eg f('devtype_DDD_SSS')->'devtype_(\d+)_(\D+)'"""           
         return reduce(lambda prev_exp, var_symb: prev_exp.replace(var_symb, 
                                                                   self._variable_family_patterns[var_symb][0]),
-                      self._variable_family_patterns.keys(),
+                      list(self._variable_family_patterns.keys()),
                       variable_name)
         
     def _reg_exp_to_variable_name(self, reg_exp):
         return reduce(lambda prev_exp, var_symb: prev_exp.replace(self._variable_family_patterns[var_symb][0], 
                                                                   var_symb),
-                      self._variable_family_patterns.keys(),
+                      list(self._variable_family_patterns.keys()),
                       reg_exp)
     
     def is_a_family_variable_name(self, variable_name):
         """Does the variable name contain a variable_family_pattern key?"""
-        return re.findall('|'.join(self._variable_family_patterns.keys()), variable_name)
+        return re.findall('|'.join(list(self._variable_family_patterns.keys())), variable_name)
     
     def translate_family_name_into_instance_name(self, variable_name, substrings):
         """Returns the fully specified instance name constructed by substituting the
@@ -52,7 +53,7 @@ class VariableFamilyNameTranslator(object):
         'a_SSS_DDD' and ('x', 42').
         """
         v_name = reduce(lambda prev_exp, var_symb: prev_exp.replace(var_symb, '%s'),
-                      self._variable_family_patterns.keys(),
+                      list(self._variable_family_patterns.keys()),
                       variable_name)
         return  v_name % tuple(map(str, substrings))
     
@@ -72,7 +73,7 @@ class VariableFamilyNameTranslator(object):
     def _set_variable_families_for_module(self, module_name):
         """Sets _variable_families[module_name] = [parsable names in module (as regular expressions)] 
         Gets a list of *.py files in the directory at module_name. """
-        if self._variable_families.has_key(module_name):
+        if module_name in self._variable_families:
             return
         try:
             module = __import__(module_name, globals(), locals(), ['anything_here_will_do'])
@@ -81,10 +82,9 @@ class VariableFamilyNameTranslator(object):
             return
         
         # get python source files in module dir
-        submodules_variables = map(lambda file_name: file_name[:-len('.py')], 
-                                   glob1(module.__path__[0], '*.py'))
+        submodules_variables = [file_name[:-len('.py')] for file_name in glob1(module.__path__[0], '*.py')]
                 
-        self._variable_families[module_name] = filter(self.is_a_family_variable_name, submodules_variables)       
+        self._variable_families[module_name] = list(filter(self.is_a_family_variable_name, submodules_variables))       
     
     def get_translated_variable_name_and_substring_arguments(self, directory_path, short_variable_name):
         """Translates the variable name and returns the pertinant substrings. 
@@ -113,13 +113,13 @@ class VariableFamilyNameTranslator(object):
                     # translate back to make sure we have the right variable and handle those funny cases
                     if self.translate_family_name_into_instance_name(var_family_name, substrings[0]) != short_variable_name:
                         continue   
-                    as_desired_types = map(lambda fn, x: fn(x),#(fn_x[0])(fn_1), 
+                    as_desired_types = list(map(lambda fn, x: fn(x),#(fn_x[0])(fn_1), 
                                            self._substitute_types(var_family_name),
-                                           substrings[0])
+                                           substrings[0]))
                     family_matches.append((var_family_name, tuple(as_desired_types)))
             how_many_matches = len(family_matches)
             if how_many_matches > 1:
-                matching_families = str(map(lambda name_val: name_val[0], family_matches))
+                matching_families = str([name_val[0] for name_val in family_matches])
                 raise LookupError("""Multiple family variables matched %(short_variable_name)s 
                 in %(directory_path)s, these matches where %(matching_families)s""" % locals())
             if how_many_matches == 1:
@@ -133,12 +133,12 @@ class VariableFamilyNameTranslatorTests(opus_unittest.OpusTestCase):
     def test_compare_instance_name_of_module_to_variable_name(self):
         instance_name = "opus_core.test.attr_test_family_32"
         variable_name = "opus_core.test.attr_test_family_DDD"
-        self.assert_(VariableFamilyNameTranslator().\
+        self.assertTrue(VariableFamilyNameTranslator().\
                      compare_instance_name_of_module_to_variable_name(instance_name, variable_name))
     
         instance_name = "opus_core.test.attr_test_family_32"
         variable_name = "opus_core.test.not_a_member"
-        self.assert_(not VariableFamilyNameTranslator().\
+        self.assertTrue(not VariableFamilyNameTranslator().\
                      compare_instance_name_of_module_to_variable_name(instance_name, variable_name))
     
     def test_translate_family_name_into_instance_name(self):
@@ -153,32 +153,32 @@ class VariableFamilyNameTranslatorTests(opus_unittest.OpusTestCase):
                   get_translated_variable_name_and_substring_arguments(
                       'opus_core.tests', 
                       'a_test_one_variable_123_five_parts_in_this_substring')
-        self.assert_(short_name=='a_test_SSS_variable_DDD_SSS')
-        self.assert_(('one', 123, 'five_parts_in_this_substring')==arguments)
+        self.assertTrue(short_name=='a_test_SSS_variable_DDD_SSS')
+        self.assertTrue(('one', 123, 'five_parts_in_this_substring')==arguments)
         
     def test_no_variable_translation(self):
         short_name, arguments = VariableFamilyNameTranslator(). \
                   get_translated_variable_name_and_substring_arguments(
                       'opus_core.tests', 
                       'a_test_variable')
-        self.assert_(short_name=='a_test_variable')
-        self.assert_(()==arguments)
+        self.assertTrue(short_name=='a_test_variable')
+        self.assertTrue(()==arguments)
         
     def test_no_variable_found(self):
         short_name, arguments = VariableFamilyNameTranslator(). \
                   get_translated_variable_name_and_substring_arguments(
                       'opus_core.tests', 
                       'not_a_123_variable')
-        self.assert_(short_name=='not_a_123_variable')
-        self.assert_(()==arguments)
+        self.assertTrue(short_name=='not_a_123_variable')
+        self.assertTrue(()==arguments)
     
     def test_two_variables_next_to_each_other(self):
         short_name, arguments = VariableFamilyNameTranslator(). \
                   get_translated_variable_name_and_substring_arguments(
                       'opus_core.tests', 
                       'a_test_123_five_parts_in_this_substring')
-        self.assert_(short_name=='a_test_DDDSSS')
-        self.assert_((123, '_five_parts_in_this_substring')==arguments)
+        self.assertTrue(short_name=='a_test_DDDSSS')
+        self.assertTrue((123, '_five_parts_in_this_substring')==arguments)
         
     def test_multiple_matches(self):
         translator = VariableFamilyNameTranslator()

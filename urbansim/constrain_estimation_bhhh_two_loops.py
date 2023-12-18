@@ -219,7 +219,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
         try:info_file.close()
         except:pass
 
-        raise RuntimeError, "max iteration reached without convergence."
+        raise RuntimeError("max iteration reached without convergence.")
 
     def inner_loop(self, supply, demand, probability, index, sdratio_matrix, J,
                    max_iteration=100):
@@ -286,13 +286,13 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
                     average_omega_history = concatenate((average_omega_history, average_omega[:, newaxis]), axis=1)
     
                     if i > 2 and ma.allclose(constrained_locations_history[:,i-1], constrained_locations_history[:,i-3]):
-                        swing_index = where((constrained_locations_history[:,i-1] - constrained_locations_history[:,i-2]) <> 0)[0]
+                        swing_index = where((constrained_locations_history[:,i-1] - constrained_locations_history[:,i-2]) != 0)[0]
                         logger.log_warning("swing of constraints found in %s alternatives" % swing_index.size)
                         return constrained_locations_matrix, omega, (inner_iterations, constrained_locations_history,swing_index, average_omega_history)
         finally:
             logger.end_block()
         logger.log_error("max iteration reached without convergence.")
-        raise RuntimeError, "max iteration reached without convergence."
+        raise RuntimeError("max iteration reached without convergence.")
 
     def compute_prob_correlation(self, pij, ptij, phij, index, resources):
         chosen_choice_dummy = resources['chosen_choice']

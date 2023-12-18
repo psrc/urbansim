@@ -16,13 +16,13 @@ class DevelopmentProjectTypesConfigurationCreator(object):
     
     def __init__(self, *args, **kwargs):
         self.development_project_type_set = {}
-        for development_project_type, config in kwargs.iteritems():
+        for development_project_type, config in kwargs.items():
             self.development_project_type_set[development_project_type] = config
     
     def execute(self):
         development_project_types = {}
         
-        for development_project_type, config in self.development_project_type_set.iteritems():
+        for development_project_type, config in self.development_project_type_set.items():
             development_project_types[development_project_type] = config.execute()
         
         return Configuration(development_project_types)

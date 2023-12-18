@@ -8,7 +8,7 @@ from opus_core import paths
 
 #loads system variables                                                                                  
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 class Query_manager :
     def __init__(self, io_info_element, logCB = None, progressCB = None) :

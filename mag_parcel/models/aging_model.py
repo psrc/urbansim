@@ -39,7 +39,7 @@ class AgingModel(Model):
         if number_of_years < 1:
             logger.log_warning("You are aging with a number less than 1")
         
-        for i in datasets.iteritems():
+        for i in datasets.items():
             # Grab the dataset and attribute to age
             dataset_to_age = dataset_pool.get_dataset(i[0])
             attribute_to_age = dataset_to_age.get_attribute(i[1])

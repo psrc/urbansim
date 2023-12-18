@@ -45,7 +45,7 @@ if __name__ == "__main__":
     results = run_manager.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % options.run_id)
 
     if len(results) > 1 and not options.force:
-        print "WARNING: run_id %s exists in run_activity. Use --force to override." % options.run_id
+        print("WARNING: run_id %s exists in run_activity. Use --force to override." % options.run_id)
         sys.exit()
     elif options.force:
         run_manager.services_db.execute(

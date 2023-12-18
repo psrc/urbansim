@@ -10,7 +10,7 @@ class PrintOutput :
         if self.logCB != None :
             self.logCB(string + "\n")
         if self.profiling != None :
-            print string
+            print(string)
             
     def progress(self, x):
         if self.progressCB != None:

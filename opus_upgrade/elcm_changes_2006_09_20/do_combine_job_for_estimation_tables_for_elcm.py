@@ -7,7 +7,7 @@ import sys
 
 from optparse import OptionParser
 
-from classes.combine_tables import CombineTables
+from .classes.combine_tables import CombineTables
 
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
@@ -50,4 +50,4 @@ CombineTables().combine_tables(config, options.database,
     ], 
     'jobs_for_estimation')
 
-print 'Done.'
+print('Done.')

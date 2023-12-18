@@ -42,7 +42,7 @@ class RunMalta(AbstractTravelModel):
                                          shell = True
                                      ).communicate()
         except:
-            print "Error occured when running MALTA"
+            print("Error occured when running MALTA")
             raise
         """
         if stderr:

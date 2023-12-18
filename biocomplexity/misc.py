@@ -19,11 +19,11 @@ def get_distinct_list(list):
     
 def create_folder(base_dir, new_dir):
     if not os.path.exists(base_dir):
-        print "base directory " + base_dir + " does not exist"
+        print("base directory " + base_dir + " does not exist")
     else:
         dir_path = os.path.join(base_dir,new_dir)
         if not os.path.exists(dir_path):
-            print "creating directory " + new_dir
+            print("creating directory " + new_dir)
             os.mkdir(dir_path)
 
 def _create_folders_for_one_running_year(base_dir, year):
@@ -36,7 +36,7 @@ def _create_folders_for_one_running_year(base_dir, year):
 
 def clean_up_files_in_folder(dir):
     if os.path.exists(dir):
-        print 'removing all files in ' + dir
+        print('removing all files in ' + dir)
         for file in glob.glob(os.path.join(dir,'*.*')):
             os.remove(file)
             

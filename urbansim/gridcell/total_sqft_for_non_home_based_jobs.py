@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class total_sqft_for_non_home_based_jobs(Variable):
     """Sum of sqft for jobs that aren't home-based (governmental, commmercial, and industrial)"""

@@ -201,7 +201,7 @@ def _add_years(travel_model_configuration, years_to_run):
             2025:'2020_06',
             2030:'2030_06',
             }
-    for year, year_dir in years_to_run.iteritems():
+    for year, year_dir in years_to_run.items():
         travel_model_configuration[year] = {
             'bank':[ year_dir, ],
             }

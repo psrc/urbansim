@@ -5,8 +5,8 @@
 import numpy
 from math import ceil
 from numpy import array
-import devmdl_optimize
-from shifters import RESLOCALCOST_D, NONRESLOCALCOST_D, MAXNONRESSIZE_D
+from . import devmdl_optimize
+from .shifters import RESLOCALCOST_D, NONRESLOCALCOST_D, MAXNONRESSIZE_D
 
 FLOORHEIGHT = 12
 LOTRATIOS = array([.71,.79,.93,1.16]) # ratio of 1BR, 2BR, etc to average

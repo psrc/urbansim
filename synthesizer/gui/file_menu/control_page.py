@@ -90,7 +90,7 @@ class ControlDataPage(QWizardPage):
         self.connect(self, SIGNAL("resolutionChanged"), self.resolutionAction)
 
     def resolutionAction(self, resolution):
-        if resolution <> 'County':
+        if resolution != 'County':
             self.sourceComboBox.clear()
             self.sourceComboBox.addItems([QString(""), 
                                           QString("Census 2000")])

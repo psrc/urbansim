@@ -615,8 +615,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         my_controller_configuration["workplace_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["coefficients_table"] = "'workplace_choice_model_for_immigrant_coefficients'"
         my_controller_configuration["workplace_choice_model_for_immigrant"]["run"]["arguments"]["agents_filter"] = "'psrc.person.is_immigrant_worker_without_job'"        
         
-        for model in my_controller_configuration.keys():
-            if model not in self["models_configuration"].keys():
+        for model in list(my_controller_configuration.keys()):
+            if model not in list(self["models_configuration"].keys()):
                 self["models_configuration"][model] = {}
             self['models_configuration'][model]['controller'] = my_controller_configuration[model]
         

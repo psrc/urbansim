@@ -48,11 +48,11 @@ class FlattenScenarioDatabaseChain(object):
         
         #by default, copy all tables
         if tables_to_copy == []:
-            tables_to_copy = sum(table_mapping.values(), [])  # flat a list of lists
+            tables_to_copy = sum(list(table_mapping.values()), [])  # flat a list of lists
         elif 'scenario_information' not in tables_to_copy:
             tables_to_copy.append('scenario_information')
             
-        for database_name, tables in table_mapping.items():
+        for database_name, tables in list(table_mapping.items()):
             database_in = db_server_from.get_database(database_name)
             for table in tables:
                 if table not in tables_to_copy:

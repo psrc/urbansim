@@ -63,7 +63,7 @@ class RealEstateTransitionModel(Model):
         """
         
         if self.target_vancy_dataset is None:
-            raise RuntimeError, "target_vacancy_rate dataset is unspecified."
+            raise RuntimeError("target_vacancy_rate dataset is unspecified.")
         
         if not sample_from_dataset:
             sample_from_dataset = realestate_dataset
@@ -117,7 +117,7 @@ class RealEstateTransitionModel(Model):
                     dataset_attribute = realestate_dataset.get_attribute(attribute)
                     sample_attribute = sample_from_dataset.get_attribute(attribute)
                 else:
-                    raise ValueError, "attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
+                    raise ValueError("attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name()))
                 
                 if attribute + '_min' in column_names:
                     amin = target_vacancy_for_this_year.get_attribute(attribute+'_min')[index] 
@@ -233,7 +233,7 @@ class RealEstateTransitionModel(Model):
             result_data.setdefault(year_built, resize(year, sampled_index.size).astype('int32'))
             ## also add 'independent_variables' to the new dataset
             for attribute in set(sample_from_dataset.get_primary_attribute_names() + independent_variables):
-                if reset_attribute_value.has_key(attribute):
+                if attribute in reset_attribute_value:
                     result_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
                 else:
                     result_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
@@ -380,7 +380,7 @@ class RETMTests(StochasticTestCase):
             table_name='households',
             table_data={
                 "household_id":arange( 1, 1000+1 ),
-                "building_id": array(100 * range(3,31,3))
+                "building_id": array(100 * list(range(3,31,3)))
                 }
             )
 #            create 250 commercial jobs
@@ -388,7 +388,7 @@ class RETMTests(StochasticTestCase):
             table_name='jobs',
             table_data={
                 "job_id":arange( 1, 250+1 ),
-                "building_id":array( 20*range(1,31,3) + 5*range(2,32,3) ),
+                "building_id":array( 20*list(range(1,31,3)) + 5*list(range(2,32,3)) ),
                 "home_based":array( 250*[0] ),
                 }
             )

@@ -69,7 +69,7 @@ class RealEstateTransitionModel(Model):
         """
         
         if self.target_vancy_dataset is None:
-            raise RuntimeError, "target_vacancy_rate dataset is unspecified."
+            raise RuntimeError("target_vacancy_rate dataset is unspecified.")
         
         if not sample_from_dataset or not living_units_from_dataset:
             logger.log_note('No development projects or no living units of development projects to sample from. Development projects are taken from building dataset and thus living units from living_units dataset.')
@@ -120,7 +120,7 @@ class RealEstateTransitionModel(Model):
                 if attribute in sample_dataset_known_attributes:
                     sample_attribute = sample_from_dataset.get_attribute(attribute)
                 else:
-                    raise ValueError, "attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
+                    raise ValueError("attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name()))
                 
                 if attribute + '_min' in column_names:
                     amin = target_vacancy_for_this_year.get_attribute(attribute+'_min')[index] 
@@ -189,7 +189,7 @@ class RealEstateTransitionModel(Model):
 #                idx_current_sector = where(this_years_control_totals['sector_id'] == criterion[col])[0]
                 next_years_jobs = this_years_control_totals['number_of_jobs']
                 controled_sectors = this_years_control_totals['sector_id']                
-                sector_job_totals = dict(zip(controled_sectors, next_years_jobs.T)) # creating dictionary with sector id's as key and number of jobs as values to ensure multiplication with right requiremtents.
+                sector_job_totals = dict(list(zip(controled_sectors, next_years_jobs.T))) # creating dictionary with sector id's as key and number of jobs as values to ensure multiplication with right requiremtents.
 
                 # Getting infos on required sqft per sector. 
 #                a_zone_id = min(self.building_sqft_per_job['zone_id']) # Get a zone number from the definition table. Here choose to take the minimum which is arbitrary. This code assumes constant sqft requirements in all zones. TODO: Support different sqft requirements per zone.
@@ -264,7 +264,7 @@ class RealEstateTransitionModel(Model):
             #result_data.setdefault(year_built, resize(year, sampled_index.size).astype('int32')) # Reset the year_built attribute. Uncommented because it is overwritten in the for loop afterwards.
             ## also add 'independent_variables' to the new dataset
             for attribute in set(sample_from_dataset.get_primary_attribute_names() + independent_variables):
-                if reset_attribute_value.has_key(attribute):
+                if attribute in reset_attribute_value:
                     result_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
                 else:
                     result_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
@@ -290,7 +290,7 @@ class RealEstateTransitionModel(Model):
         if append_to_realestate_dataset:
             if len(result_data) > 0:
                 logger.start_block('Appending development events and living units')
-                logger.log_note("Append %d sampled development events to real estate dataset." % len(result_data[result_data.keys()[0]]))
+                logger.log_note("Append %d sampled development events to real estate dataset." % len(result_data[list(result_data.keys())[0]]))
                 index = realestate_dataset.add_elements(result_data, require_all_attributes=False,
                                                         change_ids_if_not_unique=True)
                 logger.start_block('Creating id mapping')
@@ -372,7 +372,7 @@ class RealEstateTransitionModel(Model):
         # get_new_ids_of_added_buildings
         new_buildings_with_new_ids = DatasetSubset(new_dataset, new_index)
         new_ids = new_buildings_with_new_ids['building_id']
-        new_ids_to_old_ids_mapping = dict(zip(new_ids, old_ids))
+        new_ids_to_old_ids_mapping = dict(list(zip(new_ids, old_ids)))
         return new_ids_to_old_ids_mapping
     
     def check_consistency_of_living_units_per_building(self, realestate_dataset, living_units_dataset, mapping_new_old):

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ratio_vacant_industrial_sqft(Variable):
     """ vacant industrial_sqft / industrial_sqft. """ 

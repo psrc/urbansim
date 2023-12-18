@@ -90,8 +90,8 @@ class RandPoints():
         nLayers = mc.layerCount()
         for l in range(nLayers):
             layer = mc.getZpos(l)
-            if layer.name() == unicode(myName):
-                vlayer = QgsVectorLayer(unicode(layer.source()),  unicode(myName),  unicode(layer.getDataProvider().name()))
+            if layer.name() == str(myName):
+                vlayer = QgsVectorLayer(str(layer.source()),  str(myName),  str(layer.getDataProvider().name()))
                 if vlayer.isValid():
                     return vlayer
                 else:
@@ -103,7 +103,7 @@ class RandPoints():
         nLayers = mc.layerCount()
         for l in range(nLayers):
             layer = mc.getZpos(l)
-            if layer.name() == unicode(myName):
+            if layer.name() == str(myName):
                 if layer.isValid():
                     return layer
 
@@ -125,7 +125,7 @@ class RandPoints():
         check = QFile(outPath)
         if check.exists():
             if not QgsVectorFileWriter.deleteShapeFile(outPath):
-                print "Problem"
+                print("Problem")
                 return
         writer = QgsVectorFileWriter(outPath, "CP1250", fields, QGis.WKBPoint, None)
         #writer = QgsVectorFileWriter(unicode(outPath), "CP1250", fields, QGis.WKBPoint, None)
@@ -150,8 +150,8 @@ class RandPoints():
         sGeom = QgsGeometry()
         sPoints = []
         if design == "field":
-            for (i, attr) in sProvider.fields().iteritems():
-                if (unicode(numRand) == attr.name()): index = i #get input field index
+            for (i, attr) in sProvider.fields().items():
+                if (str(numRand) == attr.name()): index = i #get input field index
         count = 10.00
         add = 60.00 / sProvider.featureCount()
         while sProvider.getNextFeature(sFeat):

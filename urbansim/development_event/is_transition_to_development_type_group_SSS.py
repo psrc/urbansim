@@ -33,7 +33,7 @@ class mock_developmenttype(object):
                 return group in groups[idx]
             except:
                 return False
-        return array(map(lambda x: func(x), ids))
+        return array([func(x) for x in ids])
 
     def compute_variables_return_versions_and_final_value(self, name, *args, **kwargs):
         return ([0], array([1,2,3]))
@@ -79,7 +79,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = development_event.get_attribute(self.variable_name1)
         
         should_be = array( [True, True, False, False] )
-        self.assert_(ma.allequal( values, should_be), 
+        self.assertTrue(ma.allequal( values, should_be), 
                      msg = "Error in " + self.variable_name1 )
                           
         # Test variable 2
@@ -88,7 +88,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = development_event.get_attribute(self.variable_name2)
         
         should_be = array( [True, True, True, False] )
-        self.assert_(ma.allequal( values, should_be), 
+        self.assertTrue(ma.allequal( values, should_be), 
                      msg = "Error in " + self.variable_name2 )
 
 if __name__=='__main__':

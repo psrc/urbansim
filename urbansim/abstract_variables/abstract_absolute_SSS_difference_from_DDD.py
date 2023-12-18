@@ -156,7 +156,7 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2002)
                 pop_2002 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allequal(pop_2002, array([2,3,4])))
+                self.assertTrue(ma.allequal(pop_2002, array([2,3,4])))
                 
         
             def test_at_year_2000(self):
@@ -182,7 +182,7 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2000)
                 pop_2000 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allequal(pop_2000, array([0,0,0])))
+                self.assertTrue(ma.allequal(pop_2000, array([0,0,0])))
         
         __MyTests._package_name = self.package_name
         __MyTests._dataset_name = dataset_name

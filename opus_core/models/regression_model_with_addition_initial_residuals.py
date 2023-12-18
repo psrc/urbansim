@@ -44,14 +44,14 @@ class RegressionModelWithAdditionInitialResiduals(RegressionModel):
         By default, an outlier is a data point smaller than 0. There is no default upper bound.
         """
         if self.outcome_attribute is None:
-            raise StandardError, "An outcome attribute must be specified for this model. Pass it into the initialization."
+            raise Exception("An outcome attribute must be specified for this model. Pass it into the initialization.")
         
         if self.outcome_attribute.get_alias() not in dataset.get_known_attribute_names():
             try:
                 dataset.compute_variables(self.outcome_attribute, dataset_pool=self.dataset_pool)
             except:
-                raise StandardError, "The outcome attribute %s must be a known attribute of the dataset %s." % (
-                                                                self.outcome_attribute.get_alias(), dataset.get_dataset_name())
+                raise Exception("The outcome attribute %s must be a known attribute of the dataset %s." % (
+                                                                self.outcome_attribute.get_alias(), dataset.get_dataset_name()))
             
         if index is None:
             index = arange(dataset.size())

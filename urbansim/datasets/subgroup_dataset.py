@@ -68,7 +68,7 @@ class SubgroupDataset(UrbansimDataset):
     
 def generate_unique_ids(dataset, short_names, multipler=[]):
     if len(short_names) == 0:
-        raise ValueError, "There must have at least 1 attribute."
+        raise ValueError("There must have at least 1 attribute.")
     elif len(short_names) == 1:
         subgroup_ids = dataset[short_names[0]]
     else:

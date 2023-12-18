@@ -109,7 +109,7 @@ class RunManager(AbstractService):
             # Test pre-conditions
             model_system_class_path = run_resources.get('model_system', None)
             if model_system_class_path is None:
-                raise TypeError, ("The configuration must specify model_system, the"
+                raise TypeError("The configuration must specify model_system, the"
                     " full Opus path to the model system to be used.")
 
             # Create baseyear cache
@@ -192,11 +192,11 @@ class RunManager(AbstractService):
                     self.create_baseyear_cache(run_resources)
 
             if os.path.isdir(run_resources['cache_directory']) and not os.path.exists(run_resources['cache_directory']):
-                raise StandardError("cache directory doesn't exist: '%s'" % run_resources['cache_directory'])
+                raise Exception("cache directory doesn't exist: '%s'" % run_resources['cache_directory'])
 
             model_system_class_path = run_resources.get('model_system', None)
             if model_system_class_path is None:
-                raise TypeError, ("The configuration must specify model_system, the"
+                raise TypeError("The configuration must specify model_system, the"
                     " full Opus path to the model system to be used.")
 
             if not skip_cache_cleanup:
@@ -262,7 +262,7 @@ class RunManager(AbstractService):
             end_year = resources["years"][-1]
         
         if end_year < restart_year:
-            raise ValueError,"restart year (%s) cannot be less than end_year (%s)" % (restart_year, end_year) 
+            raise ValueError("restart year (%s) cannot be less than end_year (%s)" % (restart_year, end_year)) 
         
         if 'base_year' not in resources:
             resources['base_year'] = resources['years'][0] - 1
@@ -281,9 +281,9 @@ class RunManager(AbstractService):
         seed(root_seed)
         start_year = start_year if start_year is not None else resources["years"][0]
         end_year = end_year if end_year is not None else resources["years"][-1]
-        seed_dict = dict( zip(range(start_year, end_year+1),
+        seed_dict = dict( list(zip(list(range(start_year, end_year+1)),
                               randint(1,2**30, end_year-start_year+1)
-                              )
+                              ))
                           )
         
         resources['_seed_dictionary_'] = seed_dict
@@ -310,7 +310,7 @@ class RunManager(AbstractService):
         run_resources = self.services_db.execute(query).fetchone()
 
         if not run_resources:
-            raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
+            raise Exception("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
 
         try:
             r = self._unpickle(run_resources[0])
@@ -341,7 +341,7 @@ class RunManager(AbstractService):
     def get_runs(self, return_columns=['run_id'], return_rs=False, **kwargs):
         run_activity = self.services_db.get_table('run_activity')
         whereclause = run_activity.c.run_id > 0
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             if k in run_activity.c:
                 whereclause = and_(whereclause, run_activity.c[k]==v)
         
@@ -642,10 +642,10 @@ def insert_auto_generated_cache_directory_if_needed(config):
 
     """
     insert_auto_generated_cache_directory = True
-    if config.has_key('cache_directory') and config['cache_directory'] is not None:
+    if 'cache_directory' in config and config['cache_directory'] is not None:
         if not os.path.exists(config['cache_directory']):
             insert_auto_generated_cache_directory = False
-        elif config.has_key('overwrite_cache_directory_if_exists') and config['overwrite_cache_directory_if_exists'] is True:
+        elif 'overwrite_cache_directory_if_exists' in config and config['overwrite_cache_directory_if_exists'] is True:
             insert_auto_generated_cache_directory = False
 
     if insert_auto_generated_cache_directory:
@@ -677,7 +677,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
                                   configuration = {})
         resulting_cache_directory = run_manager.get_current_cache_directory()
         self.assertTrue(resulting_cache_directory.find(run_name)>-1)
-        self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
+        self.assertEqual(os.path.dirname(resulting_cache_directory), base_directory)
         self.assertTrue(run_manager.ready_to_run)
         self.assertTrue(not os.path.exists(resulting_cache_directory))
         run_manager.services_db.close()
@@ -715,7 +715,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
     def test_get_runs(self):
         from numpy.random import randint
         run_manager = RunManager(self.config)
-        run_ids = range(1, 11)
+        run_ids = list(range(1, 11))
         run_names = ['run ' + str(id) for id in run_ids]
         resources = {'cache_directory':None}
         status = ['done', 'failed'] * 5

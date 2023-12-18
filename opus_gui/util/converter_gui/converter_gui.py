@@ -123,20 +123,20 @@ class ConverterGui(QDialog, Ui_ConverterGui):
             suggested_savename = os.path.normpath(suggested_savename)
             self.le_filename_out.setText(suggested_savename)
 
-        except SyntaxError, ex:
+        except SyntaxError as ex:
                 self.le_filename.setFocus()
                 self.le_filename.selectAll()
                 self._display_info('<b>This XML file seems to have an invalid syntax.</b>', ex,
                                    icon = 'warning')
-        except IOError, ex:
+        except IOError as ex:
                 self.le_filename.setFocus()
                 self.le_filename.selectAll()
                 self._display_info('<b>An read error occurred while trying to load the file.</b>',
                                    ex, icon = 'warning')
-        except Exception, ex:
+        except Exception as ex:
                 self.le_filename.setFocus()
                 self.le_filename.selectAll()
-                print repr(ex)
+                print(repr(ex))
                 self._display_info('<b>An error occurred while parsing the file.</b>', ex,
                                    icon = 'warning')
         finally:
@@ -176,9 +176,9 @@ class ConverterGui(QDialog, Ui_ConverterGui):
             self._display_info(info, sec_info, icon = 'ok')
             self._enable_save(False)
 
-        except IOError, ex:
+        except IOError as ex:
             self._display_info('<b>A file error occurred while trying to save the converted XML.</b>', ex)
-        except Exception, ex:
+        except Exception as ex:
             self._display_info('<b>An error occurred while trying to save the converted XML.</b>', ex)
         finally:
             f.close()

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_ge_DDD_cars(Variable):
     """has household greater equal than DDD cars? """

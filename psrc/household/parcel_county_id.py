@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import array
 
 class parcel_county_id(Variable):
@@ -56,7 +56,7 @@ if __name__=='__main__':
                 )
             should_be = array( [33, 33, 31, 21, 33] )
             
-            self.assert_(ma.allclose(values, should_be, rtol=1e-7),
+            self.assertTrue(ma.allclose(values, should_be, rtol=1e-7),
                 'Error in ' + self.variable_name)
 
     opus_unittest.main()

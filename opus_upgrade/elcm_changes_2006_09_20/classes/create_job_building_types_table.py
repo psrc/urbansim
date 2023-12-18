@@ -23,7 +23,7 @@ class CreateJobBuildingTypesTable(object):
         try:
             db = db_server.get_database(db_name)
         except:
-            raise NameError, "Unknown database '%s'!" % db_name
+            raise NameError("Unknown database '%s'!" % db_name)
 
         logger.log_status('Creating table %s.' % table_name)
         try:
@@ -32,7 +32,7 @@ class CreateJobBuildingTypesTable(object):
                 '(id INT, name varchar(50), home_based INT);' 
                 % table_name)
         except:
-            raise NameError, "Invalid table name specified! (%s)" % table_name
+            raise NameError("Invalid table name specified! (%s)" % table_name)
             
         db.DoQuery('INSERT INTO %s (id, name, home_based) VALUES'
             '(1, "commercial", 0),' 
@@ -98,7 +98,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
         except:
             self.fail('Expected output table job_building_types does not exist.')
         
-        self.assert_(expected_results == results,
+        self.assertTrue(expected_results == results,
             "Table job_building_types has incorrect values! "
             "Expected: %s. Received: %s" % (expected_results, results))
             

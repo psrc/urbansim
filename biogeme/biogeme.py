@@ -2,7 +2,7 @@
 # Don't modify this file, modify the SWIG interface instead.
 # This file is compatible with both classic and new-style classes.
 
-import _biogeme
+from . import _biogeme
 import new
 new_instancemethod = new.instancemethod
 def _swig_setattr_nondynamic(self,class_type,name,value,static=1):
@@ -25,7 +25,7 @@ def _swig_getattr(self,class_type,name):
     if (name == "thisown"): return self.this.own()
     method = class_type.__swig_getmethods__.get(name,None)
     if method: return method(self)
-    raise AttributeError,name
+    raise AttributeError(name)
 
 def _swig_repr(self):
     try: strthis = "proxy of " + self.this.__repr__()
@@ -34,7 +34,7 @@ def _swig_repr(self):
 
 import types
 try:
-    _object = types.ObjectType
+    _object = object
     _newclass = 1
 except AttributeError:
     class _object : pass
@@ -47,7 +47,7 @@ class PySwigIterator(_object):
     __setattr__ = lambda self, name, value: _swig_setattr(self, PySwigIterator, name, value)
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, PySwigIterator, name)
-    def __init__(self): raise AttributeError, "No constructor defined"
+    def __init__(self): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     __swig_destroy__ = _biogeme.delete_PySwigIterator
     __del__ = lambda self : None;

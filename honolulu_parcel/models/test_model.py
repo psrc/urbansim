@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-import cPickle, time, sys, string, StringIO
+import pickle, time, sys, string, io
 #from bayarea.pyaccess import PyAccess
 from opus_core.model import Model
 from opus_core.logger import logger

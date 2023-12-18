@@ -30,7 +30,7 @@ class Tests(opus_unittest.OpusTestCase):
         # check that the access methods for the variable all return the correct values
         name = VariableName(expr)
         autogen = name.get_autogen_class()
-        self.assert_(issubclass(autogen, Variable), msg="autogen'd class isn't a Variable")
+        self.assertTrue(issubclass(autogen, Variable), msg="autogen'd class isn't a Variable")
         self.assertEqual(name.get_package_name(), None, msg="bad value for package")
         self.assertEqual(name.get_dataset_name(), 'tests', msg="bad value for dataset")
         self.assertEqual(name.get_short_name(), autogen.__name__, msg="bad value for shortname")
@@ -70,7 +70,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([64, -512, 0.125, 1])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_attr_power")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_attr_power")
         # check the dependencies (trickier for ** because we need a separate attribute tree pattern)
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
@@ -108,7 +108,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([ 7.48331477,  2.82842712,  6.4807407 ,  6.63324958])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression")
         # check the name
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
@@ -117,7 +117,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(var.dependencies(), ['mydataset.my_variable'], msg="dependencies are incorrect")
         # test that the variable can now also be accessed using its short name in an expression
         result2 = dataset.compute_variables([v.get_short_name()])
-        self.assert_(ma.allclose(result2, should_be, rtol=1e-6), "Error in accessing a_test_variable")
+        self.assertTrue(ma.allclose(result2, should_be, rtol=1e-6), "Error in accessing a_test_variable")
 
     def test_two_expressions(self):
         # test having two different expressions (to make sure having two autogen'd classes at once is working)
@@ -131,10 +131,10 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result1 = dataset.compute_variables([expr1])
         should_be1 = array([ 7.48331477, 2.82842712, 6.4807407, 6.63324958])
-        self.assert_(ma.allclose(result1, should_be1, rtol=1e-6), "Error in test_two_expressions")
+        self.assertTrue(ma.allclose(result1, should_be1, rtol=1e-6), "Error in test_two_expressions")
         result2 = dataset.compute_variables([expr2])
         should_be2 = array([11.22497216, 4.24264068, 9.72111105,  9.94987437])
-        self.assert_(ma.allclose(result2, should_be2, rtol=1e-6), "Error in test_two_expressions")
+        self.assertTrue(ma.allclose(result2, should_be2, rtol=1e-6), "Error in test_two_expressions")
 
     def test_expression_2vars(self):
         # test an expression with 2 variables
@@ -147,7 +147,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([ 5.29150262, 0.0,  5.47722558,  5.65685425])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression_2vars")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression_2vars")
         # check the dependencies (will depend on two different other variables)
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
@@ -167,7 +167,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([ 6, 30, 0, 2])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression_2vars")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_expression_2vars")
         # check the dependencies
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
@@ -184,7 +184,7 @@ class Tests(opus_unittest.OpusTestCase):
         # we don't actually use anything in the dataset
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
-        self.assert_(4.99<result and result<5.01, "Error in test_sqrt_constant")
+        self.assertTrue(4.99<result and result<5.01, "Error in test_sqrt_constant")
         # check the dependencies
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
@@ -201,7 +201,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([0, 1, 2, 3, 4])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_numpy_arange_constant")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_numpy_arange_constant")
 
     def test_numpy_arange_constant2(self):
         # same as test_numpy_arange_constant, except provide 2 arguments
@@ -214,7 +214,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([2, 3, 4])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_numpy_arange_constant2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_numpy_arange_constant2")
 
     def test_rand(self):
         # test numpy.random.rand (this exercises 0-argument functions)
@@ -226,7 +226,7 @@ class Tests(opus_unittest.OpusTestCase):
             )
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
-        self.assert_(result>=0 and result<1, "Error in test_rand")
+        self.assertTrue(result>=0 and result<1, "Error in test_rand")
 
     def test_condition(self):
         # test using a condition to return an array of True and False values

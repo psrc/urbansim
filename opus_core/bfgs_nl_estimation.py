@@ -63,7 +63,7 @@ class bfgs_nl_estimation(EstimationProcedure):
         l_0 = self.nl_loglikelihood(l_0beta, data, depm)
 
         ls_idx = arange(nvars, nvars+M)
-        for name, sv in self.resources.get("starting_values", {}).iteritems():
+        for name, sv in self.resources.get("starting_values", {}).items():
             est = True
             if isinstance(sv, tuple) or isinstance(sv, list):
                 est = sv[1]
@@ -135,8 +135,8 @@ class bfgs_nl_estimation(EstimationProcedure):
         if coef_names is not None:
             nestn = nest_numbers
             if nestn is None:
-                nestn = range(1,M+1)
-            names = concatenate((coef_names, array(map(lambda x: '__logsum_%s' % x, nestn))))
+                nestn = list(range(1,M+1))
+            names = concatenate((coef_names, array(['__logsum_%s' % x for x in nestn])))
         else:
             names = ['']*(nvars+M)
         logger.log_status("Coeff_names\testimate\tstd err\t\tt-values\tgradient", tags=tags, verbosity_level=vl)
@@ -174,7 +174,7 @@ class bfgs_nl_estimation(EstimationProcedure):
             return None
         if not 'get_nested_structure' in dir(model):
             return None
-        return sort(model.get_nested_structure().keys())
+        return sort(list(model.get_nested_structure().keys()))
 
 def approximate_second_derivative(f, x, args):
     delta = 0.001*x

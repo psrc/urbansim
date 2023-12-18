@@ -19,12 +19,12 @@ class LargeAreaDataset(UrbansimDataset):
 
         UrbansimDataset.__init__(self, **kwargs)
 
-        if id_values <> None:
+        if id_values != None:
             self._add_id_attribute(data=id_values, name=self.get_id_name()[0])
-        elif fazset <> None:
+        elif fazset != None:
             if (self.get_id_name()[0] not in fazset.get_attribute_names()) and \
                 (self.get_id_name()[0] not in fazset.get_primary_attribute_names()):
-                raise StandardError, "Given FazDataset does not contain " + self.get_id_name()[0]
+                raise Exception("Given FazDataset does not contain " + self.get_id_name()[0])
             large_area_ids = fazset.get_attribute(self.get_id_name()[0])
             unique_ids = unique(large_area_ids[large_area_ids >=0])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])

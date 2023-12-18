@@ -9,7 +9,7 @@ class Sampler(ModelComponent):
     
     def run(self):
         """required for children class"""
-        raise NotImplementedError, "Method 'run' is not implemented for this sampler."
+        raise NotImplementedError("Method 'run' is not implemented for this sampler.")
     
     def create_interaction_dataset(self, dataset1, dataset2, index1=None, index2=None):
         return InteractionDataset(dataset1=dataset1, dataset2=dataset2,

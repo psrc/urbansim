@@ -152,9 +152,9 @@ class LagVariable(Variable):
 
         if lag_index >= lag_size:
             final_index_array.put(indices=arange(current_index,current_size),
-                                  values=take(current_index_array, range(current_index,current_size)))
+                                  values=take(current_index_array, list(range(current_index,current_size))))
             final_var_array.put(indices=arange(current_index,current_size),
-                                values=take(current_var_array, range(current_index,current_size)))
+                                values=take(current_var_array, list(range(current_index,current_size))))
 
         return (final_index_array, final_var_array)
 
@@ -230,10 +230,10 @@ class TestLagVariables(opus_unittest.OpusTestCase):
                      dataset_name = 'tests')
         
         ds.compute_variables(['opus_core.tests.attr1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1'), array([111,222,333])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1'), array([111,222,333])))
         
         ds.compute_variables(['opus_core.tests.attr1_lag1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30])))
     
     def test_lag_variable1_missing_year(self):
         test_data = {
@@ -266,10 +266,10 @@ class TestLagVariables(opus_unittest.OpusTestCase):
                      dataset_name = 'tests')
         
         ds.compute_variables(['opus_core.tests.attr1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1'), array([111,222,333,555])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1'), array([111,222,333,555])))
         
         ds.compute_variables(['opus_core.tests.attr1_lag1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30,555])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30,555])))
 
     def test_simple_lag_variable2(self):
         test_data = {
@@ -302,10 +302,10 @@ class TestLagVariables(opus_unittest.OpusTestCase):
                      dataset_name = 'tests')
         
         ds.compute_variables(['opus_core.tests.attr1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1'), array([111,222,333,555])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1'), array([111,222,333,555])))
         
         ds.compute_variables(['opus_core.tests.attr1_lag1'])
-        self.assert_(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30,555])))
+        self.assertTrue(ma.allequal(ds.get_attribute('attr1_lag1'), array([10,20,30,555])))
 
        
     

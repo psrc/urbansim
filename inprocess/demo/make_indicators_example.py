@@ -88,7 +88,7 @@ computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = source_data)
 
-print indicator_to_XML_writer(computed_indicators)
+print(indicator_to_XML_writer(computed_indicators))
 
 ############################################
 #VISUALIZE the resulting computed indicators

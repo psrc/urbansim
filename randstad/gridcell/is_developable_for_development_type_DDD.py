@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import zeros, logical_or, where
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_developable_for_development_type_DDD(Variable):
     """Boolean indicating whether the gridcell is developable to convert to landuse type DDD"""
@@ -72,7 +72,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([0, 0, 1])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

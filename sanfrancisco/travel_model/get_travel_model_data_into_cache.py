@@ -55,7 +55,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
                 logger.log_status(line.strip('\r\n'))
             zipret  = zipproc.wait()
             logger.log_status("Returned %d" % (zipret))
-            if zipret != 0: print "Zip (%s) exited with bad return code" % (cmd)
+            if zipret != 0: print("Zip (%s) exited with bad return code" % (cmd))
             logger.end_block()
             
             # delete everything except for the triptables subdir
@@ -73,7 +73,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
                 (drive, tail) = os.path.splitdrive(run_dir)
                 recycle_dir =  os.path.join(drive + r"\\", RECYCLE_BIN, tail.lstrip(r"\\"))
                 shutil.rmtree(recycle_dir)
-            except Exception, err:
+            except Exception as err:
                 logger.log_error("Error: %s" % str(err))
 
 
@@ -95,7 +95,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
         
         skims   = SkimUtil(run_dir, useTempTrn = True, timeperiods=[2], trnskims=["WLW", "WMW", "WBW", "WPW"], skimprefix="final")
         maxTAZ  = min(skims.getMaxTAZnum(), maxTAZ)
-        modes   = dict((v,k) for k,v in TRIPMODE.iteritems())
+        modes   = dict((v,k) for k,v in TRIPMODE.items())
         logger.log_status("Opened and read Skims")
 
         for otaz in range(1, maxTAZ+1):
@@ -150,7 +150,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
             if otaz % 100 == 0: logger.log_status("Completed all destinations for otaz up to %d" % (otaz))
 
         # convert to numpy array        
-        for item, value in return_data.iteritems():
+        for item, value in return_data.items():
             try:
                 return_data[item] = array(value)
             except:

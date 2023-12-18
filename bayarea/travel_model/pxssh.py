@@ -109,7 +109,7 @@ class pxssh (spawn):
         if n > m:
             a,b = b,a
             n,m = m,n
-        current = range(n+1)
+        current = list(range(n+1))
         for i in range(1,m+1):
             previous, current = current, [i]+[0]*n
             for j in range(1,n+1):

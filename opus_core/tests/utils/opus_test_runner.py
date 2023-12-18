@@ -4,7 +4,7 @@
 
 import time
 import sys
-from StringIO import StringIO
+from io import StringIO
 from unittest import TestResult#, _WritelnDecorator, _strclass                                         
 from opus_core.logger import logger                                                                    
                                                                                                        
@@ -172,7 +172,7 @@ class OpusTestRunner:
         self.stream.writeln()
 
         if not result.wasSuccessful():
-            failed, errored = map(len, (result.failures, result.errors))
+            failed, errored = list(map(len, (result.failures, result.errors)))
             status_string = "(failures=%d, errors=%d)" % (failed, errored)
             
             status_string = _get_centered_string(status_string, result.sep_len)
@@ -293,7 +293,7 @@ class OpusXMLTestRunner:
         
         run = result.testsRun
         
-        failed, errored = map(len, (result.failures, result.errors))
+        failed, errored = list(map(len, (result.failures, result.errors)))
         top_element = result_xml.documentElement
         top_element.setAttribute('errors', '%d' % errored)
         top_element.setAttribute('failures', '%d' % failed)

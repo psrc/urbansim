@@ -44,8 +44,8 @@ class RunExportSkims(RunExportMacros, AbstractEmme4TravelModel):
         bank_year = tmconfig[year]['bank'][0]
         skimnames_config = tmconfig.get('matrix_variable_map', {})
         skimnames = {}
-        for spath, sdict in skimnames_config.iteritems():
-            skimnames[spath] = sdict.keys()
+        for spath, sdict in skimnames_config.items():
+            skimnames[spath] = list(sdict.keys())
         skimfile = tempfile.mktemp(suffix='.pickle', prefix='opus_tmp')
         f = open(skimfile, 'w')
         pickle.dump(skimnames, f)
@@ -59,7 +59,7 @@ class RunExportSkims(RunExportMacros, AbstractEmme4TravelModel):
                                 )
             logger.log_status('Invoking: %s' % cmd)     
             if os.system(cmd):
-                raise StandardError("Problem with simulation")
+                raise Exception("Problem with simulation")
         finally:
             logger.end_block()
             os.remove(skimfile)

@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
 
-import urllib
+
+import urllib.request, urllib.parse, urllib.error
 import os
 import copy
 
@@ -16,7 +16,7 @@ from database.createDBConnection import createDBC
 from misc.errors import FileError
 from misc.utils import UnzipFile
 from misc.widgets import VariableSelectionDialog
-from import_data import ImportUserProvData, FileProperties
+from .import_data import ImportUserProvData, FileProperties
 
 from global_vars import *
 
@@ -34,15 +34,15 @@ class UserImportSampleData():
             hhldTableQuery = self.mysqlQueries('hhld_sample', self.project.sampleUserProv.hhLocation)
 
             if not self.query.exec_(hhldTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(hhldTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             #print 'hhld index'
             if not self.query.exec_("""alter table hhld_sample add index(serialno)"""):
                 #raise FileError, self.query.lastError().text()
-                print "Warning: %s" %self.query.lastError.text()
+                print("Warning: %s" %self.query.lastError.text())
 
 
 
@@ -57,15 +57,15 @@ class UserImportSampleData():
                 gqTableQuery = self.mysqlQueries('gq_sample', self.project.sampleUserProv.gqLocation)
 
                 if not self.query.exec_(gqTableQuery.query1):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
                 if not self.query.exec_(gqTableQuery.query2):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
                 #print 'gq index'
                 if not self.query.exec_("""alter table gq_sample add index(serialno)"""):
                     #raise FileError, self.query.lastError().text()
-                    print "Warning: %s" %self.query.lastError.text()
+                    print("Warning: %s" %self.query.lastError.text())
 
 
     def createPersonTable(self):
@@ -75,15 +75,15 @@ class UserImportSampleData():
             personTableQuery = self.mysqlQueries('person_sample', self.project.sampleUserProv.personLocation)
 
             if not self.query.exec_(personTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(personTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             #print 'person index'
             if not self.query.exec_("""alter table person_sample add index(serialno, pnum)"""):
                 #raise FileError, self.query.lastError().text()
-                print "Warning: %s" %self.query.lastError.text()
+                print("Warning: %s" %self.query.lastError.text())
 
     def mysqlQueries(self, name, filePath):
         fileProp = FileProperties(filePath)
@@ -105,15 +105,15 @@ class UserImportSampleData():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 
@@ -169,15 +169,15 @@ class AutoImportPUMS2000Data():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 
@@ -186,7 +186,7 @@ class AutoImportPUMS2000Data():
         try:
             os.makedirs(self.loc)
             self.retrieveAndStorePUMS()
-        except WindowsError, e:
+        except WindowsError as e:
             reply = QMessageBox.question(None, "Import",
                                          QString("""Cannot download data when the data already exists.\n\n"""
                                                  """Would you like to keep the existing files?"""
@@ -206,7 +206,7 @@ class AutoImportPUMS2000Data():
         web_state = '%s' %self.state
         web_state = web_state.replace(' ', '_')
         download_location = self.loc + os.path.sep + 'all_%s.zip' %(web_state)
-        urllib.urlretrieve("""http://ftp2.census.gov/census_2000/datasets/"""
+        urllib.request.urlretrieve("""http://ftp2.census.gov/census_2000/datasets/"""
                            """PUMS/FivePercent/%s/all_%s.zip""" %(web_state, web_state),
                            download_location)
 
@@ -229,20 +229,20 @@ class AutoImportPUMS2000Data():
                                                       "./data/PUMS2000_Variables.csv",
                                                       [], [],True, True)
             if not self.query.exec_(PUMSVariableDefTable.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_(PUMSVariableDefTable.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
     def housingVarDicts(self):
         # Reading the list of PUMS housing variable names
         if not self.query.exec_("""select variablename, description, beginning, length from pums2000variablelist where type = 'H'"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.housingVariableDict = {}
             self.housingVarBegDict = {}
             self.housingVarLenDict = {}
-            while (self.query.next()):
+            while (next(self.query)):
                 self.housingVariableDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(1).toString()
                 self.housingVarBegDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(2).toString()
                 self.housingVarLenDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(3).toString()
@@ -250,22 +250,22 @@ class AutoImportPUMS2000Data():
     def housingDefVar(self):
         # Reading the list of PUMS default housing variable names
         if not self.query.exec_("""select variablename from pums2000variablelist where type = 'H' and defaultvar = 1"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.housingDefaultVariables = []
-            while (self.query.next()):
+            while (next(self.query)):
                 self.housingDefaultVariables.append(self.query.value(0).toString())
 
 
     def personVarDicts(self):
         # Reading the list of PUMS person variable names
         if not self.query.exec_("""select variablename, description, beginning, length from pums2000variablelist where type = 'P'"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.personVariableDict = {}
             self.personVarBegDict = {}
             self.personVarLenDict = {}
-            while (self.query.next()):
+            while (next(self.query)):
                 self.personVariableDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(1).toString()
                 self.personVarBegDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(2).toString()
                 self.personVarLenDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(3).toString()
@@ -274,10 +274,10 @@ class AutoImportPUMS2000Data():
     def personDefVar(self):
         # Reading the list of PUMS default person variable names
         if not self.query.exec_("""select variablename from pums2000variablelist where type = 'P' and defaultvar = 1"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.personDefaultVariables = []
-            while (self.query.next()):
+            while (next(self.query)):
                 self.personDefaultVariables.append(self.query.value(0).toString())
 
 
@@ -321,8 +321,8 @@ class AutoImportPUMS2000Data():
                 return 0
             else:
                 return 1
-        except WindowsError, e:
-            print 'Warning: File - %s not present' %(file)
+        except WindowsError as e:
+            print('Warning: File - %s not present' %(file))
             return 0
 
     def createHousingPUMSTable(self):
@@ -341,13 +341,13 @@ class AutoImportPUMS2000Data():
         try:
             housingPUMSTableQuery = ImportUserProvData("housing_pums", self.housingPUMSloc,
                                                        housingVariablesSelected, housingVariablesSelectedType, False, False)
-        except Exception, e:
-            raise FileError, e
+        except Exception as e:
+            raise FileError(e)
         if not self.query.exec_(housingPUMSTableQuery.query1):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
         if not self.query.exec_(housingPUMSTableQuery.query2):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
 
 
@@ -372,14 +372,14 @@ class AutoImportPUMS2000Data():
         try:
             personPUMSTableQuery = ImportUserProvData("person_pums", self.personPUMSloc,
                                                       personVariablesSelected, personVariablesSelectedType, False, False)
-        except Exception, e:
-            raise FileError, e
+        except Exception as e:
+            raise FileError(e)
 
         if not self.query.exec_(personPUMSTableQuery.query1):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
         if not self.query.exec_(personPUMSTableQuery.query2):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
 
 #    def createPUMSFile(self):
@@ -502,9 +502,9 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
                                                       "./data/PUMSACS_Variables.csv",
                                                       [], [],True, True)
             if not self.query.exec_(PUMSVariableDefTable.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_(PUMSVariableDefTable.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
     def checkHousingPUMSTable(self):
@@ -537,10 +537,10 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
         if self.checkIfTableExists('housing_raw'):
 
             if not self.query.exec_(hMasterPUMSTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(hMasterPUMSTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
         dummyString = ''
@@ -554,7 +554,7 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
 
         if not self.query.exec_("""create table housing_pums select %s from housing_raw"""
                                 %(dummyString)):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
 
     def createPersonPUMSTable(self):
@@ -573,10 +573,10 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
         if self.checkIfTableExists('person_raw'):
 
             if not self.query.exec_(pMasterPUMSTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(pMasterPUMSTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
         dummyString = ''
@@ -593,7 +593,7 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
 
         if not self.query.exec_("""create table person_pums select %s from person_raw"""
                                 %(dummyString)):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
         #print 'time for creating the small person table - ', time.time()-ti
 
@@ -605,8 +605,8 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
 
         try:
             os.makedirs(self.loc)
-        except WindowsError, e:
-            print e
+        except WindowsError as e:
+            print(e)
 
 
         try:
@@ -623,7 +623,7 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     self.retrieveAndStorePUMS(filetype)
-        except IOError, e:
+        except IOError as e:
             self.retrieveAndStorePUMS(filetype)
 
         self.extractPUMS(filetype)    
@@ -635,11 +635,11 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
         
         if filetype == 'H':
             h_download_location = self.loc + os.path.sep + 'csv_h%s.zip' %(web_stabb)
-            urllib.urlretrieve("""http://www2.census.gov/acs2007_3yr/pums/csv_h%s.zip""" %(web_stabb),
+            urllib.request.urlretrieve("""http://www2.census.gov/acs2007_3yr/pums/csv_h%s.zip""" %(web_stabb),
                                h_download_location)
         else:
             p_download_location = self.loc + os.path.sep + 'csv_p%s.zip' %(web_stabb)
-            urllib.urlretrieve("""http://www2.census.gov/acs2007_3yr/pums/csv_p%s.zip""" %(web_stabb),
+            urllib.request.urlretrieve("""http://www2.census.gov/acs2007_3yr/pums/csv_p%s.zip""" %(web_stabb),
                                p_download_location)
 
     def extractPUMS(self, filetype):
@@ -657,19 +657,19 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
         # Reading the list of PUMS housing variable names
         if not self.query.exec_("""select variablename, description from """
                                 """pumsACSvariablelist where type = 'H'"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.housingVariableDict = {}
-            while (self.query.next()):
+            while (next(self.query)):
                 self.housingVariableDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(1).toString()
 
     def housingDefVar(self):
         # Reading the list of PUMS default housing variable names
         if not self.query.exec_("""select variablename from pumsACSvariablelist where type = 'H' and defaultvar = 1"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.housingDefaultVariables = []
-            while (self.query.next()):
+            while (next(self.query)):
                 self.housingDefaultVariables.append(self.query.value(0).toString())
 
         
@@ -679,10 +679,10 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
         # Reading the list of PUMS person variable names
         if not self.query.exec_("""select variablename, description from """
                                 """pumsACSvariablelist where type = 'P'"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.personVariableDict = {}
-            while (self.query.next()):
+            while (next(self.query)):
                 self.personVariableDict['%s'%self.query.value(0).toString()] = '%s'%self.query.value(1).toString()
 
 
@@ -690,10 +690,10 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
     def personDefVar(self):
         # Reading the list of PUMS default person variable names
         if not self.query.exec_("""select variablename from pumsACSvariablelist where type = 'P' and defaultvar = 1"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
         else:
             self.personDefaultVariables = []
-            while (self.query.next()):
+            while (next(self.query)):
                 self.personDefaultVariables.append(self.query.value(0).toString())
 
 

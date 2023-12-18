@@ -104,7 +104,7 @@ def plot_values_as_boxplot_r(values_dict, filename=None, logy=False):
     if filename is not None:
         r.pdf(file=filename)
 
-    for var, values in values_dict.iteritems():
+    for var, values in values_dict.items():
         plot_one_boxplot_r(values, var, logstring)
 
     if filename is not None:

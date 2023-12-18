@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from dplcm_estimation_config import dplcm_configuration as dplcm_gridcell_config
-from estimation_zone_config import run_configuration as config
+from .dplcm_estimation_config import dplcm_configuration as dplcm_gridcell_config
+from .estimation_zone_config import run_configuration as config
 
 class dplcm_configuration(dplcm_gridcell_config):
     def get_configuration(self):

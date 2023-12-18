@@ -17,11 +17,11 @@ class linear_regression(Regression):
             it can be created by Dataset.create_regression_data(...).
         """
         if data.ndim < 2:
-            raise StandardError, "Argument 'data' must be a 2D numpy array."
+            raise Exception("Argument 'data' must be a 2D numpy array.")
 
         beta = coefficients
         if not check_dimensions(data[0,:], beta):
-            raise StandardError, "Mismatch in dimensions of 'data' and 'coefficients.beta'."
+            raise Exception("Mismatch in dimensions of 'data' and 'coefficients.beta'.")
 
         return sum(beta*data,axis=1)
 

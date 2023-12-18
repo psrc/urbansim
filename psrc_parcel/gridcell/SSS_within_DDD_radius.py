@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_within_DDD_radius import abstract_within_DDD_radius
+from .abstract_within_DDD_radius import abstract_within_DDD_radius
 
 
 class SSS_within_DDD_radius(abstract_within_DDD_radius):

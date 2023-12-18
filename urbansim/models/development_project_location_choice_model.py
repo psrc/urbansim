@@ -57,7 +57,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         else:
             where_developable = arange(self.choice_set.size())
         weight_array = ones((agents_index.size, where_developable.size), dtype=bool)
-        if config.has_key('estimate') and config['estimate']:
+        if 'estimate' in config and config['estimate']:
             return weight_array
         varlist = [self.developable_maximum_unit_full_name]
         if self.developable_minimum_unit_full_name is not None:
@@ -71,7 +71,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
             min_capacity = zeros(max_capacity.size)
 
         if max_capacity.sum() == 0:
-            raise RuntimeError, "There are no choices with any capacity for %s projects" % agent_set.what
+            raise RuntimeError("There are no choices with any capacity for %s projects" % agent_set.what)
 
         #how many projects fit in each developable location
         proposed_project_sizes = agent_set.get_attribute_by_index(agent_set.get_attribute_name(),

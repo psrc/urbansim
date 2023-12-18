@@ -107,7 +107,7 @@ class AbstractDataset(object):
         self._aliases = {}
         self._id_names = self.resources.get("id_name", None)
         if self._id_names == None:
-            self._raise_error(StandardError,
+            self._raise_error(Exception,
                               "Must specify 'id_name' when creating a dataset.")
         if not isinstance(self._id_names, list):
             self._id_names = [self._id_names]
@@ -136,7 +136,7 @@ class AbstractDataset(object):
         self._ensure_id_attribute_is_loaded()
         if not isinstance(data, ndarray):
             data=array(data)
-        if data.size <> self.size():
+        if data.size != self.size():
             logger.log_warning("In add_attribute: Mismatch in sizes of the argument 'data' and the Dataset object.")
         self.add_attribute(data, name, metadata=AttributeType.PRIMARY)
 
@@ -185,12 +185,12 @@ class AbstractDataset(object):
 
         # Now append to these rows.
         for attrname in self.get_computed_attribute_names():
-            if attrname not in data.keys() and attrname not in self.get_id_name():
+            if attrname not in list(data.keys()) and attrname not in self.get_id_name():
                 self.delete_one_attribute(attrname)
-        data_size = data[data.keys()[0]].size
+        data_size = data[list(data.keys())[0]].size
         for attr in self.get_known_attribute_names():
             old_data = self.get_attribute(attr)
-            if (not require_all_attributes) and (attr not in data.keys()):#missing attribute
+            if (not require_all_attributes) and (attr not in list(data.keys())):#missing attribute
                 if old_data.dtype.kind == 'S':
                     new_data = array(data_size*[''])
                 else:
@@ -203,7 +203,7 @@ class AbstractDataset(object):
         # check if ids are unique
         ids = self.get_id_attribute()
         unique_ids = uniquend(ids)
-        if unique_ids.size <> ids.size:
+        if unique_ids.size != ids.size:
             #change ids to be unique
             if change_ids_if_not_unique:
 
@@ -229,7 +229,7 @@ class AbstractDataset(object):
                                            arange(self.size(), self.size()+data_size))
                         i+=1
             else:
-                self._raise_error(StandardError,
+                self._raise_error(Exception,
                               "Attribute '%s'  is not unique in the resulting dataset!"
                               % create_list_string(self.get_id_name(), ","))
         self._update_id_mapping()
@@ -402,7 +402,7 @@ class AbstractDataset(object):
         alias = name.get_alias()
         if alias in self._aliases:
             del self._aliases[alias]
-        if alias in self.attribute_boxes.keys():
+        if alias in list(self.attribute_boxes.keys()):
             del self.attribute_boxes[alias]
         self.remove_from_primary_attribute_names(alias)
 
@@ -489,7 +489,7 @@ class AbstractDataset(object):
         Primary attributes that have not been used (and thus, are not loaded) will 
         not be included in the result. (see also get_known_attribute_names())
         """
-        return self.attribute_boxes.keys()
+        return list(self.attribute_boxes.keys())
 
     def get_known_attribute_names(self):
         """Return attribute names that are either primary or were computed (i.e. all attributes that the dataset 'knows' about)."""
@@ -499,7 +499,7 @@ class AbstractDataset(object):
     def get_attribute_long_names(self):
         """ Like get_attribute_names, but the attribute names are in their long format.
         """
-        return map(lambda key: self.attribute_boxes[key].get_full_name(), self.attribute_boxes.keys())
+        return [self.attribute_boxes[key].get_full_name() for key in list(self.attribute_boxes.keys())]
 
     def get_attributes_in_memory(self):
         """Return a list of attributes that are currently in memory"""
@@ -519,12 +519,12 @@ class AbstractDataset(object):
     def get_computed_attribute_names(self):
         """ Return names of all computed attributes.
         """
-        return [key for key in self.attribute_boxes.keys() if self._get_attribute_type(key) == AttributeType.COMPUTED]
+        return [key for key in list(self.attribute_boxes.keys()) if self._get_attribute_type(key) == AttributeType.COMPUTED]
 
     def get_cached_attribute_names(self):
         """ Return names of all cached computed attributes.
         """
-        return set(self._precached_attribute_names + [key for key in self.attribute_boxes.keys() if self.attribute_boxes[key].is_cached()])
+        return set(self._precached_attribute_names + [key for key in list(self.attribute_boxes.keys()) if self.attribute_boxes[key].is_cached()])
 
     def get_stored_attribute_names(self):
         """ Returns names of all attributes on storage, whether loaded or not.
@@ -633,7 +633,7 @@ class AbstractDataset(object):
         if (not isinstance(names, list)) and (not isinstance(names, tuple)):
             names=[names]
         if not names:
-            raise ValueError, "No variable given to the compute method."
+            raise ValueError("No variable given to the compute method.")
         new_versions = []
         for ivar in range(len(names)):
             if isinstance(names[ivar], tuple):
@@ -689,7 +689,7 @@ class AbstractDataset(object):
             desc = create_list_string(("Computing variable '%s' in dataset pool '%s' failed for packages: '%s'."
                                        % (variable_name, dataset_pool, "', '".join(package_order)),
                                        errors))
-            self._raise_error(StandardError, desc)
+            self._raise_error(Exception, desc)
         return result
     
     ##################################################################################
@@ -712,16 +712,16 @@ class AbstractDataset(object):
         if ids.dtype.name.startswith('float'):
             ids = ids.astype('int32')
         if ids.ndim > 1:
-            return array(map(lambda x: self.id_mapping[tuple(x)], ids), dtype=ids.dtype.char)
+            return array([self.id_mapping[tuple(x)] for x in ids], dtype=ids.dtype.char)
         if self.id_mapping_type == "A":
             isnegative = ids < 0
             if isnegative.sum() > 0:
-                raise KeyError, "No negative ids allowed in dataset."
+                raise KeyError("No negative ids allowed in dataset.")
             result = self.id_mapping[ids - self.id_mapping_shift]
             if any(result < 0) or any((ids - self.id_mapping_shift) < 0):
-                raise KeyError, "Some ids not found in dataset %s." % self.get_dataset_name()
+                raise KeyError("Some ids not found in dataset %s." % self.get_dataset_name())
         else:
-            result = array(map(lambda x: self.id_mapping[x], ids), dtype=ids.dtype.char)
+            result = array([self.id_mapping[x] for x in ids], dtype=ids.dtype.char)
         return result
 
     def try_get_id_index(self, id, return_value_if_not_found=-1):
@@ -734,7 +734,7 @@ class AbstractDataset(object):
         ids = ids.astype(int32)
         self._ensure_id_attribute_is_loaded() # Must have the id attributes loaded for the id_mapping to find them.
         if ids.ndim > 1:
-            return array(map(lambda x: self.try_id_mapping(tuple(x), return_value_if_not_found), ids))
+            return array([self.try_id_mapping(tuple(x), return_value_if_not_found) for x in ids])
         try: # it might be faster if all values are found
             if any(ids <= 0): # do not consider negative or zero ids
                 result = resize(array([return_value_if_not_found], dtype="int32"), ids.size)
@@ -743,7 +743,7 @@ class AbstractDataset(object):
                 return result
             return self.get_id_index(ids)
         except:
-            return array(map(lambda x: self.try_id_mapping(x, return_value_if_not_found), ids))
+            return array([self.try_id_mapping(x, return_value_if_not_found) for x in ids])
 
     def get_index_where_variable_larger_than_threshold(self, attribute, threshold=0):
         """Return index of entries for which value of the given attribute is larger than
@@ -777,8 +777,8 @@ class AbstractDataset(object):
         """ Add attributes of 'dataset' to self. self and 'dataset' must have the same
         id_name and the same values of the unique identifier.
         """
-        if self.get_id_name() <> dataset.get_id_name():
-            self._raise_error(StandardError,
+        if self.get_id_name() != dataset.get_id_name():
+            self._raise_error(Exception,
                               "Mismatch in id names of datasets('%' for this dataset versus '%' dataset passed into connect_datasets())."
                               % (self.get_id_name(), dataset.get_id_name()))
         ids = self.get_id_attribute()
@@ -853,7 +853,7 @@ class AbstractDataset(object):
         ID_NOT_FOUND = -1
         #T: won't the following only work if the join_attribute is an id col?
         idx = dataset.try_get_id_index(self.get_multiple_attributes(jattr).astype(int32), ID_NOT_FOUND)
-        idx_found = idx <> ID_NOT_FOUND
+        idx_found = idx != ID_NOT_FOUND
         lname = len(name)
         for iattr in range(lname):
             attr_values = dataset.get_attribute_by_index(name[iattr], idx[idx_found])
@@ -861,12 +861,12 @@ class AbstractDataset(object):
                 values = attr_values
             else:
                 k = attr_values.dtype.kind
-                if return_value_if_not_found is None and default_return_values_by_type.has_key(k):
+                if return_value_if_not_found is None and k in default_return_values_by_type:
                     values = array([ default_return_values_by_type[k] ], dtype=attr_values.dtype).repeat(self.size())
                 else:
                     values = array([return_value_if_not_found], dtype=attr_values.dtype).repeat(self.size())
                 
-                if filled_value is None and default_filled_values_by_type.has_key(k):
+                if filled_value is None and k in default_filled_values_by_type:
                     values[idx_found] = ma.filled(attr_values, default_filled_values_by_type[k])
                 else:
                     values[idx_found] = ma.filled(attr_values, filled_value)
@@ -907,11 +907,11 @@ class AbstractDataset(object):
         used = where(dataset_id_values > 0)[0] # only individuals that have assigned ids
         if attribute_name == None:
             if constant == None:
-                self._raise_error(StandardError,
+                self._raise_error(Exception,
                                   "Either 'attribute_name' or 'constant' must be given.")
             elif isinstance(constant, ndarray):
-                if constant.size <> dataset_id_values.size:
-                    self._raise_error(StandardError,
+                if constant.size != dataset_id_values.size:
+                    self._raise_error(Exception,
                                       "constant's size (%d) must be of the same as dataset's size (%d)"
                                       % (constant.size, dataset_id_values.size))
                 values = constant[used]
@@ -1016,7 +1016,7 @@ class AbstractDataset(object):
                     else:
                         self.compute_variables([item], resources=resources)
                         computed = True
-                if self.get_data_type(item).char <> 'S':
+                if self.get_data_type(item).char != 'S':
                     s = self.attribute_sum(short_name)
                     values = self.get_attribute(short_name)[index]
                     if self.size()==0:
@@ -1330,7 +1330,7 @@ class AbstractDataset(object):
         
         name = VariableName(name).get_alias()
         if name not in self.get_known_attribute_names():
-            raise StandardError, "Attribute " + name + " not known."
+            raise Exception("Attribute " + name + " not known.")
 
         # Determine the column header of the attributes to be used.
         # .dbf files can only have a max of 10 chars in a single cell
@@ -1592,10 +1592,10 @@ class AbstractDataset(object):
                 filter_data = self.get_2d_attribute(filter, coordinate_system=coordinate_system)
             elif isinstance(filter, ndarray):
                 if not ma.allclose(filter.shape, tdata.shape):
-                    raise StandardError, "Argument filter must have the same shape as the 2d attribute."
+                    raise Exception("Argument filter must have the same shape as the 2d attribute.")
                 filter_data = filter
             else:
-                raise TypeError, "The filter type is invalid. A character string or a 2D numpy array allowed."
+                raise TypeError("The filter type is invalid. A character string or a 2D numpy array allowed.")
             filter_data = where(ma.filled(filter_data,1) > 0, 1,0)
             data_mask = ma.mask_or(data_mask, filter_data)
         nonmaskedmin = ma.minimum(tdata) - .2 * (ma.maximum(tdata) - ma.minimum(tdata))
@@ -1744,8 +1744,8 @@ class AbstractDataset(object):
                 self.id_mapping = array([], dtype="int32")
             return
         if id_array.ndim == 1:
-            maxid = long(id_array.max())
-            minid = long(id_array.min())
+            maxid = int(id_array.max())
+            minid = int(id_array.min())
             if (maxid-minid+1) <= (2*self.size()+1000):
                 self.id_mapping_type="A" #array
                 self.id_mapping_shift = minid
@@ -1768,19 +1768,19 @@ class AbstractDataset(object):
     def _get_one_id_index(self, id):
         if self.id_mapping_type == "A":
             if id - self.id_mapping_shift < 0:
-                raise KeyError, "No id " + str(id) + " in dataset."
+                raise KeyError("No id " + str(id) + " in dataset.")
             idx = self.id_mapping[id - self.id_mapping_shift]
         else:
             idx = self.id_mapping[id]
         if idx < 0:
-            raise KeyError, "No id " + str(id) + " in dataset."
+            raise KeyError("No id " + str(id) + " in dataset.")
         return idx
 
     def _get_attribute_box(self, name):
         if not isinstance(name, VariableName):
             name = VariableName(name)
         short_name = name.get_alias()
-        if short_name in self.attribute_boxes.keys():
+        if short_name in list(self.attribute_boxes.keys()):
             return self.attribute_boxes[short_name]
         return None
 
@@ -1867,12 +1867,12 @@ class AbstractDataset(object):
         if alias!=short:
             if alias in self._aliases:
                 if vname!=self._aliases[alias]:
-                    raise ValueError, "same alias for two expressions: %s and %s" % (vname.get_expression(), self._aliases[alias].get_expression())
+                    raise ValueError("same alias for two expressions: %s and %s" % (vname.get_expression(), self._aliases[alias].get_expression()))
             else:
                 self._aliases[alias] = vname
             # make sure the alias isn't used for a primary attribute
             if alias in self.get_primary_attribute_names():
-                raise ValueError, "alias %s is also a primary attribute" % alias
+                raise ValueError("alias %s is also a primary attribute" % alias)
         return vname
 
     def _check_dataset_name(self, vname):
@@ -1880,7 +1880,7 @@ class AbstractDataset(object):
         name = vname.get_dataset_name()
         dataset_name = self.get_dataset_name() 
         if name != dataset_name:
-            raise ValueError, "When checking dataset name of '%s': different dataset names for variable and dataset: '%s' <> '%s'" % (vname.get_expression(), name, dataset_name)
+            raise ValueError("When checking dataset name of '%s': different dataset names for variable and dataset: '%s' <> '%s'" % (vname.get_expression(), name, dataset_name))
 
     def _add_id_attribute(self, data, name):
         self.add_attribute(data=data.astype(int32), name=name, metadata=AttributeType.PRIMARY)
@@ -1948,9 +1948,9 @@ class AbstractDataset(object):
         if isinstance(id_name,list):
             id_name = id_name[0]
         if variable_name.get_dataset_name() is None:
-            raise StandardError, "Computing variable " + \
+            raise Exception("Computing variable " + \
                   variable_name.get_expression() + ":\n" + \
-                  "Unable to get its dataset_name, maybe because of it's not a fully-qualified variable_name."
+                  "Unable to get its dataset_name, maybe because of it's not a fully-qualified variable_name.")
         if variable_name.get_dataset_name() != self.get_dataset_name():
             self._raise_mismatch_dataset_name_error(variable_name)
 
@@ -1962,7 +1962,7 @@ class AbstractDataset(object):
             variable = self.variable_factory.get_variable(variable_name, self, quiet=quiet, debug=self.debug,
                                                 index_name=id_name)
         if variable == None:
-            self._raise_error(StandardError,
+            self._raise_error(Exception,
                               "Initialization of variable '%s' failed!"
                               % variable_name.get_expression())
         if variable.is_lag_variable():
@@ -1991,7 +1991,7 @@ class AbstractDataset(object):
                 dataset_pool = DatasetPool()
         if not isinstance(resources, Resources):
             resources = Resources(resources)
-        for key, value in resources.iteritems():
+        for key, value in resources.items():
             if isinstance(value, AbstractDataset) or (key == "urbansim_constant"): #TODO: the second condition should be removed
                 if not dataset_pool.has_dataset(key):                              # after all variable tests are transformed to
                     dataset_pool._add_dataset(key, value)                          # using VariableTester
@@ -2083,8 +2083,8 @@ class AbstractDataset(object):
         It returns a 2D array (nobservations|len(index) x nvariables).
         """
         neqs, nvar = coefficients.getshape()
-        if neqs <> 1:
-            self._raise_error(StandardError, "Coefficients' shape (%d,%d) must have '1' for first number!"
+        if neqs != 1:
+            self._raise_error(Exception, "Coefficients' shape (%d,%d) must have '1' for first number!"
                               % (neqs, nvar))
 
         if index is not None:
@@ -2127,7 +2127,7 @@ class AbstractDataset(object):
         for attr in attr_list:
             exec("new_dataset." + attr + " = copy.deepcopy(self." + attr + ")")
         new_dataset.attribute_boxes = {}
-        for attr in self.attribute_boxes.keys():
+        for attr in list(self.attribute_boxes.keys()):
             new_dataset.attribute_boxes[attr] = AttributeBox(
                 new_dataset,
                 copy.deepcopy(self.attribute_boxes[attr].get_data()),
@@ -2151,7 +2151,7 @@ class AbstractDataset(object):
         self._get_attribute_box(name).delete_variable_instance()
 
     def _raise_mismatch_dataset_name_error(self, variable_name):
-        self._raise_error(StandardError,
+        self._raise_error(Exception,
                           "Mismatch of dataset's name '%s' and variable's dataset name '%s' when computing variable '%s'"
                           % (self.get_dataset_name(),
                              variable_name.get_dataset_name(),
@@ -2185,10 +2185,10 @@ class DatasetTests(opus_unittest.OpusTestCase):
         raised_exception = False
         try:
             dataset = AbstractDataset()
-        except StandardError, e:
+        except Exception as e:
             raised_exception = True
-            self.assert_("Must specify 'id_name'" in e.args[0])
-        self.assert_(raised_exception)
+            self.assertTrue("Must specify 'id_name'" in e.args[0])
+        self.assertTrue(raised_exception)
 
     def test_aggregate_all(self):
         data = array([1,2,3])
@@ -2226,16 +2226,16 @@ class DatasetTests(opus_unittest.OpusTestCase):
 
         # Sum over all households
         values = gridcell.aggregate_over_ids(ids=household_grid_id, what=array([1,10,100,1000,10000,100000]), function='sum')
-        self.assert_(allclose(array([1,1110,110000]), values))
+        self.assertTrue(allclose(array([1,1110,110000]), values))
         self.assertEqual(1, values.ndim)
 
         # Sum values over just the first 4 households
         values = gridcell.aggregate_over_ids(ids=household_grid_id, what=array([1,10,100,1000,0,0]), function='sum')
-        self.assert_(allclose(array([1,1110,0]), values))
+        self.assertTrue(allclose(array([1,1110,0]), values))
 
         # Ignores id valuse not in household_grid_id
         values = gridcell.aggregate_over_ids(ids=array([1,2,9,9,9,9]), what=array([1,10,100,1000,0,0]), function='sum')
-        self.assert_(allclose(array([1,10,0]), values))
+        self.assertTrue(allclose(array([1,10,0]), values))
         
 
 if __name__ == '__main__':

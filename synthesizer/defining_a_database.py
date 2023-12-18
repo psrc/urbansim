@@ -21,7 +21,7 @@ class database:
         return self
 
     def _query(self, q):
-        if self.debug: print "Query: %s" % (q)
+        if self.debug: print("Query: %s" % (q))
         self.dbc.execute(q)
         
 
@@ -53,7 +53,7 @@ class database:
         return self_var_desc
 
     
-    def next(self):
+    def __next__(self):
         r = self.dbc.fetchone()
         if not r:
             raise StopIteration

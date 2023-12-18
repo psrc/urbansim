@@ -4,7 +4,7 @@
 
 from numpy import array, where, minimum
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class travel_time_hbw_am_drive_alone_to_seattle_cbd(Variable):
     """Travel time to the Seattle CBD. It is the minimum of travel times to zones that have seattle_cbd=1.

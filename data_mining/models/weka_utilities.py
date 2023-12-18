@@ -4,7 +4,7 @@ from opus_core import paths
 
 #loads system variables                                                                               
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 #utility functions used for WEKA models
 def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query_manager, model):
@@ -40,13 +40,13 @@ def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query
         cat_att_values[model.test_attribute] = set([])
     
     for row in query_manager.current_rows:
-        for cat_att in cat_att_values.keys() :
+        for cat_att in list(cat_att_values.keys()) :
             if row[cat_att] not in cat_att_values[cat_att] :
                 cat_att_values[cat_att].add(str(row[cat_att]))
     
     #Getting ID's that insure that the cat atts are one solid string
     cat_id = {}
-    for cat_att, values in cat_att_values.iteritems() :
+    for cat_att, values in cat_att_values.items() :
         temp = {}
         id = 0
         for value in values :
@@ -137,9 +137,9 @@ def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query
 
     #Reverse cat_id so that the results can be interpreted
     cat_att_map = {}
-    for cat_att, values in cat_id.iteritems() :
+    for cat_att, values in cat_id.items() :
         cat_att_map[cat_att] = {}
-        for value, id in values.iteritems() :
+        for value, id in values.items() :
             cat_att_map[cat_att][id] = value
 
     #Getting index for each attribute
@@ -190,7 +190,7 @@ def feature_selection(test_filename, train_filename, query_manager, info, model,
 
     #Run filter
     if PROFILING :
-        print "FS- Selecting Attributes"
+        print("FS- Selecting Attributes")
     os.system(fs_string)
 
     #Change filenames and remove files
@@ -244,7 +244,7 @@ def add_target_values(test_filename, train_filename, query_manager, target_attri
                 nte.write("@attribute " + target_attribute + " real\n")
             else :
                 string = "@attribute " + target_attribute + " {"
-                for key, value in cat_value_id[target_attribute].iteritems() :
+                for key, value in cat_value_id[target_attribute].items() :
                     string += value + ", "
                 string = string.rstrip(", ")
                 string +=  "}\n"
@@ -261,7 +261,7 @@ def add_target_values(test_filename, train_filename, query_manager, target_attri
                 ntr.write("@attribute " + target_attribute + " real\n")
             else :
                 string = "@attribute " + target_attribute + " {"
-                for key, value in cat_value_id[target_attribute].iteritems() :
+                for key, value in cat_value_id[target_attribute].items() :
                     string += value + ", "
                 string = string.rstrip(", ")
                 string +=  "}\n"

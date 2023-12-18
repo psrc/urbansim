@@ -45,7 +45,7 @@ class TestCsvStorage(TestStorageInterface):
             )
             
         filename = os.path.join(self.temp_dir, 'foo.csv')
-        self.assert_(os.path.exists(filename))
+        self.assertTrue(os.path.exists(filename))
             
         expected = {
             'bar': array([1,2,3]),

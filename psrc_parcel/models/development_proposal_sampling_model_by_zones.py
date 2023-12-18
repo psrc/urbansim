@@ -30,7 +30,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         bts = self.dataset_pool.get_dataset('building_type')
         all_building_types = bts.get_id_attribute()
         
-        self.bt_do_not_count = array(map(lambda x: x not in tv_building_types, all_building_types))
+        self.bt_do_not_count = array([x not in tv_building_types for x in all_building_types])
         self.bt_do_not_count =  all_building_types[self.bt_do_not_count]
         self.do_not_count_residential_units  = self.get_do_not_count_residential_units(zones)
         
@@ -142,7 +142,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             type_id = type_ids[index]
             avg_tv += self.target_vacancies[type_id]
             demolished += self.demolished_units[type_id]
-            if type_id not in self.proposed_units_from_previous_iterations.keys():
+            if type_id not in list(self.proposed_units_from_previous_iterations.keys()):
                 self.proposed_units_from_previous_iterations[type_id] = 0
             self.proposed_units_from_previous_iterations[type_id] += self.proposed_units[type_id]
             proposed_total += self.proposed_units_from_previous_iterations[type_id]
@@ -170,9 +170,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         building_type_dataset = self.dataset_pool.get_dataset('building_type')
         alldata = self.dataset_pool.get_dataset('alldata')
         building_type_ids = building_type_dataset.get_id_attribute()
-        alldata.compute_variables(map(lambda type: 
-            "number_of_jobs_for_bt_%s = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs * (building.building_type_id == %s))" % (type,type),
-                building_type_ids) + 
+        alldata.compute_variables(["number_of_jobs_for_bt_%s = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs * (building.building_type_id == %s))" % (type,type) for type in building_type_ids] + 
               ["number_of_nhb_jobs = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs)"], 
                                   dataset_pool=self.dataset_pool)
         job_building_type_distribution = zeros(building_type_ids.size)

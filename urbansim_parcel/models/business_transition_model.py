@@ -39,9 +39,8 @@ class BusinessTransitionModel(Model):
         compute_resources = Resources(data_objects)
 #        compute_resources.merge({job_building_types.get_dataset_name():job_building_types, "debug":self.debug})
         business_set.compute_variables(
-            map(lambda x: "%s.%s.is_sector_%s"
-                    % (self.variable_package, business_set.get_dataset_name(), x),
-                sectors),
+            ["%s.%s.is_sector_%s"
+                    % (self.variable_package, business_set.get_dataset_name(), x) for x in sectors],
             resources = compute_resources)
         remove_businesses = array([], dtype='int32')
 

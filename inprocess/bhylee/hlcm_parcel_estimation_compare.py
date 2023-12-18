@@ -6,7 +6,7 @@ from urbansim.configs.hlcm_estimation_config import HLCMEstimationConfig
 from psrc_parcel.configs.baseline_estimation import BaselineEstimation
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from my_estimation_config import my_configuration
+from .my_estimation_config import my_configuration
 
 #class HlcmParcelEstimation(BaselineEstimation): # comment this line out for urbansim.configs.hlcm_estimation_config
 class HlcmParcelEstimationUrbansim(HLCMEstimationConfig): # comment this line out for psrc_parcel.configs.baseline_estimation
@@ -89,19 +89,19 @@ class HlcmParcelEstimationPsrcParcel(BaselineEstimation): # comment this line ou
 from numpy import ndarray, allclose
 
 def print_difference(dict1, dict2, key_sequence=[]):
-    unique_keys = set(dict1.keys() + dict2.keys())
+    unique_keys = set(list(dict1.keys()) + list(dict2.keys()))
     for key in unique_keys:
-        if not dict1.has_key(key):
-            print "+the 1st dict: %s is missing" % "->".join(key_sequence + [key])
+        if key not in dict1:
+            print("+the 1st dict: %s is missing" % "->".join(key_sequence + [key]))
             continue
 
-        if not dict2.has_key(key):
-            print "-the 2nd dict: %s is missing" % "->".join(key_sequence + [key])
+        if key not in dict2:
+            print("-the 2nd dict: %s is missing" % "->".join(key_sequence + [key]))
             continue
         
         try:
-            dict1[key].keys()
-            dict2[key].keys()
+            list(dict1[key].keys())
+            list(dict2[key].keys())
             is_dict = True
         except:
             is_dict = False
@@ -118,8 +118,8 @@ def print_difference(dict1, dict2, key_sequence=[]):
             elif dict1[key] == dict2[key]:
                 is_different  = False
             if is_different:
-                print "+the 1st dict: %s=%s" % ("->".join(key_sequence + [key]), dict1[key])
-                print "-the 2nd dict: %s=%s" % ("->".join(key_sequence + [key]), dict2[key] )
+                print("+the 1st dict: %s=%s" % ("->".join(key_sequence + [key]), dict1[key]))
+                print("-the 2nd dict: %s=%s" % ("->".join(key_sequence + [key]), dict2[key] ))
             
         pass
     

@@ -84,22 +84,22 @@ def create_dataset_from_sql_storage():
     return services_dataset
 
 if __name__ == "__main__":
-    print "Summary of a test dataset from tab storage"
+    print("Summary of a test dataset from tab storage")
     ds_from_tab = create_dataset_from_tab_storage()
     ds_from_tab.summary()
     # do the same in different way
     ds2_from_tab = create_dataset_from_tab_storage_shortcut()
     ds2_from_tab.summary()
     
-    print "\n\nSummary of a test dataset from dbf storage"
+    print("\n\nSummary of a test dataset from dbf storage")
     ds_from_dbf = create_dataset_from_dbf_storage()
     ds_from_dbf.summary()
     
-    print "\n\nSummary of a zone dataset from flt storage"
+    print("\n\nSummary of a zone dataset from flt storage")
     ds_from_flt = create_dataset_from_flt_storage()
     ds_from_flt.summary()
     
-    print "\n\nSummary of a test dataset from dict storage"
+    print("\n\nSummary of a test dataset from dict storage")
     ds_from_dict = create_dataset_from_dict_storage()
     ds_from_dict.summary()
     

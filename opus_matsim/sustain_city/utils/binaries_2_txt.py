@@ -84,8 +84,8 @@ for m in range(len(models)):
     content_specification+='\n\r'
     
 # print and store coefficients
-print content_coefficients
-print ''
+print(content_coefficients)
+print('')
 
 output_dir = ''
 if output_folder == None:
@@ -97,18 +97,18 @@ else:
     output_dir = output_folder
     
 content_path = os.path.join(output_dir, 'coefficients.txt')
-print '...dumping content_coefficients into %s' %content_path
+print('...dumping content_coefficients into %s' %content_path)
 f = open(content_path, 'w')
 f.write(content_coefficients)
 f.flush()
 f.close()
 
 # print and store specification
-print content_coefficients
-print ''
+print(content_coefficients)
+print('')
 
 content_path = os.path.join(output_dir, 'specifications.txt')
-print '...dumping content_specifications into %s' %content_path
+print('...dumping content_specifications into %s' %content_path)
 f = open(content_path, 'w')
 f.write(content_specification)
 f.flush()

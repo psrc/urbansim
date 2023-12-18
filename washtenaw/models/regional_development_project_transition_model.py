@@ -52,13 +52,13 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
                                                                    resources)
                     project_dataset.add_attribute(array(project_dataset.size()*[area]), "large_area_id", 
                                                   metadata=AttributeType.PRIMARY)
-                    if (project_type not in projects.keys()) or (projects[project_type] is None):
+                    if (project_type not in list(projects.keys())) or (projects[project_type] is None):
                         projects[project_type] = project_dataset
                     else:
                         projects[project_type].join_by_rows(project_dataset, change_ids_if_not_unique=True)
  
         for project_type in model_configuration['development_project_types']:
-            if project_type not in projects.keys():
+            if project_type not in list(projects.keys()):
                 projects[project_type] = None
             if projects[project_type] is None:
                 size = 0
@@ -133,7 +133,7 @@ class DPTMTests(StochasticTestCase):
 #            there will initially be 100 vacant residential units in each gridcell then.
             table_data = {
                 "household_id":arange( 1, 10000+1 ),
-                "grid_id":array( 100*range( 1, 100+1 ) )
+                "grid_id":array( 100*list(range( 1, 100+1)) )
                 }
             )
         self.storage.write_table(
@@ -153,7 +153,7 @@ class DPTMTests(StochasticTestCase):
             table_name = 'jobs',
             table_data = {
                 "job_id":arange( 1, 2500+1 ),
-                "grid_id":array( 25*range( 1, 100+1 ) ),
+                "grid_id":array( 25*list(range( 1, 100+1)) ),
                 "sector_id":array( 2500*[1] ),
                 "home_based":array( 2500*[0] ),
                 "building_type":array(2500*[Constants._commercial_code])

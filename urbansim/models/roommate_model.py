@@ -285,7 +285,7 @@ class RoommateModel(Model):
             the_lucky_person = searchsorted(cum_match_prob, r)
 
             if available_mates.shape[0] == 0:
-                print 'No more available mates remain'
+                print('No more available mates remain')
                 continue
 
 
@@ -317,7 +317,7 @@ class RoommateModel(Model):
             the_lucky_person = searchsorted(cum_match_prob, r)
 
             if available_mates.shape[0] == 0:
-                print 'No more available mates remain'
+                print('No more available mates remain')
                 continue
 
 

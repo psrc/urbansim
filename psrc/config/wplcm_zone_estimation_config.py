@@ -54,8 +54,8 @@ my_controller_configuration = {
         },  
    }}
 
-for model in my_controller_configuration.keys():
-    if model not in run_configuration["models_configuration"].keys():
+for model in list(my_controller_configuration.keys()):
+    if model not in list(run_configuration["models_configuration"].keys()):
         run_configuration["models_configuration"][model] = {}    
     run_configuration["models_configuration"][model]['controller'] = my_controller_configuration[model]
 

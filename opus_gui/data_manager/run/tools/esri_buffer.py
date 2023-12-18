@@ -13,7 +13,7 @@ def opusRun(progressCB,logCB,params):
     gp = arcgisscripting.create()
 
     my_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         my_dict[str(key)] = str(val)
 
     input = my_dict['input_shapefile']

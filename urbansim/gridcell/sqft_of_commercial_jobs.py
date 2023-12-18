@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class sqft_of_commercial_jobs(Variable):
     """Computed by multiplying the number of commercial jobs by the 

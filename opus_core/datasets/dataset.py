@@ -81,7 +81,7 @@ class Dataset(AbstractDataset):
         storage = self.resources.get("in_storage", None)
 
         if storage == None:
-            self._raise_error(StandardError,
+            self._raise_error(Exception,
                               "'in_storage' must be given to the constructor of this dataset.")
 
     def get_attribute(self, name):
@@ -228,11 +228,11 @@ class Dataset(AbstractDataset):
                                                  )
                 
                 for attr in data:
-                    if self.attribute_boxes.has_key(attr):
+                    if attr in self.attribute_boxes:
                         if not (attr in self._id_names) or not self.attribute_boxes[attr].is_in_memory():
                             self.attribute_boxes[attr].set_data(data[attr])
                             self.attribute_boxes[attr].set_is_in_memory(True)
-                    elif not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+                    elif not ((attr in self._id_names) and attr in self.attribute_boxes): #do not store id_name every time
                         self.attribute_boxes[attr] = AttributeBox(self,
                                                       data[attr],
                                                       variable_name=self.create_and_check_qualified_variable_name(attr),
@@ -241,11 +241,11 @@ class Dataset(AbstractDataset):
                                                       version=0)
 
                 for attr in data_computed:
-                    if self.attribute_boxes.has_key(attr):
+                    if attr in self.attribute_boxes:
                         if not (attr in self._id_names) or not self.attribute_boxes[attr].is_in_memory():
                             self.attribute_boxes[attr].set_data(data_computed[attr])
                             self.attribute_boxes[attr].set_is_in_memory(True)
-                    elif not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+                    elif not ((attr in self._id_names) and attr in self.attribute_boxes): #do not store id_name every time
                         self.attribute_boxes[attr] = AttributeBox(self,
                                                       data_computed[attr],
                                                       variable_name=self.create_and_check_qualified_variable_name(attr),
@@ -335,7 +335,7 @@ class Dataset(AbstractDataset):
         if not isinstance(name, VariableName):
             name = VariableName(name)
         short_name = name.get_alias()
-        if (short_name <> self.hidden_id_name) and (short_name in self.get_attributes_in_memory()):
+        if (short_name != self.hidden_id_name) and (short_name in self.get_attributes_in_memory()):
             if not is_anonymous_autogen_name(short_name):
                 type = self._get_attribute_type(short_name)
                 if (type not in (AttributeType.LAG, AttributeType.EXOGENOUS)):
@@ -428,7 +428,7 @@ class Dataset(AbstractDataset):
         elif isinstance(attributes, str):
             attr_names = [attributes]
         else:
-            raise TypeError, 'Wrong type of the argument "attributes". Array, list, tuple, "*", %s, and %s allowed.' % (AttributeType.PRIMARY, AttributeType.COMPUTED)
+            raise TypeError('Wrong type of the argument "attributes". Array, list, tuple, "*", %s, and %s allowed.' % (AttributeType.PRIMARY, AttributeType.COMPUTED))
 
         if index is None:
             index = arange(self.size())
@@ -613,7 +613,7 @@ class DummyStorage(Storage):
             if table_name is 'table_doc':
                 return ['col1','col2','col3','col4','col5']
             if table_name is 'table_20':
-                return range(20)
+                return list(range(20))
             if table_name is 'table_3':
                 return ['col1','col2','col3']
             return []
@@ -745,14 +745,14 @@ class DatasetTests(opus_unittest.OpusTestCase):
 
         # Check subset that contains entire parent dataset.
         subset = DatasetSubset(ds, index=None)
-        self.assert_(ma.allequal(subset.get_attribute('attr'),
+        self.assertTrue(ma.allequal(subset.get_attribute('attr'),
                               ds.get_attribute('attr')))
 
         # Check subset that is an actual subset.
         subset = DatasetSubset(ds, index=array([0,2]))
-        self.assert_(ma.allequal(subset.get_attribute('attr'),
+        self.assertTrue(ma.allequal(subset.get_attribute('attr'),
                               array([100,300])))
-        self.assert_(ma.allequal(subset.get_index(),
+        self.assertTrue(ma.allequal(subset.get_index(),
                               array([0,2])))
 
 
@@ -760,10 +760,10 @@ class DatasetTests(opus_unittest.OpusTestCase):
         raised_exception = False
         try:
             Dataset()
-        except StandardError, e:
+        except Exception as e:
             raised_exception = True
-            self.assert_("Must specify 'id_name'" in e.args[0])
-        self.assert_(raised_exception)
+            self.assertTrue("Must specify 'id_name'" in e.args[0])
+        self.assertTrue(raised_exception)
 
     def test_empty_dataset_like_me(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -777,13 +777,13 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name='id')
 
         ds2 = ds.empty_dataset_like_me(resources=Resources({'my_key':'my_value'}))
-        self.assert_(ma.allequal(ds2.get_id_attribute(), ds.get_id_attribute()))
-        self.assert_(ma.allequal(ds2.get_attribute('attr'), ds.get_attribute('attr')))
-        self.assert_('my_key' not in ds.resources.keys())
+        self.assertTrue(ma.allequal(ds2.get_id_attribute(), ds.get_id_attribute()))
+        self.assertTrue(ma.allequal(ds2.get_attribute('attr'), ds.get_attribute('attr')))
+        self.assertTrue('my_key' not in list(ds.resources.keys()))
         self.assertEqual(ds2.resources['my_key'], 'my_value')
         ds.set_values_of_one_attribute('id', array([11]))
-        self.assert_(not ma.allequal(ds2.get_id_attribute(), ds.get_id_attribute()))
-        self.assert_(ma.allequal(ds2.get_attribute('attr'), ds.get_attribute('attr')))
+        self.assertTrue(not ma.allequal(ds2.get_id_attribute(), ds.get_id_attribute()))
+        self.assertTrue(ma.allequal(ds2.get_attribute('attr'), ds.get_attribute('attr')))
 
     def test_join(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -954,7 +954,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(out_storage.get_column_names('tests_out.computed'), ['a'])
         stored = out_storage.load_table('tests_out.computed')['a']
         should_be = array([1000, 2000, 3000])
-        self.assert_(ma.allclose(stored, should_be, rtol=1e-6), "Error in test_write_dataset")
+        self.assertTrue(ma.allclose(stored, should_be, rtol=1e-6), "Error in test_write_dataset")
         
     def test_flush_dataset(self):
         # check that variables for expressions are flushed from the dataset, and that
@@ -977,10 +977,10 @@ class DatasetTests(opus_unittest.OpusTestCase):
         autogen_name = VariableName(expr1).get_short_name()
         ds.flush_dataset()
         box = ds.attribute_boxes['a']
-        self.assert_(box.is_cached())
-        self.assert_(not box.is_in_memory())
+        self.assertTrue(box.is_cached())
+        self.assertTrue(not box.is_in_memory())
         #autogen variable is deleted
-        self.assert_(autogen_name not in ds.get_known_attribute_names())
+        self.assertTrue(autogen_name not in ds.get_known_attribute_names())
 
  
 

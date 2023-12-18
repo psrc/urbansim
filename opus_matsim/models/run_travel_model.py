@@ -69,7 +69,7 @@ class RunTravelModel(AbstractTravelModel):
             logger.log_error(error_msg)
             logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the matsim4opus root,")
             logger.log_error("which is one level 'down' from OPUS_HOME.")
-            raise StandardError(error_msg)        
+            raise Exception(error_msg)        
         
         logger.end_block()
 

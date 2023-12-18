@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.gridcell.vacant_SSS_units_from_buildings import vacant_SSS_units_from_buildings as gc_vacant_residential_units
 
 class vacant_SSS_units_from_buildings(gc_vacant_residential_units):

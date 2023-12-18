@@ -15,7 +15,7 @@ class RunDummyTravelModel():
         """
         logger.start_block("Starting RunDummyTravelModel.run(...)")
         
-        print >> sys.stderr, "\nThis should also check if get_cache_data_into_matsim did something reasonable"
+        print("\nThis should also check if get_cache_data_into_matsim did something reasonable", file=sys.stderr)
         
         logger.log_status('would normally run MATSim')
         

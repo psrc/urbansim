@@ -1,5 +1,5 @@
 import sys
-import pxssh
+from . import pxssh
 from opus_core.logger import logger
 import os
 

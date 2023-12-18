@@ -92,7 +92,7 @@ class PersonDatasetConsistencyKeeperModel(Model):
                     for index in hh_indices:
                         household_id = household_ids[index]
                         hh_ids += [household_id] * npersons[index]
-                        member_ids += range(1, npersons[index]+1)
+                        member_ids += list(range(1, npersons[index]+1))
                         ages += [age_of_head[index]]
                         if npersons[index] > 1:
                             ages += [age_of_head[index] - sample_replace(arange(5), 1)[0]]
@@ -150,17 +150,17 @@ class Tests(opus_unittest.OpusTestCase):
         
         import itertools
         hh_select = ones(households_data["persons"].size)
-        hh_select[array(range(10) + range(11100, 11150))] = 0
+        hh_select[array(list(range(10)) + list(range(11100, 11150)))] = 0
         self.hh_index = where(hh_select)[0]
         self.hh_new_persons = where(hh_select == 0)[0]
         total_persons = households_data['persons'][self.hh_index].sum()
-        job_ids = range(1, 5000)
-        self.non_exist_jobs = range(16000, 17000)
+        job_ids = list(range(1, 5000))
+        self.non_exist_jobs = list(range(16000, 17000))
         persons_data = {
             "person_id":arange(total_persons)+1,
             "household_id": array( list(itertools.chain.from_iterable([[i] * p for i,p in zip(households_data['household_id'][self.hh_index], households_data['persons'][self.hh_index])])) ),
             ## head of the household is the oldest
-            "age": array( list(itertools.chain.from_iterable([range(a, a-p*2, -2) for a,p in zip(households_data['age_of_head'][self.hh_index], households_data['persons'][self.hh_index])])) ),
+            "age": array( list(itertools.chain.from_iterable([list(range(a, a-p*2, -2)) for a,p in zip(households_data['age_of_head'][self.hh_index], households_data['persons'][self.hh_index])])) ),
             "job_id": array(job_ids + self.non_exist_jobs + [0] * (total_persons - len(job_ids) - len(self.non_exist_jobs)))
             }
         
@@ -186,7 +186,7 @@ class Tests(opus_unittest.OpusTestCase):
         model = PersonDatasetConsistencyKeeperModel()
         orig_pers_size = self.person_set.size()
         new_pers = model.run(self.person_set, self.hh_set)
-        self.assert_(new_pers.size() == orig_pers_size + self.hh_set["persons"][self.hh_new_persons].sum())
+        self.assertTrue(new_pers.size() == orig_pers_size + self.hh_set["persons"][self.hh_new_persons].sum())
             
     def test_delete_persons(self):
         model = PersonDatasetConsistencyKeeperModel()
@@ -194,13 +194,13 @@ class Tests(opus_unittest.OpusTestCase):
         self.hh_set.remove_elements(arange(50, 100))
         orig_pers_size = self.person_set.size()
         new_pers = model.run(self.person_set, self.hh_set, expand_person_set = False)
-        self.assert_(new_pers.size() == orig_pers_size - persons_to_remove)
+        self.assertTrue(new_pers.size() == orig_pers_size - persons_to_remove)
         
     def test_delete_jobs(self):
         model = PersonDatasetConsistencyKeeperModel()
-        self.assert_(in1d(self.person_set["job_id"], self.non_exist_jobs).sum() == len(self.non_exist_jobs))
+        self.assertTrue(in1d(self.person_set["job_id"], self.non_exist_jobs).sum() == len(self.non_exist_jobs))
         new_pers = model.run(self.person_set, self.hh_set, self.job_set, expand_person_set = False)
-        self.assert_(in1d(self.person_set["job_id"], self.non_exist_jobs).sum() == 0)
+        self.assertTrue(in1d(self.person_set["job_id"], self.non_exist_jobs).sum() == 0)
 
         
 if __name__=='__main__':

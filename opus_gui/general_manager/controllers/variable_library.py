@@ -378,7 +378,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         ''' User clicked the validate selected button '''
         # Get all the selected variables
         selected_rows = set()
-        map(selected_rows.add, [i.row() for i in self.variables_table.selectedIndexes()])
+        list(map(selected_rows.add, [i.row() for i in self.variables_table.selectedIndexes()]))
 
         # Setup GUI for batch run
         self.pb_cancel_validation.setEnabled(True)

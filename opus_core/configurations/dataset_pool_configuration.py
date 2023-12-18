@@ -9,7 +9,7 @@ class DatasetPoolConfiguration(object):
     def __init__(self, package_order, package_order_exceptions={}):
         self.package_order = package_order
         if len(package_order_exceptions)>0:
-            raise ValueError, "parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary to package_order_exceptions"        
+            raise ValueError("parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary to package_order_exceptions")        
 
 from opus_core.tests import opus_unittest
 

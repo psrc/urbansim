@@ -76,7 +76,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [0,0,0], 
                            [0,1,1]])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
     def test_my_inputs(self):
@@ -118,7 +118,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [0,0,0],
                            [0,1,1]])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
 

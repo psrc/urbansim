@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_variable_within_radius_DDD_of_parcel import abstract_variable_within_radius_DDD_of_parcel
+from .abstract_variable_within_radius_DDD_of_parcel import abstract_variable_within_radius_DDD_of_parcel
 
 class new_bldgs_within_DDD_of_parcel(abstract_variable_within_radius_DDD_of_parcel):
     """total number of buildings with year_built>1995 within radius DDD of parcel"""

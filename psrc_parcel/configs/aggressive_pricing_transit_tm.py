@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from baseline import Baseline
+from .baseline import Baseline
 
 class AggressivePricingTransitTm(Baseline):
     tm_scenario = '/urbansim_cache/travel_model/pricing_transit_v1.0bb'

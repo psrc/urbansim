@@ -26,8 +26,8 @@ class GetCacheDataIntoTranscad(ParentClass):
         """Writes to file tm_input.txt to os.path.join(config["travel_model_data_directory"], config[year]["data_exchange_dir"]).
         """
         tm_config = config['travel_model_configuration']
-        if not tm_config.has_key('travel_model_base_directory') and \
-           tm_config.has_key('generic_directory'):
+        if 'travel_model_base_directory' not in tm_config and \
+           'generic_directory' in tm_config:
             tm_config['travel_model_base_directory'] = tm_config['generic_directory']
         tm_input_file_name = 'y%stazdata.xls' % year
 

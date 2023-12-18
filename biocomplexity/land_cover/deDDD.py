@@ -92,7 +92,7 @@ class Tests(ExpectedDataTest):
             dataset = "land_cover")
         should_be = array([1, 1, 0, 0, 1])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1E-5), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1E-5), 
                      msg = "Error in " + self.variable_name)
 
 

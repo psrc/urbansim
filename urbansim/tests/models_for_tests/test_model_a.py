@@ -45,7 +45,7 @@ class test_model_a_tests(opus_unittest.OpusTestCase):
         
         results = input_storage.load_table(table_name=table_name)
         
-        self.assert_(ma.allequal(results['test_attribute'], array([1,7,2])))
+        self.assertTrue(ma.allequal(results['test_attribute'], array([1,7,2])))
             
             
 if __name__ == '__main__':

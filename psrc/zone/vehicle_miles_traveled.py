@@ -42,9 +42,9 @@ class vehicle_miles_traveled(Variable):
         md_VMT_attr = travel_data.get_attribute(self._md_VMT_attr)  
         pm_ev_ni_VMT_attr = travel_data.get_attribute(self._pm_ev_ni_VMT_attr)  
         
-        non_missing_idx = logical_and(logical_and(am_VMT_attr <> self.missing_value, 
-                                                  md_VMT_attr <> self.missing_value),
-                                      pm_ev_ni_VMT_attr <> self.missing_value)
+        non_missing_idx = logical_and(logical_and(am_VMT_attr != self.missing_value, 
+                                                  md_VMT_attr != self.missing_value),
+                                      pm_ev_ni_VMT_attr != self.missing_value)
         results =   array(ndimage_sum(am_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids)) + \
                     array(ndimage_sum(md_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids)) + \
                     array(ndimage_sum(pm_ev_ni_VMT_attr[non_missing_idx], labels = from_zone_id[non_missing_idx], index=zone_ids))        
@@ -91,7 +91,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([9, 16])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
 

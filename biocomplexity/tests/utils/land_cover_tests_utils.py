@@ -46,6 +46,6 @@ if __name__ == "__main__":
             f.write('\n')
             f.close()
             dest_flt_directory = make_input_data(source_flt_directory, ["a"])
-            self.assert_(os.path.exists(os.path.join(dest_flt_directory, "land_covers", "a.lf4")))
+            self.assertTrue(os.path.exists(os.path.join(dest_flt_directory, "land_covers", "a.lf4")))
                
     opus_unittest.main()

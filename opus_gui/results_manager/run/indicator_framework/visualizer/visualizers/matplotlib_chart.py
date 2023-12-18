@@ -63,7 +63,7 @@ else:
             
             if len(primary_keys) > 1:
                 keys = [data[key] for key in primary_keys]
-                keys = zip(*keys)
+                keys = list(zip(*keys))
             else:
                 keys = data[primary_keys[0]]
             
@@ -76,7 +76,7 @@ else:
 
             row = 0
             row_y_vals = {}
-            cols = sorted([col for col in data.keys() if col not in primary_keys])
+            cols = sorted([col for col in list(data.keys()) if col not in primary_keys])
             years = [int(self.__year_pattern.match(col).group(1)) for col in cols]
 
             for key in keys:
@@ -135,7 +135,7 @@ else:
             self._create_input_stores(years = years)
     
             dataset_to_attribute_map = {}
-            for name, computed_indicator in computed_indicators.items():
+            for name, computed_indicator in list(computed_indicators.items()):
                 if name not in indicators_to_visualize: continue
                 
                 if computed_indicator.source_data != source_data:
@@ -146,7 +146,7 @@ else:
                 dataset_to_attribute_map[dataset_name].append(name)
     
             viz_metadata = []
-            for dataset_name, indicator_names in dataset_to_attribute_map.items():  
+            for dataset_name, indicator_names in list(dataset_to_attribute_map.items()):  
                 attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                               for name in indicator_names]    
                 example_indicator = computed_indicators[indicator_names[0]]
@@ -158,7 +158,7 @@ else:
                      primary_keys = primary_keys,
                      years = source_data.years
                 )
-                for name, data_subset in data.items():
+                for name, data_subset in list(data.items()):
                     
                     table_name = self.get_name(
                         dataset_name = dataset_name,
@@ -201,7 +201,7 @@ else:
         def skip_test_create_indicator(self):
             
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-            self.assert_(not os.path.exists(indicator_path))
+            self.assertTrue(not os.path.exists(indicator_path))
             
             chart = MatplotlibChart(
                       source_data = self.source_data,
@@ -212,8 +212,8 @@ else:
             
             chart.create(False)
             
-            self.assert_(os.path.exists(indicator_path))
-            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
+            self.assertTrue(os.path.exists(indicator_path))
+            self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
 
         def skip_test_create_indicator2(self):
             
@@ -222,9 +222,9 @@ else:
                 return
                 
             indicator_path = self.source_data.get_indicator_directory()
-            self.assert_(not os.path.exists(indicator_path))
+            self.assertTrue(not os.path.exists(indicator_path))
     
-            self.source_data.years = range(1980,1984)
+            self.source_data.years = list(range(1980,1984))
             indicator = Indicator(
                       dataset_name = 'test', 
                       attribute = 'opus_core.test.attribute'
@@ -244,7 +244,7 @@ else:
             chart = MatplotlibChart(
                         name = 'test_chart',
                         indicator_directory = self.source_data.get_indicator_directory())
-            chart._create_input_stores(range(1980,1984))
+            chart._create_input_stores(list(range(1980,1984)))
             
             viz_results = chart.visualize(
                             indicators_to_visualize = ['attr1',

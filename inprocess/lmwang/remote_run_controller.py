@@ -54,10 +54,10 @@ if __name__ == "__main__":
         remote_cache_directory_root = '/urbansim_cache/psrc_parcel/' #the ending slash is critical    
     
 #################################################
-    hostname = raw_input('Hostname [%s]: ' % default_hostname)
+    hostname = input('Hostname [%s]: ' % default_hostname)
     if len(hostname) == 0:
         hostname = default_hostname    
-    username = raw_input('Username [%s]: ' % default_username)
+    username = input('Username [%s]: ' % default_username)
     if len(username) == 0:
         username = default_username
     password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     #check that run_id must exist
     results = run_manager.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % run_id)
     if not len(results) > 1:
-        raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
+        raise Exception("run_id %s doesn't exist in run_activity table." % run_id)
 
     urbansim_resources = run_manager.get_resources_for_run_id_from_history(run_id=run_id)
     #TODO: is this line necessary?
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     local_cache_directory = os.path.join(local_cache_directory_root, tail)
 
     travel_model_resources = None
-    if urbansim_resources.has_key('travel_model_configuration'):
+    if 'travel_model_configuration' in urbansim_resources:
         travel_model_resources = copy.deepcopy(urbansim_resources)
 #        del urbansim_resources['travel_model_configuration']
     
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     end_year = options.end_year
     #only keep sorted travel model years falls into years range
     travel_model_years = []
-    for key in travel_model_resources['travel_model_configuration'].keys():
+    for key in list(travel_model_resources['travel_model_configuration'].keys()):
         if type(key) == int:
             if key >= start_year and key <= end_year:
                 travel_model_years.append(key)
@@ -141,20 +141,20 @@ if __name__ == "__main__":
                        (plink, username, password, hostname, restart_run_py, run_id, this_start_year))
             
         except:
-            raise StandardError, "problem running urbansim remotely"
+            raise Exception("problem running urbansim remotely")
 
         if not os.path.exists(os.path.join(local_cache_directory, str(this_end_year))):
-            raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
-                                (this_end_year, local_cache_directory)
+            raise Exception("cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
+                                (this_end_year, local_cache_directory))
         
         if travel_model_resources is not None:
-            if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
+            if this_end_year in travel_model_resources['travel_model_configuration']:
                 for full_model_path in travel_model_resources['travel_model_configuration']['models']:
                     ForkProcess().fork_new_process(full_model_path, 
                         travel_model_resources, optional_args=['-y', this_end_year])
 
         if not os.path.exists(os.path.join(local_cache_directory, str(this_end_year+1))):
-            raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                (this_end_year+1, local_cache_directory)
+            raise Exception("travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
+                                (this_end_year+1, local_cache_directory))
             
         this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year

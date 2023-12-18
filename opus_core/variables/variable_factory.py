@@ -101,7 +101,7 @@ class VariableFactory(object):
                 debug.print_debug("Evaluating '" + ev + "'.",12)
                 exec(ev)
                 debug.print_debug("Successful.", 12)
-            except ImportError, e:
+            except ImportError as e:
                 if not quiet:
                     from opus_core.simulation_state import SimulationState
                     time = SimulationState().get_current_time()

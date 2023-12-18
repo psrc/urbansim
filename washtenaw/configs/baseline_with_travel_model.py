@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 import os
-from baseline import Baseline
+from .baseline import Baseline
 
 class BaselineWithTravelModel(Baseline):
     """

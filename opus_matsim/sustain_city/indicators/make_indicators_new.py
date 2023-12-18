@@ -21,7 +21,7 @@ cache_directory = r'/Users/thomas/Development/opus_home/data/psrc_parcel/runs/ru
 
 types = ['tab']
 
-print "creating indicators ..."
+print("creating indicators ...")
 
 indicators = {
 
@@ -53,7 +53,7 @@ indicators = {
     #   attribute = 'zone.aggregate(urbansim_parcel.development_project_proposal.total_revenue,function=mean,intermediates=[parcel])'),
 }
 
-print "... done."
+print("... done.")
 
 #################################################################
 #DEFINE data source
@@ -63,7 +63,7 @@ print "... done."
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_gui.results_manager.run.indicator_framework.maker.source_data import SourceData
 
-print "creating result template ..."
+print("creating result template ...")
 
 result_template = SourceData(
    cache_directory = cache_directory,
@@ -75,7 +75,7 @@ result_template = SourceData(
    name = project_name
 )
 
-print "... done."
+print("... done.")
 
 ################################################################
 #COMPUTE indicators
@@ -84,14 +84,14 @@ print "... done."
 # for a given result template
 from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
 
-print "creating maker (to compute indicators) ..."
+print("creating maker (to compute indicators) ...")
 
 maker = Maker( project_name )
 computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = result_template)
 
-print "... done."
+print("... done.")
 
 ############################################
 #VISUALIZE the resulting computed indicators
@@ -136,5 +136,5 @@ for output_type in types:
 
 end_time = time.time()
 
-print "Computation took : %f\n" %(end_time-start_time)
-print "Finished!!!"
+print("Computation took : %f\n" %(end_time-start_time))
+print("Finished!!!")

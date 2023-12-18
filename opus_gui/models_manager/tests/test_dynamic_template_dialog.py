@@ -25,7 +25,7 @@ class TestDynamicTemplateDialog(OpusGUITestCase):
                      'apple field': [b_node.tag,],
                      'use checkbox?': [e_node.tag,]}
         node_tag_dict = {}
-        for field_id, node_list in self.instance.fields_to_nodes.items():
+        for field_id, node_list in list(self.instance.fields_to_nodes.items()):
             node_tag_dict[field_id] = [node.tag for node in node_list]
         self.assertDictsEqual(node_tag_dict, should_be)
 

@@ -47,7 +47,7 @@ class OpusResultGenerator(object):
 
             self._generate_results()
             succeeded = True
-        except Exception, e:
+        except Exception as e:
             succeeded = False
             errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
             self.errorCallback(errorinfo)

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class total_value_vacant_land(Variable):
     """avg_val_per_unit_vacant_land * number of vacant_land_sqft"""

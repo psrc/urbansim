@@ -36,7 +36,7 @@ class Model(ModelComponent):
         model_name = None
         an_instance = ModelComponent.__new__(cls, *args, **kwargs)
 
-        if 'run' in map(lambda (name, obj): name, getmembers(an_instance, isroutine)):
+        if 'run' in [name_obj[0] for name_obj in getmembers(an_instance, isroutine)]:
             run_method = an_instance.run
             def logged_run_method (*req_args, **opt_args):
                 logger.start_block("Running %s" % an_instance.full_name(), tags=["model", "model-run"],
@@ -48,7 +48,7 @@ class Model(ModelComponent):
                 return results
             an_instance.run = logged_run_method
 
-        if 'estimate' in map(lambda (name, obj): name, getmembers(an_instance, isroutine)):
+        if 'estimate' in [name_obj1[0] for name_obj1 in getmembers(an_instance, isroutine)]:
             estimate_method = an_instance.estimate
             def logged_estimate_method (*req_args, **opt_args):
                 logger.start_block("Estimating %s" % an_instance.full_name(), tags=["model", "model-estimate"],
@@ -85,7 +85,7 @@ class Model(ModelComponent):
         """
         def condition(x):
             return eval(condition_str)
-        count = where(array(map(lambda x: not(condition(x)), values)) > 0)[0].size
+        count = where(array([not(condition(x)) for x in values]) > 0)[0].size
         if (count > 0):
             logger.log_warning("Model %s fails %d times on check: %s" % (self.__class__.__module__, count,  condition_str),
                                 tags=["model", "model-check"])
@@ -106,7 +106,7 @@ class Model(ModelComponent):
         """
         self.observations_mapping = {} # maps to which submodel each observation belongs to
         nsubmodels = len(submodels)
-        if (nsubmodels > 1) or ((nsubmodels == 1) and (submodels[0] <> -2)):
+        if (nsubmodels > 1) or ((nsubmodels == 1) and (submodels[0] != -2)):
             try:
                 agent_set.compute_variables(submodel_string, dataset_pool=dataset_pool, resources=resources)
             except:
@@ -130,7 +130,7 @@ class Model(ModelComponent):
             self.observations_mapping[-2] = arange(agents_index.size)
         
         mapped = zeros(agents_index.size, dtype='bool8')
-        for submodel, index in self.observations_mapping.iteritems():
+        for submodel, index in self.observations_mapping.items():
             mapped[index] = True
         self.observations_mapping["index"] = agents_index
         self.observations_mapping["mapped_index"] = where(mapped)[0]
@@ -138,7 +138,7 @@ class Model(ModelComponent):
     def get_all_data(self, submodel=-2):
         """Model must have a property 'data' which is a dictionary that has for each submodel
         some data. It returns data for the given submodel. Meant to be used for analyzing estimation data."""
-        if submodel in self.data.keys():
+        if submodel in list(self.data.keys()):
             return self.data[submodel]
         logger.log_warning("No available data for submodel %s." % submodel)
         return None
@@ -161,7 +161,7 @@ class Model(ModelComponent):
     def get_coefficient_names(self, submodel=-2):
         """ Model must have a property 'coefficient_names' which is a dictionary that has for each submodel
         used coefficient names. It returns coefficient names for the given submodel."""
-        if submodel in self.coefficient_names.keys():
+        if submodel in list(self.coefficient_names.keys()):
             return self.coefficient_names[submodel]
         return None
 

@@ -122,7 +122,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         this_year_index = where(target_vacancy['year']==year)[0]
         target_vacancy_for_this_year = DatasetSubset(target_vacancy, this_year_index)
         if target_vacancy_for_this_year.size() == 0:
-            raise IOError, 'No target vacancy defined for year %s.' % year
+            raise IOError('No target vacancy defined for year %s.' % year)
         
         ## current_target_vacancy.target_attribute_name = 'target_vacancy_rate'
         ## each column provides a category for which a target vacancy is specified
@@ -272,7 +272,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             logger.log_status("\t".join(self.column_names + logging_header))
 #        error_log = ''
         
-        keys = self.accounting.keys(); keys.sort()
+        keys = list(self.accounting.keys()); keys.sort()
         for key in keys:
             value = self.accounting[key]
             value["current_vacancy"] = (value.get("total_spaces",0) - value.get("occupied_spaces",0))/float(value.get("total_spaces",0))           
@@ -290,7 +290,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 logger.log_status("\t".join(row))
                 
         #logging for keys not appearing in target_vacancies
-        keys = self.logging.keys(); keys.sort()
+        keys = list(self.logging.keys()); keys.sort()
         for key in keys: 
             value = self.logging[key]
             value["difference"] = ( value.get("target_spaces",0)-value.get("total_spaces",0) ) or ''
@@ -357,11 +357,11 @@ class DevelopmentProjectProposalSamplingModel(Model):
         ## skip this proposal if the proposal has no components that are needed to reach vacancy target
         if not force_accepting and all([ self._is_target_reached(key) 
                  or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
-                 for key in proposed_spaces.keys() ]):
+                 for key in list(proposed_spaces.keys()) ]):
             return False
         
         # accept this proposal
-        for key, value in demolished_spaces.items():
+        for key, value in list(demolished_spaces.items()):
             if key not in self.accounting:
                 if key not in self.logging:
                     self.logging[key] = defaultdict(int)
@@ -371,7 +371,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 ##TODO we may want to re-activate sampling of proposals if new total spaces is below target spaces 
                 ##because of demolished buildings 
         
-        for key, value in proposed_spaces.items():
+        for key, value in list(proposed_spaces.items()):
             if key not in self.accounting:
                 if key not in self.logging:
                     self.logging[key] = defaultdict(int)
@@ -397,7 +397,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         
     def _is_target_reached(self, column_value=()):
         if column_value:
-            if self.accounting.has_key(column_value):
+            if column_value in self.accounting:
                 accounting = self.accounting[column_value]
                 result = accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                                 accounting.get("demolished_spaces",0) )
@@ -406,7 +406,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 return True
         results = [  accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) ) 
-                   for column_value, accounting in self.accounting.items() ]
+                   for column_value, accounting in list(self.accounting.items()) ]
         return all(results)
 
 ## TODO: enable unittests     

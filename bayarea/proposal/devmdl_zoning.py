@@ -14,12 +14,12 @@ class Parcels():
     # empty parcels
     s = "select p.* from parcels2010_withgeography as p left outer join buildings2010 as b on (p.parcel_id = b.parcel_id) where b.parcel_id is NULL"
     
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
-    print fnames
-    fnames = dict(zip(fnames,range(len(fnames))))
+    print(fnames)
+    fnames = dict(list(zip(fnames,list(range(len(fnames))))))
     d = {}
     for r in records:
         id = r[fnames['parcel_id']]
@@ -35,7 +35,7 @@ where building_id = building and scenario = 1 and building_type_id = 1 and b.par
 group by _zone_id order by _zone_id
 '''
 
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     for r in records:
@@ -52,7 +52,7 @@ group by _zone_id, building_type having sum(residential_units) > 10 and
 sum(building_sqft-non_residential_sqft)/sum(residential_units) > 300 order by _zone_id
 
 '''
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     for r in records:
@@ -61,7 +61,7 @@ sum(building_sqft-non_residential_sqft)/sum(residential_units) > 300 order by _z
     my.unitsize = d
 
   def get_pids(my):
-        return my.parcels.keys()
+        return list(my.parcels.keys())
 
   def get_attr(my,pid,attr_name):
         return my.parcels[pid][my.parcelfnames[attr_name]]
@@ -83,7 +83,7 @@ class Zoning():
 
     # first, zoning
     s = "select * from geography_zoning"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
@@ -95,10 +95,10 @@ class Zoning():
         d[id] = r
 
     my.zoning = d
-    my.zoningfnames = dict(zip(fnames,range(len(fnames))))
+    my.zoningfnames = dict(list(zip(fnames,list(range(len(fnames))))))
 
     s = "select id from scenario where name = '%s'" % scenario
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     assert len(records) == 1
@@ -106,7 +106,7 @@ class Zoning():
 
     # then relate to parcels
     s = "select * from zoning_for_parcels(%d,'%d-01-01 00:00:00')" % (scenarioid,year)
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
@@ -119,10 +119,10 @@ class Zoning():
         zid = r[1]
         d[pid] = zid
     my.pid2zid = d
-    print "Found %d parcel->zoning relationships" % len(d)
+    print("Found %d parcel->zoning relationships" % len(d))
 
     s= "select * from geography_building_type_zone_relation"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
@@ -138,7 +138,7 @@ class Zoning():
     
 
     s= "select * from geography_parking_requirement where unit = 1"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]

@@ -42,7 +42,7 @@ class RunTravelModel(AbstractEmme2TravelModel):
         if cmd_result != 0:
             error_msg = "Emme2 Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
-            raise StandardError(error_msg)        
+            raise Exception(error_msg)        
 
 if __name__ == "__main__":
     try: import wingdbstub

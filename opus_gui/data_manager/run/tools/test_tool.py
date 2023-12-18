@@ -9,7 +9,7 @@ def opusRun(progressCB, logCB, params=[]):
     logCB("Starting the run method of the diagnostic tool\n")
     logCB("Tool filename: %s\n" % __file__)
     logCB("Listing of input parameters:\n")
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
         logCB("%s=%s\n" % (str(key),str(val)))
     

@@ -24,7 +24,7 @@ def main():
     (options, args) = parser.parse_args()
 
     if not options.run_id and not options.cache_directory:
-        print "ERROR: either -r or -c is required"
+        print("ERROR: either -r or -c is required")
         sys.exit(1)
 
     if options.run_id:
@@ -32,7 +32,7 @@ def main():
     elif options.cache_directory:
         run_id = run_id_from_cache_dir(options.cache_directory)
         if not run_id:
-            print "Failed to parse run ID from cache directory name"
+            print("Failed to parse run ID from cache directory name")
             sys.exit(1)
 
     # Note the dummy restart_year.  Because we're not actually going to
@@ -56,7 +56,7 @@ def main():
     cursor.execute(s)
     records = cursor.fetchall()
     if len(records) == 0:
-        print "Creating new scenario '" + scenario_name + "'"
+        print("Creating new scenario '" + scenario_name + "'")
         s = "insert into scenario (name, parent) values ('{}', 1)".format(scenario_name)
         cursor.execute(s)
         conn.commit()
@@ -68,7 +68,7 @@ def main():
     elif len(records) == 1:
         id = records[0][0]
     else:
-        print "ERROR: Found more than one scenario named %s!" % scenario_name
+        print("ERROR: Found more than one scenario named %s!" % scenario_name)
         cursor.close()
         conn.close()
         sys.exit(1)
@@ -81,9 +81,9 @@ def main():
     psql = os.path.join(os.path.split(__file__)[0], "process_building_to_sql.py")
     cmd = "%s %s %s %d" % (sys.executable, psql, cache_directory, id)
     cmd += " | psql -h paris.urbansim.org -q -U urbanvision bayarea > /dev/null"
-    print "Exporting buildings to db: " + cmd
+    print("Exporting buildings to db: " + cmd)
     if os.system("export PGPASSWORD=$OPUS_DBPASS; " + cmd) != 0:
-        print "ERROR: Failed to export buildings to urbanvision DB"
+        print("ERROR: Failed to export buildings to urbanvision DB")
         sys.exit(1)
 
 if __name__ == '__main__':

@@ -34,14 +34,14 @@ class RunEstimationThread(QThread):
         self.estimationguielement.estimation.cancel()
 
     def progressCallback(self,percent):
-        print "Ping From Estimation"
+        print("Ping From Estimation")
         self.emit(SIGNAL("estimationPing(PyQt_PyObject)"),percent)
 
     def finishedCallback(self,success):
         if success:
-            print "Success returned from Estimation"
+            print("Success returned from Estimation")
         else:
-            print "Error returned from Estimation"
+            print("Error returned from Estimation")
         self.emit(SIGNAL("estimationFinished(PyQt_PyObject)"),success)
 
     def errorCallback(self,errorMessage):
@@ -79,19 +79,19 @@ class OpusEstimation(object):
 
     def pause(self):
         self.paused = True
-        print "Pause pressed"
+        print("Pause pressed")
         # Can access the estimation manager via self.er
 
     def resume(self):
         self.paused = False
-        print "Resume pressed"
+        print("Resume pressed")
         # Can access the estimation manager via self.er
 
     def cancel(self):
         self.running = False
         self.paused = False
         self.cancelled = True
-        print "Cancel pressed"
+        print("Cancel pressed")
         # Can access the estimation manager via self.er
 
     def run(self):

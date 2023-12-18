@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from rate_dataset import RateDataset
+from .rate_dataset import RateDataset
 
 class BusinessRelocationRateDataset(RateDataset):
 

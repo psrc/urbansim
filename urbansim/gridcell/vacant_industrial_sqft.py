@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.misc import clip_to_zero_if_needed
 
 class vacant_industrial_sqft(Variable):

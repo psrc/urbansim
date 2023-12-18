@@ -27,14 +27,14 @@ class RunTravelModel(AbstractTravelModel):
         if cmd_result != 0:
             error_msg = "Run travel model failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
-            raise StandardError(error_msg)
+            raise Exception(error_msg)
 
     def prepare_for_run(self, config, year):
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")
     
     def create_travel_model_command_batch(self, *args, **kwargs):
         """"""
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")
         
 
 if __name__ == "__main__":

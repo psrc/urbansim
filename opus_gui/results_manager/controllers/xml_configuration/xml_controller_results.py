@@ -59,8 +59,8 @@ class XmlController_Results(XmlController):
         try:
             run_id = int(run_id)
         except ValueError:
-            raise ValueError, "run_id for run %s is invalid: %s; the run cannot be restarted." % \
-                  (run_name, run_id)
+            raise ValueError("run_id for run %s is invalid: %s; the run cannot be restarted." % \
+                  (run_name, run_id))
         
         run_manager = get_run_manager()
         config = run_manager.get_resources_for_run_id_from_history(run_id)
@@ -148,7 +148,7 @@ class XmlController_Results(XmlController):
             #self.project.dirty = True
             #update_mainwindow_savestate()
             # self.model.remove_node(run_node)
-        except Exception, ex: # TODO catch more specific error?
+        except Exception as ex: # TODO catch more specific error?
             MessageBox.warning(self.view, 'Could not remove run', str(ex))
 
     def _importRun(self):        

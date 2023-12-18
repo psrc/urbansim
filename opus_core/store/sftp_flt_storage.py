@@ -4,8 +4,8 @@
 
 from opus_core.store.storage import Storage
 from shutil import rmtree
-from urlparse import urlparse
-from file_flt_storage import file_flt_storage, FltError
+from urllib.parse import urlparse
+from .file_flt_storage import file_flt_storage, FltError
 from opus_core.ssh_client import get_ssh_client, convertntslash
 from glob import glob
 import tempfile
@@ -230,7 +230,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         expected.sort()
         actual = self.storage.get_column_names('cities')
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
     def test_load_table(self):
         if skip_test():
@@ -250,7 +250,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         actual = self.storage.get_table_names()
         expected.sort()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
 class StorageWriteTests(TestStorageInterface):
 
@@ -285,12 +285,12 @@ class StorageWriteTests(TestStorageInterface):
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, 'char_column.iS9')
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
+        self.assertTrue(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
         actual = fromfile(local_file_name, dtype='|S9')
-        self.assert_((expected==actual).all())
+        self.assertTrue((expected==actual).all())
         
     def test_write_int_array(self):
         if skip_test():
@@ -308,12 +308,12 @@ class StorageWriteTests(TestStorageInterface):
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, file_name)
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
+        self.assertTrue(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
         actual = fromfile(local_file_name, dtype=numpy_dtype)
-        self.assert_((expected==actual).all())
+        self.assertTrue((expected==actual).all())
 
         
     def test_write_float_and_boolean_array(self):
@@ -337,23 +337,23 @@ class StorageWriteTests(TestStorageInterface):
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, file_name)
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
+        self.assertTrue(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
         actual = fromfile(local_file_name, numpy_ext)
-        self.assert_((expected_float==actual).all())
+        self.assertTrue((expected_float==actual).all())
 
 
         remote_file_name = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, 'bool_column.ib1'))
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, 'bool_column.ib1')
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
+        self.assertTrue(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)        
         actual = fromfile(local_file_name, '|b1')
-        self.assert_((expected_bool == actual).all())
+        self.assertTrue((expected_bool == actual).all())
         
     def test_writing_column_to_file_when_file_of_same_column_name_and_different_type_already_exists(self):
         if skip_test():
@@ -373,9 +373,9 @@ class StorageWriteTests(TestStorageInterface):
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         
         storage.write_table(table_name=self.table_name, table_data=my_data)
-        self.assert_(not (self.storage.ssh_client.exists_remotely(remote_file)))
+        self.assertTrue(not (self.storage.ssh_client.exists_remotely(remote_file)))
         new_remote_file = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))
-        self.assert_(self.storage.ssh_client.exists_remotely(new_remote_file))
+        self.assertTrue(self.storage.ssh_client.exists_remotely(new_remote_file))
 
     def test_writing_column_to_file_when_two_files_of_same_column_name_and_different_type_already_exist(self):        
         if skip_test():
@@ -402,7 +402,7 @@ class StorageWriteTests(TestStorageInterface):
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         self.assertRaises(FltError, storage.write_table, self.table_name, my_data)
         new_remote_file = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))
-        self.assert_(not (self.storage.ssh_client.exists_remotely(new_remote_file)))        
+        self.assertTrue(not (self.storage.ssh_client.exists_remotely(new_remote_file)))        
 
     def test_write_table_columns_with_different_sizes(self):
         if not skip_test():

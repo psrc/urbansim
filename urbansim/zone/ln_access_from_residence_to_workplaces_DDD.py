@@ -63,7 +63,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([44 * exp(-4.8) + 55 * exp(-2.222), 
                            44 * exp(-3.1) + 55 * exp(-4)])
         should_be = log(should_be)
-        self.assert_(ma.allclose(values, should_be, rtol=1e-4), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-4), 
             "Error in %s" % self.variable_name)
 
 

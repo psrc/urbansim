@@ -19,12 +19,12 @@ class FazdistrictDataset(UrbansimDataset):
         self.same_age_table = None
         self.same_sector_table = None
 
-        if id_values <> None:
+        if id_values != None:
             self._add_id_attribute(data=id_values, name=self.get_id_name()[0])
-        elif fazset <> None:
+        elif fazset != None:
             if (self.get_id_name()[0] not in fazset.get_attribute_names()) and \
                 (self.get_id_name()[0] not in fazset.get_primary_attribute_names()):
-                raise StandardError, "Given FazDataset does not contain " + self.get_id_name()[0]
+                raise Exception("Given FazDataset does not contain " + self.get_id_name()[0])
             fazdistricts = fazset.get_attribute(self.get_id_name()[0])
             unique_ids = unique(fazdistricts[fazdistricts >=0])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])
@@ -86,5 +86,5 @@ class FazdistrictDataset(UrbansimDataset):
         elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
             new_name = name
         else:
-            raise StandardError, "Attribute " + name + " not known."
+            raise Exception("Attribute " + name + " not known.")
         gridcell.plot_map(new_name, **opt_args)

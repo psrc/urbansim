@@ -54,9 +54,9 @@ lc1 =  LandCoverDataset(in_storage = StorageFactory().get_storage('flt_storage',
 
 agents_index = where(lc1.get_attribute(index_attribute))[0]
 lc1subset = DatasetSubset(lc1, agents_index)
-print "Writing set 1:"
+print("Writing set 1:")
 for attr in lc1.get_primary_attribute_names():
-    print "   ", attr
+    print("   ", attr)
     lc1subset.write_dataset(attributes=[attr], out_table_name="land_covers")
     lc1.delete_one_attribute(attr) # leaving this line in causes the processing of every other input data file; commenting it causes memory error
     
@@ -66,9 +66,9 @@ lc2 =  LandCoverDataset(in_storage = StorageFactory().get_storage('flt_storage',
         storage_location = os.path.join(flt_directory_out, str(years[1]))))
                   
 lc2subset = DatasetSubset(lc2, agents_index)
-print "Writing set 2:"
+print("Writing set 2:")
 for attr in lc2.get_primary_attribute_names():
-    print "   ", attr
+    print("   ", attr)
     lc2subset.write_dataset(attributes=[attr], out_table_name="land_covers")
     lc2.delete_one_attribute(attr) # leaving this line in causes the processing of every other input data file ; commenting it causes memory error             
 logger.log_status("Data storage done. " + str(time()-t1) + " s")

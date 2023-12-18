@@ -53,10 +53,9 @@ class ParcelDataset(UrbansimDataset):
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
                    set([constraints.get_id_name()[0], "generic_land_use_type_id", "constraint_type", "minimum", "maximum"])
-        attributes_with_prefix = map(lambda attr: "%s.%s" % (variable_package_name, attr),
-                                        attributes)
+        attributes_with_prefix = ["%s.%s" % (variable_package_name, attr) for attr in attributes]
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
-        attributes = map(lambda attr: VariableName(attr), attributes)
+        attributes = [VariableName(attr) for attr in attributes]
         
         if index is None:
             index = arange(self.size())
@@ -92,7 +91,7 @@ class ParcelDataset(UrbansimDataset):
         self.large_constraint_array = False
         
         logger.start_block("Matching %s development constraints to %s parcels" % (constraints.size(), index.size))
-        for iconstr in xrange(constraints.size()):
+        for iconstr in range(constraints.size()):
             type_id = type_ids[iconstr]
             constraint_type = constraint_types[iconstr]
             w = where(self._get_one_constraint(iconstr, constraints, index, attributes))[0]
@@ -106,10 +105,10 @@ class ParcelDataset(UrbansimDataset):
                 
         if consider_constraints_as_rules:
             for type_id in all_types:
-                if not self.development_constraints.has_key(type_id):
+                if type_id not in self.development_constraints:
                     self.development_constraints[type_id] = {}
                 for constraint_type in all_unique_constraint_types:
-                    if not self.development_constraints[type_id].has_key(constraint_type):
+                    if constraint_type not in self.development_constraints[type_id]:
                         self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
                     else:
                         # change the initial value of -2 in minimum for 0 (i.e. not allowed)
@@ -208,11 +207,11 @@ class Tests(opus_unittest.OpusTestCase):
                                      )         
                           }
                      }
-        for bt, ct in should_be.iteritems():
-            for key, should_be_value in ct.iteritems():
-                self.assert_(bt in values)
-                self.assert_(key in values[bt])
-                self.assert_(ma.allclose(values[bt][key], should_be_value),
+        for bt, ct in should_be.items():
+            for key, should_be_value in ct.items():
+                self.assertTrue(bt in values)
+                self.assertTrue(key in values[bt])
+                self.assertTrue(ma.allclose(values[bt][key], should_be_value),
                              msg = "Error in parcel get_development_constraints")
 
 if __name__=='__main__':

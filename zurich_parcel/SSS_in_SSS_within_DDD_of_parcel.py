@@ -50,7 +50,7 @@ class SSS_in_SSS_within_DDD_of_parcel(Variable):
         logger.end_block()
         
         logger.start_block(name="sum results for %s" % self.fullname, verbose=False)
-        return_values = array(map(lambda l: arr[l].sum(), results))
+        return_values = array([arr[l].sum() for l in results])
         logger.end_block()
         
         logger.end_block()

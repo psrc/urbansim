@@ -70,7 +70,7 @@ def create_from_proposals_and_template_components(proposal_dataset,
 
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
-from development_project_proposal_dataset import create_from_parcel_and_development_template
+from .development_project_proposal_dataset import create_from_parcel_and_development_template
 from numpy import array, int32
 from numpy import ma
 
@@ -128,12 +128,12 @@ class Tests(opus_unittest.OpusTestCase):
         proposals_components = self.dataset_pool.get_dataset("development_project_proposal_component")
         template_ids = self.proposal_components.get_attribute("template_id")
         
-        self.assert_(ma.allequal(self.proposal_components.size(), proposals_components.size()))
-        self.assert_(self.proposal_components.get_attribute("proposal_id").sum(), proposals_components.get_attribute("proposal_id").sum())
-        self.assert_((template_ids==1).sum(), (proposals_components.get_attribute("template_id")==1).sum())
-        self.assert_((template_ids==2).sum(), (proposals_components.get_attribute("template_id")==2).sum())
-        self.assert_((template_ids==3).sum(), (proposals_components.get_attribute("template_id")==3).sum())
-        self.assert_(self.proposal_components.get_attribute("component_id").sum(), proposals_components.get_attribute("component_id").sum())
+        self.assertTrue(ma.allequal(self.proposal_components.size(), proposals_components.size()))
+        self.assertTrue(self.proposal_components.get_attribute("proposal_id").sum(), proposals_components.get_attribute("proposal_id").sum())
+        self.assertTrue((template_ids==1).sum(), (proposals_components.get_attribute("template_id")==1).sum())
+        self.assertTrue((template_ids==2).sum(), (proposals_components.get_attribute("template_id")==2).sum())
+        self.assertTrue((template_ids==3).sum(), (proposals_components.get_attribute("template_id")==3).sum())
+        self.assertTrue(self.proposal_components.get_attribute("component_id").sum(), proposals_components.get_attribute("component_id").sum())
 
 if __name__=='__main__':
     opus_unittest.main()

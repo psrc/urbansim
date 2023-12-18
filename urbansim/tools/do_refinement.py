@@ -40,11 +40,11 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     if options.cache_directory is None:
         parser.print_usage()
-        raise StandardError, "cache directory argument is required (-c or --cache-directory)"
+        raise Exception("cache directory argument is required (-c or --cache-directory)")
 
     if (options.start_year is None) and (options.refinements_directory is None):
         parser.print_usage()
-        raise StandardError, "Either start year (argument -s or --start-year) or refinements directory (argument --refinements-directory) must be given."
+        raise Exception("Either start year (argument -s or --start-year) or refinements directory (argument --refinements-directory) must be given.")
 
     
     start_year = options.start_year

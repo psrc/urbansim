@@ -101,7 +101,7 @@ def variable_batch_check(variables, validator_func, variable_key = None,
         converted_var = variable_to_validator_format(variable)
         try:
             success, msg = validator_func(variables = [converted_var,])
-        except Exception, ex:
+        except Exception as ex:
             success = False
             type, value, tb = sys.exc_info()
             stack_dump = ''.join(traceback.format_exception(type, value, tb))

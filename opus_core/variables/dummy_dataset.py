@@ -41,7 +41,7 @@ class DummyDataset(object):
         # unlike the other aggregation/disaggregation functions, aggregate_all can't be used on the
         # component of an interaction set (the modelers said this doesn't make sense)
         if dataset.get_dataset_name()!=self._name:
-            raise ValueError, 'mismatched dataset names for aggregate_all (perhaps trying to use aggregate_all on the component of an interaction set?)'
+            raise ValueError('mismatched dataset names for aggregate_all (perhaps trying to use aggregate_all on the component of an interaction set?)')
         ds = self._dataset_pool.get_dataset(aggregated_dataset)
         if function is None:
             return array(ds.aggregate_all(attribute_name=dependent_attribute))
@@ -77,7 +77,7 @@ class DummyDataset(object):
     def agent_times_choice(self, attribute_name):
         dataset = self._get_dataset()
         if not isinstance(dataset, InteractionDataset):
-            raise StandardError, "The method 'agent_times_choice' must be called for an interaction dataset."
+            raise Exception("The method 'agent_times_choice' must be called for an interaction dataset.")
         result, dependencies = dataset.match_agent_attribute_to_choice(attribute_name, dataset_pool=self._dataset_pool)
         self._var.add_and_solve_dependencies(dependencies, dataset_pool=self._dataset_pool)
         return result

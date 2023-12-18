@@ -224,7 +224,7 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
     multiyear_workbook_source_data = SourceData(
         cache_directory = cache_directory,
         run_description = "Run description is used for what?",
-        years = range(yearstart,yearend+1),
+        years = list(range(yearstart,yearend+1)),
         dataset_pool_configuration = DatasetPoolConfiguration(
             package_order=['sanfrancisco','urbansim','opus_core'],
         ),
@@ -380,11 +380,11 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         indicatorReader = csv.reader(open(filename,'r'))
         
         # title row
-        fields = indicatorReader.next() 
+        fields = next(indicatorReader) 
         assert(len(fields)==len(multiyear_workbook_source_data.years)+1) # quick check
         
         # data row
-        fields = indicatorReader.next()
+        fields = next(indicatorReader)
         fields[0] = attr_name
         onetableWriter.writerow(fields)
         
@@ -404,11 +404,11 @@ def make_zone_dbfs(cache_directory):
                                  is_parent=False)
     runconfig = xmlconfig.get_run_configuration("sanfrancisco_baseline2009", merge_controllers=True)
     tm_config = runconfig['travel_model_configuration']
-    print tm_config['urbansim_to_tm_variable_mapping']
+    print(tm_config['urbansim_to_tm_variable_mapping'])
 
     travel_model_years = []
-    for key in tm_config.iterkeys():
-        if isinstance(key,int) and tm_config[key].has_key('year_dir'):
+    for key in tm_config.keys():
+        if isinstance(key,int) and 'year_dir' in tm_config[key]:
             travel_model_years.append(key)
     travel_model_years.sort()
     
@@ -422,7 +422,7 @@ def make_zone_dbfs(cache_directory):
     )
 
     attrs = []
-    for key,val in tm_config['urbansim_to_tm_variable_mapping'].iteritems():
+    for key,val in tm_config['urbansim_to_tm_variable_mapping'].items():
         key = key.replace(".", "_")
         attrs.append("%s=%s" % (key,val))
         

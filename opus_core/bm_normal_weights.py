@@ -14,7 +14,7 @@ class bm_normal_weights:
         bias_all = bm_object.get_bias()
         wi = ones(bm_object.number_of_runs, dtype=float32)
         weight_components = {}
-        for l in y_all.keys():
+        for l in list(y_all.keys()):
             y = y_all[l]
             mu = mu_all[l]
             K = y.size

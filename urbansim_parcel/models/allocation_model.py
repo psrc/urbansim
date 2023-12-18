@@ -36,7 +36,7 @@ class AllocationModel(AM):
 
             control_totals = Dataset(in_storage = dict_storage, in_table_name = 'control_totals', id_name='year')
 
-        if datasets_and_weights_in_years is not None and current_year in datasets_and_weights_in_years.keys():
+        if datasets_and_weights_in_years is not None and current_year in list(datasets_and_weights_in_years.keys()):
             dataset_name, weight_attribute = datasets_and_weights_in_years[current_year]
             dataset = None
             

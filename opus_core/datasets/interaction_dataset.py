@@ -116,7 +116,7 @@ class InteractionDataset(Dataset):
         """
         if not isinstance(data, ndarray):
             data=array(data)
-        if data.shape[0] <> self.size()[0][0] or data.shape[1] <> self.size()[0][1]:
+        if data.shape[0] != self.size()[0][0] or data.shape[1] != self.size()[0][1]:
             logger.log_warning("In add_primary_attribute: Mismatch in sizes of the argument 'data' and the InteractionDataset object.")
         self.add_attribute(data, name, metadata=AttributeType.PRIMARY)
         
@@ -140,7 +140,7 @@ class InteractionDataset(Dataset):
         else:
             owner_dataset, index = self.get_owner_dataset_and_index(dataset_name)
             if owner_dataset is None:
-                self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
+                self._raise_error(Exception, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
                                 variable_name.get_expression())
             owner_dataset.compute_variables([variable_name], dataset_pool, resources=resources, quiet=True)
             new_version = self.add_attribute(data = owner_dataset.get_attribute_by_index(variable_name, index),
@@ -193,9 +193,9 @@ class InteractionDataset(Dataset):
         dataset2_name = "dataset2"
         dataset1 = self.get_dataset(1)
         dataset2 = self.get_dataset(2)
-        if dataset1 <> None:
+        if dataset1 != None:
             dataset1_name=dataset1.get_dataset_name()
-        if dataset2 <> None:
+        if dataset2 != None:
             dataset2_name=dataset2.get_dataset_name()
         dataset_pool.add_datasets_if_not_included({dataset1_name: dataset1, dataset2_name: dataset2})
         return dataset_pool, compute_resources
@@ -242,7 +242,7 @@ class InteractionDataset(Dataset):
             return self.dataset1
         if name==self.dataset2.get_dataset_name():
             return self.dataset2
-        raise ValueError, "trying to get an interaction set component named %s but it does not exist" % name
+        raise ValueError("trying to get an interaction set component named %s but it does not exist" % name)
 
     def get_index(self, nr):
         if (nr == 1):
@@ -264,16 +264,16 @@ class InteractionDataset(Dataset):
     def summary(self, names, resources=None):
         """Print a marginal summary of the attributes given in the list 'names'.
         """
-        print "Summary\t\tsum\t\taverage"
-        print "------------------------------------------------"
+        print("Summary\t\tsum\t\taverage")
+        print("------------------------------------------------")
         if not isinstance(names,list):
             names = [names]
         for item in names:
             if not (item.get_alias() in self.get_attribute_names()):
                 self.compute_variables([item], resources=resources)
 
-            print item + "\t" + str(self.attribute_sum(item.alias))\
-                     + "\t" + str(round(self.attribute_average(item.get_alias(),5)))
+            print(item + "\t" + str(self.attribute_sum(item.alias))\
+                     + "\t" + str(round(self.attribute_average(item.get_alias(),5))))
 
     def get_2d_dataset_attribute(self, name):
         """ Return a 2D array of the attribute given by 'name'. It is assumed
@@ -300,9 +300,9 @@ class InteractionDataset(Dataset):
             else:
                 index = self.index2
         else:
-            self._raise_error(StandardError, "'index2' has incompatible type. It should be a numpy array or None.")
-        if (index.shape[0] <> n) or (index.shape[1] <> m):
-            self._raise_error(StandardError, "'index2' has wrong dimensions.")
+            self._raise_error(Exception, "'index2' has incompatible type. It should be a numpy array or None.")
+        if (index.shape[0] != n) or (index.shape[1] != m):
+            self._raise_error(Exception, "'index2' has wrong dimensions.")
         return index
 
     def get_2d_index_of_dataset1(self):
@@ -327,8 +327,8 @@ class InteractionDataset(Dataset):
         if len(shape) > 2:
             other_dims = shape[2:]
         nparenteqs = coefficients.parent.nequations()
-        if (neqs <> self.get_reduced_m()) and (nparenteqs <> self.get_reduced_m()):
-            self._raise_error(StandardError, "create_logit_data: Mismatch in number of equations and size of dataset2.")
+        if (neqs != self.get_reduced_m()) and (nparenteqs != self.get_reduced_m()):
+            self._raise_error(Exception, "create_logit_data: Mismatch in number of equations and size of dataset2.")
 
         if index is not None:
             nobs = index.size
@@ -345,7 +345,7 @@ class InteractionDataset(Dataset):
         except:    # in case it fails due to memory allocation error
             logger.log_warning("Not enough memory. Deleting not used attributes.",
                                 tags=["memory", "logit"])
-            var_names = map(lambda x: x.get_alias(), variables)
+            var_names = [x.get_alias() for x in variables]
             self.dataset1.unload_not_used_attributes(var_names)
             self.dataset2.unload_not_used_attributes(var_names)
             collect()
@@ -382,8 +382,8 @@ class InteractionDataset(Dataset):
         if len(shape) > 2:
             other_dims = shape[2:]
         nparenteqs = coefficients.parent.nequations()
-        if (neqs <> self.get_reduced_m()) and (nparenteqs <> self.get_reduced_m()):
-            self._raise_error(StandardError, "create_logit_data: Mismatch in number of equations and size of dataset2.")
+        if (neqs != self.get_reduced_m()) and (nparenteqs != self.get_reduced_m()):
+            self._raise_error(Exception, "create_logit_data: Mismatch in number of equations and size of dataset2.")
 
         mapping = coefficients.get_coefmap_alt()
         ncoef = mapping.size
@@ -442,7 +442,7 @@ class InteractionDataset(Dataset):
         """
         nobs, neqs, nvar = data.shape
         if where(choice<0)[0].size > 0:
-            self._raise_error(StandardError, "There are no choices for some agents. Check argument 'choice'.")
+            self._raise_error(Exception, "There are no choices for some agents. Check argument 'choice'.")
         if constants_positions.size > 0:
             for const in constants_positions:
                 data[:,:,const] = 0
@@ -455,8 +455,8 @@ class InteractionDataset(Dataset):
         If name == None, indices belonging to dataset2 are returned.
         The method returns 1D array - the actual values of the choices.
         """
-        if choices.size <> self.get_n():
-            self._raise_error(StandardError, "get_attribute_by_choice: Argument 'choices' must be the same size as dataset1")
+        if choices.size != self.get_n():
+            self._raise_error(Exception, "get_attribute_by_choice: Argument 'choices' must be the same size as dataset1")
         resources.merge_with_defaults(self.resources)
         if name == None:
             twoDattr = self.get_2d_index()
@@ -546,7 +546,7 @@ class InteractionDataset(Dataset):
     def get_index1_idx(self, ids):
         id = asarray(ids)
         try:
-            return array(map(lambda x: self.index1_mapping[x], ids))
+            return array([self.index1_mapping[x] for x in ids])
         except:
             return None
 
@@ -628,7 +628,7 @@ class InteractionDataset(Dataset):
         for i in [1,2]:
             id_name = self.get_dataset(i).get_id_name()[0]
             ids.append(id_name)
-            if id_name not in data.keys():
+            if id_name not in list(data.keys()):
                 data[id_name] = self.get_attribute(id_name).ravel()
             
         storage.write_table(
@@ -644,7 +644,7 @@ class InteractionDataset(Dataset):
         name = vname.get_dataset_name()
         dataset_names = set([self.get_dataset_name()] + list(self.get_dataset(i).get_dataset_name() for i in [1,2]))
         if name not in dataset_names:
-            raise ValueError, "When checking dataset name of '%s': different dataset names for variable and dataset or a component: '%s' <> '%s'" % (vname.get_expression(), name, dataset_names)
+            raise ValueError("When checking dataset name of '%s': different dataset names for variable and dataset or a component: '%s' <> '%s'" % (vname.get_expression(), name, dataset_names))
 
     def add_mnl_bias_correction_term(self, probability, sampled_index, bias_attribute_name='__mnl_bias_correction_term'):
         """Compute and add an MNL bias correction term introduced by sampling. 

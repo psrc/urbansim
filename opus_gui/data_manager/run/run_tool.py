@@ -79,8 +79,8 @@ class OpusTool(object):
             if self.finishedCallback != None:
                 self.progressCallback(100)
                 self.finishedCallback(success)
-        except ImportError, e:
-            print "ImportError: %s" % formatExceptionInfo()
+        except ImportError as e:
+            print("ImportError: %s" % formatExceptionInfo())
             success = False
             self.logCallback("Error importing %s: %s" % (self.toolInclude, formatExceptionInfo()) )
             self.finishedCallback(success)

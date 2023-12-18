@@ -22,11 +22,11 @@ class FazDataset(UrbansimDataset):
         self.same_age_table = None
         self.same_sector_table = None
 
-        if id_values <> None:
+        if id_values != None:
             self._add_id_attribute(data=id_values, name=self.get_id_name()[0])
-        elif zoneset <> None:
+        elif zoneset != None:
             if (self.get_id_name()[0] not in zoneset.get_known_attribute_names()):
-                raise StandardError, "Given ZoneDataset does not contain " + self.get_id_name()[0]
+                raise Exception("Given ZoneDataset does not contain " + self.get_id_name()[0])
             fazids = zoneset.get_attribute(self.get_id_name()[0])
             unique_ids = unique(fazids[fazids >=0])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])
@@ -55,7 +55,7 @@ class FazDataset(UrbansimDataset):
         self.__id_mapping_array[self.get_id_attribute()-1] = self.get_id_index(ids)
 
     def get_value_from_same_age_table(self, ages, fazes):
-        age_array = array(map(lambda x: self.same_age_table_mapping[x], ages),
+        age_array = array([self.same_age_table_mapping[x] for x in ages],
                          dtype=int32).reshape((ages.size,1)).repeat(repeats=fazes.shape[1], axis=1)
         return self.same_age_table[age_array, self.__id_mapping_array[fazes-1]]
 
@@ -73,7 +73,7 @@ class FazDataset(UrbansimDataset):
             self.same_job_sector_table_mapping[unique_sectors[isec]]=isec
 
     def get_value_from_same_job_sector_table(self, sectors, fazes):
-        sector_array = array(map(lambda x: self.same_job_sector_table_mapping[x], sectors),
+        sector_array = array([self.same_job_sector_table_mapping[x] for x in sectors],
                              dtype=int32).reshape((sectors.size,1)).repeat(repeats=fazes.shape[1], axis=1)
         return self.same_job_sector_table[sector_array, self.__id_mapping_array[fazes-1]]
 
@@ -113,7 +113,7 @@ class FazDataset(UrbansimDataset):
         elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
             new_name = name
         else:
-            raise StandardError, "Attribute " + name + " not known."
+            raise Exception("Attribute " + name + " not known.")
 
         gridcell.openev_plot(new_name, **opt_args)
 #=======

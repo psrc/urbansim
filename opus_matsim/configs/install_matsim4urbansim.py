@@ -2,11 +2,11 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import urllib2, os, sys
+import urllib.request, urllib.error, urllib.parse, os, sys
 import tempfile
 from shutil import rmtree
 from opus_core.logger import logger
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from opus_matsim.models.utils.extract_zip_file import ExtractZipFile
 from opus_matsim.models.org.constants import matsim4opus
 from opus_core import paths
@@ -47,7 +47,7 @@ class InstallMATSim4UrbanSim(object):
     def __check_and_get_matsim_url(self):
         logger.log_status('Checking availability of necessary MATSim files (nightly builds): %s' %self.source_url)
         # parse matsim.org nightly builds webside
-        self.html_finder.feed( urllib2.urlopen( self.source_url ).read() )
+        self.html_finder.feed( urllib.request.urlopen( self.source_url ).read() )
 
         if not self.html_finder.allLinksFound():
             logger.log_error('Aborting MATSim4UrbanSim installation!')
@@ -75,7 +75,7 @@ class InstallMATSim4UrbanSim(object):
             os.makedirs( self.target_path )
         
         # downloading matsim jar
-        content = urllib2.urlopen( self.matsim_jar_url )
+        content = urllib.request.urlopen( self.matsim_jar_url )
         matsim_jar_target = os.path.join( self.target_path, self.html_finder.getMATSimJar() )
         # saving download
         logger.log_status('Loading MATSim.jar ...')
@@ -86,7 +86,7 @@ class InstallMATSim4UrbanSim(object):
         
         # downloading matsim lib
         logger.log_status('Loading MATSim libraries ...')
-        content = urllib2.urlopen( self.matsim_lib_url )
+        content = urllib.request.urlopen( self.matsim_lib_url )
         matsim_lib_target_tmp = os.path.join( self.temp_dir, self.html_finder.getMATSimLib() )
         # saving download
         self.__write_on_disc( matsim_lib_target_tmp, content.read() )
@@ -96,7 +96,7 @@ class InstallMATSim4UrbanSim(object):
         
         # downloading contrib jar
         logger.log_status('Loading MATSim4UrbanSim contribution/extension ...')
-        content = urllib2.urlopen( self.matsim_contrib_url )
+        content = urllib.request.urlopen( self.matsim_contrib_url )
         # target location to store downloaded tmp zip file
         matsim_contrib_target_tmp = os.path.join( self.temp_dir, self.html_finder.getMATSimContrib() )
         # target location for symbolic link/shortcut

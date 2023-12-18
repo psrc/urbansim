@@ -109,8 +109,7 @@ class LocationChoiceModel(ChoiceModel):
         if self.compute_capacity_flag:
             capacity_string = self.run_config.get("capacity_string", None)
             if capacity_string is None:
-                raise KeyError, \
-                    "Entry 'capacity_string' has to be specified in 'run_config' if 'compute_capacity_flag' is True"
+                raise KeyError("Entry 'capacity_string' has to be specified in 'run_config' if 'compute_capacity_flag' is True")
             
         ## if weights is None, use capacity for weights
         if self.run_config.get("weights_for_simulation_string", None) is None and capacity_string is not None:
@@ -148,7 +147,7 @@ class LocationChoiceModel(ChoiceModel):
         #modify locations
         #agent_set.set_values_of_one_attribute(location_id_name, choices, agents_index)
         
-        if self.run_config.has_key("capacity"):
+        if "capacity" in self.run_config:
             del self.run_config["capacity"]
             
         return choices
@@ -311,14 +310,14 @@ class LocationChoiceModel(ChoiceModel):
                     filter_idx[:, interaction_dataset.index2] = interaction_dataset.index2
 
                 if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
-                    raise StandardError, "There are no locations available for the given sampling weights for group %s." % group
+                    raise Exception("There are no locations available for the given sampling weights for group %s." % group)
                 if len(groups)>1 or (agents_index.size > agents_index_in_group.size):
                     if interaction_dataset.get_reduced_m() > 0:
                         index2[where_group,:] = filter_idx
 
                         for name in interaction_dataset.get_known_attribute_names():
                             attr_val = interaction_dataset.get_attribute(name)
-                            if not attributes.has_key(name):
+                            if name not in attributes:
                                 attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
                             attributes[name][where_group,:] = attr_val
 
@@ -333,7 +332,7 @@ class LocationChoiceModel(ChoiceModel):
                                                                                     interaction_dataset.dataset2, 
                                                                                     index1=agents_index, 
                                                                                     index2=index2)
-                    for name in attributes.keys():
+                    for name in list(attributes.keys()):
                         interaction_dataset.add_primary_attribute(attributes[name], name)
                 else:
                     self.model_interaction.create_interaction_datasets(agents_index, index2)
@@ -347,7 +346,7 @@ class LocationChoiceModel(ChoiceModel):
                 message = "There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
                                  (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index])
                 if not config.get("accept_unavailability_of_choices", False):
-                    raise StandardError, message
+                    raise Exception(message)
                 logger.log_error(message)
                 self.model_interaction.interaction_dataset = None
                 return
@@ -364,7 +363,7 @@ class LocationChoiceModel(ChoiceModel):
                                                                     config=config,
                                                                     nchunks=nchunks, chunksize=chunksize)
             if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
-                raise StandardError, "There are no locations available for the given sampling weights."
+                raise Exception("There are no locations available for the given sampling weights.")
             self.update_choice_set_size(interaction_dataset.get_reduced_m())
             
 
@@ -388,12 +387,12 @@ class LocationChoiceModel(ChoiceModel):
         if filter is None:
             filter_index = arange(self.choice_set.size())
             
-        if isinstance(filter, dict) and filter.has_key(submodel):
+        if isinstance(filter, dict) and submodel in filter:
             filter = filter[submodel]
 
         if isinstance(filter, str):
             submodel_filter = filter
-            for key, value in  replace_dict.iteritems():
+            for key, value in  replace_dict.items():
                 submodel_filter = re.sub(key, str(value), submodel_filter)
             filter_index = where(self.choice_set.compute_variables([submodel_filter], 
                                                                    dataset_pool=self.dataset_pool))[0]

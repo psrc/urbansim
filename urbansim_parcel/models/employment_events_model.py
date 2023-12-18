@@ -116,7 +116,7 @@ class EmploymentEventsModel(Model):
                     error_idx = where(bidx < 0)
                     logger.log_warning('Problems with buildings:')
                     logger.log_warning(all_buildings[known_buildings_idx[bidx[error_idx]]])
-                    raise ValueError, 'Building(s) given for employment events do not exist.'
+                    raise ValueError('Building(s) given for employment events do not exist.')
                 
                 all_parcels[known_buildings_idx] = buildings.get_attribute_by_id('parcel_id', all_buildings[known_buildings_idx])
                 employment_events.modify_attribute('parcel_id', all_parcels[known_buildings_idx], index=known_buildings_idx)

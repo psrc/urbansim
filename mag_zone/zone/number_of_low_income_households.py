@@ -63,7 +63,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = zones.get_attribute(self.variable_name)
         
         should_be = array([1,1,0,0])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-20), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-20), 
                      msg = "Error in " + self.variable_name)
 
 

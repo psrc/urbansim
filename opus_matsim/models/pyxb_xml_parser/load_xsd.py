@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import urllib2, optparse
+import urllib.request, urllib.error, urllib.parse, optparse
 from opus_core.logger import logger
 
 class LoadXSD(object):
@@ -21,7 +21,7 @@ class LoadXSD(object):
         
         logger.log_status('Loading xsd file from: %s' %self.xsd_source)
         
-        response = urllib2.urlopen( self.xsd_source )
+        response = urllib.request.urlopen( self.xsd_source )
         xsd = response.read()
         
         logger.log_status('Store xsd file to: %s' %self.xsd_destination)

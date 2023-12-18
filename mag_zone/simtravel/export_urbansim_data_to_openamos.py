@@ -49,7 +49,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                                                              )
                                                              )
             if not db_server.has_database(database_name): 
-                print "Db doesn't exist creating one"
+                print("Db doesn't exist creating one")
                 db_server.create_database(database_name)
             db = db_server.get_database(database_name) 
             output_storage = sql_storage(storage_location = db)
@@ -57,7 +57,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
             csv_directory = os.path.join(cache_directory, 'csv', str(year))
             output_storage = csv_storage(storage_location=csv_directory)
         else:
-            raise ValueError, "Unsupported output storage type {}".format(storage_type)
+            raise ValueError("Unsupported output storage type {}".format(storage_type))
                                                             
         logger.start_block('Compute and export data to openAMOS...')
 
@@ -256,7 +256,7 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                 filename = dataset.out_table_name_default + '.csv'
                 filepath = os.path.join(output_loc, filename)
                 logger.log_status("export to %s" % filepath)
-                dataframe.to_csv(filepath, cols=data.keys(), index=False)
+                dataframe.to_csv(filepath, cols=list(data.keys()), index=False)
             else:
                 dataset.write_dataset(attributes=attributes,
                                       out_storage=out_storage)

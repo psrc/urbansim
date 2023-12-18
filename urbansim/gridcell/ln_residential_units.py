@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_residential_units(Variable):
     """Natural log of the residential_units for this gridcell"""

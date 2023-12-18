@@ -21,7 +21,7 @@ class CombineTables(object):
         try:
             db = db_server.get_database(db_name)
         except:
-            raise NameError, "Unknown database '%s'!" % db_name
+            raise NameError("Unknown database '%s'!" % db_name)
 
         union_statements = []
         for from_table_name in from_tables_names:
@@ -35,7 +35,7 @@ class CombineTables(object):
             db.DoQuery('DROP TABLE IF EXISTS %s;' % to_table_name)
             db.DoQuery(create_table_query)
         except:
-            raise NameError, "Unknown or invalid table specified!"
+            raise NameError("Unknown or invalid table specified!")
                     
 
 import os    
@@ -139,7 +139,7 @@ class TestCombineTables(opus_unittest.OpusTestCase):
                 self._print_table(table_name)
             self._print_table(self.to_table)
             
-        self.assert_(expected_rows == count,
+        self.assertTrue(expected_rows == count,
             'Incorrect number of rows in output. Expected %s; received %s.'
                 % (expected_rows, count))
 

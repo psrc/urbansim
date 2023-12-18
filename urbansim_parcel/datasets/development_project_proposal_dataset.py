@@ -72,7 +72,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
                 owner_dataset = self.dataset2
 #                index = self.get_2d_index()
             else:
-                self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
+                self._raise_error(Exception, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
                                 variable_name.get_expression())
             owner_dataset.compute_variables([variable_name], dataset_pool, resources=resources, quiet=True)
             new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s.%s)" % \
@@ -83,7 +83,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
     def _check_dataset_name(self, name):
         """check that name is the name of this dataset or one of its components"""
         if name!=self.get_dataset_name() and name!=self.dataset1.get_dataset_name() and name!=self.dataset2.get_dataset_name():
-            raise ValueError, 'different dataset names for variable and dataset or a component'
+            raise ValueError('different dataset names for variable and dataset or a component')
 
     def create_and_check_qualified_variable_name(self, name):
         """Convert name to a VariableName if it isn't already, and add dataset_name to
@@ -190,7 +190,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
 
     if has_constraint_dataset:
         constraint_types = unique(constraints.get_attribute("constraint_type"))  #unit_per_acre, far etc
-        development_template_dataset.compute_variables(map(lambda x: "%s.%s" % (template_opus_path, x), constraint_types), dataset_pool)
+        development_template_dataset.compute_variables(["%s.%s" % (template_opus_path, x) for x in constraint_types], dataset_pool)
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 
                                                    index=index1, 
@@ -208,7 +208,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
         fit_indicator = ones(index1.size, dtype="bool8")
         if has_constraint_dataset:
             generic_land_use_type_id = generic_land_use_type_ids[i_template]
-            for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].iteritems():
+            for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].items():
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:
                     continue
@@ -304,10 +304,10 @@ class Tests(opus_unittest.OpusTestCase):
     def test_create(self):
         proposals = self.dataset_pool.get_dataset("development_project_proposal")
         where_valid_units = where(proposals.get_attribute("units_proposed") > 0)[0]
-        self.assert_(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()[where_valid_units]))
-        self.assert_(ma.allequal(self.dataset.get_attribute("parcel_id"), 
+        self.assertTrue(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()[where_valid_units]))
+        self.assertTrue(ma.allequal(self.dataset.get_attribute("parcel_id"), 
                                  proposals.get_attribute("parcel_id")[where_valid_units]))
-        self.assert_(ma.allequal(self.dataset.get_attribute("template_id"), 
+        self.assertTrue(ma.allequal(self.dataset.get_attribute("template_id"), 
                                  proposals.get_attribute("template_id")[where_valid_units]))
 
 
@@ -318,7 +318,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = self.dataset.get_attribute("project_size")
         should_be = array([0, 0,  0, 1999,  1999, 2000, 2000, 10, 10])
         
-        self.assert_(ma.allequal( values, should_be),
+        self.assertTrue(ma.allequal( values, should_be),
                      msg = "Error in " + "development_template.project_size")
 
         self.dataset.compute_variables("parcel.lot_size",
@@ -326,7 +326,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = self.dataset.get_attribute("lot_size")
         #should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
         should_be = array([0, 2005, 23, 2005, 23,  2005, 23, 2005, 23])        
-        self.assert_(ma.allequal( values, should_be),
+        self.assertTrue(ma.allequal( values, should_be),
                      msg = "Error in " + "parcel.lot_size")
 
 

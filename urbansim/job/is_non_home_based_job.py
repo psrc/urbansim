@@ -4,7 +4,7 @@
 
 from numpy import logical_not
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_non_home_based_job(Variable):
     """Determine if jobs are non-home-based (from building_type) according to job_building_types table. """
@@ -59,7 +59,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([0,0,1,1,1,1,0,0,1,0])
         
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

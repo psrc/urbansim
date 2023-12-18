@@ -5,7 +5,7 @@
 from numpy import where
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class size_category_SSS(Variable):
     """Create categories according to the sizes of buildings for this building type. 
@@ -71,7 +71,7 @@ class Tests(opus_unittest.OpusTestCase):
                 })
             )
         
-        variable_names = map(lambda type: '%s_%s' % (self.variable_name_prefix, type), ['commercial', 'residential'])
+        variable_names = ['%s_%s' % (self.variable_name_prefix, type) for type in ['commercial', 'residential']]
         buildings.compute_variables(variable_names, resources=Resources({'building_type': building_types}))
 
         should_be_residential = array([2, 0, 1, 0, 4, 3, 0])
@@ -79,9 +79,9 @@ class Tests(opus_unittest.OpusTestCase):
         values_commercial = buildings.get_attribute(variable_names[0])
         values_residential = buildings.get_attribute(variable_names[1])
         
-        self.assert_(ma.allequal(values_commercial, should_be_commercial),
+        self.assertTrue(ma.allequal(values_commercial, should_be_commercial),
             'Error in ' + variable_names[0])
-        self.assert_(ma.allequal(values_residential, should_be_residential),
+        self.assertTrue(ma.allequal(values_residential, should_be_residential),
             'Error in ' + variable_names[1])
 
 

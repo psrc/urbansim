@@ -4,7 +4,7 @@
 
 package = 'paris'
 dataset = 'zone'
-sectors = range(1, 12)
+sectors = list(range(1, 12))
 var_template = "employees_of_sector{0}={dataset}.aggregate(establishment.employees * (establishment.sector_id=={0}))"
 vars = [var_template.format(sector, package=package, dataset=dataset) for sector in sectors] 
 var_lag_template = "{package}.{dataset}.employees_of_sector{0}_lag4"

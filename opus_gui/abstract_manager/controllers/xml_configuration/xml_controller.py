@@ -391,7 +391,7 @@ class XmlController(object):
             
             options = ' or another node in the tree view'
             self.import_from_node(xml_node)
-        except Exception, e:
+        except Exception as e:
             MessageBox.error(mainwindow = self.view,
                 text = 'Cannot insert XML file.',
                 detailed_text = 'XML insert failed.  '
@@ -476,7 +476,7 @@ class XmlController(object):
         # Separate from other items
         if added_actions and not menu.isEmpty():
             menu.addSeparator()
-        map(lambda x: menu.addAction(x) if x is not None else menu.addSeparator(), added_actions)
+        list(map(lambda x: menu.addAction(x) if x is not None else menu.addSeparator(), added_actions))
         
     def add_default_menu_items_for_widget(self, menu):
         menu.addAction(self.actExportXMLToFile_all)

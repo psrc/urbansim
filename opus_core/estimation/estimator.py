@@ -44,12 +44,12 @@ class Estimator(ModelExplorer):
         models = self.config.get('models',[])
 
         self.model_name = None
-        if "model_name" in config.keys():
+        if "model_name" in list(config.keys()):
             self.model_name = config["model_name"]
         else:
             for model in models:
                 if isinstance(model, dict):
-                    model_name = model.keys()[0]
+                    model_name = list(model.keys())[0]
                     if (model[model_name] == "estimate") or (isinstance(model[model_name], list)
                         and ("estimate" in model[model_name])):
                             self.model_name = model_name
@@ -91,12 +91,12 @@ class Estimator(ModelExplorer):
         if type is not None:
             specification_dict = specification_dict[type]
         if submodels is not None: #remove all submodels but the given ones from specification
-            submodels_to_be_deleted = specification_dict.keys()
+            submodels_to_be_deleted = list(specification_dict.keys())
             if not isinstance(submodels, list):
                 submodels = [submodels]
             for sm in submodels:
                 if sm not in submodels_to_be_deleted:
-                    raise ValueError, "Submodel %s not in the specification." % sm
+                    raise ValueError("Submodel %s not in the specification." % sm)
                 submodels_to_be_deleted.remove(sm)
                 if "_definition_" in submodels_to_be_deleted:
                     submodels_to_be_deleted.remove("_definition_")
@@ -173,7 +173,7 @@ class Estimator(ModelExplorer):
                 agents.modify_attribute(name=predicted_choice_id_name, data=dummy_data)
             logger.log_status("Predictions saved into attribute " + predicted_choice_id_name)
             return True
-        except Exception, e:
+        except Exception as e:
             logger.log_error("Error encountered in prediction: %s" % e)
             logger.log_stack_trace()
         
@@ -283,7 +283,7 @@ class Estimator(ModelExplorer):
 
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
-            raise ValueError, "model specification or coefficient is None"
+            raise ValueError("model specification or coefficient is None")
 
         #invalid = self.coefficients.is_invalid()
         if False:
@@ -297,7 +297,7 @@ class Estimator(ModelExplorer):
             if self.model_name is not None:
                 model_name = self.model_name
             else:
-                raise ValueError, "model_name unspecified"
+                raise ValueError("model_name unspecified")
 
         out_storage_available = True
         if out_storage:
@@ -352,7 +352,7 @@ class Estimator(ModelExplorer):
         logger.enable_file_logging( os.path.join(storage_location, log_file_name),
                                     mode = 'a')  ##appending instead of overwriting
         logger.start_block("%s Estimation Results" % self.model_name)        
-        for submodel, submodel_results in results.items():
+        for submodel, submodel_results in list(results.items()):
             logger.log_status( "Submodel %s" % submodel)
             if submodel_results == {}:
                 logger.log_warning("No estimation results for submodel %s" % submodel)
@@ -365,7 +365,7 @@ class Estimator(ModelExplorer):
         logger.disable_file_logging()        
     
     def extract_coefficients_and_specification(self):
-        for key in self.model_system.run_year_namespace.keys():
+        for key in list(self.model_system.run_year_namespace.keys()):
             if isinstance(self.model_system.run_year_namespace[key], Coefficients):
                 self.coefficients = self.model_system.run_year_namespace[key]                
             if isinstance(self.model_system.run_year_namespace[key], EquationSpecification):
@@ -373,14 +373,14 @@ class Estimator(ModelExplorer):
 
     def get_keys_for_coefficients_and_specification(self):
         result = {}
-        for key in self.model_system.run_year_namespace.keys():
+        for key in list(self.model_system.run_year_namespace.keys()):
             if isinstance(self.model_system.run_year_namespace[key], Coefficients):
                 result['coefficients'] = key
             if isinstance(self.model_system.run_year_namespace[key], EquationSpecification):
                 result['specification'] = key
-        if not result.has_key('coefficients'):
+        if 'coefficients' not in result:
             logger.log_warning("No Coefficients object is found in the name space of model_system ")
-        if not result.has_key('specification'):
+        if 'specification' not in result:
             logger.log_warning("No EquationSpecification object is found in the name space of model_system ")
         
         return result

@@ -99,7 +99,8 @@ class TravelDataDataset(UrbansimDataset):
         """
         origin_ids = self.get_attribute(self.origin_id_name)
         destination_ids = self.get_attribute(self.destination_id_name)
-        def match((o, d), rv=return_value_if_not_found, verbose=verbose):
+        def match(xxx_todo_changeme, rv=return_value_if_not_found, verbose=verbose):
+            (o, d) = xxx_todo_changeme
             w = where(logical_and(origin_ids==o, destination_ids==d))[0]
             if w.size == 0:
                 if verbose: logger.log_warning("O-D pair (%s, %s) has no entry in travel_data; returns %s." % (o, d, rv))
@@ -108,7 +109,7 @@ class TravelDataDataset(UrbansimDataset):
                 w = w[0]
             else:
                 logger.log_error("O-D pair (%s, %s) has more than 1 entries in travel_data." % (o, d))
-                raise ValueError, "O-D pair (%s, %s) has more than 1 entries in travel_data." % (o, d)
+                raise ValueError("O-D pair (%s, %s) has more than 1 entries in travel_data." % (o, d))
             return w
 
         if isscalar(origin_id) and isscalar(destination_id):
@@ -116,9 +117,9 @@ class TravelDataDataset(UrbansimDataset):
         else:
             if len(origin_id) != len(destination_id):
                 logger.log_error("origin_id and destination_id can be either scalar integer, list, or array; of the same type and size.")
-                raise TypeError, "origin_id and destination_id can be either scalar integer, list, or array; of the same type and size."
+                raise TypeError("origin_id and destination_id can be either scalar integer, list, or array; of the same type and size.")
 
-            return array(map(match, zip(origin_id, destination_id)))
+            return array(list(map(match, list(zip(origin_id, destination_id)))))
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, allclose
@@ -175,7 +176,7 @@ class Test(opus_unittest.OpusTestCase):
                            [0,    0,    0,  0,  0,    0], 
                            [0,-21.0,    0,  0,  0,-24.0]])
         self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
 
     def test_set_values_of_one_attribute_with_od_pairs(self):
         O = array([1,       1,    1,     2,     2,     2,     5,     5])
@@ -185,7 +186,7 @@ class Test(opus_unittest.OpusTestCase):
         self.travel_data.set_values_of_one_attribute_with_od_pairs('attr_x', values, O, D)
         result = self.travel_data.get_attribute('attr_x')
         self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
         
         ## o-d pairs appearing in id, but not specified in O and D arguments are filled with 'fill' (0)
         ## o-p pairs not appearing in id, but specified in O and D arguments are ignored
@@ -196,7 +197,7 @@ class Test(opus_unittest.OpusTestCase):
         self.travel_data.set_values_of_one_attribute_with_od_pairs('attr_x', values, O, D)
         result = self.travel_data.get_attribute('attr_x')
         self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))        
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))        
         
     def test_get_od_pair_index_not_in_dataset_1d(self):
         O = array([-1, 1, 1, 7, 5, 5, 5, 3,  2])
@@ -204,7 +205,7 @@ class Test(opus_unittest.OpusTestCase):
         #index    [ 0, 1, 2, 3, 4, 5, 6, 7,  8]
         result = self.travel_data.get_od_pair_index_not_in_dataset(O, D)
         should_be = array([0, 2, 3, 5, 7, 8])
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
 
     def test_get_od_pair_index_not_in_dataset_2d(self):
         O = array([[-1, 1, 1,], [7, 5, 5,], [5, 3,  2]])
@@ -213,12 +214,12 @@ class Test(opus_unittest.OpusTestCase):
         #index    [  0, 1, 2,    0, 1, 2,    0, 1,  2]
         result = self.travel_data.get_od_pair_index_not_in_dataset(O, D)
         should_be = (array([0, 0, 1, 1, 2, 2]), array([0, 2, 0, 2, 1, 2]))
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
 
     def test_get_index_by_origin_and_destination_ids(self):
         result = self.travel_data.get_index_by_origin_and_destination_ids(2, 5)
         should_be = array([5])
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
         
         O = array([-1, 1, 1, 7, 5, 5, 5, 3,  2])
         D = array([ 5, 2, 3, 2, 5, 2, 1, 1, -1])
@@ -226,14 +227,14 @@ class Test(opus_unittest.OpusTestCase):
         #          -1, 1,-1,-1, 7,-1, 6,-1, -1 
         result = self.travel_data.get_index_by_origin_and_destination_ids(O, D)
         should_be = array([-1, 1,-1,-1, 7,-1, 6, -1, -1])
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
 
         O = [-1, 1, 1, 7, 5, 5, 5, 3,  2]
         D = [ 5, 2, 3, 2, 5, 2, 1, 1, -1]
         #index    [ 0, 1, 2, 3, 4, 5, 6, 7,  8]
         #          -1, 1,-1,-1, 7,-1, 6,-1, -1 
         result = self.travel_data.get_index_by_origin_and_destination_ids(O, D)
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
 
 if __name__=="__main__":
     opus_unittest.main()

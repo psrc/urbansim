@@ -24,7 +24,7 @@ class RunManager(CoreRunManager):
 
             model_system = run_resources.get('model_system', None)
             if model_system is None:
-                raise TypeError, ("The configuration must specify model_system, the"
+                raise TypeError("The configuration must specify model_system, the"
                     " full Opus path to the model system to be used.")
 
             if not skip_cache_cleanup:

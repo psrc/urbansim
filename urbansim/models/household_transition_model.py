@@ -32,7 +32,7 @@ class HouseholdTransitionModel(Model):
         control_totals.get_attribute("total_number_of_households") # to make sure they are loaded
         self.characteristics = characteristics
         self.all_categories = self.characteristics.get_attribute("characteristic")
-        self.all_categories = array(map(lambda x: x.lower(), self.all_categories))
+        self.all_categories = array([x.lower() for x in self.all_categories])
         self.scaled_characteristic_names = get_distinct_names(self.all_categories).tolist()
         self.marginal_characteristic_names = copy(control_totals.get_id_name())
         index_year = self.marginal_characteristic_names.index("year")
@@ -87,7 +87,7 @@ class HouseholdTransitionModel(Model):
         groups = self.control_totals_for_this_year.get_id_attribute()
         self.create_arrays_from_categories(self.household_set)
 
-        all_characteristics = self.arrays_from_categories.keys()
+        all_characteristics = list(self.arrays_from_categories.keys())
         self.household_set.load_dataset_if_not_loaded(attributes = all_characteristics) # prevents from lazy loading to save runtime
         idx_shape = []
         number_of_combinations=1
@@ -97,7 +97,7 @@ class HouseholdTransitionModel(Model):
             max_bins = self.arrays_from_categories[attr].max()+1
             idx_shape.append(max_bins)
             number_of_combinations=number_of_combinations*max_bins
-            if attr not in self.new_households.keys():
+            if attr not in list(self.new_households.keys()):
                 self.new_households[attr] = array([], dtype=self.household_set.get_data_type(attr, float32))
 
         self.number_of_combinations = int(number_of_combinations)
@@ -113,17 +113,16 @@ class HouseholdTransitionModel(Model):
             categories_index_mapping[tuple(categories_index[i,].tolist())] = i
 
         def get_category(values):
-            bins = map(lambda x, y: self.arrays_from_categories[x][int(y)], all_characteristics, values)
+            bins = list(map(lambda x, y: self.arrays_from_categories[x][int(y)], all_characteristics, values))
             try:
                 return categories_index_mapping[tuple(bins)]
-            except KeyError, msg: 
+            except KeyError as msg: 
                 where_error = where(array(bins) == -1)[0]
                 if where_error.size > 0:
-                    raise KeyError, \
-                        "Invalid value of %s for attribute %s. It is not included in the characteristics groups." % (
+                    raise KeyError("Invalid value of %s for attribute %s. It is not included in the characteristics groups." % (
                                                                                array(values)[where_error], 
-                                                                               array(all_characteristics)[where_error])
-                raise KeyError, msg
+                                                                               array(all_characteristics)[where_error]))
+                raise KeyError(msg)
 
         if num_attributes > 0:
             # the next array must be a copy of the household values, otherwise, it changes the original values
@@ -138,7 +137,7 @@ class HouseholdTransitionModel(Model):
                 values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
     
             # determine for each household to what category it belongs to
-            self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
+            self.household_categories = array([get_category(x) for x in values_array]) # performance bottleneck
     
             number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
                                                                     labels=self.household_categories+1,
@@ -159,7 +158,7 @@ class HouseholdTransitionModel(Model):
             group_element = self.control_totals_for_this_year.get_data_element_by_id(id)
             total = group_element.total_number_of_households
             for i in range(g.size):
-                g[i] = eval("group_element."+self.arrays_from_categories.keys()[i])
+                g[i] = eval("group_element."+list(self.arrays_from_categories.keys())[i])
             if g.size <= 0:
                 l = ones((number_of_households_in_categories.size,))
             else:
@@ -192,9 +191,9 @@ class HouseholdTransitionModel(Model):
 
     def create_arrays_from_categories(self, household_set):
         # cleanup in case there was a previous run
-        for attr in self.arrays_from_categories.keys():
+        for attr in list(self.arrays_from_categories.keys()):
             del self.arrays_from_categories[attr]  
-            if attr in self.arrays_from_categories_mapping.keys():
+            if attr in list(self.arrays_from_categories_mapping.keys()):
                 del self.arrays_from_categories_mapping[attr]
             
         self.arrays_from_categories = {}
@@ -275,7 +274,7 @@ def create_scaled_array(characteristics, agent_set):
             this_min = mins[i]
             this_max = maxs[i]
             is_in_cat = reshape(array(agent_set.get_attribute(cat) >= this_min), shape=(1,agent_set.size()))
-            if not scaled_array.has_key(cat):
+            if cat not in scaled_array:
                 scaled_array[cat] = is_in_cat
             else:
                 scaled_array[cat] = concatenate((scaled_array[cat], is_in_cat))
@@ -493,7 +492,7 @@ class Tests(opus_unittest.OpusTestCase):
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         # unplace some households
-        where10 = where(hh_set.get_attribute("grid_id")<>10)[0]
+        where10 = where(hh_set.get_attribute("grid_id")!=10)[0]
         hh_set.modify_attribute(name="grid_id", data=zeros(where10.size), index=where10)
 
         model = HouseholdTransitionModel()

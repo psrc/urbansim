@@ -54,13 +54,13 @@ class Tests(opus_unittest.OpusTestCase):
     def test_to_2(self):
         values = self.get_values(2,2)
         should_be = array([0, 10])
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
                      msg="Error in " + self.variable_name)
 
     def test_to_4(self):
         values = self.get_values(3, 4)
         should_be = array([7, 9])
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
                      msg="Error in " + self.variable_name)
 
 

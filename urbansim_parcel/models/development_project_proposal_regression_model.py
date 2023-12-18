@@ -147,7 +147,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         if template_filter is not None:
             try:
                 index2 = where(templates.compute_variables(template_filter))[0]
-            except Exception, e:
+            except Exception as e:
                 logger.log_warning( "template_filter is set to %s, but there is an error when computing it: %s"
                                    % (template_filter, e) )
                 index2 = None

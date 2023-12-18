@@ -257,7 +257,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
             num_of_samples = int(nest_node.get('number_of_samples'))
             id_start = counter['current count']
             counter['current count'] = id_end = id_start + num_of_samples
-            index_range = range(id_start, id_end)
+            index_range = list(range(id_start, id_end))
             created_nest_node.set('type', 'list')
             created_nest_node.text = repr(index_range)
         elif nest_node.find('equation') is not None:
@@ -281,10 +281,10 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 self.add_variable(node)
 
         dataset_variable_nodes = get_variable_nodes_per_dataset(self.project)
-        selected_names = map(get_variable_name, self.selector_table_model._variable_nodes)
+        selected_names = list(map(get_variable_name, self.selector_table_model._variable_nodes))
         selected_nodes = []
 
-        for variable_node_list in dataset_variable_nodes.values():
+        for variable_node_list in list(dataset_variable_nodes.values()):
             for variable_node in variable_node_list:
                 if get_variable_name(variable_node) in selected_names:
                     selected_nodes.append(variable_node)
@@ -343,7 +343,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         variable_nodes_per_dataset = get_variable_nodes_per_dataset(self.project)
 
         if not dataset_filter: # take all variables
-            for variable_nodes in variable_nodes_per_dataset.values():
+            for variable_nodes in list(variable_nodes_per_dataset.values()):
                 available_variable_nodes.extend(variable_nodes)
         else:
             available_variable_nodes = variable_nodes_per_dataset[dataset_filter]
@@ -434,7 +434,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         counter = {'current count': 1} # pass object ref to keep increments down the recursive chain
         try:
             new_nested_structure_node = self._create_nested_structure_xml(node, counter)
-        except ValueError, ex:
+        except ValueError as ex:
             MessageBox.error(self, 'Not all nests have equations assigned to them.', str(ex))
             return None
         model_node = self._lookup_model_node_for(node)
@@ -720,4 +720,4 @@ if __name__ == '__main__':
     model_node = p.find('model_manager/models/model', name='land_price_model')
     w.init_for_submodel_node(model_node.find('specification/submodel'))
     while w.exec_() == w.Accepted:
-        print etree.tostring(w.submodel_node, pretty_print=True)
+        print(etree.tostring(w.submodel_node, pretty_print=True))

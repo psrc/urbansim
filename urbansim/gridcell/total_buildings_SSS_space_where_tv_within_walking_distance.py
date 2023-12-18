@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_within_walking_distance import abstract_within_walking_distance
+from .abstract_within_walking_distance import abstract_within_walking_distance
 
 class total_buildings_SSS_space_where_tv_within_walking_distance( abstract_within_walking_distance ):
     """Caclulate the buildings space of the given type within the walking distance range. Only buildings
@@ -59,7 +59,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array( [1800.0, 3100.0, 4600.0, 6000.0] )
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
 

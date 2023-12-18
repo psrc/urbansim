@@ -14,10 +14,10 @@ from opus_core.misc import unique
 from opus_core.model import Model
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
-from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
+from .unroll_jobs_from_establishments import UnrollJobsFromEstablishments
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
-from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
+from .unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
 
 class MysqlStorage:
     def get(self, database):

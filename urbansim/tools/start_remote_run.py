@@ -135,7 +135,7 @@ class RemoteRun:
             if configuration_path is not None:
                 config = get_config_from_opus_path(configuration_path)
             elif config is None:
-                    raise StandardError, "Either configuration_path, config or run_id must be given."
+                    raise Exception("Either configuration_path, config or run_id must be given.")
             insert_auto_generated_cache_directory_if_needed(config)
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                                  configuration = config)
@@ -148,7 +148,7 @@ class RemoteRun:
             results = run_manager.services_db.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % run_id)
             if not len(results) > 1:
-                raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
+                raise Exception("run_id %s doesn't exist in run_activity table." % run_id)
 
         return run_id, config
 
@@ -167,7 +167,7 @@ class RemoteRun:
 
         travel_model_resources = None
         travel_model_years = []
-        if config.has_key('travel_model_configuration'):
+        if 'travel_model_configuration' in config:
             travel_model_resources = copy.deepcopy(config)
 
             if not self.is_localhost(self.urbansim_server_config['hostname']):
@@ -193,7 +193,7 @@ class RemoteRun:
                                                                                urbansim_server, 
                                                                                cache_directory)
             #only keep sorted travel model years falls into years range                
-            for key in travel_model_resources['travel_model_configuration'].keys():
+            for key in list(travel_model_resources['travel_model_configuration'].keys()):
                 if type(key) == int:
                     if key >= start_year and key <= end_year:
                         travel_model_years.append(key)
@@ -213,7 +213,7 @@ class RemoteRun:
             config['years'] = (this_start_year, this_end_year)
             ## since there is no --skip-travel-model switch for restart_run yet
             ## delete travel_model_configuration, so travel model won't run on urbansim_server
-            if config.has_key('travel_model_configuration'):
+            if 'travel_model_configuration' in config:
                 del config['travel_model_configuration']
             self.update_services_database(self.get_run_manager(), run_id, config)
             
@@ -237,8 +237,8 @@ class RemoteRun:
                 ##TODO: open_sftp may need to be closed
                 if not self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).exists_remotely(
                                        convertntslash(os.path.join(cache_directory, str(this_end_year))) ):
-                    raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
-                                        (this_end_year, cache_directory)
+                    raise Exception("cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
+                                        (this_end_year, cache_directory))
             else:
                 cmd = 'python %(module)s %(run_id)s %(start_year)s ' % \
                       {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
@@ -248,11 +248,11 @@ class RemoteRun:
                 logger.log_status("Call " + cmd)
                 os.system(cmd)
                 if not os.path.exists(os.path.join(cache_directory, str(this_end_year))):
-                    raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
-                                        (this_end_year, cache_directory)
+                    raise Exception("cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
+                                        (this_end_year, cache_directory))
                 
             if travel_model_resources is not None:
-                if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
+                if this_end_year in travel_model_resources['travel_model_configuration']:
                     travel_model_resources['years'] = (this_end_year, this_end_year)
                     self.update_services_database(self.get_run_manager(), run_id, travel_model_resources)
 
@@ -286,11 +286,11 @@ class RemoteRun:
                     if not self.is_localhost(self.urbansim_server_config['hostname']):
                         if not self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).exists_remotely(
                             convertntslash(flt_directory_for_next_year) ):                            
-                            raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
-                                  (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
+                            raise Exception("travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
+                                  (this_end_year+1, cache_directory, self.urbansim_server_config['hostname']))
                     elif not os.path.exists(flt_directory_for_next_year):
-                        raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                            (this_end_year+1, cache_directory)
+                        raise Exception("travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
+                                            (this_end_year+1, cache_directory))
                 
             this_start_year = travel_model_year + 1  #next run starting from the next year of a travel model year
 
@@ -319,7 +319,7 @@ class RemoteRun:
             if len(stderr_msg) > 0:
                 logger.log_error('[' + time.ctime + '] ' + "Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
                 if raise_at_error:
-                    raise RuntimeError, "Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg)
+                    raise RuntimeError("Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
             if len(stdout_msg) > 0:
                 logger.log_status('[' + time.ctime + '] ' + 'stdout:' + ''.join(stdout_msg))
                                    
@@ -328,7 +328,7 @@ class RemoteRun:
                 if run_id in runs_by_status.get('done', []):
                     break
                 if run_id in runs_by_status.get('failed', []):
-                    raise RuntimeError, "run failed: %s." % msg
+                    raise RuntimeError("run failed: %s." % msg)
             
             time.sleep(60)
         
@@ -383,7 +383,7 @@ if __name__ == "__main__":
     services_db = option_group.get_services_database_configuration(options)
     run_manager = RunManager(services_db)
     if not run_manager.services_db:
-        raise RuntimeError, "services database must exist; use --hostname argument to specify the database server containing services database."
+        raise RuntimeError("services database must exist; use --hostname argument to specify the database server containing services database.")
     
     urbansim_server = options.urbansim_server or os.environ.get('URBANSIMHOSTNAME', 'localhost')
     urbansim_user = options.runserver_username or os.environ.get('URBANSIMUSERNAME', None)
@@ -403,6 +403,6 @@ if __name__ == "__main__":
                     run_manager, plink=options.plink)
     run.run(configuration_path=options.configuration_path, run_id=options.run_id, 
             start_year=options.start_year, end_year=options.end_year)
-    for ssh_client in run.ssh.values():
+    for ssh_client in list(run.ssh.values()):
         ssh_client.close()
     #del run

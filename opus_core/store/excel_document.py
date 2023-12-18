@@ -79,7 +79,7 @@ class ExcelDocument(object):
         #    dic[list_of_column_names[i]] = array(self.get_range_values_as_list(list_of_ranges[i]))
         
         
-        for column_name, data_range in column_names_and_ranges.iteritems():
+        for column_name, data_range in column_names_and_ranges.items():
             dic[column_name] = array(self.get_range_values_as_list(data_range))
         return dic
     

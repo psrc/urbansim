@@ -3,7 +3,7 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from ui_step1 import Ui_wizardStep1Dialog
+from .ui_step1 import Ui_wizardStep1Dialog
 
 class WizardDialog(QWizard):
     def __init__(self, parent=None):

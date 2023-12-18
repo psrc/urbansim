@@ -152,7 +152,7 @@ class OpusDatabase(object):
             
     def create_table_from_schema(self, table_name, table_schema):
         columns = []
-        for col_name, type_val in table_schema.items():
+        for col_name, type_val in list(table_schema.items()):
             col = Column(col_name, type_mapper(type_val))
             columns.append(col)
         self.create_table(table_name, columns)
@@ -277,7 +277,7 @@ def convert_to_mysql_datatype(query):
                    "TINYTEXT" : "tinytext",
                    "MEDIUMTEXT" : "mediumtext"}
 
-    for old, new in filter_data.iteritems():
+    for old, new in filter_data.items():
         query = query.replace(old, new)
     return query
 

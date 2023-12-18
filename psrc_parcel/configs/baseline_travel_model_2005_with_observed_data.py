@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from baseline_hana import BaselineHana
+from .baseline_hana import BaselineHana
 
 class BaselineTravelModel2005WithObservedData(BaselineHana):
     tm_scenario = 'baseline_v1.0bb_C1'

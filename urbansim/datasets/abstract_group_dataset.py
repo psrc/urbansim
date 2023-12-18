@@ -37,11 +37,11 @@ class AbstractGroupDataset(Dataset):
                 return group in self.groups[idx,:]
             except:
                 return False
-        return array(map(lambda x: func(x), id_indices))
+        return array([func(x) for x in id_indices])
 
     def get_types_for_group(self, group):
         ids = self.get_id_attribute()
-        is_group = array(map(lambda idx: group in self.groups[idx,:], range(self.size())), dtype="bool8")
+        is_group = array([group in self.groups[idx,:] for idx in range(self.size())], dtype="bool8")
         return ids[is_group]
 
     def _get_groups(self):
@@ -66,7 +66,7 @@ class AbstractGroupDataset(Dataset):
         if isinstance(id_mapping, ndarray):
             length = id_mapping.size
         else:
-            length = len(id_mapping.keys())
+            length = len(list(id_mapping.keys()))
         result = resize(array([-9999], dtype='int32'), (length, len(dict_data[group_id_name])))
         for i in range(len(dict_data[id_name])):
             id = dict_data[id_name][i]
@@ -74,9 +74,9 @@ class AbstractGroupDataset(Dataset):
                 idx = where(dict_data[id_name]==id)[0]
                 if idx.size > 0:
                     if isinstance(id_mapping, ndarray):
-                        result[id_mapping[id-shift],range(0,idx.size)] = dict_data[group_id_name][idx]
+                        result[id_mapping[id-shift],list(range(0,idx.size))] = dict_data[group_id_name][idx]
                     else:
-                        result[id_mapping[id], range(0,idx.size)] = dict_data[group_id_name][idx]
+                        result[id_mapping[id], list(range(0,idx.size))] = dict_data[group_id_name][idx]
                 used_ids.append(id)
     
         return result

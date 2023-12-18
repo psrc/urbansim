@@ -16,7 +16,8 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from household_location_choice_model_with_price_adj import define_submarket
+from .household_location_choice_model_with_price_adj import define_submarket
+import importlib
 
 def compute_lambda_and_supply(location_set, agent_set, movers_index, submarkets):
 
@@ -178,7 +179,7 @@ class HLCMEstimator(Estimator):
                 storage_location=self.out_con)
         
         if spec_py is not None:
-            reload(spec_py)
+            importlib.reload(spec_py)
             spec_var = spec_py.specification
         
         if spec_var is not None:
@@ -255,7 +256,7 @@ class HLCMEstimator(Estimator):
 if __name__ == "__main__":
     try:import wingdbstub
     except:pass
-    from my_estimation_config import my_configuration
+    from .my_estimation_config import my_configuration
     from optparse import OptionParser
     
     parser = OptionParser(usage="python %prog [options]", description="")
@@ -281,9 +282,9 @@ if __name__ == "__main__":
     #except:aggregate_demand = False
     
     if options.aggregate_demand:
-        import hlcm_specification
+        from . import hlcm_specification
     else:
-        import hlcm_specification_submarket as hlcm_specification        
+        from . import hlcm_specification_submarket as hlcm_specification        
 
     alt_sample_size = options.alt_sample_size
     #try:alt_sample_size = int(sys.argv[2])

@@ -27,11 +27,11 @@ class Tests(opus_unittest.OpusTestCase):
             )
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
         result1 = dataset.compute_variables([expr1])
-        self.assert_(ma.allclose(result1, array([10, 50, 100]), rtol=1e-6), "Error in test_alias_file")
+        self.assertTrue(ma.allclose(result1, array([10, 50, 100]), rtol=1e-6), "Error in test_alias_file")
         result2 = dataset.compute_variables([expr2])
-        self.assert_(ma.allclose(result2, array([5, 25, 50]), rtol=1e-6), "Error in test_alias_file")
+        self.assertTrue(ma.allclose(result2, array([5, 25, 50]), rtol=1e-6), "Error in test_alias_file")
         result3 = dataset.compute_variables([expr3])
-        self.assert_(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), "Error in test_alias_file")
+        self.assertTrue(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6), "Error in test_alias_file")
          
 if __name__=='__main__':
     opus_unittest.main()

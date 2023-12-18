@@ -8,7 +8,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from coreplot import *
+from .coreplot import *
 
 class Absreldiff(Matplot):
     def __init__(self, project, parent=None):
@@ -69,7 +69,7 @@ class Absreldiff(Matplot):
         query = self.executeSelectQuery(projectDBC.dbc,aardvalvar, performancetable, filter, group)
 
         if query:
-            while query.next():
+            while next(query):
                 aardval = query.value(0).toDouble()[0]
                 self.err.append(aardval)
             projectDBC.dbc.close()

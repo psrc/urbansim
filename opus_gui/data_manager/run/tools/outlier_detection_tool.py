@@ -14,7 +14,7 @@ def changeDictionaryIntoXml(params):
     io_info = newdoc.createElement("io_info")
     model_info = newdoc.createElement("model_info")
     
-    for key, value in params.iteritems() :
+    for key, value in params.items() :
         if key.startswith("io_") :
             nk = key.replace("io_", "", 1)
             io_info.setAttribute(nk, value)
@@ -27,7 +27,7 @@ def changeDictionaryIntoXml(params):
     top_element.appendChild(io_info)
     top_element.appendChild(model_info)
     
-    print newdoc.toprettyxml()
+    print(newdoc.toprettyxml())
     return newdoc
 
 
@@ -35,7 +35,7 @@ def opusRun(progressCB,logCB,params=[]):
     param_dict = {}
     logCB("**** Starting Basic Outlier Detection ****\n")
     logCB("Input Params ::\n")
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
         logCB("%s - %s\n" % (str(key),str(val)))
     

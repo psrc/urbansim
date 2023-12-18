@@ -217,9 +217,9 @@ class XMLConfiguration(object):
         project_name = general_section['project_name']
         config = self.get_section('scenario_manager/scenario', name)
         if config is None:
-            raise ValueError, "didn't find scenario named %s; " % name + \
+            raise ValueError("didn't find scenario named %s; " % name + \
                   "If you're restarting a run make sure there is a scenario_name column in " + \
-                  "run_activity table of your services database."
+                  "run_activity table of your services database.")
         self._insert_expression_library(config)
         # Merge the information from the travel model configuration sections in the model_manager
         model_manager_tm_config = self.get_section('model_manager/travel_model_configuration')
@@ -372,12 +372,12 @@ class XMLConfiguration(object):
                     for equation_node in equation_nodes:
                         equation_id = int(equation_node.get('equation_id'))
                         variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
-                        dataset_names += map(get_variable_dataset, only_no_comment(equation_node.find('variable_list')))
+                        dataset_names += list(map(get_variable_dataset, only_no_comment(equation_node.find('variable_list'))))
                         submodel_equations[equation_id] = variable_list
                     thisres = submodel_equations
                 else:
                     thisres = self._convert_node_to_data(node.find('variable_list'))
-                    dataset_names += map(get_variable_dataset, only_no_comment(node.find('variable_list')))
+                    dataset_names += list(map(get_variable_dataset, only_no_comment(node.find('variable_list'))))
                 if nest_nodes:
                     nest_id = int(node.get('nest_id'))
                     res[nest_id] = thisres
@@ -464,7 +464,7 @@ class XMLConfiguration(object):
         self.full_tree = copy.deepcopy(self.tree)
         full_root = self.full_tree.getroot()
         if full_root.tag != 'opus_project':
-            raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
+            raise ValueError("malformed xml - expected to find a root element named 'opus_project'")
 
         # set the parser to this files xml version
         version_node = self.tree.getroot().find('xml_version')
@@ -475,12 +475,12 @@ class XMLConfiguration(object):
             self.xml_version = XMLVersion(maximum_xml_version)
         # check that the version number is OK
         if self.xml_version < minimum_xml_version:
-            raise XMLVersionException, ("XML version for this project file is less than the minimum required XML version.\n"
-                + "  File name: %s \n  XML version found: %s  \n  minimum required: %s") % (self.full_filename, self.xml_version, minimum_xml_version)
+            raise XMLVersionException(("XML version for this project file is less than the minimum required XML version.\n"
+                + "  File name: %s \n  XML version found: %s  \n  minimum required: %s") % (self.full_filename, self.xml_version, minimum_xml_version))
         if self.xml_version > maximum_xml_version:
-            raise XMLVersionException, ("XML version for this project file is greater than the maximum expected XML version.\n"
+            raise XMLVersionException(("XML version for this project file is greater than the maximum expected XML version.\n"
                 + "(Likely fix: update your version of the Opus/UrbanSim code.)\n"
-                + "  File name: %s \n  XML version found: %s \n  maximum expected: %s") % (self.full_filename, self.xml_version, maximum_xml_version)
+                + "  File name: %s \n  XML version found: %s \n  maximum expected: %s") % (self.full_filename, self.xml_version, maximum_xml_version))
 
         # The merging of inherited trees is done in two steps.
         # The first step is to merge inherited trees into one big tree (self.inherited_tree)
@@ -596,7 +596,7 @@ class XMLConfiguration(object):
             #parent_node.get('inherit_parent_values') == 'False':
             ## allow parent to specify nodes that are not supposed to be inherited
             return
-        for name, value in parent_node.items():
+        for name, value in list(parent_node.items()):
             if name != 'inherited' and not name in local_node.attrib:
                 local_node.set(name, value)
         # pair up nodes with their id's
@@ -662,7 +662,7 @@ class XMLConfiguration(object):
                         is_new = False
                         break
                 if is_new:
-                    followers = map(lambda x: x.tag, filter(lambda y: y.get('inherited') is not None, children[i+1:]))
+                    followers = [x.tag for x in [y for y in children[i+1:] if y.get('inherited') is not None]]
                     if len(followers)>0:
                         s = ','.join(followers)
                         n.set('followers', s)
@@ -745,7 +745,7 @@ class XMLConfiguration(object):
         elif type_name=='scenario_name':
             return node.text
         elif type_name=='unicode':
-            return self._convert_string_to_data(node, unicode)
+            return self._convert_string_to_data(node, str)
         elif type_name=='selectable_list':
             return self._convert_list_to_data(node)
         elif type_name=='variable_list':
@@ -795,7 +795,7 @@ class XMLConfiguration(object):
         elif type_name=='python_code':
             return eval(node.text)
         else:
-            raise ValueError, ('unknown type: %s (node: %s[name=%s])'
+            raise ValueError('unknown type: %s (node: %s[name=%s])'
                                % (type_name, node.tag, node.get('name')))
 
     def _make_instance(self, class_name, path, keyword_args = {}):
@@ -834,8 +834,8 @@ class XMLConfiguration(object):
         return resulting_string
 
     def _convert_list_to_data(self, node):
-        r = map(lambda n: self._convert_node_to_data(n), node.iterchildren(tag=Element))
-        result_list = filter(lambda n: n is not None, r)
+        r = [self._convert_node_to_data(n) for n in node.iterchildren(tag=Element)]
+        result_list = [n for n in r if n is not None]
         if node.get('parser_action', '') == 'list_to_dictionary':
             result_dict = {}
             for x in result_list:
@@ -869,10 +869,10 @@ class XMLConfiguration(object):
                 return (name, coeff_name)
             return name
         f = lambda x: x.get('ignore') != 'True'
-        return map(name_or_tuple, filter(f, variable_list_node.iterchildren(tag=Element)))
+        return list(map(name_or_tuple, list(filter(f, variable_list_node.iterchildren(tag=Element)))))
 
     def _convert_tuple_to_data(self, node):
-        r = map(lambda n: self._convert_node_to_data(n), node.iterchildren(tag=Element))
+        r = [self._convert_node_to_data(n) for n in node.iterchildren(tag=Element)]
         return tuple(r)
 
     def _convert_file_or_directory_to_data(self, node):
@@ -934,7 +934,7 @@ class XMLConfiguration(object):
             d = self._convert_node_to_data(child)
             k = d[key_name]
             del d[key_name]
-            if d.has_key(key_value):
+            if key_value in d:
                 v = d[key_value]
                 del d[key_value]
                 result[k] = v
@@ -1035,7 +1035,7 @@ class XMLConfiguration(object):
                 dependency_type = child.get('model_dependency_type')
                 if dependency_type is None:
                     continue
-                if dependency_type not in result.keys():
+                if dependency_type not in list(result.keys()):
                     result[dependency_type] = []
                 if child.text not in result[dependency_type] and child.text is not None:
                     result[dependency_type].append(child.text)
@@ -1051,7 +1051,7 @@ class XMLConfiguration(object):
                 
 
 from numpy import ma
-import StringIO
+import io
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
@@ -1078,8 +1078,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                        (element_one, str(element_one.attrib), element_two, str(element_two.attrib))
         if not element_one.tag == element_two.tag:
             raise AssertionError(assertion_text)
-        e1_attribs = element_one.attrib.keys()
-        e2_attribs = element_two.attrib.keys()
+        e1_attribs = list(element_one.attrib.keys())
+        e2_attribs = list(element_two.attrib.keys())
         e1_attribs.sort()
         e2_attribs.sort()
         if e1_attribs != e2_attribs:
@@ -1135,10 +1135,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the str and unicode tags are working correctly
         f = os.path.join(self.test_configs, 'strings.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        for k in config.keys():
-            self.assert_(type(k) is str)
-        self.assert_(type(config['s']) is str)
-        self.assert_(type(config['u']) is unicode)
+        for k in list(config.keys()):
+            self.assertTrue(type(k) is str)
+        self.assertTrue(type(config['s']) is str)
+        self.assertTrue(type(config['u']) is str)
 
     def test_array(self):
         # check that the keys in the config dictionary are str, and that
@@ -1146,7 +1146,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'array.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         should_be = array([100, 300])
-        self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
+        self.assertTrue(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
 
     def test_files_directories(self):
         # if the OPUS_HOME environment variable isn't set, temporarily set it so that
@@ -1189,8 +1189,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # 'squidcount' is new in the child
         self.assertEqual(config['squidcount'], 12)
         # 'models' is inherited
-        self.assert_('models' in config)
-        self.assert_('random_nonexistant_key' not in config)
+        self.assertTrue('models' in config)
+        self.assertTrue('random_nonexistant_key' not in config)
 
     def test_categories(self):
         f = os.path.join(self.test_configs, 'categories.xml')
@@ -1472,22 +1472,22 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
         # test getting a primary attribute
         result1 = dataset.compute_variables(["test_agent.income"])
-        self.assert_(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6))
         # test with and without package name for a variable defined as a Python class
         result2 = dataset.compute_variables(["test_agent.income_times_2"])
         result3 = dataset.compute_variables(["test_agent.i2"])
         result4 = dataset.compute_variables(["opus_core.test_agent.income_times_2"])
-        self.assert_(ma.allclose(result2, array([2, 10, 20]), rtol=1e-6))
-        self.assert_(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6))
-        self.assert_(ma.allclose(result4, array([2, 10, 20]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result2, array([2, 10, 20]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result4, array([2, 10, 20]), rtol=1e-6))
         result5 = dataset.compute_variables(["test_agent.income_times_10"])
         result6 = dataset.compute_variables(["test_agent.income_times_10_ds_qualified"])
         result7 = dataset.compute_variables(["test_agent.income_times_10_using_primary"])
         result8 = dataset.compute_variables(["test_agent.income_times_20_using_lib"])
-        self.assert_(ma.allclose(result5, array([10, 50, 100]), rtol=1e-6))
-        self.assert_(ma.allclose(result6, array([10, 50, 100]), rtol=1e-6))
-        self.assert_(ma.allclose(result7, array([10, 50, 100]), rtol=1e-6))
-        self.assert_(ma.allclose(result8, array([20, 100, 200]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result5, array([10, 50, 100]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result6, array([10, 50, 100]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result7, array([10, 50, 100]), rtol=1e-6))
+        self.assertTrue(ma.allclose(result8, array([20, 100, 200]), rtol=1e-6))
         # Test that the expression library is set correctly for estimation and run configurations.
         est = config.get_estimation_configuration()
         self.assertEqual(est['expression_library'], lib_should_be)
@@ -1512,7 +1512,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test saving as a new file name - this should also test save()
         f = os.path.join(self.test_configs, 'grandchild1.xml')
         c = XMLConfiguration(f)
-        str_io = StringIO.StringIO()
+        str_io = io.StringIO()
         c.save_as(file_object = str_io)
         # compare the strings removing white space
         saved_root = fromstring(str_io.getvalue())
@@ -1574,7 +1574,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           </opus_project>
         """
         config.update(update_str)
-        str_io = StringIO.StringIO()
+        str_io = io.StringIO()
         config.save_as(file_object = str_io)
         saved_root = fromstring(str_io.getvalue())
         should_be_root = fromstring(
@@ -1605,7 +1605,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'followers_test_child.xml')
         config = XMLConfiguration(f)
         mydict = config.full_tree.find('general/mydict')
-        child_names = map(lambda n: n.tag, mydict.iterchildren(tag=Element))
+        child_names = [n.tag for n in mydict.iterchildren(tag=Element)]
         self.assertEqual(child_names, ['a', 'b', 'x', 'c', 'd'])
         # Now update the configuration with a new xml tree, in which x is after c and
         # there is also a new node e
@@ -1628,7 +1628,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config.full_tree.find('general/mydict/x').get('followers'), 'd')
         # now write it out to a StringIO file-like object, and make sure it has
         # the correct contents
-        str_io = StringIO.StringIO()
+        str_io = io.StringIO()
         config.save_as(file_object = str_io)
         element_saved = fromstring(str_io.getvalue())
         # squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')
@@ -1731,17 +1731,17 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_parent_no_parent(self):
         f = os.path.join(self.test_configs, 'parent1.xml')
         config = XMLConfiguration(f)
-        self.assert_(config.get_last_writable_parent_file() is None, 'No parent')
+        self.assertTrue(config.get_last_writable_parent_file() is None, 'No parent')
         
     def test_get_parent_one_parent(self):
         f = os.path.join(self.test_configs, 'child2.xml')
         config = XMLConfiguration(f)
-        self.assert_(re.match(r'.*parent1\.xml$', config.get_last_writable_parent_file()), 'One parent')
+        self.assertTrue(re.match(r'.*parent1\.xml$', config.get_last_writable_parent_file()), 'One parent')
         
     def test_get_parent_two_parents(self):
         f = os.path.join(self.test_configs, 'grandchild1.xml')
         config = XMLConfiguration(f)
-        self.assert_(re.match(r'.*child2\.xml$', config.get_last_writable_parent_file()), 'Last parent')
+        self.assertTrue(re.match(r'.*child2\.xml$', config.get_last_writable_parent_file()), 'Last parent')
 
     def test_get_parent_two_parents_last_not_writable(self):
         f = os.path.join(self.test_configs, 'grandchild1.xml')
@@ -1751,7 +1751,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             old_os_access = os.access
             os.access = lambda f, m: False if m == os.W_OK and re.match(r'.*child2\.xml$', f) else old_os_access(f, m)
             config = XMLConfiguration(f)
-            self.assert_(re.match(r'.*child1\.xml$', config.get_last_writable_parent_file()), 'First parent')
+            self.assertTrue(re.match(r'.*child1\.xml$', config.get_last_writable_parent_file()), 'First parent')
         finally:
             os.access = old_os_access
             
@@ -1759,9 +1759,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'child1.xml')
         config = XMLConfiguration(f)
 
-        print(tostring(config.full_tree.getroot()))
+        print((tostring(config.full_tree.getroot())))
         for n in config.full_tree.getroot().getiterator(tag=Comment):
-            self.assert_(not re.match('.* parent .*', n.text),
+            self.assertTrue(not re.match('.* parent .*', n.text),
                           'Parent comments (except parent-only comments) have been removed')
             
     def test_dup_names_in_parents_do_not_crash_merge_configs(self):

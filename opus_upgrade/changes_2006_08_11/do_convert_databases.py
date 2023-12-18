@@ -5,7 +5,7 @@
 import os
 
 from optparse import OptionParser
-from classes.convert_databases import ConvertDatabase
+from .classes.convert_databases import ConvertDatabase
 
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
@@ -41,7 +41,7 @@ def main():
     if options.postfix == None: options.postfix = '_old'
     
     if options.databases == None or options.tables == None: 
-        print 'Nothing to convert.'
+        print('Nothing to convert.')
         return
     
     table_list = {}
@@ -67,12 +67,12 @@ def main():
         }    
     
     if len(options.databases) > 1:
-        print "Converting databases on host %s..." % options.host
+        print("Converting databases on host %s..." % options.host)
         ConvertDatabase().convert_databases(db_config, config)
-        print "Done."
+        print("Done.")
         
     elif len(options.tables) > 1:
-        print "Converting tables in database %s on host %s" % (options.databases[0], options.host)
+        print("Converting tables in database %s on host %s" % (options.databases[0], options.host))
         dbconfig = DatabaseServerConfiguration(
             protocol = 'mysql',
             host_name = db_config.host_name,
@@ -83,7 +83,7 @@ def main():
         db = db_server.get_database(options.databases[0])
         
         ConvertDatabase().convert_database(db, options.tables, options.backup, options.postfix)
-        print "Done."
+        print("Done.")
     
     else:
         dbconfig = DatabaseServerConfiguration(
@@ -92,12 +92,12 @@ def main():
             user_name = db_config.user_name,
             password = db_config.password                                       
         )
-        print "Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host)
+        print("Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host))
         db_server = DatabaseServer(dbconfig)
         db = db_server.get_database(options.databases[0])
         
         ConvertDatabase().convert_table(db, options.tables[0], options.backup, options.postfix)
-        print "Done."
+        print("Done.")
 
     
 if __name__ == "__main__":

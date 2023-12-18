@@ -19,12 +19,12 @@ class CountyDataset(UrbansimDataset):
 
         UrbansimDataset.__init__(self, **kwargs)
 
-        if id_values <> None:
+        if id_values != None:
             self._add_id_attribute(data=id_values, name=self.get_id_name()[0])
-        elif gridcellset <> None:
+        elif gridcellset != None:
             if (self.get_id_name()[0] not in gridcellset.get_attribute_names()) and \
                 (self.get_id_name()[0] not in gridcellset.get_primary_attribute_names()):
-                raise StandardError, "Given gridcellset does not contain " + self.get_id_name()[0]
+                raise Exception("Given gridcellset does not contain " + self.get_id_name()[0])
             large_area_ids = gridcellset.get_attribute(self.get_id_name()[0])
             idx = large_area_ids >=0
             unique_ids = unique(large_area_ids[idx])

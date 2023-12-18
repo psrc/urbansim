@@ -19,7 +19,7 @@ class DevelopmentProjectLocationChoiceModel(AgentLocationChoiceModel):
         if 'agent_set' in args and args['agent_set'] is None:
             logger.log_status("Development project dataset is empty. Skip DPLCM")
             return
-        elif kwargs.has_key('agent_set') and kwargs['agent_set'] is None:
+        elif 'agent_set' in kwargs and kwargs['agent_set'] is None:
             logger.log_status("Development project dataset is empty. Skip DPLCM")
             return
         else:

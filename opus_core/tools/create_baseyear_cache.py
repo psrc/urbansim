@@ -71,7 +71,7 @@ if __name__ == "__main__":
         config['cache_directory'] = options.cache_directory
         
     if options.database_name is not None or options.database_configuration is not None:
-        if not config.has_key('scenario_database_configuration'):
+        if 'scenario_database_configuration' not in config:
             config['scenario_database_configuration'] = ScenarioDatabaseConfiguration(database_name = options.database_name,
                                                                                       database_configuration = options.database_configuration
                                                                                       )

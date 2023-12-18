@@ -8,10 +8,10 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from coreplot import *
+from .coreplot import *
 from file_menu.newproject import Geography
 from misc.map_toolbar import *
-from results_preprocessor import *
+from .results_preprocessor import *
 
 # Inputs for this module
 resultsloc = "C:/populationsynthesis/gui/results"
@@ -205,8 +205,8 @@ class Indgeo(Matplot):
                     #self.draw_boxselect()
                 else:
                     self.draw_stat()
-            except Exception, e:
-                print "Exception: %s; Invalid Selection." %e
+            except Exception as e:
+                print("Exception: %s; Invalid Selection." %e)
 
     def draw_stat(self):
         self.ids = []
@@ -277,8 +277,8 @@ class Indgeo(Matplot):
                 else:
                     pass
                 self.canvas.draw()
-            except Exception, e:
-                print "Exception: %s; Invalid Selection." %e
+            except Exception as e:
+                print("Exception: %s; Invalid Selection." %e)
 
     def makeComboBox(self):
         self.geolist.sort()
@@ -321,14 +321,14 @@ class Indgeo(Matplot):
             elif self.project.resolution == 'Tract':
                 if not query.exec_("""select pumano from geocorr where state = %s and county = %s and tract = %s and bg = 1"""
                                    %(geo.state, geo.county, geo.tract)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     geo.puma5 = query.value(0).toInt()[0]
             else:
                 if not query.exec_("""select pumano from geocorr where state = %s and county = %s and tract = %s and bg = %s"""
                                    %(geo.state, geo.county, geo.tract, geo.bg)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     geo.puma5 = query.value(0).toInt()[0]
         scenarioDatabase = '%s%s%s' %(self.project.name, 'scenario', self.project.scenario)
         self.projectDBC.dbc.setDatabaseName(scenarioDatabase)
@@ -346,10 +346,10 @@ class Indgeo(Matplot):
         filter = ""
         group = ""
 
-        if self.selblkgroup <> "0":
+        if self.selblkgroup != "0":
             filter_act = "tract=" + str(self.seltract) + " and " + "bg=" + str(self.selblkgroup)
             filter_syn = "county=" + str(self.selcounty) + " and " +"tract=" + str(self.seltract) + " and " + "bg=" + str(self.selblkgroup)
-        elif self.seltract <> "0":
+        elif self.seltract != "0":
             filter_act = "tract=" + str(self.seltract) + " and " + "bg=0"
             filter_syn = "county=" + str(self.selcounty) + " and " +"tract=" + str(self.seltract) + " and " + "bg=0"
         else:
@@ -360,7 +360,7 @@ class Indgeo(Matplot):
         aardval = 0.0
         pval = 0.0
         if query:
-            while query.next():
+            while next(query):
                 aardval = query.value(0).toDouble()[0]
                 pval = query.value(1).toDouble()[0]
 
@@ -379,7 +379,7 @@ class Indgeo(Matplot):
             group = "personuniqueid"
             query = self.executeSelectQuery(self.projectDBC.dbc,vars, actualtable, filter_act, group)
             if query:
-                while query.next():
+                while next(query):
                     id= query.value(0).toInt()[0]
                     freq = query.value(1).toDouble()[0]
                     self.ids.append(id)
@@ -391,7 +391,7 @@ class Indgeo(Matplot):
             query = self.executeSelectQuery(self.projectDBC.dbc,vars, syntable, filter_syn, group)
             self.syn = [0.0] * len(self.act)
             if query:
-                while query.next():
+                while next(query):
                     id= query.value(0).toInt()[0]
                     freq = query.value(1).toDouble()[0]
                     if id in self.ids:

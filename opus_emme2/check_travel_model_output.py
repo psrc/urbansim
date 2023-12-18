@@ -7,6 +7,7 @@ import string
 
 from glob import glob
 from opus_core.logger import logger
+from functools import reduce
 
 class CheckTravelModelOutput(object):
     """Check existance & length of travel model reports after each travel 
@@ -24,14 +25,13 @@ class CheckTravelModelOutput(object):
                                 'bank2': os.path.join(data_dir, "bank2.tab"),
                                 'bank3': os.path.join(data_dir, "bank3.tab")}
                 
-        directories_content = map(lambda dir: self._get_directory_contents(open(directory_and_path[dir],'r')), \
-                                    directory_and_path.keys())
-        return dict(zip(directory_and_path.keys(), directories_content))
+        directories_content = [self._get_directory_contents(open(directory_and_path[dir],'r')) for dir in list(directory_and_path.keys())]
+        return dict(list(zip(list(directory_and_path.keys()), directories_content)))
     
     def _get_directory_contents(self, text_file):   
         text_file.readline() #ignore the header
         expected_file_sizes = {}
-        for (size, file_name) in map(lambda line: string.split(line), text_file.readlines()):
+        for (size, file_name) in [string.split(line) for line in text_file.readlines()]:
             expected_file_sizes[file_name] = int(size)
         text_file.close()
         return expected_file_sizes
@@ -41,12 +41,11 @@ class CheckTravelModelOutput(object):
         #logger.log_status("Total expected files: ", str(reduce(lambda old_sum, key: len(expected_file_info[key]) + old_sum, \
                                                     #expected_file_info.keys(), 0)))
         
-        for dir_name in expected_file_info.keys():
-            real_data_files = map(lambda file_name: (os.path.basename(file_name), os.stat(file_name)[6]), \
-                                    glob(os.path.join(travel_model_year_dir, dir_name,"*.rp*")))
+        for dir_name in list(expected_file_info.keys()):
+            real_data_files = [(os.path.basename(file_name), os.stat(file_name)[6]) for file_name in glob(os.path.join(travel_model_year_dir, dir_name,"*.rp*"))]
             real_data_files = dict(real_data_files)
-            for file_name, expected_size in expected_file_info[dir_name].iteritems():
-                if real_data_files.has_key(file_name):
+            for file_name, expected_size in expected_file_info[dir_name].items():
+                if file_name in real_data_files:
                     if expected_size != 0:
                         percent_difference = float(real_data_files[file_name] - expected_size) / expected_size
                     else:
@@ -80,7 +79,7 @@ class CheckTravelModelOutput(object):
                 raise LookupError("Error, %d missing report files: %s" % (len(self.missing_files), str(self.missing_files)))
 
             if self.missized_files:
-                raise StandardError("Error, the following files are out of range(-5%, 50%) : " + \
+                raise Exception("Error, the following files are out of range(-5%, 50%) : " + \
                                                             reduce(lambda prev, file: prev + file[0] + " off by %d percent, \n" \
                                                                     % (file[1]['percent_difference']*100) , \
                                                                     self.missized_files, ""))
@@ -102,11 +101,11 @@ class TestTravelOutputChecker(opus_unittest.OpusTestCase):
         
         original_dir = os.path.abspath('.')
         os.chdir(data_dir)
-        for (dir_name, files_in_dir) in sample_data.iteritems():
+        for (dir_name, files_in_dir) in sample_data.items():
             data_file = open(dir_name+'.tab', 'w')
             os.mkdir(join(temp_dir, dir_name))
             data_file.write('size\tfile_name\n')
-            for file_name, file_size in files_in_dir.iteritems():
+            for file_name, file_size in files_in_dir.items():
                 data_file.write('%d\t%s\n' % (file_size, file_name))
                 a_file = open(join(temp_dir, dir_name, file_name), 'w')
                 a_file.write('n'*(file_size+1)) # make a small error in file size
@@ -122,7 +121,7 @@ class TestTravelOutputChecker(opus_unittest.OpusTestCase):
         checker = CheckTravelModelOutput()
         # travel_model_year_dir is temp_dir in this test
         data_dir = os.path.join(self.temp_dir, "opus_emme2", "data", "expected_file_sizes", "2000_t05")
-        self.assert_(not checker.find_errors(self.temp_dir, data_dir))
+        self.assertTrue(not checker.find_errors(self.temp_dir, data_dir))
             
     def test_emme2_wrapper(self):
         checker = CheckTravelModelOutput()
@@ -132,7 +131,7 @@ class TestTravelOutputChecker(opus_unittest.OpusTestCase):
             data_dir = os.path.join(self.temp_dir, "opus_emme2", "data", "expected_file_sizes")
             checker.check_reports_creation_and_sizes('2000_t05', data_dir)
             sys.stdout = old_stdout
-            self.assert_(False, "Should have thrown an exception but did not.")
+            self.assertTrue(False, "Should have thrown an exception but did not.")
         except:
             pass
 

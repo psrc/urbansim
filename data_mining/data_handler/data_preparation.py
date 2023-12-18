@@ -14,7 +14,7 @@ from opus_core import paths
 
 #loads system variables                                                                                  
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 #Keeps track of information about the current data
 class Data_profiler :
@@ -74,7 +74,7 @@ class Data_profiler :
         for row in rows :
     
             #gathering class info
-            for c_name, list in class_result_dict.iteritems() :
+            for c_name, list in class_result_dict.items() :
                 if c_name in row :
                     value = row[c_name]
         
@@ -86,7 +86,7 @@ class Data_profiler :
                         class_att_value_count[c_name][value] += 1
         
             #gathering numeric info
-            for c_name, list in numeric_result_dict.iteritems() :
+            for c_name, list in numeric_result_dict.items() :
                 if c_name in row :
                     
                     value = row[c_name]
@@ -105,15 +105,15 @@ class Data_profiler :
     
         #Deciding on the weight based on the count
         class_att_value_weight = {}
-        for att_name, values in class_att_value_count.iteritems() :
+        for att_name, values in class_att_value_count.items() :
             #Finding total number of values
             overall_count = 0
-            for value, count in values.iteritems() :
+            for value, count in values.items() :
                 overall_count += count
             
             #Setting weights
             class_att_value_weight[att_name] = {}
-            for value, count in values.iteritems() :
+            for value, count in values.items() :
                 class_att_value_weight[att_name][value] = float(count / overall_count)
             
             
@@ -224,7 +224,7 @@ class Data_profiler :
             self.printOut.pLog( "PREP- ID: " + str(id) + ", Attribute: " + attribute)
         
             if attribute in class_lookup_table :
-                for att_value in class_lookup_table[attribute].keys() :
+                for att_value in list(class_lookup_table[attribute].keys()) :
                     self.attribute_id_list.append(id)
                 self.attribute_id_dict[id] = attribute
                 self.id_attribute_dict[attribute] = id 
@@ -261,7 +261,7 @@ class Data_profiler :
     def util_get_class_lookup_table(self) :
         class_lookup_table = {}
         id_lookup_table = {}
-        for class_name, values in self.class_result_dict.iteritems() :
+        for class_name, values in self.class_result_dict.items() :
             index = 0
             class_temp = {}
             id_temp = {}

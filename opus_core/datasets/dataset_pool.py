@@ -17,7 +17,7 @@ class DatasetPool(object):
         """Keeps a set of datasets by name & knows where to look for dataset modules."""
         self._package_order = package_order
         if len(package_order_exceptions)>0:
-            raise ValueError, "parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary to package_order_exceptions"        
+            raise ValueError("parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary to package_order_exceptions")        
         self._storage = storage
         self._loaded_datasets = {}
         self.add_datasets_if_not_included(datasets_dict)
@@ -25,7 +25,7 @@ class DatasetPool(object):
     def get_copy(self):
         """Return a copy of this dataset pool, without copying the datasets."""
         pool = DatasetPool(package_order=self._package_order, storage=self._storage)
-        for dataset_name, dataset in self._loaded_datasets.iteritems():
+        for dataset_name, dataset in self._loaded_datasets.items():
             pool._add_dataset(dataset_name, dataset)
         return pool
         
@@ -55,7 +55,7 @@ class DatasetPool(object):
         
     def add_datasets_if_not_included(self, datasets_dict):
         """Add datasets from the dictionary 'datasets_dict' (that are not already in the pool) into the pool."""
-        for name, dataset in datasets_dict.iteritems():
+        for name, dataset in datasets_dict.items():
             if name not in self._loaded_datasets:
                 self._add_dataset(name, dataset)
                 
@@ -75,11 +75,11 @@ class DatasetPool(object):
     
     def remove_all_datasets(self):
         """Empty this pool."""
-        for dataset_name in self._loaded_datasets.keys():
+        for dataset_name in list(self._loaded_datasets.keys()):
             self._remove_dataset(dataset_name)
             
     def flush_loaded_datasets(self):
-        for dataset in self.datasets_in_pool().values():
+        for dataset in list(self.datasets_in_pool().values()):
             dataset.flush_dataset()
         
     def _remove_dataset(self, dataset_name):
@@ -115,12 +115,12 @@ class DatasetPool(object):
 
     def info_itemsize_in_memory(self):
         """Prints out itemsize of attributes in memory of loaded datasets."""
-        print "In-memory itemsize of datasets:"
-        for name, dataset in self._loaded_datasets.iteritems():
+        print("In-memory itemsize of datasets:")
+        for name, dataset in self._loaded_datasets.items():
             try:
-                print "%s: %s" % (name, dataset.itemsize_in_memory())
+                print("%s: %s" % (name, dataset.itemsize_in_memory()))
             except:
-                print "unknown size of %s" % name 
+                print("unknown size of %s" % name) 
 
     ### some helper methods and shorthands
     def __getitem__(self, dataset_name):
@@ -222,7 +222,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
             
             # Try it for 'newdata'.
             newdata = dataset_pool.get_dataset('newdata')
-            self.assert_(newdata is not None, "Could not get 'newdata' dataset")
+            self.assertTrue(newdata is not None, "Could not get 'newdata' dataset")
             
         finally:
             sys.path = old_sys_path
@@ -242,7 +242,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         test_dataset_name = 'alldata'
         dataset1 = dataset_pool.get_dataset(test_dataset_name)
         
-        self.assert_(dataset1 is not None, "Could not get 'alldata' dataset")
+        self.assertTrue(dataset1 is not None, "Could not get 'alldata' dataset")
         
         try:
             dataset1.get_primary_attribute_names()
@@ -252,7 +252,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         
         dataset2 = dataset_pool.get_dataset(test_dataset_name)
         
-        self.assert_(dataset2 is dataset1, 'Different datasets received from '
+        self.assertTrue(dataset2 is dataset1, 'Different datasets received from '
             'calls of get_dataset on the same dataset name! Expected %s; '
             'received %s.' % (dataset1, dataset2))
         

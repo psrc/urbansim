@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from baseline_full_tm import BaselineFullTm
+from .baseline_full_tm import BaselineFullTm
 
 class NoViaductFullTm(BaselineFullTm):
     tm_scenario = 'no_viaduct_tm_no_hbw_v1.0a'

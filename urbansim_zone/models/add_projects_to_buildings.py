@@ -152,7 +152,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
 
     def test_add_three_projects(self):
         project_data = {'project_id': arange(1,12), 
-                        'zone_id': array([3, 5, 7, 8, 10] + range(1,5) + [2,10]), 
+                        'zone_id': array([3, 5, 7, 8, 10] + list(range(1,5)) + [2,10]), 
                         'building_type_id': array([1]*5 + [2]*4 + [3]*2),
                         'residential_units': array([100, 300, 1, 50, 6]+4*[0]+2*[0]),
                         'commercial_job_spaces': array(5*[0]+3*[20]+[5]+2*[0]),

@@ -18,7 +18,7 @@ class RunDummyTravelModel(AbstractTravelModel):
         """
         logger.start_block("Starting RunDummyTravelModel.run(...)")
         
-        print >> sys.stderr, "\nThis should also check if get_cache_data_into_matsim did something reasonable"
+        print("\nThis should also check if get_cache_data_into_matsim did something reasonable", file=sys.stderr)
         
         travel_model_configuration = config['travel_model_configuration']
 

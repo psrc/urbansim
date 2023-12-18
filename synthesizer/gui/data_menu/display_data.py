@@ -91,7 +91,7 @@ class DisplayTable(QDialog):
             self.descriptivesVariablesSelected = descriptivesVarDialog.selectedVariableListWidget.variables
 
 
-            COUNT, AVERAGE, MINIMUM, MAXIMUM, SUM = range(5)
+            COUNT, AVERAGE, MINIMUM, MAXIMUM, SUM = list(range(5))
 
             query = QSqlQuery(self.projectDBC.dbc)
 
@@ -102,8 +102,8 @@ class DisplayTable(QDialog):
 
                 if not query.exec_("""select count(%s), avg(%s), min(%s), max(%s), sum(%s) from %s"""
                                %(i, i, i, i, i, self.tablename)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     count = query.value(COUNT).toInt()[0]
                     average = query.value(AVERAGE).toDouble()[0]
                     minimum = query.value(MINIMUM).toDouble()[0]
@@ -119,7 +119,7 @@ class DisplayTable(QDialog):
         if frequenciesVarDialog.exec_():
             self.frequenciesVariablesSelected = frequenciesVarDialog.selectedVariableListWidget.variables
 
-            CATEGORY, FREQUENCY = range(2)
+            CATEGORY, FREQUENCY = list(range(2))
 
             query = QSqlQuery(self.projectDBC.dbc)
 
@@ -131,8 +131,8 @@ class DisplayTable(QDialog):
 
                 if not query.exec_("""select %s, count(*) from %s group by %s"""
                                %(i, self.tablename, i)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     category = query.value(CATEGORY).toString()
                     frequency = query.value(FREQUENCY).toInt()[0]
                     self.output.append("%s, %s" %(category, frequency))
@@ -144,9 +144,9 @@ class DisplayTable(QDialog):
         query = QSqlQuery(self.projectDBC.dbc)
         query.exec_("""desc %s""" %self.tablename)
 
-        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = range(6)
+        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = list(range(6))
 
-        while query.next():
+        while next(query):
             field = query.value(FIELD).toString()
             type = query.value(TYPE).toString()
             null = query.value(NULL).toString()
@@ -218,7 +218,7 @@ class DisplayTableStructure(QDialog):
 
         # set row height
         nrows = len(self.tabledata)
-        for row in xrange(nrows):
+        for row in range(nrows):
             tableview.setRowHeight(row, 18)
 
         return tableview

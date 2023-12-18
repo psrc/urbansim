@@ -117,7 +117,7 @@ from opus_core.indicator_framework.test_classes.abstract_indicator_test import A
 class Tests(AbstractIndicatorTest):
     def test_create_indicator(self):
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
         table = Table(
                   source_data = self.source_data,
@@ -128,25 +128,25 @@ class Tests(AbstractIndicatorTest):
         )
         table.create(False)
 
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__table__attribute.csv')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__table__attribute.csv')))
 
     def test_create_indicator_multiple_years(self):
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
         table = Table(
                   source_data = self.source_data,
                   dataset_name = 'test',
                   attribute = 'opus_core.test.attribute',
-                  years = range(1980,1984),
+                  years = list(range(1980,1984)),
                   output_type = 'csv'
         )
         table.create(False)
 
         file_path = os.path.join(indicator_path, 'test__table__attribute.csv')
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(file_path))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(file_path))
 
         f = open(file_path)
         cols = [col.strip() for col in f.readline().split(',')]

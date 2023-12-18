@@ -50,7 +50,7 @@ class IconLibrary(object):
             image_path = cls._get_image_path(image_name)
             icon = QIcon(image_path)
             if not icon:
-                print 'no icon %s' % image_path
+                print('no icon %s' % image_path)
                 icon = QIcon()
             cls.__cached_icons[image_name] = icon
         return cls.__cached_icons[image_name]
@@ -115,4 +115,4 @@ if __name__ == '__main__':
     b = IconLibrary.icon('fisk')
     b2 = IconLibrary.icon('fisk')
     b4 = IconLibrary.icon('fisk')
-    print '\n'.join(map(str, [b, b2,  b4]))
+    print('\n'.join(map(str, [b, b2,  b4])))

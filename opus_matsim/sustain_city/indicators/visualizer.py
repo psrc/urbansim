@@ -20,7 +20,7 @@ cache_directory = r'/Users/sustaincity/Development/opus_home/data/seattle_parcel
 
 types = ['mapnik_map']
 
-print "creating indicators for %s" % os.environ['OPUSPROJECTNAME']
+print("creating indicators for %s" % os.environ['OPUSPROJECTNAME'])
 
 indicators = {
     
@@ -50,7 +50,7 @@ indicators = {
     #    name =  'number_of_home_based_jobs'),              
 }
 
-print "... done."
+print("... done.")
 
 #################################################################
 #DEFINE data source
@@ -60,7 +60,7 @@ print "... done."
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_gui.results_manager.run.indicator_framework.maker.source_data import SourceData
 
-print "creating result template ..."
+print("creating result template ...")
 
 result_template = SourceData(
    cache_directory = cache_directory,
@@ -72,7 +72,7 @@ result_template = SourceData(
    name = project_name
 )
 
-print "... done."
+print("... done.")
 
 ################################################################
 #COMPUTE indicators
@@ -81,14 +81,14 @@ print "... done."
 # for a given result template
 from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
 
-print "creating maker (to compute indicators) ..."
+print("creating maker (to compute indicators) ...")
 
 maker = Maker( project_name )
 computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = result_template)
 
-print "... done."
+print("... done.")
 
 ############################################
 #VISUALIZE the resulting computed indicators
@@ -108,4 +108,4 @@ visualizations += visualizer.visualize(
     name = 'population'
     )
 
-print 'Finished with creating indicators'
+print('Finished with creating indicators')

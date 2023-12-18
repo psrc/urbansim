@@ -94,7 +94,7 @@ else:
             storage.write_table(table_name, values)
                 
             table_dir = os.path.join(self._temp_dir, '2000', table_name)
-            self.assert_(os.path.exists(table_dir))
+            self.assertTrue(os.path.exists(table_dir))
             
             actual = set(os.listdir(table_dir))
             expected = set(['attribute1.%(endian)si4' % replacements, 'attribute2.%(endian)si4' % replacements])
@@ -112,19 +112,19 @@ else:
             out_storage = dbf_storage(self._temp_dir)
             
             db = _dbf_class(out_storage._get_file_path_for_table(table_name))
-            length = max([len(values[key]) for key in values.keys()])
+            length = max([len(values[key]) for key in list(values.keys())])
             i = 0
             field_type = {}
             for name, type in [field.fieldInfo()[:2] for field in db.header.fields]:
                 field_type[name] = type
             for rec in db:
-                for key in values.keys():
+                for key in list(values.keys()):
                     if field_type[key.upper()] is 'F':
                         self.assertAlmostEqual(values[key][i], rec[key], 4)
                     else:
                         self.assertEqual(values[key][i], rec[key])
                 i = i + 1
-            self.assertEquals(length, i, msg="More values expected than the dbf file contains")
+            self.assertEqual(length, i, msg="More values expected than the dbf file contains")
             db.close()
 
     class UnitTests(opus_unittest.OpusTestCase):
@@ -152,8 +152,8 @@ else:
             command.execute()
             
             self.assertEqual('a-table-name', command._get_exporter().dataset_name)
-            self.assert_(isinstance(command._get_exporter().out_storage, dbf_storage))
-            self.assert_(isinstance(command._get_exporter().in_storage, AttributeCache))
+            self.assertTrue(isinstance(command._get_exporter().out_storage, dbf_storage))
+            self.assertTrue(isinstance(command._get_exporter().in_storage, AttributeCache))
             self.assertEqual('a-dbf-directory', 
                              command._get_exporter().out_storage._get_base_directory())
             self.assertEqual(9, 

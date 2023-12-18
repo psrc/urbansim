@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import zeros
 from numpy import array
 from scipy.spatial import KDTree
@@ -11,7 +11,7 @@ from numpy import column_stack
 from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 
-import cPickle as pickle
+import pickle as pickle
 import os.path
 
 class persons_within_DDD_of_parcel(Variable):
@@ -60,7 +60,7 @@ class persons_within_DDD_of_parcel(Variable):
                     self._cache_results(results)
                     
             with logger.block(name="sum results", verbose=False):
-                return_values = array(map(lambda l: arr[l].sum(), results))
+                return_values = array([arr[l].sum() for l in results])
             
         return return_values
 

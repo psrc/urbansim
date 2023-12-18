@@ -119,7 +119,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
         if current_target_vacancy.size() == 0:
-            raise IOError, 'No target vacancy defined for year %s.' % current_year
+            raise IOError('No target vacancy defined for year %s.' % current_year)
         
         self.existing_units = {}   #total existing units by land_use type
         self.occupied_units = {}   #total occupied units by land_use type
@@ -191,7 +191,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         building_types = self.dataset_pool.get_dataset("building_type")
         logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
         logger.log_status("Target/existing vacancy rates (reached using eligible proposals) by building type:")
-        for type_id in self.existing_units.keys():
+        for type_id in list(self.existing_units.keys()):
             units_stock = self._get_units_stock(type_id)
             vr = self._get_vacancy_rates(type_id)
             ## units = residential_units if building_type is residential
@@ -283,7 +283,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 affected_building_index = where(building_site==this_site)[0]
                 for this_building in affected_building_index:
                     this_building_type = building_type_ids[this_building]
-                    if this_building_type in self.existing_units.keys():
+                    if this_building_type in list(self.existing_units.keys()):
                         _unit_name = self.unit_name[is_residential[this_building]]
                         self.demolished_units[this_building_type] += buildings.get_attribute(_unit_name)[this_building]    #demolish affected buildings
                                                 
@@ -379,7 +379,7 @@ class DevelopmentProjectProposalSamplingModelTest(opus_unittest.OpusTestCase):
         
         expected = {1:0.0, 2:0.28, 3:0.0, 4:0.28, 5:0.5, 6:0.0}
         actual = {}
-        for type in DPPSM.existing_units.keys():
+        for type in list(DPPSM.existing_units.keys()):
             actual[type] = DPPSM._get_vacancy_rates(type)
 
         self.assertDictsEqual(actual, expected)

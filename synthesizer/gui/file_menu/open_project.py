@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
+
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -78,14 +78,14 @@ class SaveFile(QFileDialog):
                                     """No household variables selected for exporting""", QMessageBox.Ok)                
             
             if not query.exec_("""drop table temphou1"""):
-                print "FileError:%s" %query.lastError().text()
+                print("FileError:%s" %query.lastError().text())
             if not query.exec_("""create table temphou1 select housing_synthetic_data.* %s from housing_synthetic_data"""
                                """ left join hhld_sample using (serialno)""" %(hhldvarstr)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             if not query.exec_("""alter table temphou1 drop column hhuniqueid"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             if not query.exec_("""alter table temphou1 add index(serialno)"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
 
             if self.project.gqVars:
@@ -104,54 +104,54 @@ class SaveFile(QFileDialog):
                                         """No groupquarter variables selected for exporting""", QMessageBox.Ok)          
                   
                 if not query.exec_("""drop table temphou2"""):
-                    print "FileError:%s" %query.lastError().text()
+                    print("FileError:%s" %query.lastError().text())
                 if not query.exec_("""create table temphou2 select temphou1.* %s from temphou1"""
                                    """ left join gq_sample using (serialno)""" %(gqvarstr)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             else:
                 if not query.exec_("""alter table temphou1 rename to temphou2"""):
-                    raise FileError, query.lastError().text()                
+                    raise FileError(query.lastError().text())                
 
             if self.project.sampleUserProv.defSource == "ACS 2005-2007":
                 #print 'ACS HOUSING DATA MODIFYING THE SERIALNOS'
                 if not query.exec_("""drop table temphou3"""):
-                    print "FileError:%s" %query.lastError().text()
+                    print("FileError:%s" %query.lastError().text())
                 if not query.exec_("""alter table temphou2 drop column serialno"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""alter table temphou2 add index(hhid)"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""alter table serialcorr add index(hhid)"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""create table temphou3 select temphou2.*, serialno from temphou2"""
                                    """ left join serialcorr using (hhid)"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
                 if not query.exec_("""select * from temphou3 into outfile """
                                    """'%s/housing_synthetic_data.%s' fields terminated by '%s'"""
                                    %(self.folder, self.fileType, self.fileSep)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
                 housingSynTableVarDict, housingSynTableVars = self.getVariables('temphou3', query)
 
                 if not query.exec_("""drop table temphou3"""):
-                    print "FileError:%s" %query.lastError().text()
+                    print("FileError:%s" %query.lastError().text())
 
             else:
                 if not query.exec_("""select * from temphou2 into outfile """
                                    """'%s/housing_synthetic_data.%s' fields terminated by '%s'"""
                                    %(self.folder, self.fileType, self.fileSep)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
                 housingSynTableVarDict, housingSynTableVars = self.getVariables('temphou2', query)
             
             self.storeMetaData(housingSynTableVars, self.folder, 'housing_synthetic_data')
             
             if not query.exec_("""drop table temphou1"""):
-                print "FileError:%s" %query.lastError().text()
+                print("FileError:%s" %query.lastError().text())
 
             if not self.project.gqVars:
                 if not query.exec_("""drop table temphou2"""):
-                    print "FileError:%s" %query.lastError().text()
+                    print("FileError:%s" %query.lastError().text())
 
 
         filename = '%s/person_synthetic_data.%s' %(self.folder, self.fileType)
@@ -175,31 +175,31 @@ class SaveFile(QFileDialog):
                                     """No person variables selected for exporting""", QMessageBox.Ok)                
             
             if not query.exec_("""drop table tempperson"""):
-                print "FileError:%s" %query.lastError().text()
+                print("FileError:%s" %query.lastError().text())
             if not query.exec_("""create table tempperson select person_synthetic_data.* %s from person_synthetic_data"""
                                """ left join person_sample using (serialno)""" %(personvarstr)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             if not query.exec_("""alter table tempperson drop column personuniqueid"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
             
 
             if self.project.sampleUserProv.defSource == "ACS 2005-2007":
                 #print 'ACS PERSON DATA MODIFYING THE SERIALNOS'
                 if not query.exec_("""drop table tempperson1"""):
-                    print "FileError:%s" %query.lastError().text()
+                    print("FileError:%s" %query.lastError().text())
                 if not query.exec_("""alter table tempperson drop column serialno"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""alter table tempperson add index(hhid)"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""create table tempperson1 select tempperson.*, serialno from tempperson"""
                                    """ left join serialcorr using (hhid)"""):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
                 if not query.exec_("""select * from tempperson1 into outfile """
                                    """'%s/person_synthetic_data.%s' fields terminated by '%s'"""
                                    %(self.folder, self.fileType, self.fileSep)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
                 personSynTableVarDict, personSynTableVars = self.getVariables('tempperson1', query)
 
@@ -210,7 +210,7 @@ class SaveFile(QFileDialog):
                 if not query.exec_("""select * from tempperson into outfile """
                                    """'%s/person_synthetic_data.%s' fields terminated by '%s'"""
                                    %(self.folder, self.fileType, self.fileSep)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
 
                 personSynTableVarDict, personSynTableVars = self.getVariables('tempperson', query)
@@ -244,11 +244,11 @@ class SaveFile(QFileDialog):
 
     def getVariables(self, tablename, query):
         if not query.exec_("""desc %s""" %(tablename)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
         
         varDict = {}
         varNameList = []
-        while query.next():
+        while next(query):
             varname = query.value(0).toString()
             varDict['%s' %varname] = ""
             varNameList.append(varname)
@@ -292,7 +292,7 @@ class SaveFile(QFileDialog):
             if not query.exec_("""select * from %s into outfile """
                                """'%s' fields terminated by '%s'"""
                                %(self.tablename, filename, self.fileSep)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
         tableVarDict, tableVars = self.getVariables(self.tablename, query)
         self.storeMetaData(tableVars, self.folder, self.tablename)
@@ -312,7 +312,7 @@ class SaveFile(QFileDialog):
                 return 0
             else:
                 return 2
-        except WindowsError, e:
+        except WindowsError as e:
             #print 'Warning: File - %s not present' %(file)
             return 1
 
@@ -360,11 +360,11 @@ class ExportSummaryFile(SaveFile):
             varCorrDict.update(self.variableControlCorrDict(self.project.selVariableDicts.hhld))
             varCorrDict.update(self.variableControlCorrDict(self.project.selVariableDicts.gq))
 
-            self.createHousingMarginalsTable(query, varCorrDict.values())
+            self.createHousingMarginalsTable(query, list(varCorrDict.values()))
 
             varCorrDict = self.variableControlCorrDict(self.project.selVariableDicts.person)
 
-            self.createMarginalsTable(query, varCorrDict.values())
+            self.createMarginalsTable(query, list(varCorrDict.values()))
 
             self.createGivenControlTotalColumns(query, self.project.selVariableDicts.hhld)
             self.createGivenControlTotalColumns(query, self.project.selVariableDicts.gq)
@@ -374,7 +374,7 @@ class ExportSummaryFile(SaveFile):
         
             if not query.exec_("""select * from comparison into outfile """
                                """'%s' fields terminated by '%s'""" %(filename, self.fileSep)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
             summaryTableVarDict, summaryTableVars = self.getVariables('comparison', query)
             self.storeMetaData(summaryTableVars, self.folder, 'summary')
@@ -384,12 +384,12 @@ class ExportSummaryFile(SaveFile):
     def createSummaryTables(self, query, synthesisType):
         
         if not query.exec_("""drop table %s_summary """%(synthesisType)):
-            print "FileError:%s" %query.lastError().text()            
+            print("FileError:%s" %query.lastError().text())            
 
         if not query.exec_("""create table %s_summary """
                            """select state, county, tract, bg, sum(frequency) as %s_syn_sum from %s_synthetic_data """
                            """group by state, county, tract, bg""" %(synthesisType, synthesisType, synthesisType)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
     def createHousingMarginalsTable(self, query, housingVars):
@@ -399,20 +399,20 @@ class ExportSummaryFile(SaveFile):
         dummy = dummy[:-1]
 
         if not query.exec_("""drop table housing_marginals"""):
-            print "FileError: %s" %query.lastError().text()            
+            print("FileError: %s" %query.lastError().text())            
 
 
         if not query.exec_("""alter table hhld_marginals add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("""alter table gq_marginals add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
         if not query.exec_("""create table housing_marginals select state, county, tract, bg, %s """
                            """ from hhld_marginals left join gq_marginals using(state, county, tract, bg)"""
                            %dummy):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
     def createMarginalsTable(self, query, persVars):
@@ -422,75 +422,75 @@ class ExportSummaryFile(SaveFile):
         dummy = dummy[:-1]
 
         if not query.exec_("""drop table marginals"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""alter table housing_marginals add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("""alter table person_marginals add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
         if not query.exec_("""create table marginals select housing_marginals.*, %s """
                            """ from housing_marginals left join person_marginals using(state, county, tract, bg)"""
                            %dummy):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
     def createMarginalsSummaryTable(self, query):
         if not query.exec_("""alter table marginals add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("""alter table housing_summary add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("""alter table person_summary add index(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("""drop table summary"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""drop table comparison"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""create table summary select housing_summary.*, person_syn_sum """
                            """ from housing_summary left join person_summary using(state, county,tract, bg)"""):
-            raise FileError, query.lastError().text()        
+            raise FileError(query.lastError().text())        
 
         if not query.exec_("""create table comparison select marginals.*, housing_syn_sum, person_syn_sum """
                            """ from marginals left join summary using(state, county,tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
         
     def variableControlCorrDict(self, vardict):
         varCorrDict = {}
-        vars = vardict.keys()
+        vars = list(vardict.keys())
         for i in vars:
-            for j in vardict[i].keys():
+            for j in list(vardict[i].keys()):
                 cat = (('%s' %j).split())[-1]
                 varCorrDict['%s%s' %(i, cat)] = '%s' %vardict[i][j]
         return varCorrDict
 
     def createGivenControlTotalColumns(self, query, varDict):
-        for i in varDict.keys():
+        for i in list(varDict.keys()):
             if not query.exec_("""alter table marginals add column %s_act_sum bigint"""
                                %(i)):
-                print "FileError: %s" %query.lastError().text()
+                print("FileError: %s" %query.lastError().text())
 
             updateString = ''
-            for j in varDict[i].keys():
+            for j in list(varDict[i].keys()):
                 updateString = updateString + varDict[i][j] + "+"
             updateString = updateString[:-1]
                 
             if not query.exec_("""update marginals set %s_act_sum = %s"""
                                %(i, updateString)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
 
-            for j in varDict[i].keys():
+            for j in list(varDict[i].keys()):
                 if not query.exec_("""alter table marginals drop %s"""
                                    %(varDict[i][j])):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
                 
 
 

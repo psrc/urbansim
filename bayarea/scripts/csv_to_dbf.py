@@ -7,7 +7,7 @@ from opus_core.store.dbf_storage import dbf_storage
 import os, sys
 
 if len(sys.argv) not in (2,3):
-    print "Usage: %s csv_file [dbf_file]" % sys.argv[0]
+    print("Usage: %s csv_file [dbf_file]" % sys.argv[0])
     sys.exit(0)
 
 csv_file = sys.argv[1]

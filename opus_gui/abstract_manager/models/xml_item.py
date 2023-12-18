@@ -67,7 +67,7 @@ class XmlItem(object):
             
         ''' Refreshes this XmlItem's list of child_items. '''
         self.child_items = [i for i in _enumerate_child_items()]
-        map(lambda x: x.rebuild(), self.child_items)
+        list(map(lambda x: x.rebuild(), self.child_items))
 
     def child_item(self, row):
         '''
@@ -77,5 +77,5 @@ class XmlItem(object):
         '''
         try:
             return self.child_items[row]
-        except IndexError, ex:
+        except IndexError as ex:
             return None

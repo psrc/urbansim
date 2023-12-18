@@ -7,7 +7,7 @@ import datetime, time, numpy, re, sys
 import copy
 import MySQLdb
 import pp
-import cPickle as pickle
+import pickle as pickle
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -113,9 +113,9 @@ class RunDialog(QDialog):
 
     def variableControlCorrDict(self, vardict):
         varCorrDict = {}
-        vars = vardict.keys()
+        vars = list(vardict.keys())
         for i in vars:
-            for j in vardict[i].keys():
+            for j in list(vardict[i].keys()):
                 cat = (('%s' %j).split())[-1]
                 varCorrDict['%s%s' %(i, cat)] = '%s' %vardict[i][j]
         return varCorrDict
@@ -147,7 +147,7 @@ class RunDialog(QDialog):
         
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""show tables"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
         
         varCorrDict = {}
@@ -155,8 +155,8 @@ class RunDialog(QDialog):
         hhldDict = copy.deepcopy(self.project.selVariableDicts.hhld)
 
         if self.project.selVariableDicts.hhldMargsModify:
-            for i in hhldDict.keys():
-                for j in hhldDict[i].keys():
+            for i in list(hhldDict.keys()):
+                for j in list(hhldDict[i].keys()):
                     hhldDict[i][j] = 'mod' + hhldDict[i][j]
 
                                 
@@ -169,7 +169,7 @@ class RunDialog(QDialog):
         projectTables = []
         missingTables = []
         missingTablesString = ""
-        while query.next():
+        while next(query):
             projectTables.append('%s' %(query.value(0).toString()))
 
         for i in preprocessDataTables:
@@ -207,7 +207,7 @@ class RunDialog(QDialog):
             else:
                 reply = QMessageBox.No
 
-            if reply <> QMessageBox.Cancel:
+            if reply != QMessageBox.Cancel:
                 
                 scenarioDatabase = '%s%s%s' %(self.project.name, 'scenario', self.project.scenario)
                 for i in self.runGeoIds:
@@ -215,18 +215,18 @@ class RunDialog(QDialog):
                     if not query.exec_("""delete from %s.housing_synthetic_data where state = %s and county = %s """
                                        """ and tract = %s and bg = %s  """ 
                                        %(scenarioDatabase, i[0], i[1], i[3], i[4])):
-                        raise FileError, query.lastError().text()
+                        raise FileError(query.lastError().text())
                     
                     if not query.exec_("""delete from %s.person_synthetic_data where state = %s and county = %s """
                                        """ and tract = %s and bg = %s  """ 
                                        %(scenarioDatabase, i[0], i[1], i[3], i[4])):
-                        raise FileError, query.lastError().text()
+                        raise FileError(query.lastError().text())
                     a = self.project.synGeoIds.pop(i, -99)
 
 
             if reply == QMessageBox.Yes:
-                print '------------------------------------------------------------------'
-                print 'Generating synthetic population in Parallel...'
+                print('------------------------------------------------------------------')
+                print('Generating synthetic population in Parallel...')
 
 
                 dbList = ['%s' %self.project.db.hostname, '%s' %self.project.db.username, '%s' %self.project.db.password, '%s' %self.project.name]
@@ -268,21 +268,21 @@ class RunDialog(QDialog):
                     self.outputWindow.append("Running Syntheiss for geography State - %s, County - %s, Tract - %s, BG - %s"
                                              %(geo.state, geo.county, geo.tract, geo.bg))
                     if self.gqAnalyzed and self.project.selVariableDicts.persControl:
-                        print 'GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED'
+                        print('GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED')
                         demo.configure_and_run(self.project, geo, varCorrDict)
                     if self.gqAnalyzed and not self.project.selVariableDicts.persControl:
-                        print 'GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED'
+                        print('GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED')
                         demo_noper.configure_and_run(self.project, geo, varCorrDict)
                     if not self.gqAnalyzed and self.project.selVariableDicts.persControl:
-                        print 'NO GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED'
+                        print('NO GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED')
                         demo_nogqs.configure_and_run(self.project, geo, varCorrDict)
                     if not self.gqAnalyzed and not self.project.selVariableDicts.persControl:
-                        print 'NO GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED'
+                        print('NO GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED')
                         demo_nogqs_noper.configure_and_run(self.project, geo, varCorrDict)
                     self.project.synGeoIds[(geo.state, geo.county, geo.puma5, geo.tract, geo.bg)] = True                        
-                except Exception, e:
+                except Exception as e:
                     self.outputWindow.append("\t- Error in the Synthesis for geography")
-                    print ('Exception: %s' %e)
+                    print(('Exception: %s' %e))
 
                 # Synthesizing the population for all geographies in parallel after the first one is done in serial
 
@@ -308,12 +308,12 @@ class RunDialog(QDialog):
                     self.outputWindow.append("Running Syntheiss for geography State - %s, County - %s, Tract - %s, BG - %s"
                                              %(geo[0], geo[1], geo[3], geo[4]))
 
-                print 'Completed generating synthetic population'
-                print '------------------------------------------------------------------'
+                print('Completed generating synthetic population')
+                print('------------------------------------------------------------------')
 
             elif reply == QMessageBox.No:
-                print '------------------------------------------------------------------'
-                print 'Generating synthetic population in Series...'
+                print('------------------------------------------------------------------')
+                print('Generating synthetic population in Series...')
 
                 for geo in self.runGeoIds:
                     self.project.synGeoIds[(geo[0], geo[1], geo[2], geo[3], geo[4])] = True
@@ -325,28 +325,28 @@ class RunDialog(QDialog):
 
                     try:
                         if self.gqAnalyzed and self.project.selVariableDicts.persControl:
-                            print 'GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED'
+                            print('GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED')
                             demo.configure_and_run(self.project, geo, varCorrDict)
                         if self.gqAnalyzed and not self.project.selVariableDicts.persControl:
-                            print 'GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED'
+                            print('GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED')
                             demo_noper.configure_and_run(self.project, geo, varCorrDict)
                         if not self.gqAnalyzed and self.project.selVariableDicts.persControl:
-                            print 'NO GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED'
+                            print('NO GQ ANALYZED WITH PERSON ATTRIBUTES CONTROLLED')
                             demo_nogqs.configure_and_run(self.project, geo, varCorrDict)
                         if not self.gqAnalyzed and not self.project.selVariableDicts.persControl:
-                            print 'NO GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED'
+                            print('NO GQ ANALYZED WITH NO PERSON ATTRIBUTES CONTROLLED')
                             demo_nogqs_noper.configure_and_run(self.project, geo, varCorrDict)
-                    except Exception, e:
+                    except Exception as e:
                         self.outputWindow.append("\t- Error in the Synthesis for geography")
-                        print ('Exception: %s' %e)
+                        print(('Exception: %s' %e))
 
                 self.selGeographiesButton.setEnabled(False)
             else:
                 self.runGeoIds = []
                 self.selGeographiesList.clear()
 
-                print 'Completed generating synthetic population'
-                print '------------------------------------------------------------------'
+                print('Completed generating synthetic population')
+                print('------------------------------------------------------------------')
 
     def getPUMA5(self, geo):
         query = QSqlQuery(self.projectDBC.dbc)
@@ -358,14 +358,14 @@ class RunDialog(QDialog):
             elif self.project.resolution == 'Tract':
                 if not query.exec_("""select pumano from geocorr where state = %s and county = %s and tract = %s and bg = 1"""
                                    %(geo.state, geo.county, geo.tract)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     geo.puma5 = query.value(0).toInt()[0]
             else:
                 if not query.exec_("""select pumano from geocorr where state = %s and county = %s and tract = %s and bg = %s"""
                                    %(geo.state, geo.county, geo.tract, geo.bg)):
-                    raise FileError, query.lastError().text()
-                while query.next():
+                    raise FileError(query.lastError().text())
+                while next(query):
                     geo.puma5 = query.value(0).toInt()[0]
 
         return geo
@@ -391,7 +391,7 @@ class RunDialog(QDialog):
                     try:
 
                         if not exists:
-                            raise DummyError, 'skip messagebox'
+                            raise DummyError('skip messagebox')
 
                         self.project.synGeoIds[(geo.state, geo.county, geo.puma5, geo.tract, geo.bg)]
 
@@ -414,7 +414,7 @@ class RunDialog(QDialog):
                             elif reply == QMessageBox.NoToAll:
                                 notoall = True
 
-                    except Exception, e:
+                    except Exception as e:
                         #print e
                         self.runGeoIds.append((geo.state, geo.county, geo.puma5, geo.tract, geo.bg))
                         self.selGeographiesList.addItem(itemText)
@@ -430,7 +430,7 @@ class RunDialog(QDialog):
     def allGeographyids(self):
         query = QSqlQuery(self.projectDBC.dbc)
         allGeoids = {}
-        for i in self.project.region.keys():
+        for i in list(self.project.region.keys()):
             countyName = i
             stateName = self.project.region[i]
             countyText = '%s,%s' %(countyName, stateName)
@@ -443,26 +443,26 @@ class RunDialog(QDialog):
                 if not query.exec_("""select state, county from geocorr where state = %s and county = %s"""
                                    """ group by state, county"""
                                    %(stateCode, countyCode)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             elif self.project.resolution == 'Tract':
                 if not query.exec_("""select state, county, tract from geocorr where state = %s and county = %s"""
                                    """ group by state, county, tract"""
                                    %(stateCode, countyCode)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             else:
                 if not query.exec_("""select state, county, tract, bg from geocorr where state = %s and county = %s"""
                                    """ group by state, county, tract, bg"""
                                    %(stateCode, countyCode)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
         #return a dictionary of all VALID geographies
 
-            STATE, COUNTY, TRACT, BG = range(4)
+            STATE, COUNTY, TRACT, BG = list(range(4))
 
 
             tract = 0
             bg = 0
 
-            while query.next():
+            while next(query):
                 state = query.value(STATE).toInt()[0]
                 county = query.value(COUNTY).toInt()[0]
 
@@ -502,7 +502,7 @@ class RunDialog(QDialog):
             if not self.gqAnalyzed and not self.project.selVariableDicts.persControl:
                 prepare_data_nogqs_noper(db, self.project)
                 pass
-        except KeyError, e:
+        except KeyError as e:
         
             QMessageBox.warning(self, "Run Synthesizer", QString("""Check the <b>hhid, serialno</b> columns in the """
                                                                  """data. If you wish not to synthesize groupquarters, make"""
@@ -536,13 +536,13 @@ class RunDialog(QDialog):
         query = QSqlQuery(self.projectDBC.dbc)
 
         if not query.exec_("alter table %s add index(state, county, tract, bg)" %tablename):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if not query.exec_("alter table %s add column %s bigint" %(tablename, varname)):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
             
         if not query.exec_("update %s set %s = %s" %(tablename, varname, varString)):
-            raise FileError, query.lastError().text()        
+            raise FileError(query.lastError().text())        
 
     def createModHhldTable(self):
         databaseName = self.project.name
@@ -552,25 +552,25 @@ class RunDialog(QDialog):
         query = QSqlQuery(self.projectDBC.dbc)        
 
         if not query.exec_("drop table hhld_marginals_modp"):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("drop table hhld_marginals_modpgq"):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""create table hhld_marginals_modp select hhld_marginals.*, persontotal from hhld_marginals"""
                            """ left join person_marginals using(state, county, tract, bg)"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
         
         if self.gqAnalyzed:
             if not query.exec_("""create table hhld_marginals_modpgq select hhld_marginals_modp.*, gqtotal from hhld_marginals_modp"""
                                """ left join gq_marginals using(state, county, tract, bg)"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
         else:
             if not query.exec_("""create table hhld_marginals_modpgq select * from hhld_marginals_modp"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             
             if not query.exec_("""alter table hhld_marginals_modpgq add column gqtotal bigint default 0"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
 
     def createHhldVarProportions(self):
@@ -582,18 +582,18 @@ class RunDialog(QDialog):
 
         #calculating the proportions
 
-        for i in self.project.selVariableDicts.hhld.keys():
+        for i in list(self.project.selVariableDicts.hhld.keys()):
             sumString = ''
-            for j in self.project.selVariableDicts.hhld[i].values():
+            for j in list(self.project.selVariableDicts.hhld[i].values()):
                 sumString = sumString + j + '+'
             sumString = sumString[:-1]
 
-            for j in self.project.selVariableDicts.hhld[i].values():
+            for j in list(self.project.selVariableDicts.hhld[i].values()):
                 if not query.exec_("""alter table hhld_marginals_modpgq add column p%s float(27)""" %j):
-                    print "FileError: %s" %query.lastError().text()
+                    print("FileError: %s" %query.lastError().text())
 
                 if not query.exec_("""update hhld_marginals_modpgq set p%s = %s/(%s)""" %(j, j, sumString)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
     def calcExtraHhldsToSyn(self):
         databaseName = self.project.name
@@ -607,7 +607,7 @@ class RunDialog(QDialog):
         # PEQ = Person Equivalents
         # PSUM = Proportions Sum
         hhldsizeVarName = self.project.selVariableDicts.hhldSizeVarName
-        vars = self.project.selVariableDicts.hhld['%s' %hhldsizeVarName].values()
+        vars = list(self.project.selVariableDicts.hhld['%s' %hhldsizeVarName].values())
         vars.sort()
 
         hhldsizePEQPString = ''
@@ -625,33 +625,33 @@ class RunDialog(QDialog):
         #print 'hhldsizemod string after - ', hhldsizePEQString + vars[-1]+'*%s' %hhldSize
 
         # this is a makeshift change to modify the marginals distributions
-        print hhldsizePEQPString
+        print(hhldsizePEQPString)
         hhldsizePEQPString = hhldsizePEQPString + '+ p' + vars[-1] +'*%s' %hhldSize
-        print hhldsizePEQPString
+        print(hhldsizePEQPString)
 
 
         hhldsizePSumString = hhldsizePSumString[:-1]
 
         # Creating person equivalents column
         if not query.exec_("""alter table hhld_marginals_modpgq add column perseq bigint"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""update hhld_marginals_modpgq set perseq = %s + gqtotal""" %(hhldsizePEQString)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         # Creating person total deficiency
         if not query.exec_("""alter table hhld_marginals_modpgq add column perstotdef bigint"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""update hhld_marginals_modpgq set perstotdef = persontotal - perseq"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
         
         # Creating the number of deficient household equivalents
         if not query.exec_("""alter table hhld_marginals_modpgq add column hhldeqdef float(27)"""):
-            print "FileError: %s" %query.lastError().text()
+            print("FileError: %s" %query.lastError().text())
 
         if not query.exec_("""update hhld_marginals_modpgq set hhldeqdef = perstotdef/(%s)""" %hhldsizePEQPString):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         #print 'PEQ string', hhldsizePEQString            
         #print 'PEQP String', hhldsizePEQPString
@@ -670,7 +670,7 @@ class RunDialog(QDialog):
         #print self.project.selVariableDicts.hhld.keys()
 
         hhldsizeVar = self.project.selVariableDicts.hhldSizeVarName
-        hhldSizeCats = self.project.selVariableDicts.hhld['%s'%hhldsizeVar].keys()
+        hhldSizeCats = list(self.project.selVariableDicts.hhld['%s'%hhldsizeVar].keys())
 
         numCats = len(hhldSizeCats)
 
@@ -681,16 +681,16 @@ class RunDialog(QDialog):
         
         lastCatMarg = self.project.selVariableDicts.hhld['%s'%hhldsizeVar]['%s'%lastCatKey]
 
-        for i in self.project.selVariableDicts.hhld.keys():
+        for i in list(self.project.selVariableDicts.hhld.keys()):
             sumString = ''
-            for j in self.project.selVariableDicts.hhld[i].values():
+            for j in list(self.project.selVariableDicts.hhld[i].values()):
                 sumString = sumString + j + '+'
             sumString = sumString[:-1]
 
-            for j in self.project.selVariableDicts.hhld[i].values():
+            for j in list(self.project.selVariableDicts.hhld[i].values()):
                 #print ("""alter table hhld_marginals_modpgq add column mod%s float(27)""" %j)
                 if not query.exec_("""alter table hhld_marginals_modpgq add column mod%s float(27)""" %j):
-                    print "FileError: %s" %query.lastError().text()
+                    print("FileError: %s" %query.lastError().text())
 
                 # this is a makeshift change to modify the marginals distributions                   
                 #if j == lastCatMarg and i == hhldsizeVar:
@@ -705,7 +705,7 @@ class RunDialog(QDialog):
 
                 #print ("""update hhld_marginals_modpgq set mod%s = %s + p%s * hhldeqdef""" %(j, j, j))
                 if not query.exec_("""update hhld_marginals_modpgq set mod%s = %s + p%s * hhldeqdef""" %(j, j, j)):
-                    raise FileError, query.lastError().text()        
+                    raise FileError(query.lastError().text())        
 
     def modifyMarginals(self):
         databaseName = self.project.name
@@ -717,19 +717,19 @@ class RunDialog(QDialog):
 
         # Calculating the Person Total
         refPersName = self.project.selVariableDicts.refPersName
-        vars = self.project.selVariableDicts.person['%s' %refPersName].values()
+        vars = list(self.project.selVariableDicts.person['%s' %refPersName].values())
 
         self.addTotalColumn(vars, 'person_marginals', 'persontotal')
 
         # Calculating the groupquarter Total
         if self.gqAnalyzed:
-            refGQName = self.project.selVariableDicts.gq.keys()[0]
-            vars = self.project.selVariableDicts.gq['%s' %refGQName].values()
+            refGQName = list(self.project.selVariableDicts.gq.keys())[0]
+            vars = list(self.project.selVariableDicts.gq['%s' %refGQName].values())
             self.addTotalColumn(vars, 'gq_marginals', 'gqtotal')
         
         # Calculating the household total
         refHhldName = self.project.selVariableDicts.hhldSizeVarName
-        vars = self.project.selVariableDicts.hhld['%s' %refHhldName].values()
+        vars = list(self.project.selVariableDicts.hhld['%s' %refHhldName].values())
 
         self.addTotalColumn(vars, 'hhld_marginals', 'hhldtotal')
 
@@ -754,7 +754,7 @@ class RunDialog(QDialog):
         query = QSqlQuery(self.projectDBC.dbc)
         for i in tables:
             if not query.exec_("""drop table %s""" %i):
-                print "Warning: %s" %query.lastError().text()
+                print("Warning: %s" %query.lastError().text())
 
 
         self.projectDBC.dbc.setDatabaseName(self.project.name)
@@ -765,8 +765,8 @@ class RunDialog(QDialog):
 
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""show tables"""):
-            raise FileError, query.lastError.text()
-        while query.next():
+            raise FileError(query.lastError.text())
+        while next(query):
             tables.append('%s' %query.value(0).toString())
             
         return tables
@@ -779,10 +779,10 @@ class RunDialog(QDialog):
         if self.project.sampleUserProv.userProv == False and self.project.controlUserProv.userProv == False:
             return True
 
-        if self.project.sampleUserProv.userProv == True and self.project.sampleUserProv.gqLocation <> "":
+        if self.project.sampleUserProv.userProv == True and self.project.sampleUserProv.gqLocation != "":
             return True
 
-        if self.project.controlUserProv.userProv == True and self.project.controlUserProv.gqLocation <> "":
+        if self.project.controlUserProv.userProv == True and self.project.controlUserProv.gqLocation != "":
             return True
 
 
@@ -835,15 +835,15 @@ class RunDialog(QDialog):
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 

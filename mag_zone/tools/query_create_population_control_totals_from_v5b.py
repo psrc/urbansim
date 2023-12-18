@@ -20,11 +20,11 @@ new_table_name = 'opus_magZoneV5c_baseYearData_2010_annualHouseholdControlTotals
 
 start_year = 2011
 end_year = 2040
-years = range(start_year, end_year+1)
+years = list(range(start_year, end_year+1))
 
 iteration = 0
 for year in years:
-    print 'year = %s' % year
+    print('year = %s' % year)
     if iteration == 0:
         query = '''
                 SELECT 

@@ -88,11 +88,11 @@ if __name__=="__main__":
             wrong_numbers = [12, 15, 18]
             for wn in wrong_numbers:
                 self.wrong_number = wn
-                print "Wrong number =", self.wrong_number
+                print("Wrong number =", self.wrong_number)
                 power = zeros((len(r), len(levels)))            
                 for ir in range(len(r)):
                     for il in range(len(levels)):
-                        print "r =", r[ir],", level =",levels[il]
+                        print("r =", r[ir],", level =",levels[il])
                         seed(1)
                         for iR in range(R):                   
                             try:
@@ -100,7 +100,7 @@ if __name__=="__main__":
                                                          r[ir], significance_level=levels[il])
                             except:
                                 power[ir,il]=power[ir,il]+1
-                        print "Power:",power[ir,il]/float(R)
-                print power/float(R)
+                        print("Power:",power[ir,il]/float(R))
+                print(power/float(R))
     
     opus_unittest.main() 

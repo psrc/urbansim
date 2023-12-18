@@ -15,7 +15,7 @@ class OpusPythonShell(QTextBrowser):
             self.writefunc = writefunc
         def write( self, line ):
             if line != "\n":
-                map( self.writefunc, line.split("\n") )
+                list(map( self.writefunc, line.split("\n") ))
 
     def __init__( self, parent, cmdline, localdict={} ):
         QTextBrowser.__init__( self, parent )

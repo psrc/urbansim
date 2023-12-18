@@ -45,7 +45,7 @@ class UpdateBindingClass(object):
         pyxb_gen = os.path.join( opus_matsim.lib.__path__[0] , 'pyxbgen')
         # checking if PyXB is available
         if not os.path.exists( pyxb_gen ):
-            raise StandardError('PyXB seems not to be installed on this machine.\nPlease download and install PyXB first. It is available on http://sourceforge.net/projects/pyxb/ (Accessed July 2010).')
+            raise Exception('PyXB seems not to be installed on this machine.\nPlease download and install PyXB first. It is available on http://sourceforge.net/projects/pyxb/ (Accessed July 2010).')
         
         # print status information
         logger.log_status('Found PyXB executable: %s' % pyxb_gen)
@@ -117,7 +117,7 @@ class UpdateBindingClass(object):
         cmd_result = os.system(cmd)
         # checking if some error occurred
         if cmd_result != 0:
-            raise StandardError('Executing command failed! Return code = %i' %cmd_result)
+            raise Exception('Executing command failed! Return code = %i' %cmd_result)
         
         # Now wait 1 sec to finish writing the new generated xml parser
         logger.log_note('Finish writing new generated xml parser ...')
@@ -139,7 +139,7 @@ class UpdateBindingClass(object):
         
         # get current binding class and overwrite with the actual content containing the header
         binding_class = os.path.join(binding_class_destination, self.output_pyxb_package_file)
-        print "Path to generated binding class: %s" % binding_class
+        print("Path to generated binding class: %s" % binding_class)
         # open binding class to add the header
         f = open(binding_class, 'w')
         try:
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                       help="Indicates if this is a test run")
     (options, args) = parser.parse_args()
     
-    print options.xsd_file_name
+    print(options.xsd_file_name)
     
     # default: updates with default xsd on matsim.org
     UpdateBindingClass().run( options.xsd_file_name, None, None, False )

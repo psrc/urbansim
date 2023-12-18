@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_total_residential_value_per_residential_unit_within_walking_distance(Variable):
 

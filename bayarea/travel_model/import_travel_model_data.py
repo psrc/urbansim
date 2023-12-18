@@ -11,7 +11,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import Dataset
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
-import mtc_common
+from . import mtc_common
 
 def to_opus_dataset(df, out_store, table_name):
     data_dict = {}
@@ -48,7 +48,7 @@ def import_travel_model_data(config, year):
     base_dir = mtc_common.tm_get_base_dir(config)
     data_dir = tm_config[year]['data_dir']
 
-    for dataset_name, skim_file in data_to_import.iteritems():
+    for dataset_name, skim_file in data_to_import.items():
         skim_file = os.path.join(base_dir, data_dir, skim_file)
         data = read_csv(skim_file, header=0)
         

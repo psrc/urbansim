@@ -62,7 +62,7 @@ class DatasetJunior(object):
             key = tuple([id_col[row] for id_col in id_cols])#key is the tuple of id cols for the row
             self.row_representation[key] = {}
             
-            for name, attribute_col in attribute_cols.items():
+            for name, attribute_col in list(attribute_cols.items()):
                 self.row_representation[key][name] = attribute_col[row]
                 
     ###### Join methods ######
@@ -87,10 +87,10 @@ class DatasetJunior(object):
     
     def _merge_row_representations(self, primary_representation, representation_to_merge, fill_value):
         '''merges representation_to_merge with primary_representation'''
-        old_value_cols = primary_representation[primary_representation.keys()[0]].keys()
-        new_value_cols = representation_to_merge[representation_to_merge.keys()[0]].keys()
+        old_value_cols = list(primary_representation[list(primary_representation.keys())[0]].keys())
+        new_value_cols = list(representation_to_merge[list(representation_to_merge.keys())[0]].keys())
         
-        for id_tuple in set(primary_representation.keys() + representation_to_merge.keys()):
+        for id_tuple in set(list(primary_representation.keys()) + list(representation_to_merge.keys())):
             if id_tuple not in primary_representation:
                 primary_representation[id_tuple] = self._get_new_value_dict(
                                                         cols = old_value_cols + new_value_cols, 
@@ -107,7 +107,7 @@ class DatasetJunior(object):
         
     def get_columns(self):
         if self.reduced:
-            return self.primary_keys + self.row_representation[self.row_representation.keys()[0]].keys()
+            return self.primary_keys + list(self.row_representation[list(self.row_representation.keys())[0]].keys())
         else:
             return None
         
@@ -119,16 +119,16 @@ class DatasetJunior(object):
         if self.column_representation == {}:
             cols = self.get_columns()
             self.column_representation = dict([(col, []) for col in cols])
-            keys = self.row_representation.keys()
+            keys = list(self.row_representation.keys())
             keys.sort()
             for key in keys:
                 for i in range(len(key)):
                     self.column_representation[self.primary_keys[i]].append(key[i])
                 values = self.row_representation[key]
-                for value_col,value in values.items():
+                for value_col,value in list(values.items()):
                     self.column_representation[value_col].append(value)
             
-            for k,v in self.column_representation.items():
+            for k,v in list(self.column_representation.items()):
                 self.column_representation[k] = array(v)
             
         return self.column_representation
@@ -218,8 +218,8 @@ class DatasetJuniorTests(TestWithAttributeData):
             'opus_core.test.attribute_1980':array([5,6,7,8]),
             'opus_core.test.attribute2_1980':array([50,60,70,80])          
         }
-        self.assertEqual(output.keys(), expected.keys())
-        for k in output.keys():
+        self.assertEqual(list(output.keys()), list(expected.keys()))
+        for k in list(output.keys()):
             self.assertEqual(list(output[k]),list(expected[k]))
         
     def _get_dataset_for_year_with_computed_attributes(self, year):

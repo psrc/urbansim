@@ -52,9 +52,9 @@ class VariableTester(object):
             self.file_path = file_path
         storage = StorageFactory().get_storage('dict_storage')
         self.dataset_pool = DatasetPool(package_order=package_order)
-        for dataset_name, attribute_dict in test_data.iteritems():
+        for dataset_name, attribute_dict in test_data.items():
             storage.write_table(table_name=dataset_name, table_data=attribute_dict)
-        for dataset_name, attribute_dict in test_data.iteritems(): # the two loops are needed because
+        for dataset_name, attribute_dict in test_data.items(): # the two loops are needed because
             dataset = None                                         # of possible dependencies of one dataset on another
             for package in package_order:
                 try: # try to create a specific dataset using given packages
@@ -88,7 +88,7 @@ class VariableTester(object):
                                       in_table_name=dataset_name,
                                       in_storage=storage)
                 except:
-                    raise StandardError, "Error in creating dataset %s." % dataset_name
+                    raise Exception("Error in creating dataset %s." % dataset_name)
             self.dataset_pool._add_dataset(dataset_name, dataset)
 
     def _get_attribute(self, given_variable_name=None):
@@ -109,7 +109,7 @@ class VariableTester(object):
         this tolerance of these should_be values."""
         values = self._get_attribute()
 
-        test_class.assert_(self._allequal(values, should_be),
+        test_class.assertTrue(self._allequal(values, should_be),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -118,7 +118,7 @@ class VariableTester(object):
         this tolerance of these should_be values."""
         values = self._get_attribute()
 
-        test_class.assert_(self._allclose(values, should_be, rtol),
+        test_class.assertTrue(self._allclose(values, should_be, rtol),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -134,7 +134,7 @@ class VariableTester(object):
 
         values = self._get_attribute(variable_name)
 
-        test_class.assert_(self._allequal(values, should_be),
+        test_class.assertTrue(self._allequal(values, should_be),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -148,7 +148,7 @@ class VariableTester(object):
 
         values = self._get_attribute(variable_name)
 
-        test_class.assert_(self._allclose(values, should_be, rtol),
+        test_class.assertTrue(self._allclose(values, should_be, rtol),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 

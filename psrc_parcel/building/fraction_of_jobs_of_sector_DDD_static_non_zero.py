@@ -41,7 +41,7 @@ class Tests(opus_unittest.OpusTestCase):
         values = buildings.compute_variables(self.variable_name, dataset_pool=dataset_pool)
         
         should_be = array([21.1, 0.1, 21.1, 1.2, 40.4, 40.4, 2.3 ])/100.0
-        self.assert_(ma.allclose(values, should_be),
+        self.assertTrue(ma.allclose(values, should_be),
             'Error in ' + self.variable_name)
 
 

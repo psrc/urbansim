@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_employment_within_DDD_minutes_travel_time_hbw_am_drive_alone(Variable):
     """Natural log of employment_within_DDD_minutes_travel_time_hbw_am_drive_alone"""

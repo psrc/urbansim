@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class travel_time_hbw_am_drive_alone_to_cbd(Variable):
     """Travel time to the CBD zone whose ID is the 129.

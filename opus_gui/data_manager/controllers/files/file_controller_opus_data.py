@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from StringIO import StringIO
+from io import StringIO
 
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QModelIndex
 from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAction, QVBoxLayout, QMenu, QCursor
@@ -91,7 +91,7 @@ class FileController_OpusData(FileController):
             tabledata_tmp.append(data.get_attribute(column))
 
         # Transpose the lists
-        tabledata = map(None,*tabledata_tmp)
+        tabledata = list(*tabledata_tmp)
 
         # If the table data is not empty then we display it
         if tabledata:
@@ -176,7 +176,7 @@ class FileController_OpusData(FileController):
 # Disabling editor support for now
 
     def openTextFile(self):
-        print 'openTextFile %s' % self.model.filePath(self.currentIndex)
+        print('openTextFile %s' % self.model.filePath(self.currentIndex))
         pass
 #        print "openTextFile pressed with column = %s and item = %s" % \
 #              (self.currentColumn, self.model.filePath(self.currentIndex))
@@ -388,7 +388,7 @@ class FileController_OpusData(FileController):
                     
                     if len(export_choices) > 0:
                         self.export_dynactions = {}
-                        for export_type,tool_node in export_choices.iteritems():
+                        for export_type,tool_node in export_choices.items():
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.export_dynactions[export_type] = tool_node
@@ -398,7 +398,7 @@ class FileController_OpusData(FileController):
                         
                     if len(import_choices) > 0:
                         self.import_dynactions = {}
-                        for import_type,tool_node in import_choices.iteritems():
+                        for import_type,tool_node in import_choices.items():
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), import_type, self.treeview)
                             self.import_menu.addAction(dynaction)
                             self.import_dynactions[import_type] = tool_node

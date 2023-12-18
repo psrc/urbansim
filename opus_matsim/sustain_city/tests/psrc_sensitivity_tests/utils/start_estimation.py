@@ -36,9 +36,9 @@ if __name__ == '__main__':
     parser = option_group.parser
     (options, args) = parser.parse_args()
     if options.model_name is None:
-        raise StandardError, "Model name (argument -m) must be given."
+        raise Exception("Model name (argument -m) must be given.")
     if (options.configuration_path is None) and (options.xml_configuration is None):
-        raise StandardError, "Configuration path (argument -c) or XML configuration (argument -x) must be given."
+        raise Exception("Configuration path (argument -c) or XML configuration (argument -x) must be given.")
     if (options.specification is None) and (options.xml_configuration is None):
         logger.log_warning("No specification given (arguments -s or -x). Specification taken from the cache.")
     if options.xml_configuration is not None:

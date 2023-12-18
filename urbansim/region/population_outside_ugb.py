@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class population_outside_ugb(Variable):
     """Number of people in region"""

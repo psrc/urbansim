@@ -7,7 +7,7 @@ from opus_core.misc import unique
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class units(Variable):
     """Return the measure of units for the buildings, such as non_residential_sqft or residential units, depending on the the unit_name column of building types. 

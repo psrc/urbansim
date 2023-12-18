@@ -161,12 +161,12 @@ if __name__=='__main__':
         means[ig] = result[:,ig].mean()
         vart[ig] = standard_deviation(sqrt(result[:,ig]))**2.0
         meanst[ig] = sqrt(result[:,ig]).mean()
-    print means
-    print var
-    print sqrt(var)
+    print(means)
+    print(var)
+    print(sqrt(var))
     plot(means,var, 'ro')
     show()
-    print meanst
-    print vart
+    print(meanst)
+    print(vart)
     plot(meanst,vart, 'ro')
     show()

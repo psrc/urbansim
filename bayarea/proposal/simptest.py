@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from bform import BForm
-import submarkets
-import devmdl_optimize
+from .bform import BForm
+from . import submarkets
+from . import devmdl_optimize
 
 pid = -1 # only used for parecl fees
 parcel_size = 2000.0
@@ -51,4 +51,4 @@ prop_comp['vacancy_rates'] = [.005]*5
 
 X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,submarket_pool)
 
-print X, npv
+print(X, npv)

@@ -4,7 +4,7 @@
 
 from numpy import ma
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 
 class building_age(Variable):

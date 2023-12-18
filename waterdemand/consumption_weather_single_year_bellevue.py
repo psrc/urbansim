@@ -25,7 +25,7 @@ from waterdemand.datasets.weather_dataset import WeatherDataset
 # The estimation and simulation runs from a cache.
 # If your data is in MySQL, use create_baseyear_cache first.
 #======================================================================
-print "Create gridcell and water conpsumption dataset from cache directory"
+print("Create gridcell and water conpsumption dataset from cache directory")
 cache_directory = r"C:\tab\bellevue7"
 
 year = 2000
@@ -46,7 +46,7 @@ consumption_type = 'consumption_re'
 
 consumption = SessionConfiguration().get_dataset_from_pool(consumption_type)
 
-print "Create Dataset object for weather"
+print("Create Dataset object for weather")
 
 us_path = waterdemand.__path__[0]
 
@@ -91,7 +91,7 @@ index_est = filter_indices
 #consumption.join(weather, name=weather_attributes, join_attribute="year", 
 #                 metadata=AttributeType.PRIMARY)
 
-print "Create Specification"
+print("Create Specification")
 
 specification = EquationSpecification(
                   variables = 
@@ -116,13 +116,13 @@ specification = EquationSpecification(
                    )
                  )
 
-print "Create a model object"
+print("Create a model object")
 
-years = range(2001, 2003)
+years = list(range(2001, 2003))
 
 # single
 model = RegressionModel()
-print "Estimate coefficients - single"
+print("Estimate coefficients - single")
 coefficients, other_est_results = model.estimate(specification, consumption, 
                     outcome_attribute="waterdemand.%s.sum_demand" % consumption_type,  # if outcome_attribute is opus_core.func.ln(), the simulation results need to take exp()
                     index=index_est, 
@@ -132,7 +132,7 @@ coefficients, other_est_results = model.estimate(specification, consumption,
 
 """Simulate over the set of years."""
 for year in years:  
-    print "\nSimulate water demand %s" % year
+    print("\nSimulate water demand %s" % year)
     SimulationState().set_current_time(year)
     dataset_pool = SessionConfiguration().get_dataset_pool()
     dataset_pool.remove_all_datasets()
@@ -167,7 +167,7 @@ for year in years:
     out_storage = StorageFactory().get_storage(type="tab_storage", storage_location=year_dir)
     
     this_consumption.flush_dataset()
-    print result
+    print(result)
 
 
 
@@ -177,7 +177,7 @@ for year in years:
 
 # Estimate with a multi-year dataset: 
 
-print "Create Specification - multi-year dataset"
+print("Create Specification - multi-year dataset")
 
 specification = EquationSpecification(
                   variables = 
@@ -210,7 +210,7 @@ multi_year_gridcells = MultipleYearDatasetView(
     )
 
 model = RegressionModel()
-print "Estimate coefficients - multi"
+print("Estimate coefficients - multi")
 coefficients, other_est_results = model.estimate(specification, multi_year_gridcells, 
                     outcome_attribute="urbansim.gridcell.industrial_improvement_value",  # if outcome_attribute is opus_core.func.ln(), the simulation results need to take exp()
                     index=index_est, 

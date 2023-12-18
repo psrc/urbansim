@@ -93,7 +93,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
             self.paused = False
             self.runThread.start()
         else:
-            print "Unexpected state in the estimation run..."
+            print("Unexpected state in the estimation run...")
 
     # This is not used currently since the model can not return status... instead we use a timer to
     # check the status from a log file.
@@ -103,7 +103,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
 
     # Called when the model is finished... peg the percentage to 100% and stop the timer.
     def runFinishedFromThread(self,success):
-        print "Estimation Finished with sucess = ", success
+        print("Estimation Finished with sucess = ", success)
         self.progressBar.setValue(100)
         if success:
             self.statusLabel.setText(QString("Estimation finished successfully"))

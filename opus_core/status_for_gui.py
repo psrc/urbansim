@@ -22,7 +22,7 @@ class StatusForGui:
             self.total_number_of_pieces = npieces+leave_pieces
             self.current_piece = 0
             self.pieces_description = concatenate((self.pieces_description[0:leave_pieces], 
-                                                            array(map(lambda x: 'submodel: %s' % x, submodels))))
+                                                            array(['submodel: %s' % x for x in submodels])))
             self.write_status_for_gui()
                     
     def _increment_current_piece(self):

@@ -118,7 +118,7 @@ class SummaryPage(QWizardPage):
         self.projectDesc.setText(self.formatText(self.project.description))
         dummy = ""
         if self.project.region is not None:
-            for i in self.project.region.keys():
+            for i in list(self.project.region.keys()):
                 dummy = dummy + i + ", "+ self.project.region[i]+ "; "
         self.projectRegion.setText(self.formatText("%s"%dummy[:-2]))
 
@@ -178,15 +178,15 @@ class SummaryPage(QWizardPage):
     def checkFileLocation(self, filePath):
         try:
             open(filePath, 'r')
-        except IOError, e:
-            raise IOError, e
+        except IOError as e:
+            raise IOError(e)
 
     def checkProjectLocation(self, projectLocation, projectName):
         try:
             os.makedirs("%s/%s/results" %(projectLocation, projectName))
             self.projectLocationDummy = True
-        except WindowsError, e:
-            print e
+        except WindowsError as e:
+            print(e)
             reply = QMessageBox.question(self, "Project Setup Wizard",
                                          QString("""Cannot create a project folder when the folder already exists. \n\nDo you wish"""
                                                  """ to keep the previous data?"""
@@ -213,7 +213,7 @@ class SummaryPage(QWizardPage):
 
         query = QSqlQuery(projectDBC.dbc)
         if not query.exec_("""Create Database %s""" %(projectName)):
-            print query.lastError().text()
+            print(query.lastError().text())
             reply = QMessageBox.question(self, "Project Setup Wizard",
                                          QString("""Cannot create a MySQL database when the database already exists. \n\n"""
                                                  """Do you wish to keep the old MySQL database?"""
@@ -226,20 +226,20 @@ class SummaryPage(QWizardPage):
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     if not query.exec_("""Drop Database %s""" %(projectName)):
-                        print "FileError: %s" %(query.lastError().text())
+                        print("FileError: %s" %(query.lastError().text()))
                         projectDBC.dbc.close()
                         self.projectDatabaseDummy = False
                     if not query.exec_("""Create Database %s""" %(projectName)):
-                        print "FileError: %s" %(query.lastError().text())
+                        print("FileError: %s" %(query.lastError().text()))
                         projectDBC.dbc.close()
                         self.projectDatabaseDummy = False
 
                     for i in range(5):
                         if not query.exec_("""Drop Database %s%s%s""" %(projectName, 'scenario', str(i + 1))):
-                            print "FileError: %s" %(query.lastError().text())
+                            print("FileError: %s" %(query.lastError().text()))
                             self.projectDatabaseDummy = False
                         if not query.exec_("""Create Database %s%s%s""" %(projectName, 'scenario', str(i + 1))):
-                            print "FileError: %s" %(query.lastError().text())
+                            print("FileError: %s" %(query.lastError().text()))
                             self.projectDatabaseDummy = False
                     projectDBC.dbc.close()
                     self.projectDatabaseDummy = True
@@ -252,7 +252,7 @@ class SummaryPage(QWizardPage):
         else:
             for i in range(5):
                 if not query.exec_("""Create Database %s%s%s""" %(projectName, 'scenario', str(i + 1))):
-                    print "FileError: %s" %(query.lastError().text())
+                    print("FileError: %s" %(query.lastError().text()))
                     self.projectDatabaseDummy = False
             projectDBC.dbc.close()
             self.projectDatabaseDummy = True

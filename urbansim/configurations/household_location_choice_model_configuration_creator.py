@@ -79,12 +79,12 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
             self.chunk_specification = "{'nchunks':%s}" % nchunks
 
         self.run_config = "Resources({'lottery_max_iterations': %s, " % self.lottery_max_iterations
-        for key, value in run_config.iteritems():
+        for key, value in run_config.items():
             self.run_config += "'%s': %s," % (key, value)
         self.run_config += '})'
         
         self.estimate_config = 'Resources({'
-        for key, value in estimate_config.iteritems():
+        for key, value in estimate_config.items():
             self.estimate_config += "'%s': %s," % (key, value)
         self.estimate_config += '})'
         

@@ -26,8 +26,8 @@ class hdf5g_storage(hdf5_storage):
         """
         full_file_name = self._get_file_path()      
         f = h5py.File(full_file_name, 'r')
-        if table_name not in f.keys():
-            raise KeyError, 'Table %s not found in %s.' % (table_name, full_file_name)
+        if table_name not in list(f.keys()):
+            raise KeyError('Table %s not found in %s.' % (table_name, full_file_name))
         result = self._load_columns(f[table_name], column_names, lowercase) 
         f.close()
         return result
@@ -35,8 +35,8 @@ class hdf5g_storage(hdf5_storage):
     def load_meta(self, table_name, column_name=None):
         file_name = self._get_file_path()   
         f = h5py.File(file_name, 'r')
-        if table_name not in f.keys():
-            raise KeyError, 'Table %s not found in %s.' % (table_name, file_name)
+        if table_name not in list(f.keys()):
+            raise KeyError('Table %s not found in %s.' % (table_name, file_name))
         meta = self._get_meta(f[table_name], column_name)
         f.close()
         return meta
@@ -62,8 +62,8 @@ class hdf5g_storage(hdf5_storage):
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
         h5mode = self._get_hdf5mode(mode)
         f = h5py.File(file_name, h5mode, driver=driver)
-        if h5mode == 'a' and table_name in f.keys():
-            raise StandardError, 'File %s already contains table %s. Use mode="w" to overwrite the table.' % (file_name, table_name)
+        if h5mode == 'a' and table_name in list(f.keys()):
+            raise Exception('File %s already contains table %s. Use mode="w" to overwrite the table.' % (file_name, table_name))
         group = f.create_group(table_name)
         self._write_columns(group, column_names, table_data, table_meta, column_meta, **kwargs)
         f.close()
@@ -72,9 +72,9 @@ class hdf5g_storage(hdf5_storage):
     def get_column_names(self, table_name, lowercase=True):
         full_file_name = self._get_file_path()      
         f = h5py.File(full_file_name, 'r')
-        if table_name not in f.keys():
-            raise KeyError, 'Table %s not found in %s.' % (table_name, full_file_name)
-        result = f[table_name].keys()
+        if table_name not in list(f.keys()):
+            raise KeyError('Table %s not found in %s.' % (table_name, full_file_name))
+        result = list(f[table_name].keys())
         if lowercase:
             result = [file.lower() for file in result]
         f.close()
@@ -85,7 +85,7 @@ class hdf5g_storage(hdf5_storage):
         Returns a list of the names of the tables in storage. 
         """    
         f = h5py.File(self._get_file_path() , 'r')
-        result = f.keys()
+        result = list(f.keys())
         f.close()
         return result
     
@@ -93,7 +93,7 @@ class hdf5g_storage(hdf5_storage):
         if not self.base_location_exists():
             return False
         f = h5py.File(self._get_file_path() , 'r')
-        res = table_name in f.keys()
+        res = table_name in list(f.keys())
         f.close()
         return res
     
@@ -101,7 +101,7 @@ class hdf5g_storage(hdf5_storage):
         if not self.base_location_exists():
             return
         f = h5py.File(self._get_file_path())
-        if table_name in f.keys():
+        if table_name in list(f.keys()):
             del f[table_name]
         f.close()   
     

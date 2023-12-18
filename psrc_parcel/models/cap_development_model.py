@@ -77,7 +77,7 @@ class CapDevelopmentModel(TransitionModel):
         ## NOTE: always call compute_variables method on self.control_total_all instead of
         ## self.control_total, because there is a problem with DataSubset to handle index
         
-        if compare_absolute_numbers and ct_geo_id_name <> geo_id_name:
+        if compare_absolute_numbers and ct_geo_id_name != geo_id_name:
             logger.log_warning("ct_geo_id_name should be the same as geo_id_name if comparing absolute numbers. Using %s and %s." % (ct_geo_id_name, geo_id_name))
         
         ct_values = self.control_totals_all.compute_variables(ct_attribute_name, dataset_pool=dataset_pool)

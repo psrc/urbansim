@@ -101,7 +101,7 @@ def readExcelFiles(geographyType="tract",valueType="estimate"):
             if dataFileSize>0:
                 for line in dataFile:
                     # only include San Francisco geographies from data file 
-                    if long(line[25:32]) in range(sfLogrecnoLo,sfLogrecnoHi):
+                    if int(line[25:32]) in range(sfLogrecnoLo,sfLogrecnoHi):
                         # remove periods if they represent numbers (NOT decimal points)
                         #patt = re.compile(r'(?<![0-9])[.](?![0-9])')
                         #dataPeriodRemovedA=re.sub(patt,None,line)
@@ -136,7 +136,7 @@ def readExcelFiles(geographyType="tract",valueType="estimate"):
                     logline="%s\t%d" %(table_name,column_count)
                     logfile.write(logline)
                     logfile.flush()
-                    print logline
+                    print(logline)
                     cursor.execute(tabledef)
                     conn.commit()
                     

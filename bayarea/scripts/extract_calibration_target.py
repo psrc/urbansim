@@ -12,7 +12,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.paths import get_opus_data_path_path
 from opus_core.logger import block
-import cPickle, pickle
+import pickle, pickle
 
 pickle_filename = '/workspace/price_equilibration/dump_cached.pickle'
 pickle_data = pickle.load(open(pickle_filename, 'rb'))

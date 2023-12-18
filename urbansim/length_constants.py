@@ -58,7 +58,7 @@ class UrbanSimLength(object):
         self.value = value
         # catch unit out of bounds errors before they happen
         if not(units < self.constants.num_units and units >= 0):
-            raise StandardError, "Invalid units in UrbanSimLength"
+            raise Exception("Invalid units in UrbanSimLength")
         self.units = units
 
     def less_than(self, other):
@@ -77,7 +77,7 @@ class UrbanSimLength(object):
         elif self.units == self.constants.units_miles:
             converted = (self.value * self.constants.feet_per_mile) / self.constants.feet_per_meter
         else:
-            raise StandardError, "Error: invalid type of units in UrbanSimLength"
+            raise Exception("Error: invalid type of units in UrbanSimLength")
         return converted
         
     """
@@ -95,6 +95,6 @@ class UrbanSimLength(object):
         elif units == self.constants.units_miles :
             converted = length_in_meters * self.constants.feet_per_meter / self.constants.feet_per_mile
         else:
-            raise StandardError, "Error: invalid type of units in UrbanSimLength"
+            raise Exception("Error: invalid type of units in UrbanSimLength")
         return converted
 

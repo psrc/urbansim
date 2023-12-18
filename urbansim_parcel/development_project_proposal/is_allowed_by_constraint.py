@@ -37,7 +37,7 @@ class is_allowed_by_constraint(Variable):
         #i_sort_sort = i_sort.argsort()
         parcel_index = parcels.development_constraints['index'][i_sort].searchsorted(parcel_index)
         constraint_types = unique(constraints.get_attribute("constraint_type"))
-        templates.compute_variables(map(lambda x: "%s.%s" % (self.template_opus_path, x), constraint_types), dataset_pool)
+        templates.compute_variables(["%s.%s" % (self.template_opus_path, x) for x in constraint_types], dataset_pool)
         template_ids = templates.get_id_attribute()
         generic_land_use_type_ids = templates.get_attribute("generic_land_use_type_id")
         proposal_template_ids = proposals.get_attribute("template_id")
@@ -47,7 +47,7 @@ class is_allowed_by_constraint(Variable):
             i_template = templates.get_id_index(this_template_id)
             fit_indicator = (proposal_template_ids == this_template_id )
             building_type_id = generic_land_use_type_ids[i_template]
-            for constraint_type, constraint in parcels.development_constraints[building_type_id].iteritems():                
+            for constraint_type, constraint in parcels.development_constraints[building_type_id].items():                
                 template_attribute = templates.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name           
                 min_constraint = constraint[:, 0][parcel_index].copy() 
                 max_constraint = constraint[:, 1][parcel_index].copy()

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.has_vacant_land import has_vacant_land as gc_has_vacant_land
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_vacant_land(gc_has_vacant_land):
     """Boolean indicating whether the gridcell has vacant land"""

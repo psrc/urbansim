@@ -36,7 +36,7 @@ def main():
     if not options.xml_configuration or \
            not options.years or \
            not options.output:
-        print "ERROR: -x, -y, and -o are required options"
+        print("ERROR: -x, -y, and -o are required options")
         sys.exit(1)
 
     # determine the run_id from the command line args
@@ -45,7 +45,7 @@ def main():
     elif options.cache_directory:
         run_id = hudson_common.run_id_from_cache_dir(options.cache_directory)
         if not run_id:
-            print "Failed to parse run ID from cache directory name"
+            print("Failed to parse run ID from cache directory name")
             sys.exit(1)
     else:
         # get most recent succesful run from DB
@@ -119,18 +119,18 @@ cached data: %s
     cmd = "Rscript %s %s %d %d %s %s %s %s" % (pdf_county_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1],shp_path,"bayarea_counties.shp", scenario, "county")
-    print "Summarizing county indicators: " + cmd
+    print("Summarizing county indicators: " + cmd)
     if os.system(cmd) != 0:
-        print "WARNING: Failed to generate county indicators"
+        print("WARNING: Failed to generate county indicators")
        
     ##superdistrict-level summary report --never mind the name of the script; is en route to being generalized   
     pdf_supdist_script = os.path.join(my_location, "summarize_superdistrict_indicators_map.R")
     cmd = "Rscript %s %s %d %d %s %s %s %s" % (pdf_supdist_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1],shp_path,"superdistricts.shp", scenario, "superdistrict")
-    print "Summarizing superdistrict indicators: " + cmd
+    print("Summarizing superdistrict indicators: " + cmd)
     if os.system(cmd) != 0:
-        print "WARNING: Failed to generate superdistrict indicators"
+        print("WARNING: Failed to generate superdistrict indicators")
 
     
     shutil.copytree(os.path.join(cache_directory, "indicators"),
@@ -142,7 +142,7 @@ cached data: %s
     travel_model = os.getenv("HUDSON_TRAVEL_MODEL")
     travel_model_for_R ="FALSE"
     if travel_model and travel_model.lower() == "full":
-        print "Copying over travel model output"
+        print("Copying over travel model output")
         travel_model_for_R = "TRUE"
         tm_base_dir = mtc_common.tm_get_base_dir(config)
         tm_dir = os.path.join(tm_base_dir, "runs", cache_directory.split(os.sep)[-1])
@@ -158,7 +158,7 @@ cached data: %s
     cmd = "Rscript %s %s %d %d %s %s" % (pda_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1], run_id, scenario)
-    print "Creating pda comparison chart: " + cmd
+    print("Creating pda comparison chart: " + cmd)
     
     
     #Generate county x PDA facet chart
@@ -166,7 +166,7 @@ cached data: %s
     cmd = "Rscript %s %s %d %d %s %s" % (pda_county_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1], run_id, scenario)
-    print "Creating county by pda chart: " + cmd
+    print("Creating county by pda chart: " + cmd)
     
     
     # topsheet--need the EMFAC outputs to be generated first, so this goes last
@@ -175,14 +175,14 @@ cached data: %s
     cmd = "Rscript %s %s %d %d %s %s %s" % (topsheet_script,
                                    os.path.join(cache_directory, "indicators"),
                                    years[0], years[-1], run_id, travel_model_for_R, scenario)
-    print "Creating topsheet: " + cmd
+    print("Creating topsheet: " + cmd)
     if os.system(cmd) != 0:
-        print "WARNING: Failed to generate indicators"
+        print("WARNING: Failed to generate indicators")
 if __name__ == '__main__':
     try:
         main()
-    except Exception, e:
+    except Exception as e:
         tb = traceback.format_exc()
-        print tb
-        print "report generation failed"
+        print(tb)
+        print("report generation failed")
         sys.exit(1)

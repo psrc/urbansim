@@ -37,7 +37,7 @@ def add_headers(r):
 
 def index(request):
     recent_runs = RunActivity.objects.all().order_by('-date_time')
-    recent_run_jsons = map(run_to_dict, recent_runs)
+    recent_run_jsons = list(map(run_to_dict, recent_runs))
     return add_headers(HttpResponse(json.dumps(recent_run_jsons), mimetype="application/json"))
 
 def run(request, run_id):

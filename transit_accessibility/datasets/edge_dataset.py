@@ -50,7 +50,7 @@ class EdgeDataset(UrbansimDataset):
         for i in range(self.size()):
             u = sources[i]; v = targets[i]
             try:
-                (u,v)=map(nodetype,(u,v))
+                (u,v)=list(map(nodetype,(u,v)))
             except:
                 raise TypeError("Failed to convert edge (%s, %s) to type %s"\
                       %(u,v,nodetype))
@@ -105,7 +105,7 @@ class EdgeDataset(UrbansimDataset):
                     (length,path) = list_dijkstra(G, str(orig), valid_targets)
                     for target in valid_targets:
                         index = dest_str.index(target)
-                        if length.has_key(target):
+                        if target in length:
                             result[index] = length[target]
                         else:
                             if not show_progress:
@@ -155,8 +155,7 @@ def list_dijkstra(G,source,target=None):
             vwLength = Dist[v] + G.get_edge(v,w)
             if w in Dist:
                 if vwLength < Dist[w]:
-                    raise ValueError,\
-                          "Contradictory paths found: negative weights?"
+                    raise ValueError("Contradictory paths found: negative weights?")
             elif w not in seen or vwLength < seen[w]:
                 seen[w] = vwLength
                 fringe.append(w) # breadth first search
@@ -189,8 +188,7 @@ def dijkstra_path_length(G,source,target=None):
         try:
             return length[target]
         except KeyError:
-            raise networkx.NetworkXError, \
-                  "node %s not reachable from %s"%(source,target)
+            raise networkx.NetworkXError("node %s not reachable from %s"%(source,target))
 
     return length
 

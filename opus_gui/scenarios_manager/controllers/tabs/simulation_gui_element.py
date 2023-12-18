@@ -118,7 +118,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self.setUpdatesEnabled(True)
 
     def setupDiagnosticIndicatorTab(self):
-        years = range(self.config["years"][0], self.config["years"][1]+1)
+        years = list(range(self.config["years"][0], self.config["years"][1]+1))
         # yearItems is a list of [int, boolean] pairs, where the integer is a year
         #  and the boolean is true if the year has already been added to the drop
         self.yearItems = []
@@ -305,7 +305,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self._init_run(run_name)
             self.runThread.start()
         else:
-            print "Unexpected state in the model run..."
+            print("Unexpected state in the model run...")
 
     def _init_run(self, run_name):
         # Fire up a new thread and run the model
@@ -382,7 +382,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             all_visualizations = self.runThread.batch_processor.get_visualizations()
             for indicator_type, visualizations in all_visualizations:
                 form_generator = None
-                print indicator_type
+                print(indicator_type)
                 if indicator_type == 'mapnik_map' or \
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.managers['results_manager'].addViewImageIndicator

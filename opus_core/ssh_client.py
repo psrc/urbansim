@@ -4,7 +4,7 @@
 
 import tempfile
 import os
-from urlparse import urlparse
+from urllib.parse import urlparse
 from shutil import rmtree
 from opus_core.logger import logger
 
@@ -116,7 +116,7 @@ class ssh_paramiko(ssh_client):
         ssh_client.__init__(self, ssh_url=ssh_url, ssh_server_config=ssh_server_config)
         
         if not paramiko:
-            raise ImportError, 'Error importing paramiko.'
+            raise ImportError('Error importing paramiko.')
         
         self.client_type = 'paramiko'        
         self.ssh = paramiko.SSHClient()
@@ -160,7 +160,7 @@ class ssh_paramiko(ssh_client):
         if len(stderr_msg) > 0:
             logger.log_error("Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
             if raise_at_error:
-                raise RuntimeError, "Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg)
+                raise RuntimeError("Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
     
         results = stdout.readlines()
         if len(results)==1:
@@ -226,9 +226,9 @@ class ssh_plink(ssh_client):
             #self.pscp = self.pscp[0].strip()
         
         if not self.plink:
-            raise RuntimeError, "plink.exe cannot be found in the current directory or in paths in the PATH environment variable."       
+            raise RuntimeError("plink.exe cannot be found in the current directory or in paths in the PATH environment variable.")       
         if not self.pscp:
-            raise RuntimeError, "plink.exe cannot be found in the current directory or in paths in the PATH environment variable."
+            raise RuntimeError("plink.exe cannot be found in the current directory or in paths in the PATH environment variable.")
         self.client_type = 'plink'
         
     def _write_cmd_string_to_temp_file(self, cmd):
@@ -255,7 +255,7 @@ class ssh_plink(ssh_client):
         if len(stderr_msg) > 0:
             logger.log_error("Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
             if raise_at_error:
-                raise RuntimeError, "Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg)
+                raise RuntimeError("Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg))
     
         results = stdout.readlines()
         if len(results)==1:

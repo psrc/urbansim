@@ -128,7 +128,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
 
             assert(by_value.size==data_array.size)
 
-            for item in show_values.iteritems():
+            for item in show_values.items():
                 if type(item) == tuple:
                     value, description = item
                     description_str = "(%s)" % description

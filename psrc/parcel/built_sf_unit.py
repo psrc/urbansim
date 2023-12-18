@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import ma
 from numpy import float32
 
@@ -61,7 +61,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([500, 0, 2000, 250, 1000])
         
-        self.assert_(ma.allclose(values, should_be),
+        self.assertTrue(ma.allclose(values, should_be),
             'Error in ' + self.variable_name)
 
 

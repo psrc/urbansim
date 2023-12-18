@@ -7,11 +7,11 @@ from numpy import array, float32, ones
 import os, sys, time
 from opus_core.logger import logger
 from travel_model.models.run_travel_model import RunTravelModel
-from run_transcad_macro import run_transcad_macro
+from .run_transcad_macro import run_transcad_macro
 import win32pdhutil, win32api, win32process
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-from set_project_ini_file import set_project_ini_file, get_project_year_dir
+from .set_project_ini_file import set_project_ini_file, get_project_year_dir
 
 class RunSemcogTravelModel(RunTravelModel):
     """Run the travel model.
@@ -81,7 +81,7 @@ class RunSemcogTravelModel(RunTravelModel):
                     win32process.TerminateProcess(pid)
                 start_program = True
             except:
-                raise RuntimeError, "Unable to kill TransCAD process in memory"
+                raise RuntimeError("Unable to kill TransCAD process in memory")
             
         ##transcad not started, try to start it
         if start_program:

@@ -97,7 +97,7 @@ class ExpectedDataTest(opus_unittest.OpusTestCase):
                                 % (count, total, count*1.0/total))
             
             #self.assert_(ma.allclose(lc_values.sum(), expected_values.sum(), atol=sum_atol))
-            self.assert_(ma.allclose(lc_values, expected_values, atol=element_atol))
+            self.assertTrue(ma.allclose(lc_values, expected_values, atol=element_atol))
         finally:
             if os.path.exists(temp_dir):
                 rmtree(temp_dir)

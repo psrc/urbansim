@@ -63,11 +63,11 @@ class Converter(object):
 
     def write(self, text):
         if not self.quiet:
-            print text
+            print(text)
 
     def verbose_write(self, text):
         if self.verbose and not self.quiet:
-            print text
+            print(text)
 
     def execute(self):
         self.counter_successful = 0
@@ -84,7 +84,7 @@ class Converter(object):
                 action_function()
                 self.successfuls.append('%s: %s' % (action_docstring, action_object))
                 self.verbose_write('[OK] %s: %s' % (action_docstring, action_object))
-            except Exception, ex:
+            except Exception as ex:
                 self.warnings.append('%s: %s' % (ex, action_object))
                 self.verbose_write('[Warning] %s: %s\n    %s' % (action_docstring, action_object, ex))
         # print summary
@@ -145,7 +145,7 @@ class Converter(object):
     def action_change_node_attrib(self, node, attr_dict):
         '''Change node attributes'''
         # deletes the attribute if the value for an attribute is None
-        for key, value in attr_dict.items():
+        for key, value in list(attr_dict.items()):
             if value is None:
                 if key in node.attrib:
                     del node.attrib[key]
@@ -565,7 +565,7 @@ class Converter(object):
         variables_nodes = self.root.findall(".//*[@type='variable_list']")
         for variables_node in variables_nodes:
             self.add_action(self.action_change_node_tag, variables_node, 'variable_list')
-            selected_variables = filter(lambda x:x, [x.strip() for x in (variables_node.text or '').split(',')])
+            selected_variables = [x for x in [x.strip() for x in (variables_node.text or '').split(',')] if x]
             for variable in selected_variables:
                 name = 'constant' if variable == 'constant' else ('.%s' % variable)
                 attrib = {'name': name}
@@ -633,9 +633,9 @@ if __name__ == '__main__':
     # ensure we got a valid filename from the user
     valid_file = False
     if not os.path.exists(filename):
-        print 'File "%s" does not exists' % filename
+        print('File "%s" does not exists' % filename)
     elif not os.path.isfile(filename):
-        print '"%s" is not a file' % filename
+        print('"%s" is not a file' % filename)
     else:
         valid_file = True
     if not valid_file:
@@ -646,10 +646,10 @@ if __name__ == '__main__':
         c.open_xml_file(filename)
         c.complete_check()
         c.execute()
-    except SyntaxError, ex:
-        print '\nSyntax Error while parsing file %s.\n%s\n' % (filename, ex)
-    except IOError, ex:
-        print '\nFile Error while parsing file %s.\n%s' % (filename, ex)
+    except SyntaxError as ex:
+        print('\nSyntax Error while parsing file %s.\n%s\n' % (filename, ex))
+    except IOError as ex:
+        print('\nFile Error while parsing file %s.\n%s' % (filename, ex))
     # except Exception, ex:
     #     print '\nUnexpected Error while reading the file.\n%s' % ex
     finally:
@@ -664,15 +664,15 @@ if __name__ == '__main__':
             overwrite = ''
             while overwrite.lower() not in ['y', 'n', 'yes', 'no']:
                 try:
-                    overwrite = raw_input('The file "%s" already exists. Overwrite? (y/n): ' % outfile)
+                    overwrite = input('The file "%s" already exists. Overwrite? (y/n): ' % outfile)
                 except KeyboardInterrupt:
                     overwrite = 'n'
             if overwrite in ['n', 'no']:
                 sys.exit(1)
         try:
             tree.write(outfile)
-            print 'Wrote changes to %s' %outfile
-        except Exception, ex:
-            print 'An error occured while trying to save the file. Changes not saved.\n%s' % ex
+            print('Wrote changes to %s' %outfile)
+        except Exception as ex:
+            print('An error occured while trying to save the file. Changes not saved.\n%s' % ex)
     finally:
         pass

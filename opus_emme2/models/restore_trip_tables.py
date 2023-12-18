@@ -5,7 +5,7 @@
 import os 
 import shutil
 from opus_core.resources import Resources
-from abstract_emme2_travel_model import AbstractEmme2TravelModel
+from .abstract_emme2_travel_model import AbstractEmme2TravelModel
 
 class RestoreTripTables(AbstractEmme2TravelModel):
     """Copy original trip tables to the 'triptabs' directory of the travel model.

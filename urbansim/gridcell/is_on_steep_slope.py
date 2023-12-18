@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_on_steep_slope(Variable):
     """A boolean indicating whether or not this gridcell is on a steep slope"""

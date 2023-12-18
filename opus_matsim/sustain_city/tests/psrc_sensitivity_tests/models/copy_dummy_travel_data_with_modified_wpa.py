@@ -76,7 +76,7 @@ class CopyDummyTravelDataWithModWPA(CopyDummyTravelData):
             row = line.split(',')
             # consistency check
             if len(row) != number_of_colums:
-                raise StandardError('Error in number of colums: %s' %row)
+                raise Exception('Error in number of colums: %s' %row)
             
             zone_id = int(row[index_zone_id].strip('\r\n'))
             

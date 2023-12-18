@@ -15,5 +15,5 @@ if __name__ == "__main__":
     lc =  LandCoverDataset(in_storage = StorageFactory().get_storage("flt_storage", storage_location = flt_directory))
     lc.summary()
     for attr in lc.get_attribute_names():
-        print attr
+        print(attr)
         lc.plot_map(attr, main=attr)

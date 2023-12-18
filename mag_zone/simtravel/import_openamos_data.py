@@ -63,18 +63,18 @@ def to_opus_dataset(df, out_store, table_name, zone_id_offset=100):
 @log_block()
 def import_openamos_data(config, year, zone_set=None):
     tm_config = config['travel_model_configuration']
-    if tm_config.has_key('skim_dir'):
+    if 'skim_dir' in tm_config:
         skim_dir = tm_config.get('skim_dir')
     else:
         projectLoc = tm_config.get("project_path")
 
         #openamos_dir = tm_config[year]
         #skim_dir = "/workspace/workdata/SimTRAVEL_data/base_scenario/skims/bootstrap/"
-        print "--->", projectLoc
+        print("--->", projectLoc)
         skim_dir = os.path.join(projectLoc, "skimOutput/dynamic")
     logger.log_status('Reading skims from {}'.format(skim_dir))
     skim_files = glob.glob(os.path.join(skim_dir, "skim*.dat"))
-    print skim_files
+    print(skim_files)
     skims = None
     """
     for skim_file in skim_files:
@@ -145,7 +145,7 @@ class Tests(opus_unittest.OpusTestCase):
             return
         tmp_dir = tempfile.mkdtemp(prefix='urbansim_tmp')
         output_dir = tmp_dir
-        print output_dir
+        print(output_dir)
         year = 1999
         config = {'travel_model_configuration': {year: openamos_dir, 'skim_dir': openamos_dir,},
                   'cache_directory': output_dir,

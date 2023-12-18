@@ -183,7 +183,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Check which manager the tab belongs to and ask it to close the tab
         # TODO maybe implement a generic tab element that knows which parent
         # it belongs to?
-        for manager in self.managers.values():
+        for manager in list(self.managers.values()):
             if widget in manager.tab_widgets:
                 manager.close_tab(widget)
                 break
@@ -239,7 +239,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def showHidden(self):
         self.shows_hidden = not self.shows_hidden
-        for manager in self.managers.values():
+        for manager in list(self.managers.values()):
             manager.xml_controller.rebuild()
 
     def update_saved_state(self, force_dirty = False):
@@ -433,7 +433,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         ''' Closes the current project. '''
         if not self.okToCloseProject(): return
 
-        for manager in self.managers.values():
+        for manager in list(self.managers.values()):
             manager.close()
 
         self.project.close()
@@ -489,10 +489,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         omit.extend(omit2)
 
         widgetChildren = self.findChildren(QWidget)
-        filter(lambda widge: widge not in menuActionFontSizeFamily and
+        [widge for widge in widgetChildren if widge not in menuActionFontSizeFamily and
                 widge not in menuFontSizeFamily and
-                widge not in mainTabsFontSizeFamily,
-                widgetChildren)
+                widge not in mainTabsFontSizeFamily]
 
         def fontSizeChange(qw, fontsize):
             qw.font().setPointSize(fontsize)
@@ -502,13 +501,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             except:
                 return
 
-        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['general']),
-            widgetChildren)
-        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['menu']),
-            menuFontSizeFamily)
-        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
-            menuActionFontSizeFamily)
-        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
-            mainTabsFontSizeFamily)
+        list(map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['general']),
+            widgetChildren))
+        list(map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['menu']),
+            menuFontSizeFamily))
+        list(map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
+            menuActionFontSizeFamily))
+        list(map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
+            mainTabsFontSizeFamily))
         self.updateGeometry()
         self.update()

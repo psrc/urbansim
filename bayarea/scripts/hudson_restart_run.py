@@ -36,8 +36,7 @@ def main(option_group=None, args=None):
     cache_dir = run_resources['cache_directory']
     if not year:
         # guess the year based on how the cache dir is populated
-        years = map(lambda y : int(os.path.basename(y)),
-                    glob.glob(os.path.join(cache_dir, "2*")))
+        years = [int(os.path.basename(y)) for y in glob.glob(os.path.join(cache_dir, "2*"))]
         year = max(years)
 
     end_year = int(options.end_year) if options.end_year is not None else None

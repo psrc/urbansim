@@ -64,5 +64,5 @@ if __name__ == '__main__':
     from indicator_config import config
     from urbansim.indicators.indicator_factory import IndicatorFactory
     
-    config['years'] = range(2000,2001)    
+    config['years'] = list(range(2000,2001))    
     IndicatorFactory().create_indicators(config, get_multiple_year_indicators(config))

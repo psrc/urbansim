@@ -42,7 +42,7 @@ class TravelModelOutput(ParentTravelModelOutput):
         travel_data_set.load_dataset_if_not_loaded()
         max_zone_id = zone_set.get_id_attribute().max()
 
-        for matrix_name in matrix_attribute_name_map.keys():
+        for matrix_name in list(matrix_attribute_name_map.keys()):
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
                                                      matrix_attribute_name_map[matrix_name], **kwargs)
         return travel_data_set
@@ -62,7 +62,7 @@ class TravelModelOutput(ParentTravelModelOutput):
                 use_postfix = postfix
                 break
         if use_postfix is None:
-            raise IOError, "Skim %s not available in %s" % (matrix_name, path)
+            raise IOError("Skim %s not available in %s" % (matrix_name, path))
         try:
             file_contents = self._get_emme2_data_from_file(os.path.join(path, "mf%s.%s" % (matrix_name, use_postfix)))                      
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 

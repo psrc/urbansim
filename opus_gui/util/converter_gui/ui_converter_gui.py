@@ -251,4 +251,4 @@ class Ui_ConverterGui(object):
         self.pb_save.setText(QtGui.QApplication.translate("ConverterGui", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_save.setShortcut(QtGui.QApplication.translate("ConverterGui", "Ctrl+K", None, QtGui.QApplication.UnicodeUTF8))
 
-import resources_rc
+from . import resources_rc

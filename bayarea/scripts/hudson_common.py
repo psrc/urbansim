@@ -20,8 +20,8 @@ def mount_cache_dir(run_resources):
     node_name = os.getenv("NODE_NAME")
     if not node_name:
         node_name = socket.gethostname()
-        print "WARNING: NODE_NAME environment variable not set."
-        print "Assuming hudson node name equals hostname!"
+        print("WARNING: NODE_NAME environment variable not set.")
+        print("Assuming hudson node name equals hostname!")
     try:
         original_node = run_resources['hudson_details']['node']
         if not original_node:
@@ -64,5 +64,5 @@ def run_id_from_cache_dir(c):
         run_id = c.split(os.sep)[-1].split('.')[0].split('_')[1]
         return run_id
     except:
-        print "Failed to parse run ID from cache directory name"
+        print("Failed to parse run ID from cache directory name")
         return None

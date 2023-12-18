@@ -90,7 +90,7 @@ class weighted_sampler(Sampler):
                                "nor a simple variable from the choice dataset "
                                "nor an interaction variable: '%s'" % weight)
                     logger.log_error(err_msg)
-                    raise ValueError, err_msg
+                    raise ValueError(err_msg)
         elif isinstance(weight, ndarray):
             rank_of_weight = weight.ndim
         elif not weight:  ## weight is None or empty string
@@ -99,9 +99,9 @@ class weighted_sampler(Sampler):
         else:
             err_msg = "unkown weight type"
             logger.log_error(err_msg)
-            raise TypeError, err_msg
+            raise TypeError(err_msg)
 
-        if (weight.size <> index2.size) and (weight.shape[rank_of_weight-1] <> index2.size):
+        if (weight.size != index2.size) and (weight.shape[rank_of_weight-1] != index2.size):
             if weight.shape[rank_of_weight-1] == choice.size():
                 if rank_of_weight == 1:
                     weight = take(weight, index2)
@@ -110,7 +110,7 @@ class weighted_sampler(Sampler):
             else:
                 err_msg = "weight array size doesn't match to size of dataset2 or its index"
                 logger.log_error(err_msg)
-                raise ValueError, err_msg
+                raise ValueError(err_msg)
 
         prob = normalize(weight)
 
@@ -246,11 +246,11 @@ class Test(opus_unittest.OpusTestCase):
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]]
-                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
             
-            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
-            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+            self.assertTrue( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assertTrue( all(not_equal(weight[sampled_index], 0.0)) )
 
     def test_2d_weight_array(self):
         #2d weight
@@ -281,13 +281,13 @@ class Test(opus_unittest.OpusTestCase):
                 chosen_choice_index = resize(array([UNPLACED_ID], dtype=DTYPE), index1.shape)
                 w = where(chosen_choices>=0)[0]
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]]
-                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
                 
-            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assertTrue( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
 
             for j in range(sample_size):
-                self.assert_( all(not_equal(weight[j, sampled_index[j,:]], 0.0)) )
+                self.assertTrue( all(not_equal(weight[j, sampled_index[j,:]], 0.0)) )
 
 if __name__ == "__main__":
     opus_unittest.main()

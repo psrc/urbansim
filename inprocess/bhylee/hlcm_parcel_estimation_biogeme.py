@@ -46,7 +46,7 @@ run_configuration["models"] = [
 ]
 
 if __name__ == '__main__':
-    from my_estimation_config import my_configuration
+    from .my_estimation_config import my_configuration
     from urbansim.estimation.estimator import Estimator
     from urbansim.estimation.estimator import update_controller_by_specification_from_module
 

@@ -22,7 +22,7 @@ class DevelopmentEventTransitionModel(Model):
         grid_ids_by_project_type = {}
         for project_type in types:
             grid_ids_by_project_type[project_type] = array([], dtype=int32)
-            if projects[project_type] <> None:
+            if projects[project_type] != None:
                 grid_ids_by_project_type[project_type] = projects[project_type].get_attribute(location_id_name)
             grid_ids_for_any_project = unique(concatenate((grid_ids_for_any_project, 
                                                                   grid_ids_by_project_type[project_type])))
@@ -79,7 +79,7 @@ class DevelopmentEventTransitionModel(Model):
         """
         # argument check
         if development_models is not None and models_configuration is None:
-            raise StandardError('Configurations that pass a list of development'
+            raise Exception('Configurations that pass a list of development'
                                 ' models (argument: "development_models") must '
                                 'also pass a reference to the entire models '
                                 'configuration (argument: "models_'

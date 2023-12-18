@@ -42,7 +42,7 @@ class time_space_prism_query(Variable):
         
         #zone_ids = zones.get_id_attribute()
         zone_ids = unique(travel_data["from_zone_id"])
-        print dir(dataset)
+        print(dir(dataset))
         results = zeros((dataset.size(), zone_ids.max()+1), dtype='bool')        
         for zone in zone_ids:
             tmp_zone = zone * ones(from_zone.shape, dtype="int32")
@@ -88,4 +88,4 @@ if __name__=='__main__':
     t = Tests()
     t.setUp()
     t.test_compute()
-    print time.time() - t0
+    print(time.time() - t0)

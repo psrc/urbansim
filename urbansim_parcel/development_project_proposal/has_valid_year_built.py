@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim_parcel.building.has_valid_year_built import has_valid_year_built as building_has_valid_year_built
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_valid_year_built(building_has_valid_year_built):
     """If proposals have valid start_year or not."""

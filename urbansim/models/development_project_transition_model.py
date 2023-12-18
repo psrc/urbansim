@@ -64,7 +64,7 @@ class DevelopmentProjectTransitionModel( Model ):
         """
         # check that we get the correct arguments
         if development_models is not None and models_configuration is None:
-            raise StandardError('Configurations that pass a list of development'
+            raise Exception('Configurations that pass a list of development'
                                 ' models (argument: "development_models") must '
                                 'also pass a reference to the entire models '
                                 'configuration (argument: "models_'
@@ -243,7 +243,7 @@ class DPTMTests(StochasticTestCase):
             table_name='households',
             table_data={
                 "household_id":arange( 1, 10000+1 ),
-                "grid_id":array( 100*range( 1, 100+1 ) )
+                "grid_id":array( 100*list(range( 1, 100+1)) )
                 }
             )
         self.storage.write_table(
@@ -263,7 +263,7 @@ class DPTMTests(StochasticTestCase):
             table_name='jobs',
             table_data={
                 "job_id":arange( 1, 2500+1 ),
-                "grid_id":array( 25*range( 1, 100+1 ) ),
+                "grid_id":array( 25*list(range( 1, 100+1)) ),
                 "sector_id":array( 2500*[1] ),
                 "home_based":array( 2500*[0] ),
                 "building_type":array(2500*[Constants._commercial_code])
@@ -485,7 +485,7 @@ class DPTMTests(StochasticTestCase):
             storage.write_table(
                 table_name='development_event_history',
                 table_data={
-                    "grid_id":array( 10*range( 1, 100+1 ) ),
+                    "grid_id":array( 10*list(range( 1, 100+1)) ),
                     "scheduled_year":array( 1000*[1999] ),
 
                     "residential_units":array( 1000*[50] ),
@@ -517,14 +517,14 @@ class DPTMTests(StochasticTestCase):
                 table_name='households',
                 table_data={
                     "household_id":arange( 1, 10000+1 ),
-                    "grid_id":array( 100*range( 1, 100+1 ) )
+                    "grid_id":array( 100*list(range( 1, 100+1)) )
                     }
                 )
             storage.write_table(
                 table_name='jobs',
                 table_data={
                     "job_id":arange( 1, 2500+1 ),
-                    "grid_id":array( 25*range( 1, 100+1 ) ),
+                    "grid_id":array( 25*list(range( 1, 100+1)) ),
                     "sector_id":array( 2500*[1] ),
                     "home_based":array( 2500*[0] ),
                     "building_type":array( 2500*[Constants._industrial_code] )
@@ -582,7 +582,7 @@ class DPTMTests(StochasticTestCase):
         storage.write_table(
             table_name='development_event_history',
             table_data={
-                "grid_id":array( 10*range( 1, 100+1 ) ),
+                "grid_id":array( 10*list(range( 1, 100+1)) ),
                 "scheduled_year":array( 1000*[1999] ),
 
                 "residential_units":array( 1000*[50] ),
@@ -614,14 +614,14 @@ class DPTMTests(StochasticTestCase):
             table_name='households',
             table_data={
                 "household_id":arange( 1, 10000+1 ),
-                "grid_id":array( 100*range( 1, 100+1 ) )
+                "grid_id":array( 100*list(range( 1, 100+1)) )
             }
         )
         storage.write_table(
             table_name='jobs',
             table_data={
                 "job_id":arange( 1, 5000+1 ),
-                "grid_id":array( 50*range( 1, 100+1 ) ),
+                "grid_id":array( 50*list(range( 1, 100+1)) ),
                 "sector_id":array( 5000*[1] ),
                 "home_based":array( 5000*[0] ),
                 "building_type":array( 2500*[Constants._industrial_code]

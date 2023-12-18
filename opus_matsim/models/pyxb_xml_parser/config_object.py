@@ -32,7 +32,7 @@ class MATSimConfigObject(object):
             self.check_abolute_path( common_matsim_part['matsim_network_file'] )
             self.network_file = paths.get_opus_home_path( common_matsim_part['matsim_network_file'] )
         else:
-            raise StandardError('No network given in the  "travel_model_configuration" of your current configuration file. A network is required in order to run MATSim. ')
+            raise Exception('No network given in the  "travel_model_configuration" of your current configuration file. A network is required in order to run MATSim. ')
         self.sub_config_exists = False
         
         # input plans file parameter
@@ -103,7 +103,7 @@ class MATSimConfigObject(object):
         """ raises an exception if an absolute path is given
         """
         if(path.startswith('/')):
-            raise StandardError('Absolute path names are not supported by now! Check: %s' %path)
+            raise Exception('Absolute path names are not supported by now! Check: %s' %path)
     
     def checkAndCreateFolder(self, path):
         if not os.path.exists(path):

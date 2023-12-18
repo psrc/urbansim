@@ -15,7 +15,7 @@ from numpy import ones, zeros
 from numpy import histogram
 from scipy import sparse
 from scipy import poly1d
-import adjusting_sample_joint_distribution as adjusting_sample_joint_distribution
+from . import adjusting_sample_joint_distribution as adjusting_sample_joint_distribution
 
 def populate_master_matrix(db, pumano, hhld_units, hhld_dimensions, person_dimensions):
 # First we create an empty matrix based on the dimensions of the hhhld, and person control variables
@@ -155,14 +155,14 @@ if __name__ == '__main__':
     adjusting_sample_joint_distribution.add_unique_id(db, 'person', update_string)
 
     ti = time.clock()
-    print 'start - %s'%ti
+    print('start - %s'%ti)
     populated_matrix = populate_master_matrix(db, pumano, sample_size, hhld_dimensions, person_dimensions)
-    print 'End Populated matrix - %s'%(time.clock()-ti)
+    print('End Populated matrix - %s'%(time.clock()-ti))
 
 
     ti = time.clock()
     ps_sp_matrix = psuedo_sparse_matrix(db, populated_matrix, pumano)
-    print 'Psuedo Sparse Matrix- %s'%(time.clock()-ti)
+    print('Psuedo Sparse Matrix- %s'%(time.clock()-ti))
 
 
     index = generate_index_matrix(db, 0)

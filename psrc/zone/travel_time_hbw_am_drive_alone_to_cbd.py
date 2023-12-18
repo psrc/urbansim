@@ -4,7 +4,7 @@
 
 from numpy import minimum
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class travel_time_hbw_am_drive_alone_to_cbd(Variable):
     """Minimum travel time to CBD zones.

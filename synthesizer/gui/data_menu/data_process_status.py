@@ -3,13 +3,13 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from pums_data import AutoImportPUMS2000Data, AutoImportPUMSACSData, UserImportSampleData
-from sf_data import AutoImportSF2000Data, AutoImportSFACSData, UserImportControlData
-from geocorr_data import AutoImportGeocorrData, UserImportGeocorrData
-from shape_data import Shapes
+from .pums_data import AutoImportPUMS2000Data, AutoImportPUMSACSData, UserImportSampleData
+from .sf_data import AutoImportSF2000Data, AutoImportSFACSData, UserImportControlData
+from .geocorr_data import AutoImportGeocorrData, UserImportGeocorrData
+from .shape_data import Shapes
 from misc.errors import FileError
 
 
@@ -77,7 +77,7 @@ class DataDialog(QDialog):
         layout.addWidget(self.controlGroupBox)
 
 
-        if self.project.resolution <> 'TAZ':
+        if self.project.resolution != 'TAZ':
             self.RegionShapeLayout = CheckLabel("f. Processing regional shape files", "incomplete")
             layout4 = QVBoxLayout()
             layout4.addLayout(self.RegionShapeLayout)
@@ -109,7 +109,7 @@ class DataDialog(QDialog):
                 self.sample()
             if self.controlGroupBox.isChecked():
                 self.control()
-            if self.project.resolution <> 'TAZ':
+            if self.project.resolution != 'TAZ':
                 if self.shapesGroupBox.isChecked():
                     self.shapes()
 
@@ -122,8 +122,8 @@ class DataDialog(QDialog):
         try:
             shapesDataInstance.downloadShapes()
             self.RegionShapeLayout.changeStatus(True)
-        except Exception, e:
-            print "Exception: %s" %e
+        except Exception as e:
+            print("Exception: %s" %e)
             self.RegionShapeLayout.changeStatus(False)
 
 
@@ -136,8 +136,8 @@ class DataDialog(QDialog):
             try:
                 importGeocorrInstance.createGeocorrTable()
                 self.GeocorrHousingLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.GeocorrHousingLayout.changeStatus(False)
 
         else:
@@ -146,8 +146,8 @@ class DataDialog(QDialog):
             try:
                 importGeocorrInstance.createGeocorrTable()
                 self.GeocorrHousingLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.GeocorrHousingLayout.changeStatus(False)
         importGeocorrInstance.projectDBC.dbc.close()
 
@@ -161,15 +161,15 @@ class DataDialog(QDialog):
                 self.importSampleInstance.createHhldTable()
                 self.importSampleInstance.createGQTable()
                 self.SampleHousingLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.SampleHousingLayout.changeStatus(False)
             # Person Sample
             try:
                 self.importSampleInstance.createPersonTable()
                 self.SamplePersonLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.SamplePersonLayout.changeStatus(False)
             self.importSampleInstance.projectDBC.dbc.close()
 
@@ -183,15 +183,15 @@ class DataDialog(QDialog):
             try:
                 self.importPUMSInstance.checkHousingPUMSTable()
                 self.SampleHousingLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.SampleHousingLayout.changeStatus(False)
                 # Person PUMS
             try:
                 self.importPUMSInstance.checkPersonPUMSTable()
                 self.SamplePersonLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.SamplePersonLayout.changeStatus(False)
 
             self.importPUMSInstance.projectDBC.dbc.close()
@@ -207,15 +207,15 @@ class DataDialog(QDialog):
                 self.importControlInstance.createHhldTable()
                 self.importControlInstance.createGQTable()
                 self.ControlHousingLayout.changeStatus(True)
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.ControlHousingLayout.changeStatus(False)
             # Person Controls
             try:
                 self.importControlInstance.createPersonTable()
                 self.ControlPersonLayout.changeStatus(True)
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
                 self.ControlPersonLayout.changeStatus(False)
             self.importControlInstance.projectDBC.dbc.close()
 
@@ -234,8 +234,8 @@ class DataDialog(QDialog):
             self.ControlPersonLayout.changeStatus(True)
             try:
                 pass
-            except FileError, e:
-                print e
+            except FileError as e:
+                print(e)
                 self.ControlHousingLayout.changeStatus(False)
                 self.ControlPersonLayout.changeStatus(False)
 

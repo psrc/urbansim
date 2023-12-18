@@ -52,9 +52,7 @@ class MTCExport(Model):
         age_control_dir = os.path.join(paths.OPUS_DATA_PATH, configuration['project_name'], "ageControl")
         age_control_storage = csv_storage(storage_location=age_control_dir)
         age_control_files = os.listdir(age_control_dir)
-        years = np.array(map(lambda x:
-                             int(os.path.basename(x).replace("tazData", "").replace(".csv", "")),
-                             glob.glob(os.path.join(age_control_dir, "tazData*.csv"))))
+        years = np.array([int(os.path.basename(x).replace("tazData", "").replace(".csv", "")) for x in glob.glob(os.path.join(age_control_dir, "tazData*.csv"))])
         closest_year = years[np.argmin(np.abs(years - [year]*len(years)))]
         if closest_year != year:
             logger.log_warning("Could not find age control data for " + str(year) +
@@ -68,16 +66,16 @@ class MTCExport(Model):
         total = sum(age_category_sums.values())
         abag_age_category_shares = dict((k, age_category_sums[k]/total) for k in age_categories)
 
-        for data_fname, variable_mapping in self.data_to_export.iteritems():
+        for data_fname, variable_mapping in self.data_to_export.items():
 
             if not flip_urbansim_to_tm_variable_mappling:
-                col_names = variable_mapping.values()
+                col_names = list(variable_mapping.values())
                 variables_aliases = ["=".join(mapping[::-1]) for mapping in \
-                                     variable_mapping.iteritems()]
+                                     variable_mapping.items()]
             else:
-                col_names = variable_mapping.keys()
+                col_names = list(variable_mapping.keys())
                 variables_aliases = ["=".join(mapping) for mapping in \
-                                     variable_mapping.iteritems()]
+                                     variable_mapping.items()]
 
             dataset_name = VariableName(variables_aliases[0]).get_dataset_name()
             dataset = dataset_pool.get_dataset(dataset_name)
@@ -92,7 +90,7 @@ class MTCExport(Model):
                 diff = np.zeros(dataset.n)
                 for k in age_categories:
                     before = dataset[k]
-                    dataset[k] = np.array(map(lambda v : round(v*adjustments[k]), dataset.get_attribute(k)))
+                    dataset[k] = np.array([round(v*adjustments[k]) for v in dataset.get_attribute(k)])
                     diff += (dataset[k] - before)
                 dataset["TOTPOP"] += diff
                 dataset["HHPOP"] += diff

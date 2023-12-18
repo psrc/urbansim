@@ -54,12 +54,12 @@ class Tests(opus_unittest.OpusTestCase):
     def test_from_1(self):
         values = self.get_values(1)
         should_be = array([3.3, 4.4])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in travel_time_hbw_am_drive_alone_to_1")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-4), "Error in travel_time_hbw_am_drive_alone_to_1")
 
     def test_from_3(self):
         values = self.get_values(3)
         should_be = array([1.1, 2.2])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in travel_time_hbw_am_drive_alone_to_3")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-4), "Error in travel_time_hbw_am_drive_alone_to_3")
 
 
 if __name__=='__main__':

@@ -6,7 +6,7 @@ import os
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from baseline import Baseline
+from .baseline import Baseline
 
 my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_directory_root = '/Users/hana/urbansim_cache/washtenaw/runs',

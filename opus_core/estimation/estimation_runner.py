@@ -35,7 +35,7 @@ class EstimationRunner(Estimator):
 
         if configuration is None:
             if self.xml_configuration is None:
-                raise StandardError, "Either dictionary based or XML based configuration must be given."
+                raise Exception("Either dictionary based or XML based configuration must be given.")
             config = self.xml_configuration.get_estimation_configuration(model, model_group)
         else:
             config = Configuration(configuration)
@@ -46,7 +46,7 @@ class EstimationRunner(Estimator):
             specification_dict = self.xml_configuration.get_estimation_specification(model, model_group)
 
         if model_group is None:
-            if model in config_changes.keys():
+            if model in list(config_changes.keys()):
                 config.merge(config_changes[model])
             else:
                 config['models'] = [{model: ["estimate"]}]
@@ -56,7 +56,7 @@ class EstimationRunner(Estimator):
             elif specification_dict is not None:
                 config = update_controller_by_specification_from_dict(config, model, specification_dict)
         else:
-            if model in config_changes.keys():
+            if model in list(config_changes.keys()):
                 if model_group in config_changes[model]:
                     config.merge(config_changes[model][model_group])
                 else:
@@ -64,7 +64,7 @@ class EstimationRunner(Estimator):
             else:
                 config['models'] = [{model: {"group_members": [{model_group: ["estimate"]}]}}]
             if (specification_module is not None) or (specification_dict is not None):
-                if '%s_%s' % (model_group, model) in config["models_configuration"].keys():
+                if '%s_%s' % (model_group, model) in list(config["models_configuration"].keys()):
                     model_name_in_configuration = '%s_%s' % (model_group, model)
                 else:
                     model_name_in_configuration = model

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import where, float32, zeros, logical_and
 
 class developable_maximum_SSS_in_undeveloped_cell(Variable):

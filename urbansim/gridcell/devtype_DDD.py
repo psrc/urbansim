@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class devtype_DDD(Variable):
     """Returns a boolean indicating whether this gridcell is of the specified devtype"""

@@ -1,6 +1,6 @@
 import mtc_config
-import pxssh
-import winssh
+from . import pxssh
+from . import winssh
 import sys, os
 from optparse import OptionParser
 
@@ -12,22 +12,22 @@ def confirm_delete(yesmode, sshterm, delfiles):
     if delfiles == []:
         return
     if not yesmode:
-        print "\r\n".join(delfiles)
-        print "Can I rm -rf all of the files above? [y/n] "
+        print("\r\n".join(delfiles))
+        print("Can I rm -rf all of the files above? [y/n] ")
         y = ""
         while True:
             y = sys.stdin.read(1)
             if y == "\n":
                 continue
             elif y != "y" and y != "n":
-                print "Please enter y or n"
+                print("Please enter y or n")
             else:
                 break
         if y != 'y':
             sys.exit(0)
 
     for f in delfiles:
-        print "Removing " + f
+        print("Removing " + f)
         sshterm.cmd("rm -rf " + f)
 
 if __name__ == "__main__":
@@ -49,20 +49,20 @@ if __name__ == "__main__":
     config = mtc_config.MTCConfig()
 
     if options.scenario == None:
-        print "ERROR: Please specify a scenario with -s"
+        print("ERROR: Please specify a scenario with -s")
         sys.exit(1)
 
     if options.year == None:
-        print "ERROR: Please specify a scenario year with -y"
+        print("ERROR: Please specify a scenario year with -y")
         sys.exit(1)
 
     # Set up the server.
-    print "Setting up proper directory structure..."
+    print("Setting up proper directory structure...")
     server_admin = winssh.winssh(config.server_admin, "OPUS_MTC_SERVER_ADMIN_PASSWD")
     modeldir = options.year + "_" + options.scenario
     abs_modeldir = config.travel_model_home + modeldir
     if server_admin.cmd("test -e " + abs_modeldir)[0] != 0:
-        print "ERROR: Model directory " + abs_modeldir + " does not appear to exist"
+        print("ERROR: Model directory " + abs_modeldir + " does not appear to exist")
         sys.exit(1)
     server_admin.cmd("subst /D M:")
     (rc, windows_travel_model_home) = server_admin.cmd("cygpath -w " + config.travel_model_home)
@@ -73,37 +73,37 @@ if __name__ == "__main__":
     server = winssh.winssh(config.server, "OPUS_MTC_SERVER_PASSWD")
 
     # Clean house before proceeding
-    print "Killing old processes..."
+    print("Killing old processes...")
     server.cmd('Taskkill /IM Cluster.exe /F')
     server.cmd('Taskkill /IM Voyager.exe /F')
     server.cmd('Taskkill /IM runtpp.exe /F')
     server.cmd('taskkill /im java.exe /F')
 
-    print "Removing stale model outputs..."
+    print("Removing stale model outputs...")
     delfiles = server.cmd("find " + abs_modeldir + " -maxdepth 1 -not -wholename " + abs_modeldir)[1].split("\r\n")
-    for f in map(lambda s: abs_modeldir + '/' + s, ("RunModel.bat", "CTRAMP", "INPUT", "README.txt", "urbansim")):
+    for f in [abs_modeldir + '/' + s for s in ("RunModel.bat", "CTRAMP", "INPUT", "README.txt", "urbansim")]:
         try:
             delfiles.remove(f)
         except ValueError:
             continue
     confirm_delete(options.yesmode, server, delfiles)
 
-    print "Setting up M drive on server..."
+    print("Setting up M drive on server...")
     server.cmd("subst /D M:")
 
     server.cmd_or_fail("subst M: " + windows_travel_model_home)
 
     # Prepare synthesized population or skip if option supplied
     if not options.skippopsyn:
-        print "Synthesizing population..."
+        print("Synthesizing population...")
         synth_script = "TazAndPopSyn.bat"
         server.cmd_or_fail('cd ' + config.travel_model_home + 'land_use_and_synthesizer')
         server.cmd_or_fail('cmd /c "' + synth_script + ' ' + options.scenario + ' ' + options.year + ' > M:\\\\' + modeldir + '\\\\synthOutput.log"')
     else:
-        print "Skipping population synthesis."
+        print("Skipping population synthesis.")
         server.cmd_or_fail('cmd /c "echo Skipped population synthesis > M:\\\\' + modeldir + '\\\\synthOutput.log"')
 
-    print "Launching runMain..."
+    print("Launching runMain...")
     # Note here that we just send the line to the server with no regard for the
     # return value.  The reason is that this script starts a bunch of java
     # processes and doesn't return until they terminate.  So we assume success
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     nodes = []
     nodenum = 0
     for n in config.nodes:
-        print "Preparing node " + str(nodenum + 1)
+        print("Preparing node " + str(nodenum + 1))
         w = winssh.winssh(n, "OPUS_MTC_NODE_" + str(nodenum) + "_PASSWD")
 
         # Mount the M: drive on each node.  Start cleanly by killing any java
@@ -150,12 +150,12 @@ if __name__ == "__main__":
     # blocking on the java processes.
     server_model = winssh.winssh(config.server, "OPUS_MTC_SERVER_PASSWD")
 
-    print "Setting up M drive on server..."
+    print("Setting up M drive on server...")
     server_model.cmd("subst /D M:")
     server_model.cmd_or_fail("subst M: " + windows_travel_model_home)
     server_model.cmd_or_fail('cd /cygdrive/m/commpath/CTRAMP/runtime')
 
-    print "Starting Model"
+    print("Starting Model")
     server_model.cmd_or_fail('cd /cygdrive/m/commpath/')
     server_model.cmd_or_fail("cmd /c 'RunModel.bat' | tee RunModelOutput.log", supress_output=False, pipe_position=0)
 
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         confirm_delete(options.yesmode, server_model, delfiles)
         for d in ["database", "hwy", "logs", "main", "nonres", "skims", "trn", "popsyn", "urbansim", "landuse"]:
             d = abs_modeldir + "/" + d
-            print "Preserving output " + d + " to " + outdir
+            print("Preserving output " + d + " to " + outdir)
             server_model.cmd_or_fail("cp -r " + d + " " + outdir)
 
     # Leave the machine idle and be sure to logout.  This should probably be a

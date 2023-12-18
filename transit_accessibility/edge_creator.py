@@ -67,6 +67,6 @@ if __name__ == "__main__":
             edge_creator.create_edges(self.test_path,
                                       'same_stop_transfers_nodes_weekday_txt.txt',  # <<<< INPUT FILE NAME HERE <<<<
                                       self.output_file_name)
-            self.assert_(os.path.isfile(os.path.join(self.test_path, self.output_file_name)))
+            self.assertTrue(os.path.isfile(os.path.join(self.test_path, self.output_file_name)))
     
     opus_unittest.main()

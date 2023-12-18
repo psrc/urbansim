@@ -199,8 +199,7 @@ interactions.get_version("cost_times_income")
 
 # Using numbers
 res = locations.compute_variables(
-                                  map(lambda threshold:
-                                      "urbansim.gridcell.is_near_cbd_if_threshold_is_%s" % threshold, [2,4,7]))
+                                  ["urbansim.gridcell.is_near_cbd_if_threshold_is_%s" % threshold for threshold in [2,4,7]])
 locations.get_attribute("is_near_cbd_if_threshold_is_2")
 locations.get_attribute("is_near_cbd_if_threshold_is_4")
 locations.get_attribute("is_near_cbd_if_threshold_is_7")
@@ -239,7 +238,7 @@ zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
 zones.get_attribute("aggregated_capacity")
 aggr_var = "zone.aggregate(urbansim.gridcell.is_near_cbd_if_threshold_is_2, function=maximum)"
 zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
-print 'this %s' % zones.get_attribute(aggr_var)
+print('this %s' % zones.get_attribute(aggr_var))
 
 aggr_var2 = "neighborhood.aggregate(gridcell.capacity, intermediates=[zone], function=sum)"
 neighborhoods.compute_variables(aggr_var2, dataset_pool=dataset_pool)

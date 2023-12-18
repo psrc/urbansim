@@ -101,7 +101,7 @@ run_configuration = config.copy()
 run_configuration.merge(my_configuration)
 
 # Reduce the number of records per chunk for teh project location choice models.
-for key, value in run_configuration['models_configuration'].iteritems():
+for key, value in run_configuration['models_configuration'].items():
     if key.endswith('_development_project_location_choice_model'):
         run_configuration['models_configuration'][key]['controller']['run']['arguments']['chunk_specification'] = "{'records_per_chunk':100}"
 

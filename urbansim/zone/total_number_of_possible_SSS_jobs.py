@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.total_number_of_possible_SSS_jobs_from_buildings import total_number_of_possible_SSS_jobs_from_buildings as gc_total_number_of_possible_SSS_jobs_from_buildings
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class total_number_of_possible_SSS_jobs(gc_total_number_of_possible_SSS_jobs_from_buildings):
     """ Sums number of possible jobs over zones.

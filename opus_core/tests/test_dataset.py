@@ -18,7 +18,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.resource_factory import ResourceFactory
 from opus_core.variables.attribute_type import AttributeType
 
-from exceptions import StandardError
+from exceptions import Exception
 from opus_core.variables.variable_name import VariableName
 
 class MoreDatasetTests(opus_unittest.OpusTestCase):
@@ -76,26 +76,26 @@ class MoreDatasetTests(opus_unittest.OpusTestCase):
         
         logger.enable_hidden_error_and_warning_words()
         try:
-            self.assertRaises(StandardError, job_set._compute_one_variable, job_id_variable_name)
+            self.assertRaises(Exception, job_set._compute_one_variable, job_id_variable_name)
             
         finally:
             logger.enable_hidden_error_and_warning_words()
             
     def test_flush_dataset_correct_flags(self):
         job_set = Dataset(self.job_set_resources, dataset_name="jobs")
-        self.assert_(not 'job_id' in job_set.attribute_boxes)
+        self.assertTrue(not 'job_id' in job_set.attribute_boxes)
         
         job_set.get_attribute("job_id")
-        self.assert_(job_set.attribute_boxes["job_id"].is_in_memory())
-        self.assert_(not job_set.attribute_boxes["job_id"].is_cached())
+        self.assertTrue(job_set.attribute_boxes["job_id"].is_in_memory())
+        self.assertTrue(not job_set.attribute_boxes["job_id"].is_cached())
         
         job_set.flush_dataset()
-        self.assert_(not job_set.attribute_boxes["job_id"].is_in_memory())
-        self.assert_(job_set.attribute_boxes["job_id"].is_cached())
+        self.assertTrue(not job_set.attribute_boxes["job_id"].is_in_memory())
+        self.assertTrue(job_set.attribute_boxes["job_id"].is_cached())
         
         job_set.get_attribute("job_id")
-        self.assert_(job_set.attribute_boxes["job_id"].is_in_memory())
-        self.assert_(job_set.attribute_boxes["job_id"].is_cached())
+        self.assertTrue(job_set.attribute_boxes["job_id"].is_in_memory())
+        self.assertTrue(job_set.attribute_boxes["job_id"].is_cached())
         
     def test_flush_dataset_correct_data(self):
         job_set = Dataset(self.job_set_resources, dataset_name="jobs")
@@ -104,8 +104,8 @@ class MoreDatasetTests(opus_unittest.OpusTestCase):
         job_set.flush_dataset()
         returned_sic_data = job_set.get_attribute("sic")
         returned_id_data = job_set.get_attribute("job_id")
-        self.assert_(ma.allequal(returned_id_data,self.job_id))
-        self.assert_(ma.allequal(returned_sic_data,self.expected_sic_data))
+        self.assertTrue(ma.allequal(returned_id_data,self.job_id))
+        self.assertTrue(ma.allequal(returned_sic_data,self.expected_sic_data))
         
                    
 
@@ -149,8 +149,8 @@ class TestDataset(opus_unittest.OpusTestCase):
         
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name="id")
         
-        self.assert_(ds.get_attribute("attr").sum()==14, "Something is wrong with the dataset.")
-        self.assert_(ds.size()==4, "Wrong size of dataset.")
+        self.assertTrue(ds.get_attribute("attr").sum()==14, "Something is wrong with the dataset.")
+        self.assertTrue(ds.size()==4, "Wrong size of dataset.")
         
     def test_flt_dataset(self):
         import opus_core
@@ -188,8 +188,8 @@ class TestDataset(opus_unittest.OpusTestCase):
         ds2 = Dataset(in_storage=storage, in_table_name='dataset2', id_name='id')
         
         ds1.join_by_rows(ds2)
-        self.assert_(ma.allclose(ds1.get_attribute('attr'), array([4,7,2,1,55,66,100])))
-        self.assert_(ma.allclose(ds2.get_attribute('attr'), array([55,66,100])))
+        self.assertTrue(ma.allclose(ds1.get_attribute('attr'), array([4,7,2,1,55,66,100])))
+        self.assertTrue(ma.allclose(ds2.get_attribute('attr'), array([55,66,100])))
         
     def test_join_by_rows_for_unique_ids(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -216,9 +216,9 @@ class TestDataset(opus_unittest.OpusTestCase):
         threw_exception = False
         try: 
             ds1.join_by_rows(ds2)
-        except StandardError:
+        except Exception:
             threw_exception = True
-        self.assert_(threw_exception)
+        self.assertTrue(threw_exception)
         
     def test_join_by_rows_for_char_arrays(self):
         from numpy import alltrue
@@ -244,8 +244,8 @@ class TestDataset(opus_unittest.OpusTestCase):
         ds2 = Dataset(in_storage=storage, in_table_name='dataset2', id_name='id')
         
         ds1.join_by_rows(ds2)
-        self.assert_(alltrue(ds1.get_attribute('attr') == array(['4','7','2','1','55','66','100'])))
-        self.assert_(alltrue(ds2.get_attribute('attr') == array(['55','66','100'])))
+        self.assertTrue(alltrue(ds1.get_attribute('attr') == array(['4','7','2','1','55','66','100'])))
+        self.assertTrue(alltrue(ds2.get_attribute('attr') == array(['55','66','100'])))
         
     def test_variable_dependencies_tree_with_versioning(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -263,27 +263,27 @@ class TestDataset(opus_unittest.OpusTestCase):
         
         ds.compute_variables(["opus_core.tests.a_test_variable_with_two_dependencies"])
         
-        self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==0) #initially version=0
-        self.assert_(ds.get_version("a_dependent_variable")==0)
-        self.assert_(ds.get_version("a_dependent_variable2")==0)
+        self.assertTrue(ds.get_version("a_test_variable_with_two_dependencies")==0) #initially version=0
+        self.assertTrue(ds.get_version("a_dependent_variable")==0)
+        self.assertTrue(ds.get_version("a_dependent_variable2")==0)
         
         ds.modify_attribute("a_dependent_variable", array([0,0]))
-        self.assert_(ds.get_version("a_dependent_variable")==1) # version=1
+        self.assertTrue(ds.get_version("a_dependent_variable")==1) # version=1
         
         ds.modify_attribute("a_dependent_variable", array([1,1]))
-        self.assert_(ds.get_version("a_dependent_variable")==2) # version=2
+        self.assertTrue(ds.get_version("a_dependent_variable")==2) # version=2
         
         ds.compute_variables(["opus_core.tests.a_test_variable_with_two_dependencies"])
-        self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==1)
+        self.assertTrue(ds.get_version("a_test_variable_with_two_dependencies")==1)
         
         ds.compute_variables(["opus_core.tests.a_test_variable_with_two_dependencies"])
-        self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==1) # version does not change
+        self.assertTrue(ds.get_version("a_test_variable_with_two_dependencies")==1) # version does not change
         
         autogen_variable = "my_var = 3 * opus_core.tests.a_dependent_variable"
         ds.compute_variables([autogen_variable])
-        self.assert_(ds.get_version("my_var")==0)
+        self.assertTrue(ds.get_version("my_var")==0)
         ds.compute_variables([autogen_variable])
-        self.assert_(ds.get_version("my_var")==0)
+        self.assertTrue(ds.get_version("my_var")==0)
         
     def test_compute_variable_with_unknown_package(self):
         storage = StorageFactory().get_storage('dict_storage')

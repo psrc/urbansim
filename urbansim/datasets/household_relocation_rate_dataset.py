@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from rate_dataset import RateDataset
+from .rate_dataset import RateDataset
 from numpy import where, int32, zeros, float32
 
 class HouseholdRelocationRateDataset(RateDataset):
@@ -49,7 +49,7 @@ class Tests(StochasticTestCase):
         expected = array([0.1,             0.4,     0.3,         0.0] )
         results = array([self.rate_set.get_rate(h[0], h[1]) for h in hh])
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
 
     def test_get_rate2(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -67,7 +67,7 @@ class Tests(StochasticTestCase):
         expected = array([0.1,             0.4,     0.3,         0.0] )
         results = self.rate_set.get_rate(hhs)
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
 
     def test_get_rate3(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -85,7 +85,7 @@ class Tests(StochasticTestCase):
         expected = array([0.1,             0.4,     0.3,         0.0] )
         results = self.rate_set.get_rate(hhs)
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
         
     def test_sampling_rates(self):
         n = 100

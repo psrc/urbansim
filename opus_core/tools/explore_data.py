@@ -20,7 +20,7 @@ def main():
     (options, args) = parser.parse_args()
     
     if options.cache_directory is None:
-        raise StandardError, "Cache directory (argument -d) must be given."
+        raise Exception("Cache directory (argument -d) must be given.")
     
     explorer = DataExplorer(cache_directory=options.cache_directory)
     explorer.run()

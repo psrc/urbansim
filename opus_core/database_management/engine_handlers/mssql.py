@@ -71,7 +71,7 @@ class MSSQLServerManager(AbstractDatabaseEngineManager):
         # every MSSQL database.  A user should never need to cache or otherwise
         # work with these tables in OPUS (as far as I know), so I am filtering them 
         # out here.
-        mssql_system_tables = [u'sysconstraints', u'dtproperties', u'syssegments']
+        mssql_system_tables = ['sysconstraints', 'dtproperties', 'syssegments']
         for i in mssql_system_tables:
             if i in tables:
                 tables.remove(i)        

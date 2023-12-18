@@ -70,7 +70,7 @@ class Coefficients(object):
             "field_estimate":self.field_estimate,
             "field_standard_error":self.field_standard_error,
             "other_fields":self.other_fields})
-        if in_storage <> None:
+        if in_storage != None:
             self.in_storage = in_storage
         if not isinstance(self.in_storage, Storage):
             logger.log_warning("in_storage has to be of type Storage. No coefficients loaded.")
@@ -81,7 +81,7 @@ class Coefficients(object):
             self.values = data[local_resources["field_estimate"]]
             self.standard_errors = data[local_resources["field_standard_error"]]
             for measure in local_resources["other_fields"]:
-                if measure in data.keys():
+                if measure in list(data.keys()):
                     self.other_measures[measure] = data[measure]
             if submodels.max() >= 0:
                 self.submodels=submodels
@@ -98,7 +98,7 @@ class Coefficients(object):
             "field_standard_error":self.field_standard_error,
             "other_fields":self.other_fields,
             "out_table_name":out_table_name})
-        if out_storage <> None:
+        if out_storage != None:
             self.out_storage = out_storage
         if not isinstance(self.out_storage, Storage):
             logger.log_warning("out_storage has to be of type Storage. No coefficients written.")
@@ -111,7 +111,7 @@ class Coefficients(object):
                local_resources["field_coefficient_name"]:  self.get_names(),
                local_resources["field_estimate"]:  self.get_values(),
                local_resources["field_standard_error"]:  self.get_standard_errors()}
-        for measure in self.other_measures.keys():
+        for measure in list(self.other_measures.keys()):
             values[measure] = self.other_measures[measure]
         types = {local_resources["field_submodel_id"]: 'integer',
                local_resources["field_coefficient_name"]:  'text',
@@ -121,7 +121,7 @@ class Coefficients(object):
                local_resources["field_coefficient_name"]:  AttributeType.PRIMARY,
                local_resources["field_estimate"]:  AttributeType.PRIMARY,
                local_resources["field_standard_error"]: AttributeType.PRIMARY}
-        for measure in self.other_measures.keys():
+        for measure in list(self.other_measures.keys()):
             types[measure]= 'double'
             attrtypes[measure] = AttributeType.PRIMARY
         local_resources.merge({"values":values, 'valuetypes': types, "drop_table_flag":1,
@@ -150,7 +150,7 @@ class Coefficients(object):
         logger.log_status(self.get_values())
         logger.log_status("standard errors:")
         logger.log_status(self.get_standard_errors())
-        for key in self.other_measures.keys():
+        for key in list(self.other_measures.keys()):
             logger.log_status(key+":")
             logger.log_status(self.other_measures[key])
         if self.submodels.size > 0:
@@ -229,7 +229,7 @@ class Coefficients(object):
             self.compare_and_try_raise_coeflengthexception(self.size(),self.standard_errors.size,"standard_errors")
         if self.submodels.size > 0:
             self.compare_and_try_raise_coeflengthexception(self.size(),self.submodels.size,"submodels")
-        for key in self.other_measures.keys():
+        for key in list(self.other_measures.keys()):
             self.compare_and_try_raise_coeflengthexception(self.size(),len(self.get_measure(key)),key)
 
 
@@ -244,7 +244,7 @@ class Coefficients(object):
         if self.submodels.size > 0:
             new.submodels = self.submodels[index]
         new.other_measures = {}
-        for key in self.other_measures.keys():
+        for key in list(self.other_measures.keys()):
             new.other_measures[key] = self.get_measure(key)[index]
         return new
 
@@ -261,11 +261,11 @@ class Coefficients(object):
                                             new_coefficients, submodel)
         else:
             new_coef = new_coefficients
-        coefnames = map(lambda x: new_coef[x].get_distinct_coefficient_names().tolist(), new_coef.keys())
-        submodels = map(lambda x: len(x), coefnames)
-        submodels = map(lambda x,y: x*[y], submodels, new_coef.keys())
-        coefvalues = map(lambda x: new_coef[x].get_distinct_coefficient_values().tolist(), new_coef.keys())
-        se = map(lambda x: new_coef[x].get_distinct_standard_errors().tolist(), new_coef.keys())
+        coefnames = [new_coef[x].get_distinct_coefficient_names().tolist() for x in list(new_coef.keys())]
+        submodels = [len(x) for x in coefnames]
+        submodels = list(map(lambda x,y: x*[y], submodels, list(new_coef.keys())))
+        coefvalues = [new_coef[x].get_distinct_coefficient_values().tolist() for x in list(new_coef.keys())]
+        se = [new_coef[x].get_distinct_standard_errors().tolist() for x in list(new_coef.keys())]
         coefnames = flatten_list(coefnames) #flattens nested list
         coefvalues = flatten_list(coefvalues)
         se = flatten_list(se)
@@ -275,8 +275,8 @@ class Coefficients(object):
         self.set_standard_errors(se)
         self.set_submodels(submodels)
 
-        for measure in new_coef[new_coef.keys()[0]].parent.other_measures.keys():
-            values = map(lambda x: new_coef[x].get_distinct_measure(measure).tolist(), new_coef.keys())
+        for measure in list(new_coef[list(new_coef.keys())[0]].parent.other_measures.keys()):
+            values = [new_coef[x].get_distinct_measure(measure).tolist() for x in list(new_coef.keys())]
             self.set_measure(measure, flatten_list(values))
 
         for submodel in self.get_submodels():
@@ -292,7 +292,7 @@ class Coefficients(object):
         elif self.get_submodels().size > 0:
             self.submodels = concatenate((self.submodels, array([-2])))
         if other_measures is not None:
-            for field in other_measures.keys():
+            for field in list(other_measures.keys()):
                 self.other_measures[field] = concatenate((self.other_measures[field], array([other_measures[field]],
                                                                                dtype=self.other_measures[field].dtype)))
                 
@@ -323,7 +323,7 @@ class Coefficients(object):
         ncol = ncol + 3
         for measure in self.other_measures:
             ncol = ncol + 1
-            if measure in other_headers.keys():
+            if measure in list(other_headers.keys()):
                 hmeasure = other_headers[measure]
             else:
                 hmeasure = measure
@@ -351,7 +351,7 @@ class Coefficients(object):
             coeff_name = self.get_names()[row]
             tex_file.write("%s " % string.replace(coeff_name, "_", "\_"))
 
-            values = zeros(2+len(self.other_measures.keys()), dtype=float32)
+            values = zeros(2+len(list(self.other_measures.keys())), dtype=float32)
             values[0] = self.get_values()[row]
             values[1] = self.get_standard_errors()[row]
             i=2
@@ -375,10 +375,10 @@ class Coefficients(object):
         tex_file.write('\n')
         tex_file.write('\\end{center}\n')
         tex_file.write('\n')
-        if self.other_info.keys():
+        if list(self.other_info.keys()):
             # Table with additional info
             if other_info_keys is None:
-                other_info_keys = self.other_info[self.other_info.keys()[0]].keys()
+                other_info_keys = list(self.other_info[list(self.other_info.keys())[0]].keys())
             ncol = len(other_info_keys)
             tex_file.write('\n')
             #tex_file.write('~\\\\ \n')
@@ -389,7 +389,7 @@ class Coefficients(object):
             tex_file.write('\n')
             header = r"Submodel "
             for info in other_info_keys:
-                if info in other_headers.keys():
+                if info in list(other_headers.keys()):
                     info_header = other_headers[info]
                 else:
                     info_header = info
@@ -437,15 +437,15 @@ class Coefficients(object):
             return self.sample_values_from_uniform_distribution(**kwargs)
         elif distribution is None: 
             if not isinstance(distribution_dictionary, dict):
-                raise TypeError, "Either argument 'distribution' or argument 'distribution_dictionary' must be not None."
+                raise TypeError("Either argument 'distribution' or argument 'distribution_dictionary' must be not None.")
             # Every coefficient can have different distribution
             new_coef = self.copy_and_truncate(arange(self.size()))
-            for name, args in distribution_dictionary.iteritems():
+            for name, args in distribution_dictionary.items():
                 idx = ematch(self.get_names(), name)
                 if idx.size <= 0:
                     logger.log_warning('Coefficient %s not found. Sampling for this coefficient ignored.' % name)
                     continue
-                if 'distribution' not in args.keys():
+                if 'distribution' not in list(args.keys()):
                     logger.log_warning("The sampling dictionary for coefficient %s must contain the entry 'distribution'. Sampling for this coefficient ignored." % name)
                     continue
                 pars = {}
@@ -580,7 +580,7 @@ class CoefficientsTests(StochasticTestCase):
         
         self.chi_square_test_with_known_mean(run, coef_values, 4*se*se, 10, significance_level=0.05)
         values = run()
-        self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+        self.assertTrue(values.dtype.name == "float32", msg = "Error in coefficients data type.")
         
 
         
@@ -595,7 +595,7 @@ class CoefficientsTests(StochasticTestCase):
         self.chi_square_test_onesided(run, coef_values, 10, significance_level=0.05, number_of_tries=3)
         values = run()
         # check data type
-        self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+        self.assertTrue(values.dtype.name == "float32", msg = "Error in coefficients data type.")
 
          
     def test_sample_uniform_a_b_coefficients(self):
@@ -614,7 +614,7 @@ class CoefficientsTests(StochasticTestCase):
         self.chi_square_test_onesided(run, expected_values, 10, significance_level=0.05, number_of_tries=3)
         values = run()
         # check data type
-        self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+        self.assertTrue(values.dtype.name == "float32", msg = "Error in coefficients data type.")
             
     def test_sample_coefficients_mixed_distr(self):
         """ 2 coefficients are sampled from different distributions, one stays the same. """

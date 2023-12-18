@@ -16,7 +16,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import probsample_noreplace
 from numpy.random import randint
 from numpy import where, arange
-import cPickle
+import pickle
 
 class options(object):
     meta_models = [['residential_building_type_choice_model', 
@@ -215,7 +215,7 @@ if __name__ == '__main__':
     
     ## pickle file   
     pickle_file = open(options.pickle_filename, 'w+b')
-    cPickle.dump({'training_data': training_data,
+    pickle.dump({'training_data': training_data,
                   'population_data': population_data,
                   'choice_type': options.choice_type
                  }, file=pickle_file)

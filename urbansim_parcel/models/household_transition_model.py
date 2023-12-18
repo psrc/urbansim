@@ -66,7 +66,7 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
 
         self.debug.print_debug("Created %s persons." %  new_persons_idx.size, 3)
         # check if number of persons in the household_set correspond to those in person set
-        if household_set.get_attribute('persons').sum() <> self.person_set.size():
+        if household_set.get_attribute('persons').sum() != self.person_set.size():
             logger.log_warning('Number of persons in household set (%s) does not correspond to those in person set (%s).' % (household_set.get_attribute('persons').sum(),
                                                                                                                           self.person_set.size()))
         return result
@@ -294,7 +294,7 @@ class Tests(opus_unittest.OpusTestCase):
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         # unplace some households
-        where10 = where(hh_set.get_attribute("building_id")<>10)[0]
+        where10 = where(hh_set.get_attribute("building_id")!=10)[0]
         hh_set.modify_attribute(name="building_id", data=zeros(where10.size), index=where10)
 
         storage.write_table(table_name='prs_set', table_data=self.person_data)

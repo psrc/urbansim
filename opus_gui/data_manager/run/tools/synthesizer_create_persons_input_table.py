@@ -10,7 +10,7 @@ from random import Random
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
         
     

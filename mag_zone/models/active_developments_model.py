@@ -170,7 +170,7 @@ class ActiveDevelopmentsModel(Model):
         # The variables that this section creates and computes need to be defined in the buildings
         #     dataset aliases.py file        
         building_variables = []
-        for building_type_id,dict_of_info in developing_building_types_info.iteritems():
+        for building_type_id,dict_of_info in developing_building_types_info.items():
             try:
                 total, occupied = 'total_%s_units_col' % dict_of_info['building_type_name'], 'occupied_%s_units_col' % dict_of_info['building_type_name']
                 building_variables.append(total)
@@ -356,9 +356,9 @@ class ActiveDevelopmentsModel(Model):
                 from json import dumps
                 self.debug.print_debug(dumps(item_to_print, indent=4), self.debuglevel)
             except:
-                for key1,value1 in item_to_print.iteritems():
+                for key1,value1 in item_to_print.items():
                     self.debug.print_debug('primary dict key = %s' % key1, 1)
-                    for key2,value2 in value1.iteritems():
+                    for key2,value2 in value1.items():
                         self.debug.print_debug('%s : %s' % (key2,value2), 1)
         else:
             self.debug.print_debug(item_to_print, self.debuglevel)
@@ -459,7 +459,7 @@ class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
         
         # Check that the buildings dataset was updated properly       
         buildings_result = self.buildings.get_attribute('non_residential_sqft')
-        print buildings_result
+        print(buildings_result)
         self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==3] == 10316, True)
         self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==4] == 103211, True)        
 

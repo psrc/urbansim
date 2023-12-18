@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 from numpy import zeros, int8, bool8
 
@@ -57,7 +57,7 @@ class mock_developmenttype(DevelopmentTypeDataset):
 
     def get_types_for_group(self, group):
         ids = arange(self.size())+1
-        is_group = array(map(lambda idx: group in self.groups[idx], ids), dtype="bool8")
+        is_group = array([group in self.groups[idx] for idx in ids], dtype="bool8")
         return ids[is_group]
 
     def get_devtype_groups(self):
@@ -97,7 +97,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array( [True, False, False] )
 
-        self.assert_( ma.allequal( values, should_be),
+        self.assertTrue( ma.allequal( values, should_be),
             'Error in ' + self.variable_name1 )
 
         values = VariableTestToolbox().compute_variable( self.variable_name2,
@@ -113,7 +113,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array( [True, True, True] )
 
-        self.assert_( ma.allequal( values, should_be),
+        self.assertTrue( ma.allequal( values, should_be),
             'Error in ' + self.variable_name2 )
 
 

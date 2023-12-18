@@ -34,7 +34,7 @@ class Abstract_Trip_Weighted_Average_Variable_To_Work(Variable):
         zone_ids = zone_set.get_attribute('zone_id')
         time = travel_data.get_attribute(self.time_attribute_name)
         trips = travel_data.get_attribute(self.trips_attribute_name)
-        non_missing_idx = where(logical_and(time <> self.missing_value, trips <> self.missing_value))
+        non_missing_idx = where(logical_and(time != self.missing_value, trips != self.missing_value))
         numerator = array(ndimage_sum(time[non_missing_idx] * trips[non_missing_idx],
                                        labels = to_zone_id[non_missing_idx], index=zone_ids))
         denominator = array(ndimage_sum(trips[non_missing_idx],

@@ -14,7 +14,7 @@ def indicator_to_XML_writer(indicators):
                 'land_use_type']
     
 
-    for name, computed_indicator in indicators.items():
+    for name, computed_indicator in list(indicators.items()):
         expression = computed_indicator.indicator.attribute
         alias = computed_indicator.indicator.get_attribute_alias()
         package = computed_indicator.indicator.get_variable_name().get_package_name()
@@ -38,7 +38,7 @@ def indicator_to_XML_writer(indicators):
     output_results(results)
         
 def output_library(library_element_set):
-    print '*******************\nAdd to proper indicator library section of XML\n******************'
+    print('*******************\nAdd to proper indicator library section of XML\n******************')
     library_elements = list(library_element_set)
 
     indicator_template = ('%(i)s<%(alias)s type="indicator">\n'
@@ -57,12 +57,12 @@ def output_library(library_element_set):
                'expression':expression,
                'i':'        '
                }
-        print indicator_template%map
+        print(indicator_template%map)
         
         
 def output_results(results):
     
-    print '*******************\nAdd in Results section of XML\n******************' 
+    print('*******************\nAdd in Results section of XML\n******************') 
     result_template = ('%(i)s<%(indicator_name)s type="indicator_result">\n'
                        '%(i)s  <source_data type="string">%(source_data)s</source_data>\n'
                        '%(i)s  <indicator_name type="string">%(alias)s</indicator_name>\n'
@@ -77,4 +77,4 @@ def output_results(results):
                'dataset_name':dataset_name,
                'i':'      '
                }
-        print result_template%map
+        print(result_template%map)

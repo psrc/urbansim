@@ -5,13 +5,13 @@ import math
 import random
 import time
 
-from weka_utilities import test_file_creation, feature_selection, Test_result
+from .weka_utilities import test_file_creation, feature_selection, Test_result
 from data_mining.PrintOutput import PrintOutput
 from opus_core import paths
 
 #loads system variables                                                                                  
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 class Num_model :
 

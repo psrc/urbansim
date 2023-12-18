@@ -9,22 +9,22 @@ try: import MySQLdb
 except: pass
 from sqlalchemy import *
 
-from data_handler.data_retrieval import Query_manager
-from data_handler.data_preparation import Data_profiler
-from output.generic_output import Output_manager
-from output.log_output import Log_manager
-from models.weka_num_model import Num_model
-from models.weka_cat_model import Cat_model
+from .data_handler.data_retrieval import Query_manager
+from .data_handler.data_preparation import Data_profiler
+from .output.generic_output import Output_manager
+from .output.log_output import Log_manager
+from .models.weka_num_model import Num_model
+from .models.weka_cat_model import Cat_model
 from opus_core import paths
 
 #loads system variables
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 #Checking if pygame has been installed
 use_drawing = True
 try :
-    from output.visual_output import Parcel_block_vis
+    from .output.visual_output import Parcel_block_vis
 except ImportError :
     use_drawing = False
 use_drawing = use_drawing and DRAW_BLOCKS
@@ -65,7 +65,7 @@ def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) 
     if io_info.hasAttribute("output_table_name") :
         output_manager = Output_manager(io_info, None, columns_list)
         if output_manager.table == None :
-            print "ERROR: ordered not to overwrite table, but existing table is uncompatible with current test"
+            print("ERROR: ordered not to overwrite table, but existing table is uncompatible with current test")
             return -1
     else :
         output_manager = Output_manager(None, query_manager, columns_list)
@@ -75,7 +75,7 @@ def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) 
     if io_info.hasAttribute("log_folder_address") :  
         log_manager = Log_manager(io_info, xml_config_address)
         if log_manager.folder_address == None :
-            print "ERROR: ordered to not overide the log folder and a log folder exists"
+            print("ERROR: ordered to not overide the log folder and a log folder exists")
             return -1
     
     #Setting up parcel drawer
@@ -142,7 +142,7 @@ def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) 
             
     #Posting information about time taken 
     end_time = time.time()
-    print "Overall Time taken: ", int(end_time - start_time)
+    print("Overall Time taken: ", int(end_time - start_time))
     if logCB != None :
         logCB("Overall Time taken: " + str(int(end_time - start_time)))
         

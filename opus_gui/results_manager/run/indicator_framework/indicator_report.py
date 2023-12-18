@@ -19,7 +19,7 @@ class IndicatorReport:
     def generate_indicators(self):
         self.filepaths = {}
 
-        for name, (projconfig, batchname, visname, datasourcename, year) in self.indicators.items():
+        for name, (projconfig, batchname, visname, datasourcename, year) in list(self.indicators.items()):
             op = OpusProject()
             op.open(os.path.join(PROJECTCONFIGBASE, projconfig))
         
@@ -43,7 +43,7 @@ class IndicatorReport:
         if not os.path.exists(reportdir): os.mkdir(reportdir)
             
         # should move the files into the directory so that it can just be zipped up for shipment
-        for name, file in filepaths.iteritems():
+        for name, file in filepaths.items():
             import shutil
             newfile = os.path.join(reportdir,os.path.basename(file))
             shutil.copy(file,newfile)

@@ -14,7 +14,7 @@ class EstimationBaseConfig(Configuration):
 def get_changes_for_estimation(config):
     estimation_configuration = {}
     if "base_year" in config:
-        estimation_configuration["years"] = range(config["base_year"], config["base_year"])
+        estimation_configuration["years"] = list(range(config["base_year"], config["base_year"]))
     estimation_configuration["sample_size_locations"] = 30
     estimation_configuration["seed"] = 1,#(1,1)
     return estimation_configuration

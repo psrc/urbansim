@@ -98,16 +98,16 @@ class LineEdit(QLineEdit):
         text = self.text()
         try:
             if len(text) == 0:
-                raise TextError, "Enter a non-empty string"
+                raise TextError("Enter a non-empty string")
             if not re.match("[A-Za-z]",text[0]):
                 text = text[1:]
-                raise TextError, "First character has to be a alphabet"
+                raise TextError("First character has to be a alphabet")
 
             for i in text[1:]:
                 if not re.match("[A-Za-z_0-9]", i):
                     text.replace(i, '')
-                    raise TextError, "Name can only comprise of alphabets and an underscore (_)"
-        except TextError, e:
+                    raise TextError("Name can only comprise of alphabets and an underscore (_)")
+        except TextError as e:
             QMessageBox.information(self, "Warning",
                                     "%s" %e,
                                     QMessageBox.Ok)
@@ -157,7 +157,7 @@ class NameDialog(QDialog):
         try:
             self.nameLineEdit.check(text)
             self.check = True
-        except TextError, e:
+        except TextError as e:
             QMessageBox.warning(self, "Table Name", "TextError: %s" %e, QMessageBox.Ok)
             self.check = False
 
@@ -174,7 +174,7 @@ class VariableSelectionDialog(QDialog):
 
         self.defaultVariables = defaultVariables
         self.variableDict = variableDict
-        self.variables = self.variableDict.keys()
+        self.variables = list(self.variableDict.keys())
 
         self.checkDefaultVariables()
 
@@ -251,7 +251,7 @@ class VariableSelectionDialog(QDialog):
     def checkDefaultVariables(self):
         diff = [var for var in self.defaultVariables if var not in self.variables]
         if len(diff) >0 :
-            raise FileError, "The default variable list contains variable names that are not in the variable list. "
+            raise FileError("The default variable list contains variable names that are not in the variable list. ")
 
 
     def resetandrestore(self, button):
@@ -470,7 +470,7 @@ class RecodeDialog(QDialog):
                                  crit[1],
                                  variablename,
                                  crit[0])):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
 
     def addColumn(self, variablename):
@@ -478,7 +478,7 @@ class RecodeDialog(QDialog):
 
 
         if not query.exec_("""alter table %s add column %s text""" %(self.tablename, variablename)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
     def resetDialog(self):
         self.variableNewEdit.clear()
@@ -506,11 +506,11 @@ class RecodeDialog(QDialog):
         variables = []
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""desc %s""" %self.tablename):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         FIELD = 0
 
-        while query.next():
+        while next(query):
             field = query.value(FIELD).toString()
             variables.append(field)
 
@@ -523,12 +523,12 @@ class RecodeDialog(QDialog):
 
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""select %s from %s group by %s""" %(varname, self.tablename, varname)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         CATEGORY = 0
 
-        while query.next():
-            cat = unicode(query.value(CATEGORY).toString())
+        while next(query):
+            cat = str(query.value(CATEGORY).toString())
             #try:
             #    cat = query.value(CATEGORY).toInt()[0]
             #except:
@@ -641,7 +641,7 @@ class OldNewRelation(QDialog):
                 self.addRecCrit.setEnabled(True)
             else:
                 self.addRecCrit.setEnabled(False)
-        except Exception, e:
+        except Exception as e:
             self.addRecCrit.setEnabled(False)
 
     def enableCopyOldCrit(self):
@@ -733,7 +733,7 @@ class CreateVariable(QDialog):
         self.projectDBC.dbc.open()
 
         self.variableDict = {}
-        self.variables = variableTypeDict.keys()
+        self.variables = list(variableTypeDict.keys())
 
         newVarLabel = QLabel("New Variable Name")
         self.newVarNameEdit = QLineEdit()
@@ -862,8 +862,8 @@ class CreateVariable(QDialog):
 
         CATEGORY = 0
 
-        while query.next():
-            cat = unicode(query.value(CATEGORY).toString())
+        while next(query):
+            cat = str(query.value(CATEGORY).toString())
             #try:
             #    cat = query.value(CATEGORY).toInt()[0]
             #except:
@@ -893,7 +893,7 @@ class DeleteRows(QDialog):
         self.projectDBC = createDBC(self.project.db, database)
         self.projectDBC.dbc.open()
         self.variableDict = {}
-        self.variables = variableTypeDict.keys()
+        self.variables = list(variableTypeDict.keys())
 
         variableListLabel = QLabel("Variables in Table")
         self.variableListWidget = ListWidget()
@@ -971,8 +971,8 @@ class DeleteRows(QDialog):
 
         CATEGORY = 0
 
-        while query.next():
-            cat = unicode(query.value(CATEGORY).toString())
+        while next(query):
+            cat = str(query.value(CATEGORY).toString())
             cats.append(cat)
         return cats
 
@@ -1003,7 +1003,7 @@ class DisplayMapsDlg(QDialog):
             self.query = QSqlQuery(self.projectDBC.dbc)
             self.variableDict = {}
             self.variableTypeDict = self.populateVariableTypeDictionary(self.tablename)
-            self.variables = self.variableTypeDict.keys()
+            self.variables = list(self.variableTypeDict.keys())
             
             variableListLabel = QLabel("Variables in Table")
             self.variableListWidget = ListWidget()
@@ -1131,8 +1131,8 @@ class DisplayMapsDlg(QDialog):
     def updateCatLimits(self):
         #print 'minimum prop', self.minProp, 'maximum prop', self.maxProp
         self.updateColumnHeaders()
-        if self.minProp <> 0 and self.maxProp <> 0:
-            if self.minProp <> self.maxProp:
+        if self.minProp != 0 and self.maxProp != 0:
+            if self.minProp != self.maxProp:
                 for i in range(5):
                     itemMin = QTableWidgetItem('%.4f' %(self.minProp + i * self.intervalLength), 1000)
                     itemMax = QTableWidgetItem('%.4f' %(self.minProp + (i+ 1) * self.intervalLength), 1000)
@@ -1184,7 +1184,7 @@ class DisplayMapsDlg(QDialog):
 
     def getGeographies(self):
         self.geolist = []
-        for geo in self.project.synGeoIds.keys():
+        for geo in list(self.project.synGeoIds.keys()):
             geostr = str(geo[0]) + "," + str(geo[1]) + "," + str(geo[3]) + "," + str(geo[4])
             self.geolist.append(geostr)
 
@@ -1204,7 +1204,7 @@ class DisplayMapsDlg(QDialog):
         query.exec_(""" DROP TABLE IF EXISTS %s""" %(self.toTable))
         if not query.exec_("""CREATE TABLE %s SELECT %s.*,%s FROM %s"""
                             """ LEFT JOIN %s using (serialno)""" %(self.toTable, self.fromTable, varname, self.fromTable, self.tablename)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
     def fromTableToTable(self):
@@ -1226,11 +1226,11 @@ class DisplayMapsDlg(QDialog):
         if not query.exec_("""select state, county, tract, bg, sum(frequency) from %s where %s = %s """
                            """group by state, county, tract, bg"""
                            %(self.toTable, varstr, cat)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         distDict = {}
 
-        while query.next():
+        while next(query):
             state = str(query.value(0).toString())
             county = str(query.value(1).toString())
             tract = str(query.value(2).toString())
@@ -1258,7 +1258,7 @@ class DisplayMapsDlg(QDialog):
         varname = self.variableListWidget.currentItem().text()
         varCats = self.categories(varname)
 
-        for i in numDistDict.keys():
+        for i in list(numDistDict.keys()):
             total = 0
             for j in varCats:
                 try:
@@ -1278,7 +1278,7 @@ class DisplayMapsDlg(QDialog):
         # assuming 5 categories
             self.intervalLength = (self.maxProp - self.minProp)/5
 
-            for i in distDict.keys():
+            for i in list(distDict.keys()):
                 if distDict[i] == self.minProp:
                     distDict[i] = 1.0
                 else:
@@ -1305,8 +1305,8 @@ class DisplayMapsDlg(QDialog):
         # proportions calculated, categories calculated
         # TO DO - append to the shapefile? show the colors?
                 
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             self.minProp = 0
             self.maxProp = 0
             self.intervalLength = 0
@@ -1409,9 +1409,9 @@ class DisplayMapsDlg(QDialog):
         variableTypeDictionary = {}
         self.query.exec_("""desc %s""" %tablename)
 
-        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = range(6)
+        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = list(range(6))
 
-        while self.query.next():
+        while next(self.query):
             field = '%s' %self.query.value(FIELD).toString()
             type = self.query.value(TYPE).toString()
             null = self.query.value(NULL).toString()
@@ -1465,8 +1465,8 @@ class DisplayMapsDlg(QDialog):
 
         CATEGORY = 0
 
-        while self.query.next():
-            cat = unicode(self.query.value(CATEGORY).toString())
+        while next(self.query):
+            cat = str(self.query.value(CATEGORY).toString())
             cats.append(cat)
         return cats
 
@@ -1497,7 +1497,7 @@ class ChangeMargsDlg(DisplayMapsDlg):
         self.query = QSqlQuery(self.projectDBC.dbc)
         self.variableDict = {}
         self.variableTypeDict = self.populateVariableTypeDictionary(self.tablename)
-        self.variables = self.variableTypeDict.keys()
+        self.variables = list(self.variableTypeDict.keys())
 
         self.totalControl = 0
         self.totalAdj = 0
@@ -1506,7 +1506,7 @@ class ChangeMargsDlg(DisplayMapsDlg):
 
         geographyLabel = QLabel("Geography ID")
         self.geographyComboBox = QComboBox()
-        geoids = self.allGeographyids().keys()
+        geoids = list(self.allGeographyids().keys())
         geoids.sort()
         self.geographyComboBox.addItems(geoids)
         
@@ -1622,7 +1622,7 @@ class ChangeMargsDlg(DisplayMapsDlg):
                 selVar = '%s' %self.variableListWidget.currentItem().text()
                 adjText = "%s;%s-%s-->%s" %(selGeography, selVar, self.controlDistribution, self.controlDistributionAdj) 
                 
-                if selVar in self.adjDict[selGeography].keys():
+                if selVar in list(self.adjDict[selGeography].keys()):
                     reply = QMessageBox.question(self, "Modify Control Variable Distributions",
                                                  """Adjustment for the Control Variable Distributions already exists"""
                                                  """ for geography - %s. Do you wish to replace?""" %(selGeography),
@@ -1647,7 +1647,7 @@ class ChangeMargsDlg(DisplayMapsDlg):
             selGeography = ('%s' %splitRemoveText[0])
             selVar = ('%s' %splitRemoveText[1])
             del(self.adjDict[selGeography][selVar])
-        except Exception, e:
+        except Exception as e:
             QMessageBox.warning(self, "Modify Control Variable Distributions",
                                 """No changes selected. Select a change to the marginal distribution and then press Delete from Scenario""", QMessageBox.Ok)
 
@@ -1771,8 +1771,8 @@ class ChangeMargsDlg(DisplayMapsDlg):
             if not self.query.exec_("""select %s from %s where state = %s and county = %s """
                                        """and tract = %s and bg = %s""" 
                                        %(corrControlVar, self.mtablename, state, county, tract, bg)):
-                raise FileError, self.query.lastError().text()
-            while self.query.next():
+                raise FileError(self.query.lastError().text())
+            while next(self.query):
                 marginalVal = self.query.value(0).toInt()[0]
 
             marginals.append(marginalVal)
@@ -1814,11 +1814,11 @@ class ChangeMargsDlg(DisplayMapsDlg):
             self.variablesCorrDict = self.project.selVariableDicts.person
             self.adjDict = copy.deepcopy(self.project.adjControlsDicts.person)
 
-        self.variables = self.variablesCorrDict.keys()
+        self.variables = list(self.variablesCorrDict.keys())
         self.variableListWidget.addItems(self.variables)
 
-        for i in self.adjDict.keys():
-            for j in self.adjDict[i].keys():
+        for i in list(self.adjDict.keys()):
+            for j in list(self.adjDict[i].keys()):
                 
                 geography = i
                 selVar = j
@@ -1836,15 +1836,15 @@ class ChangeMargsDlg(DisplayMapsDlg):
 
         CATEGORY = 0
 
-        while self.query.next():
-            cat = unicode(self.query.value(CATEGORY).toString())
+        while next(self.query):
+            cat = str(self.query.value(CATEGORY).toString())
             cats.append(cat)
         return cats 
 
     def allGeographyids(self):
 
         allGeoids = {}
-        for i in self.project.region.keys():
+        for i in list(self.project.region.keys()):
             countyName = i
             stateName = self.project.region[i]
             countyText = '%s,%s' %(countyName, stateName)
@@ -1855,26 +1855,26 @@ class ChangeMargsDlg(DisplayMapsDlg):
                 if not self.query.exec_("""select state, county from geocorr where state = %s and county = %s"""
                                    """ group by state, county"""
                                    %(stateCode, countyCode)):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
             elif self.project.resolution == 'Tract':
                 if not self.query.exec_("""select state, county, tract from geocorr where state = %s and county = %s"""
                                    """ group by state, county, tract"""
                                    %(stateCode, countyCode)):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
             else:
                 if not self.query.exec_("""select state, county, tract, bg from geocorr where state = %s and county = %s"""
                                    """ group by state, county, tract, bg"""
                                    %(stateCode, countyCode)):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
         #return a dictionary of all VALID geographies
 
-            STATE, COUNTY, TRACT, BG = range(4)
+            STATE, COUNTY, TRACT, BG = list(range(4))
 
 
             tract = 0
             bg = 0
 
-            while self.query.next():
+            while next(self.query):
                 state = self.query.value(STATE).toInt()[0]
                 county = self.query.value(COUNTY).toInt()[0]
 

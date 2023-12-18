@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from psrc_parcel.configs.baseline import Baseline
-from household_location_choice_model_with_price_adj_configuration_creator import \
+from .household_location_choice_model_with_price_adj_configuration_creator import \
      HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator
 
 class HlcmWithPriceAdj(Baseline):

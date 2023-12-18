@@ -86,16 +86,16 @@ class Matplot(QDialog):
             query = QSqlQuery(dbc)
             if filter != "" and group != "":
                 if not query.exec_("""SELECT %s FROM %s WHERE %s GROUP BY %s"""%(vars,tablename,filter,group)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             elif filter != "" and group == "":
                 if not query.exec_("""SELECT %s FROM %s WHERE %s"""%(vars,tablename,filter)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             elif filter == "" and group != "":
                 if not query.exec_("""SELECT %s FROM %s GROUP BY %s"""%(vars,tablename,group)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             else:
                 if not query.exec_("""SELECT %s FROM %s"""%(vars,tablename)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
             return query
         else:
             QMessageBox.warning(self, "Results", "A table with name - %s does not exist." %(tablename), QMessageBox.Ok)
@@ -122,14 +122,14 @@ class Matplot(QDialog):
         tables = []
 
         if not self.query.exec_("""show tables"""):
-            raise FileError, self.query.lastError.text()
-        while self.query.next():
+            raise FileError(self.query.lastError.text())
+        while next(self.query):
             tables.append('%s' %self.query.value(0).toString())
         return tables
 
     def getGeographies(self):
         self.geolist = []
-        for geo in self.project.synGeoIds.keys():
+        for geo in list(self.project.synGeoIds.keys()):
             geostr = str(geo[0]) + "," + str(geo[1]) + "," + str(geo[3]) + "," + str(geo[4])
             self.geolist.append(geostr)
 

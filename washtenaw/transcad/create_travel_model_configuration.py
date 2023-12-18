@@ -111,6 +111,6 @@ def _add_years(travel_model_configuration, years_to_run):
             2020:'CoreEA20\\urbansim\\2020',
             2025:'CoreEA20\\urbansim\\2025',
             }
-    for year, year_dir in years_to_run.iteritems():
+    for year, year_dir in years_to_run.items():
         travel_model_configuration[year] = {'data_exchange_dir': year_dir}
         

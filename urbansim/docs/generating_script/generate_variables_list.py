@@ -133,12 +133,11 @@ same_sector_employment_within_walking_distance</code> variable, because its agen
     def get_doc_string(self, module_name):
         """ Assume there are no more than one classes in module that extend Variable."""
         module = eval(module_name)
-        (cls_name, cls) = filter(lambda (cls_name, cls): issubclass(cls, opus_core.variables.variable.Variable) and cls.__module__ == module_name, 
-                                   inspect.getmembers(module, inspect.isclass))[0]
+        (cls_name, cls) = [cls_name_cls for cls_name_cls in inspect.getmembers(module, inspect.isclass) if issubclass(cls_name_cls[1], opus_core.variables.variable.Variable) and cls_name_cls[1].__module__ == module_name][0]
         return (cls.__doc__ or  ' ', cls_name)
 
     def filter_and_remove(self, a_function, a_list):
-        filtered_list = filter(a_function, a_list)
+        filtered_list = list(filter(a_function, a_list))
         [a_list.remove(x) for x in filtered_list]
         return filtered_list
     
@@ -169,7 +168,7 @@ same_sector_employment_within_walking_distance</code> variable, because its agen
         module_list=[]
         ModuleScanner().run(callback_to_record_if_subclass_of_Variable, opus_directory_name + ".")
     
-        module_list = map(lambda t: t.split('.'), module_list)
+        module_list = [t.split('.') for t in module_list]
         module_list.sort(lambda x, y: (int)(x[-1] > y[-1]) - (int)(x[-1] < y[-1]))
         return module_list
 

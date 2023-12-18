@@ -83,7 +83,7 @@ class Tests(opus_unittest.OpusTestCase):
         inf_as_int32 = array([inf]).astype(int32)[0]
         should_be = array([400/(2*105.0), 200/(105.0*0.7), 400/105.0, inf_as_int32, 0.0]).round()
 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7),
                      msg="Error in " + self.variable_name)
 
 

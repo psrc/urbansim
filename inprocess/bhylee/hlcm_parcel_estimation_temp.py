@@ -5,7 +5,7 @@
 from urbansim.configs.hlcm_estimation_config import HLCMEstimationConfig
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from my_estimation_config import my_configuration
+from .my_estimation_config import my_configuration
 
 class HlcmParcelEstimation(HLCMEstimationConfig):
     def update_config(self):

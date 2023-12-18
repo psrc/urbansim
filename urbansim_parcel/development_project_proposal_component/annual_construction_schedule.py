@@ -6,7 +6,7 @@
 from numpy import array, where, zeros, nonzero
 from opus_core.variables.variable import Variable
 from opus_core.logger import logger
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class annual_construction_schedule(Variable):
     """

@@ -31,7 +31,7 @@ class UnrollGridcells(Model):
             storage = AttributeCache().get_flt_storage_for_year(base_year)
             
             urbansim_constant = SessionConfiguration().get_dataset_from_pool('urbansim_constant')
-            print "recent_years = %s" % urbansim_constant['recent_years']
+            print("recent_years = %s" % urbansim_constant['recent_years'])
             
             recent_years = urbansim_constant['recent_years']
             
@@ -81,7 +81,7 @@ class UnrollGridcells(Model):
             storage = AttributeCache().get_flt_storage_for_year(base_year)
             
             urbansim_constant = SessionConfiguration().get_dataset_from_pool('urbansim_constant')
-            print "recent_years = %s" % urbansim_constant['recent_years']
+            print("recent_years = %s" % urbansim_constant['recent_years'])
             
             recent_years = urbansim_constant['recent_years']
             roller = RollbackGridcellsFromBuildings()

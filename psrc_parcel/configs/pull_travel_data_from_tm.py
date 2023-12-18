@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 
-from baseline import Baseline
+from .baseline import Baseline
 
 class PullTravelDataFromTm(Baseline):
     def __init__(self):

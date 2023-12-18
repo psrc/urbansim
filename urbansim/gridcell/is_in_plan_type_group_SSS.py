@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 from numpy import zeros
 
@@ -61,7 +61,7 @@ class mock_plantype(object):
 
     def get_types_for_group(self, group):
         ids = arange(self.n)+1
-        is_group = array(map(lambda idx: group in self.groups[idx], range(self.size())), dtype="bool8")
+        is_group = array([group in self.groups[idx] for idx in range(self.size())], dtype="bool8")
         return ids[is_group]
 
     def size(self):

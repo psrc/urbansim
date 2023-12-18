@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class commercial_and_industrial_sqft(Variable):
     """Sum of commercial, industrial sqft for this gridcell."""

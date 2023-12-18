@@ -29,7 +29,7 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
         self.run_config = None
         if vacancy_variables is not None:
             self.run_config = "{"
-            for key, value in vacancy_variables.iteritems():
+            for key, value in vacancy_variables.items():
                 self.run_config += "'%s_vacant_variable': '%s'," % (key, value)
             self.run_config += "}"
         

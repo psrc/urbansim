@@ -67,7 +67,7 @@ if __name__ == "__main__":
                          in_storage=AttributeCache())
 
     if options.augment_variables == True:
-        for dataset_name in comparison_variables.keys():
+        for dataset_name in list(comparison_variables.keys()):
             cache_directory = baseline
             simulation_state.set_cache_directory(cache_directory)
             dataset = DatasetFactory().get_dataset(dataset_name,
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             variables = comparison_variables[dataset_name]
             dataset.compute_variables(variables, resources=Resources())
             ids = dataset.get_id_attribute()
-            for run in runs.keys():
+            for run in list(runs.keys()):
                 cache_directory=run
                 simulation_state.set_cache_directory(cache_directory)
                 run_dataset = DatasetFactory().get_dataset(dataset_name, 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    for run, description in Runs.runs.iteritems():
+    for run, description in Runs.runs.items():
         if is_class:
             args = {"base_year":2000, 
                     "cache_directory":run,

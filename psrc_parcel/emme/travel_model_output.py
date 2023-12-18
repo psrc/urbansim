@@ -45,7 +45,7 @@ class TravelModelOutput(ParentTravelModelOutput):
         travel_data_set.load_dataset_if_not_loaded()
         max_zone_id = zone_set.get_id_attribute().max()
 
-        for matrix_name in matrix_attribute_name_map.keys():
+        for matrix_name in list(matrix_attribute_name_map.keys()):
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
                                                      matrix_attribute_name_map[matrix_name], **kwargs)
         return travel_data_set
@@ -62,7 +62,7 @@ class TravelModelOutput(ParentTravelModelOutput):
                       
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
                                                   name=attribute_name)
-            if matrix_name not in attr.keys() or attr[matrix_name].size == 0:
+            if matrix_name not in list(attr.keys()) or attr[matrix_name].size == 0:
                 logger.log_error("Skipped exporting travel_data attribute %s: No data is exported from EMME matrix." % attribute_name)
             else:
                 nzones = attr[matrix_name].shape[0]

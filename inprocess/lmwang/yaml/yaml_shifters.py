@@ -23,7 +23,7 @@ class Shifters(object):
 
     def _recursive_get(self, adict):
         results = []
-        for k, v in adict.iteritems():
+        for k, v in adict.items():
             if isinstance(v, dict):
                 results += self._recursive_get(v)
             else:
@@ -36,7 +36,7 @@ class Shifters(object):
 
     def _recursive_set(self, adict, alist):
         i = 0
-        for k, v in adict.iteritems():
+        for k, v in adict.items():
             if isinstance(v, dict):
                 i += self._recursive_set(v, alist[i:])
             else:
@@ -55,7 +55,7 @@ class Shifters(object):
             stream = file(self.filename, 'r')
             #self.shifters = yaml.load(stream, OrderedDictYAMLLoader)
             yaml_dict = yaml.load(stream)
-            self.shifters = OrderedDict(sorted(yaml_dict.items(),key=lambda x: x[0]))
+            self.shifters = OrderedDict(sorted(list(yaml_dict.items()),key=lambda x: x[0]))
             stream.close()
         else:
             logger.log_warning("File %s does not exist; return {}" % self.filename)
@@ -70,7 +70,7 @@ class Shifters(object):
 
 vars = locals()
 _shifters = Shifters().shifters
-for k, v in _shifters.iteritems():
+for k, v in _shifters.items():
     #eval("vars['{}']={}".format(k, v))
     vars[k]=eval('{}'.format(v))
 
@@ -83,18 +83,18 @@ class Tests(opus_unittest.OpusTestCase):
         test_file3 = os.path.join(test_path, 'test03.yaml')
         sh1 = Shifters(filename=test_file1)
         sh2 = Shifters(filename=test_file2)
-        self.assert_( sh1.shifters == sh2.shifters )
-        self.assert_( sh1.shifters.keys() == sh2.shifters.keys() )
-        self.assert_( sh1.shifters.values() == sh2.shifters.values() )
+        self.assertTrue( sh1.shifters == sh2.shifters )
+        self.assertTrue( list(sh1.shifters.keys()) == list(sh2.shifters.keys()) )
+        self.assertTrue( list(sh1.shifters.values()) == list(sh2.shifters.values()) )
         values = sh2.getall()
         expected = [0, 2, 4, 8, 'fish', 11, 22, 'fish', 3, True, None, False]
-        new_values = range(len(values))
+        new_values = list(range(len(values)))
         #print values
-        self.assert_( values == expected )
+        self.assertTrue( values == expected )
         sh2.setall(new_values,filename=test_file3)
         del sh2
         sh3 = Shifters(filename=test_file3)
-        self.assert_( sh3.getall() == new_values )
+        self.assertTrue( sh3.getall() == new_values )
         os.remove(test_file3)
 
 if __name__ == "__main__":

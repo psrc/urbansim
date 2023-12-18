@@ -53,7 +53,7 @@ class Paris_simulation(object):
             debuglevel=0):
         t1 = time()
         l=len(variables)
-        print variables,coefficients,submodels
+        print(variables,coefficients,submodels)
         specification = EquationSpecification(variables=variables, coefficients=coefficients, submodels=submodels)
         
 #        storage = StorageFactory().get_storage(type='mysql_storage', storage_location=dbcon)
@@ -82,7 +82,7 @@ class Paris_simulation(object):
 #        save_object(specification, 'employment_location_choice_model_specification', type='mysql_storage', base=con)
 #        save_object(result[0], 'employment_location_choice_model_coefficients', type='mysql_storage', base=con)
 
-        print "Simulation done. " + str(time()-t1) + " s"
+        print("Simulation done. " + str(time()-t1) + " s")
 
 class Run_Paris_Simulation(object):
     def __init__(self, variables=(), coefficients=(), submodels=(), debuglevel=0):

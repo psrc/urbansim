@@ -68,7 +68,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [ ln(36), -7, ln(76)],
                            [ ln(58), ln(16), ln(98)]])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
 

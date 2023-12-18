@@ -4,8 +4,8 @@
 
 import re
 from types import StringType
-from file_flt_storage import file_flt_storage
-from sftp_flt_storage import sftp_flt_storage
+from .file_flt_storage import file_flt_storage
+from .sftp_flt_storage import sftp_flt_storage
         
 def flt_storage(storage_location):
     """

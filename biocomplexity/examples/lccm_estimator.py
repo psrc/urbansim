@@ -17,6 +17,7 @@ import os
 
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.variables.variable_name import VariableName
+import importlib
 
 class LCCMEstimator(Estimator):
     def __init__(self, **kargs):
@@ -66,7 +67,7 @@ class LCCMEstimator(Estimator):
     def estimate(self, spec_py=None, spec_var=None, spec_file=None):
         t1 = time()
         if spec_py is not None:
-            reload(spec_py)
+            importlib.reload(spec_py)
             spec_var = spec_py.specification
         if spec_var is not None:
             self.specification, variables, coefficents, equations, submodels = \
@@ -78,7 +79,7 @@ class LCCMEstimator(Estimator):
         self.specification.set_dataset_name_of_variables("land_cover")
         
         self.model_name = "land_cover_change_model"
-        choices = range(1,15)
+        choices = list(range(1,15))
         lccm = LandCoverChangeModel(choices, submodel_string="lct")
 
         ## 4. select (uncomment) from one the following choices of subsetted sampling files (agents_index)
@@ -125,17 +126,17 @@ class LCCMEstimator(Estimator):
         equations = []
         submodels = []
         try:
-            for sub_model, submodel_spec in spec_var.items():
+            for sub_model, submodel_spec in list(spec_var.items()):
                 if not isinstance(submodel_spec, dict):
-                    raise ValueError, "Wrong specification format"
-                if submodel_spec.has_key("equation_ids"):
+                    raise ValueError("Wrong specification format")
+                if "equation_ids" in submodel_spec:
                     equation_ids = submodel_spec["equation_ids"] ## this retrieves eq_ids from spec.py - they're stored in equations then passed to the equation specifications
                     del submodel_spec["equation_ids"]
                 else:
                     equation_ids = None
-                for var, coefs in submodel_spec.items():
+                for var, coefs in list(submodel_spec.items()):
                     if not equation_ids:
-                        equation_ids = range(1, len(coeffs)+1)
+                        equation_ids = list(range(1, len(coeffs)+1))
                     for i in range(len(coefs)):
                         if coefs[i] != 0:
                             variables.append(var)
@@ -143,7 +144,7 @@ class LCCMEstimator(Estimator):
                             equations.append(equation_ids[i])
                             submodels.append(sub_model)
         except:
-            raise ValueError, "Wrong specification format for submodel variable."
+            raise ValueError("Wrong specification format for submodel variable.")
 
         specification = EquationSpecification(variables=variables, 
                                               coefficients=coefficients, 
@@ -156,7 +157,7 @@ if __name__ == "__main__":
     ## 6. select (uncomment) from one the following choices of model specifications
 #    import estimation_lccm_specification_all91to95 as spec_py
 #    import estimation_lccm_specification_all95to99 as spec_py
-    import estimation_lccm_specification_all95to99_CAOs as spec_py
+    from . import estimation_lccm_specification_all95to99_CAOs as spec_py
 
 #    import estimation_lccm_specification_all99to02_minspec as spec_py
 #    import estimation_lccm_specification_all99to02_nosmall_v1 as spec_py

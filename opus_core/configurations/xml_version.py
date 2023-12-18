@@ -10,15 +10,15 @@ class XMLVersion(object):
     def __init__(self, version_string='0.0'):
         # TODO: remove this test for old-style version numbers in a bit (say after May 2009), after there won't be any floating around
         if version_string.startswith('4.2.'):
-            raise XMLVersionException, 'this is an old-style XML configuration number -- please update'
+            raise XMLVersionException('this is an old-style XML configuration number -- please update')
         version_parts = version_string.split('.')
         if not len(version_parts) == 2:
-            raise XMLVersionException, 'invalid format for XML version number'
+            raise XMLVersionException('invalid format for XML version number')
         try:
             self.major = int(version_parts[0])
             self.minor = int(version_parts[1])
         except ValueError:
-            raise XMLVersionException, 'invalid format for XML version number'
+            raise XMLVersionException('invalid format for XML version number')
 
     def __str__(self):
         return '%d.%d' % (self.major, self.minor)

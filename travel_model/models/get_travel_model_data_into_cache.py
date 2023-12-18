@@ -61,7 +61,7 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
     
     def get_travel_data_from_travel_model(self, config, year, zone_set, *args, **kwargs):
         """"""
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")
         
 if __name__ == "__main__":
     try: import wingdbstub

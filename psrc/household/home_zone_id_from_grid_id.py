@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class home_zone_id_from_grid_id(Variable):

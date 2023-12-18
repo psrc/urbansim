@@ -121,7 +121,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         this_year_index = where(target_vacancy['year']==year)[0]
         target_vacancy_for_this_year = DatasetSubset(target_vacancy, this_year_index)
         if target_vacancy_for_this_year.size() == 0:
-            raise IOError, 'No target vacancy defined for year %s.' % year
+            raise IOError('No target vacancy defined for year %s.' % year)
         
         ## current_target_vacancy.target_attribute_name = 'target_vacancy_rate'
         ## each column provides a category for which a target vacancy is specified
@@ -292,7 +292,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
     
     def _is_target_reached(self, column_value=()):
         if column_value:
-            if self.accounting.has_key(column_value):
+            if column_value in self.accounting:
                 accounting = self.accounting[column_value]
                 result = (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                                 accounting.get("demolished_spaces",0) )) and (
@@ -303,7 +303,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) )) and (
                          accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                   for column_value, accounting in self.accounting.items() ]
+                   for column_value, accounting in list(self.accounting.items()) ]
         return all(results)
 
     def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75, 
@@ -460,7 +460,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         wto_adjust = where(to_adjust)[0]
         self.weight[wto_adjust] = self.weight[wto_adjust] * adjfactor_scaled[wto_adjust]
         
-        if residential_preference <> 50: 
+        if residential_preference != 50: 
             # give preference to res or nonres proposals (makes sense if proposals on the same parcel have the same weight)
             res_factor = 2*residential_preference/100.
             nonres_factor = 2*(1-residential_preference/100.)

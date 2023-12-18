@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import logical_and
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_SSS_DDD_SSS_ge_DDD_and_le_DDD(Variable):
     """total number of jobs for zones within DDD minutes travel time,
@@ -68,13 +68,13 @@ class Tests(opus_unittest.OpusTestCase):
     def test_to_2_ge_1_le_11(self):
         values = self.get_values(2, 1, 11)
         should_be = array([0, 1])
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
     def test_to_4_ge_7_and_le_10(self):
         values = self.get_values(4,7,10)
         should_be = array([1, 0])
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
 

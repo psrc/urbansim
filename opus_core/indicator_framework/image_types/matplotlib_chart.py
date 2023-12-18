@@ -114,7 +114,7 @@ else:
                 return
             
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-            self.assert_(not os.path.exists(indicator_path))
+            self.assertTrue(not os.path.exists(indicator_path))
             
             chart = Chart(
                       source_data = self.source_data,
@@ -125,8 +125,8 @@ else:
             
             chart.create(False)
             
-            self.assert_(os.path.exists(indicator_path))
-            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
+            self.assertTrue(os.path.exists(indicator_path))
+            self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
                         
     if __name__ == '__main__':
         opus_unittest.main()

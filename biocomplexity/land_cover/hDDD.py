@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable, ln
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import ones
 from scipy.ndimage import correlate
 from numpy import ma
@@ -76,7 +76,7 @@ class Tests(ExpectedDataTest):
         should_be = array([2*2+5*2+15, 2*4+5+15*2, 2+5*4+15*2, 2*2+5*2+15*4])
         should_be = ln(should_be + 1) / 10.0
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + self.variable_name)
 
     def atest_on_expected_data(self):

@@ -44,7 +44,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4.5, 9]
         should_be = array([ [4.5, 9], [4.5, 9], [4.5, 9] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_aggregate")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_aggregate")
      
     def test_interaction_set_aggregate2(self):
         # Similar to test_interaction_set_aggregate, except that it uses test_location_x_test_agent
@@ -77,7 +77,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4.5, 9]
         should_be = array([ [4.5, 4.5, 4.5], [9, 9, 9] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_aggregate2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_aggregate2")
      
     def test_interaction_set_aggregate_and_multiply(self):
         # test doing an aggregate on an interaction set component and using the result in a multiply operation
@@ -111,7 +111,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4.5, 9]
         should_be = array([ [4.5, 9], [90, 180], [2250, 4500] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply")
      
     def test_interaction_set_aggregate_and_multiply2(self):
         # Similar to test_interaction_set_aggregate_and_multiply, except that it uses test_location_x_test_agent
@@ -144,7 +144,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4.5, 9]
         should_be = array([ [4.5, 90, 2250], [9, 180, 4500] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply2")
      
     def test_interaction_set_aggregate_and_multiply_same_var(self):
         # Test doing an aggregate on an interaction set component and using the result in a multiply operation
@@ -170,7 +170,7 @@ class Tests(opus_unittest.OpusTestCase):
         # test_agent.income is [1, 20, 50]
         # test_location.aggregate(test_agent.income) is [1, 70]
         should_be = array([ [1, 70], [20, 1400], [50, 3500] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6))
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6))
 
     def test_interaction_set_disaggregate(self):
         # Test doing a disaggregate on an interaction set component.  The interaction set is 
@@ -206,7 +206,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4, 8, 4, 8]
         should_be = array([ [4, 8, 4, 8], [4, 8, 4, 8], [4, 8, 4, 8] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate")
        
     def test_interaction_set_disaggregate2(self):
         # Similar to test_interaction_set_disaggregate, except that it uses test_location_x_test_agent
@@ -239,7 +239,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4, 8, 4, 8]
         should_be = array([ [4, 4, 4], [8, 8, 8], [4, 4, 4], [8, 8, 8] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate2")
        
     def test_interaction_set_disaggregate_and_multiply(self):
         # test doing a disaggregate on an interaction set component and using the result in a multiply operation
@@ -273,7 +273,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4, 8, 4, 8]
         should_be = array([ [4, 8, 4, 8], [80, 160, 80, 160], [2000, 4000, 2000, 4000] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply")
 
     def test_interaction_set_disaggregate_and_multiply2(self):
         # Similar to test_interaction_set_disaggregate_and_multiply, except that it uses test_location_x_test_agent
@@ -306,7 +306,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [4, 8, 4, 8]
         should_be = array([ [4, 80, 2000], [8, 160, 4000], [4, 80, 2000], [8, 160, 4000] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply2")
         
     def test_interaction_set_number_of_agents(self):
         # Test number_of_agents on an interaction set component.  The interaction set is 
@@ -334,7 +334,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [2, 1, 1]
         should_be = array([ [2, 1, 1], [2, 1, 1], [2, 1, 1] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents")
        
     def test_interaction_set_number_of_agents2(self):
         # Similar to test_interaction_set_number_of_agents, except that it uses test_location_x_test_agent
@@ -361,7 +361,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [2, 1, 1]
         should_be = array([ [2, 2, 2], [1, 1, 1], [1, 1, 1] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents2")
         
     def test_interaction_set_number_of_agents_and_multiply(self):
         # Test number_of_agents on an interaction set component and using the result in a multiply operation
@@ -389,7 +389,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [2, 1, 1]
         should_be = array([ [2, 1, 1], [40, 20, 20], [1000, 500, 500] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents_and_multiply")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents_and_multiply")
        
     def test_interaction_set_number_of_agents_and_multiply2(self):
         # Similar to test_interaction_set_number_of_agents_and_multiply, except that it uses test_location_x_test_agent
@@ -416,7 +416,7 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
         # result for just test_location would be [2, 1, 1]
         should_be = array([ [2, 40, 1000], [1, 20, 500], [1, 20, 500] ])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents_and_multiply2")
+        self.assertTrue(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents_and_multiply2")
 
 if __name__=='__main__':
     opus_unittest.main()

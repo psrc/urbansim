@@ -10,7 +10,7 @@ from qgis.gui import *
 from gui.misc.errors import *
 import numpy as np
 
-from coreplot import *
+from .coreplot import *
 
 class Hhdist(Matplot):
     def __init__(self, project, parent=None):
@@ -23,8 +23,8 @@ class Hhdist(Matplot):
             scenarioDatabase = '%s%s%s' %(self.project.name, 'scenario', self.project.scenario)
             self.projectDBC = createDBC(self.project.db, scenarioDatabase)
             self.projectDBC.dbc.open()
-            self.hhldvariables = self.project.selVariableDicts.hhld.keys()
-            self.gqvariables = self.project.selVariableDicts.gq.keys()
+            self.hhldvariables = list(self.project.selVariableDicts.hhld.keys())
+            self.gqvariables = list(self.project.selVariableDicts.gq.keys())
             self.hhldvariables.sort()
             self.gqvariables.sort()
 
@@ -56,11 +56,11 @@ class Hhdist(Matplot):
     def accept(self):
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""drop table temphhld"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         if self.project.gqVars:
             if not query.exec_("""drop table tempgq"""):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
 
         self.projectDBC.dbc.close()
         QDialog.reject(self)
@@ -82,14 +82,14 @@ class Hhdist(Matplot):
         query.exec_(""" DROP TABLE IF EXISTS temphhld""")
         if not query.exec_("""CREATE TABLE temphhld SELECT housing_synthetic_data.*,%s FROM housing_synthetic_data"""
                             """ LEFT JOIN hhld_sample using (serialno)""" %(hhldvarstr)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
 
         if self.project.gqVars:
             query.exec_(""" DROP TABLE IF EXISTS tempgq""")
             if not query.exec_("""CREATE TABLE tempgq SELECT housing_synthetic_data.*,%s FROM housing_synthetic_data"""
                                """ LEFT JOIN gq_sample using (serialno)""" %(gqvarstr)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
         self.on_draw()
 
 
@@ -105,14 +105,14 @@ class Hhdist(Matplot):
         self.current = '%s' %self.attrbox.getCurrentText()
         selgeog = '%s' %self.geobox.getCurrentText()
         if self.current in self.hhldvariables:
-            self.categories = self.project.selVariableDicts.hhld[self.current].keys()
+            self.categories = list(self.project.selVariableDicts.hhld[self.current].keys())
             #self.corrControlVariables =  self.project.selVariableDicts.hhld[self.current].values()
             tableAct = "hhld_marginals"
             tableEst = "temphhld"
             seldict = self.project.selVariableDicts.hhld
             seladjdict = self.project.adjControlsDicts.hhld
         elif self.current in self.gqvariables:
-            self.categories = self.project.selVariableDicts.gq[self.current].keys()
+            self.categories = list(self.project.selVariableDicts.gq[self.current].keys())
             #self.corrControlVariables =  self.project.selVariableDicts.gq[self.current].values()
             tableAct = "gq_marginals"
             tableEst = "tempgq"
@@ -128,7 +128,7 @@ class Hhdist(Matplot):
             else:
                 selsorteddict[newkey] = seldict[self.current][i]
 
-        self.categories = selsorteddict.keys()
+        self.categories = list(selsorteddict.keys())
         self.categories.sort()
 
         filterAct = ""
@@ -139,7 +139,7 @@ class Hhdist(Matplot):
             queryAct = self.executeSelectQuery(self.projectDBC.dbc,variable, table, "",variable)
             i=0
             if queryAct:
-                while queryAct.next():
+                while next(queryAct):
                     filstr = self.getGeogFilStr(queryAct.value(0).toInt()[0],queryAct.value(1).toInt()[0],queryAct.value(2).toInt()[0])
                     if i == 0:
                         filterAct = "(" + filterAct + filstr + ")"
@@ -167,19 +167,19 @@ class Hhdist(Matplot):
                     adjlist = seladjdict[selgeog][self.current][1]
                     actTotal.append(adjlist[i-1])
                 else:
-                    for j in seladjdict.keys():
+                    for j in list(seladjdict.keys()):
                         try:
                             actlist = seladjdict[j][self.current][0]
                             adjlist = seladjdict[j][self.current][1]
                             sumdiff = sumdiff + adjlist[i-1] - actlist[i-1]
                         except:
                             pass
-                    raise FileError, "Overrides"
+                    raise FileError("Overrides")
             except:
                 #print 'No overrides in scenario'
                 queryAct = self.executeSelectQuery(self.projectDBC.dbc,variableAct, tableAct, filterAct)
                 if queryAct:
-                    while queryAct.next():
+                    while next(queryAct):
                         value = queryAct.value(0).toDouble()[0]
                         #print value, sumdiff
                         value = value + sumdiff
@@ -199,7 +199,7 @@ class Hhdist(Matplot):
 
             if queryEst:
                 iteration = 0
-                while queryEst.next():
+                while next(queryEst):
                     value = queryEst.value(0).toInt()[0]
                     estTotal.append(value)
                     iteration = 1

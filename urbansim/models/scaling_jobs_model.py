@@ -79,9 +79,9 @@ class ScalingJobsModel(Model):
         counts = ndimage_sum(ones((jobsubset.size(),)), labels=sector_ids.astype('int32'), index=sectors.astype('int32'))
         if sectors.size <=1 :
             counts = array([counts])
-        variables = map(lambda x: "number_of_jobs_of_sector_"+str(int(x)), sectors)
-        compute_variables = map(lambda var: self.variable_package + "." + 
-            location_set.get_dataset_name()+ "." + var, variables)
+        variables = ["number_of_jobs_of_sector_"+str(int(x)) for x in sectors]
+        compute_variables = [self.variable_package + "." + 
+            location_set.get_dataset_name()+ "." + var for var in variables]
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})

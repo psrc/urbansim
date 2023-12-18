@@ -45,4 +45,4 @@ class GetCacheDataIntoTravelModel(AbstractTravelModel):
 
     def create_travel_model_input_file(self, *args, **kwargs):
         """"""
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")

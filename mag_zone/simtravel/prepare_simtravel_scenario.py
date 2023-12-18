@@ -36,7 +36,7 @@ def update_households_persons():
     ## which fields need to be updated
     hh_attrs = {'': ''}
     hh_attrs_known = hh.get_known_attribute_names()
-    for k, v in hh_attrs.iteritems():
+    for k, v in hh_attrs.items():
         new_values = hh_df[v].values
         if k not in hh_attrs_known:
             hh.add_attribute(k, new_values)

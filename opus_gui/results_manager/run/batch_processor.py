@@ -60,7 +60,7 @@ class BatchProcessor(object):
             if output_type == 'fixed_field':
                 list_str = str(params['fixed_field_specification'])[1:-1]
                 spec = [i.strip()[1:-1] for i in list_str.split(',')]
-                args['fixed_field_format'] = zip(indicators,spec)
+                args['fixed_field_format'] = list(zip(indicators,spec))
                 args['fixed_field_format'].insert(0,('id',str(params['id_format'])))
             elif output_type == 'sql':
                 from opus_core.database_management.configurations.indicators_database_configuration import IndicatorsDatabaseConfiguration

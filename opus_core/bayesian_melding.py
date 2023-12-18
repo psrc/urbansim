@@ -62,7 +62,7 @@ class ObservedData:
         self.observed_data_collection.append(ObservedDataOneQuantity(variable_name, self, filename, **kwargs))
         
     def get_variable_names(self):
-        return map(lambda x: x.get_variable_name(), self.get_quantity_objects())
+        return [x.get_variable_name() for x in self.get_quantity_objects()]
         
     def get_quantity_objects(self):
         return self.observed_data_collection
@@ -125,13 +125,13 @@ class ObservedDataOneQuantity:
             self.dataset = dataset_pool.get_dataset(self.dataset_name)
         if match:
             self.add_match(self.dataset)
-        for dep_dataset_name, info in dependent_datasets.iteritems():
+        for dep_dataset_name, info in dependent_datasets.items():
             if dataset_pool is None:
                 dataset_pool = DatasetPool(storage=observed_data.get_storage(), package_order=observed_data.get_package_order())
             info.update({'in_storage':observed_data.get_storage(), 'in_table_name': info.get('filename')})
             del info['filename']
             match = False
-            if 'match' in info.keys():
+            if 'match' in list(info.keys()):
                 match = info['match']
                 del info['match']
             try:
@@ -181,7 +181,7 @@ class ObservedDataOneQuantity:
         if index is None:
             idx = arange(dataset.size())
         result[idx] = 1
-        if dataset_name in self.matching_datasets.keys():
+        if dataset_name in list(self.matching_datasets.keys()):
             tmp = zeros(dataset.size(), dtype='bool8')
             tmp[dataset.get_id_index(self.matching_datasets[dataset_name])]=1
             result = result*tmp
@@ -249,7 +249,7 @@ class BayesianMelding(MultipleRuns):
     
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, quantity):
         dataset_pool = self._setup_environment(self.cache_set[run_index], year)
-        for mds_name, ids in quantity.get_matching_datasets().iteritems():
+        for mds_name, ids in quantity.get_matching_datasets().items():
             mds = dataset_pool.get_dataset(mds_name)
             mds.subset_by_ids(ids, flush_attributes_if_not_loaded=False)
         ds = dataset_pool.get_dataset(dataset_name)
@@ -293,7 +293,7 @@ class BayesianMelding(MultipleRuns):
 
     def estimate_bias(self):
         mode="wb"
-        for l in self.mu.keys():
+        for l in list(self.mu.keys()):
             self.ahat[l] = (reshape(self.y[l], (self.y[l].size,1)) - self.mu[l]).mean()
             # for zone-specific bias
             #self.ahat[l] = mean(reshape(self.y[l], (self.y[l].size,1)) - self.mu[l], axis=1)
@@ -306,7 +306,7 @@ class BayesianMelding(MultipleRuns):
 
     def estimate_variance(self):
         mode="wb"
-        for l in self.mu.keys():
+        for l in list(self.mu.keys()):
             self.v[l] = zeros(self.number_of_runs, dtype=float32)
             for i in range(self.number_of_runs):
                 self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
@@ -428,8 +428,8 @@ class BayesianMelding(MultipleRuns):
     def get_weights_from_file(self):
         file = os.path.join(self.output_directory, self.weights_file_name)
         if not os.path.exists(file):
-            raise StandardError, "Directory %s must contain a file '%s'. Use method 'compute_weights'." % (self.output_directory,
-                                                                             self.weights_file_name)
+            raise Exception("Directory %s must contain a file '%s'. Use method 'compute_weights'." % (self.output_directory,
+                                                                             self.weights_file_name))
         return array(load_from_text_file(file, convert_to_float=True))
 
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
@@ -503,14 +503,14 @@ class BayesianMelding(MultipleRuns):
         variable_list = self.get_short_variable_names()
         short_name = VariableName(variable_name).get_alias()
         if short_name not in variable_list:
-            raise ValueError, "Quantity %s is not among observed data." % variable_name
+            raise ValueError("Quantity %s is not among observed data." % variable_name)
         return variable_list.index(short_name)
         
     def get_variable_names(self):
-        return map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+        return [x.get_expression() for x in self.observed_data.get_variable_names()]
     
     def get_short_variable_names(self):
-        return map(lambda x: x.get_alias(), self.observed_data.get_variable_names())
+        return [x.get_alias() for x in self.observed_data.get_variable_names()]
     
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
@@ -535,7 +535,7 @@ class BayesianMelding(MultipleRuns):
             write_to_text_file(variance_filename, self.get_posterior_component_variance(), delimiter=' ')
         
     def write_weight_components(self, filename):
-        l = len(self.get_weight_components().keys())
+        l = len(list(self.get_weight_components().keys()))
         weight_matrix = zeros((l, self.number_of_runs))
         for i in range(l):
             weight_matrix[i,:] = self.get_weight_components()[i]
@@ -603,12 +603,12 @@ class BayesianMelding(MultipleRuns):
 
     def _get_label_of_simulated_values(self):
         self._check_simulated_values()
-        return transpose(reshape(array(self.simulated_values.shape[1]*range(self.simulated_values.shape[0])),
+        return transpose(reshape(array(self.simulated_values.shape[1]*list(range(self.simulated_values.shape[0]))),
                               (self.simulated_values.shape[1], self.simulated_values.shape[0])) + 1)
 
     def _check_simulated_values(self):
         if self.simulated_values is None:
-            raise StandardError, "Values were not simulated yet. Use method 'generate_posterior_distribution'."
+            raise Exception("Values were not simulated yet. Use method 'generate_posterior_distribution'.")
 
     def get_quantiles(self, quantiles):
         """Returns a matrix where each column corresponds to one element of the quantiles array.
@@ -709,7 +709,7 @@ class BayesianMelding(MultipleRuns):
         if filename is not None:
             r.pdf(file=filename)
     
-        for var, values in self.values_from_mr.iteritems():
+        for var, values in self.values_from_mr.items():
             plot_one_boxplot_r(values, var, logstring)
             if values.ndim == 1:
                 v = resize(values, (1, values.size))
@@ -744,7 +744,7 @@ def bmaquant(alpha, weights, means, sigma, niter=14):
     Flower = bmacdf(lower, weights, means, sigma)
     Fupper = bmacdf(upper, weights, means, sigma)
     if Flower > alpha or Fupper < alpha:
-        raise ValueError, 'Something wrong with means and variances.'
+        raise ValueError('Something wrong with means and variances.')
     # Bisection method
     for iter in range(niter):
         mid = (lower+upper)/2.
@@ -769,7 +769,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         """
         content = load_from_text_file(filename)
         nvar = (content.size-1)/2
-        self.base_year, self.year = map(lambda x: int(x), content[0].split(' '))
+        self.base_year, self.year = [int(x) for x in content[0].split(' ')]
         self.variable_names = []
         self.ahat = {}
         self.v = {}
@@ -784,7 +784,7 @@ class BayesianMeldingFromFile(BayesianMelding):
             self.variable_names.append(content[counter])
             counter += 1
             splitted_row = content[counter].split(' ')
-            self.ahat[i], self.v[i] = map(lambda x: array([float(x)]), splitted_row)
+            self.ahat[i], self.v[i] = [array([float(x)]) for x in splitted_row]
             self.ahat[i] = array(self.number_of_runs * [self.ahat[i][0]])
             self.v[i] = array(self.number_of_runs * [self.v[i][0]])
             self.weight_components[i] = array(self.number_of_runs * [1./float(self.number_of_runs)])
@@ -801,7 +801,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         return self.variable_names
     
     def get_short_variable_names(self):
-        return map(lambda x: VariableName(x).get_alias(), self.get_variable_names())
+        return [VariableName(x).get_alias() for x in self.get_variable_names()]
     
     def generate_posterior_distribution(self, year, quantity_of_interest, cache_directory=None, values=None, ids=None, 
                                         procedure="opus_core.bm_normal_posterior", use_bias_and_variance_from=None, 
@@ -810,7 +810,7 @@ class BayesianMeldingFromFile(BayesianMelding):
                                         additive_propagation=[False,False], **kwargs):
 
         if (values is None or ids is None) and (self.cache_set is None):
-            raise StandardError, "values and ids must be give if the BM object is initialized without cache_file_location."
+            raise Exception("values and ids must be give if the BM object is initialized without cache_file_location.")
             
         self.set_posterior(year, quantity_of_interest, values=values, ids=ids, use_bias_and_variance_from=use_bias_and_variance_from, 
                            propagation_factor=propagation_factor, 
@@ -843,7 +843,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         variable_list = self.get_short_variable_names()
         short_name = VariableName(variable_name).get_alias()
         if short_name not in variable_list:
-            raise ValueError, "Quantity %s not found." % variable_name
+            raise ValueError("Quantity %s not found." % variable_name)
         return variable_list.index(short_name)
     
     def _get_m_from_values(self, values, ids):
@@ -982,14 +982,14 @@ class Tests(opus_unittest.OpusTestCase):
         bmf = BayesianMeldingFromFile(os.path.join(self.temp_dir, 'bm_parameters'), package_order=['opus_core'],
                                       cache_file_location=self.temp_dir, prefix='run_', 
                                       overwrite_cache_directories_file=True, transformation_pair = ("sqrt", "**2"))
-        self.assert_(allclose(bmf.get_bias()[0], bias[0]))
-        self.assert_(allclose(bmf.get_variance()[0], variance[0]))
+        self.assertTrue(allclose(bmf.get_bias()[0], bias[0]))
+        self.assertTrue(allclose(bmf.get_variance()[0], variance[0]))
         
         # posterior distribution for future years
         posterior = bmf.generate_posterior_distribution(year=2010, 
                                     quantity_of_interest=indicator,
                                     replicates=10, propagation_factor=[0,1])
-        self.assert_(array_equal(posterior.shape, [3,10])) # 3 rows (1 row per location), 10 samples
+        self.assertTrue(array_equal(posterior.shape, [3,10])) # 3 rows (1 row per location), 10 samples
         pi = bmf.get_probability_interval(80)
         bmf.export_confidence_intervals([80, 95], os.path.join(self.temp_dir, 'CIs'))
         

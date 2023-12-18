@@ -4,7 +4,7 @@
 
 from numpy import logical_and
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_land_value_improvement_value_and_is_valid_year_built(Variable):
     """Return 0 where land_value<=0 or improvement_value<=0 or year_built < urbansim_constant["absolute_min_year"] otherwise 1.
@@ -66,7 +66,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([False, False, True, False, False, False])
         
-        self.assert_(ma.allequal( values, should_be), 
+        self.assertTrue(ma.allequal( values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

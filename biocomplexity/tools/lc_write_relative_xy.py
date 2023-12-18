@@ -43,7 +43,7 @@ if __name__ == "__main__":
         flt_directory_in = options.input
         flt_directory_out = options.output
         
-        print flt_directory_out
+        print(flt_directory_out)
         
         test_flag = options.test_flag
         
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 #    mask = lc.get_mask()
 #    idx = where(mask==0)[0]
 #    lcsubset = DatasetSubset(lc, idx)
-    print "Creating and writing relative_x and relative_y:"
+    print("Creating and writing relative_x and relative_y:")
     lc.write_dataset(attributes=["relative_x"], out_table_name="land_covers",
                                 valuetypes=valuetypes)
     lc.delete_one_attribute("relative_x")
@@ -68,4 +68,4 @@ if __name__ == "__main__":
                                 valuetypes=valuetypes)
     lc.delete_one_attribute("relative_y")
     
-    print "done."
+    print("done.")

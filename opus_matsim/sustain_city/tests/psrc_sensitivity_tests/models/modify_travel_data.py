@@ -87,7 +87,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         
         travel_data = paths.get_opus_home_path( "opus_matsim", "tmp", "travel_data.csv" )
         if not self.travel_data_exsists(travel_data):
-            raise StandardError('Travel data not found! %s' % travel_data)
+            raise Exception('Travel data not found! %s' % travel_data)
             
         in_file = open(travel_data, 'r')
         str_list = []
@@ -113,7 +113,7 @@ class ModifyTravelTimes(AbstractTravelModel):
             row = line.split(',')
             # consistency check
             if len(row) != number_of_colums:
-                raise StandardError('Error in number of colums: %s' %row)
+                raise Exception('Error in number of colums: %s' %row)
                 
             from_zone_id = int(row[index_from_zone].strip('\r\n'))
             to_zone_id = int(row[index_to_zone].strip('\r\n'))
@@ -151,10 +151,10 @@ class ModifyTravelTimes(AbstractTravelModel):
         test_dir_path = test_dir.__path__[0]
         
         input_directory = os.path.join( test_dir_path, 'data', 'travel_cost')
-        print "input_directory: %s" % input_directory
+        print("input_directory: %s" % input_directory)
         # check source file
         if not os.path.exists( input_directory ):
-            print 'File not found! %s' % input_directory
+            print('File not found! %s' % input_directory)
             sys.exit()
         table_name = 'travel_data'
         travel_data_attribute = 'single_vehicle_to_work_travel_cost'
@@ -170,7 +170,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         
     def travel_data_exsists(self, travel_data):
         if not os.path.exists( travel_data ):
-            raise StandardError("Test travel data not found: %s" % travel_data)
+            raise Exception("Test travel data not found: %s" % travel_data)
             return False
         else: return True
         

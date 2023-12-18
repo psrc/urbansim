@@ -49,7 +49,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [-15.01597613, -15.01597613, -14.72829406, -13.11885615],
                            [-14.18521949, -14.18521949, -12.57578158, -15.28383178]]) + 11.03310603
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-4), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-4), 
                      msg="Error in " + self.variable_name)
         
 

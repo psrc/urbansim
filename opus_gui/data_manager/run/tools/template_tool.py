@@ -8,13 +8,13 @@ def opusRun(progressCB,logCB,params=[]):
     param_dict = {}
     logCB("**** Starting Template Tool Execution ****\n")
     logCB("Input Params ::\n")
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
         logCB("%s - %s\n" % (str(key),str(val)))
     
     logCB("Starting to execute ::\n")
     # Do a fake loop for testing purposes
-    for x in xrange(0,10,1):
+    for x in range(0,10,1):
         if logCB:
             logCB("Executing Loop - %s\n" % (str(x)))
         if progressCB:

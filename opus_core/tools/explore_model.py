@@ -35,13 +35,13 @@ def main():
     (options, args) = parser.parse_args()
 
     if options.year is None:
-        raise StandardError, "Year (argument -y) must be given."
+        raise Exception("Year (argument -y) must be given.")
     if options.cache_directory is None:
-        raise StandardError, "Cache directory (argument -d) must be given."
+        raise Exception("Cache directory (argument -d) must be given.")
     if (options.configuration_path is None) and (options.xml_configuration is None):
-        raise StandardError, "Configuration path (argument -c) or XML configuration (argument -x) must be given."
+        raise Exception("Configuration path (argument -c) or XML configuration (argument -x) must be given.")
     if (options.scenario_name is None) and (options.xml_configuration is not None):
-        raise StandardError, "No scenario given (argument -s). Must be specified if option -x is used."
+        raise Exception("No scenario given (argument -s). Must be specified if option -x is used.")
     if options.xml_configuration is not None:
         xconfig = XMLConfiguration(options.xml_configuration)
     else:

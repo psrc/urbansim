@@ -73,7 +73,7 @@ class Shifters(object):
 
 vars = locals()
 _shifters = Shifters().shifters
-for k, v in _shifters.iteritems():
+for k, v in _shifters.items():
     vars[k]=eval('{}'.format(v))
 
 # from opus_core.tests import opus_unittest

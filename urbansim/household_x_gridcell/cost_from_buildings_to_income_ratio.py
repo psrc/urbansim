@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from cost_to_income_ratio import cost_to_income_ratio
+from .cost_to_income_ratio import cost_to_income_ratio
 
 class cost_from_buildings_to_income_ratio(cost_to_income_ratio):
     """ total_annual_rent_from_buildings /income """ 
@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [50, 500, 5000 ], 
                            [2, 20, 200]])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
 

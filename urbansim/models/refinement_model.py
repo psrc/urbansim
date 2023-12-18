@@ -575,7 +575,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(jobs_raz5.sum(), 7)
         expected_nr_sqft = array([6, 0, 3, 6, 1, 6, 5, 0])
         ## was             array([6, 2, 3, 6, 1, 2, 5, 0]),
-        self.assert_(allclose(self.buildings.get_attribute('non_residential_sqft'),  expected_nr_sqft))
+        self.assertTrue(allclose(self.buildings.get_attribute('non_residential_sqft'),  expected_nr_sqft))
         
     def test_target_action(self):
         model = RefinementModel()
@@ -587,9 +587,9 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
         
         #check results
         self.assertEqual(hhs_raz6.sum(), 7)
-        self.assert_(hhs_bldg.sum(),  7 )
-        self.assert_((hhs_bldg!=0).sum(),  2)
-        self.assert_(self.buildings.get_attribute('residential_units').sum(),  7)
+        self.assertTrue(hhs_bldg.sum(),  7 )
+        self.assertTrue((hhs_bldg!=0).sum(),  2)
+        self.assertTrue(self.buildings.get_attribute('residential_units').sum(),  7)
         
     def test_no_action_if_no_suitable_agents_to_clone_from(self):
         model = RefinementModel()
@@ -600,7 +600,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
         hhs_p5 = self.hhs.compute_variables('household.persons>5')
         
         #check results
-        self.assert_(self.hhs.size(),  hhs)
+        self.assertTrue(self.hhs.size(),  hhs)
         self.assertEqual(hhs_p5.sum(), 0)
 
     def test_set_value_action(self):
@@ -613,9 +613,9 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
         
         #check results
         self.assertEqual(hhs_raz6.sum(), 3)
-        self.assert_(hhs_bldg.sum(),  3 )
-        self.assert_((hhs_bldg!=0).sum(),  2)
-        self.assert_(allclose(self.persons.get_attribute('job_id'), array([-1,  -1, -1, -1,  3,  4,  7])))
+        self.assertTrue(hhs_bldg.sum(),  3 )
+        self.assertTrue((hhs_bldg!=0).sum(),  2)
+        self.assertTrue(allclose(self.persons.get_attribute('job_id'), array([-1,  -1, -1, -1,  3,  4,  7])))
         
 if __name__=="__main__":
     opus_unittest.main()    

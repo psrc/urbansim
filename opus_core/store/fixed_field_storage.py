@@ -128,7 +128,7 @@ class fixed_field_storage(Storage):
         # Write out the data
         for row_index in range(column_size):
             row = {}
-            for column_name, column_values in table_data.iteritems():
+            for column_name, column_values in table_data.items():
                 row[column_name] = column_values[row_index]
             formatted_row = python_format % row
             if len(formatted_row) != target_size:
@@ -175,7 +175,7 @@ class fixed_field_storage(Storage):
 
         # Convert the textual data into its proper type and load into numpy arrays
         table_data = {}
-        for name in table_data_lists.keys():
+        for name in list(table_data_lists.keys()):
             rows = len(table_data_lists[name])
             type_char = field_types[name]
             if   type_char in ['d','i','u']:

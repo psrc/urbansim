@@ -138,33 +138,33 @@ conn = engine.connect()
 # special_zones = [342,339,135,290,180,233,340,344,167,741,388]
 special_zones = [(342,3),(339,6),(135,2),(290,3),(180,2),(233,5),(340,3),(344,1),(167,10),(741,553),(388,6)]
 
-print "DELETING OLD households_temp TABLE..."
+print("DELETING OLD households_temp TABLE...")
 qry = text("DROP TABLE IF EXISTS households_temp;")
 conn.execute(qry)
 
-print "CREATING NEW households_temp TABLE..."
+print("CREATING NEW households_temp TABLE...")
 qry = text("""CREATE TABLE households_temp
               SELECT * FROM psrc_2005_parcel_baseyear_change_20070824.households;
            """)
 conn.execute(qry)
 
-print "DELETING HOUSEHOLDS..."
+print("DELETING HOUSEHOLDS...")
 hh_differences_by_zone = get_hh_differences_by_zone()
 zones_and_num_hh_to_delete = get_zones_and_num_hh_to_delete()
 for i in zones_and_num_hh_to_delete:
     delete_households(i[0], abs(i[1]))
 
-print "ADDING HOUSEHOLDS..."
+print("ADDING HOUSEHOLDS...")
 zones_and_num_hh_to_add = get_zones_and_num_hh_to_add()
 for i in zones_and_num_hh_to_add:
     add_households(i[0], i[1])
 
-print "ADDING HOUSHOLDS IN SPECIAL ZONES..."
+print("ADDING HOUSHOLDS IN SPECIAL ZONES...")
 for i in special_zones:
     list_of_zones = get_nearest_5_zones(i[0])
     add_households_from_nearest_5_zones(i[0], list_of_zones, i[1])
 
-print "RESETTING household_id..."
+print("RESETTING household_id...")
 qry = text("""
             UPDATE households_temp
             SET household_id = null;
@@ -178,4 +178,4 @@ qry = text("""
            """)
 conn.execute(qry)
 
-print "DONE"
+print("DONE")

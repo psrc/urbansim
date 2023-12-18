@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import float32, logical_and
 
 class is_average_income_high_income_and_has_DDD_to_DDD_units(Variable):

@@ -30,7 +30,7 @@ class DevelopmentEventTransitionModel(Model):
             resources = Resources()
 
         grid_ids_for_project = array([], dtype=int32)
-        if developments <> None:
+        if developments != None:
             grid_ids_for_project = developments.get_attribute("grid_id")
         grid_ids_for_project = unique(grid_ids_for_project)
         grid_ids_for_project = grid_ids_for_project[where(grid_ids_for_project>0)]

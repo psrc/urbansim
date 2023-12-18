@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class travel_time_hbw_am_drive_alone_to_DDD(Variable):
     """Travel time to the zone whose ID is the DDD.
@@ -62,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([1.1, 1.1, 3.3, 1.1])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-3), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-3), 
                      msg="Error in " + variable_name)
 
     def test_3(self):
@@ -95,7 +95,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([0.1, 0.1, 0.3])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-3), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-3), 
                      msg="Error in " + variable_name)
 
 

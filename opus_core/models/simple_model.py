@@ -33,7 +33,7 @@ class SimpleModel(Model):
             if isinstance(outcome_values, ndarray) and outcome_values.size == dataset.size():
                 values = outcome_values
             else:
-                raise StandardError, "If expression is None, outcome values must be an ndarray of the same size as dataset."
+                raise Exception("If expression is None, outcome values must be an ndarray of the same size as dataset.")
         else:
             values = dataset.compute_variables([expression], dataset_pool=dataset_pool)
 

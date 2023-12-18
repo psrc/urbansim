@@ -29,7 +29,7 @@ class GetEmme4DataIntoCache(ParentGetEmme2DataIntoCache):
         year_config = self.config['travel_model_configuration'][year]
         
         bank_path = os.path.sep.join([self.get_emme2_base_dir()] + self.config['travel_model_configuration'][year]['bank'])
-        for path, variable_dict in year_config['matrix_variable_map'].iteritems():
+        for path, variable_dict in year_config['matrix_variable_map'].items():
             path_name = os.path.sep.join([bank_path] + path.split('.'))
             self.get_needed_matrices_from_emme4(year, 
                                                 year_config['cache_directory'],

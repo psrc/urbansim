@@ -69,7 +69,7 @@ class AbstractFunctionalTest(object):
                                        resources = None, 
                                        optional_args = optional_args)
         
-        table_names = self.test_data[self.year].keys()
+        table_names = list(self.test_data[self.year].keys())
         files = [os.path.splitext(os.path.split(f)[1])[0] for f in glob(output_temp_dir + '/*')]
         self.assertEqual( set(files), set(table_names))
         
@@ -95,7 +95,7 @@ class AbstractFunctionalTest(object):
                               #)
 
     def test_export_one_table(self):
-        for table_name in self.test_data[self.year].keys():
+        for table_name in list(self.test_data[self.year].keys()):
             self._test_export_one_table(table_name)
             
     def _test_export_one_table(self, table_name):

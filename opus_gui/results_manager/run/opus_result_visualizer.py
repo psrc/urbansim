@@ -151,7 +151,7 @@ class OpusResultVisualizer(object):
 
         viz_factory = VisualizationFactory()
         self.visualizations = viz_factory.visualize(
-                                  indicators_to_visualize = indicators_to_visualize.keys(),
+                                  indicators_to_visualize = list(indicators_to_visualize.keys()),
                                   computed_indicators = indicators_to_visualize,
                                   visualization_type = viz_type, **viz_args)
 

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.logger import logger
-from table_creator import TableCreator
+from .table_creator import TableCreator
 
 class CreateBuildingTypesTable(TableCreator):
     def create_building_types_table(self, config, db_name):
@@ -22,7 +22,7 @@ class CreateBuildingTypesTable(TableCreator):
                 '(building_type_id INT, name varchar(50), units varchar(50), is_residential int(1));' 
                 % table_name)
         except:
-            raise NameError, "Invalid table name specified! (%s)" % table_name
+            raise NameError("Invalid table name specified! (%s)" % table_name)
             
         db.DoQuery('INSERT INTO %s (building_type_id, name, units, is_residential) VALUES'
             '(1, "commercial", "commercial_sqft", 0),' 
@@ -56,14 +56,14 @@ class Tests(opus_unittest.OpusTestCase):
         
         
     def test_setUp(self):
-        self.assert_(not self.db.table_exists('building_types'))
+        self.assertTrue(not self.db.table_exists('building_types'))
         
         
     def test_create_table(self):
         CreateBuildingTypesTable().create_building_types_table(
             TestDatabaseConfiguration(protocol = 'mysql'), self.db_name)
         
-        self.assert_(self.db.table_exists('building_types'))
+        self.assertTrue(self.db.table_exists('building_types'))
     
             
 if __name__ == '__main__':

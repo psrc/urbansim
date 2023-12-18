@@ -39,7 +39,7 @@ class DevelopmentEventDataset(UrbansimDataset):
         type_code_values = (default_value * ones(self.size())).astype("int16")
         if '%s_change_type' % attribute in self.get_known_attribute_names():
             type_change = self.get_attribute('%s_change_type' % attribute)
-            for type_char, type_code in DevelopmentEventTypeOfChange.available_change_types.iteritems():
+            for type_char, type_code in DevelopmentEventTypeOfChange.available_change_types.items():
                 type_code_values[type_change == type_char] = type_code
         return type_code_values
                     
@@ -89,8 +89,8 @@ class DevelopmentEventDatasetTests(opus_unittest.OpusTestCase):
             'attr':array([4,6,7])
             }
         ds = self.get_new_development_events_dataset(data)
-        self.assert_(ma.allequal(ds.get_attribute('attr'), array([4,6,7])))
-        self.assertEquals(3*2, ds.get_id_attribute().size)
+        self.assertTrue(ma.allequal(ds.get_attribute('attr'), array([4,6,7])))
+        self.assertEqual(3*2, ds.get_id_attribute().size)
 
     def write_dataset_to_cache(self, dataset, cache_dir, year):
         # save to flt file with this year.
@@ -111,7 +111,7 @@ class DevelopmentEventDatasetTests(opus_unittest.OpusTestCase):
             type_of_changes.NOT_A_MODE
         except:
             raised_exception = True
-        self.assert_(raised_exception)
+        self.assertTrue(raised_exception)
 
 if __name__ == '__main__':
     opus_unittest.main()

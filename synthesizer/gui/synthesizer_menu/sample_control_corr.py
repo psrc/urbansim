@@ -89,14 +89,14 @@ class SetCorrDialog(QDialog):
         
 
     def populate(self, selVariable, tab):
-        for i in selVariable.keys():
+        for i in list(selVariable.keys()):
 
             tab.selSampleVarListWidget.addItem(i)
             row = tab.sampleVarListWidget.rowOf(i)
             tab.sampleVarListWidget.setCurrentRow(row)
             tab.sampleVarListWidget.remove()
             cats = []
-            for j in selVariable[i].keys():
+            for j in list(selVariable[i].keys()):
 
                 varCatString = j
 
@@ -175,7 +175,7 @@ class SetCorrDialog(QDialog):
         if self.tabWidget.housingTab.check():
             #print 'original', self.project.selVariableDicts.hhld
             #print 'modified', self.tabWidget.housingTab.selVariables
-            if self.project.selVariableDicts.hhld <> self.tabWidget.housingTab.selVariables:
+            if self.project.selVariableDicts.hhld != self.tabWidget.housingTab.selVariables:
                 self.project.selVariableDicts.hhld = self.tabWidget.housingTab.selVariables
                 self.project.hhldVars, self.project.hhldDims =  self.checkIfRelationsDefined(self.project.selVariableDicts.hhld)
             hhldCheck = True
@@ -185,7 +185,7 @@ class SetCorrDialog(QDialog):
                 #self.clearTables('hhld')
         if self.tabWidget.personAnalyzed:
             if self.tabWidget.personTab.check():
-                if self.project.selVariableDicts.person <> self.tabWidget.personTab.selVariables:
+                if self.project.selVariableDicts.person != self.tabWidget.personTab.selVariables:
                     self.project.selVariableDicts.person = self.tabWidget.personTab.selVariables
                     self.project.personVars, self.project.personDims = self.checkIfRelationsDefined(self.project.selVariableDicts.person, True)
                 persCheck = True
@@ -197,7 +197,7 @@ class SetCorrDialog(QDialog):
 
         if self.tabWidget.gqAnalyzed:
             if self.tabWidget.gqTab.checkNumRelationsDefined():
-                if self.project.selVariableDicts.gq <> self.tabWidget.gqTab.selVariables:
+                if self.project.selVariableDicts.gq != self.tabWidget.gqTab.selVariables:
                     self.project.selVariableDicts.gq = self.tabWidget.gqTab.selVariables
                     self.project.gqVars, self.project.gqDims = self.checkIfRelationsDefined(self.project.selVariableDicts.gq, True)
                         #self.clearTables('gq')
@@ -231,23 +231,23 @@ class SetCorrDialog(QDialog):
         self.projectDBC.dbc.open()
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""show tables"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         query1 = QSqlQuery(self.projectDBC.dbc)
 
-        while query.next():
+        while next(query):
             tableName = query.value(0).toString()
             if tableName.startsWith(tableNamePrefix) and (tableName.endsWith("_joint_dist") or tableName.endsWith("_ipf")):
                 if not query1.exec_("""drop table %s""" %(tableName)):
-                    raise FileError, query1.lastError().text()
+                    raise FileError(query1.lastError().text())
 
 
     def checkIfRelationsDefined(self, vardict, override=False):
-        if len (vardict.keys()) > 0 or override:
-            controlVariables = ['%s' %i for i in vardict.keys()]
+        if len (list(vardict.keys())) > 0 or override:
+            controlVariables = ['%s' %i for i in list(vardict.keys())]
             controlVariables.sort()
             #controlDimensions = numpy.asarray([len(vardict[QString(i)].keys()) for i in controlVariables])
-            controlDimensions = numpy.asarray([len(vardict[i].keys()) for i in controlVariables])
+            controlDimensions = numpy.asarray([len(list(vardict[i].keys())) for i in controlVariables])
 
             #print controlVariables, controlDimensions
 
@@ -301,10 +301,10 @@ class SetCorrTabWidget(QTabWidget):
         if self.project.sampleUserProv.userProv == False and self.project.controlUserProv.userProv == False:
             return True
 
-        if self.project.sampleUserProv.userProv == True and self.project.sampleUserProv.gqLocation <> "":
+        if self.project.sampleUserProv.userProv == True and self.project.sampleUserProv.gqLocation != "":
             return True
 
-        if self.project.controlUserProv.userProv == True and self.project.controlUserProv.gqLocation <> "":
+        if self.project.controlUserProv.userProv == True and self.project.controlUserProv.gqLocation != "":
             return True
 
         return False
@@ -318,9 +318,9 @@ class SetCorrTabWidget(QTabWidget):
         tables = []
         query = QSqlQuery(projectDBC.dbc)
         if not query.exec_("""show tables"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
-        while query.next():
+        while next(query):
             tables.append('%s' %query.value(0).toString())
 
         projectDBC.dbc.close()
@@ -609,7 +609,7 @@ class TabWidgetItems(QWidget):
 
 
     def checkNumRelationsDefined(self):
-        if self.relationsListWidget.count() <> self.selSampleVarCatListWidget.count():
+        if self.relationsListWidget.count() != self.selSampleVarCatListWidget.count():
             QMessageBox.warning(self, "Corresponding Sample Categories with Marginal Variables",
                                 """Insufficient correspondence defined for the selected <b>%s</b> control variable(s).""" %self.controlType,
                                 QMessageBox.Ok)
@@ -659,11 +659,11 @@ class TabWidgetItems(QWidget):
         variables = []
         query = QSqlQuery(projectDBC.dbc)
         if not query.exec_("""desc %s""" %tablename):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         FIELD = 0
 
-        while query.next():
+        while next(query):
             field = query.value(FIELD).toString()
             variables.append('%s' %field)
 
@@ -718,12 +718,12 @@ class TabWidgetItems(QWidget):
         cats = []
         query = QSqlQuery(projectDBC.dbc)
         if not query.exec_("""select %s from %s group by %s""" %(varname, self.sampleSelTable, varname)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         CATEGORY = 0
 
-        while query.next():
-            cat = unicode(query.value(CATEGORY).toString())
+        while next(query):
+            cat = str(query.value(CATEGORY).toString())
 
             cats.append(cat)
         self.sampleVarsDict['%s' %varname] = cats
@@ -741,18 +741,18 @@ class TabWidgetItems(QWidget):
     def removeSampleVarCats(self, item):
         varName = '%s' %item.text()
 
-        for i in self.selVarCatStrings.keys():
+        for i in list(self.selVarCatStrings.keys()):
             if self.selVarCatStrings[i] == varName:
                 row = self.selSampleVarCatListWidget.rowOf(i)
                 self.selSampleVarCatListWidget.takeItem(row)
 
-        for i in self.relationStrings.keys():
+        for i in list(self.relationStrings.keys()):
             if self.relationStrings[i] == varName:
                 row = self.relationsListWidget.rowOf(i)
                 self.relationsListWidget.takeItem(row)
         try:
             self.selVariables.pop(varName)
-        except Exception, e:
+        except Exception as e:
             #print e
             pass
 
@@ -765,9 +765,9 @@ class TabWidgetItems(QWidget):
             try:
                 controlVar = self.selVariables[varName][sampleVarCat]
                 relation = '%s -  %s' %(sampleVarCat, controlVar)
-                raise Exception, "The relation already exists"
+                raise Exception("The relation already exists")
             #print relation
-            except Exception, e:
+            except Exception as e:
                 #print '%s:%s' %(Exception, e)
                 self.selVariables[varName][sampleVarCat] = controlVar
                 relation = '%s -  %s' %(sampleVarCat, controlVar)
@@ -784,7 +784,7 @@ class TabWidgetItems(QWidget):
             else:
                 self.relationsListWidget.addItem(relation)
 
-        except Exception, e:
+        except Exception as e:
             QMessageBox.warning(self, "Corresponding Sample Categories with Marginal Variables", """Select a variable category """
                                 """and a variable name to add a relation.""", QMessageBox.Ok)
 
@@ -804,8 +804,8 @@ class TabWidgetItems(QWidget):
 
     def parseRelation(self, item):
         relation = '%s' %item.text()
-        for i in self.selVariables.keys():
-            for j in self.selVariables[i].keys():
+        for i in list(self.selVariables.keys()):
+            for j in list(self.selVariables[i].keys()):
                 matchRelation = '%s -  %s' %(j, self.selVariables[i][j])
                 if matchRelation == relation:
                     self.selVariables[i].pop(j)

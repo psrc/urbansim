@@ -62,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([0.0015,0.0094,0.0026,0.0053,0.0088,0.0033,0.0046,0.0104,0.0034,0.0062])
         
-        self.assert_(ma.allclose(values, should_be,), 
+        self.assertTrue(ma.allclose(values, should_be,), 
                      msg="Error in " + self.variable_name)
 
 if __name__=='__main__':

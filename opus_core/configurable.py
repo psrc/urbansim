@@ -13,13 +13,13 @@ class Configurable(object):
         an_instance = object.__new__(cls)
         default_config = Configuration(an_instance.get_configuration())["init"]
         config = None
-        if "model_configuration" in kwargs.keys():
+        if "model_configuration" in list(kwargs.keys()):
             config = kwargs["model_configuration"]
             del kwargs["model_configuration"]
         an_instance.model_configuration = default_config.merge_defaults_with_arguments_and_config(
                                 config, **kwargs)
                                 
-        if 'run' in map(lambda (name, obj): name, getmembers(an_instance, isroutine)):
+        if 'run' in [name_obj[0] for name_obj in getmembers(an_instance, isroutine)]:
             run_method = an_instance.run
             def config_run_method (*req_args, **opt_args):
                 default_config = Configuration(an_instance.get_configuration())["run"]

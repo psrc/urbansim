@@ -132,8 +132,8 @@ class UrbansimZoneConfiguration(Configuration):
                                             ).execute(),   
         }
         self['models_configuration'] = {}
-        for model in my_controller_configuration.keys():
-            if model not in self["models_configuration"].keys():
+        for model in list(my_controller_configuration.keys()):
+            if model not in list(self["models_configuration"].keys()):
                 self["models_configuration"][model] = {}
             self['models_configuration'][model]['controller'] = my_controller_configuration[model]
 

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_DDD_commercial_sqft(Variable):
     """Boolean indicating whether or not the gridcell has DDD commercial_sqft"""

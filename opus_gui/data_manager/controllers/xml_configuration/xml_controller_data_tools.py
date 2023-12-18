@@ -172,7 +172,7 @@ class XmlController_DataTools(XmlController):
 
     def openDocumentation(self):
         ''' NO DOCUMENTATION '''
-        print 'NOTE openDocumentation for tools is disabled for now.'
+        print('NOTE openDocumentation for tools is disabled for now.')
         return
 #        assert self.has_selected_item()
 #        filePath = self.selected_item().node.text
@@ -201,8 +201,8 @@ class XmlController_DataTools(XmlController):
             import_path = params['tool_path'] + '.' + module_name
             importString = "from %s import opusRun" % (import_path)
             exec(importString)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             MessageBox.error(mainwindow = self.view,
                 text = 'Invalid module name',
                 detailed_text = ('This tool points to a module named "%s", ' % import_path + \
@@ -274,7 +274,7 @@ class XmlController_DataTools(XmlController):
                 importString = "from %s import opusRun" % (import_path)
                 exec(importString)
                 tool_config_to_tool_name[tool_config_node] = import_path
-            except Exception, e:
+            except Exception as e:
                 MessageBox.error(mainwindow = self.view,
                     text = 'Invalid module name',
                     detailed_text = ('This tool points to a module named "%s", ' % import_path + \

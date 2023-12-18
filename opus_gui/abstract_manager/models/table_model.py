@@ -60,7 +60,7 @@ class TableModel(QAbstractTableModel):
 
     # Not currently used
     def sortorder(self,arraydata):
-        orderList = range(len(self.headerdata))
+        orderList = list(range(len(self.headerdata)))
         orderList.remove(self.ncol)
         orderList.insert(0,self.ncol)
         returnsortorder = tuple(orderList)
@@ -72,7 +72,7 @@ class TableModel(QAbstractTableModel):
         self.ncol = ncol
         self.emit(SIGNAL("layoutAboutToBeChanged()"))
         # Create a list to order the sort by
-        orderList = range(len(self.headerdata))
+        orderList = list(range(len(self.headerdata)))
         orderList.remove(self.ncol)
         orderList.insert(0,self.ncol)
         # Reverse loop through and order based on columns
@@ -93,7 +93,7 @@ class CatchOutput(QTextBrowser):
             self.writefunc = writefunc
         def write( self, line ):
             if line != "\n":
-                map( self.writefunc, line.split("\n") )
+                list(map( self.writefunc, line.split("\n") ))
         def flush( self ):
             pass
 

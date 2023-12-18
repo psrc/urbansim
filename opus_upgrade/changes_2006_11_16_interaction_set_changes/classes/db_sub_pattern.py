@@ -184,7 +184,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
         
         table0 = self.test_table_names[0]
         results = db.GetResultsFromQuery('select * from %s;' % table0)
-        self.assert_(results == self.expected_output_changed,
+        self.assertTrue(results == self.expected_output_changed,
             "Convert failed for single table (%s) -- incorrect conversion."
             " Expected %s. Recieved %s." 
                 % (table0,
@@ -193,7 +193,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
                        
         for table in self.test_table_names[1:]:
             results = db.GetResultsFromQuery('select * from %s;' % table)
-            self.assert_(results == self.expected_output_unchanged,
+            self.assertTrue(results == self.expected_output_unchanged,
                 "Convert failed for single table (%s) -- incorrect conversion."
                 " Expected %s. Recieved %s." 
                     % (table,
@@ -203,7 +203,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
         for db in self.dbs[1:]:
             for table in self.test_table_names:
                 results = db.GetResultsFromQuery('select * from %s;' % table)
-                self.assert_(results == self.expected_output_unchanged,
+                self.assertTrue(results == self.expected_output_unchanged,
                     "Convert failed for single table (%s) -- converted wrong"
                         " table(s). Expected %s. Recieved %s." 
                             % (table,
@@ -224,7 +224,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
             self.fail("Backup failed for single table (%s) -- backup table (%s) not "
                 "created." % (table, backup_table_name))
             
-        self.assert_(results == self.expected_output_unchanged,
+        self.assertTrue(results == self.expected_output_unchanged,
             "Backup failed for single table (%s) -- changed contents."
             " Expected %s. Recieved %s." 
                 % (table, self.expected_output_unchanged, results)
@@ -238,7 +238,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
         db = self.dbs[0]
         for table in self.test_table_names[0:2]:
             results = db.GetResultsFromQuery('select * from %s;' % table)
-            self.assert_(results == self.expected_output_changed,
+            self.assertTrue(results == self.expected_output_changed,
                 "Convert failed for database0 (%s) -- incorrect "
                 "conversion. Expected %s. Recieved %s." 
                     % (table,
@@ -247,7 +247,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
                        
         for table in self.test_table_names[2:]:
             results = db.GetResultsFromQuery('select * from %s;' % table)
-            self.assert_(results == self.expected_output_unchanged,
+            self.assertTrue(results == self.expected_output_unchanged,
                 "Convert failed for database0 (%s) -- changed wrong table(s)."
                 " Expected %s. Recieved %s." 
                     % (table,
@@ -259,7 +259,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
             
             for table in self.test_table_names:
                 results = db.GetResultsFromQuery('select * from %s;' % table)
-                self.assert_(results == self.expected_output_unchanged,
+                self.assertTrue(results == self.expected_output_unchanged,
                     "Convert failed for database%s (%s) -- converted wrong"
                         " table(s). Expected %s. Recieved %s." 
                             % (i,
@@ -278,7 +278,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
             tables = self.config['tables'][db_name]
             for table in tables:
                 results = db.GetResultsFromQuery('select * from %s;' % table)
-                self.assert_(results == self.expected_output_changed,
+                self.assertTrue(results == self.expected_output_changed,
                     "Convert failed %s (%s) -- incorrect conversion."
                         " Expected %s. Recieved %s." 
                             % (db_name,

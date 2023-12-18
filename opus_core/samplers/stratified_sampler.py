@@ -96,21 +96,21 @@ class stratified_sampler(Sampler):
         else:
             err_msg = "unknown weight type"
             logger.log_error(err_msg)
-            raise TypeError, err_msg
+            raise TypeError(err_msg)
 
-        if (weight.size <> index2.size) and (weight.shape[rank_of_weight-1] <> index2.size):
+        if (weight.size != index2.size) and (weight.shape[rank_of_weight-1] != index2.size):
             if weight.shape[rank_of_weight-1] == choice.size():
                 weight = take(weight, index2)
             else:
                 err_msg = "weight array size doesn't match to size of dataset2 or its index"
                 logger.log_error(err_msg)
-                raise ValueError, err_msg
+                raise ValueError(err_msg)
 
         prob = normalize(weight)
 
         stratum = local_resources.get("stratum", None)
         if stratum is None:
-            raise StandardError, "'stratum' must be defined for stratified sampling."
+            raise Exception("'stratum' must be defined for stratified sampling.")
         if isinstance(stratum, str):
             choice.compute_variables(stratum,
                 resources = local_resources )
@@ -142,14 +142,14 @@ class stratified_sampler(Sampler):
         strata_sample_size = ones(unique_strata.size, dtype=DTYPE) * sample_size_from_each_stratum
         sample_rate = local_resources.get("sample_rate", None)
         if sample_rate is not None:
-            raise UnImplementedError, "sample_rate is not implemented yet."
+            raise UnImplementedError("sample_rate is not implemented yet.")
             ##TODO: to be finished
             #num_elements_in_strata = histogram(selectable_strata, unique_strata)
             #strata_sample_size = round(num_elements_in_strata * sample_rate)
 
         sample_size_from_chosen_stratum = local_resources.get("sample_size_from_chosen_stratum", None)
         if sample_size_from_chosen_stratum is None and not include_chosen_choice:
-            strata_sample_pairs = array(map(lambda x,y: [x,y], unique_strata, strata_sample_size))
+            strata_sample_pairs = array(list(map(lambda x,y: [x,y], unique_strata, strata_sample_size)))
             if rank_of_weight == 1:
                 sampled_index = self._sample_by_stratum(index1, index2, selectable_strata, prob,
                                                         chosen_choice_index_to_index2, strata_sample_pairs)
@@ -166,7 +166,7 @@ class stratified_sampler(Sampler):
                     agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] += - 1
                 else:
                     agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] = sample_size_from_chosen_stratum
-                strata_sample_pairs = array(map(lambda x,y: [x,y], unique_strata, agents_strata_sample_size))
+                strata_sample_pairs = array(list(map(lambda x,y: [x,y], unique_strata, agents_strata_sample_size)))
                 strata_sample_setting[i,...] = strata_sample_pairs
 
             sampled_index = self._sample_by_agent_and_stratum(index1, index2, selectable_strata, prob,
@@ -205,8 +205,8 @@ class stratified_sampler(Sampler):
 
     def _sample_by_stratum(self, index1, index2, stratum, prob_array, chosen_choice_index, strata_sample_setting):
         """stratum by stratum stratified sampling, suitable for 1d prob_array and sample_size is the same for all agents"""
-        if prob_array.ndim <> 1:
-            raise RuntimeError, "_sample_by_stratum only suitable for 1d prob_array"
+        if prob_array.ndim != 1:
+            raise RuntimeError("_sample_by_stratum only suitable for 1d prob_array")
 
         sampled_index = zeros((index1.size,1), dtype=DTYPE) - 1
         self._sampling_probability = zeros((index1.size,1),dtype=float32)
@@ -317,7 +317,7 @@ class Test(opus_unittest.OpusTestCase):
     storage.write_table(table_name='households',
         table_data={
             'household_id': arange(10)+1,
-            'grid_id': array([-1] + range(1, 10)),
+            'grid_id': array([-1] + list(range(1, 10))),
             'lucky':array([1,0,1, 0,1,1, 1,1,0, 0])
             }
         )
@@ -369,11 +369,11 @@ class Test(opus_unittest.OpusTestCase):
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
-                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
                 
-            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
-            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+            self.assertTrue( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assertTrue( all(not_equal(weight[sampled_index], 0.0)) )
 
     def test_1d_weight_array_variant_sample_size(self):
 
@@ -406,11 +406,11 @@ class Test(opus_unittest.OpusTestCase):
                 chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype=DTYPE)
                 w = where(chosen_choices>=0)[0]
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
-                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
 
-            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
-            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+            self.assertTrue( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assertTrue( all(not_equal(weight[sampled_index], 0.0)) )
                             
     def test_1d_weight_array_variant_sample_size_using_icc(self):
         sample_size = 2
@@ -434,10 +434,10 @@ class Test(opus_unittest.OpusTestCase):
         chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype=DTYPE)
         w = where(chosen_choices>=0)[0]
         chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
-        self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+        self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
         sampled_index = sampled_index[:,1:]
-        self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
-        self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+        self.assertTrue( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+        self.assertTrue( all(not_equal(weight[sampled_index], 0.0)) )
 
 if __name__ == "__main__":
     opus_unittest.main()

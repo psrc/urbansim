@@ -4,7 +4,7 @@
 
 from numpy import zeros
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class is_home_based_job(Variable):
@@ -68,7 +68,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([0,0,1,1,1,1,0,0,1,0], dtype="bool8")
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

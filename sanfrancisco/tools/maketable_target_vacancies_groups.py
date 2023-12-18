@@ -84,7 +84,7 @@ for unit_name in unique(btclass.get_attribute('grouping_id')): #needs to be defi
             amp=2*.01
             base=.04
             rows.append((base+amp*math.sin((period*yr-2258.125221)),float(yr),"residential_units","number_of_households",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((period*yr-2258.125221)),unit_name,yr)
+            print("%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((period*yr-2258.125221)),unit_name,yr))
         elif unit_name ==5: #visit
             amp=10*.01
             base=.3        
@@ -92,11 +92,11 @@ for unit_name in unique(btclass.get_attribute('grouping_id')): #needs to be defi
             amp=5*.01
             base=.2           
             rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((period*yr-phase)),unit_name,yr)
+            print("%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((period*yr-phase)),unit_name,yr))
 
         if unit_name in(1,2,3,5): #nonres
             rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"non_residential_sqft","occupied_sqft",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("occupied_sqft","non_residential_sqft",base+amp*math.sin((period*yr-phase)),unit_name,yr)
+            print("%s\t%s\t%f\t%s\t%d" %("occupied_sqft","non_residential_sqft",base+amp*math.sin((period*yr-phase)),unit_name,yr))
             #pass
 #print rows
 #rows.append([.1,2004,'a','b',1])

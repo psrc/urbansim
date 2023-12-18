@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.logger import logger
 
 class has_DDD_nonhome_based_workers_with_valid_work_place_zone_id(Variable):

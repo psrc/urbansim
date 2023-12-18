@@ -56,12 +56,10 @@ class EmploymentTransitionModel(Model):
     def _compute_sector_variables(self, sectors, job_set):
         compute_resources = Resources({"debug":self.debug})
         job_set.compute_variables(
-            map(lambda x: "%s.%s.is_in_employment_sector_%s_home_based"
-                    % (self.variable_package, job_set.get_dataset_name(), x),
-                sectors) +
-            map(lambda x: "%s.%s.is_in_employment_sector_%s_non_home_based"
-                    % (self.variable_package, job_set.get_dataset_name(), x),
-                sectors) + ["is_non_home_based_job", "is_home_based_job"],
+            ["%s.%s.is_in_employment_sector_%s_home_based"
+                    % (self.variable_package, job_set.get_dataset_name(), x) for x in sectors] +
+            ["%s.%s.is_in_employment_sector_%s_non_home_based"
+                    % (self.variable_package, job_set.get_dataset_name(), x) for x in sectors] + ["is_non_home_based_job", "is_home_based_job"],
             dataset_pool = self.dataset_pool,
             resources = compute_resources)
         

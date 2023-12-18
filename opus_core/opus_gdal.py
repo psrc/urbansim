@@ -91,7 +91,7 @@ class VariableTests(opus_unittest.OpusTestCase):
             dataset = gdalnumeric.LoadFile( filename, GA_ReadOnly )
             dataset = numeric.transpose(dataset)
             tdata = array(dataset.tolist())
-            self.assert_(ma.allequal(twoD_array, tdata))
+            self.assertTrue(ma.allequal(twoD_array, tdata))
 
     def tearDown(self):
         os.remove(os.path.join(self.temp_dir, self.temp_file))

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_home_access_to_population_DDD(Variable):
     """Bounded natural log of the home_access_to_population for this gridcell"""

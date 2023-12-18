@@ -68,7 +68,7 @@ class DevelopmentProjectTransitionModel( Model ):
         self.pre_check( location_set, target_vacancy_this_year, project_types)
     
         projects = None
-        for project_type_id, target_vacancy_rate in target_rates.iteritems():
+        for project_type_id, target_vacancy_rate in target_rates.items():
             # determine current-year vacancy rates
             project_type = building_types.get_attribute_by_id('building_type_name', project_type_id)
             vacant_units_sum = location_set.get_attribute(self.variable_for_vacancy[project_type]).sum()
@@ -203,7 +203,7 @@ class DPTMTests(StochasticTestCase):
             table_name='households',
             table_data={
                 "household_id":arange( 1, 1000+1 ),
-                "zone_id":array( 100*range(1,11) )
+                "zone_id":array( 100*list(range(1,11)) )
                 }
             )
 #            create 250 commercial jobs and distribute them equally across the 10 zones,
@@ -212,7 +212,7 @@ class DPTMTests(StochasticTestCase):
             table_name='jobs',
             table_data={
                 "job_id":arange( 1, 250+1 ),
-                "building_id":array( 25*range(1,11) ),
+                "building_id":array( 25*list(range(1,11)) ),
                 "home_based":array( 250*[0] ),
                 }
             )

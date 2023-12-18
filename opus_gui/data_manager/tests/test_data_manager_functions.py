@@ -26,7 +26,7 @@ class TestDataManagerFunctions(OpusGUITestCase):
         another_tool = get_tool_node_by_name(project, 'another tool')
         another_tool_node = project.find("data_manager/tool_library/tool_group/tool[@name='another tool']")
         no_tool = get_tool_node_by_name(project, 'no tool')
-        self.assertEquals(another_tool_node.find('class_module').text, 'correct_tool')
+        self.assertEqual(another_tool_node.find('class_module').text, 'correct_tool')
         self.assertEqual(another_tool, another_tool_node)
         self.assertTrue(no_tool is None)
 

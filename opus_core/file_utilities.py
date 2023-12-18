@@ -10,7 +10,7 @@ from opus_core.configuration import Configuration
 def write_resources_to_file(filename, resources):
     """Given a filename and a resource object, this will dump a dictionary of the resources to the file."""
     loc_resources = {}
-    for key in resources.keys():
+    for key in list(resources.keys()):
         loc_resources[key]=resources[key]
         
     f = open(filename,'wb')
@@ -52,17 +52,17 @@ class FileUtilitiesTests(opus_unittest.OpusTestCase):
         resources = Resources(data)
         write_resources_to_file(self.file_name, resources)
         data2 = get_resources_from_file(self.file_name)
-        self.assertEquals(data, data2)
+        self.assertEqual(data, data2)
         
     def test_read_write_to_file(self):
         content = "test\n test2\n\n\ttest"
         write_to_file(self.file_name, content)
         loaded_content = read_file_content(self.file_name)
-        self.assertEquals(content, loaded_content)
+        self.assertEqual(content, loaded_content)
         content = ["test","test2","","test3"]
         write_to_file(self.file_name, content)
         loaded_content = read_file_content(self.file_name)            
-        self.assertEquals("".join(content), loaded_content)
+        self.assertEqual("".join(content), loaded_content)
     
     def test_read_resources_from_string(self):
         data = {"arg1":1, "arg2":"2", "dict1":{"three":3,"four":4}}
@@ -70,7 +70,7 @@ class FileUtilitiesTests(opus_unittest.OpusTestCase):
         write_resources_to_file(self.file_name, resources)                        
         resources_string = read_file_content(self.file_name)
         loaded_resources = get_resources_from_string(resources_string)
-        self.assertEquals(resources, loaded_resources)
+        self.assertEqual(resources, loaded_resources)
         
 if __name__ == "__main__":
     opus_unittest.main()

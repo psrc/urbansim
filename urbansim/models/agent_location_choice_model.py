@@ -79,7 +79,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             try:
                 agents_index = array(agents_index)
             except:
-                raise TypeError, "Argument agents_index is of wrong type (numpy array or list allowed.)"
+                raise TypeError("Argument agents_index is of wrong type (numpy array or list allowed.)")
 
         if agents_index.size == 0:
             logger.log_status("Nothing to be done.")

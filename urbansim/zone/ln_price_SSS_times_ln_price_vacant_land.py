@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_price_SSS_times_ln_price_vacant_land(Variable):
     """Multiplication of two zone variables"""

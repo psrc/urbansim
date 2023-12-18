@@ -81,7 +81,7 @@ if __name__ == '__main__':
     config['cache_directory'] = output_dir
     config['years'] = (base_year+1, base_year+years_to_run)
 
-    if not len(range(config['years'][0], config['years'][1]+1)) > 0:
+    if not len(list(range(config['years'][0], config['years'][1]+1))) > 0:
         display_message_dialog('No years to simulate!')
         sys.exit(1)
         

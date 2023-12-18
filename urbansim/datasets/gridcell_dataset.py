@@ -37,16 +37,16 @@ class GridcellDataset(UrbansimDataset):
         Truncate the development capacity to the range
         min <= development capacity <= max, as defined by the given constraints.
         """
-        if (self.development_capacity <> None) and (not recompute_flag):
-            if (index <> None) and (index.size == self.development_capacity["index"].size) and \
+        if (self.development_capacity != None) and (not recompute_flag):
+            if (index != None) and (index.size == self.development_capacity["index"].size) and \
                     alltrue(self.development_capacity["index"] == index):
                 return self.development_capacity
         constraints.load_dataset_if_not_loaded()
         attributes = remove_elements_with_matched_prefix_from_list(
             constraints.get_attribute_names(), ["min", "max"])
         attributes = remove_all(attributes, constraints.get_id_name()[0])
-        attributes_with_prefix = map(lambda attr: "urbansim.gridcell." +
-                                        attr, attributes)
+        attributes_with_prefix = ["urbansim.gridcell." +
+                                        attr for attr in attributes]
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         if index == None:
             index = arange(self.size())

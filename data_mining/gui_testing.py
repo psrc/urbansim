@@ -9,8 +9,8 @@ sys.path.append('/Users/samclark/Desktop/UrbSimSandbox/trunk/opus_core')
 sys.path.append('/Users/samclark/Desktop/UrbSimSandbox/trunk')
 os.environ['OPUS_HOME'] = '/Users/samclark/Desktop/UrbSimSandbox'
 
-print "VARIABLES SET"
-from null_val_rep import run_test
+print("VARIABLES SET")
+from .null_val_rep import run_test
 import data_mining.PrintOutput
 
 def opusRun(progressCB, logCB, params=[]):
@@ -24,10 +24,10 @@ def opusRun(progressCB, logCB, params=[]):
     run_test(xml_doc, logCB, progressCB, False)
     
 def logCB(line):
-    print line
+    print(line)
 
 def progressCB(x):
-    print "Percentage: ", x 
+    print("Percentage: ", x) 
     
 def changeDictionaryIntoXml(params):
     
@@ -37,7 +37,7 @@ def changeDictionaryIntoXml(params):
     io_info = newdoc.createElement("io_info")
     model_info = newdoc.createElement("model_info")
     
-    for key, value in params.iteritems() :
+    for key, value in params.items() :
         if key.startswith("io_") :
             nk = key.replace("io_", "", 1)
             io_info.setAttribute(nk, value)
@@ -50,7 +50,7 @@ def changeDictionaryIntoXml(params):
     top_element.appendChild(io_info)
     top_element.appendChild(model_info)
     
-    print newdoc.toprettyxml()
+    print(newdoc.toprettyxml())
     return newdoc
 
 

@@ -81,4 +81,4 @@ if __name__=='__main__':
     t = Tests()
     t.setUp()
     t.test_compute()
-    print time.time() - t0
+    print(time.time() - t0)

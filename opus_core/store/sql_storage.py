@@ -86,15 +86,15 @@ class sql_storage(Storage):
         while True:
             row = query_results.fetchone()
             if row is None: break
-            for col_name, (column, col_type) in col_data.items():
+            for col_name, (column, col_type) in list(col_data.items()):
                 table_data[col_name].append(row[column])
                     
-        len_all = len(table_data.values()[0])
+        len_all = len(list(table_data.values())[0])
 
         problem_rows = set()
         problem_columns = {}
         remove_columns = {}
-        for key, column in table_data.items():
+        for key, column in list(table_data.items()):
             problem_rows_for_column = []
             for i in range(len_all):
                 if column[i] is None:
@@ -111,7 +111,7 @@ class sql_storage(Storage):
         if len_rm > 0:
             logger.log_warning('%s of %s columns ignored in %s '
                                'due to NULL values in column(s) (with row count in parens) "%s)"' 
-                               % (len_rm, len(table_data.keys()), table_name,
+                               % (len_rm, len(list(table_data.keys())), table_name,
                                '), "'.join('%s" (%s' % (k, remove_columns[k]) for k in sorted(list(remove_columns)))))
             
             
@@ -129,7 +129,7 @@ class sql_storage(Storage):
         if len_pr + len_rm == 0:
             logger.log_note('All rows and columns imported successfully')
             
-        for col_name, (column, col_type) in col_data.items():
+        for col_name, (column, col_type) in list(col_data.items()):
             if col_name in remove_columns:
                 del table_data[col_name]
                 continue
@@ -175,7 +175,7 @@ class sql_storage(Storage):
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
-        for column_name, column_data in table_data.items():
+        for column_name, column_data in list(table_data.items()):
             col_type = self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)
 
             # TODO this may be problematic: not all columns ending with '_id' and unique are primary keys
@@ -206,7 +206,7 @@ class sql_storage(Storage):
         try:
             try:
                 table = db.create_table(table_name, columns = columns)
-            except Exception, e:
+            except Exception as e:
                 raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
 
             transaction = connection.begin()
@@ -216,7 +216,7 @@ class sql_storage(Storage):
                     rows_to_insert = []
                     for row in range(last_row + 1, min(last_row + 1 + chunk_size, table_length)):
                         row_data = {}
-                        for column_name in table_data.keys():
+                        for column_name in list(table_data.keys()):
                             row_data[column_name] = table_data[column_name][row]
                         rows_to_insert.append(row_data)
                     last_row = row
@@ -300,7 +300,7 @@ class sql_storage(Storage):
                  }
         ## if a sqlalchemy type is specified in the type mapping above
         column_type_str = self.get_column_type_str(column_type, uppercase=True)
-        if specified_type_mapping.has_key(column_type_str):
+        if column_type_str in specified_type_mapping:
             return specified_type_mapping[column_type_str]
         
         ## resort to default class instance checking 
@@ -315,7 +315,7 @@ class sql_storage(Storage):
         elif isinstance(column_type, Boolean):
             default_type = dtype('b')
         else:
-            raise TypeError, 'Unrecognized column type: %s' % column_type_str
+            raise TypeError('Unrecognized column type: %s' % column_type_str)
         
         return default_type
     
@@ -362,7 +362,7 @@ else:
                     import traceback
                     traceback.print_exc()
                     
-                    print 'WARNING: could not start server for protocol %s'%config.protocol
+                    print('WARNING: could not start server for protocol %s'%config.protocol)
             
             
         def tearDown(self):
@@ -372,7 +372,7 @@ else:
                 server.close()
             
         def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_not_including_port(self):
-            import urllib
+            import urllib.request, urllib.parse, urllib.error
             for db, server, storage in self.dbs:
                 if db.protocol != 'sqlite':
                     if db.protocol == 'postgres':
@@ -395,10 +395,10 @@ else:
                                    db.database_name)
                     actual_url = storage.get_storage_location()
                     # It seems to have random cases where get_storage_location() returns quoted URL
-                    actual_url = urllib.unquote(actual_url)
+                    actual_url = urllib.parse.unquote(actual_url)
                     urls_are_equal = expected_url==actual_url
                     # Careful!  Don't put the URLs in the assertion, so if there is a failure they don't get printed in the CruiseControl log
-                    self.assert_(urls_are_equal, "expected and actual URLs not equal for protocol %s" % db.protocol)
+                    self.assertTrue(urls_are_equal, "expected and actual URLs not equal for protocol %s" % db.protocol)
 
        
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):
@@ -412,7 +412,7 @@ else:
                             }
                         )
                         
-                    expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
+                    expected_results = [(int(1),int(4)), (int(2),int(5)), (int(3),int(6))]
                                         
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
@@ -421,7 +421,7 @@ else:
                     self.assertEqual(expected_results, results)
                 except:
                     db.drop_table('test_write_table')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
                     
         def test_write_table_creates_a_table_with_the_given_table_name_and_data_of_different_types(self):
@@ -444,7 +444,7 @@ else:
 #                        expected_results = [(1,Decimal(str(1.1)),'bar'), (2,Decimal(str(2.2)),'foo')]
 #                    else:
 #                        expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
-                    expected_results = [(long(1),1.1,'bar',False), (long(2),2.2,'foo',True)]
+                    expected_results = [(int(1),1.1,'bar',False), (int(2),2.2,'foo',True)]
                     # Verify the data through a DatabaseServer database connection        
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data, tbl.c.boolean_data], order_by = tbl.c.int_data)
@@ -453,7 +453,7 @@ else:
                     self.assertEqual(expected_results, results)
                 except:
                     db.drop_table('test_write_table')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
                 
         def test_write_table_properly_creates_primary_key(self):  
@@ -494,7 +494,7 @@ else:
                     self.assertFalse(tbl.c.id.primary_key)
                 except:
                     db.drop_table('test_write_table')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
 
         def test_write_table_overwrite(self):
@@ -516,7 +516,7 @@ else:
                             'a': array([4,5,6]),
                             }
                         )                
-                    expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
+                    expected_results = [(int(1),int(4)), (int(2),int(5)), (int(3),int(6))]
                     
                     #Verify the data through a DatabaseServer database connection
                     tbl = db.get_table('test_write_table')
@@ -526,7 +526,7 @@ else:
                     self.assertEqual(expected_results, results)
                 except:
                     db.drop_table('test_write_table')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise                        
         def test_get_sql_alchemy_type_from_numpy_dtype(self):
             for db, server, storage in self.dbs:
@@ -544,7 +544,7 @@ else:
                     actual_sql_alchemy_type = storage._get_sql_alchemy_type_from_numpy_dtype(dtype('S'))
                     self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
                 except:
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
                 
         def test_get_numpy_dtype_from_sql_alchemy_type(self):
@@ -571,7 +571,7 @@ else:
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
                     
                 except:
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise            
         
         def test_get_table_names_added_through_write_table(self):
@@ -592,7 +592,7 @@ else:
                     db.drop_table('table1')
                     db.drop_table('table2')
                     db.drop_table('table3')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
             
         def test_get_column_names(self):
@@ -633,7 +633,7 @@ else:
                 except:
                     db.drop_table('foo')
                     db.drop_table('bar')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
             
         def test_load_table_returns_a_table_with_the_given_table_name_and_data(self):
@@ -663,7 +663,7 @@ else:
                 except:
                     db.drop_table('foo')
 
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
             
         def test_load_table_returns_a_table_with_different_table_name_and_data(self):
@@ -692,7 +692,7 @@ else:
                     self.assertDictsEqual(expected_data, actual_data)
                 except:
                     db.drop_table('bar')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
 
         def test_load_empty_table(self):
@@ -721,7 +721,7 @@ else:
                     self.assertDictsEqual(expected_data, actual_data)
                 except:
                     db.drop_table('bar')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
 
         def test_load_table_ignores_rows_with_null_values(self):
@@ -755,7 +755,7 @@ else:
                     self.assertDictsEqual(expected_data, actual_data)
                 except:
                     db.drop_table('bar')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
 
         def test_load_table_returns_nothing_when_no_cols_specified(self):
@@ -779,7 +779,7 @@ else:
                     self.assertDictsEqual(expected_data, actual_data)            
                 except:
                     db.drop_table('bar')
-                    print 'ERROR: protocol %s'%server.config.protocol
+                    print('ERROR: protocol %s'%server.config.protocol)
                     raise
                     
     if __name__ == '__main__':

@@ -20,29 +20,29 @@ class PyXBBindingClassGeneration():
     '''
     
     def setUp(self):
-        print "entering __setUp"
+        print("entering __setUp")
         logger.log_status('Testing automatic generation of the PyXB binding class.')
         logger.log_status('The PyXB binding class is needed to create the MATSim configuration via a xsd.')
         # point to test xsd
         self.xsd_file = os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'pyxb_data', 'test_xsd.xsd')
         # destination folder for generated pyxb binding class
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        print "leaving __setUp"
+        print("leaving __setUp")
 
     def tearDown(self):
-        print "entering tearDown"
+        print("entering tearDown")
 #        # Turn off the logger, so we can delete the cache directory.
 #        logger.disable_all_file_logging()
-        print "leaving tearDown"
+        print("leaving tearDown")
 
     def cleanup_test_run(self):
-        print "entering cleanup_test_run"
+        print("entering cleanup_test_run")
 #        cache_dir = self.resources['cache_directory']
 #        if os.path.exists(cache_dir):
 #            rmtree(cache_dir)
         if os.path.exists(self.temp_dir):
             rmtree(self.temp_dir)
-        print "leaving cleanup_test_run"
+        print("leaving cleanup_test_run")
         
     def test_run(self):
         logger.log_status("Entering test run")
@@ -53,9 +53,9 @@ class PyXBBindingClassGeneration():
         
         #self.assertTrue(return_code == 1)
         if return_code == 1:
-            print "PyxB binding class generation was successful !"
+            print("PyxB binding class generation was successful !")
         else:
-            print "Error while generating PyxB binding class!"
+            print("Error while generating PyxB binding class!")
         
         logger.log_status( "Leaving test run" )
         

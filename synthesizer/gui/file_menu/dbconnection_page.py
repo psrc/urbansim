@@ -12,7 +12,7 @@ import sys
 from misc.widgets import *
 from misc.errors import *
 from database.createDBConnection import createDBC
-from newproject import DBInfo
+from .newproject import DBInfo
 
 class DBConnectionPage(QWizardPage):
     def __init__(self, parent=None):
@@ -94,11 +94,11 @@ class DBConnectionPage(QWizardPage):
         try:
             dbconnection = createDBC(db)
             if not dbconnection.dbc.open():
-                raise FileError, dbconnection.dbc.lastError().text()
+                raise FileError(dbconnection.dbc.lastError().text())
 
             self.connectionDummy = True
             dbconnection.dbc.close()
-        except Exception, e:
+        except Exception as e:
             dbconnection.dbc.close()
             self.connectionDummy = False
 

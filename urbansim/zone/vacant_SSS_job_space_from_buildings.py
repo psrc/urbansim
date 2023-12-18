@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.vacant_SSS_job_space_from_buildings import vacant_SSS_job_space_from_buildings as gc_vacant_SSS_job_space_from_buildings
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class vacant_SSS_job_space_from_buildings(gc_vacant_SSS_job_space_from_buildings):
     """ The SSS_sqft_from_buildings/SSS_sqft_per_job - number_of_SSS_jobs. (See its gridcell equivalent for the algorithm.)""" 

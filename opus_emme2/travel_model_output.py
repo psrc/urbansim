@@ -43,7 +43,7 @@ class TravelModelOutput(object):
             in_table_name=table_name, out_storage=out_storage)
         travel_data_set.load_dataset_if_not_loaded()
         max_zone_id = zone_set.get_id_attribute().max()
-        for matrix_name in matrix_attribute_name_map.keys():
+        for matrix_name in list(matrix_attribute_name_map.keys()):
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
                                                      matrix_attribute_name_map[matrix_name], bank_path, matrices_created)
         return travel_data_set
@@ -68,7 +68,7 @@ class TravelModelOutput(object):
         node_travel_data_set = NodeTravelDataDataset(in_storage=in_storage, 
             in_table_name=table_name, out_storage=out_storage)
 
-        for file_name in matrix_attribute_name_map.keys():
+        for file_name in list(matrix_attribute_name_map.keys()):
             self._put_matricies_from_one_file_into_node_travel_data_set(node_travel_data_set, file_name, 
                                                      matrix_attribute_name_map[file_name], bank_path)
         return node_travel_data_set
@@ -114,7 +114,7 @@ class TravelModelOutput(object):
             cmd = "%s%s" % (cmd, out)
             logger.log_status(cmd)
             if os.system(cmd):
-                raise StandardError("Problem with simulation")
+                raise Exception("Problem with simulation")
         finally:
             os.remove(temp_macro_file_name)
             os.chdir(prior_cwd)
@@ -157,10 +157,10 @@ class TravelModelOutput(object):
         """
         full_file_name = join(bank_path, file_name)
         f = open(full_file_name, 'r')
-        file_contents = map(str.strip, f.readlines())
+        file_contents = list(map(str.strip, f.readlines()))
         f.close()
         header = str.split(file_contents[0])
-        attr_to_map_index = array([i for i in range(len(header)) if header[i] in attribute_map.keys()])
+        attr_to_map_index = array([i for i in range(len(header)) if header[i] in list(attribute_map.keys())])
         data = {}
         for idx in attr_to_map_index:
             node_travel_data_set.add_primary_attribute(data=zeros(node_travel_data_set.size(), dtype=float32), name=attribute_map[header[idx]])
@@ -175,7 +175,7 @@ class TravelModelOutput(object):
                 logger.log_warning('Invalid value in %s: %s' % (full_file_name, x))
                 return 0
         for line in file_contents[1:len(file_contents)]:
-            splitted_line = array(map(lambda x: try_convert_to_float(x), str.split(line)), dtype=float32)
+            splitted_line = array([try_convert_to_float(x) for x in str.split(line)], dtype=float32)
             from_node_id, to_node_id = round_(splitted_line[0:2]).astype("int32")
             try:
                 idindex = node_travel_data_set.get_id_index([[from_node_id, to_node_id]]) # this will raise error, if this combination of from_node, to_node is not in the dataset
@@ -191,7 +191,7 @@ class TravelModelOutput(object):
                 data['from_node_id'] = concatenate((data['from_node_id'], array([from_node_id])))
                 data['to_node_id'] = concatenate((data['to_node_id'], array([to_node_id])))
 
-        if data[data.keys()[0]].size > 0:
+        if data[list(data.keys())[0]].size > 0:
             node_travel_data_set.add_elements(data, require_all_attributes=False)
         
     def _get_emme2_data_from_file(self, full_file_name):
@@ -199,9 +199,9 @@ class TravelModelOutput(object):
            (they begin with a number)
         """
         f = open(full_file_name, 'r')
-        file_contents = map(str.strip, f.readlines())
+        file_contents = list(map(str.strip, f.readlines()))
         f.close()
-        return filter(lambda line: len(line) > 0 and str.isdigit(line[0]), file_contents)
+        return [line for line in file_contents if len(line) > 0 and str.isdigit(line[0])]
                 
     def _create_emme2_macro_to_extract_this_matrix(self, matrix_name, max_zone_id, file_name="_one_matrix.txt"):
         """Return an emme/2 macrot that will extract this matrix's values."""
@@ -250,7 +250,7 @@ from urbansim.datasets.zone_dataset import ZoneDataset
 
 class TravelModelOutputTests(opus_unittest.OpusTestCase):
     def setUp(self):
-        self._has_travel_model = os.environ.has_key('TRAVELMODELROOT')
+        self._has_travel_model = 'TRAVELMODELROOT' in os.environ
         if self._has_travel_model:
             self.real_bank_path = os.path.join(os.environ['TRAVELMODELROOT'], 
                                                'baseline_travel_model_psrc',
@@ -261,7 +261,7 @@ class TravelModelOutputTests(opus_unittest.OpusTestCase):
         from string import find, count
         tm_output = TravelModelOutput()
         macro = tm_output._create_emme2_macro_to_extract_this_matrix('xoxoxo', 9999)
-        self.assert_(find(macro, 'xoxoxo'))
+        self.assertTrue(find(macro, 'xoxoxo'))
         self.assertEqual(count(macro, '9999'), 4)
         
     def test_running_emme2_to_get_matrix(self):
@@ -319,7 +319,7 @@ class TravelModelOutputTests(opus_unittest.OpusTestCase):
             zone_storage.write_table(
                     table_name=zone_table_name,
                     table_data={
-                        'zone_id':array(range(num_zones))+1
+                        'zone_id':array(list(range(num_zones)))+1
                         },
                 )
             

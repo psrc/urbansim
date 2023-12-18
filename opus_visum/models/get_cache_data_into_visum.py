@@ -6,7 +6,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
-from visum_functions import load_version_file
+from .visum_functions import load_version_file
 from opus_core.variables.variable_name import VariableName
 import VisumPy.helpers as h
 
@@ -46,7 +46,7 @@ class GetCacheDataIntoVisum(GetCacheDataIntoTravelModel):
 		    h.SetMulti(Visum.Net.Zones, attrName, tempData)
 	except Exception:
 		error_msg = "Setting zone attribute " + attrName + " failed"
-		raise StandardError(error_msg)
+		raise Exception(error_msg)
 
 	#Save version file
 	#This saves over the existing version file
@@ -54,7 +54,7 @@ class GetCacheDataIntoVisum(GetCacheDataIntoTravelModel):
 		Visum.SaveVersion(fileName)
 	except Exception:
 		error_msg = "Saving version file failed"
-		raise StandardError(error_msg)
+		raise Exception(error_msg)
 	    
     def create_travel_model_input_file(self, config, year, zone_set, dataset_pool):
 	zone_set.compute_variables(config['travel_model_configuration']['urbansim_to_tm_variables'], 

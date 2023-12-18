@@ -21,7 +21,7 @@ class Visualization(object):
         self.years = years
         self.table_name = table_name
         self.file_extension = file_extension
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             self.__setattr__(k,v)
     
     def get_file_path(self):

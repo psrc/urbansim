@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.buildings_SSS_units import buildings_SSS_units as gridcell_buildings_SSS_units
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class buildings_SSS_units(gridcell_buildings_SSS_units):
@@ -58,7 +58,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([0, 0, 350])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

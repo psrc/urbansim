@@ -159,7 +159,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         prev_widget = self.le_project_filename # prev_widget is used to link the tab order of widgets
         
         # create a widget for each field_identifier
-        for field_id, nodes in self.fields_to_nodes.items():
+        for field_id, nodes in list(self.fields_to_nodes.items()):
             # pick the first node out of the list of nodes for this field identifier (there are at least one)
             node = nodes[0]
             
@@ -279,7 +279,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         # set the expected response attribute
         self.new_project_filename = project_filename
         
-        print('Saved new project to {0}'.format(project_filename))
+        print(('Saved new project to {0}'.format(project_filename)))
         self.accept()
         
     def on_buttonBox_rejected(self):

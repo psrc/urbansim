@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_sector_DDD_jobs_in_faz(Variable):
     """Natural log of the sector_DDD_jobs_in_faz for this gridcell"""

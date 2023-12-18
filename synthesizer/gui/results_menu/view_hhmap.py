@@ -14,7 +14,7 @@ from numpy.random import randint
 from gui.misc.dbf import *
 
 from gui.misc.map_toolbar import *
-from doRandPoints import *
+from .doRandPoints import *
 
 
 qgis_prefix = "C:/qgis"
@@ -94,17 +94,17 @@ class Hhmap(QDialog):
             writer = QgsVectorFileWriter(fdst, "CP1250", provider.fields(), QGis.WKBPolygon, None)
             del writer
             newlayer = QgsVectorLayer(fdst,"SelCounties", "ogr")
-            print "old layer feature count: ",newlayer.featureCount()
+            print("old layer feature count: ",newlayer.featureCount())
             newlayer.startEditing()
-            newlayer.setSelectedFeatures(range(newlayer.featureCount()))
+            newlayer.setSelectedFeatures(list(range(newlayer.featureCount())))
             newlayer.deleteSelectedFeatures()
             newlayer.addFeatures(sel_feats)
             newlayer.commitChanges()
-            print "new layer feature count: ",newlayer.featureCount()
+            print("new layer feature count: ",newlayer.featureCount())
             self.setGeogLayer(newlayer)
         else:
             newlayer = QgsVectorLayer(fdst,"SelCounties", "ogr")
-            print "layer feature count: ",newlayer.featureCount()
+            print("layer feature count: ",newlayer.featureCount())
             self.setGeogLayer(newlayer)
 
 
@@ -140,7 +140,7 @@ class Hhmap(QDialog):
         f.close()
         fieldnames, fieldspecs, records = db[0], db[1], db[2:]
         if hhcount_fieldname not in fieldnames:
-            print hhcount_fieldname + " Absent"
+            print(hhcount_fieldname + " Absent")
             fieldnames.append(hhcount_fieldname)
             fieldspecs.append(('N',11,0))
             for rec in records:
@@ -149,7 +149,7 @@ class Hhmap(QDialog):
             dbfwriter(f, fieldnames, fieldspecs, records)
             f.close()
         else:
-            print hhcount_fieldname + " Present"
+            print(hhcount_fieldname + " Present")
 
     def addLayer(self, layer):
         QgsMapLayerRegistry.instance().addMapLayer(layer)
@@ -175,15 +175,15 @@ class Hhmap(QDialog):
         allAttrs = provider.allAttributesList()
 
         allFields = provider.fields()
-        for(i, field) in allFields.iteritems():
-            print field.name()
+        for(i, field) in allFields.items():
+            print(field.name())
 
         fdst = basepath[0] + '_test' + '.shp'
         QgsVectorFileWriter.deleteShapeFile(fdst)
         QgsVectorFileWriter.writeAsShapefile(layer, fdst, "CP1250")
 
         if not self.isFieldInTable(hhcount_fieldname,allFields):
-            print "Field Absent"
+            print("Field Absent")
             #db = dbf.Dbf(dbfpath)
             #db.addField("hhcount_fieldname", 'N',10,0)
             #for rec in db:
@@ -206,7 +206,7 @@ class Hhmap(QDialog):
 
     def isFieldInTable(self, field, allFields):
         retval = False
-        for (i, attr) in allFields.iteritems():
+        for (i, attr) in allFields.items():
             if attr.name().trimmed() == field:
                 retval = True
                 return retval

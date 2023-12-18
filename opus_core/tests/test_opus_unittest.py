@@ -17,7 +17,7 @@ class TestSingleton(opus_unittest.OpusTestCase):
         """Also tests Singleton.has_singleton_for_class()."""
         # The only singleton should be Singleton itself.
         self.assertEqual(len(Singleton()._singletons), 1)
-        self.assert_(Singleton().has_singleton_for_class(Singleton))
+        self.assertTrue(Singleton().has_singleton_for_class(Singleton))
     
 class TestOpusTestCase(opus_unittest.OpusTestCase):
     class TestSingleton(Singleton):
@@ -39,7 +39,7 @@ class TestOpusTestCase(opus_unittest.OpusTestCase):
             'integer':1,
             'numpy_array':array([1,2,3]),
             'array':array(['alpha', 'beta']),
-            'long':10L,
+            'long':10,
             'float':3.1415926,
             'boolean':False,
             }
@@ -49,24 +49,24 @@ class TestOpusTestCase(opus_unittest.OpusTestCase):
             'integer':111,
             'numpy_array':array([111,222,333]),
             'array':array(['ALPHA', 'BETA']),
-            'long':101010L,
+            'long':101010,
             'float':2.18,
             'boolean':True,
             }
         
-        for type1, value1 in values.iteritems():
-            self.assert_(self._get_difference(
+        for type1, value1 in values.items():
+            self.assertTrue(self._get_difference(
                 first = {'arg':value1},
                 second = {'arg':value1},
                 ) is None)
                         
-            for type2, value2 in different_values.iteritems():
-                self.assert_(self._get_difference(
+            for type2, value2 in different_values.items():
+                self.assertTrue(self._get_difference(
                     first = {'arg':value1},
                     second = {'arg':value2},
                     ) is not None)
         
-        self.assert_(self._get_difference(
+        self.assertTrue(self._get_difference(
             first = {
                 'dictionary':{1:1},
                 'arg2':{
@@ -74,7 +74,7 @@ class TestOpusTestCase(opus_unittest.OpusTestCase):
                     'integer':1,
                     'numpy_array':array([1,2,3]),
                     'array':array(['alpha', 'beta']),
-                    'long':10L,
+                    'long':10,
                     'float':3.1415926,
                     'boolean':False,
                     },
@@ -86,14 +86,14 @@ class TestOpusTestCase(opus_unittest.OpusTestCase):
                     'integer':1,
                     'numpy_array':array([1,2,3]),
                     'array':array(['alpha', 'beta']),
-                    'long':10L,
+                    'long':10,
                     'float':3.1415926,
                     'boolean':False,
                     },
                 },
             ) is None)
         
-        self.assert_(self._get_difference(
+        self.assertTrue(self._get_difference(
             first = {
                 'dictionary':{1:1},
                 'arg2':{
@@ -108,7 +108,7 @@ class TestOpusTestCase(opus_unittest.OpusTestCase):
                 },
             ) is not None)
             
-        self.assert_(self._get_difference(
+        self.assertTrue(self._get_difference(
             first = {
                 'dictionary':{1:1},
                 'arg2':{

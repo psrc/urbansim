@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.code_for_price_model_SSS import code_for_price_model_SSS as gridcell_code_for_price_model_SSS
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class code_for_price_model_SSS(gridcell_code_for_price_model_SSS):
@@ -55,7 +55,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([2, 1, 2])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

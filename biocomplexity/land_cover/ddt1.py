@@ -27,7 +27,7 @@ class ddt1(Variable):
         constants = dataset_pool.get_dataset('constants')
         cellsize = constants["CELLSIZE"]
         all_urban_types = constants["ALL_URBAN"]
-        all_urban_types = map(lambda key: constants[key], all_urban_types)
+        all_urban_types = [constants[key] for key in all_urban_types]
         lct = ma.filled(self.get_dataset().get_2d_attribute(self.land_cover_type), 0)
         is_lct_all_urban = zeros(shape=lct.shape, dtype="int32")
         for urban_type in all_urban_types:
@@ -82,7 +82,7 @@ class Tests(ExpectedDataTest):
         should_be = array([1, 0, 1, 0], dtype=float32)
         should_be = ln(30*distance_transform_edt(should_be)+1) / ddt1.standardization_constant_distance
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + self.variable_name)
 
     def test_on_expected_data(self):

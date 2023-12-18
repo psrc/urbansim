@@ -63,7 +63,7 @@ class PersonDatasetConsistencyKeeperModel(Model):
                     household_id = household_ids[index]
                     if workers[index] > 0:
                         hh_ids += [household_id] * workers[index]
-                        member_ids += range(1, workers[index]+1)
+                        member_ids += list(range(1, workers[index]+1))
                         job_ids += [-1] * workers[index]
                         work_nonhome_based += [-1] * workers[index]
 

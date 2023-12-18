@@ -3,14 +3,14 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import array, zeros, exp
 from scipy.spatial import KDTree
 from numpy import column_stack
 from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 
-import cPickle as pickle
+import pickle as pickle
 import os.path
 
 class jobs_within_DDD_of_parcel_exp_weighted_with_beta(Variable):

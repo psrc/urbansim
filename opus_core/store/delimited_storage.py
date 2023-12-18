@@ -141,7 +141,7 @@ class delimited_storage(Storage):
         try:
             reader = csv.reader(input, self._dialect_name)
             
-            reader.next() # skip header because it was already read above
+            next(reader) # skip header because it was already read above
     
             index_map = self._get_index_map(column_names, available_column_names)
             
@@ -257,7 +257,7 @@ class delimited_storage(Storage):
             reader = csv.reader(input, self._dialect_name)
             
             # load header
-            header_information = reader.next()
+            header_information = next(reader)
             
         finally:
             input.close()
@@ -287,10 +287,10 @@ class delimited_storage(Storage):
             reader = csv.reader(input, self._dialect_name)
             
             # skip header
-            reader.next()
+            next(reader)
             
             try:
-                first_data_row = reader.next()
+                first_data_row = next(reader)
             except:
                 raise OpusError("Cannot determine the column types for table "
                     "'%s'. Type information must either be present in the "
@@ -360,13 +360,13 @@ class TestDelimitedStorage(TestStorageInterface):
                 }
             )
             
-        self.assert_(os.path.exists(os.path.join(temp_location, 'foo.spam')))
+        self.assertTrue(os.path.exists(os.path.join(temp_location, 'foo.spam')))
             
         if os.path.exists(base_location):
             rmtree(base_location)
         
     def test_load_table(self):
-        self.assert_(os.path.exists(
+        self.assertTrue(os.path.exists(
             os.path.join(self.temp_dir, '%s.csv' % self.table_name)))
         
         expected = {
@@ -437,7 +437,7 @@ class TestDelimitedStorage(TestStorageInterface):
             column_names = Storage.ALL_COLUMNS,
             available_column_names = ['a', 'b', 'c', 'd', 'e'],
             )
-        expected = range(len(['a', 'b', 'c', 'd', 'e']))
+        expected = list(range(len(['a', 'b', 'c', 'd', 'e'])))
         self.assertEqual(expected, actual)        
         
         actual = self.storage._get_index_map(
@@ -491,7 +491,7 @@ class TestDelimitedStorage(TestStorageInterface):
         """
         expected_string = ' alpha'
         original_string = expected_string + ' '*10 # This should be at least 2 spaces
-        self.assert_(original_string.endswith(' '))
+        self.assertTrue(original_string.endswith(' '))
         
         self.storage.write_table(
             table_name = 'foo',
@@ -501,7 +501,7 @@ class TestDelimitedStorage(TestStorageInterface):
             )
     
         file_path = self.storage._get_file_path_for_table('foo')
-        self.assert_(os.path.exists(file_path))
+        self.assertTrue(os.path.exists(file_path))
         
         input = open(file_path, 'rb')
         try:
@@ -509,7 +509,7 @@ class TestDelimitedStorage(TestStorageInterface):
             input.readline()
             
             line = input.readline()
-            self.assert_(not len(line) > len(expected_string)+2) # allow for a possible \r\n
+            self.assertTrue(not len(line) > len(expected_string)+2) # allow for a possible \r\n
             
         finally:
             input.close()
@@ -544,17 +544,17 @@ class TestDelimitedStorage(TestStorageInterface):
             lowercase = False,
             )
         expected = ['bar', 'BAZ']
-        self.assertEqual(actual_data.keys(), expected)
+        self.assertEqual(list(actual_data.keys()), expected)
         
         actual_data = self.storage.load_table(
             table_name = 'foo',
             lowercase = True,
             )
         expected = ['bar', 'baz']
-        self.assertEqual(actual_data.keys(), expected)
+        self.assertEqual(list(actual_data.keys()), expected)
         
     def test_has_table(self):
-        self.assert_(not self.storage.has_table('foo'))
+        self.assertTrue(not self.storage.has_table('foo'))
         
         self.storage.write_table(
             table_name = 'foo',
@@ -563,7 +563,7 @@ class TestDelimitedStorage(TestStorageInterface):
                 }
             )
         
-        self.assert_(self.storage.has_table('foo'))
+        self.assertTrue(self.storage.has_table('foo'))
         
     def test_get_header_information_in_table(self):
         dummy_column_names, column_types = self.storage._delimited_storage__get_header_information_from_table(self.table_name)      
@@ -590,7 +590,7 @@ class TestDelimitedStorage(TestStorageInterface):
         for header, expected_name, expected_type in good_headers_to_test:
             match = pattern.match(header)
             
-            self.assert_(match is not None)
+            self.assertTrue(match is not None)
             self.assertEqual(match.group(1), expected_name)
             self.assertEqual(match.group(2), expected_type)
              
@@ -609,7 +609,7 @@ class TestDelimitedStorage(TestStorageInterface):
         
         for header in bad_headers_to_test:
             match = pattern.match(header)
-            self.assert_(match is None)
+            self.assertTrue(match is None)
                  
     def test_infer_header_information_in_table(self):
         inferred_header_information = self.storage._delimited_storage__infer_header_information_in_table(
@@ -667,12 +667,12 @@ class TestDelimitedStorage(TestStorageInterface):
             )
 
         expected_file_path = os.path.join(base_dir, 'foo.bang')
-        self.assert_(os.path.exists(expected_file_path))
+        self.assertTrue(os.path.exists(expected_file_path))
         
         foo_file = open(storage._get_file_path_for_table('foo'), 'rb')
         try:
             for line in foo_file:
-                self.assert_('!' in line)
+                self.assertTrue('!' in line)
                 
         finally:
             foo_file.close()
@@ -722,7 +722,7 @@ class TestDelimitedStorageGetTableNames(TestStorageInterface):
         open(os.path.join(self.temp_dir, 'table1.test'), 'w').close()
         expected = ['table1']
         actual = self.storage.get_table_names()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
     def test_get_table_names_many_tables(self):
         expected = ['table1', 'table2', 'table7']
@@ -731,7 +731,7 @@ class TestDelimitedStorageGetTableNames(TestStorageInterface):
             open(os.path.join(self.temp_dir, '%s.test' % table_name), 'w').close()
         actual = self.storage.get_table_names()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':

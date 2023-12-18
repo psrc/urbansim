@@ -76,7 +76,7 @@ class BatchMakeIndicator(object):
         
         variable_augment = False
         if variable_augment == True:
-            for dataset_name in comparison_variables.keys():
+            for dataset_name in list(comparison_variables.keys()):
                 cache_directory = baseline
                 simulation_state.set_cache_directory(cache_directory)
                 dataset = DatasetFactory().get_dataset(dataset_name,
@@ -86,7 +86,7 @@ class BatchMakeIndicator(object):
                 variables = comparison_variables[dataset_name]
                 dataset.compute_variables(variables, resources=Resources())
                 ids = dataset.get_id_attribute()
-                for run in runs.keys():
+                for run in list(runs.keys()):
                     cache_directory=run
                     simulation_state.set_cache_directory(cache_directory)
                     run_dataset = DatasetFactory().get_dataset(dataset_name, 
@@ -103,11 +103,11 @@ class BatchMakeIndicator(object):
         
         #indicators_module = args[0]
         #eval("from %s import config" % indicators_module)
-        from make_indicators_openev import config
+        from .make_indicators_openev import config
         from urbansim.indicators.indicator_configuration_handler_batch_mode import generate_indicators
         #from make_indicators_openev import config
         #from inprocess.travis.urbansim.indicators.indicator_configuration_handler_batch_mode import generate_indicators
-        for run, descriptin in runs.iteritems():
+        for run, descriptin in runs.items():
             config.request_years = [year]
             config.cache_directory = run
             config.run_description = descriptin

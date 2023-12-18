@@ -43,7 +43,7 @@ class XmlController_Models(XmlController):
         template_nodes = self.project.findall('model_manager/templates/model_template')
         templates = dict((node.get('name'), node) for node in template_nodes)
 
-        for template_name, template_node in templates.items():
+        for template_name, template_node in list(templates.items()):
             callback = lambda x = template_node: self._show_dialog_for_template_node(x)
             action = self.create_action('clone', template_name, callback)
             self.create_from_template_actions.append(action)

@@ -31,7 +31,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModel):
         where_developable = self.filter_index
         # multiply by filter for submodels
         building_use_ids = agent_set.get_attribute_by_index('building_use_id', kwargs['agents_index'])
-        for submodel, filter_variable in self.filter_for_submodels.iteritems():
+        for submodel, filter_variable in self.filter_for_submodels.items():
             if filter_variable.get_alias() in self.choice_set.get_known_attribute_names():
                 values = self.choice_set.get_attribute(filter_variable)[where_developable].astype("bool8")
                 index = where(building_use_ids == submodel)[0]

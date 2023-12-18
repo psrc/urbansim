@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from elcm_estimation_config import elcm_configuration as elcm_gridcell_config
-from estimation_zone_config import run_configuration as config
+from .elcm_estimation_config import elcm_configuration as elcm_gridcell_config
+from .estimation_zone_config import run_configuration as config
 
 class elcm_configuration(elcm_gridcell_config):
     def get_configuration(self):

@@ -36,14 +36,14 @@ def create_data_set(xml_config_address):
     if not get_rand_coords :
         start_x = float(new_table_elem.attributes["x_coord"].value)
         start_y = float(new_table_elem.attributes["y_coord"].value)
-        print "Starting x: ", start_x
-        print "Starting y: ", start_y
+        print("Starting x: ", start_x)
+        print("Starting y: ", start_y)
   
     #Replace the table if one already exists
     db = create_engine(db_url)
     metadata = MetaData(db)
     if db.has_table(name) and replace_table != "TRUE":
-        print "ERROR: Table already exists and replacement not specified"
+        print("ERROR: Table already exists and replacement not specified")
         return -1
     elif db.has_table(name) :
         temp_table = Table(name, metadata, autoload=True)
@@ -80,14 +80,14 @@ def create_data_set(xml_config_address):
 
     if start_x != None :
         if start_x < x_min or start_x > x_max or start_y < y_min or start_y > y_max :
-            print "ERROR: starting coordinates are not inside area covered by input table"
+            print("ERROR: starting coordinates are not inside area covered by input table")
             return -1
     else :
         multiplier = 10000
         start_x = float(random.randint(int(x_min*multiplier), int(x_max*multiplier))) / multiplier
         start_y = float(random.randint(int(y_min*multiplier), int(y_max*multiplier))) / multiplier
-        print "Starting x: ", start_x
-        print "Starting y: ", start_y
+        print("Starting x: ", start_x)
+        print("Starting y: ", start_y)
         
     x_mult = (x_max - x_min) / NUM_INCRIMENTS
     y_mult = (y_max - y_min) / NUM_INCRIMENTS
@@ -98,7 +98,7 @@ def create_data_set(xml_config_address):
     cy_min = None
     
     #Finding appropriate coords (increasing size of the block in a linear manner)
-    print "Finding appropriate sized block"
+    print("Finding appropriate sized block")
     t = old_t
     x = ot_xcoord
     y = ot_ycoord
@@ -112,15 +112,15 @@ def create_data_set(xml_config_address):
         
         s = select([func.count("*")], and_(t.c[x] >= cx_min, t.c[x] <= cx_max, t.c[y] >= cy_min, t.c[y] <= cy_max), from_obj=[t]).execute()
         block_count = parcel_count = sql_get_agg(s, "int")  
-        print "Block count: ", block_count
+        print("Block count: ", block_count)
         if block_count > data_set_size :
-            print "Block selected"
+            print("Block selected")
             break
         
     s = t.select(and_(t.c[x] > cx_min, t.c[x] < cx_max, t.c[y] > cy_min, t.c[y] < cy_max)).execute()
         
     #Inputing rows into the new table
-    print "Inserting rows"
+    print("Inserting rows")
     row_list = []
     for row in s:
         temp = {}

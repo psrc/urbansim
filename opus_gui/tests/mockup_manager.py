@@ -28,4 +28,4 @@ class MockupManager(AbstractManager):
 
 if __name__ == '__main__':
     instance = MockupManager()
-    print 'Instance created'
+    print('Instance created')

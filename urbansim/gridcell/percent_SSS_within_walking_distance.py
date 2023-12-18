@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class percent_SSS_within_walking_distance(Variable):
     """There is exactly one variable corresponding to each defined development type dynamic_land_use_variables,

@@ -9,5 +9,5 @@ if __name__ == "__main__":
     char = ''
     logger.log_status()
     while char.lower() != 'y':
-        char = raw_input("Press 'y' when ready to continue:")
+        char = input("Press 'y' when ready to continue:")
     logger.end_block()

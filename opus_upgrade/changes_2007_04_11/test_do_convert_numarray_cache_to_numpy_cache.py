@@ -38,18 +38,18 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         convert = ConvertNumarrayCacheToNumpyCache()
         
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'do_not_change_me.sometext', output_directory)
-        self.assert_(os.path.exists(os.path.join(output_directory, 'do_not_change_me.sometext')))
+        self.assertTrue(os.path.exists(os.path.join(output_directory, 'do_not_change_me.sometext')))
         
         endian = file_flt_storage.storage_file(None)._get_native_endian_file_extension_character()
 
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'f.Int32', output_directory)
-        self.assert_(os.path.exists(os.path.join(output_directory, 'f.%si4' % endian)))
+        self.assertTrue(os.path.exists(os.path.join(output_directory, 'f.%si4' % endian)))
         
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'd.Float32', output_directory)
-        self.assert_(os.path.exists(os.path.join(output_directory, 'd.%sf4' % endian)))
+        self.assertTrue(os.path.exists(os.path.join(output_directory, 'd.%sf4' % endian)))
         
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'c.txt', output_directory)
-        self.assert_(os.path.exists(os.path.join(output_directory, 'c.iS7')))
+        self.assertTrue(os.path.exists(os.path.join(output_directory, 'c.iS7')))
         
         # Does the file contain the expected data?
         f = open(os.path.join(output_directory, 'c.iS7'), 'rb')
@@ -70,23 +70,23 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         converter = ConvertNumarrayCacheToNumpyCache()
         converter.execute(directory_to_copy, output_directory)
         
-        self.assert_(self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
+        self.assertTrue(self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
         
         # Should notice that empty directory is gone.
         rmtree(os.path.join(output_directory, 'a'))
-        self.assert_(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
+        self.assertTrue(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
         
         # Make them the same again
         converter.execute(directory_to_copy, output_directory)
         # Then change contents of one of the files.
         numpy.array([100]).tofile(os.path.join(output_directory, 'f.li4'))
-        self.assert_(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
+        self.assertTrue(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
         
         # Make them the same again
         converter.execute(directory_to_copy, output_directory)
         # Add directory in output_directory
         os.mkdir(os.path.join(output_directory, 'new_dir'))
-        self.assert_(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
+        self.assertTrue(not self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
         
     def _are_directories_same (self, first_path, second_path):
         return (self._is_first_directory_subset_of_second(first_path, second_path) and
@@ -132,12 +132,12 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
             output_directory,
             )
         
-        print cmd
+        print(cmd)
         result = os.system(cmd)
         self.assertEqual(0, result)
         
         # Check that output files have correct data.
-        self.assert_(self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
+        self.assertTrue(self._are_directories_same(numpy_directory_containing_expected_data, output_directory))
         
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class RunDummyTravelModel(AbstractTravelModel):
         """
         logger.start_block("Starting RunDummyTravelModel.run(...)")
         
-        print >> sys.stderr, "\nThis should also check if get_cache_data_into_matsim did something reasonable"
+        print("\nThis should also check if get_cache_data_into_matsim did something reasonable", file=sys.stderr)
         
         #try: # tnicolai :for debugging
         #    import pydevd
@@ -49,7 +49,7 @@ class RunDummyTravelModel(AbstractTravelModel):
         logger.log_status('would normally run command %s' % cmd )
         
         travel_data_location = os.path.join( opus_matsim.__path__[0], 'tests', 'testdata', 'travel_data.csv' )
-        print 'MATSim travel_data.csv stored at %s' %travel_data_location
+        print('MATSim travel_data.csv stored at %s' %travel_data_location)
                 
     def setUp(self, config):
         """ create MATSim config data

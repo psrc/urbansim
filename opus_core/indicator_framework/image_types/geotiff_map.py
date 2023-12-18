@@ -6,7 +6,7 @@ from opus_core.logger import logger
 try:
     from opus_core.opus_gdal import OpusGDAL
 except:
-    raise ImportError, 'failed to import OpusGDAL from opus_core.opus_gdal'
+    raise ImportError('failed to import OpusGDAL from opus_core.opus_gdal')
 
 import os, re, sys, time, traceback
 from copy import copy
@@ -85,7 +85,7 @@ class Tests(AbstractIndicatorTest):
         ####NOTE: THIS TEST FAILS BECAUSE THE OPUS_CORE DATASET DOES NOT HAVE 2D ATTRIBUTES, X/Y AXES
         
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
         
         map = GeotiffMap(
                   source_data = self.source_data,
@@ -97,11 +97,11 @@ class Tests(AbstractIndicatorTest):
         
         map.create(False)
         
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__geotiff__attribute__1980.tif')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__geotiff__attribute__1980.tif')))
                 
 if __name__ == '__main__':
     try: import gdal
-    except: print "Could not import gdal library."
+    except: print("Could not import gdal library.")
     else:
         opus_unittest.main()

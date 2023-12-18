@@ -13,7 +13,7 @@ def create_view(database, table_to_link_name, dataset_name):
     try:
         spatial_table = database.get_table(spatial_table_name)
     except:
-        print 'Error, could not create view because spatial table %s could not be found'%spatial_table_name
+        print('Error, could not create view because spatial table %s could not be found'%spatial_table_name)
         return
     table_to_link = database.get_table(table_to_link_name)
         
@@ -31,7 +31,7 @@ def create_view(database, table_to_link_name, dataset_name):
     cols_from_linked = [c.name for c in table_to_link.c if c.name not in cols_from_spatial]
     
     if table_to_link_primary_keys[0].name not in cols_from_spatial:
-        print 'WARNING: view will not be able to be created because the spatial table does not contain the column %s'%table_to_link_primary_keys[0].name   
+        print('WARNING: view will not be able to be created because the spatial table does not contain the column %s'%table_to_link_primary_keys[0].name)   
     
     cols = ','.join(['s.%s'%c for c in cols_from_spatial] +  ['l.%s'%c for c in cols_from_linked])
 
@@ -51,10 +51,10 @@ def create_view(database, table_to_link_name, dataset_name):
 
     try:
         database.execute(qry)
-        print qry
+        print(qry)
     except:
-        print 'Error, could not create view'
-        print qry
+        print('Error, could not create view')
+        print(qry)
         import traceback
         traceback.print_exc()
         

@@ -39,7 +39,7 @@ def sector2building_type(sectors):
     19:18  #      Education    TO School
     }
     trans_array = zeros(max(transl.keys())+1, dtype='int32')
-    for sector, bt in transl.iteritems():
+    for sector, bt in transl.items():
         trans_array[sector] = bt
     return trans_array[sectors]
     
@@ -471,7 +471,7 @@ class MoveHouseholdsToJobs:
                 hh_idx_sampled = unique(hh_idx_sampled)
                 hh_idx_sampled = hh_idx_sampled[0:minimum(buildings["residential_units"][bidx[i]]-buildings["number_of_households"][bidx[i]], hh_idx_sampled.size)]
                 hh_building_id[unique(hh_idx_sampled)] = buildings['building_id'][bidx[i]]
-        logger.log_status("%s households re-located." % (hh_building_id <> hhs['building_id']).sum())
+        logger.log_status("%s households re-located." % (hh_building_id != hhs['building_id']).sum())
         hhs.modify_attribute('building_id', data=hh_building_id)
         logger.end_block() 
         if out_storage is not None:

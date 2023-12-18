@@ -8,7 +8,7 @@ import sys
 from optparse import OptionParser
 from warnings import filterwarnings
 
-from classes.create_buildings_table import CreateBuildingsTable
+from .classes.create_buildings_table import CreateBuildingsTable
 
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
@@ -42,4 +42,4 @@ config = DatabaseServerConfiguration(
 filterwarnings('ignore', 'Unknown table')
 CreateBuildingsTable().create_buildings_table(config, options.database)
 
-print 'Done.'
+print('Done.')

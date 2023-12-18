@@ -31,7 +31,7 @@ class OpusProjectTestCase(opus_unittest.OpusTestCase):
         fn = self._get_file_path(fn)
         ok, msg = self.p.open(fn)
         if not ok:
-            print msg
+            print(msg)
         self.assertTrue(self.p.is_open(), 'Project file could not be opened')
         return self.p
 
@@ -113,7 +113,7 @@ class TestOpusProject(OpusProjectTestCase):
         # Test that the find method is equivalent to using nodes find
         self.assertTrue(p.find('general/project_name') is p.root_node().find('general/project_name'))
         # Test that the name got parsed OK
-        self.assertEquals(p.name, 'test_project')
+        self.assertEqual(p.name, 'test_project')
         # Test that the data path is based on the name
         self.assertTrue(p.data_path().endswith(os.path.sep + 'test_project'))
         # Make sure no data is left arond when we open another file and fails
@@ -188,10 +188,10 @@ class TestOpusProject(OpusProjectTestCase):
                 i_ins = p.delete_node(i)
                 i = p.find(name)
                 s = 'pass #%d of make_local/delete_node failed for node %s' % (nth, node_identity_string(i))
-                self.assert_(i_ins is i, s)
-                self.assert_(i not in p._shadowing_nodes, s)
-                self.assert_(i is not None, s)
-                self.assert_(i.get('inherited') is not None, s)
+                self.assertTrue(i_ins is i, s)
+                self.assertTrue(i not in p._shadowing_nodes, s)
+                self.assertTrue(i is not None, s)
+                self.assertTrue(i.get('inherited') is not None, s)
 
     def test_update_node(self):
         def get_nodes_by_name_as_list(names):
@@ -242,8 +242,8 @@ class TestOpusProject(OpusProjectTestCase):
             self.assertEqual(end.text, 'shadowed_value_child appended_text', 'update shadowing node changes text')
         for end in ll_end:
             self.assertTrue(end.get('inherited') is None)
-            print end.text
-            self.assertEquals(end.text, 'local appended_text', 'update shadowing node changes text')
+            print(end.text)
+            self.assertEqual(end.text, 'local appended_text', 'update shadowing node changes text')
 
         # check that the shadowing node was removed from the shadowing nodes map
         self.assertTrue(p.root_node() in p._shadowing_nodes)
@@ -258,10 +258,10 @@ class TestOpusProject(OpusProjectTestCase):
                 i_ins = p.delete_node(ic)
                 i = p.find(name)
                 s = 'pass #%d of make_local/delete_node failed for node %s' % (nth, node_identity_string(i))
-                self.assert_(i_ins is i, s)
-                self.assert_(i not in p._shadowing_nodes, s)
-                self.assert_(i is not None, s)
-                self.assert_(i.get('inherited') is not None, s)
+                self.assertTrue(i_ins is i, s)
+                self.assertTrue(i not in p._shadowing_nodes, s)
+                self.assertTrue(i is not None, s)
+                self.assertTrue(i.get('inherited') is not None, s)
 
     def test_find(self):
         p = self._open('find.xml')
@@ -324,11 +324,11 @@ class TestOpusProject(OpusProjectTestCase):
         local = p.find('local')
         shadowing = p.find('shadowing')
         inherited = p.find('inherited')
-        self.assert_(p.get_prototype_node(local) is None)
+        self.assertTrue(p.get_prototype_node(local) is None)
         # prototype returns copy of inherited so do equality instead if instance check
         self.assertEqual(tostring(p.get_prototype_node(shadowing)),
                          tostring(p._inherited_root.find('shadowing')))
-        self.assert_(p.get_prototype_node(inherited) is inherited)
+        self.assertTrue(p.get_prototype_node(inherited) is inherited)
 
     def test_insert_node(self):
         p = self._open('child.xml')
@@ -340,22 +340,22 @@ class TestOpusProject(OpusProjectTestCase):
         local_unique = Element('local', {'name':'unique'})          # ok - diff name
         path = Element('path', {'name':'2.5th path'})               # ok - diff name
 
-        self.assert_(p.find('a/pretty/deep').get('attribute') is None)
+        self.assertTrue(p.find('a/pretty/deep').get('attribute') is None)
         r = p.root_node()
-        self.assert_(p.insert_node( new, r) is not None)
-        self.assert_(p.insert_node( shadowing, r) is None)
-        self.assert_(p.insert_node( local, r) is None)
-        self.assert_(p.insert_node( inherited, r) is None)
-        self.assert_(p.insert_node( local_unique, r) is not None)
+        self.assertTrue(p.insert_node( new, r) is not None)
+        self.assertTrue(p.insert_node( shadowing, r) is None)
+        self.assertTrue(p.insert_node( local, r) is None)
+        self.assertTrue(p.insert_node( inherited, r) is None)
+        self.assertTrue(p.insert_node( local_unique, r) is not None)
         nth = p.insert_node(path, p.find('a/pretty/deep'), 1)
-        self.assert_(nth is path) # inserting a node should return the inserted node
+        self.assertTrue(nth is path) # inserting a node should return the inserted node
 
-        self.assert_(p.find('local', name = 'unique') is local_unique)
+        self.assertTrue(p.find('local', name = 'unique') is local_unique)
         # inserting path should have made <a/pretty/deep/path> local all the way up
-        self.assert_(p.find('a/pretty/deep').get('inherited') is None)
-        self.assert_(p.find('a').get('inherited') is None)
+        self.assertTrue(p.find('a/pretty/deep').get('inherited') is None)
+        self.assertTrue(p.find('a').get('inherited') is None)
         # it should also have inserted the node between the first and the second node
-        self.assert_(p.find('a/pretty/deep')[1] is path)
+        self.assertTrue(p.find('a/pretty/deep')[1] is path)
         
         
     # ============================================

@@ -25,7 +25,7 @@ class CorrectLandValue(Model):
             
         previous_dev_type = dataset.get_attribute_by_index("%s_lag2" % submodel_string, index)
         current_dev_type = dataset.get_attribute_by_index(submodel_string, index)
-        change_indicator = (previous_dev_type <> current_dev_type)
+        change_indicator = (previous_dev_type != current_dev_type)
             
         previous_residential_land_value = dataset.get_attribute_by_index("residential_land_value_lag1", index) 
         previous_nonresidential_land_value = dataset.get_attribute_by_index("nonresidential_land_value_lag1", index)    
@@ -46,7 +46,7 @@ from numpy import array, ma
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from opus_core.coefficients import Coefficients
 from opus_core.equation_specification import EquationSpecification 
-from land_price_model import LandPriceModel
+from .land_price_model import LandPriceModel
 from opus_core.storage_factory import StorageFactory
 
 

@@ -8,7 +8,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtSql import *
 from database.createDBConnection import createDBC
 from misc.errors import FileError
-from import_data import ImportUserProvData, FileProperties
+from .import_data import ImportUserProvData, FileProperties
 
 class UserImportGeocorrData():
     def __init__(self, project):
@@ -24,10 +24,10 @@ class UserImportGeocorrData():
             geocorrTableQuery = self.mysqlQueries('geocorr', self.project.geocorrUserProv.location)
 
             if not self.query.exec_(geocorrTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(geocorrTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
     def mysqlQueries(self, name, filePath):
         fileProp = FileProperties(filePath)
@@ -48,15 +48,15 @@ class UserImportGeocorrData():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 class AutoImportGeocorrData():
@@ -70,7 +70,7 @@ class AutoImportGeocorrData():
         check = self.checkIfTableExists('geocorr')
 
         if check:
-            if self.project.controlUserProv.defSource <> 'ACS 2005-2007':
+            if self.project.controlUserProv.defSource != 'ACS 2005-2007':
                 geocorrTableQuery = ImportUserProvData('geocorr',
                                                        "./data/us2000geocorr.csv",
                                                        [], [], True, True)
@@ -80,10 +80,10 @@ class AutoImportGeocorrData():
                                                        [], [], True, True)                
 
             if not self.query.exec_(geocorrTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(geocorrTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
     def checkIfTableExists(self, tablename):
@@ -95,13 +95,13 @@ class AutoImportGeocorrData():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1

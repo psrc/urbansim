@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class percent_development_type_DDD_within_walking_distance(Variable):
     """There is exactly one variable corresponding to each defined development type dynamic_land_use_variables,
@@ -71,7 +71,7 @@ class Tests(opus_unittest.OpusTestCase):
                             1/5.0*100.0, 
                             0/5.0*100.0] )
         
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7), 
                      msg = "Error in " + self.variable_name)
 
 

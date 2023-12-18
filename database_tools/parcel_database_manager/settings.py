@@ -19,12 +19,12 @@ ENGINE = lambda:'sqlite:///sample_parcel.sqlite'
 def setup_model():
     #import camelot.model
     from elixir import setup_all
-    import model
-    print 'Testing...'
-    print 'model.metadata: ', model.__metadata__
+    from . import model
+    print('Testing...')
+    print('model.metadata: ', model.__metadata__)
 
     setup_all(create_tables=False)
-    print 'Original Tables:'
+    print('Original Tables:')
 #    for table in model.__metadata__.sorted_tables:
 #        print str(table)
     tables_to_drop = ([

@@ -4,7 +4,7 @@
 
 import os
 from time import localtime, strftime, time
-from opus_core.logger import logger
+from .opus_core.logger import logger
 
 try:
     try:
@@ -87,7 +87,7 @@ else:
             #    raise RuntimeError, "Error saving array into image"
     
     
-    from opus_core.tests import opus_unittest
+    from .opus_core.tests import opus_unittest
     from numpy import arange, array, reshape
     from numpy import ma
     import tempfile, os
@@ -109,7 +109,7 @@ else:
                 dataset = gdalnumeric.LoadFile( filename, gdal.gdalconst.GA_ReadOnly )
                 dataset = Numeric.transpose(dataset)
                 tdata = array(dataset.tolist())
-                self.assert_(ma.allequal(twoD_array, tdata))
+                self.assertTrue(ma.allequal(twoD_array, tdata))
     
         def tearDown(self):
             os.remove(os.path.join(self.temp_dir, self.temp_file))

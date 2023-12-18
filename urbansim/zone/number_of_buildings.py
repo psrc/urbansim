@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class number_of_buildings(Variable):
     """Number of buildings in zones"""
@@ -58,7 +58,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([1, 3, 1, 1, 0])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
 

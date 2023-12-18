@@ -4,7 +4,7 @@
 
 
 from inprocess.psrc_zone.configs.create_post_year_configuration import create_post_year_configuration
-from baseline_copied_travel_data import BaselineCopiedTravelData
+from .baseline_copied_travel_data import BaselineCopiedTravelData
 
 class BaselineInflatedTravelData(BaselineCopiedTravelData):
     def __init__(self):

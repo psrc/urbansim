@@ -80,22 +80,22 @@ class constrain_estimation_bhhh(EstimationProcedure):
         omega = self.mnl_probabilities.get_omega(probability, constrained_locations_matrix, unconstrained_locations_matrix, sdratio_matrix)
         omega = _round(omega, 1.0, CLOSE)
 
-        print 'Num of constrainted locations: ', constrained_locations.sum()
-        print 'Num of unconstrainted locations: ', unconstrained_locations.sum()
-        print 'Min Ex Ante Constraints:',min(constrained_ex_ante.sum(axis=1))
-        print 'Max Ex Ante Constraints:',max(constrained_ex_ante.sum(axis=1))
+        print('Num of constrainted locations: ', constrained_locations.sum())
+        print('Num of unconstrainted locations: ', unconstrained_locations.sum())
+        print('Min Ex Ante Constraints:',min(constrained_ex_ante.sum(axis=1)))
+        print('Max Ex Ante Constraints:',max(constrained_ex_ante.sum(axis=1)))
         #print 'Omega shape',omega.shape
         #print 'Omega histogram',histogram(omega,0,4,40)
-        print 'Minimum Omega',min(omega)
-        print 'Maximum Omega',max(omega)
-        print 'Mean Omega:',mean(omega)
-        print 'Median Omega:',median(omega)
-        print 'Sum Omega:',omega.sum()
-        print 'Standard Deviation Omega:',standard_deviation(omega)
-        print 'Count of Negative Omega',(where(omega<0,1,0).sum())
-        print 'Count of Omega < 1',(where(omega<1,1,0).sum())
-        print 'Count of Omega > 2',(where(omega>2,1,0).sum())
-        print 'Count of Omega > 4',(where(omega>4,1,0).sum())
+        print('Minimum Omega',min(omega))
+        print('Maximum Omega',max(omega))
+        print('Mean Omega:',mean(omega))
+        print('Median Omega:',median(omega))
+        print('Sum Omega:',omega.sum())
+        print('Standard Deviation Omega:',standard_deviation(omega))
+        print('Count of Negative Omega',(where(omega<0,1,0).sum()))
+        print('Count of Omega < 1',(where(omega<1,1,0).sum()))
+        print('Count of Omega > 2',(where(omega>2,1,0).sum()))
+        print('Count of Omega > 4',(where(omega>4,1,0).sum()))
 
         average_omega = self.mnl_probabilities.get_average_omega(omega, probability, index, nsupply, nobs, demand)
         average_omega=_round(average_omega, 1.0, CLOSE)
@@ -112,8 +112,8 @@ class constrain_estimation_bhhh(EstimationProcedure):
         prev_constrained_locations_matrix = constrained_locations_matrix
 
         for i in range(max_iter):
-            print
-            print 'Iteration',i
+            print()
+            print('Iteration',i)
             pi = self.mnl_probabilities.get_pi(sdratio_matrix, omega, constrained_locations_matrix, unconstrained_locations_matrix, nobs)
             #print 'pi shape',pi.shape
             #print 'data shape', data.shape
@@ -149,34 +149,34 @@ class constrain_estimation_bhhh(EstimationProcedure):
             constrained_ex_ante_not_ex_post = where((constrained_ex_post - constrained_ex_ante)==-1,1,0)
 
             #Assumption 5: if j belongs to constrained ex post and unconstrained ex ante, then p^i_j <= D_j / S_j
-            print 'Number of individual violating Assumption 5: ', where((probability > 1 / sdratio_matrix)*constrained_ex_post_not_ex_ante)[0].size
+            print('Number of individual violating Assumption 5: ', where((probability > 1 / sdratio_matrix)*constrained_ex_post_not_ex_ante)[0].size)
 
             #Assumption 6: pi of constrained locations should be less than 1
-            print 'Number of individual violating Assumption 6: ', where((probability * constrained_ex_post).sum(axis=1) >
-                                                                         (prob_hat * constrained_ex_post).sum(axis=1))[0].size
+            print('Number of individual violating Assumption 6: ', where((probability * constrained_ex_post).sum(axis=1) >
+                                                                         (prob_hat * constrained_ex_post).sum(axis=1))[0].size)
             ##OR ?
             #print 'Assumption 6: ', where(pi[where(constrained_locations_matrix)] > 1)[0].size
 
-            print 'number of constrainted locations: ', constrained_locations.sum()
-            print 'number of unconstrainted locations: ', unconstrained_locations.sum()
-            print 'Min Ex Post Constraints:',min(constrained_ex_post.sum(axis=1))
-            print 'Max Ex Post Constraints:',max(constrained_ex_post.sum(axis=1))
-            print 'At Least 1 Constrained Ex Ante Not Ex Post*:',where(constrained_ex_ante_not_ex_post.sum(axis=1))[0].size
-            print 'At Least 1 Constrained Ex Post Not Ex Ante:',where(constrained_ex_post_not_ex_ante.sum(axis=1))[0].size
+            print('number of constrainted locations: ', constrained_locations.sum())
+            print('number of unconstrainted locations: ', unconstrained_locations.sum())
+            print('Min Ex Post Constraints:',min(constrained_ex_post.sum(axis=1)))
+            print('Max Ex Post Constraints:',max(constrained_ex_post.sum(axis=1)))
+            print('At Least 1 Constrained Ex Ante Not Ex Post*:',where(constrained_ex_ante_not_ex_post.sum(axis=1))[0].size)
+            print('At Least 1 Constrained Ex Post Not Ex Ante:',where(constrained_ex_post_not_ex_ante.sum(axis=1))[0].size)
 
             omega = self.mnl_probabilities.get_omega(prob_hat, constrained_locations_matrix, unconstrained_locations_matrix, sdratio_matrix)
             omega = _round(omega, 1.0, CLOSE)
             #print 'Omega histogram',histogram(omega,0,4,40)
-            print 'Minimum Omega',min(omega)
-            print 'Maximum Omega',max(omega)
-            print 'Mean Omega:',mean(omega)
-            print 'Median Omega:',median(omega)
-            print 'Sum Omega:',omega.sum()
-            print 'Standard Deviation Omega:',standard_deviation(omega)
-            print 'Count of Negative Omega',(where(omega<0,1,0).sum())
-            print 'Count of Omega < 1: ',(where(omega<1,1,0).sum())
-            print 'Count of Omega > 2: ',(where(omega>2,1,0).sum())
-            print 'Count of Omega > 4: ',(where(omega>4,1,0).sum())
+            print('Minimum Omega',min(omega))
+            print('Maximum Omega',max(omega))
+            print('Mean Omega:',mean(omega))
+            print('Median Omega:',median(omega))
+            print('Sum Omega:',omega.sum())
+            print('Standard Deviation Omega:',standard_deviation(omega))
+            print('Count of Negative Omega',(where(omega<0,1,0).sum()))
+            print('Count of Omega < 1: ',(where(omega<1,1,0).sum()))
+            print('Count of Omega > 2: ',(where(omega>2,1,0).sum()))
+            print('Count of Omega > 4: ',(where(omega>4,1,0).sum()))
 
             average_omega = self.mnl_probabilities.get_average_omega(omega, prob_hat, index, nsupply, nobs, demand_new)
             average_omega = _round(average_omega, 1.0, CLOSE)
@@ -184,9 +184,9 @@ class constrain_estimation_bhhh(EstimationProcedure):
             global_excess_demand = excess_demand.sum()
             #print 'Omega [i], [i-1]',prev_omega, omega,
             #print 'Constrained locations [i], [i-1]',constrained_locations_matrix, prev_constrained_locations_matrix
-            print 'Global Excess Demand',global_excess_demand
+            print('Global Excess Demand',global_excess_demand)
             if ma.allclose(omega, prev_omega, atol=1e-3) or not any(constrained_locations_matrix - prev_constrained_ex_ante):
-                print 'omega or constrained ex post unchanged: Convergence criterion achieved'
+                print('omega or constrained ex post unchanged: Convergence criterion achieved')
                 break
 
             #if global_excess_demand < 1:

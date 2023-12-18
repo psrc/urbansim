@@ -133,7 +133,7 @@ class RemoteRun:
                 config = get_config_from_opus_path(opus_path)
             else:
                 if config is None:
-                    raise StandardError, "Either configuration_path, config or run_id must be given."
+                    raise Exception("Either configuration_path, config or run_id must be given.")
             insert_auto_generated_cache_directory_if_needed(config)
     
             self.run_id = self.get_run_manager()._get_new_run_id()
@@ -150,7 +150,7 @@ class RemoteRun:
             results = self.get_run_manager().services_db.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
-                raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
+                raise Exception("run_id %s doesn't exist in run_activity table." % self.run_id)
             
         self.set_local_output_path()
         return config
@@ -267,7 +267,7 @@ class RemoteRun:
         #only keep sorted travel model years falls into years range
         travel_model_years = []
         if not self.skip_travel_model:
-            for key in travel_model_resources['travel_model_configuration'].keys():
+            for key in list(travel_model_resources['travel_model_configuration'].keys()):
                 if type(key) == int:
                     if key >= start_year and key <= end_year:
                         travel_model_years.append(key)
@@ -296,7 +296,7 @@ class RemoteRun:
                                                    )
                     if not background:               
                         if not self.has_urbansim_finished(urbansim_resources):
-                            raise StandardError, "There was an error in the urbansim run."
+                            raise Exception("There was an error in the urbansim run.")
 
             # run travel models
             if not self.skip_travel_model:
@@ -307,10 +307,10 @@ class RemoteRun:
                         if self.run_id in runs_by_status.get('done', []):
                             break
                         if self.run_id in runs_by_status.get('failed', []):
-                            raise StandardError, "There was an error in the urbansim run."
+                            raise Exception("There was an error in the urbansim run.")
 
                 max_zone_id = 0
-                if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
+                if this_end_year in travel_model_resources['travel_model_configuration']:
                     tm = AbstractEmme2TravelModel(travel_model_resources)
                     for full_model_path in travel_model_resources['travel_model_configuration'][this_end_year].get('models'):
                         if full_model_path in self.remote_travel_models:
@@ -337,8 +337,8 @@ class RemoteRun:
                         self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
                         node_map = travel_model_resources['travel_model_configuration'].get('node_matrix_variable_map', {})
                         node_files = []
-                        if "bank%i" % x in node_map.keys():
-                            node_files = node_map["bank%i" % x].keys()
+                        if "bank%i" % x in list(node_map.keys()):
+                            node_files = list(node_map["bank%i" % x].keys())
                         for report in reports+node_files:
                             report_name = os.path.join(bank_dir, report)
                             if os.path.exists(report_name):
@@ -366,7 +366,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
     
     if options.server is None:
-        hostname = raw_input('Hostname [%s]: ' % RemoteRun.default_hostname)
+        hostname = input('Hostname [%s]: ' % RemoteRun.default_hostname)
         if len(hostname) == 0:
             hostname = RemoteRun.default_hostname
     else:
@@ -374,9 +374,9 @@ if __name__ == "__main__":
         
     username=None
     password=None
-    if hostname <> 'localhost':
+    if hostname != 'localhost':
         if options.user is None:
-            username = raw_input('Username [%s]: ' % RemoteRun.default_username)
+            username = input('Username [%s]: ' % RemoteRun.default_username)
             if len(username) == 0:
                 username = RemoteRun.default_username
             else:

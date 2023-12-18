@@ -121,7 +121,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
     def test_save_specification_table_to_tex_file_method_creates_expected_output_file(self):
         LaTeX().save_specification_table_to_tex_file([[1]], self.output_file)
-        self.assert_(os.path.isfile(self.output_file), 
+        self.assertTrue(os.path.isfile(self.output_file), 
             'Output file was not created or was named incorrectly!')
             
             
@@ -132,7 +132,7 @@ class LatexTests(opus_unittest.OpusTestCase):
         f.close()
         
         m = re.search(r'\\begin\{longtable\}(\s|.)*\\end\{longtable\}', lines)
-        self.assert_(m is not None, 'No tabular block found!')
+        self.assertTrue(m is not None, 'No tabular block found!')
             
     
     def test_save_specification_table_to_tex_file_method_output_params(self):
@@ -142,7 +142,7 @@ class LatexTests(opus_unittest.OpusTestCase):
         f.close()
 
         m = re.search(r'\\begin\{[^\{\}]*\}\s*\{[clr|]{2}', lines)
-        self.assert_(m is not None, 'Incorrect params found!')   
+        self.assertTrue(m is not None, 'Incorrect params found!')   
         
     
     def test_save_specification_table_to_tex_file_method_number_of_hlines(self):
@@ -153,11 +153,11 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         m = re.search(r'^(\s|.)*\\hline(\s|.)*\\hline(\s|.)*\\hline(\s|.)*$', 
                       lines)
-        self.assert_(m is not None, 'Too few \\hline\'s found!')           
+        self.assertTrue(m is not None, 'Too few \\hline\'s found!')           
 
         m = re.search(r'^(\s|.)*\\hline(\s|.)*\\hline(\s|.)*\\hline(\s|.)*'
                       '\\hline(\s|.)*$', lines)
-        self.assert_(m is None, 'Too many \\hline\'s found!')
+        self.assertTrue(m is None, 'Too many \\hline\'s found!')
         
     
     def test_save_specification_table_to_tex_file_method_consistent_columns(self):
@@ -176,7 +176,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         for match in matches:
             cols = len(re.split(r'(?<!\\)&', match))
-            self.assert_(cols == num_cols, 
+            self.assertTrue(cols == num_cols, 
                          "Incorrect number of columns found: '%s\\\\'" % match)
                           
   
@@ -194,7 +194,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         matches = re.findall(r'(.*)\\\\', lines)
 
-        self.assert_(len(matches) == rows, 
+        self.assertTrue(len(matches) == rows, 
                      'Incorrect number of rows generated!')
         
 
@@ -211,14 +211,14 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         # This first match should be the header.
         m = re.search(r'(.*)\\\\', lines)
-        self.assert_(m is not None, 'No header found!')
+        self.assertTrue(m is not None, 'No header found!')
         
         entries = re.split(r'(?<!\\)&', m.group())
         
         for i in range(len(entries)):
             m = re.search(r'^\s*%s\s*(?:\\\\)?\s*$' 
                           % re.escape(str(table[0][i])), entries[i])
-            self.assert_(m is not None, 
+            self.assertTrue(m is not None, 
                          "Unexpected output. Expected '%s'. Received '%s'." 
                          % (table[0][i], entries[i]))
             
@@ -236,7 +236,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         # Skip the header.
         m = re.findall(r'(.*)\\\\', lines)[1:]
-        self.assert_(m is not None, 'No non-header rows found!')
+        self.assertTrue(m is not None, 'No non-header rows found!')
         
         for i in range(len(m)):
             entries = re.split(r'(?<!\\)&', m[i])
@@ -245,7 +245,7 @@ class LatexTests(opus_unittest.OpusTestCase):
                 match = re.search(r'^\s*%s\s*(?:\\\\)?\s*$' 
                                   % re.escape(str(table[i+1][j])), entries[j])
 
-                self.assert_(match is not None, 
+                self.assertTrue(match is not None, 
                              "Unexpected output. Expected '%s'. Received '%s'." 
                              % (table[i+1][j], entries[j]))
                              
@@ -271,7 +271,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         # Skip the header.
         m = re.findall(r'(.*)\\\\', lines)[1:]
-        self.assert_(m is not None, 'No non-header rows found!')
+        self.assertTrue(m is not None, 'No non-header rows found!')
         
         for i in range(len(m)):
             entries = re.split(r'(?<!\\)&', m[i])
@@ -291,7 +291,7 @@ class LatexTests(opus_unittest.OpusTestCase):
                 except IndexError:
                     self.fail('Output column incorrect width!')
 
-                self.assert_(match is not None, 
+                self.assertTrue(match is not None, 
                              "Unexpected output. Expected '%s'. Received '%s'." 
                              % (expected, entries[j]))
                              
@@ -311,7 +311,7 @@ class LatexTests(opus_unittest.OpusTestCase):
 
         # Skip the header.
         m = re.findall(r'(.*)\\\\', lines)[1:]
-        self.assert_(m is not None, 'No non-header rows found!')
+        self.assertTrue(m is not None, 'No non-header rows found!')
         
         for i in range(len(m)):
             entries = re.split(r'(?<!\\)&', m[i])
@@ -331,7 +331,7 @@ class LatexTests(opus_unittest.OpusTestCase):
                 except IndexError:
                     self.fail('Output column incorrect width!')
 
-                self.assert_(match is not None, 
+                self.assertTrue(match is not None, 
                              "Unexpected output. Expected '%s'. Received '%s'." 
                              % (expected, entries[j]))
             

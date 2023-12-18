@@ -141,7 +141,7 @@ class DependencyQuery:
             for x in xs:
                 ret.append(VariableName(x[0]))
                 rec(x[1])
-        rec(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name, group)[1])))
+        rec(list(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name, group)[1]))))
         return elim_dups(ret)
 
     #get a dependency tree for a variable given its name
@@ -159,20 +159,20 @@ class DependencyQuery:
             if isinstance(dep_item, str):
                 result_others.append(self.get_dep_tree_from_name(dep_item))
             else:
-                print "Attribute!"
+                print("Attribute!")
         return (inp.name(), elim_dups(result_others))
 
     def all_models_tree(self):
-        return map(self.get_dep_tree_from_name, extract_leaves(self.var_tree)) \
-             + map(lambda x,y: (x, y,"model"), self.var_tree.iteritems())
+        return list(map(self.get_dep_tree_from_name, extract_leaves(self.var_tree))) \
+             + list(map(lambda x,y: (x, y,"model"), iter(self.var_tree.items())))
 
     def model_tree(self):
         model = self.get_model_vars()
-        return map(self.get_dep_tree_from_name, extract_leaves(model[1])) \
+        return list(map(self.get_dep_tree_from_name, extract_leaves(model[1]))) \
                 + [(model[0], model[1],"model")]
 
     def vars_tree(self, vl):
-        return map(self.get_dep_tree_from_name, extract_leaves(vl))
+        return list(map(self.get_dep_tree_from_name, extract_leaves(vl)))
     
     def get_model_structure_dependencies(self):
         return self.model_structure_dependencies
@@ -208,7 +208,7 @@ class DependencyChart:
                 write_edges(x)
             if len(tree) > 2:
                 dot.add_node(Node(tree[0], shape = {"primary":"diamond", "model":"box"}[tree[2]]))
-        map(write_edges, trees)
+        list(map(write_edges, trees))
         dot.write_png(fi + ".png")
 
     #return latex-formatted table of a model's depndencies
@@ -230,35 +230,35 @@ class DependencyChart:
     #print out a model's dependencies
     def print_model_dependencies(self):
         tree = self.query.model_tree()
-        print '\nDependencies for model: %s' % self.query.model_name
-        print '==============================='
-        print ' * Variables:'
+        print('\nDependencies for model: %s' % self.query.model_name)
+        print('===============================')
+        print(' * Variables:')
         self._print_dependencies(tree)
-        print ''
-        print ' * Other dependencies:'
-        for key, value in self.query.get_model_structure_dependencies().iteritems():
-            if key <> 'variable':
-                print key, ':', value
+        print('')
+        print(' * Other dependencies:')
+        for key, value in self.query.get_model_structure_dependencies().items():
+            if key != 'variable':
+                print(key, ':', value)
 
     def print_dependencies(self, name):
         """Prints out dependencies of one variable."""
         tree = self.query.vars_tree([name])
-        print '\nDependencies for variable: %s' % name
-        print '==============================='
+        print('\nDependencies for variable: %s' % name)
+        print('===============================')
         self._print_dependencies(tree)
         
     def _print_dependencies(self, tree):
         leaves = elim_dups(extract_leaves_using_primary_key(tree))
-        leaves_v = map(lambda x: VariableName(x), leaves)
+        leaves_v = [VariableName(x) for x in leaves]
         vs = groupBy(leaves_v, lambda x: x.get_dataset_name())
-        for k, vars in vs.iteritems():
+        for k, vars in vs.items():
             if k == None: continue
-            print ''
-            print 'Dataset: ', k
-            print '------------------'
-            uvars = elim_dups(map(lambda x: x.get_short_name(), vars))
+            print('')
+            print('Dataset: ', k)
+            print('------------------')
+            uvars = elim_dups([x.get_short_name() for x in vars])
             for var in uvars:
-                print '\t', var
+                print('\t', var)
 #Utility Funcs
 
 #removes the leaves of a tree constructed of tuples and lists.
@@ -405,7 +405,7 @@ if __name__ == '__main__':
     else:
         if options.output == None:
             for x in chart.query.var_tree:
-                print "Processing " + x[0] + "..."
+                print("Processing " + x[0] + "...")
                 chart.graph_model(None, x[0])
         else:
             chart.graph_all(options.output)

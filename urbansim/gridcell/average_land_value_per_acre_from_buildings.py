@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.misc import safe_array_divide
 
 class average_land_value_per_acre_from_buildings(Variable):

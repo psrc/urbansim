@@ -154,8 +154,7 @@ class BuildingTransitionModel( Model ):
         if building_categories: # should be a dictionary of categories for each building type
             building_set.resources['building_categories'] = building_categories
         # add submodel attribute
-        category_variables = map(lambda type: "urbansim.%s.size_category_%s" % (building_set.get_dataset_name(), type),
-                                           building_types)
+        category_variables = ["urbansim.%s.size_category_%s" % (building_set.get_dataset_name(), type) for type in building_types]
 
         for category_var in category_variables:
             var = VariableName(category_var)
@@ -221,7 +220,7 @@ class BTMTests(StochasticTestCase):
             table_name=buildings_table_name,
             table_data={
                 "building_id":arange( 1, 2000+1 ), # 2000 buildings
-                "grid_id":array( 20*range( 1, 100+1 ), dtype=int32 ), # spread evenly across 100 gridcells
+                "grid_id":array( 20*list(range( 1, 100+1)), dtype=int32 ), # spread evenly across 100 gridcells
                 "building_type_id":array(1000*[self.sfhc] +
                                          500*[self.comc] +
                                          500*[self.indc], dtype=int8),
@@ -248,7 +247,7 @@ class BTMTests(StochasticTestCase):
             table_name=households_table_name,
             table_data={
                 "household_id":arange( 1, 10000+1 ),
-                "grid_id":array( 100*range( 1, 100+1 ), dtype=int32 )
+                "grid_id":array( 100*list(range( 1, 100+1)), dtype=int32 )
                 }
             )
         self.households = HouseholdDataset(in_storage=storage, in_table_name=households_table_name)
@@ -282,7 +281,7 @@ class BTMTests(StochasticTestCase):
             table_name=jobs_table_name,
             table_data={
                 "job_id":arange( 1, 2500+1 ),
-                "grid_id":array( 25*range( 1, 100+1 ), dtype=int32 ),
+                "grid_id":array( 25*list(range( 1, 100+1)), dtype=int32 ),
                 "sector_id":array( 2500*[1], dtype=int32 ),
                 "building_type":array(2500*[self.comc], dtype=int8)
                 }
@@ -419,7 +418,7 @@ class BTMTests(StochasticTestCase):
         """
         residential_units_developed = (10000 - (.01*20000))/.01
         max_difference = 50
-        self.assert_(self.is_close(resunits_after - resunits_before, residential_units_developed, max_difference),
+        self.assertTrue(self.is_close(resunits_after - resunits_before, residential_units_developed, max_difference),
                          """Approximately %s residential units should've been added/developed.
                          Instead, got %s""" % (residential_units_developed, resunits_after - resunits_before))
 
@@ -436,7 +435,7 @@ class BTMTests(StochasticTestCase):
         """
         commercial_sqft_developed = (250000 - (.01*1000000))/.01
         max_difference = 5000
-        self.assert_(self.is_close(commercial_after - commercial_before, commercial_sqft_developed, max_difference),
+        self.assertTrue(self.is_close(commercial_after - commercial_before, commercial_sqft_developed, max_difference),
                          """Approximately %s commercial sqft should've been added/developed.
                          Instead, got %s""" % (commercial_sqft_developed, commercial_after - commercial_before))
 

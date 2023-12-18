@@ -51,7 +51,7 @@ class DocumentationTab(QWidget):
         self.mainwindow.tabWidget.setCurrentIndex(0)
 
     def clicked(self):
-        print "Remove Documentation Pressed..."
+        print("Remove Documentation Pressed...")
         self.mainwindow.tabWidget.removeTab(self.mainwindow.tabWidget.indexOf(self.tab))
         self.tab.hide()
 

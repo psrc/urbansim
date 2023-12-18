@@ -50,7 +50,7 @@ class bfgs_mnl_estimation(bhhh_mnl_estimation):
 
         bounds_lower = bounds_upper = repeat([None], beta.size)
         bounds_lower[is_fixed_values] = bounds_upper[is_fixed_values] = fixed_values
-        bounds = zip(bounds_lower, bounds_upper)
+        bounds = list(zip(bounds_lower, bounds_upper))
                 
         logger.start_block('Starting L_BFGS_B procedure...')
         epsilon = self.resources.get('bfgs_epsilon', self.epsilon)
@@ -70,7 +70,7 @@ class bfgs_mnl_estimation(bhhh_mnl_estimation):
         info = bfgs_result[2]
         status = {0:'Convergence achieved.', 
                   1:'Maximum iterations reached without convergence.',
-                  2:'Stop for another reason: %s.' % info['task'] if info.has_key('task') \
+                  2:'Stop for another reason: %s.' % info['task'] if 'task' in info \
                                                                   else 'unknown'
                  }
         warnflag = ''

@@ -94,7 +94,7 @@ class CacheScenarioDatabase(Model):
         cache_directory = simulation_state.get_cache_directory()
 
         baseyear_cache_path = os.path.join(cache_directory, str(base_year))
-        for table_name, year in creating_baseyear_cache_configuration.tables_to_copy_to_previous_years.iteritems():
+        for table_name, year in creating_baseyear_cache_configuration.tables_to_copy_to_previous_years.items():
             year_cache_path = os.path.join(cache_directory, str(year))
             dest_file_path = os.path.join(year_cache_path, table_name)
             if os.path.exists(dest_file_path):

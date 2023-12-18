@@ -129,7 +129,7 @@ if __name__ == '__main__':
             return 3
         else:
             return 4
-    mtc_hh['hinccat1'] = array(map(income2hinccat1, opus_hh['income']))
+    mtc_hh['hinccat1'] = array(list(map(income2hinccat1, opus_hh['income'])))
 
     # 1 - 0 to 10k
     # 2 - 10 to 20k
@@ -162,7 +162,7 @@ if __name__ == '__main__':
             return 8
         else:
             return 9
-    mtc_hh['hinccat2'] = array(map(income2hinccat2, opus_hh['income']))
+    mtc_hh['hinccat2'] = array(list(map(income2hinccat2, opus_hh['income'])))
 
     def hhagecat(a):
         if a >= 0  and a <= 64:
@@ -172,14 +172,14 @@ if __name__ == '__main__':
         else:
             logger.log_warning("Found age_of_head < 0")
             return -1
-    mtc_hh['hhagecat'] = array(map(hhagecat, opus_hh['age_of_head']))
+    mtc_hh['hhagecat'] = array(list(map(hhagecat, opus_hh['age_of_head'])))
 
     def hsizecat(s):
         if s >= 4:
             return 4
         else:
             return s
-    mtc_hh['hsizecat'] = array(map(hsizecat, opus_hh['persons']))
+    mtc_hh['hsizecat'] = array(list(map(hsizecat, opus_hh['persons'])))
 
     # TODO: need family v. non-family
     # mtc_hh['hfamily'] = ???
@@ -195,7 +195,7 @@ if __name__ == '__main__':
     # TODO: MTC docs say this is "number of workers in the hh category".  What
     # category?  Is this not just number of workers in the hh as in opus?
     # Probably not considering that we have hworkers later.
-    mtc_hh['hwrkrcat'] = array(map(lambda w: w if w < 4 else 3, opus_hh['workers']))
+    mtc_hh['hwrkrcat'] = array([w if w < 4 else 3 for w in opus_hh['workers']])
 
     # TODO: These next categories are summaries of the household members of
     # certain ages.  How can we find this out?  Do we need to traverse the

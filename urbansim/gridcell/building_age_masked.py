@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.simulation_state import SimulationState
 from numpy import maximum, ma, logical_not
 
@@ -20,7 +20,7 @@ class building_age_masked(Variable):
         current_year = SimulationState().get_current_time()
 
         if current_year == None:
-            raise StandardError, "'SimulationState().get_current_time()' returns None."
+            raise Exception("'SimulationState().get_current_time()' returns None.")
         urbansim_constant = dataset_pool.get_dataset('urbansim_constant')
         is_year_built = self.get_dataset().get_attribute("has_valid_year_built")
         year_built_values = self.get_dataset().get_attribute(self.year_built)

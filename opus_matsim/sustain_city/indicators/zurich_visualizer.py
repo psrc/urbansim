@@ -20,7 +20,7 @@ cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_
 #cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_5.test_no_action_with_accessibility_1pct_30it_2000-2010_warm-hot-start'
 #cache_directory = r'/Users/sustaincity/Development/opus_home/data/zurich_parcel_from_20111014/results/dec2011/run_6.test_schwamendingertunnel_with_accessibility_1pct_30it_2000-2010_warm-hot-start'
 
-print "creating indicators for %s" % os.environ['OPUSPROJECTNAME']
+print("creating indicators for %s" % os.environ['OPUSPROJECTNAME'])
 
 indicators = {
     
@@ -127,7 +127,7 @@ indicators = {
        attribute = 'zone.aggregate(urbansim_parcel.parcel.improvement_value)'),
            
 }
-print "... done."
+print("... done.")
 
 #################################################################
 #DEFINE data source
@@ -137,7 +137,7 @@ print "... done."
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_gui.results_manager.run.indicator_framework.maker.source_data import SourceData
 
-print "creating result template ..."
+print("creating result template ...")
 
 source_data = SourceData(
    cache_directory = cache_directory,
@@ -149,7 +149,7 @@ source_data = SourceData(
    #name = project_name
 )
 
-print "... done."
+print("... done.")
 
 ################################################################
 #COMPUTE indicators
@@ -158,13 +158,13 @@ print "... done."
 # for a given result template
 from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
 
-print "creating maker (to compute indicators) ..."
+print("creating maker (to compute indicators) ...")
 
 maker = Maker( project_name )
 computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = source_data)
-print "... done."
+print("... done.")
 
 ############################################
 #VISUALIZE the resulting computed indicators
@@ -554,4 +554,4 @@ visualizations += visualizer.visualize(
     #name = 'improvement_value'
     )
 
-print 'Finished with creating indicators'
+print('Finished with creating indicators')

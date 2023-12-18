@@ -31,7 +31,7 @@ class percent_of_development_this_year(Variable):
                 return a[idx]
             else:
                 return a[idx] - a[idx-1]
-        percent_of_development_this_year = array(map(lambda vel, i: get_one_velocity(vel,i), velocity, index))
+        percent_of_development_this_year = array(list(map(lambda vel, i: get_one_velocity(vel,i), velocity, index)))
         ds.touch_attribute("_start_year") # in order to always recompute (because the simulation year can change)
         return percent_of_development_this_year
     

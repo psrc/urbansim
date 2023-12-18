@@ -25,12 +25,12 @@ class Tests(opus_unittest.OpusTestCase):
         jobs = Dataset(in_storage=storage, in_table_name='jobs', id_name="jid", dataset_name="myjob")       
         values = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
         should_be = array([2, 1, 1])            
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
         # change gids of jobs (to test if computing dependencies is working)
         jobs.modify_attribute(name="gid", data=array([1,1,1,1]))
         values2 = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
         should_be2 = array([4, 0, 0])            
-        self.assert_(ma.allclose(values2, should_be2, rtol=1e-7), msg = "Error in " + expr)
+        self.assertTrue(ma.allclose(values2, should_be2, rtol=1e-7), msg = "Error in " + expr)
 
     def test_number_of_agents_expression(self):
         expr = "mygridcell.number_of_agents(myjob)+10"
@@ -43,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
         jobs = Dataset(in_storage=storage, in_table_name='jobs', id_name="jid", dataset_name="myjob")       
         values = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
         should_be = array([12, 11, 11])            
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
 
     def test_aggregate(self):
         # test aggregate with no function specified (so defaults to 'sum')
@@ -67,7 +67,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable)'], dataset_pool=dataset_pool)
         should_be = array([4.5, 9]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_with_cast(self):
         # test aggregate with a cast (this exercises the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern)
@@ -91,7 +91,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable).astype(float32)'], dataset_pool=dataset_pool)
         should_be = array([4.5, 9.0]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_squared(self):
         # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
@@ -115,7 +115,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable)**2'], dataset_pool=dataset_pool)
         should_be = array([4.5*4.5, 9*9]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_with_cast_squared(self):
         # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
@@ -139,7 +139,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable).astype(float32)**2'], dataset_pool=dataset_pool)
         should_be = array([4.5*4.5, 9.0*9.0]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_squared_with_cast(self):
         # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
@@ -163,7 +163,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['(zone.aggregate(gridcell.my_variable)**2).astype(float32)'], dataset_pool=dataset_pool)
         should_be = array([4.5*4.5, 9.0*9.0]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_fully_qualified_variable(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -187,7 +187,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('tests', test_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(opus_core.tests.a_test_variable)'], dataset_pool=dataset_pool)
         should_be = array([45, 90]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in test_aggregate_fully_qualified_variable")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in test_aggregate_fully_qualified_variable")
 
     def test_aggregate_sum(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -206,7 +206,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds2)
         values = ds2.compute_variables(['myfaz.aggregate(myzone.my_variable, function=sum)'], dataset_pool=dataset_pool)
         should_be = array([4.5, 9]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum")
 
     def test_aggregate_sum_one_level(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -237,7 +237,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfazdistr',ds2)
         values = ds2.compute_variables(['myfazdistr.aggregate(myzone.my_variable, intermediates=[myfaz])'], dataset_pool=dataset_pool)
         should_be = array([132, 24])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_one_level") 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_one_level") 
 
     def test_aggregate_sum_two_levels(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -275,7 +275,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myneighborhood',ds3)
         values = ds3.compute_variables(['myneighborhood.aggregate(myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)'], dataset_pool=dataset_pool)
         should_be = array([177, 24])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_two_levels")    
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_two_levels")    
         
     def test_aggregate_mean(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -298,7 +298,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds2)
         values = ds2.compute_variables(['myfaz.aggregate(myzone.my_variable, function=mean)'], dataset_pool=dataset_pool)
         should_be = array([7.0, 4.5])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_mean")      
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_mean")      
 
     def test_aggregate_all(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -314,7 +314,7 @@ class Tests(opus_unittest.OpusTestCase):
         ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable)"], dataset_pool=dataset_pool)         
         values = ds2.get_attribute("myvar")
         should_be = array([13.5])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all")
 
     def test_aggregate_all_sum(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -337,7 +337,7 @@ class Tests(opus_unittest.OpusTestCase):
         ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable, function=sum)"], dataset_pool=dataset_pool)    
         values = ds2.get_attribute("myvar")
         should_be = array([13.5])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_sum")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_sum")
 
     def test_aggregate_all_mean(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -360,7 +360,7 @@ class Tests(opus_unittest.OpusTestCase):
         ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable, function=mean)"], dataset_pool=dataset_pool)
         values = ds2.get_attribute("myvar")
         should_be = array([5.75])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_mean")      
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_mean")      
 
     def test_disaggregate(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -383,7 +383,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds2)
         values = ds.compute_variables(["myzone.disaggregate(myfaz.my_variable)"], dataset_pool=dataset_pool)
         should_be = array([4, 8, 4, 8])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
         
     def test_disaggregate_fully_qualified_variable(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -407,7 +407,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('test_location', test_dataset)
         values = zone_dataset.compute_variables(['zone.disaggregate(opus_core.test_location.cost_times_3)'], dataset_pool=dataset_pool)
         should_be = array([12, 24, 12, 24]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in test_disaggregate_fully_qualified_variable")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in test_disaggregate_fully_qualified_variable")
 
     def test_disaggregate_one_level(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -438,7 +438,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfazdistr', ds2)
         values = ds0.compute_variables(["myzone.disaggregate(myfazdistr.my_variable, intermediates=[myfaz])"], dataset_pool=dataset_pool)
         should_be = array([40, 40, 40, 50, 40,50, 40])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_one_level") 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_one_level") 
           
     def test_disaggregate_two_levels(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -477,7 +477,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfazdistr', ds2)
         values = ds.compute_variables(["mygridcell.disaggregate(myfazdistr.my_variable, intermediates=[myfaz,myzone])"], dataset_pool=dataset_pool)
         should_be = array([40, 50, 40, 40, 50,50, 40, 40, 40])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_two_levels")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_two_levels")
 
     def test_disaggregate_and_multiply(self):
         # Perform two different disaggregations and multiply the results.  This tests using a dataset name in both the
@@ -512,7 +512,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfazdistr', ds2)
         values = ds0.compute_variables([expr], dataset_pool=dataset_pool)
         should_be = array([400, 4000, 400, 2500, 4000, 2500, 400])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_and_multiply")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_and_multiply")
         
 if __name__=='__main__':
     opus_unittest.main()

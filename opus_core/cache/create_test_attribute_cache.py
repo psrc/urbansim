@@ -25,13 +25,13 @@ class CreateTestAttributeCache(object):
         SimulationState().set_cache_directory(cache_dir)
         attr_cache = AttributeCache()
         
-        for year, datasets in data.iteritems():
+        for year, datasets in data.items():
             year_dir = os.path.join(cache_dir, str(year))
             if not os.path.exists(year_dir):
                 os.makedirs(year_dir)
             SimulationState().set_current_time(year)
             flt_storage = attr_cache.get_flt_storage_for_year(year)
-            for dataset_name, attributes in datasets.iteritems():
+            for dataset_name, attributes in datasets.items():
                 flt_storage.write_table(table_name=dataset_name, table_data=attributes)
 
 from opus_core.tests import opus_unittest
@@ -62,15 +62,15 @@ class Tests(opus_unittest.OpusTestCase):
         cache_directory = os.path.join(self._temp_dir, 'some', 'path', 'cache')
         cache_creator.create_attribute_cache_with_data(cache_directory, test_data)
         
-        self.assert_(os.path.exists(cache_directory))
+        self.assertTrue(os.path.exists(cache_directory))
         
         cache_directory = os.path.join(self._temp_dir, 'somepath')
         cache_creator.create_attribute_cache_with_data(cache_directory, test_data)
         
-        self.assert_(os.path.exists(cache_directory))
+        self.assertTrue(os.path.exists(cache_directory))
         # filename is e.g. attr1.li4 for little-endian 32 bit architecture
         filename = 'attr1.%(endian)si%(bytes)u' % replacements
-        self.assert_(os.path.exists(os.path.join(cache_directory, 
+        self.assertTrue(os.path.exists(os.path.join(cache_directory, 
                                                  str(year),
                                                  table_name,
                                                  filename

@@ -7,7 +7,7 @@ from numpy import where, zeros, float64, float32, array
 from opus_core.estimation_procedure import EstimationProcedure
 from opus_core.logger import logger
 from opus_core.misc import ematch
-import biogeme
+from . import biogeme
 import os
 import tempfile
 #import pdb
@@ -93,40 +93,40 @@ class mnl_estimation(EstimationProcedure):
         # Use the results
         #
 
-        print " timeStamp: ",  estimationResults.getTimeStamp() ;
+        print(" timeStamp: ",  estimationResults.getTimeStamp()) ;
 
-        print " version: ", estimationResults.getVersion() ;
+        print(" version: ", estimationResults.getVersion()) ;
 
-        print " description: ", estimationResults.getDescription() ;
+        print(" description: ", estimationResults.getDescription()) ;
 
-        print " model: ", estimationResults.getModel() ;
+        print(" model: ", estimationResults.getModel()) ;
 
-        print " drawsType: ", estimationResults.getDrawsType() ;
+        print(" drawsType: ", estimationResults.getDrawsType()) ;
 
-        print " numberOfDraws: ", estimationResults.numberOfDraws ;
+        print(" numberOfDraws: ", estimationResults.numberOfDraws) ;
 
-        print " numberOfParameters: ", estimationResults.numberOfParameters ;
+        print(" numberOfParameters: ", estimationResults.numberOfParameters) ;
 
-        print " numberOfObservations: ", estimationResults.numberOfObservations ;
+        print(" numberOfObservations: ", estimationResults.numberOfObservations) ;
 
-        print " numberOfIndividuals: ", estimationResults.numberOfIndividuals;
+        print(" numberOfIndividuals: ", estimationResults.numberOfIndividuals);
 
-        print " nullLogLikelihood: ", estimationResults.nullLoglikelihood ;
+        print(" nullLogLikelihood: ", estimationResults.nullLoglikelihood) ;
 
-        print " initLoglikelihood: ", estimationResults.initLoglikelihood ;
+        print(" initLoglikelihood: ", estimationResults.initLoglikelihood) ;
 
-        print " finalLoglikelihood: ", estimationResults.finalLoglikelihood ;
+        print(" finalLoglikelihood: ", estimationResults.finalLoglikelihood) ;
 
-        print " likelihoodRatioTest: ", estimationResults.likelihoodRatioTest ;
+        print(" likelihoodRatioTest: ", estimationResults.likelihoodRatioTest) ;
 
-        print " rhoSquare: ", estimationResults.rhoSquare ;
+        print(" rhoSquare: ", estimationResults.rhoSquare) ;
 
-        print " rhoBarSquare: ", estimationResults.rhoBarSquare ;
+        print(" rhoBarSquare: ", estimationResults.rhoBarSquare) ;
 
-        print " finalGradientNorm: ", estimationResults.finalGradientNorm ;
+        print(" finalGradientNorm: ", estimationResults.finalGradientNorm) ;
 
-        print " varianceCovariance: ", estimationResults.getVarianceCovariance() ;
-        print "Parameters\tEstimate\tStdErr\ttTest\tpValue";
+        print(" varianceCovariance: ", estimationResults.getVarianceCovariance()) ;
+        print("Parameters\tEstimate\tStdErr\ttTest\tpValue");
 
         coef_names = resources["specified_coefficients"].get_coefficient_names_from_alt()
         est_values = zeros(coef_names.size, dtype=float32)
@@ -136,15 +136,15 @@ class mnl_estimation(EstimationProcedure):
 
         for  i in range(estimationResults.totalNumberOfParameters):
             if (estimationResults.getFixed(i)):
-                print estimationResults.getParamName(i)," is fixed" ;
+                print(estimationResults.getParamName(i)," is fixed") ;
             else:
                 name = estimationResults.getParamName(i)
                 idx = ematch(coef_names, name)[0]
-                print name , '\t',\
+                print(name , '\t',\
                       estimationResults.getEstimate(i), '\t',\
                       estimationResults.getStdErrRobust(i),'\t',\
                       estimationResults.getTTestRobust(i),'\t',\
-                      estimationResults.getPValueRobust(i) ;
+                      estimationResults.getPValueRobust(i)) ;
                 #print "Check... " , estimationResults.getEstimate(estimationResults.getParamName(i)) ;
                 est_values[idx] = estimationResults.getEstimate(i)
                 std_errors[idx] = estimationResults.getStdErrRobust(i)
@@ -187,12 +187,12 @@ def create_model_file(nalts, resources):
         fd.write("%s\tA%s \tavail\t" % (ialt+1, ialt+1))
         flag = False
         for ivar in range(len(var_names)):
-            if coefvalues[ialt,ivar] <> 0:
+            if coefvalues[ialt,ivar] != 0:
                 if flag:
                     fd.write(" + ")
                 fd.write("%s * %s" % (coef_names[ivar], var_names[ivar]))
                 flag = True
-                if var_names[ivar] <> "constant":
+                if var_names[ivar] != "constant":
                     fd.write("_%s" % (ialt+1))
         if flag:
             fd.write(" \n")

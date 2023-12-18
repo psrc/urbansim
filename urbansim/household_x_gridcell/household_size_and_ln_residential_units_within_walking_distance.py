@@ -65,7 +65,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [log(7), log(100), 0, log(24)],
                            [log(7)*10, log(100)*10, 0, log(24)*10]])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
         
 if __name__=='__main__':

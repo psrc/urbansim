@@ -43,8 +43,8 @@ class BusinessTransitionModel(Model):
                           "activity_id":array([], dtype='int32')}
 
         business_set.compute_variables(
-            map(lambda x: "%s.%s.is_of_sector_%s" 
-                    % (self.variable_package, business_set.get_dataset_name(), x), sectors), 
+            ["%s.%s.is_of_sector_%s" 
+                    % (self.variable_package, business_set.get_dataset_name(), x) for x in sectors], 
                 dataset_pool=dataset_pool, resources = resources)
         self.remove_businesses = array([], dtype='int32')
             

@@ -27,7 +27,7 @@ class TestForSQLPassword(opus_unittest.OpusTestCase):
                     cat = file(file_name, "r").read()
                 except:
                     pass
-                self.assert_(cat.find(password) < 0, "found sql password in %s" % file_name)
+                self.assertTrue(cat.find(password) < 0, "found sql password in %s" % file_name)
           
 if __name__ == "__main__":
     opus_unittest.main()

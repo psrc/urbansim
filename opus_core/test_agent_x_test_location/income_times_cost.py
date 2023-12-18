@@ -52,7 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [20000, 40000], 
                            [500000, 1000000]])
 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-20),
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-20),
                      msg = "Error in " + self.variable_name)
 
 

@@ -32,7 +32,7 @@ class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache, AbstractEmme4Tr
         
         bank_path = os.path.sep.join([self.get_emme2_base_dir()] + self.config['travel_model_configuration'][year]['bank'])
         #bank_file = os.path.join(matrix_directory, "%s-travelmodel.h5" % bank_year)
-        for path, variable_dict in year_config['matrix_variable_map'].iteritems():
+        for path, variable_dict in year_config['matrix_variable_map'].items():
             path_name = os.path.sep.join([bank_path] + path.split('.'))
             self.get_needed_matrices_from_emme4(year, 
                                                 year_config['cache_directory'],
@@ -70,7 +70,7 @@ class GetEmme4DataDirectlyIntoCache(ParentGetEmme2DataIntoCache, AbstractEmme4Tr
         tm_output = TravelModelOutput(self.emme_cmd)
         dstorage = StorageFactory().get_storage('dict_storage')
         data = {}
-        for matrix_name in matrix_variable_map.keys():
+        for matrix_name in list(matrix_variable_map.keys()):
             d[matrix_name] = open_emmbank_matrix_in_numpy(path, matrix_name)
         table_name = 'skims'
         dstorage.write_table(table_name = table_name, table_data = data)

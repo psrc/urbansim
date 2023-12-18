@@ -87,7 +87,7 @@ CLUSTER_ATTRIBUTES = set( ['K', 'URL', 'bgcolor', 'color', 'colorscheme', 'fillc
 #
 class frozendict(dict):
     def _blocked_attribute(self, obj):
-        raise AttributeError, "A frozendict cannot be modified."
+        raise AttributeError("A frozendict cannot be modified.")
     _blocked_attribute = property(_blocked_attribute)
 
     __delitem__ = __setitem__ = clear = _blocked_attribute
@@ -100,7 +100,7 @@ class frozendict(dict):
         for arg in args:
             if isinstance(arg, dict):
                 arg = copy.copy(arg)
-                for k, v in arg.items():
+                for k, v in list(arg.items()):
                     if isinstance(v, dict):
                         arg[k] = frozendict(v)
                     elif isinstance(v, list):
@@ -176,7 +176,7 @@ def needs_quotes( s ):
 
 def quote_if_necessary(s):
 
-    if not isinstance( s, basestring ):
+    if not isinstance( s, str ):
         return s
 
     if needs_quotes(s):
@@ -239,7 +239,7 @@ def graph_from_edges(edge_list, node_prefix='', directed=False):
     return graph
 
 
-def graph_from_adjacency_matrix(matrix, node_prefix= u'', directed=False):
+def graph_from_adjacency_matrix(matrix, node_prefix= '', directed=False):
     """Creates a basic graph out of an adjacency matrix.
     
     The matrix has to be a list of rows of values
@@ -337,7 +337,7 @@ def __find_executables(path):
     
     if os.path.isdir(path) : 
     
-        for prg in progs.keys():
+        for prg in list(progs.keys()):
     
             if progs[prg]:
                 continue
@@ -425,7 +425,7 @@ def find_graphviz():
 
     # Method 2 (Linux, Windows etc)
     #
-    if os.environ.has_key('PATH'):
+    if 'PATH' in os.environ:
     
         for path in os.environ['PATH'].split(os.pathsep):
             progs = __find_executables(path)
@@ -441,7 +441,7 @@ def find_graphviz():
         # machine (might be on drive D:, or in a different language)
         #
         
-        if os.environ.has_key('PROGRAMFILES'):
+        if 'PROGRAMFILES' in os.environ:
         
             # Note, we could also use the win32api to get this
             # information, but win32api may not be installed.
@@ -487,7 +487,7 @@ class Common:
     def __getstate__(self):
 
         dict = copy.copy(self.__dict__)
-        for attr in self.attributes.keys():
+        for attr in list(self.attributes.keys()):
 
             del dict['set_'+attr]
             del dict['get_'+attr]
@@ -497,7 +497,7 @@ class Common:
     
     def __setstate__(self, state):
     
-        for k, v in state.items():
+        for k, v in list(state.items()):
         
             self.__setattr__(k, v)
 
@@ -548,7 +548,7 @@ class Common:
         which are defined for all the existing attributes.
         """
 
-        if self.obj_dict['attributes'].has_key(name):
+        if name in self.obj_dict['attributes']:
             self.obj_dict['attributes'][name] = value
             return True
             
@@ -661,12 +661,12 @@ class Node(object, Common):
             # Remove the compass point
             #
             port = None
-            if isinstance(name, basestring) and not name.startswith('"'):
+            if isinstance(name, str) and not name.startswith('"'):
                 idx = name.find(':')
                 if idx > 0:
                     name, port = name[:idx], name[idx:]
 
-            if isinstance(name, (long, int)):
+            if isinstance(name, int):
                 name = str(name)
             
             self.obj_dict['name'] = quote_if_necessary( name )
@@ -717,7 +717,7 @@ class Node(object, Common):
 
         node_attr = list()
 
-        for attr, value in self.obj_dict['attributes'].items():
+        for attr, value in list(self.obj_dict['attributes'].items()):
             node_attr.append( attr + '=' + quote_if_necessary(value) )
                 
                 
@@ -815,7 +815,7 @@ class Edge(object,  Common ):
         """
         
         if not isinstance(edge, Edge):
-            raise Error, "Can't compare and edge to a non-edge object."
+            raise Error("Can't compare and edge to a non-edge object.")
             
         if self.get_parent_graph().get_top_graph_type() == 'graph':
         
@@ -894,7 +894,7 @@ class Edge(object,  Common ):
 
         edge_attr = list()
         
-        for attr, value in self.obj_dict['attributes'].items():
+        for attr, value in list(self.obj_dict['attributes'].items()):
         
             edge_attr.append( attr + '=' + quote_if_necessary(value) )
 
@@ -956,7 +956,7 @@ class Graph(object, Common):
             self.obj_dict['attributes'] = dict(attrs)
             
             if graph_type not in ['graph', 'digraph']:
-                raise Error, 'Invalid type "%s". Accepted graph types are: graph, digraph, subgraph' % graph_type
+                raise Error('Invalid type "%s". Accepted graph types are: graph, digraph, subgraph' % graph_type)
     
     
             self.obj_dict['name'] = graph_name
@@ -1174,7 +1174,7 @@ class Graph(object, Common):
         
         match = list()
         
-        if self.obj_dict['nodes'].has_key(name):
+        if name in self.obj_dict['nodes']:
         
             match.extend( [ Node( obj_dict = obj_dict ) for obj_dict in self.obj_dict['nodes'][name] ])
         
@@ -1199,7 +1199,7 @@ class Graph(object, Common):
         
         node_objs = list()
         
-        for node, obj_dict_list in self.obj_dict['nodes'].items():
+        for node, obj_dict_list in list(self.obj_dict['nodes'].items()):
                 node_objs.extend( [ Node( obj_dict = obj_d ) for obj_d in obj_dict_list ] )
         
         return node_objs
@@ -1218,7 +1218,7 @@ class Graph(object, Common):
             
         edge_points = ( graph_edge.get_source(), graph_edge.get_destination() )
 
-        if self.obj_dict['edges'].has_key(edge_points):
+        if edge_points in self.obj_dict['edges']:
         
             edge_list = self.obj_dict['edges'][edge_points]
             edge_list.append(graph_edge.obj_dict)
@@ -1251,8 +1251,8 @@ class Graph(object, Common):
 
         match = list()
         
-        if self.obj_dict['edges'].has_key( (src, dst) ) or (
-            self.get_top_graph_type() == 'graph' and self.obj_dict['edges'].has_key( (dst, src) )):
+        if (src, dst) in self.obj_dict['edges'] or (
+            self.get_top_graph_type() == 'graph' and (dst, src) in self.obj_dict['edges']):
         
             edges_obj_dict = self.obj_dict['edges'].get(
                 (src, dst),
@@ -1280,7 +1280,7 @@ class Graph(object, Common):
         
         edge_objs = list()
         
-        for edge, obj_dict_list in self.obj_dict['edges'].items():
+        for edge, obj_dict_list in list(self.obj_dict['edges'].items()):
                 edge_objs.extend( [ Edge( obj_dict = obj_d ) for obj_d in obj_dict_list ] )
         
         return edge_objs
@@ -1297,7 +1297,7 @@ class Graph(object, Common):
         if not isinstance(sgraph, Subgraph) and not isinstance(sgraph, Cluster):
             raise TypeError('add_subgraph() received a non subgraph class object')
             
-        if self.obj_dict['subgraphs'].has_key(sgraph.get_name()):
+        if sgraph.get_name() in self.obj_dict['subgraphs']:
         
             sgraph_list = self.obj_dict['subgraphs'][ sgraph.get_name() ]
             sgraph_list.append( sgraph.obj_dict )
@@ -1326,7 +1326,7 @@ class Graph(object, Common):
         
         match = None
         
-        if self.obj_dict['subgraphs'].has_key( sgraph.get_name() ):
+        if sgraph.get_name() in self.obj_dict['subgraphs']:
         
             sgraphs_obj_dict = self.obj_dict['subgraphs'].get( sgraph.get_name() )
         
@@ -1353,7 +1353,7 @@ class Graph(object, Common):
         
         sgraph_objs = list()
         
-        for sgraph, obj_dict_list in self.obj_dict['subgraphs'].items():
+        for sgraph, obj_dict_list in list(self.obj_dict['subgraphs'].items()):
                 sgraph_objs.extend( [ Subgraph( obj_dict = obj_d ) for obj_d in obj_dict_list ] )
         
         return sgraph_objs
@@ -1364,15 +1364,15 @@ class Graph(object, Common):
     
         self.obj_dict['parent_graph'] = parent_graph
         
-        for obj_list in self.obj_dict['nodes'].values():
+        for obj_list in list(self.obj_dict['nodes'].values()):
             for obj in obj_list:
                 obj['parent_graph'] = parent_graph
 
-        for obj_list in self.obj_dict['edges'].values():
+        for obj_list in list(self.obj_dict['edges'].values()):
             for obj in obj_list:
                 obj['parent_graph'] = parent_graph
 
-        for obj_list in self.obj_dict['subgraphs'].values():
+        for obj_list in list(self.obj_dict['subgraphs'].values()):
             for obj in obj_list:
                 Graph(obj_dict=obj).set_parent_graph(parent_graph)
 
@@ -1399,7 +1399,7 @@ class Graph(object, Common):
             graph.append( '%s %s {\n' % (self.obj_dict['type'], self.obj_dict['name']) )
 
 
-        for attr in self.obj_dict['attributes'].keys():
+        for attr in list(self.obj_dict['attributes'].keys()):
         
             if self.obj_dict['attributes'].get(attr, None) is not None:
        
@@ -1414,21 +1414,21 @@ class Graph(object, Common):
         edges_done = set()
         
         edge_obj_dicts = list()
-        for e in self.obj_dict['edges'].values():
+        for e in list(self.obj_dict['edges'].values()):
             edge_obj_dicts.extend(e)
             
         if edge_obj_dicts:
-            edge_src_set, edge_dst_set = zip( *[obj['points'] for obj in edge_obj_dicts] )
+            edge_src_set, edge_dst_set = list(zip( *[obj['points'] for obj in edge_obj_dicts] ))
             edge_src_set, edge_dst_set = set(edge_src_set), set(edge_dst_set)
         else:
             edge_src_set, edge_dst_set = set(), set()
             
         node_obj_dicts = list()
-        for e in self.obj_dict['nodes'].values():
+        for e in list(self.obj_dict['nodes'].values()):
             node_obj_dicts.extend(e)
 
         sgraph_obj_dicts = list()
-        for sg in self.obj_dict['subgraphs'].values():
+        for sg in list(self.obj_dict['subgraphs'].values()):
             sgraph_obj_dicts.extend(sg)
 
         
@@ -1612,7 +1612,7 @@ class Dot(Graph):
             del dict['set_'+attr]
             del dict['get_'+attr]
 
-        for k in [ x for x in dict.keys() if
+        for k in [ x for x in list(dict.keys()) if
             x.startswith('write_') or  x.startswith('create_') ]:
             
             del dict[k]
@@ -1633,7 +1633,7 @@ class Dot(Graph):
         graph is going to be rendered.
         """
         
-        if isinstance( file_paths, basestring ):
+        if isinstance( file_paths, str ):
             self.shape_files.append( file_paths )
             
         if isinstance( file_paths, (list, tuple) ):
@@ -1725,7 +1725,7 @@ class Dot(Graph):
                 raise InvocationException(
                     'GraphViz\'s executables not found' )
                 
-        if not self.progs.has_key(prog):
+        if prog not in self.progs:
             raise InvocationException(
                 'GraphViz\'s executable "%s" not found' % prog )
             
@@ -1794,7 +1794,7 @@ class Dot(Graph):
                 'Program terminated with status: %d. stderr follows: %s' % (
                     status, stderr_output) )
         elif stderr_output:
-            print stderr_output
+            print(stderr_output)
         
         # For each of the image files...
         #

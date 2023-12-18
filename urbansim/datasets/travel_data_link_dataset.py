@@ -21,7 +21,7 @@ class TravelDataLinkDataset(UrbansimDataset):
     def __init__(self, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
         if 'data_link' not in self.get_known_attribute_names():
-            raise StandardError, 'Attribute "data_link" must be included in TravelDataLinkDataset'
+            raise Exception('Attribute "data_link" must be included in TravelDataLinkDataset')
         path_to_h5 = self.get_attribute('data_link')
         self.skim_dataset = TravelDataH5SkimDataset(path_to_h5[0])
         
@@ -40,12 +40,12 @@ class TravelDataH5SkimDataset(UrbansimDataset):
     def __init__(self, path):
         self.base_directory = path
         if not os.path.exists(self.base_directory):
-            raise StandardError("Directory '%s' does not exist!" % self.base_directory)
+            raise Exception("Directory '%s' does not exist!" % self.base_directory)
         self.time_skims = self._get_skim_files()
-        self.time_array = array(map(lambda x: x.replace('.h5', '').split('to'), self.time_skims)).astype('int32')
+        self.time_array = array([x.replace('.h5', '').split('to') for x in self.time_skims]).astype('int32')
         file_name = os.path.join(self.base_directory, self.time_skims[0])
         f = h5py.File(file_name, "r")
-        self._attribute_names = f["Skims"].keys()
+        self._attribute_names = list(f["Skims"].keys())
         self._primary_attribute_names = self._attribute_names
         self.n = f["Skims"][self._attribute_names[0]].shape[0]
         f.close()
@@ -53,7 +53,7 @@ class TravelDataH5SkimDataset(UrbansimDataset):
     def _get_skim_files(self):
         files = glob(os.path.join(self.base_directory, '*.h5'))
         # return short names
-        return array(map(lambda x: os.path.split(x)[1], files))
+        return array([os.path.split(x)[1] for x in files])
         
     def get_attribute_names(self):
         return self._attribute_names
@@ -67,10 +67,10 @@ class TravelDataH5SkimDataset(UrbansimDataset):
             logger.log_warning('Skim file %s does not exist.' % file_name)
             return None
         f = h5py.File(file_name, "r")
-        if 'Skims' not in f.keys():
+        if 'Skims' not in list(f.keys()):
             logger.log_warning('Wrong structure of the skim file %s' % file_name)
             return None            
-        if name not in f['Skims'].keys():
+        if name not in list(f['Skims'].keys()):
             logger.log_warning('Skim %s not found.' % name)
             return None
         result = f['Skims'][name][...]
@@ -127,7 +127,7 @@ class TravelDataH5SkimDataset(UrbansimDataset):
             else:
                 result = result + this_result
         if (ltime - nerr) == 0:
-            raise StandardError, 'No data available.' 
+            raise Exception('No data available.') 
         result = result/float(ltime-nerr)        
         return result
 
@@ -177,15 +177,15 @@ class Test(opus_unittest.OpusTestCase):
          
     def test_get_attribute_as_matrix(self):
         result = self.travel_data.get_attribute_as_matrix('distance', from_time=5, to_time=6)
-        self.assert_(allclose( result, self.distance),  msg="returned results should be %s but is %s" % (self.distance, result))
+        self.assertTrue(allclose( result, self.distance),  msg="returned results should be %s but is %s" % (self.distance, result))
         result = self.travel_data.get_attribute_as_matrix('time', from_time=5, to_time=7, to_zone=array([1,2]))
-        self.assert_(allclose( result, self.time5to6[:,0:2]+3),  msg="returned results should be %s but is %s" % (self.time5to6[:,0:2]+3, result))
+        self.assertTrue(allclose( result, self.time5to6[:,0:2]+3),  msg="returned results should be %s but is %s" % (self.time5to6[:,0:2]+3, result))
         result = self.travel_data.get_attribute_as_matrix('time', from_time=6, from_zone=array([2,3]), to_zone=array([2]))
         should_be = array([[7],[127]])
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
         result = self.travel_data.get_attribute('time', from_time=6, from_zone=array([2,3]), to_zone=array([2,1]))
         should_be = array([7, 72.4])
-        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        self.assertTrue(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
 
 if __name__=="__main__":
     opus_unittest.main()

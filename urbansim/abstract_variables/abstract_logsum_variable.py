@@ -20,7 +20,7 @@ class abstract_logsum_variable(Variable):
     direction_from_home = True
 
     def dependencies(self):
-        return [ self.agent_zone_id, self.agent_category_attribute, self.location_zone_id] + self.travel_data_attributes.values()
+        return [ self.agent_zone_id, self.agent_category_attribute, self.location_zone_id] + list(self.travel_data_attributes.values())
 
     def compute(self, dataset_pool):
         interaction_dataset = self.get_dataset()
@@ -43,7 +43,7 @@ class abstract_logsum_variable(Variable):
         max_choices = agent_category_attr.max() + 1
         choices = [results] * max_choices
         for i in range(max_choices):
-            if self.travel_data_attributes.has_key(i):
+            if i in self.travel_data_attributes:
                 travel_data_attr_mat = travel_data.get_attribute_as_matrix(self.travel_data_attributes[i],
                                                                            fill=self.default_value)
                 choices[i] = travel_data_attr_mat[home_zone, work_zone]
@@ -56,7 +56,7 @@ class abstract_logsum_variable(Variable):
             logger.log_warning("zone pairs at index %s are not in travel data; value set to %s." % ( str(missing_pairs_index), self.default_value) )
         
         has_category = zeros(home_zone.shape, dtype='bool')
-        for k in self.travel_data_attributes.keys():
+        for k in list(self.travel_data_attributes.keys()):
             has_category = logical_or(has_category, agent_category_attr==k)
         missing_category = where(logical_not(has_category))
         if missing_category[0].size > 0:

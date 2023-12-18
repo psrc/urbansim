@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-import adjusting_pums_joint_distribution
+from . import adjusting_pums_joint_distribution
 import numpy
 
 def ipf_config_run (db, synthesis_type, control_variables, dimensions, pumano, tract, bg):

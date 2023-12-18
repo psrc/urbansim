@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-from indicator_report import IndicatorReport, ReportSpec
+from .indicator_report import IndicatorReport, ReportSpec
 from opus_core import paths
 
 def main():
@@ -23,9 +23,9 @@ def main():
     ir.generate_indicators()
     filepaths = ir.filepaths 
     
-    import hardcoded_indicators
+    from . import hardcoded_indicators
     hardcoded_visualizatons = hardcoded_indicators.go() 
-    for key, value in hardcoded_visualizatons.items(): 
+    for key, value in list(hardcoded_visualizatons.items()): 
         filepaths[key] = value # hardcoded indicators are now available for display
     
     ir.move_files(filepaths,REPORTDIR,REPORTNAME)
@@ -44,7 +44,7 @@ def main():
     rs.writesimpletable(filepaths['table'],title='Table of gridcell data for 1980',numrows=20)
     rs.writefooter()
     
-    print "Finished generating indicator report"
+    print("Finished generating indicator report")
         
 if __name__ == '__main__':
     main()

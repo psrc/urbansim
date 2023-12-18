@@ -74,7 +74,7 @@ class Storage:
         raise NotImplementedError()
     
     def _get_column_size_and_names(self, table_data):
-        column_names = table_data.keys()
+        column_names = list(table_data.keys())
         # Check that every column has the same number of items
         column_size = None
         for column_name in column_names:
@@ -164,8 +164,8 @@ class Storage:
         'uint16': int,
         'int32': int,
         'uint32': int,
-        'int64': long,
-        'uint64': long,
+        'int64': int,
+        'uint64': int,
         'float32': float,
         'float64': float,
         'complex64': complex,
@@ -177,10 +177,10 @@ class Storage:
     
     __PYTHON_TYPE_TO_NUMPY_TYPE_MAP = {
         int: 'int32',
-        long: 'int64',
+        int: 'int64',
         float: 'float32',
         str: 'a255',
-        unicode: 'a255',
+        str: 'a255',
         }
         
     def _assert_no_nones(self, table_name, column_name, values):

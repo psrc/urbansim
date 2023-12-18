@@ -19,9 +19,9 @@ class RunOpenamos(AbstractTravelModel):
         tm_config = config['travel_model_configuration']
         xml_config = tm_config.get("openamos_configuration")
 
-        if tm_config.has_key("openamos_module"):
+        if "openamos_module" in tm_config:
             python_cmd = "%s -m %s %s %s %s %s" % (sys.executable, tm_config["openamos_module"], xml_config, iteration, setupCache, backupResults)
-        elif tm_config.has_key("openamos_path"):
+        elif "openamos_path" in tm_config:
             python_cmd = "%s %s -file %s -it %s -crca %s -bkup %s -year %s" % (sys.executable, tm_config["openamos_path"], xml_config, iteration, setupCache, backupResults, year)
         else:
             raise ValueError("Either openamos_module or openamos_path needs to be specified in travel_model_configuration.")
@@ -33,7 +33,7 @@ class RunOpenamos(AbstractTravelModel):
                                              shell = True
                                              ).communicate()
         except:
-            print "Error occured when running OpenAMOS"
+            print("Error occured when running OpenAMOS")
             raise
 
     

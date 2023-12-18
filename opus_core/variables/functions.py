@@ -18,7 +18,7 @@ try:
     else:
         from scipy.stats.stats import zscore as scipy_zscore
 except ImportError:
-    print "There is an error importing zscore from scipy; zscore function is not available."
+    print("There is an error importing zscore from scipy; zscore function is not available.")
 
 def clip_to_zero(v):
     """Returns the given values with all negative values clipped to 0."""
@@ -110,13 +110,13 @@ def mean_with_exclude(v, exclude=None):
     from numpy import repeat
     if exclude is None:
         return v.mean()
-    return repeat(v[v <> exclude].mean(), v.size).reshape(v.shape)
+    return repeat(v[v != exclude].mean(), v.size).reshape(v.shape)
     
 def replace_value_with_mean(v, value=0):
     """Compute mean of the 'v' array while excluding 'value'. Replace all cells 
     that are equal to 'value' with the computed mean.
     """
-    return v*(v<>value) + mean_with_exclude(v, value)*(v==value)
+    return v*(v!=value) + mean_with_exclude(v, value)*(v==value)
 
 
 # unit tests for all the functions
@@ -141,7 +141,7 @@ class Tests(opus_unittest.OpusTestCase):
         else:
             expr = "%s(my_variable, %s)" % (func, optional_args)
         result = dataset.compute_variables([expr])
-        self.assert_(ma.allclose(result, array(should_be), rtol=1e-6), "Error in " + func)
+        self.assertTrue(ma.allclose(result, array(should_be), rtol=1e-6), "Error in " + func)
 
     def test_clip_to_zero(self):
         self.function_tester('clip_to_zero', [4,8,-5,0], [4, 8, 0, 0])
@@ -173,10 +173,10 @@ class Tests(opus_unittest.OpusTestCase):
         z = lambda x: (x - np.mean(x)) / np.std(x)
 
         input = np.random.random(100) * 100
-        self.assert_(np.allclose(zscore(input), z(input)))
+        self.assertTrue(np.allclose(zscore(input), z(input)))
 
         input = np.random.randn(2, 3, 6) * 6 + 4.5
-        self.assert_(np.allclose(zscore(input), z(input)))
+        self.assertTrue(np.allclose(zscore(input), z(input)))
         
     def test_expfin(self):
         import numpy as np
@@ -188,10 +188,10 @@ class Tests(opus_unittest.OpusTestCase):
     def test_scoreatpercentile(self):
         import numpy as np
         numbers = np.random.permutation(100) + 1
-        self.assert_( scoreatpercentile(numbers, 0), 0)
-        self.assert_( scoreatpercentile(numbers, 5), 5)
-        self.assert_( scoreatpercentile(numbers, 21), 21)
-        self.assert_( scoreatpercentile(numbers, 100), 100)
+        self.assertTrue( scoreatpercentile(numbers, 0), 0)
+        self.assertTrue( scoreatpercentile(numbers, 5), 5)
+        self.assertTrue( scoreatpercentile(numbers, 21), 21)
+        self.assertTrue( scoreatpercentile(numbers, 100), 100)
        
     # the function_tester is just set up for unary functions, and safe_array_divide takes two numpy arguments,
     # so it is tested separately
@@ -206,7 +206,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([1, 0, 0, 3])
-        self.assert_(ma.allclose(result, array(should_be), rtol=1e-6), "Error in safe_array_divide")
+        self.assertTrue(ma.allclose(result, array(should_be), rtol=1e-6), "Error in safe_array_divide")
 
     def test_safe_array_divide_with_return_value(self):
         expr = 'safe_array_divide(numerator, denominator, return_value_if_denominator_is_zero=100)'
@@ -218,7 +218,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         result = dataset.compute_variables([expr])
         should_be = array([1, 100, 0, 3])
-        self.assert_(ma.allclose(result, array(should_be), rtol=1e-6), "Error in safe_array_divide")
+        self.assertTrue(ma.allclose(result, array(should_be), rtol=1e-6), "Error in safe_array_divide")
     
     def test_ones_like(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -230,13 +230,13 @@ class Tests(opus_unittest.OpusTestCase):
         expr1 = 'ones_like(attr1)'
         result = dataset.compute_variables([expr1])
         should_be = array([1, 1, 1, 1])
-        self.assert_(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
-        self.assert_(result.dtype==should_be.dtype, "Error in ones_like")
+        self.assertTrue(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
+        self.assertTrue(result.dtype==should_be.dtype, "Error in ones_like")
 
         expr2 = 'ones_like(attr1)'
         result = dataset.compute_variables([expr2])
         should_be = array([1, 1, 1, 1])
-        self.assert_(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
+        self.assertTrue(numpy.allclose(result, array(should_be), rtol=1e-6), "Error in ones_like")
         self.assertEqual(result.dtype, should_be.dtype, "Error in ones_like")
         
     def test_mean_with_exclude(self):

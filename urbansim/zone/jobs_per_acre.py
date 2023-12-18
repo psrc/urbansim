@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from opus_core.misc import safe_array_divide
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 
 class jobs_per_acre(Variable):

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class building_typeclass_name(Variable):
@@ -43,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
         )
         
         should_be = array(['hotel','apartment','hotel','hotel','apartment','apartment'])
-        print tester._get_attribute()
+        print(tester._get_attribute())
 
         assert(alltrue(should_be==tester._get_attribute()))
 #        test_is_close_for_variable_defined_by_this_module(self, should_be)

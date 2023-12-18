@@ -9,7 +9,7 @@ from re import match
 from numpy import asarray as arr
 from numpy import fix as quo
 from numpy import zeros
-from defining_a_database import *
+from .defining_a_database import *
 
 def create_dimensions(db, synthesis_type, control_variables):
     pums = database(db, '%s_pums'%synthesis_type)
@@ -101,7 +101,7 @@ def num_breakdown(dimensions):
     index_array = []
     index = []
     table_size = dimensions.cumprod()[-1]
-    composite_index = range(table_size)
+    composite_index = list(range(table_size))
     
     for j in composite_index:
         n = j
@@ -222,7 +222,7 @@ def prepare_control_marginals(db, synthesis_type, control_variables, pumano, tra
 #                if synthesis_type == 'hhld' or synthesis_type =='person' or synthesis_type == 'gq':
                 dbc.execute('select %s from %s_marginals where pumano = %s and tract = %s and bg = %s'%(i, type, pumano, tract, bg))
                 result = dbc.fetchall()
-                if result[0][0] <> 0:
+                if result[0][0] != 0:
                     variable_marginals.append(result[0][0])
                 else:
                     variable_marginals.append(0.1)
@@ -257,7 +257,7 @@ def create_adjusted_frequencies(db, synthesis_type, control_variables, pumano, t
     
     puma_adjustment = (pums_prob <= upper_prob_bound) * pums_prob + (pums_prob > upper_prob_bound) * upper_prob_bound
     correction = 1 - sum((puma_prob == 0) * puma_adjustment)
-    puma_prob = ((puma_prob <> 0) * correction * puma_prob +
+    puma_prob = ((puma_prob != 0) * correction * puma_prob +
                  (puma_prob == 0) * puma_adjustment)
     puma_joint[:,-1] = sum(puma_joint[:,-1]) * puma_prob
 

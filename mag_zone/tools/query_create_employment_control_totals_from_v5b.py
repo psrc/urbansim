@@ -21,7 +21,7 @@ new_table_name = 'opus_magZoneV5c_baseYearData_2010_annualEmploymentControlTotal
 
 start_year = 2011
 end_year = 2040
-years = range(start_year, end_year+1)
+years = list(range(start_year, end_year+1))
 
 sector_names = ['01agricultural'
                 ,'02mining'
@@ -50,9 +50,9 @@ iteration = 0
 home_based_status = 0
 home_based_status_string = 'nhb'
 for table_name in table_names:
-    print home_based_status_string
+    print(home_based_status_string)
     for year in years:
-        print 'year = %s' % year
+        print('year = %s' % year)
         for sector_name in sector_names:
             sector_id = str(int(sector_name[0:2]))
             if iteration == 0:

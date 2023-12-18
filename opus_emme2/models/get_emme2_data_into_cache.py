@@ -50,7 +50,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
                     self.copy_report_to_cache(report, year, year_config['cache_directory'], bank_dir)
             if "bank%i" % x in year_config.get('node_matrix_variable_map', {}):
                 node_variable_map = year_config['node_matrix_variable_map']["bank%i" % x]
-                if len(node_variable_map.keys()) > 0:
+                if len(list(node_variable_map.keys())) > 0:
                     self.get_needed_node_matrices_from_emme2(year, year_config['cache_directory'], bank_dir, node_variable_map)
                     
     def create_output_matrix_files(self, year, max_zone_id):
@@ -61,7 +61,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         for x in 1,2,3:
             if "bank%i" % x in year_config['matrix_variable_map']:
                 bank_dir = self.get_emme2_dir(year, "bank%i" % x)
-                for matrix_name in year_config['matrix_variable_map']["bank%i" % x].keys():
+                for matrix_name in list(year_config['matrix_variable_map']["bank%i" % x].keys()):
                     tm_output._get_matrix_into_data_file(matrix_name, max_zone_id, bank_dir, "%s_one_matrix.txt" % matrix_name)
             
     def get_needed_matrices_from_emme2(self, year, cache_directory, bank_dir, matrix_variable_map, matrices_created=False):

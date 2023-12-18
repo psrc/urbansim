@@ -56,7 +56,7 @@ class HHControlTotalsWithIncomeGrowth(TransitionModel):
         ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
 
         if target_attribute_name not in ct_known_attributes:
-            raise AttributeError, "Target attribute %s must be an attribute of control_total dataset" % target_attribute_name
+            raise AttributeError("Target attribute %s must be an attribute of control_total dataset" % target_attribute_name)
         
         if id_name not in ct_known_attributes:
             self.control_totals_all.add_attribute(name=id_name,

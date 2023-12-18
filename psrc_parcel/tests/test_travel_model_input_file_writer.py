@@ -70,7 +70,7 @@ class TestTravelModelInputFileWriter(opus_unittest.OpusTestCase):
                     job_zone_id = int(numbers[1])
                     real_tazdata[i].append([zone_id, job_zone_id])
                     
-        for group in expected_tazdata.keys():
+        for group in list(expected_tazdata.keys()):
             self.assertEqual(real_tazdata[group], expected_tazdata[group],
                                        "income group %d, columns did not match up."%group)
 

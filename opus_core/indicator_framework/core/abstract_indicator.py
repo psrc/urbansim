@@ -138,7 +138,7 @@ class AbstractIndicator(object):
                     self.data_manager.export_indicator(indicator = self, 
                                                        source_data = self.source_data,
                                                        year = year)
-                except Exception, e:
+                except Exception as e:
                     self._handle_indicator_error(e, display_error_box)
         else:
             try:
@@ -146,7 +146,7 @@ class AbstractIndicator(object):
                 self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
                 self.data_manager.export_indicator(indicator = self,
                                                    source_data = self.source_data)
-            except Exception, e:
+            except Exception as e:
                 self._handle_indicator_error(e, display_error_box)
         
         del self.dataset
@@ -433,7 +433,7 @@ class AbstractIndicator(object):
     def _get_base_year_for_change_operation(self):
         base_year = self.source_data.base_year
         if base_year is None:
-            raise StandardError, 'Base year must be set in the source data when using a change operation.'
+            raise Exception('Base year must be set in the source data when using a change operation.')
         logger.log_status('Using base year', base_year)
         return base_year
     

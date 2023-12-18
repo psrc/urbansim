@@ -18,7 +18,7 @@ def read_header(in_fname, rename_attrs=None, dtypes=None):
     header = in_fh.readline().strip().split(",")
     names = [v.lower() for v in header]
     if rename_attrs is not None:
-        for org_attr, new_attr in rename_attrs.iteritems():
+        for org_attr, new_attr in rename_attrs.items():
             names[names.index(org_attr)] = new_attr
     if dtypes is None:
         formats = ['i4'] * len(names)
@@ -91,14 +91,14 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
                 if row == '': continue
                 vals = [int(val) for val in row.split(delimiter)]
                 
-                maxdelta = dict( (names.index(n), vals[names.index(n)]) for n in rename_and_fix_attrs.values())
+                maxdelta = dict( (names.index(n), vals[names.index(n)]) for n in list(rename_and_fix_attrs.values()))
 
                 # Adjust those attributes in rename_and_fix_attrs
                 # by the respective value of the first record
                 if irow == skiprows:
-                    delta = dict( (n, GAP * i - maxdelta[n]) for n in maxdelta.keys())
+                    delta = dict( (n, GAP * i - maxdelta[n]) for n in list(maxdelta.keys()))
                     logger.log_note('Adjusting IDs: %s' % delta)
-                for i, d in delta.iteritems():
+                for i, d in delta.items():
                     vals[i] += d
                 
                 h5data[drow] = np.array([tuple(vals)], dtype=dtype)
@@ -110,7 +110,7 @@ def read_native_write_h5py(in_fnamel, out_fname, dataset_name,
     return h5data
 
 def usage():
-    print "Usage: python %s.py chunks in_fname_hh [...] in_fname_person [...] out_fname" % sys.argv[0]
+    print("Usage: python %s.py chunks in_fname_hh [...] in_fname_person [...] out_fname" % sys.argv[0])
     sys.exit(0)
 
 if __name__ == '__main__':

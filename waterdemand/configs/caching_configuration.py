@@ -19,7 +19,7 @@ class CachingConfiguration(Baseline):
         self['creating_baseyear_cache_configuration'].tables_to_cache.append('consumption_co')
         self['creating_baseyear_cache_configuration'].tables_to_cache.append('consumption_mf')
         tables_to_copy_to_previous_years = self['creating_baseyear_cache_configuration'].tables_to_copy_to_previous_years
-        for table_name, year in tables_to_copy_to_previous_years.iteritems():
+        for table_name, year in tables_to_copy_to_previous_years.items():
             tables_to_copy_to_previous_years[table_name] = 1995
         self['cache_directory'] = 'c:/urbansim_cache/water_test'
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(

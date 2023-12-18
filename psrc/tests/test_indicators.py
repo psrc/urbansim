@@ -54,7 +54,7 @@ class TestIndicators(opus_unittest.OpusIntegrationTestCase):
         self.year = 1000
         SimulationState().set_current_time(self.year)
         exporter = ExportStorage()
-        for table_name, table_data in tables_data.iteritems():
+        for table_name, table_data in tables_data.items():
             storage.write_table(table_name=table_name, table_data=table_data)
             exporter.export_dataset(dataset_name=table_name, 
                                     in_storage=storage, 

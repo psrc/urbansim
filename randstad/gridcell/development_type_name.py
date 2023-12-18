@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class development_type_name(Variable):
     """return development type name"""
@@ -62,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array(['residential', 'residential', 'commercial', 'industrial'])
         
-        self.assert_(alltrue(values == should_be), 
+        self.assertTrue(alltrue(values == should_be), 
             'Error in ' + self.variable_name )
 
 

@@ -16,7 +16,7 @@ connection = engine.connect()
 
 start_year = 2011
 end_year = 2040
-years = range(start_year, end_year+1)
+years = list(range(start_year, end_year+1))
 
 table_name = 'adoa_oct19Draft_mediumSeries_population'
 new_table_name = 'jesse_test_script_delete_me'

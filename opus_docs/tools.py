@@ -17,9 +17,9 @@ def build(modules, cwd=os.getcwd(), make_bibliography=AUTO, make_index=AUTO):
         delete_full(out_dir)
         os.mkdir(out_dir)
         latex_command = ["pdflatex","-interaction","nonstopmode","-output-directory",out_dir,module+".tex"]
-        print "* Building docs for module", module
+        print("* Building docs for module", module)
         rerun = False
-        print "  * Running pdflatex, initial pass"
+        print("  * Running pdflatex, initial pass")
         result = run(latex_command, cwd)
         report_on_run(result, error_fns=[check_returncode])
         rerun = bool(check_latex_rerun(result))
@@ -29,7 +29,7 @@ def build(modules, cwd=os.getcwd(), make_bibliography=AUTO, make_index=AUTO):
             for name in files_in_cwd:
                 if '.bib' in name:
                     shutil.copy(name, out_dir)
-            print "  * Running bibtex"
+            print("  * Running bibtex")
             wd = os.getcwd()
             os.chdir(out_dir)
             result = run(["bibtex",module], out_dir)
@@ -38,7 +38,7 @@ def build(modules, cwd=os.getcwd(), make_bibliography=AUTO, make_index=AUTO):
             rerun = True
         if (make_index == True) or \
                 (make_index == AUTO and os.access(module_base_path+".idx", os.F_OK)):
-            print "  * Running makeindex"
+            print("  * Running makeindex")
             wd = os.getcwd()
             os.chdir(out_dir)
             result = run(["makeindex",module+".idx"], out_dir, log=module_base_path+".ilg")
@@ -47,13 +47,13 @@ def build(modules, cwd=os.getcwd(), make_bibliography=AUTO, make_index=AUTO):
             rerun = True
         pass_number = 1
         while rerun:
-            print "  * Running pdflatex, integration pass", pass_number
+            print("  * Running pdflatex, integration pass", pass_number)
             result = run(latex_command, cwd)
             rerun = bool(check_latex_rerun(result))
             pass_number += 1
         report_on_run(result, stop_on_warning=True, warning_fns=[check_latex_warnings], error_fns=[check_returncode])
         move_file(module+".pdf", out_dir, cwd)
-        print "  * Running latex2html"
+        print("  * Running latex2html")
         result = run(["latex2html","-local_icons","-bottom_navigation","-address","info (at) urbansim.org",
                       "-external_file",module_base_path,module], cwd)
         report_on_run(result, error_fns=[check_returncode])

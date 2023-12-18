@@ -77,7 +77,7 @@ class Tests(AbstractIndicatorTest):
         ####NOTE: THIS TEST FAILS BECAUSE THE OPUS_CORE DATASET DOES NOT HAVE 2D ATTRIBUTES, X/Y AXES
         
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
         
         map = Map(
                   source_data = self.source_data,
@@ -90,13 +90,13 @@ class Tests(AbstractIndicatorTest):
                 
         map.create(False)
         
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__map__my_name__1980.png')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__map__my_name__1980.png')))
 
 if __name__ == '__main__':
     try: 
         import matplotlib
     except:
-        print 'could not import matplotlib'
+        print('could not import matplotlib')
     else:
         opus_unittest.main()

@@ -53,7 +53,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([(1.1*1.0 +2.2*2.0)/(3.0), 
                            (3.3*3.0 + 4.4*4.0)/(7.0)])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
     def test_with_zero_denominator(self):
@@ -88,7 +88,7 @@ class Tests(opus_unittest.OpusTestCase):
                            (2.2*20.0 + 3.3*30)/(20.0+30.0),# when denominator = 0, use prior good value
                            (2.2*20.0 + 3.3*30)/(20.0+30.0)])# when denominator = 0, use prior good value
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
     def test_with_all_zero_denominator(self):
@@ -123,7 +123,7 @@ class Tests(opus_unittest.OpusTestCase):
                            0.0,
                            0.0])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
 

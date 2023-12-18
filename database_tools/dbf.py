@@ -190,7 +190,7 @@ import time
 import csv
 import struct
 from decimal import Decimal
-import Tkinter as tk
+import tkinter as tk
 
 version = (0, 84, 18)
 
@@ -334,7 +334,7 @@ class Date(object):
                     return True
                 return False
         return NotImplemented
-    def __nonzero__(yo):
+    def __bool__(yo):
         if yo._date:
             return True
         return False
@@ -520,7 +520,7 @@ class DateTime(object):
                     return True
                 return False
         return NotImplemented
-    def __nonzero__(yo):
+    def __bool__(yo):
         if yo._datetime is not False:
             return True
         return False
@@ -712,7 +712,7 @@ class Time(object):
                     return True
                 return False
         return NotImplemented
-    def __nonzero__(yo):
+    def __bool__(yo):
         if yo._time is not False:
             return True
         return False
@@ -917,7 +917,7 @@ def _updateDateTime(moment, fielddef={}, memo=None):
 def _retrieveDouble(bytes, fielddef={}, memo=None):
     return struct.unpack('<d', bytes)[0]
 def _updateDouble(value, fielddef={}, memo=None):
-    if not (type(value) in (int, long, float)):
+    if not (type(value) in (int, int, float)):
         raise DbfError("incompatible type: %s" % type(value))
     return struct.pack('<d', value)
 def _retrieveInteger(bytes, fielddef={}, memo=None):
@@ -925,7 +925,7 @@ def _retrieveInteger(bytes, fielddef={}, memo=None):
     return struct.unpack('<i', bytes)[0]
 def _updateInteger(value, fielddef={}, memo=None):
     "returns value in little-endian binary format"
-    if not (type(value) in (int, long)):
+    if not (type(value) in (int, int)):
         raise DbfError("incompatible type: %s" % type(value))
     if not -2147483648 < value < 2147483647:
         raise DbfError("Integer size exceeded.  Possible: -2,147,483,648..+2,147,483,647.  Attempted: %d" % value)
@@ -937,7 +937,7 @@ def _updateLogical(logical, fielddef={}, memo=None):
     "Returs 'T' if logical is True, 'F' otherwise"
     if type(logical) != bool:
         logical = _convertToBool(logical)
-    if type(logical) <> bool:
+    if type(logical) != bool:
         raise DbfError('Value %s is not logical.' % logical)
     return logical and 'T' or 'F'
 def _retrieveMemo(stringval, fielddef, memo):
@@ -963,7 +963,7 @@ def _retrieveNumeric(string, fielddef, memo=None):
         return float(string)
 def _updateNumeric(value, fielddef, memo=None):
     "returns value as ascii representation, rounding decimal portion as necessary"
-    if not (type(value) in (int, long, float)):
+    if not (type(value) in (int, int, float)):
         raise DbfError("incompatible type: %s" % type(value))
     decimalsize = fielddef['decimals']
     if decimalsize:
@@ -1080,7 +1080,7 @@ class _TableHeader(object):
         yo._data = data + '\x0d'
     def __getattr__(yo, name):
         if name[0:2] == '__' and name[-2:] == '__':
-            raise AttributeError, 'Method %s is not implemented.' % name
+            raise AttributeError('Method %s is not implemented.' % name)
         elif name not in ['data', 'version', 'update', 'recordcount', 'start', \
                 'fieldcount', 'recordlength', 'codepage', 'fields', 'extra']:
             raise AttributeError
@@ -1214,14 +1214,14 @@ class _DbfRecord(object):
         return (yo[field] for field in yo._layout.fields)
     def __getattr__(yo, name):
         if name[0:2] == '__' and name[-2:] == '__':
-            raise AttributeError, 'Method %s is not implemented.' % name
+            raise AttributeError('Method %s is not implemented.' % name)
         elif not name in yo._layout.fields:
             raise FieldMissing(name)
         try:
             fielddef = yo._layout[name]
             value = yo._retrieveFieldValue(yo._data[fielddef['start']:fielddef['end']], fielddef)
             return value
-        except DbfError, error:
+        except DbfError as error:
             message = "field --%s-- is %s -> %s" % (name, yo._layout.fieldtypes[fielddef['type']]['Type'], error.message)
             raise DbfError(message)
     def __getitem__(yo, item):
@@ -1271,13 +1271,13 @@ class _DbfRecord(object):
         fielddef = yo._layout[name]
         try:
             yo._updateFieldValue(fielddef, value)
-        except DbfError, error:
+        except DbfError as error:
             message = "field --%s-- is %s -> %s" % (name, yo._layout.fieldtypes[fielddef['type']]['Type'], error.message)
             raise DbfError(message)
     def __setitem__(yo, name, value):
         if type(name) == str:
             yo.__setattr__(name, value)
-        elif type(name) in (int, long):
+        elif type(name) in (int, int):
             yo.__setattr__(yo._layout.fields[name], value)
         else:
             raise TypeError("%s is not a field name" % name)
@@ -1344,7 +1344,7 @@ class _DbfRecord(object):
             values = [yo._layout.fieldtypes[yo._layout[key]['type']]['Blank']() for key in keys]
         else:
             values = [yo[field] for field in keys]
-        return dict(zip(keys, values))
+        return dict(list(zip(keys, values)))
     def undelete_record(yo):
         "marks record as active"
         yo._data = ' ' + yo._data[1:]
@@ -1652,7 +1652,7 @@ class DbfTable(object):
                 yo.useDeleted = table.useDeleted
             def __iter__(yo):
                 return yo
-            def next(yo):
+            def __next__(yo):
                 for i in yo.recordList:
                     record = yo.table._table[i]
                     if not yo.useDeleted and record.has_been_deleted:
@@ -1698,13 +1698,13 @@ class DbfTable(object):
         "returns a copy of the list of fields defined in table"
         return yo._meta.fields[:]
     def items(yo):
-        return zip(yo.keys(), yo.values())
+        return list(zip(list(yo.keys()), list(yo.values())))
     def iteritems(yo):
-        return (item for item in yo.items())
+        return (item for item in list(yo.items()))
     def iterkeys(yo):
         return (key for key in yo._meta.fields)
     def itervalues(yo):
-        return (value for value in yo.values())
+        return (value for value in list(yo.values()))
     def values(yo):
         "returns list of values in field order for current record"
         record = yo.current()
@@ -1762,7 +1762,7 @@ class DbfTable(object):
                 field_type = format[0].upper()
                 if len(name) > 10:
                     raise DbfError("Maximum field name length is 10.  '%s' is %d characters long." % (name, len(name)))
-                if not field_type in meta.fieldtypes.keys():
+                if not field_type in list(meta.fieldtypes.keys()):
                     raise DbfError("Field types supported are (C)haracter, (D)ate, (L)ogical, (M)emo, and (N)umeric -- not (%s)" % field_type)
                 length, decimals = yo._meta.fieldtypes[field_type]['Init'](format)
             except ValueError:
@@ -1946,7 +1946,7 @@ class DbfTable(object):
             records = DbfList(desc="%s -->  find(%s)" % (yo.filename, match))
         i = 0
         for record in yo:                           #i in range(yo._recordCount):
-            for fieldname in match.keys():
+            for fieldname in list(match.keys()):
                 value = match[fieldname]
                 if type(value) == str:
                     if contained:
@@ -1978,11 +1978,11 @@ class DbfTable(object):
             yo._meta.current = match
             record = yo.current()
             if not yo.useDeleted and record.has_been_deleted:
-                return yo.next()
+                return next(yo)
             else:
                 return record
         for i in range(yo._meta.header.recordcount):
-            for fieldname in match.keys():
+            for fieldname in list(match.keys()):
                 value = match[fieldname] 
                 if type(value) == str:
                     if yo._table[yo._index[i]][fieldname][:len(value)] != value:
@@ -2013,7 +2013,7 @@ class DbfTable(object):
         if filename != ':memory:' and os.path.split(filename)[0] == "":
             filename = os.path.join(os.path.split(yo.filename)[0], filename)
         return Table(filename, _fieldlist, type=yo._versionabbv)
-    def next(yo):
+    def __next__(yo):
         "set record pointer to next (non-deleted) record"
         yo._meta.current += 1
         while yo._meta.current < yo._meta.header.recordcount:
@@ -2028,7 +2028,7 @@ class DbfTable(object):
     def order(yo, fields='ORIGINAL'):
         "orders the table using the field(s) provided; removes order if no field provided"
         if fields == 'ORIGINAL':
-            yo._index = range(yo._meta.header.recordcount)
+            yo._index = list(range(yo._meta.header.recordcount))
             yo._meta.order = None
             return
         fields = fields.replace(',',' ').split()
@@ -2110,7 +2110,7 @@ class DbfTable(object):
             query_result['keep'] = False
             g['fld'] = record
             g['query_result'] = query_result
-            exec select in g
+            exec(select, g)
             if query_result['keep'] is True:
                 possible.append(record)
         return possible
@@ -2241,7 +2241,7 @@ class DbfTable(object):
         #    raise DbfError('Table is empty')
         yo._meta.current = -1
         try:
-            return yo.next()
+            return next(yo)
         except Eof:
             yo._meta.current = -1
             raise Bof()
@@ -2426,7 +2426,7 @@ class DbfList(object):
         return (record for record in yo._list_of_records)
     def __len__(yo):
         return len(yo._list_of_records)
-    def __nonzero__(yo):
+    def __bool__(yo):
         return len(yo) > 0
     def __repr__(yo):
         if yo._desc:
@@ -2471,7 +2471,7 @@ class DbfList(object):
         return yo._list_of_records.index(record, i, j)
     def insert(yo, i, record):
         return yo._list_of_records.insert(i, record)
-    def next(yo):
+    def __next__(yo):
         if yo._current_record < len(yo._list_of_records):
             yo._current_record += 1
             if yo._current_record < yo._list_of_records:
@@ -2582,7 +2582,7 @@ def export(table, filename='', fieldlist='', format='csv', header=True):
 def first_record(table):
     table = Table(table)
     try:
-        print str(table[0])
+        print(str(table[0]))
     finally:
         table.close()
 def from_csv(csvfile, to_disk=False, diskname=None, fieldnames=None):
@@ -2623,7 +2623,7 @@ def get_fields(table):
     return table.fields
 def info(table):
     table = Table(table)
-    print str(table)
+    print(str(table))
 def rename_field(table, oldfield, newfield):
     table = Table(table)
     try:

@@ -23,6 +23,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.attribute_cache import AttributeCache
+import importlib
 
 
 def compute_lambda(nbs):
@@ -130,7 +131,7 @@ class HLCMEstimator(Estimator):
                 storage_location=self.out_con)
         
         if spec_py is not None:
-            reload(spec_py)
+            importlib.reload(spec_py)
             spec_var = spec_py.specification
         
         if spec_var is not None:
@@ -222,7 +223,7 @@ if __name__ == "__main__":
             )
     }
 
-    from my_estimation_config import my_configuration    
+    from .my_estimation_config import my_configuration    
     ss = SimulationState()
     ss.set_current_time(2000)
     ss.set_cache_directory(my_configuration['cache_directory'])

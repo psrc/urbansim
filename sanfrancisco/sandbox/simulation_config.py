@@ -21,7 +21,7 @@ my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_from_database = True,
         baseyear_cache = BaseyearCacheConfiguration(
             existing_cache_to_copy = '/urbansim_cache/psrc_zone',
-            years_to_cache = range(1996,2000),
+            years_to_cache = list(range(1996,2000)),
             ),
         tables_to_cache = tables_to_cache().get_tables_to_cache(),
         tables_to_cache_nchunks = {

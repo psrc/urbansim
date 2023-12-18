@@ -117,7 +117,7 @@ class Variable(object):
         
     def compute(self, dataset_pool):
         """Returns the result of this variable.  Private use only."""
-        raise NotImplementedError, "compute() method not implemented for this variable."
+        raise NotImplementedError("compute() method not implemented for this variable.")
     
     def is_lag_variable(self):
         """Not a lag variable unless this function has been overridden to return True"""
@@ -242,7 +242,7 @@ class Variable(object):
                 result_others = result_others + [(dep_item, version)]
                 isprimary = dep_item.is_primary()
                 
-            if (var <> None) and (not isprimary):
+            if (var != None) and (not isprimary):
                 res = var.get_all_dependencies()
                 result_others = result_others + res
         return result_others
@@ -264,7 +264,7 @@ class Variable(object):
         if self.number_of_compute_runs == 0:
             if isinstance(dep_list, str):
                 dep_list = [dep_list]
-            self.dependencies_list = self.dependencies_list + map(lambda x: (x, 0), dep_list)
+            self.dependencies_list = self.dependencies_list + [(x, 0) for x in dep_list]
             
     def add_and_solve_dependencies(self, dep_list=[], dataset_pool=None):
         """Calls 'add_dependencies' and if it is run for the first time, it also calls the 
@@ -275,7 +275,7 @@ class Variable(object):
         
     def get_current_dependencies(self):
         if self.dependencies_list is None:
-            self.dependencies_list = map(lambda x: (x, 0), self.get_dependencies())
+            self.dependencies_list = [(x, 0) for x in self.get_dependencies()]
         return self.dependencies_list
         
     def do_check(self, condition_str, values):
@@ -291,7 +291,7 @@ class Variable(object):
             except TypeError: values = array([values[()]])
         except: pass
 
-        count = where(array(map(lambda x: not(condition(x)), values)) > 0)[0].size
+        count = where(array([not(condition(x)) for x in values]) > 0)[0].size
         
         if (count > 0):
             logger.log_warning("Variable %s fails %d times on check %s" % 
@@ -329,7 +329,7 @@ class Variable(object):
         dependencies_list = self.get_current_dependencies()
         if len(dependencies_list) <= 0:
             return 0
-        versions = array(map(lambda x: x[1], dependencies_list))
+        versions = array([x[1] for x in dependencies_list])
         return versions.max()
     
     def set_dataset(self, dataset):
@@ -392,7 +392,7 @@ def get_dependency_datasets(variables, dataset, quiet=False):
         dep = get_variable_dependencies(var, quiet)
         for name, version in dep:
             object = name.get_dataset_name()
-            if not (object in datasetslist) and (object <> dataset):
+            if not (object in datasetslist) and (object != dataset):
                 datasetslist = datasetslist + [object]
     return datasetslist
 
@@ -403,15 +403,15 @@ from numpy import int8, int64
 class VariableTests(opus_unittest.OpusTestCase):
     def test_safely_divide_two_arrays(self):
         result = Variable().safely_divide_two_arrays(array([10,20,30,0]).astype(int8), array([2,0,2,0]).astype(int8))
-        self.assert_(ma.allclose(array([5,0,15,0]), result))
+        self.assertTrue(ma.allclose(array([5,0,15,0]), result))
         # Types are done correctly
         self.assertEqual(result.dtype.type, int8)
         
         result = Variable().safely_divide_two_arrays(array([1,2,3,0]), array([2.,0.,2.,0.]))
-        self.assert_(ma.allclose(array([.5, 0, 1.5, 0]), result))
+        self.assertTrue(ma.allclose(array([.5, 0, 1.5, 0]), result))
         
         result = Variable().safely_divide_two_arrays(array([1,2,3,0]), array([2.,0.,2.,0.]), value_for_divide_by_zero=-1.)
-        self.assert_(ma.allclose(array([.5, -1., 1.5, -1.]), result))
+        self.assertTrue(ma.allclose(array([.5, -1., 1.5, -1.]), result))
         
     def test_safely_divide_two_attributes(self):
         from opus_core.datasets.dataset_pool import DatasetPool
@@ -434,12 +434,12 @@ class VariableTests(opus_unittest.OpusTestCase):
 
         result = variable.safely_divide_two_attributes('opus_core.test.numerator',
                                                        'opus_core.test.denominator')
-        self.assert_(ma.allclose(array([.5, 0, 1.5, 0]), result))
+        self.assertTrue(ma.allclose(array([.5, 0, 1.5, 0]), result))
         
         result = variable.safely_divide_two_attributes('opus_core.test.numerator',
                                                        'opus_core.test.denominator', 
                                                         value_for_divide_by_zero=-1.0)
-        self.assert_(ma.allclose(array([.5, -1., 1.5, -1.]), result))
+        self.assertTrue(ma.allclose(array([.5, -1., 1.5, -1.]), result))
     
     def test_compute_unloads_from_memory(self):
         
@@ -457,10 +457,10 @@ class VariableTests(opus_unittest.OpusTestCase):
         
         SimulationState().set_flush_datasets(True)
         dataset.get_attribute("a_dependent_variable")
-        self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
+        self.assertTrue("a_dependent_variable" in dataset.get_attributes_in_memory())
         dataset.compute_variables("opus_core.tests.a_test_variable")
-        self.assert_("a_dependent_variable" not in dataset.get_attributes_in_memory())
-        self.assert_("a_test_variable" in dataset.get_attributes_in_memory())
+        self.assertTrue("a_dependent_variable" not in dataset.get_attributes_in_memory())
+        self.assertTrue("a_test_variable" in dataset.get_attributes_in_memory())
         SimulationState().remove_singleton(delete_cache=True)
 
     def test_compute_does_not_unload_from_memory(self):        
@@ -477,10 +477,10 @@ class VariableTests(opus_unittest.OpusTestCase):
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
         
         values = dataset.get_attribute("a_dependent_variable")
-        self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
+        self.assertTrue("a_dependent_variable" in dataset.get_attributes_in_memory())
         dataset.compute_variables("opus_core.tests.a_test_variable")
-        self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
-        self.assert_("a_test_variable" in dataset.get_attributes_in_memory())
+        self.assertTrue("a_dependent_variable" in dataset.get_attributes_in_memory())
+        self.assertTrue("a_test_variable" in dataset.get_attributes_in_memory())
         # The type of values will be int32 on a 32-bit machine, and int64 on a 64 bit machine
         if platform.architecture()[0]=='64bit':
             self.assertEqual(values.dtype.type, int64)

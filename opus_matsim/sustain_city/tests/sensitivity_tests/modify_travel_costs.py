@@ -57,7 +57,7 @@ class ModifyTravelCosts(AbstractTravelModel):
         # set source location
         travel_data_source = os.path.join( test_dir_path, 'data', 'travel_cost', "travel_data.csv" )
         if not self.travel_data_exsists( travel_data_source ):
-            print 'Pre-computed MATSim travel data not fould! %s' % travel_data_source
+            print('Pre-computed MATSim travel data not fould! %s' % travel_data_source)
             sys.exit()
             
         # set destination location
@@ -76,7 +76,7 @@ class ModifyTravelCosts(AbstractTravelModel):
         if os.path.isfile (travel_data_destination): 
             logger.log_status("Copying successful ...")
         else: 
-            raise StandardError("Test travel data not copied!")
+            raise Exception("Test travel data not copied!")
             sys.exit()
         
     def modify_travel_costs(self):
@@ -96,7 +96,7 @@ class ModifyTravelCosts(AbstractTravelModel):
         
         travel_data = paths.get_opus_home_path('opus_matsim', 'tmp', 'travel_data.csv')
         if not self.travel_data_exsists(travel_data):
-            raise StandardError('Travel data not found! %s' % travel_data)
+            raise Exception('Travel data not found! %s' % travel_data)
             
         in_file = open(travel_data, 'r')
         str_list = []
@@ -122,7 +122,7 @@ class ModifyTravelCosts(AbstractTravelModel):
             row = line.split(",")
             # consistency check
             if len(row) != number_of_colums:
-                print 'Error in number of colums: %s' %row
+                print('Error in number of colums: %s' %row)
                 sys.exit()
             
             # get all zones from and to cbd
@@ -165,7 +165,7 @@ class ModifyTravelCosts(AbstractTravelModel):
         
     def travel_data_exsists(self, travel_data):
         if not os.path.exists( travel_data ):
-            raise StandardError("Test travel data not found: %s" % travel_data)
+            raise Exception("Test travel data not found: %s" % travel_data)
             return False
         else: return True
 

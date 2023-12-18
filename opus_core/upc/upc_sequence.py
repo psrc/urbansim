@@ -111,7 +111,7 @@ class upc_sequence(object):
 
         probabilities = self.get_probabilities()
         if probabilities.ndim < 2:
-            raise StandardError, "probabilities must have at least 2 dimensions."
+            raise Exception("probabilities must have at least 2 dimensions.")
         alts = probabilities.shape[1]
         width_par = (1/alts+1)/2.0
         choice_counts = self.get_choice_histogram(0, alts)
@@ -133,7 +133,7 @@ class upc_sequence(object):
 
         probabilities = self.get_probabilities()
         if probabilities.ndim < 2:
-            raise StandardError, "probabilities must have at least 2 dimensions."
+            raise Exception("probabilities must have at least 2 dimensions.")
         alts = self.probabilities.shape[1]
         width_par = (1/alts+1)/2.0
         choice_counts = self.get_choice_histogram(0, alts)

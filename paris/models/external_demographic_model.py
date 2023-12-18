@@ -82,12 +82,12 @@ class ExternalDemographicModel(Model):
         n_hhs = hh_ids.size
         results = {}
         results['household_id'] = hh_ids
-        for k, v in demographic_attributes.iteritems():
+        for k, v in demographic_attributes.items():
             results[k] = hhs_new.compute_variables(v)
 
         logger.log_status( ('Loaded demographic characteristics {} for {} ' +\
                             'households from external file {}.').format(
-                            demographic_attributes.keys(), n_hhs, 
+                            list(demographic_attributes.keys()), n_hhs, 
                             demographic_data_file) )
 
         is_existing = in1d(hh_ids, hh_ds['household_id'])

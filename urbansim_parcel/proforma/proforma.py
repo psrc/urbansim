@@ -206,7 +206,7 @@ class proforma(Variable):
                     costs[period] = 0
                 
                 construction_loan_balance -= construction_loan_repayment
-                if DEBUG: print period, sales_revenue, full_rent_periods, for_rent_seasoning_threshold 
+                if DEBUG: print(period, sales_revenue, full_rent_periods, for_rent_seasoning_threshold) 
                 if full_rent_periods > for_rent_seasoning_threshold+1 and \
                    sales_revenue <= 0 and \
                    not sold_for_rent:
@@ -218,13 +218,13 @@ class proforma(Variable):
                     sold_for_rent = 1
                     #break
 
-        if DEBUG: print "REVENUES:", revenues
+        if DEBUG: print("REVENUES:", revenues)
         costs = costs * (1.0-p['costdiscount'])
-        if DEBUG: print "COSTS:", costs
+        if DEBUG: print("COSTS:", costs)
         cash_flow = (revenues - costs)[1:period]
         npv = np.npv(discount_rate, cash_flow)
-        if DEBUG: print "CASHFLOW:", cash_flow
-        if DEBUG: print "NPV:", npv
+        if DEBUG: print("CASHFLOW:", cash_flow)
+        if DEBUG: print("NPV:", npv)
         irr = np.irr(cash_flow)
 
         return asarray(npv)

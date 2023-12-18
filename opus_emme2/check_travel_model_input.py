@@ -35,10 +35,10 @@ class CheckTravelModelInput(object):
         tables_to_check = {"gridcells_exported":"grid_id, year", "jobs_exported":"job_id, year", \
                            "households_exported":"household_id, year", "zones_exported":"zone_id, year"}
         sql = "select count(*) as occur from %(table)s group by %(id)s having occur > 1 limit 1"
-        for table, id in tables_to_check.iteritems():
+        for table, id in tables_to_check.items():
             result = urbansim_output_db.GetResultsFromQuery(sql % {'table':table, 'id':id})
             if len(result) > 1:
-                raise StandardError("duplicate entries in urbansim output database in " + table)
+                raise Exception("duplicate entries in urbansim output database in " + table)
             
 
 from opus_core.tests import opus_unittest
@@ -78,7 +78,7 @@ m matrix="hhemp"
 """)
             mock_tazdata.close()
             CheckTravelModelInput().check_syntax_of_emme2_input_tazdata(mock_tazdata.name)
-            self.assert_(False, "CheckTravelModelInput should have found an error but it didn't")
+            self.assertTrue(False, "CheckTravelModelInput should have found an error but it didn't")
         except SyntaxError:
             pass
 

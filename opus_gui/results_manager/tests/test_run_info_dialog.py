@@ -16,5 +16,5 @@ class TestGetRunInfo(OpusGUITestCase):
                            w.lblScenario_name.text: 'sample scenario',
                            w.lblRunId.text: '1',
                            w.lblCache_directory.text: '/sample/path' }
-        for func, value in expected_values.items():
+        for func, value in list(expected_values.items()):
             self.assertEqual(str(func()), value)

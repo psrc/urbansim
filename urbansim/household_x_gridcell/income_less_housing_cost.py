@@ -60,7 +60,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [-980, -9980, -99980 ], 
                            [-500, -9500, -99500]])
         
-        self.assert_(ma.allequal(values, should_be,), 
+        self.assertTrue(ma.allequal(values, should_be,), 
                      msg="Error in " + self.variable_name)
 
 

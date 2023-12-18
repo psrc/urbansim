@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_valid_year_built(Variable):
     """Return 0 where year_built < urbansim_constant["absolute_min_year"] otherwise 1.
@@ -58,7 +58,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([True, True, True, False, True, False])
         
-        self.assert_(ma.allequal( values, should_be), 
+        self.assertTrue(ma.allequal( values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

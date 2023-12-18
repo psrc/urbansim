@@ -115,7 +115,7 @@ class Table(Visualization):
         dataset_to_attribute_map = {}
 
         self._create_input_stores(years = source_data.years)
-        for name, computed_indicator in computed_indicators.items():
+        for name, computed_indicator in list(computed_indicators.items()):
             if name not in indicators_to_visualize: continue
 
             if computed_indicator.source_data != source_data:
@@ -125,9 +125,9 @@ class Table(Visualization):
                 dataset_to_attribute_map[dataset_name] = []
             dataset_to_attribute_map[dataset_name].append(computed_indicator)
 
-        for dataset_name, indicators in dataset_to_attribute_map.items():
+        for dataset_name, indicators in list(dataset_to_attribute_map.items()):
             visualization_representations = []
-            indicator_names = map(lambda x: x.get_file_name(suppress_extension_addition=True), indicators)
+            indicator_names = [x.get_file_name(suppress_extension_addition=True) for x in indicators]
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]
             example_indicator = computed_indicators[indicator_names[0]]
@@ -171,7 +171,7 @@ class Table(Visualization):
             years = years)
 
         viz_metadata = []
-        for year, data_subset in per_year_data.items():
+        for year, data_subset in list(per_year_data.items()):
             if self.name is not None:
                 table_name = self.name + '_%i'%year
             else:
@@ -184,7 +184,7 @@ class Table(Visualization):
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
-                column_names = primary_keys + sorted([col for col in data_subset.keys()
+                column_names = primary_keys + sorted([col for col in list(data_subset.keys())
                                                       if col not in primary_keys]),
                 computed_indicators = computed_indicators,
                 years = [year],
@@ -210,9 +210,9 @@ class Table(Visualization):
             years = years)
 
         viz_metadata = []
-        for name, data_subset, computed_indicator in zip(per_attribute_data.keys(),
-                                                         per_attribute_data.values(),
-                                                         computed_indicators.values()):
+        for name, data_subset, computed_indicator in zip(list(per_attribute_data.keys()),
+                                                         list(per_attribute_data.values()),
+                                                         list(computed_indicators.values())):
             if self.name is not None:
                 table_name = self.name + '_%s'%name
             else:
@@ -226,7 +226,7 @@ class Table(Visualization):
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
-                column_names = primary_keys + sorted([col for col in data_subset.keys()
+                column_names = primary_keys + sorted([col for col in list(data_subset.keys())
                                                      if col not in primary_keys]),
                 computed_indicators = computed_indicators,
                 years = years,
@@ -259,7 +259,7 @@ class Table(Visualization):
         if self.name is not None:
             table_name = '%s__%s'%(self.name, table_name)
             
-        cols = [col for col in new_data.keys()
+        cols = [col for col in list(new_data.keys())
                                                if col not in primary_keys]
         cols.sort()
         self._write_to_storage(
@@ -323,7 +323,7 @@ class Table(Visualization):
     def build_format_string(self, computed_indicators, column_names, years, primary_keys):
         format_list = []
         name_mapping = {}
-        for name, computed_indicator in computed_indicators.items():
+        for name, computed_indicator in list(computed_indicators.items()):
             for year in years:
                 col_name = computed_indicator.get_computed_dataset_column_name(year = year)
                 try:
@@ -357,9 +357,9 @@ class Tests(AbstractIndicatorTest):
     def test_create_indicator(self):
 
         indicator_path = self.source_data.get_indicator_directory()
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
-        self.source_data.years = range(1980,1984)
+        self.source_data.years = list(range(1980,1984))
         indicator = Indicator(
                   dataset_name = 'test',
                   attribute = 'opus_core.test.attribute'
@@ -380,7 +380,7 @@ class Tests(AbstractIndicatorTest):
             table = Table(indicator_directory = self.source_data.get_indicator_directory(),
                           output_type = 'csv',
                           output_style = style)
-            table._create_input_stores(range(1980,1984))
+            table._create_input_stores(list(range(1980,1984)))
 
             viz_results = table.visualize(
                             indicators_to_visualize = ['attr1',
@@ -480,8 +480,8 @@ class Tests(AbstractIndicatorTest):
             else:
                 expected = expected2
 
-            self.assertEqual(len(expected.keys()), len(output.keys()))
-            for k,v in expected.items():
+            self.assertEqual(len(list(expected.keys())), len(list(output.keys())))
+            for k,v in list(expected.items()):
                 self.assertEqual(list(v), list(output[k]))
 
     def test__output_PER_YEAR(self):
@@ -558,8 +558,8 @@ class Tests(AbstractIndicatorTest):
             else:
                 expected = expected_2002
 
-            self.assertEqual(len(expected.keys()), len(output.keys()))
-            for k,v in expected.items():
+            self.assertEqual(len(list(expected.keys())), len(list(output.keys())))
+            for k,v in list(expected.items()):
                 self.assertEqual(list(v), list(output[k]))
 
     def test__output_types(self):

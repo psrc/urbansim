@@ -8,13 +8,13 @@ from PyQt4.QtGui import *
 from PyQt4.QtSql import *
 
 import sys, os, re
-import newproject
-from intro_page import IntroPage
-from resolution_page import ResolutionPage
-from sample_page import SampleDataPage
-from control_page import ControlDataPage
-from dbconnection_page import DBConnectionPage
-from summary_page_labels import SummaryPage
+from . import newproject
+from .intro_page import IntroPage
+from .resolution_page import ResolutionPage
+from .sample_page import SampleDataPage
+from .control_page import ControlDataPage
+from .dbconnection_page import DBConnectionPage
+from .summary_page_labels import SummaryPage
 from misc.errors import *
 from misc.widgets import *
 import misc.dbf as dbf
@@ -55,7 +55,7 @@ class Wizard(QWizard):
         file = QFile("./data/counties.csv")
 
         if not file.open(QIODevice.ReadOnly):
-            raise IOError, unicode(file.errorString())
+            raise IOError(str(file.errorString()))
 
         stateAbb = {}
         stateCode = {}
@@ -144,7 +144,7 @@ class Wizard(QWizard):
             self.project.location = self.page1.locationComboBox.currentText()
             self.project.description = self.page1.descTextEdit.toPlainText()
             self.project.region = self.page1.selectedCounties
-            self.project.state = self.page1.selectedCounties.values()[0]
+            self.project.state = list(self.page1.selectedCounties.values())[0]
 
 
             self.project.resolution = resolution

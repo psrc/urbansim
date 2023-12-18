@@ -83,8 +83,8 @@ class TestTravelModelInputFileWriter(opus_unittest.OpusIntegrationTestCase):
                 if value != -1:
                     real_tazdata[zone_id][column_var] = value
 
-        for zone in expected_tazdata.keys():
-            for col_var in expected_tazdata[zone].keys():
+        for zone in list(expected_tazdata.keys()):
+            for col_var in list(expected_tazdata[zone].keys()):
                 self.assertAlmostEqual(real_tazdata[zone][col_var], expected_tazdata[zone][col_var], 3,\
                                        "zone %d, column variable %d did not match up."%(zone, col_var))
                     

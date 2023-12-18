@@ -34,7 +34,7 @@ class TestXmlModel(opus_unittest.TestCase):
             'defValue': QVariant()
             }
 
-        for key, value in expected_results.items():
+        for key, value in list(expected_results.items()):
             self.assertEqual(self.instance.iconFromType(key), value)
 
     def test_columnCount(self):
@@ -62,8 +62,8 @@ class TestXmlModel(opus_unittest.TestCase):
         self.assertTrue(idx_child21.internalPointer().node is node_child21)
 
         # Check parent lookups
-        self.assertEquals(self.instance.parent(idx_child21), idx_child2)
-        self.assertEquals(self.instance.parent(idx_child2), QModelIndex())
+        self.assertEqual(self.instance.parent(idx_child21), idx_child2)
+        self.assertEqual(self.instance.parent(idx_child2), QModelIndex())
         self.assertNotEqual(self.instance.parent(idx_child21),
                             self.instance.parent(idx_child2))
 
@@ -97,9 +97,9 @@ class TestXmlModel(opus_unittest.TestCase):
         idx_child1 = self.instance.index(0, 1, QModelIndex())
         idx_child2 = self.instance.index(1, 0, QModelIndex())
 
-        self.assertEquals(self.instance.rowCount(QModelIndex()), 2)
-        self.assertEquals(self.instance.rowCount(idx_child2), 1)
-        self.assertEquals(self.instance.rowCount(idx_child1), 0)
+        self.assertEqual(self.instance.rowCount(QModelIndex()), 2)
+        self.assertEqual(self.instance.rowCount(idx_child2), 1)
+        self.assertEqual(self.instance.rowCount(idx_child1), 0)
 
     def test_remove_node(self):
         pass
@@ -152,5 +152,5 @@ class TestXmlModel(opus_unittest.TestCase):
                         self.instance._root_item is not None)
 
 if __name__ == '__main__':
-    print 'Running test'
+    print('Running test')
     opus_unittest.main()

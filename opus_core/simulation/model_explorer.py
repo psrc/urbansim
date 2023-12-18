@@ -26,7 +26,7 @@ class ModelExplorer(object):
  
         if configuration is None:
             if xml_configuration is None:
-                raise StandardError, "Either dictionary based or XML based configuration must be given."
+                raise Exception("Either dictionary based or XML based configuration must be given.")
             config = xml_configuration.get_run_configuration(scenario_name)
         else:
             config = Configuration(configuration)
@@ -102,7 +102,7 @@ class ModelExplorer(object):
         """Return a Dataset object of the given name."""
         ds = self.model_system.run_year_namespace.get(dataset_name, None)
         if ds is None:
-            if dataset_name not in self.model_system.run_year_namespace["datasets"].keys():
+            if dataset_name not in list(self.model_system.run_year_namespace["datasets"].keys()):
                 ds = self.get_dataset_pool().get_dataset(dataset_name)
             else:
                 ds = self.model_system.run_year_namespace["datasets"][dataset_name]
@@ -227,13 +227,13 @@ class ModelExplorer(object):
         storage = AttributeCache(self.simulation_state.get_cache_directory())
         ds = self._get_before_after_dataset_from_attribute(var_name, storage=storage, 
                    package_order=self.get_dataset_pool().get_package_order())
-        print ''
-        print 'Before model run:'
-        print '================='
+        print('')
+        print('Before model run:')
+        print('=================')
         ds.summary(names=['%s_reload__' % var_name.get_alias()])
-        print ''
-        print 'After model run:'
-        print '================='
+        print('')
+        print('After model run:')
+        print('=================')
         #ds.summary(names=[var_name.get_alias()])
         ds.summary(names=[var_name.get_alias()])
         
@@ -249,8 +249,8 @@ class ModelExplorer(object):
             for thismodel in self.scenario_models:
                 thisgroups = None
                 if isinstance(thismodel, dict):
-                    thisgroups = thismodel[thismodel.keys()[0]].get('group_members', None)
-                    thismodel = thismodel.keys()[0]
+                    thisgroups = thismodel[list(thismodel.keys())[0]].get('group_members', None)
+                    thismodel = list(thismodel.keys())[0]
                 if not isinstance(thisgroups, list):
                     thisgroups = [thisgroups]                
                 for group in thisgroups:

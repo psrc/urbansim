@@ -64,7 +64,7 @@ class HouseholdSynthesizer(object):
             is_building_in_this_zone = (building_zone_id == zone_id)
 #            if not is_household_in_this_zone.sum() <= capacity:
             if capacity == 0 or is_household_in_this_zone.sum()==0:
-                print "WARNING: zone %s has %s households but only %s units" % (zone_id, is_household_in_this_zone.sum(), capacity)
+                print("WARNING: zone %s has %s households but only %s units" % (zone_id, is_household_in_this_zone.sum(), capacity))
                 continue
                         
             prob = buildings.get_attribute(capacity_attribute_name) * is_building_in_this_zone / array(capacity, dtype=float64)
@@ -80,7 +80,7 @@ class HouseholdSynthesizer(object):
         households.write_dataset(out_table_name='households', out_storage=out_storage)
   
 if __name__ == '__main__':
-    from synthesizer_configuration import SynthesizerConfiguration
+    from .synthesizer_configuration import SynthesizerConfiguration
     config = SynthesizerConfiguration()
 #    del config['estimation_database_configuration']['db_output_database']
     HouseholdSynthesizer(config)

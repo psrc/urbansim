@@ -6,7 +6,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from visum_functions import load_version_file
+from .visum_functions import load_version_file
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
@@ -40,21 +40,21 @@ class GetVisumDataIntoCache(GetTravelModelDataIntoCache):
         #Note that matrix objects must be defined in version file before getting or setting
         try:
             #Get demand matrices
-            if matrices.has_key('od'):
-                for od_mat_num, od_mat_name in matrices["od"].iteritems():
+            if 'od' in matrices:
+                for od_mat_num, od_mat_name in matrices["od"].items():
                     mat = h.GetODMatrix(Visum, od_mat_num) #returns a 2d numarray object
                     data_dict[od_mat_name] = ravel(mat)    #flatten to 1d and convert to numpy
                     #mat.tofile(visum_dir + "/od" + str(od_mat_num) + ".mtx") #temp hack to save it
 
             #Get skim matrices    
-            if matrices.has_key('skim'):
-                for skim_mat_num,skim_mat_name in matrices["skim"].iteritems():
+            if 'skim' in matrices:
+                for skim_mat_num,skim_mat_name in matrices["skim"].items():
                     mat = h.GetSkimMatrix(Visum, skim_mat_num) #returns a 2d numarray object
                     data_dict[skim_mat_name] = ravel(mat)      #flatten to 1d and convert to numpy
                 #mat.tofile(visum_dir + "/skim" + str(skim_mat_num) + ".mtx") #temp hack to save it
-        except Exception, e:
+        except Exception as e:
             error_msg = "Getting matrices failed: %s " % e
-            raise StandardError(error_msg)
+            raise Exception(error_msg)
 
         ## hack to add keys to the matrix values
         zoneNumbers = h.GetMulti(Visum.Net.Zones, "NO")

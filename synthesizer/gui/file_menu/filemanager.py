@@ -7,10 +7,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSql import *
 
-import shutil, urllib, os
+import shutil, urllib.request, urllib.parse, urllib.error, os
 
 from database.createDBConnection import createDBC
-from summary_page import SummaryPage
+from .summary_page import SummaryPage
 from data_menu.data_process_status import DataDialog
 from data_menu.display_data import DisplayTable
 from data_menu.sf_data import AutoImportSF2000Data
@@ -114,7 +114,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                 if not whereExpression == "":
 
                     if not query.exec_("""delete from %s where %s""" %(tablename, whereExpression)):
-                        raise FileError, query.lastError().text()
+                        raise FileError(query.lastError().text())
                 else:
                     QMessageBox.warning(self, "Delete Records", """No filter expression selected, 0 records deleted.""",
                                         QMessageBox.Ok)
@@ -139,7 +139,7 @@ class QTreeWidgetCMenu(QTreeWidget):
 
             query = QSqlQuery(projectDBC.dbc)
             if not query.exec_("""create table %s select * from %s""" %(newTablename, tablename)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             self.populate()
             projectDBC.dbc.close()
 
@@ -160,7 +160,7 @@ class QTreeWidgetCMenu(QTreeWidget):
 
             query = QSqlQuery(projectDBC.dbc)
             if not query.exec_("""alter table %s rename to %s""" %(tablename, newTablename)):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             self.populate()
             projectDBC.dbc.close()
 
@@ -182,7 +182,7 @@ class QTreeWidgetCMenu(QTreeWidget):
 
             query = QSqlQuery(projectDBC.dbc)
             if not query.exec_("""drop table %s""" %tablename):
-                raise FileError, query.lastError().text()
+                raise FileError(query.lastError().text())
             self.populate()
             projectDBC.dbc.close()
 
@@ -216,11 +216,11 @@ class QTreeWidgetCMenu(QTreeWidget):
             else:
                 query = QSqlQuery(projectDBC.dbc)
                 if not query.exec_("""alter table %s add column %s text""" %(tablename, newVarName)):
-                    print ("""alter table %s add column %s text""" %(tablename, newVarName))
-                    raise FileError, query.lastError().text()
+                    print(("""alter table %s add column %s text""" %(tablename, newVarName)))
+                    raise FileError(query.lastError().text())
                 if not query.exec_("""update %s set %s = %s where %s""" %(tablename, newVarName,
                                                                           numericExpression, whereExpression)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
         projectDBC.dbc.close()
 
@@ -274,7 +274,7 @@ class QTreeWidgetCMenu(QTreeWidget):
 
             for i in deleteVariablesSelected:
                 if not query.exec_("""alter table %s drop %s""" %(tablename, i)):
-                    raise FileError, query.lastError().text()
+                    raise FileError(query.lastError().text())
 
         projectDBC.dbc.close()
 
@@ -312,7 +312,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                     #print "Executing Query: %s" %i
                     if not query.exec_("""%s""" %i):
                         if not query.lastError().number() == 1051:
-                            print "FileError: %s" %query.lastError().text()
+                            print("FileError: %s" %query.lastError().text())
 
 
         if not self.project.controlUserProv.userProv:
@@ -328,7 +328,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                 for i in queries:
                     #print "Executing Query: %s" %i
                     if not query.exec_(i %tablename):
-                        print "FileError: %s" %query.lastError().text()
+                        print("FileError: %s" %query.lastError().text())
 
         if not (checkPUMSTableTransforms or checkSFTableTransforms):
             QMessageBox.warning(self, "Default Transformations", 
@@ -356,9 +356,9 @@ class QTreeWidgetCMenu(QTreeWidget):
         query = QSqlQuery(projectDBC.dbc)
         query.exec_("""desc %s""" %tablename)
 
-        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = range(6)
+        FIELD, TYPE, NULL, KEY, DEFAULT, EXTRA = list(range(6))
 
-        while query.next():
+        while next(query):
             field = query.value(FIELD).toString()
             type = query.value(TYPE).toString()
             null = query.value(NULL).toString()
@@ -430,7 +430,7 @@ class QTreeWidgetCMenu(QTreeWidget):
 
         dummy = ""
         if self.project.region is not None:
-            for i in self.project.region.keys():
+            for i in list(self.project.region.keys()):
                 dummy = dummy + i + ", "+ self.project.region[i]+ "; "
 
 
@@ -451,7 +451,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                             "Description":self.project.description,
                             "Region":dummy,
                             "Resolution":resolution}
-        for i,j in informationItems.items():
+        for i,j in list(informationItems.items()):
             child = QTreeWidgetItem(informationParent, [i, QString(j)])
 
         geocorrParent = QTreeWidgetItem(projectAncestor, [QString("Geographic Correspondence")])
@@ -459,7 +459,7 @@ class QTreeWidgetCMenu(QTreeWidget):
         geocorrItems = {"User Provided":geocorrUserProvText,
                         "Location":self.project.geocorrUserProv.location}
 
-        for i,j in geocorrItems.items():
+        for i,j in list(geocorrItems.items()):
             child = QTreeWidgetItem(geocorrParent, [i, QString("%s"%j)])
 
         sampleParent = QTreeWidgetItem(projectAncestor, [QString("Sample")])
@@ -470,7 +470,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                        "GQ Data Location": self.project.sampleUserProv.gqLocation,
                        "Person Data Location": self.project.sampleUserProv.personLocation}
 
-        for i,j in sampleItems.items():
+        for i,j in list(sampleItems.items()):
             child = QTreeWidgetItem(sampleParent, [i, QString("%s"%j)])
 
         controlParent = QTreeWidgetItem(projectAncestor, [QString("Control")])
@@ -481,7 +481,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                        "GQ Data Location": self.project.controlUserProv.gqLocation,
                        "Person Data Location": self.project.controlUserProv.personLocation}
 
-        for i,j in controlItems.items():
+        for i,j in list(controlItems.items()):
             child = QTreeWidgetItem(controlParent, [i, QString("%s"%j)])
 
         dbParent = QTreeWidgetItem(projectAncestor, [QString("Database")])
@@ -489,7 +489,7 @@ class QTreeWidgetCMenu(QTreeWidget):
                    "Username":self.project.db.username}
         #"Password":self.project.db.password}
 
-        for i,j in dbItems.items():
+        for i,j in list(dbItems.items()):
             child = QTreeWidgetItem(dbParent, [QString(i), QString(j)])
 
 
@@ -531,11 +531,11 @@ class QTreeWidgetCMenu(QTreeWidget):
         self.query = QSqlQuery(projectDBC.dbc)
 
         if not self.query.exec_("""show tables"""):
-            raise FileError, self.query.lastError().text()
+            raise FileError(self.query.lastError().text())
 
         tableItems = []
 
-        while self.query.next():
+        while next(self.query):
             tableItems.append(self.query.value(0).toString())
 
         projectDBC.dbc.close()

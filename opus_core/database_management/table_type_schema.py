@@ -25,9 +25,9 @@ class TableTypeSchema(dict):
         
         opus_corehome = parent_dir_path
         
-        dirs_in_opus_core = filter(lambda name: name.find('.') == -1, os.listdir(opus_corehome))
-        self.tables_path = map(lambda dir_name: join(opus_corehome, dir_name, 'docs','database_tables'), dirs_in_opus_core)
-        self.tables_path = filter(lambda path: os.path.exists(path), self.tables_path)
+        dirs_in_opus_core = [name for name in os.listdir(opus_corehome) if name.find('.') == -1]
+        self.tables_path = [join(opus_corehome, dir_name, 'docs','database_tables') for dir_name in dirs_in_opus_core]
+        self.tables_path = [path for path in self.tables_path if os.path.exists(path)]
         if table_path:
             self.tables_path.insert(0, table_path)
 
@@ -53,7 +53,7 @@ class TableTypeSchema(dict):
             return {}
         table_path = self.get_path_to_table_xml_file(table_name, look_up_path)
         if not table_path:
-            raise SchemaException, 'Cannot locate xml file for table %s' % table_name
+            raise SchemaException('Cannot locate xml file for table %s' % table_name)
             return {}
         
         dom = parse(table_path)
@@ -69,14 +69,14 @@ class TableTypeSchema(dict):
                 ok = True
         if not ok:
             return {}
-        schemaNodes = filter(lambda n: n.nodeType==n.ELEMENT_NODE and n.tagName=='schema', root.childNodes)
+        schemaNodes = [n for n in root.childNodes if n.nodeType==n.ELEMENT_NODE and n.tagName=='schema']
         columnNodes = []
         for s in schemaNodes:
-            columnNodes.extend(filter(lambda n: n.nodeType==n.ELEMENT_NODE and n.tagName=='column', s.childNodes))
-        col_names = map(lambda n: str(n.getAttribute('name')).lower(), columnNodes)
-        col_types = map(lambda n: str(n.getAttribute('type')), columnNodes)
+            columnNodes.extend([n for n in s.childNodes if n.nodeType==n.ELEMENT_NODE and n.tagName=='column'])
+        col_names = [str(n.getAttribute('name')).lower() for n in columnNodes]
+        col_types = [str(n.getAttribute('type')) for n in columnNodes]
         if len(col_names) == len(col_types):            
-            schema = zip(col_names, col_types)
+            schema = list(zip(col_names, col_types))
             return dict(schema)
         else:
             return {}
@@ -87,7 +87,7 @@ class TableTypeSchema(dict):
         schema_pairlist = []
         if not schema:
             return schema_pairlist
-        for key, value in schema.iteritems():
+        for key, value in schema.items():
             schema_pairlist.append((key, value))
         return schema_pairlist
 
@@ -129,21 +129,21 @@ class TableTypeSchemaTests(opus_unittest.OpusTestCase):
         os.remove(self.file_name)
         
     def test_get_path_to_table_xml_file(self):
-        self.assert_(TableTypeSchema().get_path_to_table_xml_file('annual_relocation_rates_for_households', self.temp_dir) != '')
+        self.assertTrue(TableTypeSchema().get_path_to_table_xml_file('annual_relocation_rates_for_households', self.temp_dir) != '')
 
     def test_get_table_schema(self):
         """this test is intended for a list of pair, not a dictionry"""
         expected_table_schema = [('AGE_MIN', 'INTEGER'), ('AGE_MAX', 'INTEGER'), ('INCOME_MIN', 'INTEGER'),
                                  ('INCOME_MAX', 'INTEGER'), ('PROBABILITY_OF_RELOCATING', 'FLOAT')]
-        expected_table_schema = map(lambda (x,y): (x.lower(), y), expected_table_schema)
+        expected_table_schema = [(x_y[0].lower(), x_y[1]) for x_y in expected_table_schema]
         table_schema = TableTypeSchema().get_table_schema_pairlist('table1', self.temp_dir)
-        self.assert_(len(expected_table_schema) == len(table_schema))
+        self.assertTrue(len(expected_table_schema) == len(table_schema))
         for field in expected_table_schema:
             if field not in table_schema:
-                self.assert_(False, 'table schema not matched in ' + str(field))
+                self.assertTrue(False, 'table schema not matched in ' + str(field))
         for field in table_schema:
             if field not in expected_table_schema:
-                self.assert_(False, 'table schema not matched in ' + str(field))
+                self.assertTrue(False, 'table schema not matched in ' + str(field))
         
     def test_tables_from_default_location(self):
         table_schema = TableTypeSchema().get_table_schema('table2')

@@ -19,7 +19,7 @@ class total_residential_land_area_from_constraints(Variable):
         parcels.get_development_constraints(constraints, dataset_pool, consider_constraints_as_rules=True)
         result = zeros(parcels.size())
         # iterate over GLU types
-        for glu in parcels.development_constraints.keys():
+        for glu in list(parcels.development_constraints.keys()):
             if  glu == 'index':
                 continue
             res_constraints = minimum(safe_array_divide(43560.0, parcels.development_constraints[glu]['units_per_acre'][:, 1])*parcels["residential_units"], parcels['parcel_sqft'])

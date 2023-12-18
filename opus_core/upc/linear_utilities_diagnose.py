@@ -20,7 +20,7 @@ class linear_utilities_diagnose(linear_utilities):
         The file name can be passed in resources - entry 'utilities_diagnose_file'.
         """
         if data.ndim < 3:
-            raise StandardError, "Argument 'data' must be a 3D numpy array."
+            raise Exception("Argument 'data' must be a 3D numpy array.")
 
         if not isinstance(resources, Resources):
             resources= Resources(resources)
@@ -46,7 +46,7 @@ class linear_utilities_diagnose(linear_utilities):
                 diagnose_utilities[iquant, ivar] = utility[0,0]
             argcor = argcor + (data[:,:,ivar].ravel(),)
         diagnose_utilities[2,:] = diagnose_utilities[1,:] - diagnose_utilities[0,:]
-        coef_names = resources.get("coefficient_names", map(lambda x: 'x%s' % x, arange(nvar)+1))
+        coef_names = resources.get("coefficient_names", ['x%s' % x for x in arange(nvar)+1])
         write_to_text_file(file_name, coef_names, delimiter=' ')
         write_table_to_text_file( file_name, diagnose_utilities, mode='ab')
         logger.log_status("Diagnosed utilities written into %s." % file_name)

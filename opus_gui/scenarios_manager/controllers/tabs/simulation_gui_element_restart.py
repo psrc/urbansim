@@ -100,7 +100,7 @@ class SimulationGuiElementRestart(SimulationGuiElement):
                                              )
             self.runThread.start()
         else:
-            print "Unexpected state in the model run..."
+            print("Unexpected state in the model run...")
 
     def runFinishedFromThread(self,*args, **kwargs):
         """overrided to correct button label"""

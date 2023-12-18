@@ -39,7 +39,7 @@ class LandUseDevelopmentLocationChoiceModel(LocationChoiceModel):
             try:
                 agents_index = array(agents_index)
             except:
-                raise TypeError, "Argument agents_index is of wrong type (numpy array or list allowed.)"
+                raise TypeError("Argument agents_index is of wrong type (numpy array or list allowed.)")
         id_name = self.choice_set.get_id_name()[0]
         unplaced = arange(agents_index.size)
         for run in range(self.max_runs):

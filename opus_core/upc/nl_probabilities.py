@@ -74,7 +74,7 @@ class nl_probabilities(Probabilities):
         nesting_keys = resources.get('keys', None)
         sampling_nest_size = resources.get('sampling_nest_size', None)
         if correct_for_sampling and (sampling_rate is None or sampling_size is None or sampling_nest_size is None or stratum_id is None):
-            raise StandardError, "If correct_for_sampling is True, must pass sampling_size and sampling_nest_size."
+            raise Exception("If correct_for_sampling is True, must pass sampling_size and sampling_nest_size.")
         availability = resources.get('availability', None)
         # compute logsum and conditional probability
         logsum = zeros((N,M), dtype="float64")
@@ -95,7 +95,7 @@ class nl_probabilities(Probabilities):
                 if correct_for_sampling:
                     # need to create rate panel which is the corrections for sampling by nest
                     nest_is_chosen = array(stratum_id[:,0] == nesting_keys[nest],dtype="int32")
-                    nest_is_not_chosen = array(stratum_id[:,0] <> nesting_keys[nest],dtype="int32")
+                    nest_is_not_chosen = array(stratum_id[:,0] != nesting_keys[nest],dtype="int32")
 
                     sampling_rate = sampling_size[nest]/sampling_nest_size[nest]
                     modified_sampling_rate = (sampling_size[nest]-1)/(sampling_nest_size[nest]-1) 
@@ -136,7 +136,7 @@ class nl_probabilities(Probabilities):
                     return zeros(utils.shape)
                 if correct_for_sampling:
                     where_chosen_alt_in_this_nest = where(altsidx[1] == 0)[0] #it is assumed that chosen alternative is at position 0
-                    where_chosen_alt_not_in_this_nest = where(altsidx[1] <> 0)[0]
+                    where_chosen_alt_not_in_this_nest = where(altsidx[1] != 0)[0]
                     exponentiated_utility_logsum = exponentiated_utility.copy()
                     for j in where_chosen_alt_in_this_nest:
                         exponentiated_utility_logsum[altsidx[0][j],1:] = exponentiated_utility[altsidx[0][j],1:]/sampling_rate[nest]

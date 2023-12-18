@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class max_SSS_capacity_for_generic_land_use_type_DDD(Variable):
     """ minimum SSS capacity (far, units_per_acre, etc) allowed by development constraints

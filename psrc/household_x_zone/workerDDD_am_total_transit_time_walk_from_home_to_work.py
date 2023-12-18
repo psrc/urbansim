@@ -70,7 +70,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [4.4, 2.2, 8.7], [default_value, default_value, default_value],
                            [default_value, default_value, default_value]])
 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-3),
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-3),
             'Error in ' + self.variable_name)
 
 

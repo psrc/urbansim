@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_buildings_with_year_built(Variable):
     """Returns 1 if the location contains at least one buildings with valid year_built, otherwise 0.

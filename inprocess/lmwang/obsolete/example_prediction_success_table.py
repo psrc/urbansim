@@ -102,14 +102,14 @@ def create_prediction_success_table(LCM, location_set, observed_choices_id, geog
             #resources.merge({"agents_index": agents_index_in_geo, "agent":sim})
             what = ones(ids.size())
             pred_matrix[f] = array(nd_image_sum(what, labels=ids, index=myids))
-            print pred_matrix[f]
+            print(pred_matrix[f])
             if sum(pred_matrix[f]) > 0:
                 p_success[f] = float(pred_matrix[f, f])/sum(pred_matrix[f])
     
             #sim.increment_version(gcs.id_name[0])  #to trigger recomputation in next iteration
             f += 1
             
-        print p_success
+        print(p_success)
         results.append((pred_matrix.copy(), p_success.copy()))
         
     return results

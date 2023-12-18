@@ -48,7 +48,7 @@ class UnzipFile:
                 if reply == QMessageBox.NoToAll:
                     break
 
-            except Exception, e:
+            except Exception as e:
                 zipObject.extract(fileArchInfo, self.mountpoint)
 
 

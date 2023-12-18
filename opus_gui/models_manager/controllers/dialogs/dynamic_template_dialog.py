@@ -108,7 +108,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
 
     def _apply_data_methods(self):
         ''' Map the data-method to all nodes '''
-        for field, method in self.fields_to_data_methods.items():
+        for field, method in list(self.fields_to_data_methods.items()):
             for node in self.fields_to_nodes[field]:
                 node.text = method()
         self._generate_specification()
@@ -145,14 +145,14 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             for deletenode in specnode[isubmodelnode]: # delete submodel nodes given by the template
                 specnode[isubmodelnode].remove(deletenode)
             if nested_structure is not None:                
-                for nest, choices in nested_structure.iteritems():
+                for nest, choices in nested_structure.items():
                     nestnode = SubElement(specnode[isubmodelnode], 'nest', 
                                             nest_id="%s" % nest, name="Nest %s" % nest)
                     keep_fixed = "True"
                     force_asc=False
                     if len(choices) > 1:
                         keep_fixed = "False"
-                    if (nest <> nested_structure.keys()[0]) and (choices[0] <> -2): # is it not the first nest processed                       
+                    if (nest != list(nested_structure.keys())[0]) and (choices[0] != -2): # is it not the first nest processed                       
                         force_asc=True
                     add_vars = {'keep_fixed': keep_fixed, 'starting_value': '1'}
                     self._generate_equations_specification(nestnode, choices, force_asc=force_asc)
@@ -170,9 +170,9 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             eq = SubElement(node, 'equation', equation_id="%s" % choice, 
                             name="Choice %s" % choice, type="submodel_equation")
             varl = SubElement(eq, "variable_list", type="variable_list")
-            if force_asc or (choice <> choices[0]):
+            if force_asc or (choice != choices[0]):
                 SubElement(varl, "variable_spec", name="constant")
-            for key, value in add_vars.iteritems():
+            for key, value in add_vars.items():
                 SubElement(varl, "variable_spec", name=key, **value)
            
     def _widget_and_method_from_field_data_type(self, template_node):
@@ -204,7 +204,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         if data_type == 'model_variable':
             variables_per_dataset = get_variable_nodes_per_dataset(self.project)
             widget = QtGui.QComboBox()
-            for dataset, variables in variables_per_dataset.items():
+            for dataset, variables in list(variables_per_dataset.items()):
                 for variable in variables:
                     widget.addItem('%s: %s' % (dataset, variable.get('name')))
             # return a method that only gives the name of the variable, and skips the dataset
@@ -221,8 +221,8 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         if data_type == 'choice_set': # No special handling
             return None
         # unknown, notify with a warning
-        print ('Warning: <%s name=%s> has a field_data_type of unknown value (%s) and is ignored.' %
-               (template_node.tag, template_node.get('name'), data_type))
+        print(('Warning: <%s name=%s> has a field_data_type of unknown value (%s) and is ignored.' %
+               (template_node.tag, template_node.get('name'), data_type)))
         return None
 
     def _widget_and_method_from_type(self, template_node):

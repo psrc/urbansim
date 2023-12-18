@@ -87,7 +87,7 @@ if __name__=="__main__":
             power = zeros((len(r), len(levels)))            
             for ir in range(len(r)):
                 for il in range(len(levels)):
-                    print "r=", r[ir],", level=",levels[il]
+                    print("r=", r[ir],", level=",levels[il])
                     seed(1)
                     for iR in range(R):                   
                         try:
@@ -95,8 +95,8 @@ if __name__=="__main__":
                                                      r[ir], significance_level=levels[il])
                         except:
                             power[ir,il]=power[ir,il]+1
-                    print "Power: ",power[ir,il]/float(R)
-            print power/float(R)
+                    print("Power: ",power[ir,il]/float(R))
+            print(power/float(R))
             
         def xtest_HTM_controlling_with_marginal_characteristics(self):
             nhhs = 5000
@@ -150,9 +150,9 @@ if __name__=="__main__":
                 idx3 = where(logical_and(income <= 10000, income > 5000))[0]
                 idx4 = where(income > 10000)[0]
                 results = array([age[idx1].mean(), age[idx2].mean(), age[idx3].mean(), age[idx4].mean()])
-                print results
+                print(results)
                 return results
-            print expected_results      
+            print(expected_results)      
             R = 2
             #r = [2, 5, 10, 50, 100, 1000]
             #r = [2, 5, 10, 15, 20]
@@ -162,7 +162,7 @@ if __name__=="__main__":
             power = zeros((len(r), len(levels)))            
             for ir in range(len(r)):
                 for il in range(len(levels)):
-                    print "r=", r[ir],", level=",levels[il]
+                    print("r=", r[ir],", level=",levels[il])
                     seed(1)
                     for iR in range(R):                   
                         try:
@@ -170,8 +170,8 @@ if __name__=="__main__":
                                                      r[ir], significance_level=levels[il], transformation=None)
                         except:
                             power[ir,il]=power[ir,il]+1
-                    print "Power: ",power[ir,il]/float(R)
-            print power/float(R)     
+                    print("Power: ",power[ir,il]/float(R))
+            print(power/float(R))     
             
         def xtest_power_HTM_controlling_with_marginal_characteristics(self):
             nhhs = 5000
@@ -239,11 +239,11 @@ if __name__=="__main__":
             wrong_numbers = [1]
             for wn in wrong_numbers:
                 self.wrong_number = wn
-                print "Wrong number = ", self.wrong_number
+                print("Wrong number = ", self.wrong_number)
                 power = zeros((len(r), len(levels)))            
                 for ir in range(len(r)):
                     for il in range(len(levels)):
-                        print "r=", r[ir],", level=",levels[il]
+                        print("r=", r[ir],", level=",levels[il])
                         seed(1)
                         for iR in range(R):                  
                             try:
@@ -251,6 +251,6 @@ if __name__=="__main__":
                                                          r[ir], significance_level=levels[il], transformation=None)
                             except:
                                 power[ir,il]=power[ir,il]+1
-                        print "Power: ",power[ir,il]/float(R)
-                print power/float(R)                                                 
+                        print("Power: ",power[ir,il]/float(R))
+                print(power/float(R))                                                 
     opus_unittest.main()

@@ -7,9 +7,9 @@ import os
 def get_project_year_dir(config, year):
     base_dir = config["travel_model_base_directory"]   #C:/SEMCOG_baseline
     year_dir = config[year]  
-    if year_dir.has_key('data_dir'):  #'CoreEA05'
+    if 'data_dir' in year_dir:  #'CoreEA05'
         return os.path.join(base_dir, year_dir['data_dir'])
-    elif year_dir.has_key('exchange_dir'):
+    elif 'exchange_dir' in year_dir:
         dir_part1, dir_part2 = os.path.split(year_dir['exchange_dir'])  #'CoreEA05\\urbansim\\2001'
         while dir_part1:
             dir_part1, dir_part2 = os.path.split(dir_part1)
@@ -25,8 +25,8 @@ def set_project_ini_file(config, year):
     ini_file = config['project_ini']
     ini_fp = open(ini_file,"r")
     project_year_dir = get_project_year_dir(config, year)
-    import ConfigParser
-    cfg = ConfigParser.ConfigParser()
+    import configparser
+    cfg = configparser.ConfigParser()
     cfg.readfp(ini_fp)
     for section in cfg.sections():
         for option in cfg.options(section):

@@ -74,7 +74,7 @@ class IndicatorDataManager:
             try:
                  indicator = self._import_indicator_from_file(f) 
                  indicators.append(indicator)
-            except Exception, e:
+            except Exception as e:
                 logger.log_warning('Could not load indicator from %s: %s'%(f,e))
         return indicators        
     
@@ -159,7 +159,7 @@ class IndicatorDataManager:
     def _create_indicator(self, indicator_class, params, non_constructor_attributes, source_data_params):
         source_data = SourceData(**source_data_params)
         
-        for k,v in params.items():
+        for k,v in list(params.items()):
             if v=='None':
                 params[k] = None
                 
@@ -173,7 +173,7 @@ class IndicatorDataManager:
         exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class))
         indicator = locals()[indicator_class](**params)
         
-        for attr, value in non_constructor_attributes.items():
+        for attr, value in list(non_constructor_attributes.items()):
             if value == 'None':
                 value = None
             indicator.__setattr__(attr,value)
@@ -252,8 +252,8 @@ class Tests(AbstractIndicatorTest):
             
             for i in range(len(output)):
                 if expected[i] != output[i]:
-                    print expected[i]
-                    print output[i]
+                    print(expected[i])
+                    print(output[i])
                     
             self.assertEqual(output,expected)
   

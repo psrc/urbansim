@@ -35,7 +35,7 @@ arg ="%s %s %s %s %s %s %s" % ((os.sep.join(tab_directory.split(os.sep))),yrStar
 command="Rscript %s" %(os.path.join(rScriptPath,script))
 bashCmd="%s %s" %(command, arg)
 
-print bashCmd
+print(bashCmd)
 #call bash process as subprocess
 #process = subprocess.Popen(bashCmd.split(), stdout=subprocess.PIPE)
 #output = process.communicate()[0]

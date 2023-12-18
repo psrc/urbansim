@@ -52,7 +52,7 @@ class GetEmme4DataFromH5IntoCache(ParentGetEmme4DataIntoCache, AbstractEmme4Trav
         matrix_directory = tmconfig.get('matrix_h5_directory', self.get_emme2_base_dir())        
         bank_year = tmconfig[year]['bank'][0]
         bank_file = os.path.join(matrix_directory, "%s-travelmodel.h5" % bank_year)
-        for path, variable_dict in year_config['matrix_variable_map'].iteritems():
+        for path, variable_dict in year_config['matrix_variable_map'].items():
             self.get_needed_matrices_from_emme4(year, 
                                                 year_config['cache_directory'],
                                                 path, variable_dict, bank_file=bank_file)

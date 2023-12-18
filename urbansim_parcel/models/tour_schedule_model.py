@@ -14,7 +14,7 @@ class TourScheduleModel(Model):
         if person_index == None:
             person_index = arange(person_set.size())
 
-        if tour_filter <> None:
+        if tour_filter != None:
             tour_index = where(tour_set.compute_variables(tour_filter))[0]
         else:
             tour_index = arange(tour_set.size())

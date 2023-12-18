@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
             classifier = GridcellClassifier(devtypes)
             distance = classifier._distances(gridcells, 1)
-            self.assert_(alltrue(distance == array([0,8*8,12*12])))
+            self.assertTrue(alltrue(distance == array([0,8*8,12*12])))
 
         def test_closest_devtype_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
             classifier = GridcellClassifier(devtypes)
             dts = classifier.get_closest_development_type(gridcells)
-            self.assert_(alltrue(dts == array([1,1,2])))
+            self.assertTrue(alltrue(dts == array([1,1,2])))
 
         def test_closest_devtype_units_and_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
@@ -219,7 +219,7 @@ if __name__ == "__main__":
 
             classifier = GridcellClassifier(devtypes)
             dts = classifier.get_closest_development_type(gridcells)
-            self.assert_(alltrue(dts == array([2,3,3,1])))
+            self.assertTrue(alltrue(dts == array([2,3,3,1])))
 
         def test_closest_devtype_units(self):
             storage = StorageFactory().get_storage('dict_storage')
@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
             classifier = GridcellClassifier(devtypes)
             dts = classifier.get_closest_development_type(gridcells)
-            self.assert_(alltrue(dts == array([1,2,2])))
+            self.assertTrue(alltrue(dts == array([1,2,2])))
 
         def test_subset_of_devtypes(self):
             storage = StorageFactory().get_storage('dict_storage')
@@ -301,6 +301,6 @@ if __name__ == "__main__":
             classifier = GridcellClassifier(devtypes)
             dts = classifier.get_closest_development_type(gridcells,
                                                       devtype_ids_to_use=[1,3])
-            self.assert_(alltrue(dts == array([3,3,3,1])))
+            self.assertTrue(alltrue(dts == array([3,3,3,1])))
 
    opus_unittest.main()

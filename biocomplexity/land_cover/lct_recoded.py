@@ -31,7 +31,7 @@ class lct_recoded(Variable):
         groups[8] = [8, 9]
         groups[10] = [10,11,14]
         groups[13] = [13]
-        for group in groups.keys():
+        for group in list(groups.keys()):
             tmp = zeros(lct.shape, dtype=int8)
             for i in range(len(groups[group])):
                 tmp = logical_or(tmp, lct == groups[group][i])
@@ -55,7 +55,7 @@ class Tests(ExpectedDataTest):
             dataset = "land_cover")
         should_be = array([12, 1, 8, 10])
         
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
                      msg = "Error in " + variable_name)
 
 

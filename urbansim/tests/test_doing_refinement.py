@@ -140,12 +140,12 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         
     def write_datasets_to_cache(self, datasets_by_year, up_to_year=None):
         """Write datasets by year to cache"""
-        for year, datasets in datasets_by_year.iteritems():
+        for year, datasets in datasets_by_year.items():
             if up_to_year is not None and year > up_to_year: continue
             SimulationState().set_current_time(year)
             year_dir = os.path.join(self.cache_dir, str(year))
             flt_storage = StorageFactory().get_storage('flt_storage', storage_location=year_dir)
-            for table_name, data in datasets.iteritems():
+            for table_name, data in datasets.items():
                 flt_storage.write_table(table_name, data)
 
     def test_do_nothing_if_no_refinements_specified_between_start_year_and_end_year(self):
@@ -158,7 +158,7 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         dir_names = glob(os.path.join(self.cache_dir, '*'))
         expected_dir_names = [ os.path.join(self.cache_dir, '2000') ]
         
-        self.assert_(set(dir_names).issubset(set(expected_dir_names)))
+        self.assertTrue(set(dir_names).issubset(set(expected_dir_names)))
         self.assertEqual(set(dir_names).symmetric_difference(set(expected_dir_names)), set([]))
         
         #expected_dataset_names = []
@@ -174,11 +174,11 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
                    'start_year': 2020, 'end_year': 2020 }
                   )
         backup_dir = os.path.join(self.cache_dir, "backup", "2020")
-        self.assert_(os.path.exists(backup_dir))
+        self.assertTrue(os.path.exists(backup_dir))
         
         expected_dataset_names = [ os.path.basename(p) for p in glob( os.path.join(self.cache_dir, '2020', '*')) ]
         dataset_names = [ os.path.basename(p) for p in glob(os.path.join(backup_dir, '*'))]
-        self.assert_(set(dataset_names).issubset(set(expected_dataset_names)))
+        self.assertTrue(set(dataset_names).issubset(set(expected_dataset_names)))
         self.assertEqual(set(dataset_names).symmetric_difference( set(expected_dataset_names) ), set([]) )
 
     def test_doing_refinements_from_specified_refinement_dataset(self):
@@ -211,7 +211,7 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         self.assertEqual(jobs_raz5.sum(), 7)
         expected_nr_sqft = array([6, 0, 3, 6, 1, 6, 5, 0])
         ## was             array([6, 2, 3, 6, 1, 2, 5, 0]),
-        self.assert_(allclose(buildings.get_attribute('non_residential_sqft'),  expected_nr_sqft))
+        self.assertTrue(allclose(buildings.get_attribute('non_residential_sqft'),  expected_nr_sqft))
         
         self.dataset_pool.remove_all_datasets()
         
@@ -228,9 +228,9 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         
         #check results
         self.assertEqual(hhs_raz6.sum(), 7)
-        self.assert_(hhs_bldg.sum(),  7 )
-        self.assert_((hhs_bldg!=0).sum(),  2)
-        self.assert_(buildings.get_attribute('residential_units').sum(),  7)
+        self.assertTrue(hhs_bldg.sum(),  7 )
+        self.assertTrue((hhs_bldg!=0).sum(),  2)
+        self.assertTrue(buildings.get_attribute('residential_units').sum(),  7)
         
         self.dataset_pool.remove_all_datasets()        
         
@@ -252,7 +252,7 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         hhs_p5 = hhs.compute_variables('household.persons>5')
         
         #check results
-        self.assert_(hhs.size(),  2)
+        self.assertTrue(hhs.size(),  2)
         self.assertEqual(hhs_p5.sum(), 0)
         
         self.dataset_pool.remove_all_datasets()
@@ -271,9 +271,9 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         
         #check results
         self.assertEqual(hhs_raz6.sum(), 3)
-        self.assert_(hhs_bldg.sum(),  3 )
-        self.assert_((hhs_bldg!=0).sum(),  2)
-        self.assert_(allclose(persons.get_attribute('job_id'), array([-1,  -1, -1, -1,  3,  4,  7])))
+        self.assertTrue(hhs_bldg.sum(),  3 )
+        self.assertTrue((hhs_bldg!=0).sum(),  2)
+        self.assertTrue(allclose(persons.get_attribute('job_id'), array([-1,  -1, -1, -1,  3,  4,  7])))
 
         
 if __name__=='__main__':

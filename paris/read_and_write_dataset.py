@@ -41,7 +41,7 @@ class GridcellsReadMySQLWriteFlt(object):
             storage_location = db)
         
         gcs = GridcellDataset(in_storage=in_storage, nchunks=5)
-        print "Read and Write GridcellDataset."
+        print("Read and Write GridcellDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(gcs, out_storage=out_storage, out_table_name=settings.gcsubdir)
@@ -56,7 +56,7 @@ class NeighborhoodsReadMySQLWriteFlt(object):
             password=settings.get_db_password(),
             database_name=settings.db)
         nbs = NeighborhoodDataset(in_storage=in_storage, nchunks=5)
-        print "Read and Write NeighborhoodDataset."
+        print("Read and Write NeighborhoodDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(nbs, out_storage=out_storage, out_table_name=settings.nbsubdir)
@@ -71,7 +71,7 @@ class HouseholdsReadMySQLWriteFlt(object):
             password=settings.get_db_password(),
             database_name=settings.db)
         hhs = HouseholdDataset(in_storage=in_storage, nchunks=3)
-        print "Read and Write HouseholdDataset."
+        print("Read and Write HouseholdDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(hhs, out_storage=out_storage, out_table_name=settings.hhsubdir)
@@ -87,7 +87,7 @@ class JobsReadMySQLWriteFlt(object):
             password=settings.get_db_password(),
             database_name=settings.db)
         jobs = JobDataset(in_storage=in_storage, nchunks=5)
-        print "Read and Write JobDataset."
+        print("Read and Write JobDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(jobs, out_storage=out_storage, out_table_name=settings.jobsubdir)
@@ -102,7 +102,7 @@ class TravelDataReadMySQLWriteFlt(object):
             password=settings.get_db_password(),
             database_name=settings.db)
         traveldata = TravelDataDataset(in_storage=in_storage)
-        print "Read and Write TravelDataDataset."
+        print("Read and Write TravelDataDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(traveldata, out_storage=out_storage, out_table_name=settings.traveldatasubdir)
@@ -117,7 +117,7 @@ class ZonesReadMySQLWriteFlt(object):
             password=settings.get_db_password(),
             database_name=settings.db)
         zones = ZoneDataset(in_storage=in_storage)
-        print "Read and Write ZoneDataset."
+        print("Read and Write ZoneDataset.")
         out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage', 
             storage_location=settings.dir)
         ReadWriteADataset(zones, out_storage=out_storage, out_table_name=settings.zonesubdir)

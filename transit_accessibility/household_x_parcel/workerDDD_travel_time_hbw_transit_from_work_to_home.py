@@ -40,7 +40,7 @@ else:
             work_parcel = household_x_parcels.get_dataset(1).get_attribute_by_index(self.work_parcel_id, 
                                                                                  n_index).astype(int32)
             
-            pairs = map(lambda x, y: (x, y.tolist()), work_parcel, home_parcel)
+            pairs = list(map(lambda x, y: (x, y.tolist()), work_parcel, home_parcel))
             results = array(edges.compute_dijkstra_path_length(pairs, 
                                                                default_value=self.default_value,
     #                                                           show_progress=True
@@ -109,7 +109,7 @@ else:
             should_be = array([[default_value, 12, 15], [17, default_value, default_value], 
                                [17, default_value, default_value], [default_value, default_value, 1]])
             
-            self.assert_(ma.allclose(values, should_be, rtol=1e-10),
+            self.assertTrue(ma.allclose(values, should_be, rtol=1e-10),
                 'Error in ' + self.variable_name)
     
     

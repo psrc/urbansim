@@ -18,7 +18,7 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
         try:
             db = db_server.get_database(db_name)
         except:
-            raise NameError, "Unknown database '%s'!" % db_name
+            raise NameError("Unknown database '%s'!" % db_name)
         
         pattern_template = '%s_%s_location_choice_model_%s'
         pattern = re.compile('^%s$' % pattern_template 

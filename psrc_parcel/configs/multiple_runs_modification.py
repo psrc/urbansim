@@ -45,7 +45,7 @@ class MultipleRunsModification:
             
     def modify_by_local_configuration(self, config):
         # some models in the first year have sampled inputs and therefore different controller
-        if 'models_in_year' not in config.keys():
+        if 'models_in_year' not in list(config.keys()):
             config['models_in_year'] = {}
         config['models_in_year'][config['base_year']+1]= self.firstyear_models
         
@@ -69,7 +69,7 @@ class MultipleRunsModification:
             new_model_name = "%s_with_sampled_rr" % model_name
             config["models_configuration"][new_model_name] = config["models_configuration"][model_name]
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_rates"] = True
-        for model_name, coef_config in self.models_with_mixed_sampled_coefficients.iteritems():
+        for model_name, coef_config in self.models_with_mixed_sampled_coefficients.items():
             new_model_name = "%s_with_mixed_sampled_coef" % model_name
             config["models_configuration"][new_model_name] = Configuration(config["models_configuration"][model_name])
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_coefficients"] = \

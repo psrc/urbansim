@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable, ln_bounded
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_commercial_sqft_within_walking_distance(Variable):
     """Natural log of the commercial_sqft_within_walking_distance for this gridcell"""

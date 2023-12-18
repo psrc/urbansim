@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
+
 
 
 import os, sys, pickle, re
@@ -12,30 +12,30 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 from database.createDBConnection import createDBC
-from file_menu.wizard_window_validate import Wizard
-from file_menu.filemanager import QTreeWidgetCMenu
-from file_menu.open_project import OpenProject, SaveFile, ExportSummaryFile
-from file_menu.summary_page import SummaryPage
-from data_menu.data_process_status import DataDialog
-from data_menu.data_connection import DBConnectionDialog
-from data_menu.display_data import DisplayTable, DisplayTableStructure
-from results_menu.results_preprocessor import *
-from synthesizer_menu.sample_control_corr import SetCorrDialog
-from synthesizer_menu.parameters import ParametersDialog
-from synthesizer_menu.run import RunDialog
-from misc.errors import FileError
-from misc.widgets import DisplayMapsDlg, ChangeMargsDlg
+from .file_menu.wizard_window_validate import Wizard
+from .file_menu.filemanager import QTreeWidgetCMenu
+from .file_menu.open_project import OpenProject, SaveFile, ExportSummaryFile
+from .file_menu.summary_page import SummaryPage
+from .data_menu.data_process_status import DataDialog
+from .data_menu.data_connection import DBConnectionDialog
+from .data_menu.display_data import DisplayTable, DisplayTableStructure
+from .results_menu.results_preprocessor import *
+from .synthesizer_menu.sample_control_corr import SetCorrDialog
+from .synthesizer_menu.parameters import ParametersDialog
+from .synthesizer_menu.run import RunDialog
+from .misc.errors import FileError
+from .misc.widgets import DisplayMapsDlg, ChangeMargsDlg
 
-from results_menu.view_aard import *
-from results_menu.view_pval import *
-from results_menu.view_hhdist import *
-from results_menu.view_ppdist import *
-from results_menu.view_indgeo import *
-from results_menu.view_hhmap import *
-from results_menu.view_thmap import *
-from results_menu.coreplot import *
+from .results_menu.view_aard import *
+from .results_menu.view_pval import *
+from .results_menu.view_hhdist import *
+from .results_menu.view_ppdist import *
+from .results_menu.view_indgeo import *
+from .results_menu.view_hhmap import *
+from .results_menu.view_thmap import *
+from .results_menu.coreplot import *
 
-from help_menu.helpform import *
+from .help_menu.helpform import *
 
 if sys.platform.startswith('win'):
     qgis_prefix = "C:/qgis"
@@ -531,7 +531,7 @@ class MainWindow(QMainWindow):
     def dataSource(self):
         dataConnectionDia = DBConnectionDialog(self.project)
         if dataConnectionDia.exec_():
-            if self.project <> dataConnectionDia.project:
+            if self.project != dataConnectionDia.project:
                 self.project = dataConnectionDia.project
                 self.project.save()
                 self.fileManager.populate()
@@ -554,7 +554,7 @@ class MainWindow(QMainWindow):
                 b = DisplayTable(self.project, tablename)
                 
                 b.exec_()
-        except Exception, e:
+        except Exception as e:
             QMessageBox.warning(self, "Data",
                                 """Select a table and then choose this option to display a table"""
                                 """or use the context menu to view a table.""",
@@ -564,7 +564,7 @@ class MainWindow(QMainWindow):
     def dataMargsHhld(self):
         reqTables = ['hhld_sample', 'hhld_marginals', 'geocorr']
         tableList = self.tableList(self.project.name)
-        varsCorrDef = self.project.selVariableDicts.hhld.keys()
+        varsCorrDef = list(self.project.selVariableDicts.hhld.keys())
         if self.checkIfTablesExist(reqTables, tableList) and len(varsCorrDef)>0:
             margsModHhld = ChangeMargsDlg(self.project, 'hhld', 'Modify Household Marginals Distributions', 'marginals')
             margsModHhld.exec_()
@@ -577,7 +577,7 @@ class MainWindow(QMainWindow):
     def dataMargsGQ(self):
         reqTables = ['gq_sample', 'gq_marginals', 'geocorr']
         tableList = self.tableList(self.project.name)
-        varsCorrDef = self.project.selVariableDicts.gq.keys()
+        varsCorrDef = list(self.project.selVariableDicts.gq.keys())
         if self.checkIfTablesExist(reqTables, tableList) and len(varsCorrDef)>0:
             margsModGQ = ChangeMargsDlg(self.project, 'gq', 'Modify Groupquarter Marginals Distributions', 'marginals')
             margsModGQ.exec_()
@@ -591,7 +591,7 @@ class MainWindow(QMainWindow):
     def dataMargsPers(self):
         reqTables = ['person_sample', 'person_marginals', 'geocorr']
         tableList = self.tableList(self.project.name)
-        varsCorrDef = self.project.selVariableDicts.person.keys()
+        varsCorrDef = list(self.project.selVariableDicts.person.keys())
         if self.checkIfTablesExist(reqTables, tableList) and len(varsCorrDef)>0:
             margsModPers = ChangeMargsDlg(self.project, 'person', 'Modify Person Marginals Distributions', 'marginals')
             margsModPers.exec_()
@@ -649,8 +649,8 @@ class MainWindow(QMainWindow):
         tables = []
 
         if not query.exec_("""show tables"""):
-            raise FileError, query.lastError.text()
-        while query.next():
+            raise FileError(query.lastError.text())
+        while next(query):
             tables.append('%s' %query.value(0).toString())
         projectDBC.dbc.close()
         return tables

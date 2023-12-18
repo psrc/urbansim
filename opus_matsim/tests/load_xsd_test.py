@@ -4,7 +4,7 @@
 
 from opus_core.tests import opus_unittest
 from opus_core.logger import logger
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import opus_matsim
 import os, tempfile
 
@@ -34,7 +34,7 @@ class XSDLoadTest(opus_unittest.OpusTestCase):
         self.xsd_destination = os.path.join(self.temp_dir, 'MATSim4UrbanSimConfigSchema.xsd')
         logger.log_status('Loading xsd file from: %s' %self.xsd_source)
         
-        response = urllib2.urlopen( self.xsd_source )
+        response = urllib.request.urlopen( self.xsd_source )
         xsd = response.read()
         
         logger.log_status('Storing xsd file at: %s' %self.xsd_destination)

@@ -7,21 +7,21 @@ account for parking
 fix buildable area
 '''
 
-import os, sys, cPickle, traceback, time, string, StringIO, math, copy
+import os, sys, pickle, traceback, time, string, io, math, copy
 import numpy
 from numpy import array, zeros, repeat, arange, round
 
-from devmdl_zoning import *
-import devmdl_optimize
-from isr import ISR
-from parcelfees import ParcelFees
-from shifters import price_shifters
-from bform import BForm
-from devmdl_accvars import compute_devmdl_accvars
-from constants import *
-import submarkets
+from .devmdl_zoning import *
+from . import devmdl_optimize
+from .isr import ISR
+from .parcelfees import ParcelFees
+from .shifters import price_shifters
+from .bform import BForm
+from .devmdl_accvars import compute_devmdl_accvars
+from .constants import *
+from . import submarkets
 
-import proforma
+from . import proforma
 from opus_core.logger import logger
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
@@ -198,7 +198,7 @@ class DeveloperModel(Model):
     #test_parcels = numpy.where(parcel_set['parcel_id'] == 1608920)[0]
     #print test_parcels
     logger.log_status("%s parcels to test" % (test_parcels.size))
-    print "Num of parcels:", test_parcels.size
+    print("Num of parcels:", test_parcels.size)
     import time
 
     HOTSHOT = 0
@@ -221,12 +221,12 @@ class DeveloperModel(Model):
     aggd = {}
 
     def chunks(l, n):
-        for i in xrange(0, len(l), n):
+        for i in range(0, len(l), n):
            yield l[i:i+n]
 
     for test_chunk in chunks(test_parcels,1000):
 
-        print "Executing CHUNK"
+        print("Executing CHUNK")
 
         sales_absorption = submarket.compute_variables('bayarea.submarket.sales_absorption')
         rent_absorption = submarket.compute_variables('bayarea.submarket.rent_absorption')
@@ -238,18 +238,18 @@ class DeveloperModel(Model):
             results = []
             for p in test_chunk: 
                 r = process_parcel(p)
-                if r <> None and r <> -1: results.append(list(r))
+                if r != None and r != -1: results.append(list(r))
         else:
             if MP:
                 results = pool.map(process_parcel,test_chunk)
             else:
                 results = [process_parcel(p) for p in test_chunk]
-            results_bldg = [list(x[0]) for x in results if x <> None and x[0] <> -1]
+            results_bldg = [list(x[0]) for x in results if x != None and x[0] != -1]
             #each row of units represents number of units of [1, 2, 3, 4] bedrooms
-            units = array([x[1][0] for x in results if x <> None and x[0] <> -1])
-            sqft_per_unit = array([x[1][1] for x in results if x <> None and x[0] <> -1])
+            units = array([x[1][0] for x in results if x != None and x[0] != -1])
+            sqft_per_unit = array([x[1][1] for x in results if x != None and x[0] != -1])
             for x in results:
-                if x <> None: 
+                if x != None: 
                     debugf.write(x[2])
 
             results = results_bldg
@@ -343,10 +343,10 @@ class DeveloperModel(Model):
     aggf = open('county_aggregations-%d.csv' % current_year,'w')
     county_names = {49:'son',41:'smt',1:'ala',43:'scl',28:'nap',38:'sfr',7:'cnc',48:'sol',21:'mar',0:'n/a'}
     btype_names = {1:'SF',2:'SFBUILD',3:'MF',4:'MXMF',5:'CONDO',6:'MXC',7:'OF',8:'MXO',9:'CHOOD',10:'CAUTO',11:'CBOX',12:'MANU',13:'WHE'}
-    aggf.write('county,total,'+string.join(btype_names.values(),sep=',')+'\n')
+    aggf.write('county,total,'+string.join(list(btype_names.values()),sep=',')+'\n')
     for county in [38,41,43,1,7,48,28,49,21]:
         aggf.write(county_names[county]+','+str(aggd.get(county,0)))
-        for btype in btype_names.keys():
+        for btype in list(btype_names.keys()):
             key = (county,btype)
             val = aggd.get(key,0) 
             aggf.write(','+str(val))
@@ -354,12 +354,12 @@ class DeveloperModel(Model):
 
     t2 = time.time()
 
-    print "Finished in %f seconds" % (t2-t1)
-    print "Ran optimization %d times" % devmdl_optimize.OBJCNT
+    print("Finished in %f seconds" % (t2-t1))
+    print("Ran optimization %d times" % devmdl_optimize.OBJCNT)
     global NOZONINGCNT, NOBUILDTYPES
-    print "Did not find zoning for parcel %d times" % NOZONINGCNT
-    print "Did not find building types for parcel %d times" % NOBUILDTYPES
-    print "DONE"
+    print("Did not find zoning for parcel %d times" % NOZONINGCNT)
+    print("Did not find building types for parcel %d times" % NOBUILDTYPES)
+    print("DONE")
 
     my.post_run() #remove price_shifter & cost_shifter to avoid them being cached
 
@@ -398,8 +398,8 @@ def process_parcel(parcel):
         existing_price = building_price[parcel]
         if existing_sqft < 0: existing_sqft = 0
         if existing_price < 0: existing_price = 0
-        if DEBUG: print "parcel_id is %d" % pid
-        if DEBUG > 0: print "node_id is %d" % node_id
+        if DEBUG: print("parcel_id is %d" % pid)
+        if DEBUG > 0: print("node_id is %d" % node_id)
         shape_area = parcel_set['shape_area'][parcel]
         v = float(shape_area)*10.7639
         #set_value(excel,sp,"Bldg Form","C28",v)
@@ -420,18 +420,18 @@ def process_parcel(parcel):
         if v < 800:
             #print "PARCEL SIZE IS TOO SMALL"
             return
-        if DEBUG > 0: print "Parcel size is %f" % v
+        if DEBUG > 0: print("Parcel size is %f" % v)
         far = z.get_attr(zoning,'max_far', 100)
         height = int(z.get_attr(zoning,'max_height', 1000))
         max_dua = int(z.get_attr(zoning,'max_dua', 100))
         max_dua = min(max_dua,30)
-        if DEBUG: print far, height, max_dua
+        if DEBUG: print(far, height, max_dua)
 
         if far == 100 and height == 1000: far,height = .75,10
             
         bform = BForm(pid,v,far,height,max_dua,county_id,taz,isr,parcelfees,existing_sqft,existing_price)
 
-        if DEBUG > 0: print "ZONING BTYPES:", btypes
+        if DEBUG > 0: print("ZONING BTYPES:", btypes)
 
         # right now we can't have MF-CONDO (type 5)
         devmdl_btypes = []
@@ -455,7 +455,7 @@ def process_parcel(parcel):
 
         idx_node_parcel = numpy.where(node_set['node_id']==node_id)[0]
 
-        if DEBUG > 0: print "DEVMDL BTYPES:", btypes
+        if DEBUG > 0: print("DEVMDL BTYPES:", btypes)
 
         maxnpv, maxbuilding = 0, -1
         ## number of units and sqft_per_unit by number of bedrooms (1, 2, 3, 4)
@@ -464,7 +464,7 @@ def process_parcel(parcel):
 
         for btype in btypes:
             
-            if DEBUG > 0: print "building type = %s" % btype
+            if DEBUG > 0: print("building type = %s" % btype)
             
             if 1: #btype in [1,2,3,4,5,6]: # RESIDENTIAL
                 zone_id = parcel_set['zone_id'][parcel]
@@ -504,8 +504,8 @@ def process_parcel(parcel):
             #if price_per_sqft_mf > 1.5 * price_per_sqft_sf:
             #    price_per_sqft_mf = 1.5 * price_per_sqft_sf
             #price_per_sqft_mf = price_per_sqft_sf*.5
-            if DEBUG > 0: print "price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf
-            if DEBUG > 0: print "of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft
+            if DEBUG > 0: print("price_per_sqft_sf:", price_per_sqft_sf, "price_per_sqft_mf:", price_per_sqft_mf, "rent_per_sqft_sf:", rent_per_sqft_sf, "rent_per_sqft_mf:", rent_per_sqft_mf)
+            if DEBUG > 0: print("of_rent_sqft:", of_rent_sqft, "ret_rent_sqft:", ret_rent_sqft, "ind_rent_sqft:", ind_rent_sqft)
             #prices = (price_per_sqft_sf*1.2,price_per_sqft_mf,rent_per_sqft_sf,rent_per_sqft_mf*2,of_rent_sqft*1.85,ret_rent_sqft*1.85,ind_rent_sqft*2.5)
             prices = (price_per_sqft_sf*1.0*price_shifters['price_per_sqft_sf'],
                       price_per_sqft_mf*1.0,
@@ -517,7 +517,7 @@ def process_parcel(parcel):
             if not lotsize: lotsize = 11111    
             if lotsize <1000:  lotsize = 11111   
             if lotsize>20000: lotsize=20000
-            if DEBUG > 0: print "zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2
+            if DEBUG > 0: print("zone:", zone_id, "lotsize:", lotsize, "HS size:", unitsize, "MF size:", unitsize2)
             bform.set_unit_sizes(lotsize,unitsize,unitsize2)
 
             bform.set_btype(btype)
@@ -548,7 +548,7 @@ def process_parcel(parcel):
 
             X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,
                                               submarket_pool)
-            if DEBUG: print X, npv
+            if DEBUG: print(X, npv)
 
             bformdbg = (county_id,far,height,max_dua,bform.sf_builtarea(),bform.sfunitsizes,bform.mf_builtarea(),bform.mfunitsizes,bform.num_units,bform.nonres_sqft,bform.buildable_area)
             pfeesstr = ''

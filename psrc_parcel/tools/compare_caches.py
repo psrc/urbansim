@@ -25,8 +25,8 @@ class CompareCaches(Model):
             logger.log_status("TABLE: %s" % table)
             tabdata1 = self.storage1.load_table(table)
             tabdata2 = self.storage2.load_table(table)
-            columns1 = tabdata1.keys()
-            columns2 = tabdata2.keys()
+            columns1 = list(tabdata1.keys())
+            columns2 = list(tabdata2.keys())
             coldif = setdiff1d(columns1, columns2)
             if coldif.size > 0:
                 logger.log_status("\tColumns that are only in one of the caches: %s" % str(coldif).strip('[]')) 
@@ -40,8 +40,8 @@ class CompareCaches(Model):
             is_equal = df1.equals(df2)
             if not is_equal:
                 logger.log_status("\tDetected differences in columns:")
-                for col in tabdata1.keys():
-                    if tabdata1[col].size <> tabdata2[col].size:
+                for col in list(tabdata1.keys()):
+                    if tabdata1[col].size != tabdata2[col].size:
                         logger.log_status("\t\t%s: size varies" % col)
                     else:
                         eq = equal(tabdata1[col], tabdata2[col])

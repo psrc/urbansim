@@ -61,7 +61,7 @@ def get_indices_of_matched_items(valuearray, items_to_match):
     """Returns indices of matched items from items_to_match within valuearray.
     """
     from numpy import array
-    return array(map(lambda x: ematch(valuearray, x)[0], items_to_match))
+    return array([ematch(valuearray, x)[0] for x in items_to_match])
     
 def byteswap_if_needed(data, byteorder):
     """
@@ -69,7 +69,7 @@ def byteswap_if_needed(data, byteorder):
     To be used with the fromfile and tofile methods provided in numpy,
     which assume native byteorder rather than letting you specify.
     """
-    if sys.byteorder <> byteorder:
+    if sys.byteorder != byteorder:
         data.byteswap(True)
 
 def module_path_from_opus_path(opus_path):
@@ -125,7 +125,7 @@ def write_to_text_file(filename, data, mode="wb", delimiter="\n", end_delimiter=
             n = data.size
 
         if n > 0:
-            for index in xrange(n-1):
+            for index in range(n-1):
                 text_file.write(str(data[index]) + delimiter)
 
             text_file.write(str(data[n-1]) + end_delimiter)
@@ -185,8 +185,8 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
             splitted_row = row.split(split_delimiter)
             if len(splitted_row) == 1:
                 return float(splitted_row[0])
-            return map(lambda x: float(x), splitted_row)
-        return (reshape(array(map(lambda x: split_and_convert(x), data)), (nrow, ncol)), header_line)
+            return [float(x) for x in splitted_row]
+        return (reshape(array([split_and_convert(x) for x in data]), (nrow, ncol)), header_line)
     return (reshape(array(data), (nrow, ncol)), header_line)
 
 def load_from_text_file(filename, convert_to_float=False, split_delimiter=' ', comment=None):
@@ -211,8 +211,8 @@ def load_from_text_file(filename, convert_to_float=False, split_delimiter=' ', c
             splitted_row = row.split(split_delimiter)
             if len(splitted_row) == 1:
                 return float(splitted_row[0])
-            return map(lambda x: float(x), splitted_row)
-        return array(map(lambda x: split_and_convert(x), data))
+            return [float(x) for x in splitted_row]
+        return array([split_and_convert(x) for x in data])
     return array(data)
 
 def remove_directories_with_this_name(top, dir_name):
@@ -251,7 +251,7 @@ def create_string_list(prefix, n):
     """
     name_list = []
     for i in range(n):
-        name_list.append(prefix + `i+1`)
+        name_list.append(prefix + repr(i+1))
     return name_list
 
 def list2string(l, sep=' '):
@@ -269,7 +269,7 @@ def remove_all(valuelist, element):
     """
     result = []
     for item in valuelist:
-        if element <> item:
+        if element != item:
             result.append(item)
     return result
 
@@ -301,7 +301,7 @@ def type_convert(valuelist):
             return float(x)
         except:
             return x
-    return map(lambda x: tryconvert(x), valuelist)
+    return [tryconvert(x) for x in valuelist]
 
 def get_distinct_names(namesarray):
     """Return a list of distinct names from a list of names"""
@@ -339,11 +339,11 @@ def sample_1d(population, k, probabilities):
     from numpy.random import random
 
     n = population.size
-    if n <> probabilities.shape[0]:
-        raise StandardError, "Mismatch in size of population and probabilities."
+    if n != probabilities.shape[0]:
+        raise Exception("Mismatch in size of population and probabilities.")
     cumulative_probability = probabilities.cumsum()
     if cumulative_probability[n-1]<=0:
-        raise StandardError, "Sum of probabilities must be > 0."
+        raise Exception("Sum of probabilities must be > 0.")
     cumulative_probability = cumulative_probability/float(cumulative_probability[n-1])
     draw = random([k])
     choices = searchsorted(cumulative_probability, draw)
@@ -369,16 +369,16 @@ def sample(population, k, probabilities=None):
     if probabilities.ndim <= 1:
         return sample_1d(population, k, probabilities)
 
-    if (n <> probabilities.shape[1]) or (k <> probabilities.shape[0]) :
-        raise StandardError, "Mismatch in size of population and probabilities."
+    if (n != probabilities.shape[1]) or (k != probabilities.shape[0]) :
+        raise Exception("Mismatch in size of population and probabilities.")
     cumulative_probability = probabilities.cumsum(axis=1)
     if not alltrue(cumulative_probability[:,n-1]):
-        raise StandardError, "Sums of probabilities must be > 0."
+        raise Exception("Sums of probabilities must be > 0.")
     cumulative_probability = cumulative_probability/reshape(cumulative_probability[:,n-1],(k,1)).astype('float32')
     draw = random([k])
     choices = reshape(n-where(reshape(draw, (k,1)) <= cumulative_probability,1,0).sum(axis=1), (k,))
     if choices.max() >= n:
-        raise StandardError, "Something is wrong with the probabilities."
+        raise Exception("Something is wrong with the probabilities.")
     return population[choices]
 
 def intersect1d(ar1, ar2, **kwargs):
@@ -463,16 +463,16 @@ def uniquend(arr):
     d = {}
     for element in arr:
         k = totuple(element)
-        if k not in d.keys():
+        if k not in list(d.keys()):
             d[k] = 1
         else:
             d[k] += 1
-    return array(d.keys())
+    return array(list(d.keys()))
 
 def has_this_method(object, method_name):
     """Does this object have a method named method_name?"""
     members = getmembers(object)
-    method_found = map(lambda x: method_name in x, members)
+    method_found = [method_name in x for x in members]
     return (1 in method_found) and ismethod(getattr(object, method_name))
 
 def all_in_list(list1, list2):
@@ -486,7 +486,7 @@ def do_id_mapping_dict_from_array(id_array):
     from numpy import ndarray
 
     if isinstance(id_array, ndarray) and id_array.ndim > 1: # transfer to tuples, since dict does not work with arrays as keys
-        new_id_array = map(lambda x: tuple(x.tolist()), id_array)
+        new_id_array = [tuple(x.tolist()) for x in id_array]
     else:
         new_id_array = id_array
     id_mapping = {}
@@ -503,9 +503,9 @@ def do_id_mapping_array_from_array(id_array, minid=None, maxid=None):
     if id_array.size <= 0:
         return array([], dtype="int32")
     if maxid is None:
-        maxid = long(id_array.max())
+        maxid = int(id_array.max())
     if minid is None:
-        minid = long(id_array.min())
+        minid = int(id_array.min())
     id_mapping = -1 * ones(maxid-minid+1, dtype='i')
     id_mapping[id_array-minid] = arange(id_array.size).astype(id_mapping.dtype)
     return id_mapping
@@ -529,8 +529,8 @@ def ncumsum(prob_array, axis=0, dtype='float64'):
     from numpy import take, ma
 
     if not ma.allclose(prob_array.sum(axis=axis, dtype=dtype), 1.0, rtol=1.e-2):
-        raise ValueError, "The probability array must sum up to 1. It is " + \
-                               str(prob_array.sum(axis=axis, dtype=dtype))
+        raise ValueError("The probability array must sum up to 1. It is " + \
+                               str(prob_array.sum(axis=axis, dtype=dtype)))
 
     cum_prob = prob_array.cumsum(axis=axis, dtype=dtype)
     return cum_prob / take(cum_prob, (-1,), axis=axis)
@@ -552,7 +552,7 @@ def corr(var_array, *var_arrays):
                 Y = var[:, newaxis]
             X = concatenate((X, Y), axis=1)
     except:
-        raise ValueError, "Input variable arrays must have the same number of observations"
+        raise ValueError("Input variable arrays must have the same number of observations")
 
     #from scipy.stats import corrcoef
     from numpy import corrcoef
@@ -658,7 +658,7 @@ def clip_to_zero_if_needed(values, function=""):
 def convert_lower_case_with_underscores_into_camel_case(name):
     """Creates CamelCase name from this lower_case_with_underscores name.
     """
-    return ''.join(map(lambda s: s.capitalize(), name.split('_')))
+    return ''.join([s.capitalize() for s in name.split('_')])
 
 def get_camel_case_class_name_from_opus_path(opus_path):
     """return CamelCase class name from opus_path.
@@ -786,9 +786,9 @@ def djbhash(sequence):
     http://www.gossamer-threads.com/lists/python/python/679002#679002
     http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
     """
-    h = 5381L
+    h = 5381
     for i in sequence:
-        t = (h * 33) & 0xffffffffL
+        t = (h * 33) & 0xffffffff
         h = t ^ i
     return h 
 
@@ -801,7 +801,7 @@ def fnvhash(sequence):
     """
     h = 2166136261
     for i in sequence:
-        t = (h * 16777619) & 0xffffffffL
+        t = (h * 16777619) & 0xffffffff
         h = t ^ i
     return h
 
@@ -828,10 +828,10 @@ def ndsum(input, labels, index=None):
         hash_value = djbhash(label)
         hash_table.update({hash_value:label})
         return hash_value
-    labels_hash = array(map(hashlabel, labels)).astype("int32")
+    labels_hash = array(list(map(hashlabel, labels))).astype("int32")
 
-    index = array(hash_table.keys()).astype("int32")
-    value = array(hash_table.values())
+    index = array(list(hash_table.keys())).astype("int32")
+    value = array(list(hash_table.values()))
     result = sum(input, labels=labels_hash, index=index)
 
     return array(result), [value[:, col] for col in range(value.shape[-1])]
@@ -873,7 +873,7 @@ def lookup(subarray, fullarray, index_if_not_found=-1):
     """
     from numpy import arange, searchsorted, not_equal
     if subarray.ndim !=1 or fullarray.ndim !=1:
-        raise ValueError, "lookup only works with 1-d input arrays."
+        raise ValueError("lookup only works with 1-d input arrays.")
     
     array_size = fullarray.size
     index_all = arange(array_size)
@@ -930,7 +930,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         expected_mat = zeros( (2, 4)) 
         expected_mat[expected[1]] = expected[0]
         
-        self.assert_(allclose(result_mat, expected_mat))
+        self.assertTrue(allclose(result_mat, expected_mat))
 
        
     def test_opus_path_for_variable_from_module_path(self):
@@ -956,39 +956,39 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             for n in t:
                 path = os.path.join(path, n)
             os.makedirs(path)
-            self.assert_(os.path.exists(path))
+            self.assertTrue(os.path.exists(path))
         remove_directories_with_this_name(self.temp_dir, 'CVS')
         for t in files:
             path = self.temp_dir
             for n in t:
                 path = os.path.join(path, n)
             if 'CVS' in t:
-                self.assert_(not os.path.exists(path))
+                self.assertTrue(not os.path.exists(path))
             else:
-                self.assert_(os.path.exists(path))
+                self.assertTrue(os.path.exists(path))
         # make sure we didn't accidentally delete the temp directory itself
-        self.assert_(os.path.exists(self.temp_dir))
+        self.assertTrue(os.path.exists(self.temp_dir))
 
     def test_concatenate_on_strings(self):
         from numpy import array, concatenate, alltrue
 
         a = array(['a','bb','ccc'])
         b = array(['ddd','ee'])
-        self.assert_(alltrue(concatenate([a,b]) == array(['a','bb','ccc','ddd','ee'])))
+        self.assertTrue(alltrue(concatenate([a,b]) == array(['a','bb','ccc','ddd','ee'])))
 
     def test_concatenate_on_ints(self):
         from numpy import array, concatenate, alltrue
 
         a = array([1,2,3])
         b = array([44,55])
-        self.assert_(alltrue(concatenate([a,b]) == array([1,2,3,44,55])))
+        self.assertTrue(alltrue(concatenate([a,b]) == array([1,2,3,44,55])))
 
     def test_concatenate_on_mix_of_ints_and_floats(self):
         from numpy import array, concatenate, alltrue
 
         a = array([1,2,3])
         b = array([4.4,5.5])
-        self.assert_(alltrue(concatenate([a,b]) == array([1,2,3,4.4,5.5])))
+        self.assertTrue(alltrue(concatenate([a,b]) == array([1,2,3,4.4,5.5])))
 
     #def test_concatenate_on_mix_of_ints_and_strings(self):
         #a = array(['a','bb','ccc'])
@@ -1009,7 +1009,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             concatenate([a,b])
         except Exception:
             threw_exception = True
-        self.assert_(threw_exception)
+        self.assertTrue(threw_exception)
 
     def test_clip_to_zero_if_needed(self):
         from numpy import array, ma
@@ -1049,7 +1049,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
     def test_safe_array_divide_broadcast(self):
         a = array([10, 0, 30, 40])
         b = array([0])
-        self.assert_(allclose(safe_array_divide(a,b), array([0, 0, 0, 0])))
+        self.assertTrue(allclose(safe_array_divide(a,b), array([0, 0, 0, 0])))
 
     def test_transformation(self):
         from numpy import array, ma
@@ -1115,9 +1115,9 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
     def test_is_masked_array(self):
         import numpy
         a1 = ma.array([3])
-        self.assert_(is_masked_array(a1))
+        self.assertTrue(is_masked_array(a1))
         a2 = numpy.array([4])
-        self.assert_(not is_masked_array(a2))
+        self.assertTrue(not is_masked_array(a2))
         
     def test_copytree(self):
         dest = os.path.join(self.temp_dir, 'dest')
@@ -1142,9 +1142,9 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             for n in t:
                 path = os.path.join(path, n)
             if 'CVS' in t or '.svn' in t:
-                self.assert_(not os.path.exists(path))
+                self.assertTrue(not os.path.exists(path))
             else:
-                self.assert_(os.path.exists(path))
+                self.assertTrue(os.path.exists(path))
 
     def test_unique(self):
         from numpy import array, all
@@ -1176,13 +1176,13 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(list2string(["aaa", 5, "xx", 6.8], sep=', '), "aaa, 5, xx, 6.8")   
         
     def test_get_distinct_list(self):
-        self.assertEquals(get_distinct_list([]), [])
-        self.assertEquals(get_distinct_list(['zxq', 'zxq', 5.4, 9, ['3', 'a'], 5.4, 5.4, ['3', 'a']]), ['zxq', 5.4, 9, ['3', 'a']] )
+        self.assertEqual(get_distinct_list([]), [])
+        self.assertEqual(get_distinct_list(['zxq', 'zxq', 5.4, 9, ['3', 'a'], 5.4, 5.4, ['3', 'a']]), ['zxq', 5.4, 9, ['3', 'a']] )
         
     def test_flatten_list(self):
         nestedList = [3, 4.0, 'five']
         testList = [nestedList]
-        self.assertEquals(flatten_list(testList), nestedList)
+        self.assertEqual(flatten_list(testList), nestedList)
         
     def test_ismember(self):
         from numpy import array
@@ -1228,7 +1228,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         a = array([1, 9, 2, 7, 3, 5, 6])
         b = array([0, 3, 2, 9, 7, 10])
         expected = array([-1, 4, 2, 1, 3, -1])
-        self.assert_(alltrue(lookup(b, a)==expected))
+        self.assertTrue(alltrue(lookup(b, a)==expected))
 
     def test_totuple(self):
         a = array([1, 2, 3, 5, 7, 9])

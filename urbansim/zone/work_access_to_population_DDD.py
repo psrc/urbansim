@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from abstract_zone_access_variable import Abstract_Zone_Access_Variable
+from .abstract_zone_access_variable import Abstract_Zone_Access_Variable
 
 class work_access_to_population_DDD(Abstract_Zone_Access_Variable):
     """The accessibility to jobs in the given zone from population for number of autos DDD.

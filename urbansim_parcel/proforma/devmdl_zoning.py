@@ -19,7 +19,7 @@ class Zoning():
 
     # first, zoning
     s = "select * from geography_zoning"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
@@ -31,10 +31,10 @@ class Zoning():
         d[id] = r
 
     my.zoning = d
-    my.zoningfnames = dict(zip(fnames,range(len(fnames))))
+    my.zoningfnames = dict(list(zip(fnames,list(range(len(fnames))))))
 
     s = "select id from scenario where name = '%s'" % scenario
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     assert len(records) == 1
@@ -59,7 +59,7 @@ class Zoning():
     # print "Found %d parcel->zoning relationships" % len(d)
 
     s= "select * from geography_building_type_zone_relation"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]
@@ -75,7 +75,7 @@ class Zoning():
     
 
     s= "select * from geography_parking_requirement where unit = 1"
-    print s
+    print(s)
     cursor.execute(s)
     records = cursor.fetchall()
     fnames = [x[0] for x in cursor.description]

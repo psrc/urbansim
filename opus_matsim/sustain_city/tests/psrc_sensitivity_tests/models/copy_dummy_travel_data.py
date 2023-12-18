@@ -53,10 +53,10 @@ class CopyDummyTravelData(AbstractTravelModel):
         # set source location
         travel_data_source = paths.get_opus_data_path_path('psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'travel_data.csv' )
         if not self.travel_data_exsists( travel_data_source ):
-            raise StandardError( 'Dummy MATSim travel data not fould! %s' % travel_data_source )
+            raise Exception( 'Dummy MATSim travel data not fould! %s' % travel_data_source )
         workplace_accessibility_source = paths.get_opus_data_path_path('psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'zones.csv' )
         if not self.travel_data_exsists( workplace_accessibility_source ):
-            raise StandardError( 'Dummy MATSim travel data not fould! %s' % workplace_accessibility_source )
+            raise Exception( 'Dummy MATSim travel data not fould! %s' % workplace_accessibility_source )
             
         # set destination location
         destination_dir = paths.get_opus_home_path( "opus_matsim", "tmp" )
@@ -75,7 +75,7 @@ class CopyDummyTravelData(AbstractTravelModel):
         if os.path.isfile (self.travel_data_destination): 
             logger.log_status("Copying successful ...")
         else: 
-            raise StandardError("Test travel data travel_data_destination not copied!")
+            raise Exception("Test travel data travel_data_destination not copied!")
         
         logger.log_status("Copying dummy workplace accessibility indicators:")
         logger.log_status("Source: %s" % workplace_accessibility_source)
@@ -86,11 +86,11 @@ class CopyDummyTravelData(AbstractTravelModel):
         if os.path.isfile (self.workplace_accessibility_destination): 
             logger.log_status("Copying successful ...")
         else: 
-            raise StandardError("Test travel data workplace_accessibility_destination not copied!")  
+            raise Exception("Test travel data workplace_accessibility_destination not copied!")  
         
     def travel_data_exsists(self, travel_data):
         if not os.path.exists( travel_data ):
-            raise StandardError("Test travel data not found: %s" % travel_data)
+            raise Exception("Test travel data not found: %s" % travel_data)
             return False
         else: return True
 

@@ -157,7 +157,7 @@ class _Logger(Singleton):
             if filename is None:
                 file_dict = self._file_stack.pop()
             else:
-                filenames = map(lambda x: x['file_name'],self._file_stack )
+                filenames = [x['file_name'] for x in self._file_stack]
                 index = filenames.index(filename)
                 file_dict = self._file_stack.pop(index)
             
@@ -168,7 +168,7 @@ class _Logger(Singleton):
             if not self._file_stack:
                 self._log_to_file = False
             if self._warning_file_stack:
-                warning_files = map(lambda x: x['file_name'],self._warning_file_stack )
+                warning_files = [x['file_name'] for x in self._warning_file_stack]
                 if self._warning_file_name(file_dict['file_name']) in warning_files:
                     index = warning_files.index(self._warning_file_name(file_dict['file_name']))
                     file_dict = self._warning_file_stack.pop(index)
@@ -335,7 +335,7 @@ class _Logger(Singleton):
         tags = kwargs.get("tags", [])
         level = kwargs.get("verbosity_level", 3)
         if self._should_log(tags, level):
-            message = ' '.join(map(unicode, what_to_log))   
+            message = ' '.join(map(str, what_to_log))   
             self._writeln(message)
 
     def log_debug(self, message='',  **kwargs):
@@ -385,7 +385,7 @@ class _Logger(Singleton):
             'Fail' : 'F a i l',
             'fail' : 'f a i l',
         }
-        for old, new in words_to_hide.iteritems():
+        for old, new in words_to_hide.items():
             message = message.replace(old, new)
         return message
         
@@ -541,12 +541,12 @@ class LoggerTests(opus_unittest.OpusTestCase):
     def test_timing(self):
         logger.start_block('Timing test')
         logger.enable_exact_time()
-        self.assert_(logger._show_exact_time)
+        self.assertTrue(logger._show_exact_time)
         logger.start_block('Timing test with exact time')
         time.sleep(1)
         logger.end_block()
         logger.end_block()
-        self.assert_(not logger._show_exact_time)
+        self.assertTrue(not logger._show_exact_time)
         
     def test_memory_logging(self):
         logger.start_block('A')
@@ -560,9 +560,9 @@ class LoggerTests(opus_unittest.OpusTestCase):
         v2 = logger.end_block() 
         self.assertEqual(v2, logger.get_values_from_last_block())
         if logger.can_get_memory_usage():
-            self.assertNotEqual(v1.keys(), v2.keys())
+            self.assertNotEqual(list(v1.keys()), list(v2.keys()))
         else:
-            self.assertEqual(v1.keys(), v2.keys())
+            self.assertEqual(list(v1.keys()), list(v2.keys()))
         
     def test_empty_block(self):
         logger.start_block("empty C")
@@ -586,7 +586,7 @@ class LoggerTests(opus_unittest.OpusTestCase):
     def test_multiply_messages_log(self):
         from numpy import array
         logger.log_status("my favorite number is", 21, "but my mom's is", 14)
-        logger.log_status(array(xrange(5)), "and i can count to", 2.0/3.0, "on a bad day")
+        logger.log_status(array(range(5)), "and i can count to", 2.0/3.0, "on a bad day")
         
 
     def test_multi_line_msg(self):
@@ -607,19 +607,19 @@ class LoggerTests(opus_unittest.OpusTestCase):
         file_name_b = 'delete_me_b.log'
 
         logger.enable_file_logging(file_name_a)
-        self.assert_(len(logger._file_stack) == 1 )              
+        self.assertTrue(len(logger._file_stack) == 1 )              
         logger.log_status('status in a')
         logger.enable_file_logging(file_name_b)
-        self.assert_(len(logger._file_stack) == 2)
+        self.assertTrue(len(logger._file_stack) == 2)
         logger.log_status('in both')
         logger.disable_file_logging(file_name_b)
-        self.assert_(len(logger._file_stack) == 1 )
+        self.assertTrue(len(logger._file_stack) == 1 )
 
         logger.log_status("only in a")
         logger.disable_file_logging(file_name_a)
-        self.assert_(len(logger._file_stack) == 0 )
-        self.assert_(file_name_a in os.listdir('.'))
-        self.assert_(file_name_b in os.listdir('.'))  
+        self.assertTrue(len(logger._file_stack) == 0 )
+        self.assertTrue(file_name_a in os.listdir('.'))
+        self.assertTrue(file_name_b in os.listdir('.'))  
         os.remove(file_name_a)
         os.remove(file_name_b)
         # check that each file has what it's supposed to have

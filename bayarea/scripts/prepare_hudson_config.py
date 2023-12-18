@@ -39,7 +39,7 @@ import sys, os
 from optparse import OptionParser
 from lxml import etree
 from copy import deepcopy
-from StringIO import StringIO
+from io import StringIO
 
 if __name__ == "__main__":
 
@@ -53,17 +53,17 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     if options.xml_configuration == None:
-        print "ERROR: Please specify a suitable xml_configuration"
+        print("ERROR: Please specify a suitable xml_configuration")
         sys.exit(1)
 
     parent_scenario = os.getenv("HUDSON_SCENARIO")
     if parent_scenario == None:
-        print "ERROR: HUDSON_SCENARIO environment variable must be set"
+        print("ERROR: HUDSON_SCENARIO environment variable must be set")
         sys.exit(1)
 
     node_name = os.getenv("NODE_NAME")
     if not node_name:
-        print "ERROR: NODE_NAME environment variable must be set"
+        print("ERROR: NODE_NAME environment variable must be set")
         sys.exit(1)
 
     project = etree.Element("opus_project")
@@ -179,7 +179,7 @@ if __name__ == "__main__":
             tmh.append(tmconnect)
         tmc.append(tmh)
 
-    print etree.tostring(project, pretty_print=True)
+    print(etree.tostring(project, pretty_print=True))
 
     if options.db_output:
         # Start by reading in the template:

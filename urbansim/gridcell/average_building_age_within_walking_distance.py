@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 from numpy import ma
-from abstract_within_walking_distance import abstract_within_walking_distance
-from variable_functions import my_attribute_label
+from .abstract_within_walking_distance import abstract_within_walking_distance
+from .variable_functions import my_attribute_label
 
 class average_building_age_within_walking_distance( abstract_within_walking_distance ):
     """average building age within walking distance calculated only over 'valid' ages.

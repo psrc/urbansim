@@ -32,7 +32,7 @@ class LandCoverDataset(UrbansimDataset):
             try:
 #                self.header = self.get_attribute_header(name) # 1. original 
                 self.header = self._get_flt_file_header(name) # 2. updated - added on 18 jun 09 by mm
-                print "pulled header from %s" % name
+                print("pulled header from %s" % name)
             except:
                 self.header = None
             if self.header and ("relative_x" not in self.get_primary_attribute_names()):
@@ -92,7 +92,7 @@ class LandCoverDataset(UrbansimDataset):
         """Get mask for lct."""
         
         if attribute is None:
-            raise StandardError, "No non-attributes found. Cannot create mask."
+            raise Exception("No non-attributes found. Cannot create mask.")
          
         if is_2d_version:
             values =self.get_2d_attribute(attribute)    

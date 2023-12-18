@@ -16,7 +16,7 @@ def read_header(in_fname, rename_attrs=None, dtypes=None):
     header = in_fh.readline().strip().split(",")
     names = [v.lower() for v in header]
     if rename_attrs is not None:
-        for org_attr, new_attr in rename_attrs.iteritems():
+        for org_attr, new_attr in rename_attrs.items():
             names[names.index(org_attr)] = new_attr
     if dtypes is None:
         formats = ['i4'] * len(names)
@@ -79,7 +79,7 @@ def read_native_write_h5py(in_fname, out_fname, dataset_name,
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print "Usage: python %s.py in_fname out_fname <household | person>" % sys.argv[0]
+        print("Usage: python %s.py in_fname out_fname <household | person>" % sys.argv[0])
         sys.exit(0)
 
     in_fname, out_fname = sys.argv[1], sys.argv[2]

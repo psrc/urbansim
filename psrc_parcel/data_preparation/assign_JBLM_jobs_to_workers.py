@@ -28,7 +28,7 @@ class AssignJBLM:
         is_worker = workers.compute_variables('urbansim_parcel.person.is_worker', dataset_pool=dataset_pool)
         workers_jobs = workers['job_id']
         job_ids = arange(self.job_id_range[0], self.job_id_range[1]+1)
-        for area, values in self.faz_worker_mapping.iteritems():
+        for area, values in self.faz_worker_mapping.items():
             fazes = array(values[0])
             amount = values[1]
             indicator = logical_and(ismember(faz_ids, fazes), is_worker)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     seed(1)
     AssignJBLM().run(dataset_pool)
     dataset_pool['person'].write_dataset(out_storage=outstorage, attributes=1)
-    print "Assignment finished."
+    print("Assignment finished.")
             
             
         

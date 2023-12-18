@@ -11,7 +11,7 @@ class ValidationInformation(object):
         if self._error_data is None:
             return None
         
-        return self._error_data.keys()
+        return list(self._error_data.keys())
     
     def get_string(self):
         if self._error_data is None:
@@ -19,7 +19,7 @@ class ValidationInformation(object):
         
         parameter_messages = [
             "* %s: %s" % (key, value)
-            for key, value in self._error_data.iteritems()
+            for key, value in self._error_data.items()
             ]
         
         return ("The following parameters failed to validate:\n\n%s" 
@@ -62,7 +62,7 @@ class ValidationInformationTest(opus_unittest.TestCase):
                 'parameter2':'(Just kidding)',
                 }
             )
-        self.assert_(
+        self.assertTrue(
             (info.get_string() == possible_string1) or
             (info.get_string() == possible_string1)
             )

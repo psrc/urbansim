@@ -42,7 +42,7 @@ def main():
 
             query = QSqlQuery()
             if not query.exec_("""show tables"""):
-                raise Exception, query.lastError().text()
+                raise Exception(query.lastError().text())
 
             sys.exit(1)
             a.dbc.close()
@@ -52,11 +52,11 @@ def main():
 
             b = createDBC(db, "fayken1")
             b.dbc.open()
-            print 'duplicatewqeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            print('duplicatewqeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
             b.dbc.close()
             a.dbc.close()
-    except Exception, e:
-        print "Error: %s" %e
+    except Exception as e:
+        print("Error: %s" %e)
 
     
 

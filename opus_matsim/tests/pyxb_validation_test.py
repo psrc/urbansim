@@ -12,22 +12,22 @@ class PyxbValidation(opus_unittest.OpusTestCase):
     """
     
     def setUp(self):
-        print "entering __setUp"
+        print("entering __setUp")
         self.config_location = os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'pyxb_data')
-        print "leaving __setUp"
+        print("leaving __setUp")
 
     def tearDown(self):
-        print "entering tearDown"
+        print("entering tearDown")
 #        # Turn off the logger, so we can delete the cache directory.
 #        logger.disable_all_file_logging()
-        print "leaving tearDown"
+        print("leaving tearDown")
 
     def cleanup_test_run(self):
-        print "entering cleanup_test_run"
-        print "leaving cleanup_test_run"
+        print("entering cleanup_test_run")
+        print("leaving cleanup_test_run")
     
     def test_run(self):
-        print "Entering test run"
+        print("Entering test run")
         
         # xml config
         config_file = os.path.join( self.config_location, "test_config.xml")

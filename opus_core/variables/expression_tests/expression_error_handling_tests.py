@@ -25,7 +25,7 @@ class Tests(opus_unittest.OpusTestCase):
                 }
             )
         dataset = Dataset(in_storage=storage, in_table_name='testzz', id_name="id", dataset_name="testzz")
-        self.assertRaises(StandardError, dataset.compute_variables, [expr])
+        self.assertRaises(Exception, dataset.compute_variables, [expr])
         
     def test_mismatched_dataset_name_expression(self):
         expr = "sqrt(opus_core.tests.a_test_variable)"
@@ -38,7 +38,7 @@ class Tests(opus_unittest.OpusTestCase):
                 }
             )
         dataset = Dataset(in_storage=storage, in_table_name='testzz', id_name="id", dataset_name="testzz")
-        self.assertRaises(StandardError, dataset.compute_variables, [expr])
+        self.assertRaises(Exception, dataset.compute_variables, [expr])
 
     def test_aggregate_unqualified_name(self):
         # test aggregate without the dataset provided for the variable being aggregated

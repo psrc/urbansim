@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from scipy.spatial import KDTree
 from numpy import array, column_stack, where, arange, zeros
 
@@ -40,6 +40,6 @@ class abstract_variable_within_radius_DDD_of_parcel(Variable):
         kd_tree = KDTree(coords, 100)
         KDTresults = kd_tree.query_ball_tree(kd_tree, self.radius)
         result = zeros(parcels.size(), dtype=arr.dtype)
-        tmp = array(map(lambda l: arr[l].sum(), KDTresults))
+        tmp = array([arr[l].sum() for l in KDTresults])
         result[index] = tmp
         return result

@@ -10,7 +10,7 @@ from opus_core import paths
 
 #loads system variables                                                                                  
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 class Log_manager :
     def __init__(self, xml_elem, config_address):
@@ -81,9 +81,9 @@ class Log_manager :
         date = datetime.datetime.now()
         
         #Print the overall results
-        print "\n\n\n\n"
-        print "################# Overall Results ##################"
-        print "\n"
+        print("\n\n\n\n")
+        print("################# Overall Results ##################")
+        print("\n")
         
         #Table and date info
         output_info(of, 'Date: ' + str(date) + '\n')
@@ -99,7 +99,7 @@ class Log_manager :
             if ran_test[model] :
     
                 #Print info
-                print "\n\n"
+                print("\n\n")
                 output_info(of, 'Target attribute: ' + model.test_attribute + '\n')
                 output_info(of, 'Classifier: ' + model.test_classifier + '\n')
                 output_info(of, 'Options: ' + model.test_options + '\n')
@@ -122,7 +122,7 @@ class Log_manager :
                             else :
                                 fs_attribute_counts[attribute] = 1
                 selected_attributes = ""
-                for attribute, count in fs_attribute_counts.iteritems() :
+                for attribute, count in fs_attribute_counts.items() :
                     selected_attributes += str(count) + ":" + attribute + ", "
                 selected_attributes = selected_attributes.rstrip(", ")
                 output_info(of, 'Selected Attributes: ' + selected_attributes + '\n\n')
@@ -131,7 +131,7 @@ class Log_manager :
                 temp_dict = {}
                 for stat_dict in self.block_stats[model.test_attribute] :
                     count = stat_dict["test instance count"]
-                    for key, value in stat_dict.iteritems() :
+                    for key, value in stat_dict.items() :
                         if key not in ["test instance count", "Total Number of Instances", "block number", "selected attributes"] :
                             if key not in temp_dict :
                                 temp_dict[key] = value*count
@@ -141,7 +141,7 @@ class Log_manager :
                                 temp_dict[key + "count"] += count
                 
                 output_info(of, 'Statistics for Test:\n')
-                keys = temp_dict.keys()
+                keys = list(temp_dict.keys())
                 keys.sort()
                 for key in keys :
                     if key not in ["test instance count", "Total Number of Instances", "block number", "selected attributes"] and key.find("count") == -1:
@@ -170,9 +170,9 @@ class Log_manager :
                     info["FS: Evalulation"] = model.evaluation_class
                     info["FS: Search"] = model.search_class
                 else :
-                    info["FS: Attributes"] = unicode("")
-                    info["FS: Evalulation"] = unicode("")
-                    info["FS: Search"] = unicode("")
+                    info["FS: Attributes"] = str("")
+                    info["FS: Evalulation"] = str("")
+                    info["FS: Search"] = str("")
                 
                 info["Classifier"] = model.test_classifier
                 info["Options"] = model.test_options    
@@ -210,7 +210,7 @@ class Log_manager :
                     f.write('Block: ' + str(stat_dict["block number"]) + '\n')
                     f.write('Test intance count: ' + str(stat_dict["test instance count"]) + '\n')
                     
-                    keys = stat_dict.keys()
+                    keys = list(stat_dict.keys())
                     keys.sort()
                     for key in keys :
                         if key not in ["test instance count", "Total Number of Instances", "block number", "selected attributes"] :
@@ -271,6 +271,6 @@ def create_table(table_name, metadata) :
 def output_info(file, string): 
     file.write(string)
     ns = string.rstrip('\n')
-    print ns
+    print(ns)
 
     

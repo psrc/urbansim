@@ -8,7 +8,7 @@ from opus_core.database_management.configurations.database_server_configuration 
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
     
     # get parameter values

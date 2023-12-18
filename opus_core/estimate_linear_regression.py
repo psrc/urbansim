@@ -54,7 +54,7 @@ class estimate_linear_regression(EstimationProcedure):
         Return a dictionary with results.
         """
         if data.ndim < 2:
-            raise StandardError, "Argument 'data' must be a 2D numpy array."
+            raise Exception("Argument 'data' must be a 2D numpy array.")
         tags = ["estimate", "result"]
         vl = 2
         nobs = data.shape[0]

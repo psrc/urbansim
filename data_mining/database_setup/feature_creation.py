@@ -75,7 +75,7 @@ class SuperCategory :
 
     def set_value(self, row, temp_row):
         found_value = False
-        for value, info_list in self.value_dict.iteritems() :
+        for value, info_list in self.value_dict.items() :
             stop_searching = False
             for criteria in info_list :
                 if criteria["type"] == "E" and row[criteria["attribute"]] == criteria["value"] :
@@ -139,7 +139,7 @@ def create_features(xml_config_address):
     db = create_engine(db_url)
     metadata = MetaData(db)
     if db.has_table(name) and replace_table != "TRUE":
-        print "ERROR: Table already exists and replacement not specified"
+        print("ERROR: Table already exists and replacement not specified")
         return -1
     elif db.has_table(name) :
         temp_table = Table(name, metadata, autoload=True)
@@ -179,7 +179,7 @@ def create_features(xml_config_address):
     new_table.create()   
     
     #Add rows with new columns
-    print "Inserting rows into new table..."
+    print("Inserting rows into new table...")
     current_rows = [] 
     count = 0                              
     for row in old_t.select().execute() :                        
@@ -196,7 +196,7 @@ def create_features(xml_config_address):
         if len(current_rows) == NUM_ROWS_ADDED:
             new_table.insert().execute(current_rows)
             current_rows = []
-            print "Number of rows added: ", count
+            print("Number of rows added: ", count)
 
     new_table.insert().execute(current_rows)
                                          

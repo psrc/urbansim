@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import ma, maximum, logical_not
 from opus_core.simulation_state import SimulationState
 
@@ -24,7 +24,7 @@ class building_age(Variable):
         current_year = SimulationState().get_current_time()
 
         if current_year == None:
-            raise StandardError, "'SimulationState().get_current_time()' returns None."
+            raise Exception("'SimulationState().get_current_time()' returns None.")
         building_age = maximum(0, current_year - self.get_dataset().get_attribute(self.year_built))
         return ma.masked_where(logical_not(self.get_dataset().get_attribute(self.is_valid_year_built)),
                              building_age)
@@ -69,7 +69,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([10, 5, 0, -99])
 
-        self.assert_(ma.allequal( values, should_be),
+        self.assertTrue(ma.allequal( values, should_be),
                      msg = "Error in " + self.variable_name)
 
 

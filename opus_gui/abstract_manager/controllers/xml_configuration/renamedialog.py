@@ -25,7 +25,7 @@ class RenameDialog(QDialog, Ui_RenameDialog):
         self.setupUi(self)
 
         self.accepted_name = ''
-        self.taken_names = map(lambda x: x.strip(), taken_names)
+        self.taken_names = [x.strip() for x in taken_names]
 
         self.lbl_name_warning.setVisible(False)
         hide_widget_on_value_change(self.lbl_name_warning, self.leName)

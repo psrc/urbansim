@@ -83,7 +83,7 @@ def get_indicator_nodes_per_dataset(project):
     '''
     variable_nodes_per_dataset = get_variable_nodes_per_dataset(project)
     indicators_per_dataset = {}
-    for dataset, variables in variable_nodes_per_dataset.items():
+    for dataset, variables in list(variable_nodes_per_dataset.items()):
         indicators_per_dataset[dataset] = [node for node in variables if
                                            node.get('use') in ('both', 'indicator')]
     return indicators_per_dataset
@@ -97,7 +97,7 @@ def get_available_indicator_nodes(project):
     all_indicator_nodes = []
     indicator_nodes_per_dataset = get_indicator_nodes_per_dataset(project)
     # flatten dict
-    map(all_indicator_nodes.extend, indicator_nodes_per_dataset.values())
+    list(map(all_indicator_nodes.extend, list(indicator_nodes_per_dataset.values())))
     return all_indicator_nodes
 
 def get_available_indicator_names(project):

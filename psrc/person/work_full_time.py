@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import zeros, logical_or, bool8
 
 class work_full_time(Variable):
@@ -60,7 +60,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([1, 1, 0, 0, 1])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
             'Error in ' + self.variable_name)
 
 

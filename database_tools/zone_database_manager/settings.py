@@ -18,7 +18,7 @@ ENGINE = lambda:'sqlite:///zone.db'
 def setup_model():
     #import camelot.model
     from elixir import setup_all
-    import model
+    from . import model
     setup_all(create_tables=True)
     from camelot.model.authentication import updateLastLogin
     updateLastLogin()

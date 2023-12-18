@@ -28,7 +28,7 @@ class cummulative_amount_of_development(Variable):
             if idx >= a.size:
                 return 100
             return a[idx]
-        result = array(map(lambda vel, i: get_one_velocity(vel,i), velocity, index))
+        result = array(list(map(lambda vel, i: get_one_velocity(vel,i), velocity, index)))
         ds.touch_attribute("_start_year") # in order to always recompute (because the simulation year can change)
         return result
     

@@ -61,7 +61,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([911, 900, 910, 901, 933])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

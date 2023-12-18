@@ -57,7 +57,7 @@ class ModelSystem(object):
         (current_year, current_year) rather than the real start and end years for the simulation.
         """
         if not isinstance(resources, Resources):
-            raise TypeError, "Argument 'resources' must be of type 'Resources'."
+            raise TypeError("Argument 'resources' must be of type 'Resources'.")
         logger_settings = resources.get("log", {"tags":[],
                                             "verbosity_level": 3})
         logger.set_tags(logger_settings.get("tags", []) )
@@ -90,11 +90,11 @@ class ModelSystem(object):
 
                 years = resources["years"]
                 if (not isinstance(years, tuple)) and (not isinstance(years, list)):
-                    raise TypeError, "Entry 'years' in resources must be a tuple."
+                    raise TypeError("Entry 'years' in resources must be a tuple.")
 
                 if len(years) < 2:
-                    print years
-                    raise StandardError, "Entry 'years' in resources must be of length at least 2."
+                    print(years)
+                    raise Exception("Entry 'years' in resources must be of length at least 2.")
 
                 start_year = years[0]
                 end_year = years[-1]
@@ -154,7 +154,7 @@ class ModelSystem(object):
         if resources.get('flush_variables', False):
             AttributeCache().delete_computed_tables()
             # this will also delete computed attributes
-            datasets_to_cache = SessionConfiguration().get_dataset_pool().datasets_in_pool().keys()
+            datasets_to_cache = list(SessionConfiguration().get_dataset_pool().datasets_in_pool().keys())
         else:
             datasets_to_cache = resources.get("datasets_to_cache_after_each_model",[])
         self.flush_datasets(datasets_to_cache, after_model=True)
@@ -195,10 +195,10 @@ class ModelSystem(object):
                 models_configuration = resources.get('models_configuration', {})
                 dataset_pool = SessionConfiguration().get_dataset_pool()
                 datasets = {}
-                for dataset_name, its_dataset in dataset_pool.datasets_in_pool().iteritems():
+                for dataset_name, its_dataset in dataset_pool.datasets_in_pool().items():
                     self.vardict[dataset_name] = its_dataset
                     datasets[dataset_name] = its_dataset
-                    exec '%s=its_dataset' % dataset_name
+                    exec('%s=its_dataset' % dataset_name)
 
                 # This is needed. It resides in locals()
                 # and is passed on to models as they run.
@@ -221,7 +221,7 @@ class ModelSystem(object):
                     # ]
                     # get list of methods to be processed evtl. for each group member
                     if isinstance(model_entry, dict):
-                        model_name, value = model_entry.items()[0]
+                        model_name, value = list(model_entry.items())[0]
                         if not isinstance(value, dict): # is a model group
                             processes = value
                             if not isinstance(processes, list):
@@ -231,33 +231,33 @@ class ModelSystem(object):
                         processes = ["run"]
                     group_member = None
                     model_group = model_group_members_to_run[model_name][1]
-                    last_member = max(1, len(model_group_members_to_run[model_name][0].keys()))
+                    last_member = max(1, len(list(model_group_members_to_run[model_name][0].keys())))
                     for imember in range(last_member):
                         controller_config = models_configuration[model_name]["controller"]
                         model_configuration = models_configuration[model_name]
-                        if model_group_members_to_run[model_name][0].keys():
-                            group_member_name = model_group_members_to_run[model_name][0].keys()[imember]
+                        if list(model_group_members_to_run[model_name][0].keys()):
+                            group_member_name = list(model_group_members_to_run[model_name][0].keys())[imember]
                             group_member = ModelGroupMember(model_group, group_member_name)
                             processes = model_group_members_to_run[model_name][0][group_member_name]
                             member_model_name = "%s_%s" % (group_member_name, model_name)
-                            if member_model_name in models_configuration.keys():
+                            if member_model_name in list(models_configuration.keys()):
                                 model_configuration = models_configuration[member_model_name]
-                                if "controller" in model_configuration.keys():
+                                if "controller" in list(model_configuration.keys()):
                                     controller_config = model_configuration["controller"]
                         datasets_to_preload_for_this_model = controller_config.get('_model_structure_dependencies_',{}).get('dataset',[])
                         for dataset_name in datasets_to_preload_for_this_model:
                             try:
-                                if not dataset_pool.has_dataset(dataset_name) or (dataset_name not in datasets.keys()):
+                                if not dataset_pool.has_dataset(dataset_name) or (dataset_name not in list(datasets.keys())):
                                     ds = dataset_pool.get_dataset(dataset_name)
                                     self.vardict[dataset_name] = ds
                                     datasets[dataset_name] = ds
-                                    exec '%s=ds' % dataset_name
+                                    exec('%s=ds' % dataset_name)
                             except:
                                 logger.log_warning('Failed to load dataset %s.' % dataset_name)
                         # import part
-                        if "import" in controller_config.keys():
+                        if "import" in list(controller_config.keys()):
                             import_config = controller_config["import"]
-                            for import_module in import_config.keys():
+                            for import_module in list(import_config.keys()):
                                 exec("from %s import %s" % (import_module, import_config[import_module]))
 
                         # gui_import_replacements part
@@ -265,12 +265,12 @@ class ModelSystem(object):
                         # for use with the GUI.  The contents of this part of the config is a dictionary.
                         # Keys are names of models (not used here).  Values are 2 element pairs.
                         # The first element is a name and the second is a value.  Bind the name to the value.
-                        if "gui_import_replacements" in controller_config.keys():
+                        if "gui_import_replacements" in list(controller_config.keys()):
                             import_replacement_config = controller_config["gui_import_replacements"]
-                            for model_name in import_replacement_config.keys():
+                            for model_name in list(import_replacement_config.keys()):
                                 pair = import_replacement_config[model_name]
                                 temp = pair[1]
-                                exec("%s = temp") % pair[0]
+                                exec(("%s = temp") % pair[0])
 
                         # init part
                         model = self.do_init(locals())
@@ -284,12 +284,12 @@ class ModelSystem(object):
                             # prepare part
                             exec(self.do_prepare(locals()))
                             processmodel_config = controller_config[process]
-                            if "output" in processmodel_config.keys():
+                            if "output" in list(processmodel_config.keys()):
                                 outputvar = processmodel_config["output"]
                             else:
                                 outputvar = "process_output"
                             self.vardict[outputvar] = self.do_process(locals())
-                            exec outputvar+'=self.vardict[outputvar]'
+                            exec(outputvar+'=self.vardict[outputvar]')
 
                             # check command file from gui, if the simulation should be stopped or paused
                             self.do_commands_from_gui(resources.get('command_file_for_gui', None))
@@ -304,7 +304,7 @@ class ModelSystem(object):
                 if write_datasets_to_cache_at_end_of_year:
                     logger.start_block('Writing datasets to cache for year %s' % year)
                     try:
-                        for dataset_name, its_dataset in SessionConfiguration().get_dataset_pool().datasets_in_pool().iteritems():
+                        for dataset_name, its_dataset in SessionConfiguration().get_dataset_pool().datasets_in_pool().items():
                             self.flush_dataset(its_dataset)
                     finally:
                         logger.end_block()
@@ -322,8 +322,8 @@ class ModelSystem(object):
         Returns model object.
         """
         # give this method the same local variables as its calling method has.
-        for key in parent_state.keys():
-            if key <> 'self':
+        for key in list(parent_state.keys()):
+            if key != 'self':
                 exec('%s = parent_state["%s"]' % (key, key))
         init_config = parent_state['controller_config']["init"]
         group_member = parent_state['group_member']
@@ -346,13 +346,13 @@ class ModelSystem(object):
         method will be put.
         """
         # give this method the same local variables as its calling method has.
-        for key in parent_state.keys():
-            if key <> 'self':
+        for key in list(parent_state.keys()):
+            if key != 'self':
                 exec('%s = parent_state["%s"]' % (key, key))
         key_name = "prepare_for_%s" % process
-        if key_name in controller_config.keys():
+        if key_name in list(controller_config.keys()):
             prepare_config = controller_config[key_name]
-            if "output" in prepare_config.keys():
+            if "output" in list(prepare_config.keys()):
                 outputvar = prepare_config["output"]
             else:
                 outputvar = "prepare_output"
@@ -365,8 +365,8 @@ class ModelSystem(object):
             return ''
 
     def do_process(self, parent_state):
-        for key in parent_state.keys():
-            if key <> 'self':
+        for key in list(parent_state.keys()):
+            if key != 'self':
                 exec('%s = parent_state["%s"]' % (key, key))
         ev = "model.%s(%s)" % (process,
                                self.construct_arguments_from_config(processmodel_config))
@@ -386,13 +386,13 @@ class ModelSystem(object):
         model_group_members_to_run = {}
         for model_entry in models:
             if isinstance(model_entry, dict):
-                model_name, value = model_entry.items()[0]
+                model_name, value = list(model_entry.items())[0]
                 if isinstance(value, dict): # is a model group
-                    if not value.keys()[0]=="group_members":
-                        raise KeyError, "Key for model " + model_name + " must be 'group_members'."
+                    if not list(value.keys())[0]=="group_members":
+                        raise KeyError("Key for model " + model_name + " must be 'group_members'.")
                     group_members = value["group_members"]
                     model_group = None
-                    if 'group_by_attribute' in models_configuration[model_name]["controller"].keys():
+                    if 'group_by_attribute' in list(models_configuration[model_name]["controller"].keys()):
                         group_dataset_name, group_attribute = models_configuration[model_name]["controller"]['group_by_attribute']
                         model_group = ModelGroup(SessionConfiguration().get_dataset_from_pool(group_dataset_name),
                                              group_attribute)
@@ -400,13 +400,13 @@ class ModelSystem(object):
                         group_members = [group_members]
                     if group_members[0] == "_all_": # see 'model_name_5' example above
                         if model_group is None:
-                            raise KeyError, "Entry 'group_by_attribute' is missing for model %s" % model_name
+                            raise KeyError("Entry 'group_by_attribute' is missing for model %s" % model_name)
                         group_members = model_group.get_member_names()
                     model_group_members_to_run[model_name] = [{}, model_group]
                     for member in group_members:
                         if isinstance(member, dict):
                             # see 'model_name_2' ('residential') in the comment above
-                            member_name = member.keys()[0]
+                            member_name = list(member.keys())[0]
                             model_group_members_to_run[model_name][0][member_name] = member[member_name]
                             if not isinstance(model_group_members_to_run[model_name][0][member_name], list):
                                 model_group_members_to_run[model_name][0][member_name]=[model_group_members_to_run[model_name][0][member_name]]
@@ -437,7 +437,7 @@ class ModelSystem(object):
                 sys.exit()
             elif line == 'resume':
                 break
-            elif line <> 'pause':
+            elif line != 'pause':
                 logger.log_warning("Unknown command '%s'. Allowed commands: 'stop', 'pause', 'resume'." % line)
             time.sleep(10)
 
@@ -464,7 +464,7 @@ class ModelSystem(object):
         if resources.get('_seed_dictionary_', None) is not None:
             # This is added by the RunManager to ensure reproducibility including restarted runs 
             seed_dict = resources.get('_seed_dictionary_')
-            seed_array = array(map(lambda year : seed_dict[year], range(start_year, end_year+1)))
+            seed_array = array([seed_dict[year] for year in range(start_year, end_year+1)])
         else:
             seed(root_seed)
             seed_array = randint(1,2**30, nyears)
@@ -548,11 +548,11 @@ class ModelSystem(object):
 
     def construct_arguments_from_config(self, config):
         key = "arguments"
-        if (key not in config.keys()) or (len(config[key].keys()) <= 0):
+        if (key not in list(config.keys())) or (len(list(config[key].keys())) <= 0):
             return ""
         arg_dict = config[key]
         result = ""
-        for arg_key in arg_dict.keys():
+        for arg_key in list(arg_dict.keys()):
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
 
@@ -604,7 +604,7 @@ class ModelSystem(object):
 
     def update_config_for_multiple_runs(self, config):
         models_to_update = config.get('models_with_sampled_coefficients', [])
-        if 'models_in_year' not in config.keys():
+        if 'models_in_year' not in list(config.keys()):
             config['models_in_year'] = {}
         if config['models_in_year'].get(config['base_year']+1, None) is None:
             config['models_in_year'][config['base_year']+1]= config.get('models')

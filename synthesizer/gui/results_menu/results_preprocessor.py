@@ -35,7 +35,7 @@ class ResultsGen():
         self.stateCode = self.project.stateCode[self.project.state]
         self.countyCodes=[]
 
-        for i in self.project.region.keys():
+        for i in list(self.project.region.keys()):
             county = i + ',' + self.project.state
             self.countyCodes.append(self.project.countyCode['%s' %county])
 

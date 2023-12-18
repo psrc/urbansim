@@ -53,7 +53,7 @@ class DatabaseServer(object):
         try:
             result = self.engine.execute(query)
         except:
-            print query
+            print(query)
             raise
         return result
         
@@ -118,7 +118,7 @@ class DatabaseServer(object):
     
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
-        for database_name, dbs in self.open_databases.items():
+        for database_name, dbs in list(self.open_databases.items()):
             for db in dbs:
                 try:
                     db.close()

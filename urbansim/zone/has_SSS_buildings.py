@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.has_SSS_buildings import has_SSS_buildings as gridcell_has_SSS_buildings
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class has_SSS_buildings(gridcell_has_SSS_buildings):
     """Returns 1 if the location contains buildings of the given type, otherwise 0."""
@@ -52,7 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([1, 0, 1])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

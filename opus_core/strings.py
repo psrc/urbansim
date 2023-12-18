@@ -16,18 +16,18 @@ def indent_text(text, depth=4):
     Indent every line of the text by the same amount of spaces.
     """
     indent = ' ' * depth
-    return create_list_string(map(lambda line: indent + line, text.split('\n')))
+    return create_list_string([indent + line for line in text.split('\n')])
 
 from opus_core.tests import opus_unittest
 
 class StringsTests(opus_unittest.OpusTestCase):
     def test_indent_text(self):
-        self.assertEquals(indent_text('a\nb\n', 2), '  a\n  b\n  ')
-        self.assertEquals(indent_text('a\nb\n'), '    a\n    b\n    ')
+        self.assertEqual(indent_text('a\nb\n', 2), '  a\n  b\n  ')
+        self.assertEqual(indent_text('a\nb\n'), '    a\n    b\n    ')
              
     def test_create_list_string(self):
-        self.assertEquals(create_list_string(['aa', 'b', '', ' dd'], 'SEP'), 'aaSEPbSEPSEP dd')
-        self.assertEquals(create_list_string(['aa', 'b', '', ' dd']), 'aa\nb\n\n dd')
+        self.assertEqual(create_list_string(['aa', 'b', '', ' dd'], 'SEP'), 'aaSEPbSEPSEP dd')
+        self.assertEqual(create_list_string(['aa', 'b', '', ' dd']), 'aa\nb\n\n dd')
         
 if __name__ == "__main__":
     opus_unittest.main()

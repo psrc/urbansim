@@ -29,12 +29,12 @@ class AllocationModel(Model):
         """
         ct_attr = control_totals.get_known_attribute_names()
         if year_attribute not in ct_attr:
-            raise StandardError, "Year attribute '%s' must be a known attribute of the control totals dataset." % year_attribute
+            raise Exception("Year attribute '%s' must be a known attribute of the control totals dataset." % year_attribute)
         ct_attr.remove(year_attribute)
         if control_total_attribute is None:
             control_total_attribute = outcome_attribute
         if control_total_attribute not in ct_attr:
-            raise StandardError, "Attribute '%s' must be a known attribute of the control totals dataset." % control_total_attribute
+            raise Exception("Attribute '%s' must be a known attribute of the control totals dataset." % control_total_attribute)
         ct_attr.remove(control_total_attribute)
         if control_totals._is_hidden_id():
             ct_attr.remove(control_totals.id_name()[0])

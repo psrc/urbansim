@@ -31,7 +31,7 @@ class Tests(object):#(opus_unittest.OpusTestCase):
     '''
     
     def __init__(self):
-        print "entering setUp"
+        print("entering setUp")
         
         logger.log_status(' This test compares the execution time of two different scenarios \
                            (or same scenarios but with a different configuration).')
@@ -40,7 +40,7 @@ class Tests(object):#(opus_unittest.OpusTestCase):
         self.elapsed_time_sceanario = None
         self.start_time = None
         self.end_time = None
-        print "leaving setUp"
+        print("leaving setUp")
         
     def test_run(self):
         elapsed_time1 = self.run_scenario("opus_matsim/sustain_city/tests/configs/seattle_parcel_test.xml", "Seattle_baseline")
@@ -48,13 +48,13 @@ class Tests(object):#(opus_unittest.OpusTestCase):
         self.reset_time()
         elapsed_time2 = self.run_scenario("opus_matsim/sustain_city/tests/configs/san_antonio_zone_test.xml", "san_antonio_baseline")
         
-        print "Runtime for Scenario 1 took %f min" % elapsed_time1
-        print "Runtime for Scenario 2 took %f min" % elapsed_time2
+        print("Runtime for Scenario 1 took %f min" % elapsed_time1)
+        print("Runtime for Scenario 2 took %f min" % elapsed_time2)
         
     def run_scenario(self, config, executable):
         # instanciate first scenario
         self.scenario = StartRun()
-        print "Running scenario"
+        print("Running scenario")
         # get the actual time running the fist scenario
         self.start_time = time.time()
         # run first scenario
@@ -62,7 +62,7 @@ class Tests(object):#(opus_unittest.OpusTestCase):
         # stopping the time
         self.end_time = time.time()
         # return elapsed time in minutes
-        print "Run complete"
+        print("Run complete")
         return (self.end_time - self.start_time)/60.0
         
     def reset_time(self):

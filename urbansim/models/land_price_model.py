@@ -42,7 +42,7 @@ class LandPriceModel(RegressionModel):
         """
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        if self.filter <> None:
+        if self.filter != None:
             res = Resources({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)
@@ -66,7 +66,7 @@ class LandPriceModel(RegressionModel):
                         estimate_config=None,  debuglevel=0):
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        if self.filter <> None:
+        if self.filter != None:
             res = Resources({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)

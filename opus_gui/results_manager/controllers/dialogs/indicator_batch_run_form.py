@@ -61,7 +61,7 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
         end_year = int(self.co_end_year.currentText())
         increment = int(self.co_every_year.currentText())
 
-        years = range(start_year, end_year + 1, increment)
+        years = list(range(start_year, end_year + 1, increment))
         # (visualization_type, dataset_name, vals)
         visualizations = get_batch_configuration(project = self.project,
                                                  batch_name = self.batch_name)

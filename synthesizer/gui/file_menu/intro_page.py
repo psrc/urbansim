@@ -9,7 +9,7 @@ from misc.widgets import *
 from qgis.core import *
 from qgis.gui import *
 from misc.map_toolbar import *
-import countydata
+from . import countydata
 from numpy.random import randint
 
 
@@ -183,11 +183,11 @@ class IntroPage(QWizardPage):
             if self.parent is None:
                 self.parent = item.parent()
                 #print 'current parent', self.parent.text(0)
-            elif self.parent <> item.parent():
+            elif self.parent != item.parent():
                 self.parent = item.parent()
                 self.clearOtherParentSelection()
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             self.parent = item
             #print 'county selected parent is ', self.parent.text(0)
             self.clearOtherParentSelection()
@@ -197,7 +197,7 @@ class IntroPage(QWizardPage):
         for i in self.countySelectTree.selectedItems():
             self.selectedCounties[i.text(0)] = i.parent().text(0)
 
-        if len(self.selectedCounties.keys()) > 0:
+        if len(list(self.selectedCounties.keys())) > 0:
             self.regionDummy = True
         else:
             self.regionDummy = False
@@ -235,7 +235,7 @@ class IntroPage(QWizardPage):
             attrMap = feat.attributeMap()
             featstate = attrMap[stidx].toString().trimmed()
             featcounty = attrMap[ctyidx].toString().trimmed()
-            for county in self.selectedCounties.keys():
+            for county in list(self.selectedCounties.keys()):
                 state = self.selectedCounties[county]
 
                 if (featstate.compare(state) == 0 and featcounty.compare(county) == 0):
@@ -281,7 +281,7 @@ class IntroPage(QWizardPage):
     def initialLoad(self):
         try:
             self.counties.load()
-        except IOError, e:
+        except IOError as e:
             QMessageBox.warning(self, "Counties - Error", "Failed to load: %s" %e)
 
     def isComplete(self):

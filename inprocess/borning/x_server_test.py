@@ -18,7 +18,7 @@ class Tests(opus_unittest.OpusTestCase):
         label.show()
         QTimer.singleShot(100, app.quit)
         app.exec_()
-        print "exiting successfully from x server test"
+        print("exiting successfully from x server test")
         
          
 if __name__=='__main__':

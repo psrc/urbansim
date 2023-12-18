@@ -34,7 +34,7 @@ class RegressionModel(ChunkModel):
 
         self.regression = RegressionModelFactory().get_model(name=regression_procedure)
         if self.regression == None:
-            raise StandardError, "No regression procedure given."
+            raise Exception("No regression procedure given.")
 
         self.submodel_string = submodel_string
 
@@ -258,15 +258,15 @@ class RegressionModel(ChunkModel):
                 regression_resources.merge({"submodel": submodel})
                 estimated_coef[submodel] = self.procedure.run(self.data[submodel], self.regression,
                                                         resources=regression_resources)
-                if "estimators" in estimated_coef[submodel].keys():
+                if "estimators" in list(estimated_coef[submodel].keys()):
                     coef[submodel].set_coefficient_values(estimated_coef[submodel]["estimators"])
-                if "standard_errors" in estimated_coef[submodel].keys():
+                if "standard_errors" in list(estimated_coef[submodel].keys()):
                     coef[submodel].set_standard_errors(estimated_coef[submodel]["standard_errors"])
-                if "other_measures" in estimated_coef[submodel].keys():
-                    for measure in estimated_coef[submodel]["other_measures"].keys():
+                if "other_measures" in list(estimated_coef[submodel].keys()):
+                    for measure in list(estimated_coef[submodel]["other_measures"].keys()):
                         coef[submodel].set_measure(measure,
                               estimated_coef[submodel]["other_measures"][measure])
-                if "other_info" in estimated_coef[submodel].keys():
+                if "other_info" in list(estimated_coef[submodel].keys()):
                     for info in estimated_coef[submodel]["other_info"]:
                         coef[submodel].set_other_info(info,
                               estimated_coef[submodel]["other_info"][info])
@@ -353,7 +353,7 @@ class RegressionModel(ChunkModel):
             fh.write(delimiter.join(line) + '\n')
         fh.flush()
         fh.close
-        print 'Data written into %s' % out_file
+        print('Data written into %s' % out_file)
         
     def run_after_estimation(self, *args, **kwargs):
         return self.run(*args, **kwargs)
@@ -397,7 +397,7 @@ class RegressionModelTests(opus_unittest.OpusTestCase):
         model = RegressionModel()
         model.estimate(specification, ds, "outcome")
         data_attr1 = model.get_data("ba1")
-        self.assert_(ma.allequal(ds.get_attribute("attr1"), data_attr1),
+        self.assertTrue(ma.allequal(ds.get_attribute("attr1"), data_attr1),
                      msg = "Error in getting data from regression model")
 
         specification_2subm = EquationSpecification(
@@ -408,12 +408,12 @@ class RegressionModelTests(opus_unittest.OpusTestCase):
         model = RegressionModel(submodel_string="submodel_id")
         model.estimate(specification_2subm, ds, "outcome")
         data_attr1 = model.get_data("ba1", 1)
-        self.assert_(data_attr1 == None, msg = "Error in getting data from regression model with multiple submodels.")
+        self.assertTrue(data_attr1 == None, msg = "Error in getting data from regression model with multiple submodels.")
         data_attr1 = model.get_data("ba1", 2)
-        self.assert_(ma.allequal(ds.get_attribute("attr1")[1:3], data_attr1),
+        self.assertTrue(ma.allequal(ds.get_attribute("attr1")[1:3], data_attr1),
                      msg = "Error in getting data from regression model with multiple submodels.")
         d = model.get_data_as_dataset(2)
-        self.assert_(ma.allequal(ds.get_attribute("attr1")[1:3], d.get_attribute("ba1")),
+        self.assertTrue(ma.allequal(ds.get_attribute("attr1")[1:3], d.get_attribute("ba1")),
                      msg = "Error in getting data from regression model with multiple submodels.")
 
     def test_estimation_with_restricted_submodel_size(self):
@@ -440,11 +440,11 @@ class RegressionModelTests(opus_unittest.OpusTestCase):
         model.estimate(specification_2subm, ds, "outcome", procedure='opus_core.estimate_linear_regression')
 
         data_attr1 = model.get_data("ba1", 1)
-        self.assert_(data_attr1 == None, msg = "Error in getting data from regression model with multiple submodels.")
+        self.assertTrue(data_attr1 == None, msg = "Error in getting data from regression model with multiple submodels.")
         data_attr1 = model.get_data("ba2", 1)
-        self.assert_(data_attr1.size == 5, msg = "Error in sub-sampling data in regression model.")
+        self.assertTrue(data_attr1.size == 5, msg = "Error in sub-sampling data in regression model.")
         data_attr1 = model.get_data("ba1", 2)
-        self.assert_(ma.allequal(ds.get_attribute("attr1")[array([1, 2, 6])], data_attr1),
+        self.assertTrue(ma.allequal(ds.get_attribute("attr1")[array([1, 2, 6])], data_attr1),
                      msg = "Error in getting data from regression model with multiple submodels.")
 
 

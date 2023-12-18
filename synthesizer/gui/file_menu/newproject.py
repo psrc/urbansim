@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
+
 from collections import defaultdict
 
 import pickle, numpy
@@ -144,8 +144,8 @@ class NewProject(object):
 if __name__ == "__main__":
     a = ControlVariable()
 
-    print dir(a)
-    print type(a)
+    print(dir(a))
+    print(type(a))
 
 
 

@@ -6,7 +6,7 @@ from numpy import zeros
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class building_size(Variable):
     """Return size of the building, either sqft, or residential units, depending on the building type.
@@ -79,7 +79,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([300, 350, 100, 0, 1000, 600])
         values = buildings.get_attribute(self.variable_name)
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 if __name__=='__main__':

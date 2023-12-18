@@ -114,7 +114,7 @@ class VisumConfiguration(Configuration):
             2002:'2002.ver',
             2004:'2004.ver'
             }
-        for year, year_dir in years_to_run.iteritems():
+        for year, year_dir in years_to_run.items():
             travel_model_configuration[year] = {
             'version':[travel_model_dir_name,year_dir],
             'procedure_file':procedure_file

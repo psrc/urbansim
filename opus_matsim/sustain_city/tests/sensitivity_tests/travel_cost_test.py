@@ -14,7 +14,7 @@ class TravelCostTest(object):
     """
 
     def __init__(self):
-        print "Entering setup"
+        print("Entering setup")
         
         logger.log_status('Running UrbanSim to test the impact of travel costs (provided from an dummy travel model)')
         
@@ -22,23 +22,23 @@ class TravelCostTest(object):
         self.test_dir_path = test_dir.__path__[0]
         
         self.config_file = os.path.join( self.test_dir_path, "configs", "seattle_parcel_travel_cost_test.xml")
-        print 'Loding UrbanSim config file: %s' % self.config_file
+        print('Loding UrbanSim config file: %s' % self.config_file)
         
         # get seattle_parcel configuration
         self.config = XMLConfiguration( self.config_file ).get_run_configuration( "Seattle_baseline" )
         insert_auto_generated_cache_directory_if_needed(self.config)
         
-        print "Leaving setup"
+        print("Leaving setup")
     
     def test_run(self):
-        print "Entering test run"
+        print("Entering test run")
         
         run_manager = RunManager(ServicesDatabaseConfiguration())
         run_manager.setup_new_run(cache_directory = self.config['cache_directory'],configuration = self.config)
         
         run_manager.run_run(self.config, run_as_multiprocess = True )
         
-        print "Leaving test run"
+        print("Leaving test run")
         
 if __name__ == "__main__":
     tct = TravelCostTest()

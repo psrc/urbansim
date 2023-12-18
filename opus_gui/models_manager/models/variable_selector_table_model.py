@@ -47,7 +47,7 @@ class VariableSelectorTableModel(QtCore.QAbstractTableModel):
         for variable_spec_node in variable_list_node.findall('variable_spec'):
             self.insertRow(0, QtCore.QModelIndex(), variable_spec_node)
         # map the selected variables to a variable node in the expression library for faster lookups
-        map(self._map_variable_to_definition_node, self._variable_nodes)
+        list(map(self._map_variable_to_definition_node, self._variable_nodes))
         self.sort_variables_by_name()
 
     def add_variable_from_definition_node(self, variable_definition_node):
@@ -97,7 +97,7 @@ class VariableSelectorTableModel(QtCore.QAbstractTableModel):
         # Note that built-ins like 'constant' return None as dataset, not an empty string.
         if dataset == '':
             possible_datasets = []
-            for dataset_name, variable_nodes in expression_lib_nodes.items():
+            for dataset_name, variable_nodes in list(expression_lib_nodes.items()):
                 for variable_definition_node in variable_nodes:
                     def_variable_name = get_variable_name(variable_definition_node)
                     if def_variable_name == name:

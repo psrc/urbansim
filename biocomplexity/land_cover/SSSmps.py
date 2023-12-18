@@ -7,6 +7,7 @@ from scipy.ndimage import correlate, label, find_objects
 from numpy import ma
 from opus_core.variables.variable import Variable, ln
 from biocomplexity.land_cover.variable_functions import my_attribute_label
+from functools import reduce
 
 class SSSmps(Variable):
     """Computes the mean size of all patches of covertypes of interest
@@ -76,7 +77,7 @@ class SSSmps(Variable):
             raise RuntimeError("Sorry. Variable biocomplexity.land_cover.SSSmps was unable to meaningfully" + \
                                " translate characters SSS for variable instantiation %smps." % self.covertype_symbol)
 
-        return map(lambda key: lookup_dict[key], covertypes_of_interest)
+        return [lookup_dict[key] for key in covertypes_of_interest]
 
 
 from numpy import array
@@ -120,7 +121,7 @@ class Tests(ExpectedDataTest):
         should_be = array([2, 2, 2, 2], dtype=float32)
         should_be = ln(should_be + 1) / SSSmps.standardization_constant_MPS
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def test_my_inputs_for_amps(self):
@@ -157,7 +158,7 @@ class Tests(ExpectedDataTest):
         should_be = array([3, 3, 3, 2, 3, 2, 1, 1, 1], dtype=float32)
         should_be = ln(should_be + 1) / SSSmps.standardization_constant_MPS
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def test_no_translation(self):

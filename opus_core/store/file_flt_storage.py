@@ -263,9 +263,9 @@ class StorageFileTests(opus_unittest.OpusTestCase):
         self.assertEqual(expected, storage_file.get_name())
         
     def test_get_type_from_unicode_filename(self):
-        storage_file = file_flt_storage.storage_file(u'path/to/table/test.li4')
-        self.assertEquals('<i4', storage_file.get_type())
-        self.assertEquals(type('<i4'), type(storage_file.get_type()))
+        storage_file = file_flt_storage.storage_file('path/to/table/test.li4')
+        self.assertEqual('<i4', storage_file.get_type())
+        self.assertEqual(type('<i4'), type(storage_file.get_type()))
         
 class StorageTests(opus_unittest.OpusTestCase):
     
@@ -307,7 +307,7 @@ class StorageTests(opus_unittest.OpusTestCase):
         actual = storage.get_table_names()
         expected.sort()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
 class StorageWriteTests(TestStorageInterface):
     
@@ -328,9 +328,9 @@ class StorageWriteTests(TestStorageInterface):
         file_name = os.path.join(self.temp_dir, self.table_name, 'char_column.iS9')
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_name))
+        self.assertTrue(os.path.exists(file_name))
         actual = numpy.fromfile(file_name, dtype='|S9')
-        self.assert_((expected==actual).all())
+        self.assertTrue((expected==actual).all())
         
     def test_write_int_array(self):
         expected = array([100, 70])
@@ -343,9 +343,9 @@ class StorageWriteTests(TestStorageInterface):
         numpy_dtype = '%(numpy_endian)si%(bytes)u' % replacements
         file_path = os.path.join(self.temp_dir, self.table_name, file_name)
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_path))
+        self.assertTrue(os.path.exists(file_path))
         actual = numpy.fromfile(file_path, dtype=numpy_dtype)
-        self.assert_((expected==actual).all())
+        self.assertTrue((expected==actual).all())
         
     def test_write_float_and_boolean_array(self):
         expected_float = array([100.17, 70.00])
@@ -362,14 +362,14 @@ class StorageWriteTests(TestStorageInterface):
             numpy_ext = '>f8'
         file_path = os.path.join(self.temp_dir, self.table_name, file_name)
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_path))
+        self.assertTrue(os.path.exists(file_path))
         actual = fromfile(file_path, numpy_ext)
-        self.assert_((expected_float == actual).all())
+        self.assertTrue((expected_float == actual).all())
         file_path = os.path.join(self.temp_dir, self.table_name, 'bool_column.ib1')
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_path))
+        self.assertTrue(os.path.exists(file_path))
         actual = fromfile(file_path, '|b1')
-        self.assert_((expected_bool == actual).all())
+        self.assertTrue((expected_bool == actual).all())
         
     def test_writing_column_to_file_when_file_of_same_column_name_and_different_type_already_exists(self):
         
@@ -382,8 +382,8 @@ class StorageWriteTests(TestStorageInterface):
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         
         storage.write_table(table_name=self.table_name, table_data=my_data)
-        self.assert_(not (os.path.exists(existing_file.name)))
-        self.assert_(os.path.exists(os.path.join(self.temp_dir, self.table_name, column_name + ".li8")))
+        self.assertTrue(not (os.path.exists(existing_file.name)))
+        self.assertTrue(os.path.exists(os.path.join(self.temp_dir, self.table_name, column_name + ".li8")))
 
 
 
@@ -400,7 +400,7 @@ class StorageWriteTests(TestStorageInterface):
         # Test writing 
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         self.assertRaises(FltError, storage.write_table, self.table_name, my_data)
-        self.assert_(not (os.path.exists(os.path.join(self.temp_dir, self.table_name, column_name + ".li8"))))        
+        self.assertTrue(not (os.path.exists(os.path.join(self.temp_dir, self.table_name, column_name + ".li8"))))        
         
         
 

@@ -18,7 +18,7 @@ class EstimationProcedure(ModelComponent):
         return self.estimate_dcm(data)
         
     def estimate_dcm(self, data):
-        assert StandardError, "Method not implemented. It is a responsibility of the child class."
+        assert Exception, "Method not implemented. It is a responsibility of the child class."
         
     def _get_dcm_likelihood(self, p, depm):
         return (depm*log(p)).sum()

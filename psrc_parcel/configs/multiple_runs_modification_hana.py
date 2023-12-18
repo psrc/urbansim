@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from multiple_runs_modification import MultipleRunsModification
+from .multiple_runs_modification import MultipleRunsModification
 
 class MultipleRunsModificationHana(MultipleRunsModification):
     models_with_normally_sampled_coefficients = [

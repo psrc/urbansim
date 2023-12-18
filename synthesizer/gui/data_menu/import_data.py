@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from __future__ import with_statement
+
 
 import os
 import re
@@ -51,8 +51,8 @@ class FileProperties():
                     self.varTypesDummy = False
 
             if self.varNamesDummy and self.varTypesDummy:
-                if len(self.varNames) <> len(self.varTypes):
-                    raise FileError, "Mismatch in the number of Variable Names and Variable Types"
+                if len(self.varNames) != len(self.varTypes):
+                    raise FileError("Mismatch in the number of Variable Names and Variable Types")
 
 
     def checkVarTypes(self, line):
@@ -141,30 +141,30 @@ class ImportUserProvData():
 
         for i in self.varNames:
             if not re.match("[A-Za-z]", i[0]):
-                raise FileError, "Enter a valid variable name"
+                raise FileError("Enter a valid variable name")
 
         for i in self.varTypes:
             if not re.match("[A-Za-z]", i[0]):
-                raise FileError, "Enter a valid variable type definition"
+                raise FileError("Enter a valid variable type definition")
             try:
                 validVariableTypes.index(i.lower())
             except:
-                raise FileError, "Enter a valid variable type definition"
+                raise FileError("Enter a valid variable type definition")
 
         #print firstrow, len(firstrow)
 
         #print 'lenght of variable names',len(self.varNames)
         #print 'length of the first row', len(firstrow)
 
-        if len(self.varNames) <> len(firstrow):
-            raise FileError, "Enter the same number of variable names as columns in the data file."
+        if len(self.varNames) != len(firstrow):
+            raise FileError("Enter the same number of variable names as columns in the data file.")
 
         if self.varNamesDummy == False and self.varNamesFileDummy == False:
             for i in range(len(firstrow)):
                 self.varNames.append('Var%s'%(i+1))
 
-        if len(self.varTypes) <> len(firstrow):
-            raise FileError, "Enter the same number of variable type definitions as columns in the data file."
+        if len(self.varTypes) != len(firstrow):
+            raise FileError("Enter the same number of variable type definitions as columns in the data file.")
 
         if self.varTypesDummy == False and self.varTypesFileDummy == False:
             for i in range(len(firstrow)):
@@ -173,8 +173,8 @@ class ImportUserProvData():
         for i in range(len(firstrow)):
             self.query1 = self.query1 + self.varNames[i] + ' ' + self.varTypes[i] + ', '
 
-        if len(self.varNames) <> len(self.varTypes):
-            raise FileError,  "Mismatch in the number of Variable Names and Variable Types"
+        if len(self.varNames) != len(self.varTypes):
+            raise FileError("Mismatch in the number of Variable Names and Variable Types")
 
 
         self.query1 = self.query1[:-2]
@@ -199,13 +199,13 @@ if __name__ == "__main__":
     #for b in ['test']:
     for b in ['names']:
         a = FileProperties("C:/Documents and Settings/kkonduri/Desktop/impute.csv")
-        print b
-        print "Var Type Dummy:", a.varTypesDummy
-        print a.varTypes
-        print "Var Names Dummy:", a.varNamesDummy
-        print a.varNames
+        print(b)
+        print("Var Type Dummy:", a.varTypesDummy)
+        print(a.varTypes)
+        print("Var Names Dummy:", a.varNamesDummy)
+        print(a.varNames)
 
         c = ImportUserProvData(b,"C:/Documents and Settings/kkonduri/Desktop/impute.csv" , a.varNames, a.varTypes, a.varNamesDummy, a.varTypesDummy)
-        print c.query1
-        print c.query2
+        print(c.query1)
+        print(c.query2)
 

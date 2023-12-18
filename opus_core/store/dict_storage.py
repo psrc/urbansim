@@ -21,7 +21,7 @@ class dict_storage(Storage):
         try:
             available_column_names = self.get_column_names(table_name, lowercase)
             columns_to_load = self._select_columns(column_names, available_column_names) 
-        except AttributeError, e:
+        except AttributeError as e:
             raise AttributeError("In table '%s': %s" % (table_name, e))
         
         if lowercase:
@@ -43,13 +43,13 @@ class dict_storage(Storage):
         self._mystorage[table_name] = copy.deepcopy(table_data)
 
     def get_column_names(self, table_name, lowercase=True):
-        cols = self._mystorage[table_name].keys()
+        cols = list(self._mystorage[table_name].keys())
         if lowercase:
             cols = [col.lower() for col in cols]
         return cols
     
     def get_table_names(self):
-        return self._mystorage.keys()
+        return list(self._mystorage.keys())
     
     
 from opus_core.tests import opus_unittest
@@ -75,16 +75,16 @@ class DictStorageTests(TestStorageInterface):
         
         self.storage.write_table(table_name=self.table_name, table_data=data)
         
-        self.assert_(ma.allequal(self.storage._mystorage[self.table_name][self.id_name], 
+        self.assertTrue(ma.allequal(self.storage._mystorage[self.table_name][self.id_name], 
             expected_internal_storage[self.table_name][self.id_name]))
-        self.assertEqual(self.storage._mystorage[self.table_name].keys(), 
-            expected_internal_storage[self.table_name].keys())
-        self.assertEqual(self.storage._mystorage.keys(), expected_internal_storage.keys())
+        self.assertEqual(list(self.storage._mystorage[self.table_name].keys()), 
+            list(expected_internal_storage[self.table_name].keys()))
+        self.assertEqual(list(self.storage._mystorage.keys()), list(expected_internal_storage.keys()))
         
     def test_get_column_names(self):
         self.storage._mystorage = {self.table_name:{self.id_name:None, self.attr_name:None}}
         
-        expected_field_names = self.storage._mystorage[self.table_name].keys()
+        expected_field_names = list(self.storage._mystorage[self.table_name].keys())
         
         field_names = self.storage.get_column_names(table_name=self.table_name)
         
@@ -127,7 +127,7 @@ class DictStorageTests(TestStorageInterface):
         self.storage.write_table(table_name='table1', table_data={'a':array([1])})
         expected = ['table1']
         actual = self.storage.get_table_names()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
     def test_get_table_names_two_tables(self):
         self.storage.write_table(table_name='table1', table_data={'a':array([1])})
@@ -136,7 +136,7 @@ class DictStorageTests(TestStorageInterface):
         expected.sort()
         actual = self.storage.get_table_names()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
     def test_load_table_returns_copy(self):
         expected_data = {

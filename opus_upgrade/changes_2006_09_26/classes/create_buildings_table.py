@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.logger import logger
-from table_creator import TableCreator
+from .table_creator import TableCreator
 
 class CreateBuildingsTable(TableCreator):
     def create_buildings_table(self, config, db_name):

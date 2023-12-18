@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from avg_val_per_unit_within_walking_distance_if_low_income import avg_val_per_unit_within_walking_distance_if_low_income
+from .avg_val_per_unit_within_walking_distance_if_low_income import avg_val_per_unit_within_walking_distance_if_low_income
 
 class avg_val_per_unit_within_walking_distance_if_high_income(avg_val_per_unit_within_walking_distance_if_low_income):
     """avg_val_per_unit within the walking radius, given that the decision-making household is high-income.
@@ -51,7 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [50, 10, 20], 
                            [0,0,0]])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
 
 if __name__=='__main__':

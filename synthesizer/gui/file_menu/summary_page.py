@@ -112,7 +112,7 @@ class SummaryPage(QWizardPage):
         self.projectDescLineEdit.setText(self.project.description)
         dummy = ""
         if self.project.region is not None:
-            for i in self.project.region.keys():
+            for i in list(self.project.region.keys()):
                 dummy = dummy + i + ", "+ self.project.region[i]+ "; "
         self.projectRegionLineEdit.setText("%s"%dummy[:-2])
         #self.projectResolutionLineEdit.setText(self.project.resolution)

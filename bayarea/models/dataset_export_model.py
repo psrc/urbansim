@@ -29,8 +29,8 @@ class DatasetExportModel(object):
         """
         if not hasattr(self, 'out_storage'):
             if out_storage is None:
-                raise ValueError, "Either out_storage argument needs to be specified or " + \
-                        "prepare_for_run called before run method to create a valid out_storage."
+                raise ValueError("Either out_storage argument needs to be specified or " + \
+                        "prepare_for_run called before run method to create a valid out_storage.")
             else:
                 self.out_storage = out_storage
         sim_state = SimulationState()
@@ -71,7 +71,7 @@ class DatasetExportModel(object):
         query_st = "select create_urbansim_buildings({}, {}, {}); commit;".format(scenario_id,
                                                                         min_year,
                                                                         max_year)
-        print query_st
+        print(query_st)
         db.execute(query_st)
         db.close()
 

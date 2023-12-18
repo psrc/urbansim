@@ -18,7 +18,7 @@ def _convert_image_type(image_type):
         
 def _convert(args):
     map = {}
-    for attr_name, value in args.items():
+    for attr_name, value in list(args.items()):
         if attr_name == 'dataset':
             map['dataset_name'] = repr(value)
         elif attr_name == 'image_type':
@@ -28,7 +28,7 @@ def _convert(args):
         elif attr_name == 'attribute':
             if isinstance(value,dict):
                 submap = _convert(value)
-                for k,v in submap.items():
+                for k,v in list(submap.items()):
                     map[k] = v
             else:
                 map['attribute'] = repr(value)
@@ -53,7 +53,7 @@ def _create_indicator(i, indent):
 
     s.append('%s%s('%(indents,i['class']))
     indents += '\t'
-    for k,v in i.items():
+    for k,v in list(i.items()):
         if k == 'class': continue
         s.append('%s%s = %s,'%(indents,k,v))
     s.append(indents + ')')
@@ -93,7 +93,7 @@ class Tests(opus_unittest.OpusTestCase):
 #            elif output_map[k] != expected_map[k]:
 #                print '%s: output=%i, expected=%i'%(k,output_map[k],expected_map[k])
             
-        self.assertEqual(len(output_map.keys()),len(expected_map.keys()))
+        self.assertEqual(len(list(output_map.keys())),len(list(expected_map.keys())))
                 
     def get_char_count(self,s):
         char_map = {}

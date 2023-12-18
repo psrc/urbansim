@@ -159,8 +159,8 @@ class Tests(StochasticTestCase):
             and then count how many houses returned in hrm_relocation_results are in each range.  
             """
             list_of_tallies = []
-            for range_to_count in [range(0,600), range(600,1000), range(1000,1200), range(1200,1500)]:
-                list_of_tallies.append(len(filter(lambda x: x in range_to_count, hrm_relocation_results)))
+            for range_to_count in [list(range(0,600)), list(range(600,1000)), list(range(1000,1200)), list(range(1200,1500))]:
+                list_of_tallies.append(len([x for x in hrm_relocation_results if x in range_to_count]))
             return array(list_of_tallies)
 
         should_be = array([0, 40, 100, 300])
@@ -283,11 +283,11 @@ class Tests(StochasticTestCase):
             erm_relocation_results = erm.run(jobs_set,resources=erm_resources)
 
             list_of_tallies = []
-            range_list = [range(0,75),     range(75, 100),  range(100, 400), range(400, 500), #gridcell 1
-                          range(500,550), range(550, 600), range(600, 700), range(700, 800), #gridcell 2
-                          range(800,825), range(825, 900), range(900, 925), range(925, 1000)] #gridcell 3
+            range_list = [list(range(0,75)),     list(range(75, 100)),  list(range(100, 400)), list(range(400, 500)), #gridcell 1
+                          list(range(500,550)), list(range(550, 600)), list(range(600, 700)), list(range(700, 800)), #gridcell 2
+                          list(range(800,825)), list(range(825, 900)), list(range(900, 925)), list(range(925, 1000))] #gridcell 3
             for range_to_count in range_list:
-                list_of_tallies.append(len(filter(lambda x: x in range_to_count, erm_relocation_results)))
+                list_of_tallies.append(len([x for x in erm_relocation_results if x in range_to_count]))
             return array(list_of_tallies)
 
         #50% of each group is what we expect. i.e. 750 sector-1 non-home-based jobs were created in gridcell #1, 
@@ -300,8 +300,8 @@ class Tests(StochasticTestCase):
         #sum up the number of relocated jobs in sector 1
         def run_model_sector_1():
             list_of_tallies = run_model()
-            list_of_tallies_summed = filter(lambda i: not(i/2%2), range(len(list_of_tallies)))
-            list_of_tallies_summed = sum(map(lambda x: list_of_tallies[x], list_of_tallies_summed))
+            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if not(i/2%2)]
+            list_of_tallies_summed = sum([list_of_tallies[x] for x in list_of_tallies_summed])
             return list_of_tallies_summed
         
         should_be = array([37 + 12 + 25 + 25 + 12 + 37])
@@ -310,8 +310,8 @@ class Tests(StochasticTestCase):
         #sum up the number of relocated jobs in sector 2
         def run_model_sector_2():
             list_of_tallies = run_model()
-            list_of_tallies_summed = filter(lambda i: i/2%2, range(len(list_of_tallies)))
-            list_of_tallies_summed = sum(map(lambda x: list_of_tallies[x], list_of_tallies_summed))
+            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if i/2%2]
+            list_of_tallies_summed = sum([list_of_tallies[x] for x in list_of_tallies_summed])
             return list_of_tallies_summed
         should_be = array([150 + 50 + 50 + 50 + 12 + 37])
         self.run_stochastic_test(__file__, run_model_sector_2, should_be, 10)

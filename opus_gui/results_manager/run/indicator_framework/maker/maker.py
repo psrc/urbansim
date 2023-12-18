@@ -96,14 +96,14 @@ class Maker(object):
                 package_order = self.package_order,
                 in_storage = AttributeCache())
 
-            for name, indicator in indicators.items():
+            for name, indicator in list(indicators.items()):
                 dataset_name = indicator.dataset_name
                 if dataset_name not in indicators_by_dataset:
                     indicators_by_dataset[dataset_name] = [(name,indicator)]
                 else:
                     indicators_by_dataset[dataset_name].append((name,indicator))
 
-            for dataset_name, indicators_in_dataset in indicators_by_dataset.items():
+            for dataset_name, indicators_in_dataset in list(indicators_by_dataset.items()):
                 dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
 
                 self._make_indicators_for_dataset(
@@ -177,7 +177,7 @@ class Maker(object):
         options = ServicesDatabaseConfiguration()
         results_manager = ResultsManager(options)
 
-        for name, indicator in computed_indicator_group.items():
+        for name, indicator in list(computed_indicator_group.items()):
             results_manager.add_computed_indicator(
                     indicator_name = indicator.indicator.name,
                     dataset_name = indicator.dataset_name,
@@ -189,7 +189,7 @@ class Maker(object):
         results_manager.close()
 
     def _check_integrity(self, indicators, source_data):
-        for name, indicator in indicators.items():
+        for name, indicator in list(indicators.items()):
             attribute = indicator.attribute
             package = VariableName(attribute).get_package_name()
             if package != None and package not in self.package_order:
@@ -202,9 +202,9 @@ from opus_gui.results_manager.run.indicator_framework.test_classes.abstract_indi
 class Tests(AbstractIndicatorTest):
     def test_create_indicator_multiple_years(self):
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
-        self.source_data.years = range(1980,1984)
+        self.source_data.years = list(range(1980,1984))
         indicator = Indicator(
                   dataset_name = 'test',
                   attribute = 'opus_core.test.attribute')
@@ -217,7 +217,7 @@ class Tests(AbstractIndicatorTest):
             storage_location = os.path.join(self.source_data.get_indicator_directory(),
                                 '_stored_data',
                                 repr(year))
-            self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
+            self.assertTrue(os.path.exists(os.path.join(storage_location, 'test')))
 
             store = StorageFactory().get_storage(type = 'flt_storage',
                                                  storage_location = storage_location)
@@ -250,7 +250,7 @@ class Tests(AbstractIndicatorTest):
         storage_location = os.path.join(self.source_data.get_indicator_directory(),
                             '_stored_data',
                             '1980')
-        self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
+        self.assertTrue(os.path.exists(os.path.join(storage_location, 'test')))
 
         store = StorageFactory().get_storage(type = 'flt_storage',
                                              storage_location = storage_location)
@@ -280,7 +280,7 @@ class Tests(AbstractIndicatorTest):
         storage_location = os.path.join(self.source_data.get_indicator_directory(),
                             '_stored_data',
                             '1980')
-        self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
+        self.assertTrue(os.path.exists(os.path.join(storage_location, 'test')))
 
         store = StorageFactory().get_storage(type = 'flt_storage',
                                              storage_location = storage_location)

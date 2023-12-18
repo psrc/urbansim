@@ -32,8 +32,8 @@ def person_index_matrix(db, pumano = 0):
 
     try:
         dbc.execute('alter table person_sample_%s add column id bigint primary key auto_increment not null first'%(pumano))
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
 
     dbc.execute('select hhid, min(id), max(id) from person_sample_%s group by hhid'%(pumano))
     result = arr(dbc.fetchall(), int)
@@ -140,7 +140,7 @@ def drawing_housing_units(db, frequencies, weights, index_matrix, sp_matrix, pum
             hhldid_by_type = sp_matrix[i[1]-1:i[2],2]
 
             for k in range(len(freq)):
-                if freq[k]<>0:
+                if freq[k]!=0:
                     #hhid = hhidRowDict[hhldid_by_type[k]]
                     # storing the matrix row no, freq, type
                     synthetic_population.append([hhldid_by_type[k], freq[k], i[0]])
@@ -174,7 +174,7 @@ def drawing_housing_units_nogqs(db, frequencies, weights, index_matrix, sp_matri
             hhldid_by_type = sp_matrix[i[1]-1:i[2],2]
 
             for k in range(len(freq)):
-                if freq[k]<>0:
+                if freq[k]!=0:
                     #hhid = hhidRowDict[hhldid_by_type[k]]
                     # storing the matrix row no, freq, type
                     synthetic_population.append([hhldid_by_type[k], freq[k], i[0]])
@@ -220,10 +220,10 @@ def synthetic_population_properties(db, geo, synthetic_population, person_index_
     try:
         housing_sample[synthetic_population[:,0],:]
         synthetic_housing_attributes[:,4:-2] = housing_sample[synthetic_population[:,0],:]
-    except Exception, e:
+    except Exception as e:
         for i in synthetic_population[:,0]:
-            print i, housing_sample[i,:]
-        print e, 'Crashesssssssssssssssssssssssssssssssssssssssss Herrrrrrrrrrrrrrrrrrrreeeeeeeeeeeeeeeee'
+            print(i, housing_sample[i,:])
+        print(e, 'Crashesssssssssssssssssssssssssssssssssssssssss Herrrrrrrrrrrrrrrrrrrreeeeeeeeeeeeeeeee')
 
     # Store household frequency
     synthetic_housing_attributes[:,-2] = synthetic_population[:,1]
@@ -458,8 +458,8 @@ def round_stochastic(numbers):
 if __name__ == '__main__':
     #print round([1,2])
     #print round([64.85, 12.34, 10.36, 0.43, 0.49, 0.47, 0.44, 0.39, 0.49, 0.10, 0.12, 0.20, 0.27, 0.28, 0.38, 0.37])
-    print round_bucket(arr([64.85, 12.34, 10.36, 0.43, 0.49, 0.47, 0.44, 0.39, 0.48, 0.10, 0.12, 0.20, 0.27, 0.28, 0.38, 0.37]))
-    print round_stochastic(arr([64.85, 12.34, 10.36, 0.43, 0.49, 0.47, 0.44, 0.39, 0.48, 0.10, 0.12, 0.20, 0.27, 0.28, 0.38, 0.37]))
+    print(round_bucket(arr([64.85, 12.34, 10.36, 0.43, 0.49, 0.47, 0.44, 0.39, 0.48, 0.10, 0.12, 0.20, 0.27, 0.28, 0.38, 0.37])))
+    print(round_stochastic(arr([64.85, 12.34, 10.36, 0.43, 0.49, 0.47, 0.44, 0.39, 0.48, 0.10, 0.12, 0.20, 0.27, 0.28, 0.38, 0.37])))
 
 
 

@@ -21,5 +21,5 @@ class MockupOpusProject(OpusProject):
 
 if __name__ == '__main__':
     instance = MockupOpusProject()
-    print 'XML Data:'
-    print tostring(instance._root_node)
+    print('XML Data:')
+    print(tostring(instance._root_node))

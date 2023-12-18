@@ -8,11 +8,11 @@ from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from numpy import array, where, zeros, logical_and
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from run_transcad_macro import run_transcad_macro, run_get_file_location_macro
+from .run_transcad_macro import run_transcad_macro, run_get_file_location_macro
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-from set_project_ini_file import set_project_ini_file
+from .set_project_ini_file import set_project_ini_file
 
 class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
     """
@@ -39,19 +39,19 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         
         matrices = []
         row_index_name, col_index_name = "ZoneID", "ZoneID"  #default values
-        if matrix_attribute_name_map.has_key('row_index_name'):
+        if 'row_index_name' in matrix_attribute_name_map:
             row_index_name = matrix_attribute_name_map['row_index_name']
-        if matrix_attribute_name_map.has_key('col_index_name'):
+        if 'col_index_name' in matrix_attribute_name_map:
             col_index_name = matrix_attribute_name_map['col_index_name']
             
-        for key, val in matrix_attribute_name_map.iteritems():
+        for key, val in matrix_attribute_name_map.items():
             if (key != 'row_index_name') and (key != 'col_index_name'):
-                if val.has_key('row_index_name'):
+                if 'row_index_name' in val:
                     row_index_name = val['row_index_name']
-                if val.has_key('col_index_name'):
+                if 'col_index_name' in val:
                     col_index_name = val['col_index_name']
                 matrix_file_name = transcad_file_location[key]  #replace internal matrix name with absolute file name
-                matrices.append([matrix_file_name, row_index_name, col_index_name, val.items()])
+                matrices.append([matrix_file_name, row_index_name, col_index_name, list(val.items())])
                   
         macro_args =[ ("ExportTo", tm_output_full_name) ]
         macro_args.append(("Matrix", matrices))
@@ -121,7 +121,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                 return_dict[headers[col_index]].append(v)
         text_file.close()
         
-        for item, value in return_dict.iteritems():
+        for item, value in return_dict.items():
             try:
                 return_dict[item] = array(value)
             except:
@@ -144,7 +144,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
             is_valid_to_zone_id += data_dict["to_zone_id"] == id
         
         keep_indices = where(logical_and(is_valid_from_zone_id, is_valid_to_zone_id))
-        for name, values in data_dict.iteritems():
+        for name, values in data_dict.items():
             data_dict[name] = values[keep_indices]
         
         #convert from seq_taz to zone_id

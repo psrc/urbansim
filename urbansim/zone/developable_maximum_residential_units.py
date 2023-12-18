@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from developable_maximum_industrial_sqft import developable_maximum_industrial_sqft
+from .developable_maximum_industrial_sqft import developable_maximum_industrial_sqft
 
 class developable_maximum_residential_units(developable_maximum_industrial_sqft):
     """How many residential units are at most developable for each zone."""

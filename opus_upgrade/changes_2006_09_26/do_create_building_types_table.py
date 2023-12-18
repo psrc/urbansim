@@ -8,7 +8,7 @@ import sys
 from optparse import OptionParser
 from warnings import filterwarnings
 
-from classes.create_building_types_table import CreateBuildingTypesTable
+from .classes.create_building_types_table import CreateBuildingTypesTable
 
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
@@ -46,4 +46,4 @@ config = DatabaseServerConfiguration(
 filterwarnings('ignore', 'Unknown table')
 CreateBuildingTypesTable().create_building_types_table(config, options.database)
 
-print 'Done.'
+print('Done.')

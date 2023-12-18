@@ -43,14 +43,14 @@ class mean_income_kDDD(Variable):
         sum_households = zeros(id_max, dtype=zones['sum_households'].dtype)
         sum_income[zones['zone_id']] = zones['sum_income']
         sum_households[zones['zone_id']] = zones['sum_households']
-        if not nx: raise ImportError, "networkx module is required."
+        if not nx: raise ImportError("networkx module is required.")
         G = nx.Graph()
         G.add_nodes_from(zones['zone_id'])
         G.add_edges_from(adjacent_zones.get_multiple_attributes(['zone_id', 'adjacent_zone_id']))
         length = nx.all_pairs_shortest_path_length(G, cutoff=self.order)
         
-        for key, val in length.items():
-            W[key][val.keys()] = 1
+        for key, val in list(length.items()):
+            W[key][list(val.keys())] = 1
         
         sum_income = dot(W, sum_income[:, newaxis])[:, 0]
         sum_households = dot(W, sum_households[:, newaxis])[:, 0]

@@ -55,7 +55,7 @@ def dictionary_to_menu(source_dict, callback, display_func = None, parent_widget
     top_menu = QtGui.QMenu(parent_widget)
     if not display_func:
         display_func = str
-    for key, items in source_dict.items():
+    for key, items in list(source_dict.items()):
         sub_menu = QtGui.QMenu(str(key), parent_widget)
         if isinstance(items, dict):
             dict_menu = dictionary_to_menu(items, callback, parent_widget)

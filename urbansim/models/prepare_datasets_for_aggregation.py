@@ -18,7 +18,7 @@ class PrepareDatasetsForAggregation(Model):
         If 'flush_dataset' is True, the datasets given as keys in 'datasets_variables'
         are flushed to cache.
         """
-        for dataset in datasets_variables.keys():
+        for dataset in list(datasets_variables.keys()):
             variables = datasets_variables[dataset]
             dataset.compute_variables(variables, dataset_pool=dataset_pool)
             for var in variables:

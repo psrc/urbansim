@@ -24,7 +24,7 @@ if __name__ == "__main__":
     rcfile.write('    </qresource>\n')
     rcfile.write('</RCC>')
     rcfile.close()
-    print 'Wrote %d images to %s' %(len(images), RCFILE)
+    print('Wrote %d images to %s' %(len(images), RCFILE))
     os.system('pyrcc4 %s -o %s' %(RCFILE, OUTFILE))
-    print 'Compiled to %s' %OUTFILE
+    print('Compiled to %s' %OUTFILE)
 

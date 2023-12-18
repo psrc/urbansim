@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.logger import logger
 
 class average_percent_open_space_within_walking_distance(Variable):

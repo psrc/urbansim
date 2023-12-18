@@ -41,7 +41,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
         tm_config = self.config['travel_model_configuration']
         data_to_export = tm_config['urbansim_to_tm_variable_mapping']
         
-        table_names = data_to_export.keys()
+        table_names = list(data_to_export.keys())
         variable_names = {}
         datasets = {}
         filenames = {}
@@ -55,7 +55,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
                 del data_to_export[table_name]['__out_table_name__']
             else:
                 out_table_name = table_name
-            variables_to_export = map(lambda alias: "%s = %s" % (alias, data_to_export[table_name][alias]), data_to_export[table_name].keys())
+            variables_to_export = ["%s = %s" % (alias, data_to_export[table_name][alias]) for alias in list(data_to_export[table_name].keys())]
             dataset_name = None            
             for var in variables_to_export:
                 var_name = VariableName(var)
@@ -66,7 +66,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
                     datasets[dataset_name] = ds
                     filenames[dataset_name] = out_table_name
                     in_table_names[dataset_name] = table_name
-                    if dataset_name not in variable_names.keys():
+                    if dataset_name not in list(variable_names.keys()):
                         variable_names[dataset_name] = []
                 variable_names[dataset_name].append(var_name.get_alias())                
                 ds.compute_variables([var_name], dataset_pool=dataset_pool)
@@ -92,7 +92,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
         if file_format.startswith('hdf5'):
             kwargs['compression'] = file_config.get('hdf5_compression', None) 
         logger.start_block('Writing Daysim inputs.')
-        for dataset_name, dataset in datasets.iteritems():
+        for dataset_name, dataset in datasets.items():
             ds_meta = meta_data.get(in_table_names[dataset_name], {})
             if file_format.startswith('hdf5'):
                 kwargs['column_meta']  = ds_meta
@@ -103,7 +103,7 @@ class GetCacheDataIntoDaysim(AbstractDaysimTravelModel):
             mode['hdf5g'] = Storage.APPEND
         logger.end_block()
         logger.log_status('Daysim inputs written into %s' % current_year_tm_dir)
-        return out_table_names.values()
+        return list(out_table_names.values())
     
 if __name__ == "__main__":
     try: import wingdbstub
@@ -125,9 +125,9 @@ if __name__ == "__main__":
                                action="store", help="Cache directory with urbansim output.")
     (options, args) = parser.parse_args()
     if options.year is None:
-        raise StandardError, "Year (argument -y) must be given."
+        raise Exception("Year (argument -y) must be given.")
     if (options.scenario_name is None) and (options.xml_configuration is not None):
-        raise StandardError, "No scenario given (argument -s). Must be specified if option -x is used."
+        raise Exception("No scenario given (argument -s). Must be specified if option -x is used.")
     r = None
     xconfig = None
     if options.resources_file_name is not None:
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         xconfig = XMLConfiguration(options.xml_configuration)
         resources = xconfig.get_run_configuration(options.scenario_name)
     else:
-        raise StandardError, "Either option -r or -x must be used."
+        raise Exception("Either option -r or -x must be used.")
         
     files = GetCacheDataIntoDaysim(resources).run(options.year, cache_directory=options.cache_directory)
     if options.output_directory is not None:

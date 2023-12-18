@@ -41,7 +41,7 @@ class CacheScenarioDatabase(Model):
         simulation_state.set_current_time(config['base_year'])
                   
         self.tables_cached = set()      
-        for database_name, tables in database_to_table_mapping.items():
+        for database_name, tables in list(database_to_table_mapping.items()):
             self.cache_database_tables(config, database_name, tables)
 
         un_cached_tables = set(self.tables_to_cache) - self.tables_cached

@@ -16,7 +16,7 @@ class MatrixTest(opus_unittest.OpusTestCase):
     """
 
     def setUp(self):
-        print "Entering setup"
+        print("Entering setup")
         # get sensitivity test path
         self.test_dir_path = test_dir.__path__[0]
         # get location to travel data table
@@ -24,12 +24,12 @@ class MatrixTest(opus_unittest.OpusTestCase):
         logger.log_status("input_directory: %s" % self.input_directory)
         # check source file
         if not os.path.exists( self.input_directory ):
-            raise('File not found! %s' % self.input_directory)
+            raise 'File not found! %s'
         
-        print "Leaving setup"
+        print("Leaving setup")
     
     def test_run(self):
-        print "Entering test run"
+        print("Entering test run")
         
         # This test checks if the pre-computed MATSim travel data 
         # is loaded correctly into UrbanSim. Therefore the UrbanSim
@@ -67,7 +67,7 @@ class MatrixTest(opus_unittest.OpusTestCase):
             
         # self.dump_travel_list(travel_list) # for debugging
         
-        print "Leaving test run"
+        print("Leaving test run")
         
     def dump_travel_list(self, travel_list):
         ''' Dumping travel_list for debugging reasons...

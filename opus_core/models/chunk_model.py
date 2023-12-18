@@ -82,7 +82,7 @@ class ChunkModel(Model):
         return arange(dataset.size())
 
     def run_chunk(self, index, dataset, *args, **kwargs):
-        raise NotImplementedError, "Method 'run_chunk' for this model not implemented."
+        raise NotImplementedError("Method 'run_chunk' for this model not implemented.")
 
     def _get_status_total_pieces(self):
         return self.get_number_of_chunks()

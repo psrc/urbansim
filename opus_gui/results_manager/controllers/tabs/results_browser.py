@@ -39,7 +39,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             pass
 
         def test():
-            print 'Variables updated'
+            print('Variables updated')
         self.connect(get_mainwindow_instance(), SIGNAL('variables_updated'), test)
 
         tool_tip = ('If checked, indicator results will automatically be\n'
@@ -282,7 +282,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         batch_processor.set_data(
             visualizations = visualizations,
             source_data_name = run_name,
-            years = range(start_year, end_year + 1))
+            years = list(range(start_year, end_year + 1)))
 
         if not self.generating_results:
             self.generating_results = True

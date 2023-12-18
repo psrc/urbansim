@@ -26,7 +26,7 @@ class Simulation(object):
     package_path = OpusPackage().get_path_for_package("biocomplexity") 
     lct_attribute = "biocomplexity.land_cover.lct_recoded"
     #lct_attribute = "lct"
-    possible_lcts = range(1,15)
+    possible_lcts = list(range(1,15))
     
     def run(self, base_directory, urbansim_cache_directory, years):
         """ run the simulation

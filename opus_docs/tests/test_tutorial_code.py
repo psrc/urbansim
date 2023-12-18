@@ -16,7 +16,7 @@ class TestTutorialCode(opus_unittest.OpusTestCase):
         error_code = os.system('%s "%s"'
             % (sys.executable, os.path.join(opus_docs_path, 'manual', 'part-command-line', 'tutorial_code.py')))
         
-        self.assert_(not error_code)
+        self.assertTrue(not error_code)
 
 
 if __name__=="__main__":

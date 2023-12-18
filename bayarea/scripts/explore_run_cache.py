@@ -36,7 +36,7 @@ if __name__ == "__main__":
     if options.run_id:
         run_id = int(options.run_id)
         if not options.project_name:
-            print "project_name argument is required when using run_id"
+            print("project_name argument is required when using run_id")
             sys.exit(0)
         else:
             run_manager = RunManager(option_group.get_services_database_configuration(options))
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     if options.run_directory:
         _cache_directory = options.run_directory
         if cache_directory is not None:
-            print "Both run-directory and run-id specified; use run directory %s" % cache_directory
+            print("Both run-directory and run-id specified; use run directory %s" % cache_directory)
         else:
             cache_directory = _cache_directory
 

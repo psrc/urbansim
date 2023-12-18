@@ -83,7 +83,7 @@ class SynthesizeJobs(object):
                     type_index[name] = i
                     break;
             else:
-                raise KeyError, ('No column by the name of \'%s\' found in '
+                raise KeyError('No column by the name of \'%s\' found in '
                                  'the database.' % name)  
 
         for name in building_types:
@@ -204,7 +204,7 @@ class SynthesizeJobs(object):
                                                    row[jobs_for_this_type])]
             total_jobs[row[zone]] = row[total];
                                                    
-        for key in jobs_per_building_type.keys():
+        for key in list(jobs_per_building_type.keys()):
             jobs_per_building_type[key] = self._resolve_fractional_jobs(
                                    jobs_per_building_type[key], total_jobs[key])       
         return jobs_per_building_type
@@ -258,19 +258,19 @@ class SynthesizeJobs(object):
         probabilities of the represented objects and the given sample size.
         """
         if type(dist) is not type([]):
-            raise TypeError, ('Invalid input. Expected %s. Received %s.' 
+            raise TypeError('Invalid input. Expected %s. Received %s.' 
                                 % (type({}), type(dist)))
         
         pop = []; prob = []        
                                         
         for tuple in dist:
             if type(tuple) is not type(()):
-                raise TypeError, ('Invalid input. Expected a list of %s. '
+                raise TypeError('Invalid input. Expected a list of %s. '
                                   'Received %s.' 
                                   % (type(()), type(tuple)))
               
             if len(tuple) != 2:
-                raise TypeError, ('Invalid input. Expected tuples of length 2')
+                raise TypeError(('Invalid input. Expected tuples of length 2'))
                                   
             # Don't add anything that has no chance of being chosen. This also
             # makes testing that the sum of the list is non-zero a simple length
@@ -320,17 +320,17 @@ class SynthesizeJobs(object):
         res_sample = []; jobs_table = []
         no_samples = []
 
-        for key in sectors.keys():
+        for key in list(sectors.keys()):
             sector_num = key
             sector = sectors[key]
-            for zone in sector.keys():
+            for zone in list(sector.keys()):
                 for building_type, number_of_jobs in sector[zone]:
                     for type, id, home_based in building_types_and_ids_and_home_based:
                         if building_type == id: 
                             dist = dist_src[type]
                             break
                     else:
-                        raise TypeError, ("Invalid building type: %s" 
+                        raise TypeError("Invalid building type: %s" 
                                           % building_type)
                     
                     try:
@@ -356,8 +356,8 @@ class SynthesizeJobs(object):
                                             'grid':grid_id}]
         
         if len(no_samples) > 0:
-            print ('No job samples created for (zone, building_type): %s!' 
-                   % no_samples)
+            print(('No job samples created for (zone, building_type): %s!' 
+                   % no_samples))
         
         return jobs_table
         

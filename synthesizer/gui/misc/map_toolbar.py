@@ -9,8 +9,8 @@ from qgis.core import *
 from qgis.gui import *
 import sys, os
 
-from regionTool import *
-from pointSelectTool import *
+from .regionTool import *
+from .pointSelectTool import *
 
 
 qgis_prefix = "C:\qgis"
@@ -127,7 +127,7 @@ class Toolbar(QToolBar):
                 devicepoint = transform.transform(feat.geometry().asPoint())
                 #print devicepoint.x(), devicepoint.y()
                 dummy = ""
-            for (i, attr) in attrMap.iteritems():
+            for (i, attr) in attrMap.items():
                 if i == 0:
                     dummy = '"%s"' % attr.toString().trimmed()
                 else:

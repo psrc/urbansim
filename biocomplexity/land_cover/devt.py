@@ -50,7 +50,7 @@ class Tests(ExpectedDataTest):
             dataset = "land_cover")
         should_be = array([1, 1, 5, -9999])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

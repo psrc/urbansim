@@ -33,7 +33,7 @@ class AbstractTripMode(Variable):
         results = zeros(len(zone_ids)).astype(float32)
         for matrix in self.matrices:
             values = travel_data.get_attribute(matrix)
-            non_missing_idx = where(values <> self.missing_value)
+            non_missing_idx = where(values != self.missing_value)
             results += array(ndimage_sum(values[non_missing_idx], labels = from_zone_id[non_missing_idx], 
                                          index=zone_ids))
         return results

@@ -105,27 +105,27 @@ class RollbackGridcellsFromBuildingsTests(opus_unittest.OpusTestCase):
         roller = RollbackGridcellsFromBuildings()
         
         roller.unroll_gridcells_for_one_year(gridcells, buildings, 2000, dataset_pool)
-        self.assert_(ma.allequal(gridcells.get_attribute('commercial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('commercial_sqft'),
                               array([50,50,50])))
-        self.assert_(ma.allequal(gridcells.get_attribute('industrial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('industrial_sqft'),
                               array([100,100,100])))
-        self.assert_(ma.allequal(gridcells.get_attribute('residential_units'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('residential_units'),
                               array([10, 0, 0])))
         
         roller.unroll_gridcells_for_one_year(gridcells, buildings, 1999, dataset_pool)
-        self.assert_(ma.allequal(gridcells.get_attribute('commercial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('commercial_sqft'),
                               array([50,50,30])),
                      'Unexpected results: expected %s; received %s' % 
                      (array([50,50,30]), gridcells.get_attribute('commercial_sqft')))
-        self.assert_(ma.allequal(gridcells.get_attribute('industrial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('industrial_sqft'),
                               array([70,100,100])))
         
         roller.unroll_gridcells_for_one_year(gridcells, buildings, 1998, dataset_pool)
-        self.assert_(ma.allequal(gridcells.get_attribute('commercial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('commercial_sqft'),
                               array([50,50,0])))
-        self.assert_(ma.allequal(gridcells.get_attribute('industrial_sqft'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('industrial_sqft'),
                               array([70,70,100])))
-        self.assert_(ma.allequal(gridcells.get_attribute('residential_units'),
+        self.assertTrue(ma.allequal(gridcells.get_attribute('residential_units'),
                               array([5, 0, 0])))
                               
 

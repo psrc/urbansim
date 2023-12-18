@@ -166,7 +166,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
             min_capacity = zeros(max_capacity.size)
 
         if max_capacity.sum(dtype="float32") == 0:
-            raise RuntimeError, "There are no choices with any capacity for %s buildings." % agent_set.what
+            raise RuntimeError("There are no choices with any capacity for %s buildings." % agent_set.what)
 
         #how many buildings fit in each developable location
         max_building_size = sort(max_capacity)[-max(50,int(where_developable.size*0.001))]

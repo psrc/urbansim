@@ -33,7 +33,7 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         ## if tmp_output_file is a remote sftp URL, redirect file to local tempdir
         tmp_output_file = redirect_sftp_url_to_local_tempdir(tmp_output_file)
         
-        for macro_name, macro_info in specified_macros.iteritems():
+        for macro_name, macro_info in specified_macros.items():
             bank = macro_info['bank']
             bank_path = self.get_emme2_dir(year, bank)
             macro_path = os.path.join(self.get_emme2_base_dir(), macro_info.get('path',''), macro_name)

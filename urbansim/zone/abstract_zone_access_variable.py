@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import zeros, float32, exp, where, logical_or, compress, newaxis
 
 class Abstract_Zone_Access_Variable(Variable):
@@ -88,6 +88,6 @@ class Abstract_Zone_Access_Variable(Variable):
     def access_is_from_origin(self):
         """return True if the access is for the origin (from) zone, and False if the access is for the destination zone.
         home_access_to* variables will return True, and work_access_to_* variables will return False."""
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")
 
 # the unit tests are in the concrete subclasses of this class

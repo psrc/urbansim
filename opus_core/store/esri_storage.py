@@ -44,12 +44,12 @@ class esri_storage(Storage):
             full_db_connection_file_path = os.path.join(os.environ['USERPROFILE'], 'Application Data\\ESRI\\ArcCatalog', db_connection_file)
             storage_location_exists = os.path.exists(full_db_connection_file_path)
             if not storage_location_exists:
-                raise IOError, 'The ArcSDE geodatabase connection "%s" does not exist.' % (db_connection_file)
+                raise IOError('The ArcSDE geodatabase connection "%s" does not exist.' % (db_connection_file))
             self.sde = True
         else:
             storage_location_exists = os.path.exists(storage_location)
             if not storage_location_exists:
-                raise IOError, 'The storage location "%s" does not exist.' % (storage_location)
+                raise IOError('The storage location "%s" does not exist.' % (storage_location))
             self.sde = False
 
         # Set the ESRI workspace parameter
@@ -135,7 +135,7 @@ class esri_storage(Storage):
                     short_name = self._get_shortened_column_name(i, 29)
                     short_column_names.append(i)
         # Create column_names to short_column_names mapping
-        column_names_mapping = dict(zip(column_names, short_column_names))
+        column_names_mapping = dict(list(zip(column_names, short_column_names)))
         # Get column types
         numpy_column_types = []
         for i in column_names:
@@ -166,7 +166,7 @@ class esri_storage(Storage):
         for i in range(0, number_of_records):
             # Get an ESRI NewRow object
             row = rows.NewRow()
-            for column_name, column_value in table_data.iteritems():
+            for column_name, column_value in table_data.items():
                 # Check for string value, if yes, insert quotes
                 if column_value[i].dtype.kind == 'S':
                     if "\'" in column_value[i]:
@@ -183,7 +183,7 @@ class esri_storage(Storage):
                 else:
                     exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], column_value[i])
                 # Execute the statement built above
-                exec exec_stmt
+                exec(exec_stmt)
             # Insert the row
             rows.InsertRow(row)
 
@@ -222,7 +222,7 @@ class esri_storage(Storage):
         # Get column types
         column_types = self._get_column_types_esri(table_name)
         numpy_column_dtypes = {}
-        for i, j in column_types.iteritems():
+        for i, j in column_types.items():
             numpy_type = self._get_numpy_dtype_from_esri_dtype(j)
             numpy_column_dtypes[i] = numpy_type
 
@@ -247,12 +247,12 @@ class esri_storage(Storage):
         # converting unicode and the special 'PyTime'
         # types to strings
         while row:
-            exec exec_stmt
-            if type(row_values) != types.TupleType:
+            exec(exec_stmt)
+            if type(row_values) != tuple:
                 row_values = (row_values,)
             x = 0
             for i in row_values:
-                if type(i) == types.UnicodeType:
+                if type(i) == str:
                     i = str(i)
                 elif type(i) == pywintypes.TimeType:
                     i = str(i)
@@ -415,7 +415,7 @@ class esri_storage(Storage):
         try:
             self.gp.SearchCursor(table_name)
             return True
-        except Exception, e:
+        except Exception as e:
             return False
 
     def _get_numpy_dtype_from_esri_dtype(self, esri_type):

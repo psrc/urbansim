@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label, attribute_label
+from .variable_functions import my_attribute_label, attribute_label
 
 class ln_access_from_residence_to_workplaces_DDD(Variable):
     """Looks up the variable with the same name that is in zone. """

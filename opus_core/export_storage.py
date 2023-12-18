@@ -38,7 +38,7 @@ class ExportStorage(object):
                     cols_in_this_chunk = colnames[int(chunk*chunk_size):int((chunk+1)*chunk_size)]
                 with logger.block('Loading %s - chunk %s out of %s' % (dataset_name, chunk+1, nchunks)):
                     values_from_storage = in_storage.load_table(dataset_name, column_names=cols_in_this_chunk)
-                    length = len(values_from_storage) and len(values_from_storage.values()[0])
+                    length = len(values_from_storage) and len(list(values_from_storage.values())[0])
                     if  length == 0:
                         logger.log_warning("Dataset %s ignored because it's empty" % dataset_name)
                         return

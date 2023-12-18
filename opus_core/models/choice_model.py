@@ -115,7 +115,7 @@ class ChoiceModel(ChunkModel):
                                                    debuglevel=debuglevel)
             
         self.sampler_class = SamplerFactory().get_sampler(sampler)
-        if (sampler <> None) and (self.sampler_class == None):
+        if (sampler != None) and (self.sampler_class == None):
             logger.log_warning("Error in loading sampler class. No sampling will be performed.")
         self.sampler_size=sampler_size
         
@@ -327,7 +327,7 @@ class ChoiceModel(ChunkModel):
         choices = self.upc_sequence.compute_choices(resources=self.run_config)
 
         #attach converged price coming out from equilibration_choices
-        if price_coef_name is not None and self.run_config.has_key('price_converged'):
+        if price_coef_name is not None and 'price_converged' in self.run_config:
             price_converged = price_var_name + "_converged"
             if price_converged not in self.choice_set.get_known_attribute_names():
                 self.choice_set.add_attribute(data=self.choice_set[price_var_name],
@@ -398,7 +398,7 @@ class ChoiceModel(ChunkModel):
             self.procedure = self.estimate_config.get("estimation", None)
         self.procedure = ModelComponentCreator().get_model_component(self.procedure)
         if self.procedure == None:
-            raise StandardError, "No estimation procedure given, or error when loading the corresponding module."
+            raise Exception("No estimation procedure given, or error when loading the corresponding module.")
         
         if agent_set.size()<=0:
             agent_set.get_id_attribute()
@@ -480,7 +480,7 @@ class ChoiceModel(ChunkModel):
                                                                         config=config,
                                                                         nchunks=nchunks, chunksize=chunksize)
                 if not config.get("accept_unavailability_of_choices", False) and interaction_dataset.get_reduced_m() == 0:
-                    raise StandardError, "There are no choices available for the given sampling weights."
+                    raise Exception("There are no choices available for the given sampling weights.")
                 self.update_choice_set_size(interaction_dataset.get_reduced_m())
                 self.model_interaction.interaction_dataset = interaction_dataset
              
@@ -514,15 +514,15 @@ class ChoiceModel(ChunkModel):
                 self.estimate_config.merge({"_model_":self})
                 self.estimate_config['availability'] = self.model_interaction.get_availability(submodel)
                 result[submodel] = self.estimate_submodel(self.get_all_data(submodel), submodel)
-                if "estimators" in result[submodel].keys():
+                if "estimators" in list(result[submodel].keys()):
                     coef[submodel].set_beta_alt(result[submodel]["estimators"])
-                if "standard_errors" in result[submodel].keys():
+                if "standard_errors" in list(result[submodel].keys()):
                     coef[submodel].set_beta_se_alt(result[submodel]["standard_errors"])
-                if "other_measures" in result[submodel].keys():
-                    for measure in result[submodel]["other_measures"].keys():
+                if "other_measures" in list(result[submodel].keys()):
+                    for measure in list(result[submodel]["other_measures"].keys()):
                         coef[submodel].set_measure_from_alt(measure,
                               result[submodel]["other_measures"][measure])
-                if "other_info" in result[submodel].keys():
+                if "other_info" in list(result[submodel].keys()):
                     for info in result[submodel]["other_info"]:
                         coef[submodel].set_other_info(info, result[submodel]["other_info"][info])
                 coef[submodel].fill_beta_from_beta_alt()
@@ -610,7 +610,7 @@ class ChoiceModel(ChunkModel):
                 index2[index_for_ichunk,:] = interaction_dataset.index2
                 for name in interaction_dataset.get_known_attribute_names():
                     attr_val = interaction_dataset.get_attribute(name)
-                    if not attributes.has_key(name):
+                    if name not in attributes:
                         attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
                     attributes[name][index_for_ichunk,:] = attr_val
                     
@@ -619,7 +619,7 @@ class ChoiceModel(ChunkModel):
                                                                                 interaction_dataset.dataset2, 
                                                                                 index1=agents_index, 
                                                                                 index2=index2)
-            for name in attributes.keys():
+            for name in list(attributes.keys()):
                 interaction_dataset.add_attribute(attributes[name], name)
 
         return interaction_dataset
@@ -785,7 +785,7 @@ class ChoiceModel(ChunkModel):
 
         fh.flush()
         fh.close
-        print 'Data written into %s' % out_file
+        print('Data written into %s' % out_file)
 
     def get_agents_order(self, agents):
         return permutation(agents.size())
@@ -841,7 +841,7 @@ class ChoiceModel(ChunkModel):
         """
         from opus_core.plot_functions import plot_histogram
         if self.result_choices is None:
-            raise StandardError, "Model does not have any results. Try to run it first."
+            raise Exception("Model does not have any results. Try to run it first.")
         if index is None:
             values = self.result_choices
         else:
@@ -985,7 +985,7 @@ class ModelInteraction:
         index = self.get_choice_index()
         if index is not None:
             index = take(index, self.model.observations_mapping[submodel], axis=0)
-            if submodel in self.data_include_rows.keys():
+            if submodel in list(self.data_include_rows.keys()):
                 index = compress(self.data_include_rows[submodel], index, axis=0)
         return index
 
@@ -1010,7 +1010,7 @@ class ModelInteraction:
 
     def prepare_data_for_simulation(self, submodel):
         # free up memory from previous chunks
-        if submodel in self.data.keys():
+        if submodel in list(self.data.keys()):
             del self.data[submodel]
             gc.collect()
              
@@ -1086,7 +1086,7 @@ class ModelInteraction:
     def set_chosen_choice(self, agents_index=None, chosen_choice=None):
         if chosen_choice is None: 
             if agents_index is None:
-                raise ValueError, "Either agents_index or chosen_choice must be specified"
+                raise ValueError("Either agents_index or chosen_choice must be specified")
             else: 
                 chosen_choice = self.choice_set.get_id_index(id=
                                                                  self.agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
@@ -1176,7 +1176,7 @@ class ModelInteraction:
             availability = self.interaction_dataset[availability_string][self.model.observations_mapping[submodel],:]
         if 'availability' in self.interaction_dataset.get_known_attribute_names():
             availability = self.interaction_dataset['availability'][self.model.observations_mapping[submodel],:]
-        if availability is not None and submodel in self.data_include_rows.keys():
+        if availability is not None and submodel in list(self.data_include_rows.keys()):
             return compress(self.data_include_rows[submodel], availability, axis=0)
         return availability
         
@@ -1510,10 +1510,10 @@ class TestChoiceModel(StochasticTestCase):
                                                    "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
                              )
         probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))[0]
-        self.assert_(all(probs.shape == array([100, 11])))
+        self.assertTrue(all(probs.shape == array([100, 11])))
         self.assertEqual(unique(probs[:,0]).size == 100, True)
         choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))[0]
-        self.assert_(all(choices.shape == array([100, 11])))
+        self.assertTrue(all(choices.shape == array([100, 11])))
         self.assertEqual(unique(choices[:,0]).size == 100, True)
         rmtree(temp_dir)
 
@@ -1562,11 +1562,11 @@ class TestChoiceModel(StochasticTestCase):
         agents = locations.compute_variables("location.number_of_agents(household)",
                                              resources={'household':households})
         rmse = np.sqrt(np.mean((locations['capacity'] - agents)**2))
-        self.assert_(np.allclose(rmse, 0, atol=1e-3))
+        self.assertTrue(np.allclose(rmse, 0, atol=1e-3))
         price_converged = resources.get('price_converged')
-        self.assert_('price_converged' in locations.get_known_attribute_names())
-        self.assert_(np.allclose(locations['price_converged'], price_converged))
-        self.assert_(np.allclose(np.std(price_converged), 0, atol=1e-3))
+        self.assertTrue('price_converged' in locations.get_known_attribute_names())
+        self.assertTrue(np.allclose(locations['price_converged'], price_converged))
+        self.assertTrue(np.allclose(np.std(price_converged), 0, atol=1e-3))
             
 if __name__=="__main__":
     opus_unittest.main()

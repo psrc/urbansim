@@ -93,7 +93,7 @@ class IndicatorFactoryTests(AbstractIndicatorTest):
             pass
         else:
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-            self.assert_(not os.path.exists(indicator_path))
+            self.assertTrue(not os.path.exists(indicator_path))
             
             indicators = [
                Table(
@@ -108,8 +108,8 @@ class IndicatorFactoryTests(AbstractIndicatorTest):
             
             factory.create_indicators(indicators = indicators)
             
-            self.assert_(os.path.exists(indicator_path))
-            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__tab__attribute.tab')))
+            self.assertTrue(os.path.exists(indicator_path))
+            self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__tab__attribute.tab')))
             #self.assert_(os.path.exists(os.path.join(indicator_path, 'indicator_results.html')))
             
 

@@ -72,16 +72,16 @@ class ExpressionModel(Model):
                 exprs = {x: exprs[x] for x in which_default_expressions if x in exprs}
         exprs.update(expressions)
         not_critical = not_critical + self.not_critical
-        df = pd.DataFrame(index=exprs.keys(), columns=["condition", "True", "False"])
+        df = pd.DataFrame(index=list(exprs.keys()), columns=["condition", "True", "False"])
         warnings = []
         errors = []
-        for name, expr in exprs.iteritems():
+        for name, expr in exprs.items():
             values = self.compute_expression(expr, fault_tolerant=fault_tolerant)
             if values is None:
                 df.loc[name, 'condition'] = expr
                 warnings = warnings + [name]
                 continue
-            df.loc[name] = [expr, (values <> 0).sum(), (values == 0).sum()]
+            df.loc[name] = [expr, (values != 0).sum(), (values == 0).sum()]
             if df.loc[name, "False"] > 0:
                 if name in not_critical:
                     warnings = warnings + [name]
@@ -93,7 +93,7 @@ class ExpressionModel(Model):
         if len(errors) > 0:
             logger.log_error("False values found in conditions: %s" % errors)        
             if not fault_tolerant:
-                raise ValueError, "QC resutls: Found problems with the data."
+                raise ValueError("QC resutls: Found problems with the data.")
         return df
 
     def compute_expression(self, attribute_name, fault_tolerant=False):
@@ -105,7 +105,7 @@ class ExpressionModel(Model):
             try:
                 func = getattr(self, attribute_name[0])
             except AttributeError:
-                print 'Method "%s" not found.' % (attribute_name[0])
+                print('Method "%s" not found.' % (attribute_name[0]))
             else:
                 return func(*attribute_name[1], fault_tolerant=fault_tolerant)            
             
@@ -119,7 +119,7 @@ class ExpressionModel(Model):
             raise
         try:
             return ds.compute_variables([var_name], dataset_pool=self.dataset_pool)
-        except (LookupError, FileNotFoundError, StandardError):
+        except (LookupError, FileNotFoundError, Exception):
             if fault_tolerant:
                 return np.zeros(ds.size(), dtype="bool8")
             raise
@@ -177,7 +177,7 @@ class TestExpressionModel(opus_unittest.OpusTestCase):
         storage.write_table(table_name='buildings', table_data=buildings_data) 
         storage.write_table(table_name='cities', table_data=cities_data) 
         dspool = DatasetPool(['urbansim_parcel', 'urbansim'], storage=storage)
-        res = ExpressionModel(dspool).run(which_default_expressions=range(5,11)+[13], fault_tolerant=True)
+        res = ExpressionModel(dspool).run(which_default_expressions=list(range(5,11))+[13], fault_tolerant=True)
         self.assertEqual(res.shape[0], 7) # 7 rows
         self.assertEqual(res.loc[10,"False"], 3) # 3 values of building.parcel_id are non-existing
         self.assertEqual(res.loc[6,"False"], 2) # 2 buildings in no parcel

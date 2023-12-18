@@ -13,7 +13,7 @@ from opus_core.store.csv_storage import csv_storage
 def opusRun(progressCB,logCB,config):
 
     tm_config = config['travel_model_configuration']
-    for key, val in tm_config.iteritems():
+    for key, val in tm_config.items():
         tm_config[str(key)] = str(val)
         
     opus_data_directory = tm_config['travel_data_dir']

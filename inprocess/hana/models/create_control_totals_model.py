@@ -15,7 +15,7 @@ class CreateControlTotalsModel(Model):
         existing_ct = dataset_pool.get_dataset(dataset_name, dataset_arguments={"id_name": []})
         ctstorage = StorageFactory().get_storage(storage_type, storage_location = ct_directory)
         if sample_range is not None:
-            rn = sample(range(sample_range[0], sample_range[1]), 1)[0]
+            rn = sample(list(range(sample_range[0], sample_range[1])), 1)[0]
         else:
             rn = ''
         in_table_name = "%s%s" % (in_table_prefix, rn)

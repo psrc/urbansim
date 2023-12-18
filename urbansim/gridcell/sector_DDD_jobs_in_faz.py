@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import arange, array
 
 class sector_DDD_jobs_in_faz(Variable):
@@ -25,7 +25,7 @@ class sector_DDD_jobs_in_faz(Variable):
     def compute(self, dataset_pool):
         fazes = dataset_pool.get_dataset('faz')
         gc_fazes = self.get_dataset().get_attribute(self.gc_faz_id)
-        values = map(lambda x: fazes.get_attribute_by_id(self.number_of_jobs_of_sector, [x])[0], gc_fazes)
+        values = [fazes.get_attribute_by_id(self.number_of_jobs_of_sector, [x])[0] for x in gc_fazes]
         return array(values)
         
 

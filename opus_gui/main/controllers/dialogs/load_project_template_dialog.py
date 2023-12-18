@@ -61,7 +61,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             if selected_item is None:
                 self._show_error('Please select a template to load')
                 return False
-            if selected_item.text() in self._builtin_templates.keys():
+            if selected_item.text() in list(self._builtin_templates.keys()):
                 return self._builtin_templates[str(selected_item.text())]
             else:
                 self._show_error('Something unexpected happened.<br/>Could not find the selected builtin template')
@@ -76,7 +76,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             try:
                 file = open(filename, 'r')
                 return filename
-            except Exception, e:
+            except Exception as e:
                 self._show_error('Could not load the custom project template.<br/>' + 
                                  'Please revise the entered filename.<br/>' + 
                                  'The error was:<br/><strong>' + str(e) + '</strong>')
@@ -94,7 +94,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             if flag is not True:
                 raise Exception(message)
             return project
-        except Exception, ex:
+        except Exception as ex:
             self._show_error('There was a problem loading the specified project template<br/>' + 
                              'The error was:<br/>'+
                              '<strong>' + str(ex) + '</strong>')

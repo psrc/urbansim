@@ -106,7 +106,7 @@ class Visualization(object):
             for key in primary_keys:                    
                 id_subset[key] = table_data[key]
                 
-            num_rows = len(id_subset[id_subset.keys()[0]])
+            num_rows = len(id_subset[list(id_subset.keys())[0]])
 
             for row in range(num_rows):
                 key = tuple([id_subset[key][row] for key in primary_keys])
@@ -116,9 +116,9 @@ class Visualization(object):
             id_subsets[year] = id_subset
         
         key_set = set([])        
-        for id_subset in id_subsets.values():
+        for id_subset in list(id_subsets.values()):
             new_keys = [id_subset[key] for key in primary_keys]
-            key_set.update(zip(*new_keys))
+            key_set.update(list(zip(*new_keys)))
 
         keys = sorted(list(key_set))
         new_key_to_index_map = dict([(keys[i],i) for i in range(len(keys))])
@@ -130,7 +130,7 @@ class Visualization(object):
         for key in primary_keys:
             new_data[key] = array(default_array)
 
-        for col_names in attribute_data.values():
+        for col_names in list(attribute_data.values()):
             for col_name in col_names:
                 dtype = col_names[col_name].dtype.type
                 new_data[col_name] = array(default_array, dtype = dtype)
@@ -139,7 +139,7 @@ class Visualization(object):
             key = keys[i]
             
             index_in_new = new_key_to_index_map[key]
-            for year, col_names in attribute_data.items():
+            for year, col_names in list(attribute_data.items()):
                 if key in old_key_to_index_map[year]:
                     index_in_old = old_key_to_index_map[year][key]
                     for col_name in col_names:
@@ -171,7 +171,7 @@ class Visualization(object):
                                                 for year in years]
             
         per_attribute_data = {}
-        for name, cols in col_name_attribute_map.items():
+        for name, cols in list(col_name_attribute_map.items()):
             data_subset = dict([(col, new_data[col]) for col in primary_keys+cols])
             per_attribute_data[name] = data_subset
             
@@ -316,8 +316,8 @@ class Tests(AbstractIndicatorTest):
             primary_keys = ['id','id2'], 
             years = [2000,2002])
                 
-        self.assertEqual(len(expected.keys()), len(output.keys()))
-        for k,v in expected.items():
+        self.assertEqual(len(list(expected.keys())), len(list(output.keys())))
+        for k,v in list(expected.items()):
             self.assertEqual(list(v), list(output[k]))    
 if __name__ == '__main__':
     opus_unittest.main()

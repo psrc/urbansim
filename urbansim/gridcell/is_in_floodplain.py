@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_in_floodplain(Variable):
     """Returns a boolean indicating if the gridcell is in a floodplain area"""

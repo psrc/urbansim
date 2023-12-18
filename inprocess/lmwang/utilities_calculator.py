@@ -60,7 +60,7 @@ if __name__ == "__main__":
     choice_set_name = options.choice_set_name
     cache_directory = options.cache_directory
     base_year = options.base_year
-    years = range(base_year, options.year+1)
+    years = list(range(base_year, options.year+1))
 
     test_settings = {
                  'hlcm':{'specification_table':'household_location_choice_model_specification',
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     try:
         agent_set_name = test_settings[model]['agent_set_name']
     except:
-        raise UnImplmentedError, "utilties caculation for %s hasn't been implemented." % model
+        raise UnImplmentedError("utilties caculation for %s hasn't been implemented." % model)
 
     file_name_root = os.path.join(cache_directory, 'diagnostic_data')
 

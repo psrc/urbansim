@@ -4,7 +4,7 @@
 
 from numpy import array, where, minimum
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class generalized_cost_hbw_am_drive_alone_to_bellevue_cbd(Variable):
     """Generalized cost for travel to the Bellevue CBD. It is the minimum of costs for travels to zones that have bellevue_cbd=1.

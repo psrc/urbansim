@@ -64,7 +64,7 @@ class RunModelThread(QThread):
             self.run_name = run_name
         
     def progressCallback(self,percent):
-        print "Ping From Model"
+        print("Ping From Model")
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
 
     def startedCallback(self, run_id, run_name, scenario_name, run_resources, status):
@@ -84,7 +84,7 @@ class RunModelThread(QThread):
         
     def finishedCallback(self, success, run_name):
         if success:
-            print "Success returned from Model"
+            print("Success returned from Model")
 
             if self.modelguielement.model.cancelled:
                 self.modelguielement.model.run_manager.cancel_run()
@@ -92,7 +92,7 @@ class RunModelThread(QThread):
                 if self.batch_name is not None:
                     self.runIndicatorBatch()
         else:
-            print "Error returned from Model"
+            print("Error returned from Model")
 
         sync_available_runs(self.project)
         self.modelguielement.model.run_manager.close()
@@ -117,7 +117,7 @@ class RunModelThread(QThread):
         self.batch_processor.set_data(
             visualizations = visualizations,
             source_data_name = self.get_run_name(),
-            years = range(start, end + 1))
+            years = list(range(start, end + 1)))
 
         self.batch_processor.run()
 

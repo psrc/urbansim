@@ -33,9 +33,8 @@ class ln_home_access_to_population_income_DDD(Variable):
         
         # todo: make this better with numpy features, also don't 
         #       assume travel_data is in order
-        return map(lambda zone: (zone_set.get_attribute(self.population) * 
-                                    exp(td_attr_by_idx(self.logsum_hbw_am_income, where(from_zone_id == zone)))).sum(),
-                   zone_ids)
+        return [(zone_set.get_attribute(self.population) * 
+                                    exp(td_attr_by_idx(self.logsum_hbw_am_income, where(from_zone_id == zone)))).sum() for zone in zone_ids]
 
 
 from opus_core.tests import opus_unittest

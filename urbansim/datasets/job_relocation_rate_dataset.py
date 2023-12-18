@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from rate_dataset import RateDataset
+from .rate_dataset import RateDataset
 
 class JobRelocationRateDataset(RateDataset):
 
@@ -43,7 +43,7 @@ class Tests(StochasticTestCase):
 
     def BLOCK_test_get_rate(self):
         results = array([self.rate_set.get_rate(s) for s in self.sectors])
-        self.assert_(allclose(results, self.prob))
+        self.assertTrue(allclose(results, self.prob))
 
     def test_get_rate2(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -59,7 +59,7 @@ class Tests(StochasticTestCase):
         
         results = self.rate_set.get_rate(jobs)
         
-        self.assert_(allclose(results, self.prob))
+        self.assertTrue(allclose(results, self.prob))
         
     def test_sampling_rates(self):
         n = 100

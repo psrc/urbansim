@@ -161,7 +161,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                 return_dict[headers[col_index]].append(value)
         text_file.close()
         
-        for item, value in return_dict.iteritems():
+        for item, value in return_dict.items():
             try:
                 return_dict[item] = array(value)
             except:
@@ -184,7 +184,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
             is_valid_to_zone_id += data_dict["to_zone_id"] == id
         
         keep_indices = where(logical_and(is_valid_from_zone_id, is_valid_to_zone_id))
-        for name, values in data_dict.iteritems():
+        for name, values in data_dict.items():
             data_dict[name] = values[keep_indices]
         
         #convert from seq_taz to zone_id

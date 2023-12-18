@@ -130,7 +130,7 @@ class SimulationState(object):
         
         ### TODO: Probably get rid of this. Why is SimulationState creating directories???
         if delete_cache:
-            if SimulationState.__instance <> None:
+            if SimulationState.__instance != None:
                 self.remove_base_cache_directory()
                 
         SimulationState.__instance = None

@@ -32,7 +32,7 @@ class bma_for_linear_regression_r(EstimationProcedure):
         """
         r = robjects.r
         if data.ndim < 2:
-            raise StandardError, "Argument 'data' must be a 2D numpy array."
+            raise Exception("Argument 'data' must be a 2D numpy array.")
 
         nobs = data.shape[0]
         nvar = data.shape[1]

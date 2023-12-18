@@ -8,12 +8,12 @@ import networkx as NX
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 
-print "Program started at %s" % time.asctime()
+print("Program started at %s" % time.asctime())
 
 fh=open("C:/bhylee/GIS/Transit/IATBR06/03Network/psrc_edges_num.edgelist") # <<<< INPUT EDGELIST FILE
 G=NX.read_edgelist(fh,create_using=NX.XDiGraph(),edgetype=int)
 
-print "Done reading edgelist at %s" % time.asctime()
+print("Done reading edgelist at %s" % time.asctime())
 
 input_file = "C:/bhylee/GIS/Transit/IATBR06/03Network/psrc_o_d.txt" # <<<< INPUT ORIGIN/DESTINATION FILE
 input_file_dir, input_file_name = os.path.split(input_file)
@@ -37,13 +37,13 @@ columns = {}
 
 i = 0
 lines = in_fh.readlines()
-print "Done reading O/D at %s" % time.asctime()
-print "Number of O/D pairs is %s" % len(lines)
+print("Done reading O/D at %s" % time.asctime())
+print("Number of O/D pairs is %s" % len(lines))
 
 for line in lines:
 #for i in range(origs.size()):
     columns[first_col], columns[sec_col] = line.strip().split("\t")
-    print "O/D pair", i+1
+    print("O/D pair", i+1)
     i = i + 1
     try:
         result = NX.dijkstra_path_length(G, str(columns["orig"]), str(columns["dest"]))
@@ -54,4 +54,4 @@ for line in lines:
 
 in_fh.close()
 out_fh.close()
-print "Program completed at %s" % time.asctime()
+print("Program completed at %s" % time.asctime())

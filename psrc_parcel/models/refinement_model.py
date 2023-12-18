@@ -131,7 +131,7 @@ class RefinementModel(Model):
                             regions = agent_dataset[self.subarea_id_name].copy()
                             agent_dataset.delete_one_attribute(self.subarea_id_name)
                             agent_dataset.add_attribute(name=self.subarea_id_name, data=regions, metadata=1)
-                        if location_dataset.get_dataset_name() <> self.subarea_name and self.subarea_id_name in agent_dataset.get_primary_attribute_names():
+                        if location_dataset.get_dataset_name() != self.subarea_name and self.subarea_id_name in agent_dataset.get_primary_attribute_names():
                             agent_dataset.delete_one_attribute(self.subarea_id_name)
                         logger.end_block()
                     logger.start_block('Flushing agent set')
@@ -157,7 +157,7 @@ class RefinementModel(Model):
                         
             logger.end_block()
 
-        for key in self.processed_locations.keys():
+        for key in list(self.processed_locations.keys()):
             self.processed_locations[key] = unique(self.processed_locations[key])
         return self.processed_locations
             
@@ -293,7 +293,7 @@ class RefinementModel(Model):
                                               this_refinement.location_expression,
                                               dataset_pool)
         # get unplaced agents from that zone
-        if this_refinement.agent_expression <> '':
+        if this_refinement.agent_expression != '':
             agent_expr_unpl = '(%s) * ' % this_refinement.agent_expression
         else:
             agent_expr_unpl = ''
@@ -361,7 +361,7 @@ class RefinementModel(Model):
         # remove remaining agents from demolished buildings and update building_id
         if self.demolish_buildings:
             for synch_dataset_name in ['job', 'household']:
-                if synch_dataset_name <> agent_dataset.get_dataset_name():
+                if synch_dataset_name != agent_dataset.get_dataset_name():
                     synch_dataset = dataset_pool.get_dataset(synch_dataset_name)
                     idxb = where(in1d(synch_dataset['building_id'], bldgs.get_id_attribute()[bldgs_movers_index]))[0]
                     idx = idxb
@@ -374,14 +374,14 @@ class RefinementModel(Model):
                                            -1 * ones( idx.size, dtype='int32' ),
                                            index = idx)
                 logger.log_status("%s %ss unplaced (%s from demolished buildings)." % (idx.size, synch_dataset_name, idxb.size))
-                if synch_dataset_name <> agent_dataset.get_dataset_name():
+                if synch_dataset_name != agent_dataset.get_dataset_name():
                     synch_dataset.flush_dataset()
             bldgs.remove_elements(bldgs_movers_index)
             logger.log_status("%s buildings removed." % bldgs_movers_index.size)
         else:
             logger.log_status("%s %ss unplaced." % (movers_index.size, agent_dataset.get_dataset_name()))
                 
-        if location_dataset.get_id_name()[0] <> 'building_id':
+        if location_dataset.get_id_name()[0] != 'building_id':
             agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
                                        -1 * ones( movers_index.size, dtype='int32' ),
                                        index = movers_index
@@ -545,7 +545,7 @@ class RefinementModel(Model):
             new_agents_index = agent_dataset.duplicate_rows(agents_index_to_clone)
             self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=agents_index_to_clone)
             self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=new_agents_index)
-            if location_dataset.get_dataset_name() <> 'building':
+            if location_dataset.get_dataset_name() != 'building':
                 agent_dataset.modify_attribute( 'building_id',
                                             -1 * ones( new_agents_index.size, dtype='int32' ),
                                             new_agents_index

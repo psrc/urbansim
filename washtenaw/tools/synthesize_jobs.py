@@ -46,20 +46,20 @@ config = {
     
 job_configuration = Configuration(config)
 
-print "Beginning employment synthesis process."
+print("Beginning employment synthesis process.")
 
 before = time()
 try:
     SynthesizeJobs().synthesize_employment_data(config)
     
-except Exception, val:
+except Exception as val:
     after = time()
     delta = after-before
-    print "Employment synthesis failed after %s seconds." % round(delta, 2)
-    raise Exception, val
+    print("Employment synthesis failed after %s seconds." % round(delta, 2))
+    raise Exception(val)
     
 after = time()
 
 delta = after-before
 
-print "Employment synthesis complete in %s seconds." % round(delta, 2)
+print("Employment synthesis complete in %s seconds." % round(delta, 2))

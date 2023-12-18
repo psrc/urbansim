@@ -21,7 +21,7 @@ class mnl_probabilities(Probabilities):
         The return value is a 2D array (same shape as utilities).
         """
         if utilities.ndim < 2:
-            raise StandardError, "Argument 'utilities' must be a 2D numpy array."
+            raise Exception("Argument 'utilities' must be a 2D numpy array.")
 
         util_min = utilities.min()
         util_max = utilities.max()

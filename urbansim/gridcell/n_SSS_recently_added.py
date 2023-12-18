@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class n_SSS_recently_added(Variable):
 
@@ -124,7 +124,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([0,0,1,0])))
+        self.assertTrue(ma.allequal(values, array([0,0,1,0])))
 
     def test_recent_years_of_2(self):
         dataset_pool = self.prepare_dataset_pool(2)
@@ -133,7 +133,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([-1,0,2,1])))
+        self.assertTrue(ma.allequal(values, array([-1,0,2,1])))
 
 if __name__=='__main__':
     opus_unittest.main()

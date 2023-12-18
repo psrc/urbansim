@@ -32,11 +32,11 @@ class GeneralResources(dict):
         """
         def check_and_raise_exception(self, key):
             if not self.is_in(key):
-                raise StandardError, "Key '" + key + "' not contained in the resources."
+                raise Exception("Key '" + key + "' not contained in the resources.")
             if self[key] is None:
-                raise StandardError, "None value for key '" + key + "' not allowed."
+                raise Exception("None value for key '" + key + "' not allowed.")
             
-        map(lambda(x): check_and_raise_exception(self, x), keys)
+        list(map(lambda x: check_and_raise_exception(self, x), keys))
 
     def add(self, key, value):
         """Add a key-value pair into dictionary."""
@@ -45,7 +45,7 @@ class GeneralResources(dict):
     def remove(self, key):
         """Remove an entry 'key' from the dictionary.
         """ 
-        if self.has_key(key):
+        if key in self:
             del self[key]
         else:
             logger.log_warning("Key " + key + " not contained in the dictionary!",
@@ -54,7 +54,7 @@ class GeneralResources(dict):
     def is_in(self, key):
         """Return True if 'key' is in the dictionary, otherwise False. It is a synonym for 'has_key'.
         """ 
-        return self.has_key(key) 
+        return key in self 
         
     def is_None(self, key):
         """Return 1 if value of key is None, otherwise 0."""
@@ -66,7 +66,7 @@ class GeneralResources(dict):
         The updated Resources object is returned.
         """
         resources = self
-        for key in data.iterkeys():
+        for key in data.keys():
             if data[key] is not None:
                 resources.add(key, data[key])
         return resources
@@ -78,8 +78,8 @@ class GeneralResources(dict):
         The updated Resources object is returned.
         """
         resources = self
-        for key in data.iterkeys():
-            if (key not in self.keys()) and (data[key] is not None):
+        for key in data.keys():
+            if (key not in list(self.keys())) and (data[key] is not None):
                 resources.add(key, data[key])
         return resources
         

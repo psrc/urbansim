@@ -61,4 +61,4 @@ class Ui_UrbansimAbout(object):
         self.licensePushButton.setText(QtGui.QApplication.translate("UrbansimAbout", "License", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonCancel.setText(QtGui.QApplication.translate("UrbansimAbout", "Ok", None, QtGui.QApplication.UnicodeUTF8))
 
-import opusmain_rc
+from . import opusmain_rc

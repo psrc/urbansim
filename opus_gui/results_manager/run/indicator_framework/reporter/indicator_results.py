@@ -52,7 +52,7 @@ class IndicatorResults(object):
         
         #load previously computed indicators
         indicator_dirs = []
-        for i in indicators.values():
+        for i in list(indicators.values()):
                 #if i.write_to_file:
                 dir = i.storage_location
                 if not dir in indicator_dirs:
@@ -71,7 +71,7 @@ class IndicatorResults(object):
         unique_rows = dict([(' '.join(x), x) for x in rows])
         #rows_by_date_dict = dict([(x[4],x) for x in unique_rows.itervalues()])
         
-        sorted_rows = unique_rows.items()
+        sorted_rows = list(unique_rows.items())
         sorted_rows.sort(reverse = True)
         
         sorted_rows = [row[1] for row in sorted_rows]
@@ -161,7 +161,7 @@ class IndicatorResults(object):
            'Cache directory: ' : source_data.cache_directory,
            }
         
-        for title,value in config_fields.iteritems():
+        for title,value in config_fields.items():
             html.append('<b>%s</b>%s<br><br>\n'%(title,value))
         
         return ''.join(html)
@@ -365,8 +365,8 @@ class IndicatorResultsTests(TestWithAttributeData):
             
             for i in range(len(output)):
                 if output[i] != rows[i]:
-                    print output[i]
-                    print rows[i]
+                    print(output[i])
+                    print(rows[i])
             #print ''
             #for l in output: print l
             #for l in rows: print l

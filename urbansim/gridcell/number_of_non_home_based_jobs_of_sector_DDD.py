@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class number_of_non_home_based_jobs_of_sector_DDD(Variable):
     """Sum the number of non_home_based jobs for a given gridcell that are in the employment sector specified by DDD """

@@ -13,7 +13,7 @@ from opus_core.database_management.database_server import DatabaseServer
 
 def opusRun(progressCB,logCB,params):
     params_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         params_dict[str(key)] = str(val)
 
     database_name = params_dict['database_name']

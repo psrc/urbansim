@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import int32
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from opus_core.logger import logger
 
 try:
@@ -30,7 +30,7 @@ else:
             persons = self.get_dataset()
             homes = persons.get_attribute("home_parcel_id").astype(int32)
             workplaces = persons.get_attribute("work_place_parcel_id").astype(int32)
-            pairs = map(lambda x,y: (x, y), workplaces, homes)
+            pairs = list(map(lambda x,y: (x, y), workplaces, homes))
             results = edges.compute_dijkstra_path_length(pairs,
                                                          default_value=self.default_value)
 
@@ -96,7 +96,7 @@ else:
 
             values = [value[0] for value in values]
 
-            self.assert_(ma.allclose(values, should_be, rtol=1e-3),
+            self.assertTrue(ma.allclose(values, should_be, rtol=1e-3),
                 'Error in ' + self.variable_name)
 
 

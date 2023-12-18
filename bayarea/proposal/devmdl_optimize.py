@@ -7,8 +7,8 @@
 from scipy.optimize import *
 from numpy import array
 from opus_core.logger import logger
-from proforma import proforma
-from constants import *
+from .proforma import proforma
+from .constants import *
 import numpy
 import copy
 
@@ -29,7 +29,7 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
     X = params
 
     e = None
-    if DEBUG > 1: print "PARAMS", params
+    if DEBUG > 1: print("PARAMS", params)
 
     #d = proforma_inputs['proposal_component']
     if type(dataset_pool) == dict:
@@ -109,12 +109,12 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
     proposal['costdiscount'] = costdiscount
     proposal['construction_cost'] = cost 
     #print proposal['construction_cost']
-    if DEBUG: print "COST:", proposal['construction_cost']
+    if DEBUG: print("COST:", proposal['construction_cost'])
     #if DEBUG: print "COST:",proforma_inputs['proposal']['construction_cost']
 
-    if DEBUG > 1: print "SALES REVENUE", d['sales_revenue']
-    if DEBUG > 1: print d['rent_revenue']
-    if DEBUG > 1: print d['leases_revenue']
+    if DEBUG > 1: print("SALES REVENUE", d['sales_revenue'])
+    if DEBUG > 1: print(d['rent_revenue'])
+    if DEBUG > 1: print(d['leases_revenue'])
     #if DEBUG > 1: print d['sales_absorption']
     #if DEBUG > 1: print d['rent_absorption']
     #if DEBUG > 1: print d['leases_absorption']
@@ -127,7 +127,7 @@ def _objfunc2(params,bform,btype,prices,costdiscount,dataset_pool,baveexcel=0,ex
     #npv = proposal.compute_variables('urbansim_parcel.proposal.proforma', 
     #                                 dataset_pool=dataset_pool)
  
-    if DEBUG > 1: print "NPV=", npv, "\n\n"
+    if DEBUG > 1: print("NPV=", npv, "\n\n")
     return -1*npv/100000.0
 
 #cost discount should be .01 for 1% discount
@@ -181,7 +181,7 @@ def optimize(bform,prices,costdiscount,dataset_pool):
     #r = fmin_l_bfgs_b(_objfunc,x0,approx_grad=1,bounds=bounds,epsilon=1.0,factr=1e16)
     if 0: #DEBUG:
         r = fmin_slsqp(_objfunc,x0,f_ieqcons=ieqcons,iprint=0,full_output=1,epsilon=1,args=[btype,prices,dataset_pool],iter=150,acc=.01)
-        print r
+        print(r)
         #r2[0] = numpy.round(r2[0], decimals=1)
         #r2[1] = _objfunc(r2[0],btype)
    
@@ -193,12 +193,12 @@ def optimize(bform,prices,costdiscount,dataset_pool):
     logger.log_status("r1: %s" % (r[1]))
     #if DEBUG > 0: print r
     #print r
-    if r[3] <> 0: return r[0], -1
+    if r[3] != 0: return r[0], -1
     r[0] = numpy.round(r[0], decimals=1)
     r[1] = _objfunc2(r[0],bform,btype,prices,costdiscount,dataset_pool)
     if 0: #DEBUG: 
-        print r2
-        print r
+        print(r2)
+        print(r)
         numpy.testing.assert_approx_equal(r2[1],r[1],significant=1)
     r[1] *= -1*100000
 

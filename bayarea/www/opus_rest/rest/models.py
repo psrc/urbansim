@@ -20,7 +20,7 @@ class ComputedIndicators(models.Model):
     date_time = models.DateTimeField(null=True, blank=True)
     project_name = models.TextField(blank=True)
     class Meta:
-        db_table = u'computed_indicators'
+        db_table = 'computed_indicators'
 
 class RunActivity(models.Model):
     run_id = models.IntegerField(primary_key=True)
@@ -34,5 +34,5 @@ class RunActivity(models.Model):
     resources = models.TextField(blank=True)
     project_name = models.TextField(blank=True)
     class Meta:
-        db_table = u'run_activity'
+        db_table = 'run_activity'
 

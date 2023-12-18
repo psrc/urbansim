@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import StringIO
+import io
 from lxml import etree
 from lxml.etree import Element
 
@@ -120,7 +120,7 @@ class XmlController_Scenarios(XmlController):
         assert self.has_selected_item()
         item = self.selected_item()
         node = item.node
-        self.model.add_node(node, etree.parse(StringIO.StringIO('<models_to_run config_name="models" type="selectable_list"/>')).getroot())
+        self.model.add_node(node, etree.parse(io.StringIO('<models_to_run config_name="models" type="selectable_list"/>')).getroot())
         self.project.dirty = True
                         
     def addModel(self, models_to_run_list_index, model_name):

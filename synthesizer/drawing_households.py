@@ -99,7 +99,7 @@ def drawing_housing_units(db, frequencies, weights, index_matrix, sp_matrix, pum
     for i in index_matrix[:hh_colno,:]:
         if i[1] == i[2] and frequencies[j]>0:
             synthetic_population.append([sp_matrix[i[1]-1, 2] + 1, frequencies[j], i[0]])
-            print 'hhid single',sp_matrix[i[1]-1, 2]
+            print('hhid single',sp_matrix[i[1]-1, 2])
         else:
             cumulative_weights = weights[sp_matrix[i[1]-1:i[2], 2]].cumsum()
             probability_distribution = cumulative_weights / cumulative_weights[-1]
@@ -111,7 +111,7 @@ def drawing_housing_units(db, frequencies, weights, index_matrix, sp_matrix, pum
             hhldid_by_type = sp_matrix[i[1]-1:i[2],2] 
 
             for k in range(len(freq)):
-                if freq[k]<>0:
+                if freq[k]!=0:
                     synthetic_population.append([hhldid_by_type[k] + 1, freq[k], i[0]])
         j = j + 1
 

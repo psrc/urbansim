@@ -15,7 +15,7 @@ def combine_tables(xml_config_address):
     table_list = xmldoc.getElementsByTagName('table')
     
     if len(table_list) > 3 :
-        print "ERROR: To many tables in the configuration file."
+        print("ERROR: To many tables in the configuration file.")
         return 1
     else :
         #Initializing table variables
@@ -51,7 +51,7 @@ def combine_tables(xml_config_address):
         for element in table_list :
             type = element.attributes["type"].value
             if type == "new" :
-                print "Creating new table"
+                print("Creating new table")
                 #Replace the table if one already exists
                 db = create_engine(db_url)
                 metadata = MetaData(db)
@@ -102,7 +102,7 @@ def combine_tables(xml_config_address):
                 new_table.create()   
                    
                 #Adding rows to the new table
-                print "Starting join process"
+                print("Starting join process")
                 count = 0
                 current_rows = []
                 
@@ -124,9 +124,9 @@ def combine_tables(xml_config_address):
                     index += 1
                       
                     if index % 1000 == 0 :
-                        print "Indexing Spatial rows: ", index
+                        print("Indexing Spatial rows: ", index)
                         
-                print len(spatial_rows)
+                print(len(spatial_rows))
                     
                 for j_row in joined_t.select().execute() :                        
                             
@@ -148,7 +148,7 @@ def combine_tables(xml_config_address):
                     if len(current_rows) == NUM_ROWS_ADDED:
                         new_table.insert().execute(current_rows)
                         current_rows = []
-                        print "Number of rows added: ", count
+                        print("Number of rows added: ", count)
 
                 new_table.insert().execute(current_rows)
                         

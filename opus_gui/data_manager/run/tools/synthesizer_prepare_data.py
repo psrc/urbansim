@@ -18,7 +18,7 @@ from opus_core.database_management.opus_database import OpusDatabase
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
     
     database_server_connection = param_dict['database_server_connection']
@@ -49,7 +49,7 @@ def opusRun(progressCB,logCB,params):
     gq_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'gq', gq_control_variables))
     person_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'person', person_control_variables))
         
-    print 'Dimensions and Control Variables created in %.4f' %(time.clock()-ti)
+    print('Dimensions and Control Variables created in %.4f' %(time.clock()-ti))
     ti = time.clock()
     
     update_string = adjusting_pums_joint_distribution.create_update_string(db, hhld_control_variables, hhld_dimensions)
@@ -59,23 +59,23 @@ def opusRun(progressCB,logCB,params):
     update_string = adjusting_pums_joint_distribution.create_update_string(db, person_control_variables, person_dimensions)
     adjusting_pums_joint_distribution.add_unique_id(db, 'person', update_string)
     
-    print 'Uniqueid\'s created in %.4f' %(time.clock()-ti)
+    print('Uniqueid\'s created in %.4f' %(time.clock()-ti))
     ti = time.clock()
     
     # Populating the Master Matrix
     populated_matrix = psuedo_sparse_matrix.populate_master_matrix(db, 0, housing_units, hhld_dimensions, 
                                                                                                gq_dimensions, person_dimensions)
-    print 'Frequency Matrix Populated in %.4f' %(time.clock()-ti)
+    print('Frequency Matrix Populated in %.4f' %(time.clock()-ti))
     ti = time.clock()
 
     # Sparse representation of the Master Matrix    
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 0)
-    print 'Psuedo Sparse Representation of the Frequency Matrix created in %.4f' %(time.clock()-ti)
+    print('Psuedo Sparse Representation of the Frequency Matrix created in %.4f' %(time.clock()-ti))
     ti = time.clock()
     #______________________________________________________________________
     #Creating Index Matrix
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 0)
-    print 'Index matrix created in %.4f' %(time.clock()-ti)
+    print('Index matrix created in %.4f' %(time.clock()-ti))
     ti = time.clock()
     dbc.close()
     #______________________________________________________________________

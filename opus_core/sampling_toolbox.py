@@ -29,7 +29,7 @@ def sample_noreplace(source_array, size, return_index=False, try_replace=True):
         try:
             source_array = asarray(source_array)
         except:
-            raise TypeError, "source_array must be of type ndarray"
+            raise TypeError("source_array must be of type ndarray")
     
     n = source_array.size
     if n == 0:
@@ -50,13 +50,13 @@ def probsample_replace(source_array, size, prob_array, return_index=False):
         try:
             source_array = asarray(source_array)
         except:
-            raise TypeError, "source_array must be of type ndarray"
+            raise TypeError("source_array must be of type ndarray")
 
     if prob_array is None:
         return sample_replace(source_array,size, return_index=return_index)
 
     if prob_array.sum() == 0:
-        raise ValueError, "there aren't non-zero weights in prob_array"
+        raise ValueError("there aren't non-zero weights in prob_array")
 
     cum_prob = cumsum(prob_array, dtype='float64')
 
@@ -114,7 +114,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
         
         nzc = nonzerocounts(prob_array2)
         if nzc == 0:
-            raise ValueError, "The weight array contains no non-zero elements. Check the weight used for sampling."
+            raise ValueError("The weight array contains no non-zero elements. Check the weight used for sampling.")
         if nzc < sample_size:
             if try_replace:
                 logger.log_warning("The weight array contains %s non-zero elements, less than the sample_size %s. Use probsample_replace. " %
@@ -244,7 +244,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
         prob_array = ones(source_array_size)
 
     if not (isinstance(prob_array, ndarray) or is_masked_array(prob_array)):
-        raise TypeError, "prob_array must be of type ndarray"
+        raise TypeError("prob_array must be of type ndarray")
 
 #    prob_array_size = nonzerocounts(prob_array)
 #    if prob_array_size <= columns:
@@ -271,9 +271,9 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
                 try:
                     exclude_index = asarray(exclude_index)
                 except:
-                    raise TypeError, "exclude_index must be of type ndarray"
-            if exclude_index.shape[0] <> rows:
-                raise ValueError, "exclude_index should have the same number of rows as sample_size[0]"
+                    raise TypeError("exclude_index must be of type ndarray")
+            if exclude_index.shape[0] != rows:
+                raise ValueError("exclude_index should have the same number of rows as sample_size[0]")
             if exclude_index.ndim == 1:
                 exclude_index = exclude_index[:, newaxis]
             #sampled_choiceset_index = concatenate((exclude_index,sampled_choiceset_index),axis=1)
@@ -325,14 +325,14 @@ def sample_choice(prob_array, method="MC"):
     method - the method used to sample choice, either MC (Monte Carlo) or max_prob
     """
 
-    if prob_array.ndim <> 2:
-        raise RuntimeError, "prob_array must be a 2d array"
+    if prob_array.ndim != 2:
+        raise RuntimeError("prob_array must be a 2d array")
 
     rows, columns = prob_array.shape
     sum_prob_by_col = sum(prob_array, axis=1, dtype=float64)
     if not ma.allclose(sum_prob_by_col, ones((rows,))):
         strange_rows = where(sum_prob_by_col != ones((rows,)))
-        raise RuntimeError, "prob_array must add up to 1 for each row. Abnormal rows: %s" % prob_array[strange_rows,:] 
+        raise RuntimeError("prob_array must add up to 1 for each row. Abnormal rows: %s" % prob_array[strange_rows,:]) 
     
 
     if method.lower() == "mc":
@@ -346,8 +346,8 @@ def sample_choice(prob_array, method="MC"):
     elif method.lower() == "max_prob":
         choices = argmax(prob_array)
 
-    if choices.size <> rows:
-        raise RuntimeError, "having problems sample choice"
+    if choices.size != rows:
+        raise RuntimeError("having problems sample choice")
 
     return (arange(rows), choices)
 
@@ -359,7 +359,7 @@ def find_duplicates(source_array):
 
     if not isinstance(source_array, ndarray):
         source_array = asarray(source_array)
-    if source_array.ndim <> 1:
+    if source_array.ndim != 1:
         source_array = source_array.ravel()
     array_size = source_array.size
     allsum = zeros(array_size, dtype="int32")
@@ -381,8 +381,8 @@ def find_duplicates_others(source_array, other_array):
     if other_array is None or len(other_array) == 0:
         return zeros(source_array.shape, dtype="int32")
 
-    if other_array.shape[0] <> source_array.shape[0]:
-        raise ValueError, "Arrays have incompatible shapes"
+    if other_array.shape[0] != source_array.shape[0]:
+        raise ValueError("Arrays have incompatible shapes")
     source_array_rank = source_array.ndim
     if source_array_rank < other_array.ndim:
         src_array = source_array[:, newaxis]
@@ -414,10 +414,10 @@ def normalize(weight_array):
 
     lt0_index = weight_array < 0
     if lt0_index.sum() > 0:
-        raise ValueError, "some values of rows %s in weight_array are less than 0" % where(lt0_index)[0]
+        raise ValueError("some values of rows %s in weight_array are less than 0" % where(lt0_index)[0])
 
     if d > 2:
-        raise ValueError, "Can't handle a weight_array with more than 2d"
+        raise ValueError("Can't handle a weight_array with more than 2d")
     elif d == 2:
         weight_array_sum = sum(weight_array, axis=1, dtype=float32)[:, newaxis]
         zero_index = weight_array_sum<=0
@@ -434,7 +434,7 @@ def normalize(weight_array):
             logger.log_warning("weight_array sums to 0 or less")
             prob_array = weight_array * 0
     else:
-        raise ValueError, "Can't handle this weight_array"
+        raise ValueError("Can't handle this weight_array")
 
     return prob_array
 

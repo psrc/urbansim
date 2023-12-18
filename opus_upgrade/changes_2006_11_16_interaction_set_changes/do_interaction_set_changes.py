@@ -7,7 +7,7 @@ import re
 import sys
 
 from optparse import OptionParser
-from classes.db_sub_pattern import DBSubPattern
+from .classes.db_sub_pattern import DBSubPattern
 
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
@@ -83,12 +83,12 @@ def main():
         )
         
     if len(options.databases) > 1:
-        print "Converting databases on host %s..." % options.host
+        print("Converting databases on host %s..." % options.host)
         DBSubPattern().convert_databases(db_config, options.databases, table_list, patterns, options.backup, options.postfix)
-        print "Done."
+        print("Done.")
         
     elif len(options.tables) > 1:
-        print "Converting tables in database %s on host %s" % (options.databases[0], options.host)
+        print("Converting tables in database %s on host %s" % (options.databases[0], options.host))
         dbconfig = DatabaseServerConfiguration(
             protocol = 'mysql',
             host_name = db_config.host_name,
@@ -99,10 +99,10 @@ def main():
         db = db_server.get_database(options.databases[0])
         
         DBSubPattern().convert_database(db, options.tables, patterns, options.backup, options.postfix)
-        print "Done."
+        print("Done.")
     
     else:
-        print "Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host)
+        print("Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host))
 
         dbconfig = DatabaseServerConfiguration(
             host_name = db_config.host_name,
@@ -114,7 +114,7 @@ def main():
         db = db_server.get_database(options.databases[0])
         
         DBSubPattern().convert_table(db, options.tables[0], patterns, options.backup, options.postfix)
-        print "Done."
+        print("Done.")
 
     
 if __name__ == "__main__":

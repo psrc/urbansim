@@ -10,6 +10,7 @@ from scipy.ndimage import correlate
 from opus_core.variables.variable import Variable
 
 from biocomplexity.land_cover.variable_functions import my_attribute_label
+from functools import reduce
 
 class SSSai(Variable):
     """Landscape Metric Computed Variables
@@ -88,7 +89,7 @@ class SSSai(Variable):
             raise RuntimeError("Sorry. Variable biocomplexity.land_cover.SSSai was unable to meaningfully" + \
                                " translate characters SSS for variable instantiation %sai." % self.covertype_symbol)
 
-        return map(lambda key: lookup_dict[key], covertypes_of_interest)
+        return [lookup_dict[key] for key in covertypes_of_interest]
 
 
 from numpy import array
@@ -131,7 +132,7 @@ class Tests(ExpectedDataTest):
 
         should_be = arcsin(sqrt(array([0.25, 0, 0.25, 0])))
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def test_my_inputs_convert(self):
@@ -166,7 +167,7 @@ class Tests(ExpectedDataTest):
 
         should_be = arcsin(sqrt(array([0.25, 0, 0.25, 0])))
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def atest_on_expected_data(self):

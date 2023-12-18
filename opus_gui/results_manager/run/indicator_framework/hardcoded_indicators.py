@@ -53,7 +53,7 @@ def go():
     for item in maps:
         vistype = 'mapnik_map' # default to map
         if type(item) == type(()): item, vistype = item
-        print "Generating indicator %s" % item
+        print("Generating indicator %s" % item)
         
         visualizations += visualizer.visualize(
             indicators_to_visualize = [item], # override default indicators to visualize (all)
@@ -61,9 +61,9 @@ def go():
             visualization_type = vistype,
             name = item)
     
-    print "Done generating indicators."
+    print("Done generating indicators.")
 
     return dict((v.name,v.get_file_path()) for v in visualizations)
 
 if __name__ == '__main__':
-    print go()
+    print(go())

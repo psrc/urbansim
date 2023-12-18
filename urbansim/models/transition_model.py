@@ -231,7 +231,7 @@ class TransitionModel(Model):
         ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
 
         if target_attribute_name not in ct_known_attributes:
-            raise AttributeError, "Target attribute %s must be an attribute of control_total dataset" % target_attribute_name
+            raise AttributeError("Target attribute %s must be an attribute of control_total dataset" % target_attribute_name)
         
         if id_name not in ct_known_attributes:
             self.control_totals_all.add_attribute(name=id_name,
@@ -311,7 +311,7 @@ class TransitionModel(Model):
             else:
                 error_msg = "Unknown sampling_threshold type; it must be of int, float, or str."
                 logger.log_error(error_msg)
-                raise TypeError, error_msg
+                raise TypeError(error_msg)
         
         ## handle sampling_threshold and/or sampling_hierarchy specified in control_totals table
         threshold_ct = None; hierarchy_ct = None
@@ -503,8 +503,8 @@ class TransitionModel(Model):
                         h = hierarchy_this[0]
                         k = asscalar(self.control_totals[h][index])
                         
-                        if reset_hierarchy_value.has_key(h):
-                            if reset_hierarchy_value[h].has_key(k):
+                        if h in reset_hierarchy_value:
+                            if k in reset_hierarchy_value[h]:
                                 #concatenate
                                 reset_hierarchy_value[h][k] = \
                                     concatenate((reset_hierarchy_value[h][k], 
@@ -568,8 +568,8 @@ class TransitionModel(Model):
                                  reset_attribute_dict = reset_dataset_attribute_value, 
                                  index=index_updated)
             #reset hierarchy value
-            for h, k in reset_hierarchy_value.items():
-                for v, idx in k.items():
+            for h, k in list(reset_hierarchy_value.items()):
+                for v, idx in list(k.items()):
                     self._reset_attribute(self.dataset, 
                                           reset_attribute_dict={h:v},
                                           index=index_updated[idx])
@@ -764,7 +764,7 @@ class TransitionModel(Model):
         """
         if not reset_attribute_dict: return
         known_attribute_names = dataset.get_known_attribute_names()
-        for key, value in reset_attribute_dict.items():
+        for key, value in list(reset_attribute_dict.items()):
             if key in known_attribute_names:
                 data_size = index.size if index is not None else dataset.size()
                 data = resize(value, data_size)
@@ -825,7 +825,7 @@ class Tests(opus_unittest.OpusTestCase):
             "person_id":arange(total_persons)+1,
             "household_id": array( list(itertools.chain.from_iterable([[i] * p for i,p in zip(self.households_data['household_id'], self.households_data['persons'])])) ),
             ## head of the household is the oldest
-            "age": array( list(itertools.chain.from_iterable([range(a, a-p*2, -2) for a,p in zip(self.households_data['age_of_head'], self.households_data['persons'])])) ),
+            "age": array( list(itertools.chain.from_iterable([list(range(a, a-p*2, -2)) for a,p in zip(self.households_data['age_of_head'], self.households_data['persons'])])) ),
             "job_id": zeros(total_persons)
             }
 
@@ -1136,7 +1136,7 @@ class Tests(opus_unittest.OpusTestCase):
         results = histogram(hh_set['mpa_id'], [1,2,3,4,4])[0]
         #self.assertEqual(results.sum(), array([12000, 8000, 15000, 15000]).sum())
         #self.assertEqual(results.sum(), array([10000, 10000, 15000, 15000]).sum())
-        print results
+        print(results)
         #self.assertArraysEqual(results, array([12000, 8000, 15000, 15000]))
         self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
         
@@ -1220,7 +1220,7 @@ class Tests(opus_unittest.OpusTestCase):
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model._code_control_total_id(['age_of_head_min', 'age_of_head_max'])
 
-        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 3, 4])))
+        self.assertTrue(all(ismember(hh_set['control_total_id'], [-1, 3, 4])))
         dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
                                    datasets_dict={'household':hh_set})
         hct_set.compute_variables('households=control_total.number_of_agents(household)', 
@@ -1228,7 +1228,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))
         
         model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'persons'])
-        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        self.assertTrue(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
         hct_set.compute_variables('households=control_total.number_of_agents(household)', 
                                  dataset_pool=dataset_pool)
         self.assertArraysEqual(hct_set['households'], array([5000, 3000, 0, 6000]))
@@ -1242,13 +1242,13 @@ class Tests(opus_unittest.OpusTestCase):
         model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'person_ge2'], 
                                      control_total_index=[2], 
                                      dataset_pool=dataset_pool)
-        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        self.assertTrue(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
         hct_set.compute_variables('households=control_total.number_of_agents(household)', 
                                  dataset_pool=dataset_pool)
         self.assertArraysEqual(hct_set['households'], array([5000, 3000, 13000, 6000]))        
 
         model._code_control_total_id(['age_of_head_min', 'age_of_head_max'])
-        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        self.assertTrue(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
         hct_set.compute_variables('households=control_total.number_of_agents(household)', 
                                  dataset_pool=dataset_pool)
         self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))
@@ -1256,7 +1256,7 @@ class Tests(opus_unittest.OpusTestCase):
         model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'person_ge2'], 
                                      control_total_index=[3],
                                      dataset_pool=dataset_pool)
-        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        self.assertTrue(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
         hct_set.compute_variables('households=control_total.number_of_agents(household)', 
                                  dataset_pool=dataset_pool)
         self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))

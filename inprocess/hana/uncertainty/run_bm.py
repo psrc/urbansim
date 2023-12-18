@@ -153,22 +153,22 @@ if __name__ == "__main__":
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     
     weights = bm.compute_weights()
-    print weights
+    print(weights)
     
-    variable_list = map(lambda x: x.get_alias(), bm.observed_data.get_variable_names())
+    variable_list = [x.get_alias() for x in bm.observed_data.get_variable_names()]
     n = len(variable_list)
     for index in range(n):
         name = variable_list[index]
-        print name
-        print "variance: ", bm.get_variance()[index]
-        print "variance mean: ", bm.get_variance()[index].mean(), " sd: ", sqrt(bm.get_variance()[index].var())
-        print "bias:", bm.get_bias()[index] 
-        print "weight components: ", bm.get_weight_components()[index]
+        print(name)
+        print("variance: ", bm.get_variance()[index])
+        print("variance mean: ", bm.get_variance()[index].mean(), " sd: ", sqrt(bm.get_variance()[index].var()))
+        print("bias:", bm.get_bias()[index]) 
+        print("weight components: ", bm.get_weight_components()[index])
     
     from numpy import argsort
     w = bm.get_weights()
     maxiall = argsort(w)[-1]
-    print "all weights: max = %s, index = %s" % (w[maxiall], maxiall)
+    print("all weights: max = %s, index = %s" % (w[maxiall], maxiall))
 #    maxi3all = argsort(w)[range(-1,-4,-1)]
 #    miniall =  argsort(w)[0]
 #    for index in range(n):
@@ -214,7 +214,7 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
     idcolname = {'zone': 'zone_id', 'faz': 'faz_id', 'large_area': 'large_area_id', 'city': 'city_id', 'tract10': 'tract10_id', 
                  'reggeo': 'reggeo_id', 'census_block_group': 'census_block_group_id'}
     header = {}
-    for g in idcolname.keys():
+    for g in list(idcolname.keys()):
         header[g] = array([idcolname[g]] + header_base)[newaxis,:]
     if aggregate_to is not None:
         header[validation_geography] = header[aggregate_to]
@@ -263,7 +263,7 @@ def export_quantiles(bm, outdir, years=[2010, 2040], repl=10000, validation_year
                     addpropbias = not bias
                     #bmf = deepcopy(bm)
                     
-                    for indicator in vars.keys():                        
+                    for indicator in list(vars.keys()):                        
                         if aggregate_to is None:
                             exact = True # calibration geography is the same as simulation target
                             bm.set_posterior(year=year, quantity_of_interest=vars[indicator][validation_geography], 

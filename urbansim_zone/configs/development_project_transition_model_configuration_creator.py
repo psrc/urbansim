@@ -33,10 +33,10 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
         if (vacancy_variables is not None) or (total_units_variables is not None):
             self.run_config = "{"
             if vacancy_variables is not None:
-                for key, value in vacancy_variables.iteritems():
+                for key, value in vacancy_variables.items():
                     self.run_config += "'%s_vacant_variable': '%s'," % (key, value)
             if total_units_variables is not None:
-                for key, value in total_units_variables.iteritems():
+                for key, value in total_units_variables.items():
                     self.run_config += "'%s_total_units_variable': '%s'," % (key, value)
             self.run_config += "}"
         

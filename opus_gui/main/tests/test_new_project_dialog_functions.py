@@ -23,7 +23,7 @@ class TestNewProjectDialogFunctions(opus_unittest.OpusTestCase):
         p = OpusProject()
         ok, msg = p.open(fn)
         if not ok:
-            print msg
+            print(msg)
         self.assertTrue(p.is_open(), 'Project file could not be opened')
         return p
 
@@ -54,12 +54,12 @@ class TestNewProjectDialogFunctions(opus_unittest.OpusTestCase):
         merge_templated_nodes_with_project(templated_nodes, new_project)
 
         # validate that the expected nodes are in the new project
-        self.assert_(new_project.find('single_level') is not None)
-        self.assert_(new_project.find('multi_level_1/multi_level_2/multi_level_3') is not None)
+        self.assertTrue(new_project.find('single_level') is not None)
+        self.assertTrue(new_project.find('multi_level_1/multi_level_2/multi_level_3') is not None)
         
         # check that the parent nodes that should have been left in the parent are left there
-        self.assert_(new_project.find('multi_level_1/multi_level_2/multi_level_3/multi_level_4') is None)
-        self.assert_(new_project.find('parent_exclusive') is None)
+        self.assertTrue(new_project.find('multi_level_1/multi_level_2/multi_level_3/multi_level_4') is None)
+        self.assertTrue(new_project.find('parent_exclusive') is None)
         
         # check that the values have been overwritten by our modified values
         self.assertEqual(new_project.find('single_level').text, customized_value)

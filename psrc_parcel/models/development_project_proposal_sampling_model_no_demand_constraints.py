@@ -31,7 +31,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
         this_year_index = where(target_vacancy['year']==year)[0]
         target_vacancy_for_this_year = DatasetSubset(target_vacancy, this_year_index)
         if target_vacancy_for_this_year.size() == 0:
-            raise IOError, 'No target vacancy defined for year %s.' % year
+            raise IOError('No target vacancy defined for year %s.' % year)
         self.all_btypes_size = target_vacancy_for_this_year.size()
         return DevelopmentProjectProposalSamplingModelWithMinimum.run(self, n=n, realestate_dataset_name=realestate_dataset_name,
                                                                       current_year=current_year, **kwargs)
@@ -63,7 +63,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
         names_index = ones(len(self.column_names), dtype='bool8')
         names_index[self.column_names_index['building_type_id']] = False
         arr_column_value = array(column_value)
-        for colvalue, accounting in self.accounting.items():
+        for colvalue, accounting in list(self.accounting.items()):
             if (not (array(colvalue)[names_index] == arr_column_value[names_index]).all()) or (colvalue[self.column_names_index['building_type_id']] not in self.same_demand_group):
                 continue
             result.append((accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
@@ -91,11 +91,11 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
         
         ## skip this proposal if the proposal has no components that are needed to reach vacancy target
         if not force_accepting and all([ all(self._are_targets_reached(key)) or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
-                 for key in proposed_spaces.keys() ]):
+                 for key in list(proposed_spaces.keys()) ]):
             return False
         
         # accept this proposal
-        for key, value in demolished_spaces.items():
+        for key, value in list(demolished_spaces.items()):
             if key not in self.accounting:
                 if key not in self.logging:
                     self.logging[key] = defaultdict(int)
@@ -105,7 +105,7 @@ class DevelopmentProjectProposalSamplingModel(DevelopmentProjectProposalSampling
                 ##TODO we may want to re-activate sampling of proposals if new total spaces is below target spaces 
                 ##because of demolished buildings 
         
-        for key, value in proposed_spaces.items():
+        for key, value in list(proposed_spaces.items()):
             if key not in self.accounting:
                 if key not in self.logging:
                     self.logging[key] = defaultdict(int)

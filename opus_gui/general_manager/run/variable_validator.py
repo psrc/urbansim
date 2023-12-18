@@ -70,7 +70,7 @@ class VariableValidator(object):
                         errors.append("Error - dataset name  mismatch in Python class reference: (%s, %s): %s" % (var_name, dataset_name, expr))
                 else:
                     errors.append("Unknown source type %s: (%s, %s): %s" % (source, var_name, dataset_name, expr))
-            except (SyntaxError, ValueError), e:
+            except (SyntaxError, ValueError) as e:
                 errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
         return len(errors) == 0, errors
 
@@ -128,7 +128,7 @@ class VariableValidator(object):
         try:
             dataset.compute_variables(names = [expression])
             return True, None
-        except Exception, e:
+        except Exception as e:
             type, value, tb = sys.exc_info()
             stack_dump = ''.join(traceback.format_exception(type, value, tb))
             errors = "{}\n\n{}".format(e, stack_dump)

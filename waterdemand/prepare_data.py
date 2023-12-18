@@ -5,7 +5,7 @@
 #DISCLAIMER: THIS FILE IS OUT OF DATE AND NEEDS SIGNIFICANT MODIFICATIONS 
 #            TO MAKE IT WORK
 
-print "Create MySQL connection"
+print("Create MySQL connection")
 from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.datasets.dataset import DatasetSubset
 from numpy import where
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # step 2 cache water demand data by 
     dbcon = ScenarioDatabase(database_name = "water_demand_seattle2") 
     
-    print "Create Storage object."
+    print("Create Storage object.")
     from opus_core.storage_factory import StorageFactory
     storage = StorageFactory().get_storage(type="mysql_storage", storage_location=dbcon)
     
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         consumption = ConsumptionDataset(in_storage = storage, in_table_name=consumption_type+'_grid')
         
         for year in range(1990, 2001):
-            print "%s %s" % (consumption_type, year)
+            print("%s %s" % (consumption_type, year))
             year_index = where(consumption.get_attribute("billyear") == year)
             out_storage = StorageFactory().get_storage(type="flt_storage", storage_location=os.path.join(cache_directory, str(year)))
             consumption_subset = DatasetSubset(consumption, year_index)

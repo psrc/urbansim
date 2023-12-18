@@ -33,7 +33,7 @@ class LandUseDevelopmentDataset(Dataset):
         dataset_name = "landuse_development"
         nchunks_default = 1
         
-        if data <> None:
+        if data != None:
             in_storage = StorageFactory().get_storage('dict_storage')
             
             in_storage.write_table(table_name='landuse_developments', table_data=data)
@@ -60,7 +60,7 @@ def create_landuse_developments_from_history(history_table, attribute_name='deve
     id_name_default = 'landuse_development_id'
     history_values_starting = history_table.get_attribute('starting_' + attribute_name)
     history_values_ending = history_table.get_attribute('ending_' + attribute_name)
-    development_index = where(history_values_starting<>history_values_ending)[0]
+    development_index = where(history_values_starting!=history_values_ending)[0]
     #attributes = history_table.get_primary_attribute_names()
     attributes = ['scheduled_year', 'grid_id']
     values = arange(development_index.size)

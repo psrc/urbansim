@@ -72,7 +72,7 @@ class expected_sales_price_per_sqft_luv(Variable):
         wis_non_res = where(is_non_res)[0]
         price = 9./100. * dpp["expected_sales_price_per_sqft"]
         percentiles = []
-        for geo, p in  self.weight_factor.iteritems():
+        for geo, p in  self.weight_factor.items():
             percentiles = percentiles + list(unique(p))
         percentiles = unique(array(percentiles))
         percentiles = percentiles[percentiles > 0]

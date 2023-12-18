@@ -23,7 +23,7 @@ config_changes = {
         'cache_directory_root':r'/projects/urbansim7/urbansim_cache/psrc', #'/projects/urbansim7/urbansim_cache/psrc',
         'baseyear_cache':{
             'existing_cache_to_copy':r'/projects/urbansim7/urbansim_cache/psrc/wlcm_initialization_source',
-            'years':range(2000,2001)
+            'years':list(range(2000,2001))
             },
      "tables_to_cache":[
                      "persons",

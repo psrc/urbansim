@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from attribute_type import AttributeType
+from .attribute_type import AttributeType
 
 class AttributeBox(object):
     """A container for a single attribute and meta-data about that attribute.

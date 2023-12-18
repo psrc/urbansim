@@ -27,7 +27,7 @@ from opus_core.tests.utils.variable_tester import VariableTester
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
-from workerDDD_drive_alone_from_home_to_work import workerDDD_drive_alone_from_home_to_work
+from .workerDDD_drive_alone_from_home_to_work import workerDDD_drive_alone_from_home_to_work
 
 class Tests(opus_unittest.OpusTestCase):
 

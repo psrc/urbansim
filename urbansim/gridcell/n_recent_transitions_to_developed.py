@@ -111,7 +111,7 @@ class Tests(opus_unittest.OpusTestCase):
 
     def write_gridcell_data_to_cache(self, data_by_year):
         """Write all of this data to the gridcells for each year in data_by_year."""
-        for year, data in data_by_year.iteritems():
+        for year, data in data_by_year.items():
             self.write_gridcell_data_for_year(data, year)
 
     def write_gridcell_data_for_year(self, data, year):
@@ -137,7 +137,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([1,1,0,0])))
+        self.assertTrue(ma.allequal(values, array([1,1,0,0])))
 
     def test_for_recent_years_of_1(self):
         dataset_pool = self.prepare_dataset_pool(1)
@@ -146,7 +146,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([1,1,0,0])))
+        self.assertTrue(ma.allequal(values, array([1,1,0,0])))
 
     def test_for_recent_years_of_2(self):
         dataset_pool = self.prepare_dataset_pool(2)
@@ -155,7 +155,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([1,1,1,0])))
+        self.assertTrue(ma.allequal(values, array([1,1,1,0])))
 
     def test_for_recent_years_of_3(self):
         dataset_pool = self.prepare_dataset_pool(3)
@@ -164,7 +164,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([1,2,1,0])))
+        self.assertTrue(ma.allequal(values, array([1,2,1,0])))
 
 if __name__=='__main__':
     opus_unittest.main()

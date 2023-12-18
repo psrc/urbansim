@@ -80,9 +80,8 @@ class SpecifiedCoefficients(object):
         return self
 
     def create_coefficient_arrays (self, neqs, equation_ids=None):
-        self.variable_names = array(map(lambda x: ModelVariableName(x,
-                                         self.constant_string, self.reserved_name_prefix),
-                                   self.specification.get_distinct_long_variable_names()))
+        self.variable_names = array([ModelVariableName(x,
+                                         self.constant_string, self.reserved_name_prefix) for x in self.specification.get_distinct_long_variable_names()])
         submodels = self.coefficients.get_submodels()
         if equation_ids is not None:
             self.neqs = int(max(self.specification.get_nequations(),len(equation_ids), neqs))   
@@ -108,7 +107,7 @@ class SpecifiedCoefficients(object):
             if (submodels_array.size <=0) or ((self.get_nsubmodels() == 1) and (submodels_array[0] < 0)):
                 submodels_array = array([-2]) #set sub_model_id = -2 if have no or 1 submodel
             self.submodels_mapping = do_id_mapping_dict_from_array(submodels_array)
-            for dimname in self.other_dimensions_values.keys():
+            for dimname in list(self.other_dimensions_values.keys()):
                 self.other_dimensions_mapping[dimname] = do_id_mapping_dict_from_array(self.other_dimensions_values[dimname])
             self.match_variable_with_coefficient_names(self.specification.get_coefficient_names(),
                     self.specification.get_variable_names())
@@ -134,8 +133,8 @@ class SpecifiedCoefficients(object):
     def fill_beta_from_beta_alt(self,submodels=None):
         if submodels==None:
             submodels = arange(self.get_nsubmodels())
-        for name in self.other_measures_alt.keys():
-            if not name in self.other_measures.keys():
+        for name in list(self.other_measures_alt.keys()):
+            if not name in list(self.other_measures.keys()):
                 self.initialize_arrays_of_other_measures([name])
         index = create_combination_indices(tuple([self.nequations(), self.size()] + list(self.get_other_ndim())))
         for k in submodels:
@@ -149,12 +148,12 @@ class SpecifiedCoefficients(object):
                 if self.coefmap[tidx] >= 0:
                     self.beta[tidx] = self.beta_alt[tidx_alt]
                     self.beta_se[tidx] = self.beta_se_alt[tidx_alt]
-                    for m in self.other_measures_alt.keys():
+                    for m in list(self.other_measures_alt.keys()):
                         self.other_measures[m][tidx] = self.other_measures_alt[m][tidx_alt]
                 else:
                     self.beta[tidx] = 0.0
                     self.beta_se[tidx] = 0.0
-                    for m in self.other_measures_alt.keys():
+                    for m in list(self.other_measures_alt.keys()):
                         self.other_measures[m][tidx] = 0.0
 
     def get_beta_alt(self):
@@ -186,7 +185,7 @@ class SpecifiedCoefficients(object):
         self.beta = zeros((1,self.n,1), dtype=float32)
         self.beta_se = zeros((1,self.n,1), dtype=float32)
         self.coefmap = resize(array([-2], dtype=int16), (1,self.n,1))
-        for key in self.coefficients.other_measures.keys():
+        for key in list(self.coefficients.other_measures.keys()):
             self.other_measures[key] = zeros((1,self.n,1), dtype=float32)
 
     def initialize_coefficient_arrays(self):
@@ -205,14 +204,14 @@ class SpecifiedCoefficients(object):
         self.beta = repeat(self.beta, n, dim)
         self.beta_se = repeat(self.beta_se, n, dim)
         self.coefmap = repeat(self.coefmap, n, dim)
-        for key in self.coefficients.other_measures.keys():
+        for key in list(self.coefficients.other_measures.keys()):
             self.other_measures[key] = repeat(self.other_measures[key], n, dim)
         
     def add_dimensions(self):
         self.beta = self.beta[...,newaxis]
         self.beta_se = self.beta_se[...,newaxis]
         self.coefmap = self.coefmap[...,newaxis]
-        for key in self.coefficients.other_measures.keys():
+        for key in list(self.coefficients.other_measures.keys()):
             self.other_measures[key] = self.other_measures[key][...,newaxis]
 
     def initialize_arrays_of_other_measures(self, keys):
@@ -228,7 +227,7 @@ class SpecifiedCoefficients(object):
     def _initialize_other_measures(self, measure):
         measure = repeat(measure, self.neqs, 0)
         measure = repeat(measure, self.get_nsubmodels(), 2)
-        for dimname in self.other_dimensions_values.keys():
+        for dimname in list(self.other_dimensions_values.keys()):
             measure = measure[...,newaxis]
             measure = repeat(measure, self.other_dimensions_values[dimname].size,  measure.ndim-1)
         return measure
@@ -240,7 +239,7 @@ class SpecifiedCoefficients(object):
         logger.log_status(str(self.get_coefficient_values()))
         logger.log_status("standard error (beta):")
         logger.log_status(self.get_standard_errors())
-        for key in self.other_measures.keys():
+        for key in list(self.other_measures.keys()):
             logger.log_status(key)
             logger.log_status(self.other_measures[key])
         logger.log_status("coefficient names: %s" % self.get_coefficient_names())
@@ -267,7 +266,7 @@ class SpecifiedCoefficients(object):
             self.compare_and_try_raise_coeflengthexception(len(self.get_variable_names()),self.size(),"names")
             self.check_3d_array(self.get_coefficient_values(),"beta")
             self.check_3d_array(self.get_standard_errors(),"beta_se")
-            for key in self.other_measures.keys():
+            for key in list(self.other_measures.keys()):
                 self.check_3d_array(self.get_standard_errors(),key)
             self.check_3d_array(self.get_coefficient_mapping(),"coefmap")
 
@@ -280,11 +279,11 @@ class SpecifiedCoefficients(object):
             matches = ematch(varnames, self.variable_names[ivar].get_alias())
             l = matches.size
             if (l > (ndisteqs*self.nsubmodels*max(1,sum(self.get_other_ndim())))) or (l == 0):
-                raise StandardError, "Method match_variable_with_coefficient_names: something wrong with variable names."
+                raise Exception("Method match_variable_with_coefficient_names: something wrong with variable names.")
             for i in range(l): #iterate over matches of variables
                 v_matches = ematch(self.coefficient_names, coefnames[matches[i]])
                 if v_matches.size == 0:
-                    raise StandardError, "Method match_variable_with_coefficient_names: Mismatch in coefficient and variable names."
+                    raise Exception("Method match_variable_with_coefficient_names: Mismatch in coefficient and variable names.")
                 for j in range(v_matches.size): #iterate over matches in coefficient class
                     if (self.nsubmodels==1) or (self.specification.get_submodels()[matches[i]] ==
                             self.coefficients.get_submodels()[v_matches[j]]):
@@ -293,14 +292,14 @@ class SpecifiedCoefficients(object):
                         if self.nsubmodels > 1:
                             submidx = self.submodels_mapping[self.specification.get_submodels()[matches[i]]]
                         if len(self.specification.get_equations()) > 1:
-                            if len(self._equation_index_mapping.keys()) > 0:
+                            if len(list(self._equation_index_mapping.keys())) > 0:
                                 eqidx = self._equation_index_mapping[self.specification.get_equations()[matches[i]]]
                             else:
                                 eqidx = int(self.specification.get_equations()[matches[i]]-1)
                         else:
-                            eqidx = range(self.coefmap.shape[0])
+                            eqidx = list(range(self.coefmap.shape[0]))
                         coefmap_index = [eqidx,ivar,submidx]
-                        for dimname in self.other_dimensions_values.keys():
+                        for dimname in list(self.other_dimensions_values.keys()):
                             idx = self.other_dimensions_mapping[dimname][self.specification.get_other_field(dimname)[matches[i]]]
                             coefmap_index.append(idx)
                         self.coefmap[tuple(coefmap_index)] = v_matches[j]
@@ -310,7 +309,7 @@ class SpecifiedCoefficients(object):
         values = self.coefficients.get_values()
         se =  self.coefficients.get_standard_errors()
         others = {}
-        for key in self.other_measures.keys():
+        for key in list(self.other_measures.keys()):
             others[key] = self.coefficients.get_measure(key)
         shape = self.getshape()
         # create combinations of all indices
@@ -321,12 +320,12 @@ class SpecifiedCoefficients(object):
             if self.coefmap[tindex] < 0:
                 self.beta[tindex] = 0.0
                 self.beta_se[tindex] = 0.0
-                for key in self.other_measures.keys():
+                for key in list(self.other_measures.keys()):
                     self.other_measures[key][tindex] = 0.0
             else:
                 self.beta[tindex] = values[self.coefmap[tindex]]
                 self.beta_se[tindex] = se[self.coefmap[tindex]]
-                for key in self.other_measures.keys():
+                for key in list(self.other_measures.keys()):
                     self.other_measures[key][tindex] = others[key][self.coefmap[tindex]]
 
     def getshape(self):
@@ -335,30 +334,30 @@ class SpecifiedCoefficients(object):
     def get_variable_names(self):
         if self.variable_names.size <= 0:
             return array([])
-        return array(map(lambda x: x.get_alias(), self.variable_names))
+        return array([x.get_alias() for x in self.variable_names])
 
     def get_full_variable_names(self):
         return self.variable_names
 
     def get_variables_without_constants(self):
-        is_con = array(map(lambda x: x.is_constant, self.variable_names))
+        is_con = array([x.is_constant for x in self.variable_names])
         return self.variable_names[is_con==False]
 
     def get_variables_without_constants_and_reserved_names(self):
-        is_con = array(map(lambda x: x.is_constant_or_reserved_name(), self.variable_names))
+        is_con = array([x.is_constant_or_reserved_name() for x in self.variable_names])
         return self.variable_names[is_con==False]
 
     def get_variable_names_without_constants(self):
         vars = self.get_variables_without_constants()
-        return array(map(lambda x: x.get_alias(), vars))
+        return array([x.get_alias() for x in vars])
 
     def get_full_variable_names_without_constants(self):
         vars = self.get_variables_without_constants()
-        return array(map(lambda x: x.get_expression(), vars))
+        return array([x.get_expression() for x in vars])
 
     def get_full_variable_names_without_constants_and_reserved_names(self):
         vars = self.get_variables_without_constants_and_reserved_names()
-        return array(map(lambda x: x.get_expression(), vars))
+        return array([x.get_expression() for x in vars])
 
     def get_coefficient_values(self):
         return self.beta
@@ -395,7 +394,7 @@ class SpecifiedCoefficients(object):
         return self.submodels_mapping[submodel]
 
     def get_submodels(self):
-        return self.submodels_mapping.keys()
+        return list(self.submodels_mapping.keys())
 
     def get_constants_positions(self):
         """Return an index of variables that are constants."""
@@ -447,7 +446,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         used = []
         coef_used = []
         for i in range(self.parent.size()):
-            if (sometrue(self.parent.beta[:,i,self.submodel_idx].ravel()<>0.0)) and \
+            if (sometrue(self.parent.beta[:,i,self.submodel_idx].ravel()!=0.0)) and \
                 sometrue(self.parent.coefmap[:,i,self.submodel_idx].ravel()>=0):
                 used.append(i)
                 coef_used = coef_used + where(self.parent.coefmap_alt[:,self.submodel_idx] == i)[0].tolist()
@@ -471,7 +470,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         coef_values = self.get_coefficient_values()
         non_zero_eq = []
         for i in equations_index:
-            if (sometrue(coef_values[i,:]<>0.0)):
+            if (sometrue(coef_values[i,:]!=0.0)):
                 non_zero_eq.append(i)
         return array(non_zero_eq)
         
@@ -528,7 +527,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         coefmapflat = coefmap.ravel()
         coefmapflat = coefmapflat[where(coefmapflat>=0)]
         coef_idx = unique(coefmapflat)
-        result = map(lambda x: values[coefmap==x][0], coef_idx)
+        result = [values[coefmap==x][0] for x in coef_idx]
         return array(result)
 
     def get_measure(self, name):
@@ -559,7 +558,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         self._set_values(self.parent.beta_se_alt, self.used_coef_idx, values)
 
     def set_measure_from_alt(self, name, values):
-        if not name in self.parent.other_measures_alt.keys():
+        if not name in list(self.parent.other_measures_alt.keys()):
             self.parent.initialize_alt_arrays_of_other_measures([name])
         self._set_values(self.parent.other_measures_alt[name], self.used_coef_idx, values)
 
@@ -572,7 +571,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
                 self.parent.beta_se[:, self.used_variables_idx[i], self.submodel_idx] = values[i]
 
     def set_measure(self, name, values):
-        if not name in self.parent.other_measures.keys():
+        if not name in list(self.parent.other_measures.keys()):
             self.parent.initialize_arrays_of_other_measures([name])
         self._set_values(self.parent.other_measures[name], self.used_variables_idx, values)
 
@@ -649,8 +648,8 @@ def update_constants(const, neqs):
     if const.ndim <= 0: #single value
         const = reshape(const, (1,))
         const = repeat(const, neqs, 0)
-    if const.shape[0] <> neqs:
-        raise StandardError, "Mismatch in 'const' shape and the number of equations."
+    if const.shape[0] != neqs:
+        raise Exception("Mismatch in 'const' shape and the number of equations.")
     return const
 
 class CoefLengthException(Exception):

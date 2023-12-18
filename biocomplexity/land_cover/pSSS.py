@@ -70,15 +70,15 @@ class pSSS(Variable):
             covertypes_of_interest = lookup_dict['MED_HIGH_URBAN']
         elif self.lct_type == 'grag':
             covertypes_of_interest = lookup_dict['GRASS_AND_AG']
-        elif self.lct_type.lower() in lookup_dict.keys():
+        elif self.lct_type.lower() in list(lookup_dict.keys()):
             return [lookup_dict[self.lct_type.lower()]]
-        elif self.lct_type.upper() in lookup_dict.keys():
+        elif self.lct_type.upper() in list(lookup_dict.keys()):
             return [lookup_dict[self.lct_type.upper()]]
         else:
             raise RuntimeError("Sorry. Variable biocomplexity.land_cover.pSSS was unable to meaningfully" + \
                    " translate characters SSS for variable instantiation p%s." % self.lct_type)
 
-        return map(lambda key: lookup_dict[key], covertypes_of_interest)
+        return [lookup_dict[key] for key in covertypes_of_interest]
 
 
 
@@ -126,7 +126,7 @@ class Tests(ExpectedDataTest):
         should_be = cc_within_fp / (5.0 - ow_within_fp)
         should_be = arcsin(sqrt(should_be))
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def test_my_inputs_tree_lookup_test(self):
@@ -165,7 +165,7 @@ class Tests(ExpectedDataTest):
         should_be = mhu_within_fp / (5.0 - ow_within_fp)
         should_be = arcsin(sqrt(should_be))
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + variable_name)
 
     def test_on_expected_data(self):

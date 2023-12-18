@@ -21,7 +21,7 @@ class ScenarioDatabaseManager(object):
             table_mapping = {})
         
         database_to_table_mapping = {}
-        for table_name, database_name in table_mapping.items():
+        for table_name, database_name in list(table_mapping.items()):
             if database_name not in database_to_table_mapping:
                 database_to_table_mapping[database_name] = [table_name]
             else:
@@ -113,8 +113,8 @@ class ScenarioDatabaseManagerTest(DatabaseManagementTestInterface):
         expected = {
             'db_chain_granddad': ['base_schema', 'base_schema2', 'scenario_information']
         }
-        self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
-        for k,v in d_mapping.items():
+        self.assertEqual(len(list(expected.keys())), len(list(d_mapping.keys())))
+        for k,v in list(d_mapping.items()):
             self.assertTrue(k in expected)
             for table in v:
                 self.assertTrue(table in expected[k])            
@@ -127,8 +127,8 @@ class ScenarioDatabaseManagerTest(DatabaseManagementTestInterface):
             'db_chain_son': ['base_schema2', 'scenario_information'],
             'db_chain_dad': ['base_schema']
         }
-        self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
-        for k,v in d_mapping.items():
+        self.assertEqual(len(list(expected.keys())), len(list(d_mapping.keys())))
+        for k,v in list(d_mapping.items()):
             self.assertTrue(k in expected)
             for table in v:
                 self.assertTrue(table in expected[k]) 

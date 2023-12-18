@@ -26,7 +26,7 @@ class ExogenousAspectForDataset(DatasetAspect):
 
                 current_year = SimulationState().get_current_time()
                 
-                if short_name in dataset.exogenous_attribute_names.keys():
+                if short_name in list(dataset.exogenous_attribute_names.keys()):
                     exogenous_table_name = dataset.exogenous_attribute_names[short_name]
                     
                     temporary_dataset = Dataset(in_storage=dataset.resources['in_storage'], 
@@ -50,7 +50,7 @@ class ExogenousAspectForDataset(DatasetAspect):
                 year_data = temporary_dataset.attribute_boxes['year'].get_data()
                 base_table_id_data = temporary_dataset.attribute_boxes['base_table_id'].get_data()
 
-                exogenous_table_data = zip(exogenous_data, year_data, base_table_id_data)
+                exogenous_table_data = list(zip(exogenous_data, year_data, base_table_id_data))
 
                 exogenous_attribute_values = [_attribute
                     for _attribute, _year, _base_table_id in exogenous_table_data
@@ -110,7 +110,7 @@ class ExogenousAspectForDataset(DatasetAspect):
                     logger.log_warning("An exogenous_relationships table was found, but did not contain the 'exogenous_table' attribute.")
                     return {}
                 
-                relationships = zip(base_tables, exogenous_tables)
+                relationships = list(zip(base_tables, exogenous_tables))
                 
                 for base_table, exogenous_table in relationships:
                     if base_table == resources['in_table_name']:
@@ -212,10 +212,10 @@ class TestExogenousAttributes(opus_unittest.OpusTestCase):
         exogenous_attribute1 = base_dataset.get_attribute(self.exogenous_attribute1)
         exogenous_attribute2 = base_dataset.get_attribute(self.exogenous_attribute2)
         
-        self.assert_(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1980_1),
+        self.assertTrue(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1980_1),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1980_1, exogenous_attribute1))
-        self.assert_(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1980_2),
+        self.assertTrue(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1980_2),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1980_2, exogenous_attribute2))
         
@@ -223,10 +223,10 @@ class TestExogenousAttributes(opus_unittest.OpusTestCase):
         exogenous_attribute1 = base_dataset.get_attribute(self.exogenous_attribute1)
         exogenous_attribute2 = base_dataset.get_attribute(self.exogenous_attribute2)
         
-        self.assert_(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1981_1),
+        self.assertTrue(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1981_1),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1981_1, exogenous_attribute1))
-        self.assert_(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1981_2),
+        self.assertTrue(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1981_2),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1981_2, exogenous_attribute2))
                 
@@ -234,10 +234,10 @@ class TestExogenousAttributes(opus_unittest.OpusTestCase):
         exogenous_attribute1 = base_dataset.get_attribute(self.exogenous_attribute1)
         exogenous_attribute2 = base_dataset.get_attribute(self.exogenous_attribute2)
         
-        self.assert_(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1982_1),
+        self.assertTrue(ma.allequal(exogenous_attribute1, self.expected_exogenous_attribute_1982_1),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1982_1, exogenous_attribute1))
-        self.assert_(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1982_2),
+        self.assertTrue(ma.allequal(exogenous_attribute2, self.expected_exogenous_attribute_1982_2),
             "Exogenous attribute loaded incorrectly. Expected '%s'; received '%s'."
                 % (self.expected_exogenous_attribute_1982_2, exogenous_attribute2))
                 

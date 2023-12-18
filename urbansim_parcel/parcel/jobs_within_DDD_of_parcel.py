@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import zeros
 from numpy import array
 from scipy.spatial import KDTree
@@ -29,7 +29,7 @@ class jobs_within_DDD_of_parcel(Variable):
         coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         kd_tree = KDTree(coords, 100)
         results = kd_tree.query_ball_tree(kd_tree, self.radius)
-        return array(map(lambda l: arr[l].sum(), results))
+        return array([arr[l].sum() for l in results])
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)

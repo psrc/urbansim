@@ -61,7 +61,7 @@ class OpusProject(object):
         local_ids_to_nodes = dict((root_node_id + node_identity_string(n), n) for 
             n in root_node.getiterator() if not n.get('inherited'))
         # join the local and inherited nodes on id-match
-        for id_, node in local_ids_to_nodes.items():
+        for id_, node in list(local_ids_to_nodes.items()):
             if id_ in inherited_ids_to_nodes:
                 shadowing_node = inherited_ids_to_nodes[id_]
                 assert node.tag == shadowing_node.tag
@@ -101,7 +101,7 @@ class OpusProject(object):
             self.filename = os.path.normpath(os.path.join(default_path, filename))
             return (True, 'Project %s loaded OK' % filename)
         # Catch only the errors that XMLConfiguration is known to throw
-        except (IOError, SyntaxError, ValueError, SyntaxError, XMLVersionException), ex:
+        except (IOError, SyntaxError, ValueError, SyntaxError, XMLVersionException) as ex:
             self.close()
             return (False, str(ex))
 
@@ -122,7 +122,7 @@ class OpusProject(object):
 
         try:
             self.xml_config.save_as(filename)
-        except IOError, ex:
+        except IOError as ex:
             return (False, 'An error occurred when trying to save the project.\n'
                     'The error is described as:\n' + str(ex))
 
@@ -156,7 +156,7 @@ class OpusProject(object):
         try:
             existing_node = self.find_by_id_string(future_id, parent_node.getroottree().getroot())
         except LookupError: # nodes with this id already exists
-            print "LookupError"
+            print("LookupError")
             return None
         if existing_node is not None:
             return None # don't allow overwriting existing nodes
@@ -245,7 +245,7 @@ class OpusProject(object):
             localize_parents(node.getparent())
         def localize_children(node):
             localize_node(node)
-            map(localize_children, list(node))
+            list(map(localize_children, list(node)))
 
         localize_parents(node.getparent())
         localize_children(node)

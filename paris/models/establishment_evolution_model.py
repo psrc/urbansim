@@ -24,7 +24,7 @@ class EstablishmentEvolutionModel(RealEstatePriceModel, RegressionModelWithAddit
         """
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        if self.filter_attribute <> None:
+        if self.filter_attribute != None:
             res = Resources({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter_attribute, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)

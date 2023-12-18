@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-import os, cPickle, time, sys, string, StringIO
+import os, pickle, time, sys, string, io
 try:
     from bayarea.accessibility.pyaccess import PyAccess
 except:
@@ -15,7 +15,7 @@ from numpy import array
     
 MAXDISTANCE=1500 
 path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
-d = cPickle.load(open(path))
+d = pickle.load(open(path))
 pya = PyAccess()
 pya.createGraph(1,d['nodeids'],d['nodes'],d['edges'],d['edgeweights'])
 pya.precomputeRange(MAXDISTANCE)
@@ -49,12 +49,12 @@ class NodeDataset(UrbansimDataset):
     dataset_name = "node"
 
     path = paths.get_opus_data_path_path("bay_area_parcel","network.jar")
-    d = cPickle.load(open(path))
+    d = pickle.load(open(path))
 
     def __init__(self, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
         node_ids = self.get_id_attribute()
-        node_d = dict(zip(self.d['nodeids'],range(len(node_ids))))
+        node_d = dict(list(zip(self.d['nodeids'],list(range(len(node_ids))))))
         node_ids = [node_d[x] for x in node_ids]
         self.node_ids = array(node_ids, dtype="int32")
         global MAXDISTANCE, pya

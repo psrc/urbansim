@@ -55,8 +55,8 @@ class OpusAbstractTestCase(OriginalTestCase):
         """
         Assert that these two dictionaries have the same structure and contents.
         """
-        self.assert_(isinstance(first, dict), *args, **kwargs)
-        self.assert_(isinstance(second, dict), *args, **kwargs)
+        self.assertTrue(isinstance(first, dict), *args, **kwargs)
+        self.assertTrue(isinstance(second, dict), *args, **kwargs)
         
         difference_message = self._get_difference(first, second)
         if difference_message is not None:
@@ -66,8 +66,8 @@ class OpusAbstractTestCase(OriginalTestCase):
         """
         Assert that these two dictionaries do NOT have the same structure and contents.
         """
-        self.assert_(isinstance(first, dict), *args, **kwargs)
-        self.assert_(isinstance(second, dict), *args, **kwargs)
+        self.assertTrue(isinstance(first, dict), *args, **kwargs)
+        self.assertTrue(isinstance(second, dict), *args, **kwargs)
             
         difference_message = self._get_difference(first, second)
         if difference_message is None:
@@ -77,8 +77,8 @@ class OpusAbstractTestCase(OriginalTestCase):
         """
         Assert that these two numpy arrays are equal.
         """
-        self.assert_(isinstance(first, ndarray), *args, **kwargs)
-        self.assert_(isinstance(second, ndarray), *args, **kwargs)
+        self.assertTrue(isinstance(first, ndarray), *args, **kwargs)
+        self.assertTrue(isinstance(second, ndarray), *args, **kwargs)
         
         if not all(first == second):
             self.fail('Arrays are different: %s vs %s.' % (first, second))

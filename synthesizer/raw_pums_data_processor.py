@@ -107,7 +107,7 @@ class raw_pums_data_processor(object):
             x = line[self.hh_beg[y]:self.hh_end[y]]
             insrt.append(x)
             y += 1
-        zipped = zip(self.hh_field_names, insrt)
+        zipped = list(zip(self.hh_field_names, insrt))
         dic = dict(zipped)
         return dic
     
@@ -149,7 +149,7 @@ class raw_pums_data_processor(object):
             x = line[self.pp_beg[y]:self.pp_end[y]]
             insrt.append(x)
             y += 1
-        zipped = zip(self.pp_field_names, insrt)
+        zipped = list(zip(self.pp_field_names, insrt))
         dic = dict(zipped)
         return dic                
     

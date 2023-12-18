@@ -19,7 +19,7 @@ class random_choices(Choices):
             probability = concatenate((1.0-probability, probability), axis=1)
 
         if probability.ndim < 2:
-            raise StandardError, "Argument 'probability' must be a 2D numpy array."
+            raise Exception("Argument 'probability' must be a 2D numpy array.")
 
         prob = probability/reshape(probability.sum(axis=1),(probability.shape[0],1))
         return sample_choice(prob)[1]

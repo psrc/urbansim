@@ -104,6 +104,6 @@ if __name__=='__main__':
         db_server.drop_database('temporary_flattened_scenario_database')        
     
     else:
-        print "usage: \n create_database_subset_by_sampling.py hostname proportion"
-        print "       ex: python create_database_subset_by_sampling.py myserver.mydomain.org 0.5"
+        print("usage: \n create_database_subset_by_sampling.py hostname proportion")
+        print("       ex: python create_database_subset_by_sampling.py myserver.mydomain.org 0.5")
 

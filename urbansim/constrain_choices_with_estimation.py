@@ -19,7 +19,7 @@ class constrain_choices(object):
         Optional entry 'index' (1D or 2D array) gives indices of the choices.
         """
         if probability.ndim < 2:
-            raise StandardError, "Argument 'probability' must be a 2D numpy array."
+            raise Exception("Argument 'probability' must be a 2D numpy array.")
             
         resources.check_obligatory_keys(["capacity"])
         supply = resources["capacity"]
@@ -42,7 +42,7 @@ class constrain_choices(object):
         nobs = probability.shape[0]
 
         if supply.sum < nobs:
-            raise StandardError, "Aggregate Supply Must be Greater than Aggregate Demand."
+            raise Exception("Aggregate Supply Must be Greater than Aggregate Demand.")
 
 
         if index.ndim <= 1:

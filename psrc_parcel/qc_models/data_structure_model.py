@@ -51,7 +51,7 @@ class DataStructureModel(Model):
             if check_size:
                 table_size = self.cache.load_table(table, columns_list[0])[columns_list[0]].size
                 reftable_size = self.reference_storage.load_table(table, ref_columns_list[0])[ref_columns_list[0]].size
-                if table_size <> reftable_size:
+                if table_size != reftable_size:
                     samesize = False
             if len(more) == 0 and len(less) == 0 and samesize:
                 continue
@@ -127,12 +127,12 @@ class QCDataStructureTests(opus_unittest.OpusTestCase):
         res = DataStructureModel(os.path.join(self.temp_refdir, "%s" % 2005)).run(self.temp_dir)
         self.assertEqual(res.shape[0], 1) # one row
         self.assertEqual(res.loc[0, "Less-than-ref"], "str_column")
-        self.assert_("flt_column" in res.loc[0, "More-than-ref"])
-        self.assert_("int_column" in res.loc[0, "More-than-ref"])
-        self.assert_("bool_column" not in res.loc[0, "More-than-ref"])
-        self.assert_("bool_column" not in res.loc[0, "Less-than-ref"])
-        self.assert_("Size" not in res.columns.values.tolist())
-        self.assert_("Size-ref" not in res.columns.values.tolist())
+        self.assertTrue("flt_column" in res.loc[0, "More-than-ref"])
+        self.assertTrue("int_column" in res.loc[0, "More-than-ref"])
+        self.assertTrue("bool_column" not in res.loc[0, "More-than-ref"])
+        self.assertTrue("bool_column" not in res.loc[0, "Less-than-ref"])
+        self.assertTrue("Size" not in res.columns.values.tolist())
+        self.assertTrue("Size-ref" not in res.columns.values.tolist())
         
     def test_different_sizes(self):
         res = DataStructureModel(os.path.join(self.temp_refdir, "%s" % 2005)).run(self.temp_dir2)

@@ -98,7 +98,7 @@ class Tests(ExpectedDataTest):
         
         should_be = array([1.42948067, 1.18391383, 1.42948103, 1.18391371])
         
-        self.assert_(ma.allclose( values, should_be, rtol=1e-6), 
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-6), 
                      msg = "Error in " + self.variable_name)
 
     def test_on_expected_data(self):

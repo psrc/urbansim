@@ -40,7 +40,7 @@ unscaled_probability = reshape(array(Cursor.fetchall()),(-1,alts))
 #Scale probabilities to 1 to ensure there is not a rounding error
 probability = unscaled_probability/resize(sum(unscaled_probability,axis=1),(117872,8))
 check1 = sum(probability,axis=1)
-print 'All probability sums close to 1.0:', ma.allclose(check1,1.0,rtol=1e-10)
+print('All probability sums close to 1.0:', ma.allclose(check1,1.0,rtol=1e-10))
 
 #Get index
 sql = 'select commune_id from probabilities'
@@ -68,4 +68,4 @@ C.compute(probability,resources)
 
 #B = bhhh_estimation()
 #B.compute(data,resources)
-print 'Total Elapsed Time:',time.clock()-program_start
+print('Total Elapsed Time:',time.clock()-program_start)

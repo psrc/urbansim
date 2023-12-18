@@ -139,7 +139,7 @@ class AgentEventModel(Model):
                 clone_attr_index = sample_replace(where(loc_indicator)[0], number_of_agents)
                 # impute remaining attributes
                 for attr in agent_set.get_primary_attribute_names():
-                    if attr not in data.keys():
+                    if attr not in list(data.keys()):
                         data[attr] = agent_set[attr][clone_attr_index]
                 
                 agent_set.add_elements(data, require_all_attributes=False)
@@ -300,12 +300,12 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove 5 jobs from gridcell 5 and all jobs from gridcell 10
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,5,10,10,10,10,0]))) 
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,5,10,10,10,10,0]))) 
 
         AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove another 3 jobs from gridcell 5
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,2,10,10,10,10,0])))
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,2,10,10,10,10,0])))
 
     def test_addition_of_jobs(self):
         dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
@@ -315,12 +315,12 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         AgentEventModel().run(gridcell_set, event_set, jobs, 2000, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should add 5 jobs to gridcell 5 and 20 jobs to gridcell 10
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,15,10,10,10,10,30]))) 
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,15,10,10,10,10,30]))) 
 
         AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should add another 3 jobs to gridcell 5
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,18,10,10,10,10,30])))
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,18,10,10,10,10,30])))
         
     def test_deletion_of_households(self):
         dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
@@ -331,13 +331,13 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove 6 households from gridcell 1
-        self.assert_(ma.allclose(number_of_households, array( [4,0,30,0,0,0,0,0,0,0]))) 
+        self.assertTrue(ma.allclose(number_of_households, array( [4,0,30,0,0,0,0,0,0,0]))) 
 
         AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove 50% from gridcell 1 (2) and 25 households from gridcell 3
-        self.assert_(ma.allclose(number_of_households, array( [2,0,5,0,0,0,0,0,0,0])))
+        self.assertTrue(ma.allclose(number_of_households, array( [2,0,5,0,0,0,0,0,0,0])))
 
     def test_addition_of_households(self):
         dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
@@ -348,13 +348,13 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should add 6 households to gridcell 1, 
-        self.assert_(ma.allclose(number_of_households, array( [16,0,30,0,5,0,0,0,0,0]))) 
+        self.assertTrue(ma.allclose(number_of_households, array( [16,0,30,0,5,0,0,0,0,0]))) 
 
         AgentEventModel().run(gridcell_set, event_set, households, 2001, dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should add 50% from gridcell 1 (8) and 25 households to gridcell 3
-        self.assert_(ma.allclose(number_of_households, array( [24,0,55,0,5,0,0,0,0,0])))
+        self.assertTrue(ma.allclose(number_of_households, array( [24,0,55,0,5,0,0,0,0,0])))
         
     def test_addition_of_households_with_location(self):
             dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
@@ -366,7 +366,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
             
             # the model should add 6 households to gridcell 1 and 5 to gridcell 5, i.e. 11 new households
             # all new households should have persons either 1 or 2, but not 3
-            self.assert_(in1d(households['persons'][50:61], array([1,2])).all())
+            self.assertTrue(in1d(households['persons'][50:61], array([1,2])).all())
      
             AgentEventModel().run(gridcell_set, event_set, households, 2001, 
                                   location_characteristics=['zone_id'], dataset_pool=dataset_pool)
@@ -374,7 +374,7 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
                                                                   dataset_pool=dataset_pool)
             # the model should add 50% from gridcell 1 (8) and 25 households to gridcell 3, i.e. 33 new HHs
             # new households should have persons 1,2,3
-            self.assert_(in1d(households['persons'][61:94], array([1,2,3])).all())    
+            self.assertTrue(in1d(households['persons'][61:94], array([1,2,3])).all())    
         
     def test_deletion_of_jobs_with_one_characteristics(self):
         dataset_pool = DatasetPool(storage=self.storage, package_order=["psrc_parcel","urbansim", "opus_core"])
@@ -390,10 +390,10 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
                                                                     dataset_pool=dataset_pool)
         # the model should remove 2 jobs of sector 1 from gridcell 1, 
         #                         5 jobs of sector 1 from gridcell 5
-        self.assert_(ma.allclose(number_of_jobs_of_sector_1, array( [2,4,4,4,0,4,4,4,4,4]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_1, array( [2,4,4,4,0,4,4,4,4,4]))) 
         # other sectors don't change
-        self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
-        self.assert_(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
 
         AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
@@ -406,8 +406,8 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         #                         1 job of sector 1 from gridcell 1,
         #                       all jobs of sector 2 from gridcell 2
         #                        70% jobs of sector 2 from gridcell 3
-        self.assert_(ma.allclose(number_of_jobs_of_sector_1, array( [1,4,4,4,0,4,4,4,4,4]))) 
-        self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( [3, 0, 1, 3, 1, 3, 3, 3, 3, 3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_1, array( [1,4,4,4,0,4,4,4,4,4]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_2, array( [3, 0, 1, 3, 1, 3, 3, 3, 3, 3]))) 
         # sector 4 does not change
 
     def test_addition_of_jobs_with_one_characteristics(self):
@@ -425,10 +425,10 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
 
         # the model should add 2 jobs of sector 1 to gridcell 1, 
         #                      5 jobs of sector 1 to gridcell 5
-        self.assert_(ma.allclose(number_of_jobs_of_sector_1, array( [6,4,4,4,9,4,4,4,4,4]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_1, array( [6,4,4,4,9,4,4,4,4,4]))) 
         # other sectors don't change
-        self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
-        self.assert_(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_2, array( 10 * [3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3]))) 
 
         AgentEventModel().run(gridcell_set, event_set, jobs, 2001, dataset_pool=dataset_pool)
         number_of_jobs_of_sector_1 = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs_of_sector_1", 
@@ -441,10 +441,10 @@ class AgentEventsTests(opus_unittest.OpusTestCase):
         #                      1 job of sector 1 to gridcell 1,
         #                      4 jobs of sector 2 to gridcell 2
         #                      70% jobs of sector 2 to gridcell 3
-        self.assert_(ma.allclose(number_of_jobs_of_sector_1, array( [7, 4, 4, 4, 9, 4, 4, 4, 4, 4]))) 
-        self.assert_(ma.allclose(number_of_jobs_of_sector_2, array( [3, 6, 5, 3, 5, 3, 3, 3, 3, 3]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_1, array( [7, 4, 4, 4, 9, 4, 4, 4, 4, 4]))) 
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_2, array( [3, 6, 5, 3, 5, 3, 3, 3, 3, 3]))) 
         # sector 4 does not change
-        self.assert_(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3])))
+        self.assertTrue(ma.allclose(number_of_jobs_of_sector_4, array( 10 * [3])))
                 
 if __name__=="__main__":
     opus_unittest.main()

@@ -22,7 +22,7 @@ class ExportTravelData(object):
         '''
         # get working path as an anchor e.g. to determine the config file location.
         self.working_path = test_path.__path__[0]
-        print "Working path: %s" % self.working_path
+        print("Working path: %s" % self.working_path)
         # get config file location
         self.config_file = os.path.join( self.working_path, 'configs', 'seattle_parcel_travel_cost_test.xml')
         

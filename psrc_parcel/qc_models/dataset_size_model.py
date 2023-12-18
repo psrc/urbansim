@@ -51,7 +51,7 @@ class DatasetSizeModel(Model):
             colyears = np.array(colyears)
             uc = np.unique(values, return_counts=True)
             imax = np.argmax(uc[1])
-            idx = np.where(values <> uc[0][imax])[0]
+            idx = np.where(values != uc[0][imax])[0]
             df = pd.DataFrame({"column": names[idx],  "year": colyears[idx], "size": values[idx], "target": target})
             df = df.append(pd.DataFrame({"column": np.array(["all other columns"]), "year": np.array([years[0]]), "size": np.array([uc[0][imax]]), "target": target}))
             logger.log_status("Inconsistency in table ", table, ":\n", df)

@@ -7,7 +7,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from coreplot import *
+from .coreplot import *
 
 class Pval(Matplot):
     def __init__(self, project, parent=None):
@@ -67,7 +67,7 @@ class Pval(Matplot):
         query = self.executeSelectQuery(projectDBC.dbc,pvaluevar, performancetable, filter, group)
 
         if query:
-            while query.next():
+            while next(query):
                 pval = query.value(0).toDouble()[0]
                 self.err.append(pval)
             projectDBC.dbc.close()

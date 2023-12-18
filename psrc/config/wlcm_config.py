@@ -154,8 +154,8 @@ my_controller_configuration["home_based_workplace_choice_model"]["prepare_for_ru
 my_controller_configuration["home_based_workplace_choice_model"]["run"]["arguments"]["agents_filter"] = "'psrc.person.is_home_based_worker_without_job'"
 my_controller_configuration["home_based_workplace_choice_model"]["run"]["arguments"]["chunk_specification"] = "{'nchunks':1}"
 
-for model in my_controller_configuration.keys():
-    if model not in run_configuration["models_configuration"].keys():
+for model in list(my_controller_configuration.keys()):
+    if model not in list(run_configuration["models_configuration"].keys()):
         run_configuration["models_configuration"][model] = {}    
     run_configuration["models_configuration"][model]['controller'] = my_controller_configuration[model]
 

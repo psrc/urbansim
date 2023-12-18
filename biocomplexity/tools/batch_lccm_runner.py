@@ -78,7 +78,7 @@ if __name__ == "__main__":
             current_year = str(year)
             previous_year = str(Simulation()._get_previous_year(year, years))
             prediction_year = [LCCMBatch()._get_prediction_year(year, years)]
-            print previous_year, current_year, prediction_year
+            print(previous_year, current_year, prediction_year)
             # 1. move LCCM_base_directory from previous year to current year
             LCCMBatch()._move_LCCM_base_directory(os.path.join(LCCMBatch.base_dir, previous_year, "land_covers"),
                                      os.path.join(LCCMBatch.base_dir, current_year, "land_covers"))

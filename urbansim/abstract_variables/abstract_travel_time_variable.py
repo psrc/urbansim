@@ -44,7 +44,7 @@ class abstract_travel_time_variable(Variable):
             results[missing_pairs_index] = self.default_value
             logger.log_warning("Values for %s O-D pairs in %s interaction dataset reset." % ( missing_pairs_index[0].size, home_zone.shape ) )
             logger.log_warning("O-D pairs below do not appear in travel data; their values set to %s:\n %s" % ( self.default_value,
-                                                                                                         str(array(zip(home_zone[missing_pairs_index], 
-                                                                                                                       work_zone[missing_pairs_index]))) ) )
+                                                                                                         str(array(list(zip(home_zone[missing_pairs_index], 
+                                                                                                                       work_zone[missing_pairs_index])))) ) )
         
         return results

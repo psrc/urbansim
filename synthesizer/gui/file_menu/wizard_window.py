@@ -9,7 +9,7 @@ from PyQt4.QtSql import *
 from qgis.core import *
 from qgis.gui import *
 import sys, os, re, shutil
-import countydata, newproject
+from . import countydata, newproject
 from database.createDBConnection import createDBC
 
 
@@ -70,7 +70,7 @@ class LineEdit(QLineEdit):
     def check(self):
         string = self.text()
         #print string
-        if len(string)<>0:
+        if len(string)!=0:
             for i in string:
                 if not re.match("[A-Za-z_]", i):
                     check_dummy = False
@@ -276,7 +276,7 @@ class Wizard(QWizard):
     def initialLoad(self):
         try:
             self.counties.load()
-        except IOError, e:
+        except IOError as e:
             QMessageBox.warning(self, "Counties - Error", "Failed to load: %s" %e)
 
     def createResolutionPage(self):
@@ -614,8 +614,8 @@ class Wizard(QWizard):
     def checkFileLocation(self, filePath):
         try:
             open(filePath, 'r')
-        except IOError, e:
-            raise IOError, e
+        except IOError as e:
+            raise IOError(e)
 
 
     def checkSampleFiles(self):
@@ -629,7 +629,7 @@ class Wizard(QWizard):
         try:
             os.makedirs("%s/%s/data" %(self.project.location, self.project.name))
             projectLocationDummy = True
-        except WindowsError, e:
+        except WindowsError as e:
             reply = QMessageBox.question(None, "PopGen: Processing Data",
                                          QString("""Database Error: %s. \n\nDo you wish"""
                                                  """ to keep the previous data?"""

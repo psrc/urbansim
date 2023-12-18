@@ -71,7 +71,7 @@ class AbstractFunctionalTest(object):
         db = OpusDatabase(database_server_configuration = self.db_config, 
                           database_name = self.test_db)
         
-        table_names = self.test_data[self.year].keys()
+        table_names = list(self.test_data[self.year].keys())
         existing_tables = db.get_tables_in_database()        
         self.assertEqual( set(existing_tables), set(table_names) )
 
@@ -98,7 +98,7 @@ class AbstractFunctionalTest(object):
         
     def test_export_one_table(self):
         logger.log_status("Test export single table for %s with %s" % (self.protocol, self.__class__))
-        for table_name in self.test_data[self.year].keys():
+        for table_name in list(self.test_data[self.year].keys()):
             self._test_export_one_table(table_name)
             
     def _test_export_one_table(self, table_name):

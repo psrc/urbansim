@@ -160,7 +160,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([0,0,1,2])))
+        self.assertTrue(ma.allequal(values, array([0,0,1,2])))
 
     def test_recent_years_of_2(self):
         dataset_pool = self.prepare_dataset_pool(2)
@@ -169,7 +169,7 @@ class Tests(opus_unittest.OpusTestCase):
         gridcell.compute_variables(self.variable_name,
                                    dataset_pool=dataset_pool)
         values = gridcell.get_attribute(self.variable_name)
-        self.assert_(ma.allequal(values, array([1,0,3,2])))
+        self.assertTrue(ma.allequal(values, array([1,0,3,2])))
 
 if __name__=='__main__':
     opus_unittest.main()

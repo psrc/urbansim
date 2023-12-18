@@ -24,7 +24,7 @@ class AbstractDatabaseEngineManager(object):
         raise Exception('method not implemented')
     
     def get_tables_in_database(self, metadata):
-        return metadata.tables.keys()
+        return list(metadata.tables.keys())
     
     @classmethod
     def format_db_name(cls, database_name):

@@ -119,7 +119,7 @@ def drawing_housing_units(db, frequencies, weights, index_matrix, sp_matrix, pum
             hhldid_by_type = sp_matrix[i[1]-1:i[2],2]
 
             for k in range(len(freq)):
-                if freq[k]<>0:
+                if freq[k]!=0:
                     synthetic_population.append([hhldid_by_type[k] + 1, freq[k], i[0]])
         j = j + 1
 

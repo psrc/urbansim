@@ -39,7 +39,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
                           )
                          )
         desc = QtGui.QApplication.translate("DatabaseSettingsEditGui", desc, None, QtGui.QApplication.UnicodeUTF8)
-        desc = unicode(desc) % dict([(n, eval('DatabaseServerConfiguration.%s'%n)) for n in dir(DatabaseServerConfiguration) if re.match('.*_TAG$', n)] +
+        desc = str(desc) % dict([(n, eval('DatabaseServerConfiguration.%s'%n)) for n in dir(DatabaseServerConfiguration) if re.match('.*_TAG$', n)] +
                                     [('conf_file_path', DatabaseServerConfiguration.get_default_configuration_file_path())])
         desc = QtCore.QString(desc)
         
@@ -57,7 +57,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
             self.tree_view = self.xml_controller.view
             return
 
-        except IOError, ex:
+        except IOError as ex:
             MessageBox.error(mainwindow = self,
                           text = 'Could not initialize Database Settings',
                           detailed_text = str(ex))
@@ -68,12 +68,12 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
     def on_buttonBox_accepted(self):
         try:
             ElementTree(self.xml_root).write(self._config_filename, pretty_print=True, with_tail=False)
-        except IOError, ex:
+        except IOError as ex:
             MessageBox.error(self,
                           text = 'A disk error occured when saving the ' +
                           'settings.',
                           detailed_text = str(ex))
-        except Exception, ex:
+        except Exception as ex:
             MessageBox.error(mainwindow = self,
                           text = 'An unknown error occured when saving ' +
                           'your changes.',

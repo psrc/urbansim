@@ -66,7 +66,7 @@ def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_p
 
     if labels is None:
         if index is not None:
-            raise ValueError, "index without defined labels"
+            raise ValueError("index without defined labels")
         if not pass_positions:
             return func(input.ravel())
         else:
@@ -75,7 +75,7 @@ def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_p
     try:
         input, labels = numpy.broadcast_arrays(input, labels)
     except ValueError:
-        raise ValueError, "input and labels must have the same shape (excepting dimensions with width 1)"
+        raise ValueError("input and labels must have the same shape (excepting dimensions with width 1)")
 
     if index is None:
         if not pass_positions:
@@ -85,7 +85,7 @@ def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_p
 
     index = numpy.atleast_1d(index)
     if numpy.any(index.astype(labels.dtype).astype(index.dtype) != index):
-        raise ValueError, "Cannot convert index values from <%s> to <%s> (labels' type) without loss of precision"%(index.dtype, labels.dtype)
+        raise ValueError("Cannot convert index values from <%s> to <%s> (labels' type) without loss of precision"%(index.dtype, labels.dtype))
     index = index.astype(labels.dtype)
 
     # optimization: find min/max in index, and select those parts of labels, input, and positions
@@ -120,7 +120,7 @@ def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_p
         lo = numpy.searchsorted(labels, sorted_index, side='left')
         hi = numpy.searchsorted(labels, sorted_index, side='right')
     
-        for i, l, h in zip(range(nidx), lo, hi):
+        for i, l, h in zip(list(range(nidx)), lo, hi):
             if l == h:
                 continue
             idx = sorted_index[i]
@@ -283,24 +283,24 @@ class ndimageTests(opus_unittest.OpusTestCase):
         
         index = None
         expected = 4.5
-        self.assert_(all(median(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(median(input, labels=labels, index=index)==expected))
 
         index = 2
         expected = 4
-        self.assert_(all(median(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(median(input, labels=labels, index=index)==expected))
 
         index = array([1,5])
         expected = array([3.5,7])
-        self.assert_(all(median(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(median(input, labels=labels, index=index)==expected))
 
         index = array([1,2,5])
         expected = array([3.5,4,7])
-        self.assert_(all(median(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(median(input, labels=labels, index=index)==expected))
 
         labels = None
         index = None
         expected = 5.0
-        self.assert_(all(median(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(median(input, labels=labels, index=index)==expected))
 
     def test_empty_array_zero_identity_error1(self):
         """test fix for scipy 0.8.0
@@ -311,7 +311,7 @@ class ndimageTests(opus_unittest.OpusTestCase):
         index = None
         expected = 0
         results = sum(input, labels=labels, index=index)
-        self.assert_(all(results==expected))
+        self.assertTrue(all(results==expected))
 
     def test_empty_array_zero_identity_error2(self):
         """ test fix for scipy 0.8.0
@@ -322,14 +322,14 @@ class ndimageTests(opus_unittest.OpusTestCase):
         index = array([1,2,3],dtype=int32)
         expected = array([0, 0, 0], dtype=int32)
         results = sum(input, labels=labels, index=index)
-        self.assert_(all(results==expected))
-        self.assert_(len(results)==len(expected))
+        self.assertTrue(all(results==expected))
+        self.assertTrue(len(results)==len(expected))
         
         index = [1,2,3]
         expected = array([0, 0, 0], dtype=int32)
         results = sum(input, labels=labels, index=index)
-        self.assert_(all(results==expected))
-        self.assert_(len(results)==len(expected))
+        self.assertTrue(all(results==expected))
+        self.assertTrue(len(results)==len(expected))
 
     def test_ndimage_mean_nan(self):
         """ test fix for ndimage.mean for scipy 0.8.0
@@ -340,14 +340,14 @@ class ndimageTests(opus_unittest.OpusTestCase):
         index = array([1,2,3],dtype=int32)
         expected = array([0, 0, 0], dtype=int32)
         results = mean(input, labels=labels, index=index)
-        self.assert_(all(results==expected))
-        self.assert_(len(results)==len(expected))
+        self.assertTrue(all(results==expected))
+        self.assertTrue(len(results)==len(expected))
         
         index = [1,2,3]
         expected = array([0, 0, 0], dtype=int32)
         results = mean(input, labels=labels, index=index)
-        self.assert_(all(results==expected))
-        self.assert_(len(results)==len(expected))
+        self.assertTrue(all(results==expected))
+        self.assertTrue(len(results)==len(expected))
 
     def MASKED_test_empty_array_memory_error(self):
         """ weird error introduced in scipy 0.8.0
@@ -355,10 +355,10 @@ class ndimageTests(opus_unittest.OpusTestCase):
         from numpy import array, all, int64, int32
         input = array([], dtype=int64)
         labels=array([])  ## default to float64
-        print labels.dtype
+        print(labels.dtype)
         index = array([1,2,3])
         expected = 0
-        self.assert_(all(sum(input, labels=labels, index=index)==expected))
+        self.assertTrue(all(sum(input, labels=labels, index=index)==expected))
                 
 if __name__ == "__main__":
     opus_unittest.main()

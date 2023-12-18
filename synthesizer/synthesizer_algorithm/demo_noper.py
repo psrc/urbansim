@@ -7,31 +7,31 @@
 
 from PyQt4.QtCore import *
 
-import heuristic_algorithm_noper
-import psuedo_sparse_matrix
-import drawing_households
-import adjusting_sample_joint_distribution
-import ipf
+from . import heuristic_algorithm_noper
+from . import psuedo_sparse_matrix
+from . import drawing_households
+from . import adjusting_sample_joint_distribution
+from . import ipf
 import scipy
 import scipy.stats
 import numpy
 import MySQLdb
 import time
-import cPickle
+import pickle
 
 def configure_and_run(project, geo, varCorrDict):
 
 
     f = open('indexMatrix_99999.pkl', 'rb')
-    index_matrix = cPickle.load(f)
+    index_matrix = pickle.load(f)
     f.close()
 
 
     state, county, pumano, tract, bg = geo.state, geo.county, geo.puma5, geo.tract, geo.bg
-    print '------------------------------------------------------------------'
-    print 'Geography: County - %s, PUMA ID- %s, Tract ID- %0.2f, BG ID- %s' \
-                                                                         %(county, pumano, float(tract)/100, bg)
-    print '------------------------------------------------------------------'
+    print('------------------------------------------------------------------')
+    print('Geography: County - %s, PUMA ID- %s, Tract ID- %0.2f, BG ID- %s' \
+                                                                         %(county, pumano, float(tract)/100, bg))
+    print('------------------------------------------------------------------')
 
     db = MySQLdb.connect(host = '%s' %project.db.hostname, user = '%s' %project.db.username,
                          passwd = '%s' %project.db.password, db = '%s%s%s' 
@@ -75,13 +75,13 @@ def configure_and_run(project, geo, varCorrDict):
                                                                                   project.adjControlsDicts.gq,
                                                                                   state, county, tract, bg)
 
-    print 'Step 1A: Checking if the marginals totals are non-zero and if they are consistent across variables...'
-    print '\tChecking household variables'
+    print('Step 1A: Checking if the marginals totals are non-zero and if they are consistent across variables...')
+    print('\tChecking household variables')
     adjusting_sample_joint_distribution.check_marginals(hhld_marginals, hhld_control_variables)
-    print '\tChecking gq variables\n'
+    print('\tChecking gq variables\n')
     adjusting_sample_joint_distribution.check_marginals(gq_marginals, gq_control_variables)
     
-    print 'Step 1B: Checking if the geography has any housing units to synthesize...\n'
+    print('Step 1B: Checking if the geography has any housing units to synthesize...\n')
     adjusting_sample_joint_distribution.check_for_zero_housing_totals(hhld_marginals, gq_marginals)
 
 # Reading the parameters
@@ -89,34 +89,34 @@ def configure_and_run(project, geo, varCorrDict):
 
 #______________________________________________________________________
 # Running IPF for Households
-    print 'Step 2A: Running IPF procedure for Households... '
+    print('Step 2A: Running IPF procedure for Households... ')
     hhld_objective_frequency, hhld_estimated_constraint = ipf.ipf_config_run(db, 'hhld', hhld_control_variables, varCorrDict, 
                                                                              project.adjControlsDicts.hhld,
                                                                              hhld_dimensions, 
                                                                              state, county, pumano, tract, bg, 
                                                                              parameters, project.selVariableDicts.hhldMargsModify)
-    print 'IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti)
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
     ti = time.clock()
 
 # Running IPF for GQ
-    print 'Step 2B: Running IPF procedure for Gqs... '
+    print('Step 2B: Running IPF procedure for Gqs... ')
     gq_objective_frequency, gq_estimated_constraint = ipf.ipf_config_run(db, 'gq', gq_control_variables, varCorrDict, 
                                                                          project.adjControlsDicts.gq,
                                                                          gq_dimensions, 
                                                                          state, county, pumano, tract, bg, 
                                                                          parameters)
-    print 'IPF procedure for GQ was completed in %.2f sec \n'%(time.clock()-ti)
+    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.clock()-ti))
     ti = time.clock()
 
 #______________________________________________________________________
 # Creating the weights array
-    print 'Step 3: Running IPU procedure for obtaining weights that satisfy Household constraints... '
+    print('Step 3: Running IPU procedure for obtaining weights that satisfy Household constraints... ')
     dbc.execute('select rowno from sparse_matrix1_%s group by rowno'%(99999))
     result = numpy.asarray(dbc.fetchall())[:,0]
     weights = numpy.ones((1,housing_units), dtype = float)[0] * -99
     weights[result]=1
 
-    print 'Number of housing units - %s' %housing_units
+    print('Number of housing units - %s' %housing_units)
 #______________________________________________________________________
 # Creating the control array
     total_constraint = numpy.hstack((hhld_estimated_constraint[:,0], gq_estimated_constraint[:,0]))
@@ -131,10 +131,10 @@ def configure_and_run(project, geo, varCorrDict):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = heuristic_algorithm_noper.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix, parameters)
 
-    print 'IPU procedure was completed in %.2f sec\n'%(time.clock()-ti)
+    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
     ti = time.clock()
 #_________________________________________________________________
-    print 'Step 4: Creating the synthetic households and individuals...'
+    print('Step 4: Creating the synthetic households and individuals...')
 # creating whole marginal values
     hhld_order_dummy = adjusting_sample_joint_distribution.create_aggregation_string(hhld_control_variables)
     hhld_frequencies = drawing_households.create_whole_frequencies(db, 'hhld', hhld_order_dummy, pumano, tract, bg, parameters)
@@ -151,11 +151,11 @@ def configure_and_run(project, geo, varCorrDict):
     ti = time.time()
 
     f = open('pIndexMatrix.pkl', 'rb')
-    p_index_matrix = cPickle.load(f)
+    p_index_matrix = pickle.load(f)
 
     f.close()
 
-    print 'pIndexMatrix in - %.4f' %(time.time()-ti)
+    print('pIndexMatrix in - %.4f' %(time.time()-ti))
 
 
     hhidRowDict = drawing_households.hhid_row_dictionary(housing_sample) # row in the master matrix - hhid
@@ -196,8 +196,8 @@ def configure_and_run(project, geo, varCorrDict):
 
 
     if draw_count >= parameters.synPopDraws:
-        print ('Max Iterations (%d) reached for drawing households with the best draw having a p-value of %.4f'
-               %(parameters.synPopDraws, max_p))
+        print(('Max Iterations (%d) reached for drawing households with the best draw having a p-value of %.4f'
+               %(parameters.synPopDraws, max_p)))
         if max_p == 0:
             max_p = p_value
             max_p_housing_attributes = synthetic_housing_attributes
@@ -205,7 +205,7 @@ def configure_and_run(project, geo, varCorrDict):
             min_chi = stat
 
     else:
-        print 'Population with desirable p-value of %.4f was obtained in %d iterations' %(max_p, draw_count)
+        print('Population with desirable p-value of %.4f was obtained in %d iterations' %(max_p, draw_count))
 
     #drawing_households.storing_synthetic_attributes('housing', max_p_housing_attributes, county, tract, bg, project.location, project.name)
     #drawing_households.storing_synthetic_attributes('person', max_p_person_attributes, county, tract, bg, project.location, project.name)
@@ -221,18 +221,18 @@ def configure_and_run(project, geo, varCorrDict):
     values = (int(state), int(county), int(tract), int(bg), min_chi, max_p, draw_count, iteration, conv_crit_array[-1])
     drawing_households.store_performance_statistics(db, geo, values)
 
-    print 'Number of Synthetic Household/Group quarters - %d' %(sum(max_p_housing_attributes[:,-2]))
+    print('Number of Synthetic Household/Group quarters - %d' %(sum(max_p_housing_attributes[:,-2])))
     for i in range(len(hhld_control_variables)):
-        print '%s variable\'s marginal distribution sum is %d' %(hhld_control_variables[i], sum(hhld_marginals[i]))
+        print('%s variable\'s marginal distribution sum is %d' %(hhld_control_variables[i], sum(hhld_marginals[i])))
 
     for i in range(len(gq_control_variables)):
-        print '%s variable\'s marginal distribution sum is %d' %(gq_control_variables[i], sum(gq_marginals[i]))
+        print('%s variable\'s marginal distribution sum is %d' %(gq_control_variables[i], sum(gq_marginals[i])))
 
 
     db.commit()
     dbc.close()
     db.close()
-    print 'Blockgroup synthesized in %.4f s' %(time.clock()-tii)
+    print('Blockgroup synthesized in %.4f s' %(time.clock()-tii))
 
 if __name__ == '__main__':
 
@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
     geography = (5601, 170401, 3)
     configure_and_run(index_matrix, p_index_matrix, geography)
-    print 'Synthesis for the geography was completed in %.2f' %(time.clock()-ti)
+    print('Synthesis for the geography was completed in %.2f' %(time.clock()-ti))
 
     dbc.close()
     db.commit()

@@ -42,7 +42,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         bts = self.dataset_pool.get_dataset('building_type')
         all_building_types = bts.get_id_attribute()
         
-        self.bt_do_not_count = array(map(lambda x: x not in tv_building_types, all_building_types))
+        self.bt_do_not_count = array([x not in tv_building_types for x in all_building_types])
         self.bt_do_not_count =  all_building_types[self.bt_do_not_count]
         
         regions.compute_variables(["placed_households = %s.aggregate(%s.number_of_agents(household), intermediates=[%s])" % (self.subarea_name, realestate_dataset_name, self.intermediates_to_realestate),
@@ -165,7 +165,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             if not self.is_residential_bt[column_value] and not self.build_in_subarea["non_residential"]:
                 return True
             
-        if column_value and not self.second_pass.has_key(column_value):
+        if column_value and column_value not in self.second_pass:
             self.second_pass[column_value] = True
             # set total spaces, occupied spaces and target spaces
             realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
@@ -175,12 +175,12 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             self.accounting[column_value]["target_spaces"] = int(round(self.occuppied_estimate[column_value][self.subarea_index]))
                 
         if column_value:
-            if self.accounting.has_key(column_value):
+            if column_value in self.accounting:
                 column_values = [column_value]
             else:
                 return True
         else:
-            column_values = self.accounting.keys()
+            column_values = list(self.accounting.keys())
             
         is_target_met = {}
         for column_value in column_values:
@@ -188,10 +188,10 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             tot = 0
             prop = 0
             demol = 0
-            for bt in self.occuppied_estimate.keys():
+            for bt in list(self.occuppied_estimate.keys()):
                 if (self.is_residential_bt[column_value] and not self.is_residential_bt[bt]) or (not self.is_residential_bt[column_value] and self.is_residential_bt[bt]):
                     continue
-                if not self.accounting.has_key(bt):
+                if bt not in self.accounting:
                     realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
                                    self.realestate_dataset[self.subarea_id_name] == self.subarea))
                     tot = tot + self.realestate_dataset.total_spaces[realestate_indexes].sum()
@@ -211,16 +211,14 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                 else:                
                     target = self.occupied_estimate_nonresidential[self.subarea_index]
             is_target_met[column_value] = target <= (tot + prop - demol)
-        results = is_target_met.values()
+        results = list(is_target_met.values())
         return all(results)
         
 
     def compute_job_building_type_distribution(self, building_type_dataset, realestate_dataset_name, regions):
         building_type_ids = building_type_dataset.get_id_attribute()
         
-        regions.compute_variables(map(lambda type: 
-            "number_of_jobs_for_bt_%s = %s.aggregate(psrc_parcel.%s.number_of_non_home_based_jobs * (%s.building_type_id == %s))" % (type, self.subarea_name, realestate_dataset_name, realestate_dataset_name, type),
-                building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]) + 
+        regions.compute_variables(["number_of_jobs_for_bt_%s = %s.aggregate(psrc_parcel.%s.number_of_non_home_based_jobs * (%s.building_type_id == %s))" % (type, self.subarea_name, realestate_dataset_name, realestate_dataset_name, type) for type in building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]] + 
               ["number_of_nhb_jobs = %s.aggregate(psrc_parcel.%s.number_of_non_home_based_jobs)" % (self.subarea_name, realestate_dataset_name)], 
                                   dataset_pool=self.dataset_pool)
         building_type_distribution = {}
@@ -235,9 +233,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
     def compute_building_type_distribution(self, building_type_dataset, realestate_dataset_name, regions):
         parcels = self.dataset_pool.get_dataset('parcel')        
         building_type_ids = building_type_dataset.get_id_attribute()
-        regions.compute_variables(map(lambda type:
-            "units_proposed_for_bt_%s = %s.aggregate(psrc_parcel.parcel.units_proposed_for_building_type_%s)" % (type, self.subarea_name, type), 
-            building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]),
+        regions.compute_variables(["units_proposed_for_bt_%s = %s.aggregate(psrc_parcel.parcel.units_proposed_for_building_type_%s)" % (type, self.subarea_name, type) for type in building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]],
                     dataset_pool=self.dataset_pool)
         sumunits_residential = zeros(regions.size(), dtype='float32')        
         sumunits_nonresidential = zeros(regions.size(), dtype='float32')

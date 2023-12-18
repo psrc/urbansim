@@ -2,20 +2,20 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from bform import BForm
-import submarkets
-import devmdl_optimize
+from .bform import BForm
+from . import submarkets
+from . import devmdl_optimize
 import csv, string, sys
 import zipfile
 
 try:
     f = sys.argv[1]
 except:
-    print "Include a file to test on the command line"
+    print("Include a file to test on the command line")
     sys.exit(0)
 
 if f[-3:] == "zip":
-    print "Opening as a zipfile"
+    print("Opening as a zipfile")
     z = zipfile.ZipFile(f)
     f = z.open(f.replace("zip","csv"))
 else: f = open(f)
@@ -70,7 +70,7 @@ for r in f:
 
   X, npv = devmdl_optimize.optimize(bform,prices,costdiscount,submarket_pool)
 
-  print X, npv, btype
+  print(X, npv, btype)
 
   c += 1
   #if c == 500: break

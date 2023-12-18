@@ -11,7 +11,7 @@ class LagVariableParser(object):
         """Pattern matches for lag variable short name and return true if attribute is a lag varaible
             false otherwise"""
         match = re.search("^[a-z_0-9]+_lag[0-9]+$", short_name)
-        return match <> None
+        return match != None
             
     def parse_lag_variable_short_name(self, short_name):
         """Returns a tuple of the lag attribute's short name and the lag delay"""
@@ -37,15 +37,15 @@ class LagVariableParserTests(opus_unittest.OpusTestCase):
         self.assertEqual(self.parser.parse_lag_variable_short_name('a_lag42'), ('a', 42))
         
     def test_is_short_name_for_lag_variable(self):
-        self.assert_(self.parser.is_short_name_for_lag_variable('a_lag1'))
-        self.assert_(self.parser.is_short_name_for_lag_variable('a_lag01'))
-        self.assert_(not self.parser.is_short_name_for_lag_variable('a_lag_1'))
-        self.assert_(not self.parser.is_short_name_for_lag_variable('lag1'))
-        self.assert_(not self.parser.is_short_name_for_lag_variable('_lag1'))
-        self.assert_(not self.parser.is_short_name_for_lag_variable('a_lag.1'))
+        self.assertTrue(self.parser.is_short_name_for_lag_variable('a_lag1'))
+        self.assertTrue(self.parser.is_short_name_for_lag_variable('a_lag01'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('a_lag_1'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('lag1'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('_lag1'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('a_lag.1'))
 # TODO: we want the following two to be true
-        self.assert_(not self.parser.is_short_name_for_lag_variable('-a_lag1'))
-        self.assert_(not self.parser.is_short_name_for_lag_variable('a_lag1aa'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('-a_lag1'))
+        self.assertTrue(not self.parser.is_short_name_for_lag_variable('a_lag1aa'))
 #        self.assert_(not self.parser.is_short_name_for_lag_variable('a_lag1_lag1'))
 
     def test_add_this_lag_offset_to_this_short_name(self):

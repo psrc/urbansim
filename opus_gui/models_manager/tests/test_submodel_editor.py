@@ -19,7 +19,7 @@ class TestSubmodelEditor(OpusGUITestCase):
         instance.le_name.setText('taken name')
         self.assertEqual(instance.validate_submodel_and_accept(), 'name collision')
         instance.le_name.setText('unique name')
-        self.assert_(instance.validate_submodel_and_accept() is None)
+        self.assertTrue(instance.validate_submodel_and_accept() is None)
 
     def test_get_nested_structure(self):
         xml = self.get_data_from_test_files('nested_structures.xml', __file__)
@@ -34,7 +34,7 @@ class TestSubmodelEditor(OpusGUITestCase):
                 self.assertEqual(nest_struct_node, None)
             else:
                 node_data = p.xml_config._convert_node_to_data(nest_struct_node)
-                print etree.tostring(nest_struct_node)
+                print(etree.tostring(nest_struct_node))
                 self.assertDictsEqual(node_data, should_be_dict)
 
         should_be_dict = None

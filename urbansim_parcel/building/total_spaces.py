@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from opus_core.misc import unique
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from numpy import zeros
 
 class total_spaces(Variable):

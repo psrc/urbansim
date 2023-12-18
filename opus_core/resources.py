@@ -22,7 +22,7 @@ class Resources(Configuration):
     def is_in(self, key):
         """Return True if 'key' is in the dictionary or session configuration, otherwise False.
         """ 
-        return (self.has_key(key) or SessionConfiguration().has_key(key))
+        return (key in self or key in SessionConfiguration())
         
     def copy(self):
         c = Resources()

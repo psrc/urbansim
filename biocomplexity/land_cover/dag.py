@@ -53,7 +53,7 @@ class dag(Variable):
             del locmask
         pcount_corr = correlate(patchcount, footprint, mode="reflect", cval=0.0)
         psize_corr = correlate(patchsizes, footprint, mode="reflect", cval=0.0)
-        nonzeros = where (pcount_corr <> 0)
+        nonzeros = where (pcount_corr != 0)
         result = zeros(psize_corr.shape, dtype=float32)
         result[nonzeros] = psize_corr[nonzeros]/pcount_corr[nonzeros]
         return result
@@ -104,7 +104,7 @@ class Tests(ExpectedDataTest):
         should_be = ln(distance_transform_edt(should_be)+1) / dag.standardization_constant_distance
         should_be = ravel(transpose(should_be)) # flatten by id
 
-        self.assert_(ma.allclose( values, should_be, rtol=1e-7),
+        self.assertTrue(ma.allclose( values, should_be, rtol=1e-7),
                      msg = "Error in " + self.variable_name)
 
     def test_on_expected_data(self):

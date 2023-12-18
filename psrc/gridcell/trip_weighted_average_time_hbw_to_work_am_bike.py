@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class trip_weighted_average_time_hbw_to_work_am_bike(Variable):
     """Value of this variable from this gridcell's zone."""
@@ -55,7 +55,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([4.1, 4.1, 6.2])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-3), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-3), 
                      msg="Error in " + self.variable_name)
 
 

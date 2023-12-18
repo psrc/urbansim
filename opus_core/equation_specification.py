@@ -33,7 +33,7 @@ class EquationSpecification(object):
         if (variables is None) and (specification_dict is not None):
             variables, coefficients, equations, submodels, fixed_values, other_fields = \
                                             get_specification_attributes_from_dictionary(specification_dict)
-        self.variables = tuple(map(lambda x: VariableName(x), self._none_or_array_to_array(variables)))
+        self.variables = tuple([VariableName(x) for x in self._none_or_array_to_array(variables)])
         self.coefficients = self._none_or_array_to_array(coefficients)
         if not isinstance(self.coefficients, ndarray):
             self.coefficients=array(self.coefficients)
@@ -71,7 +71,7 @@ class EquationSpecification(object):
             "field_coefficient_name":self.field_coefficient_name,
             "field_variable_name":self.field_variable_name,
             "field_fixed_value":self.field_fixed_value})
-        if in_storage <> None:
+        if in_storage != None:
             self.in_storage = in_storage
         if not isinstance(self.in_storage, Storage):
             logger.log_warning("in_storage is not of type Storage. No EquationSpecification loaded.")
@@ -81,7 +81,7 @@ class EquationSpecification(object):
             if local_resources["field_equation_id"] in data:
                 equations = data[local_resources["field_equation_id"]]
             vars=data[local_resources["field_variable_name"]]
-            self.variables=tuple(map(lambda x: VariableName(x), vars))
+            self.variables=tuple([VariableName(x) for x in vars])
             self.coefficients=data[local_resources["field_coefficient_name"]]
             if local_resources["field_submodel_id"] in data:
                 submodels = data[local_resources["field_submodel_id"]]
@@ -112,7 +112,7 @@ class EquationSpecification(object):
             "field_variable_name":self.field_variable_name,
             "field_fixed_value":self.field_fixed_value,
             "out_table_name":out_table_name})
-        if out_storage <> None:
+        if out_storage != None:
             self.out_storage = out_storage
         if not isinstance(self.out_storage, Storage):
             logger.log_warning("out_storage has to be of type Storage. No EquationSpecifications written.")
@@ -132,7 +132,7 @@ class EquationSpecification(object):
                local_resources["field_variable_name"]:  self.get_long_variable_names()}
         if self.fixed_values.size > 0:
             values[local_resources["field_fixed_value"]] = self.fixed_values
-        for field in self.other_fields.keys():
+        for field in list(self.other_fields.keys()):
             values[field] = self.other_fields[field]
 
         types = {local_resources["field_submodel_id"]: 'integer',
@@ -151,8 +151,7 @@ class EquationSpecification(object):
         """
         variables = tuple(variables)
         idx_list = []
-        variable_names = asarray(map(lambda x: x.get_alias(),
-                                                  self.variables))
+        variable_names = asarray([x.get_alias() for x in self.variables])
         for var in variables:
             idx = ematch(variable_names, var)
             if idx.size > 0:
@@ -165,7 +164,7 @@ class EquationSpecification(object):
         for i in idx_array:
             new_variables.append(self.variables[i])
         self.variables = tuple(new_variables)
-        tuple(map(lambda x: VariableName(x), variable_names[idx_array]))
+        tuple([VariableName(x) for x in variable_names[idx_array]])
         self.coefficients = self.coefficients[idx_array]
         if self.submodels.size > 0:
             self.submodels = self.submodels[idx_array]
@@ -173,15 +172,14 @@ class EquationSpecification(object):
             self.equations = self.equations[idx_array]
         if self.fixed_values.size > 0:
             self.fixed_values = self.fixed_values[idx_array]
-        for field in self.other_fields.keys():
+        for field in list(self.other_fields.keys()):
             self.other_fields[field] = self.other_fields[field][idx_array]
             
     def delete(self, variables):
         """ Delete given variables from specification."""
         variables = tuple(variables)
         idx_list = []
-        variable_names = asarray(map(lambda x: x.get_alias(),
-                                                  self.variables))
+        variable_names = asarray([x.get_alias() for x in self.variables])
         nvariables = variable_names.size
         will_not_delete = array(nvariables*[True], dtype='bool8')
         for var in variables:
@@ -209,7 +207,7 @@ class EquationSpecification(object):
         elif self.get_fixed_values().size > 0:
             self.fixed_values = concatenate((self.fixed_values, array([0], dtype=self.fixed_values.dtype)))
         if other_fields is not None:
-            for field in other_fields.keys():
+            for field in list(other_fields.keys()):
                 self.other_fields[field] = concatenate((self.other_fields[field], array([other_fields[field]],
                                                                                dtype=self.other_fields[field].dtype)))
 
@@ -217,7 +215,7 @@ class EquationSpecification(object):
         logger.log_status("Specification object:")
         logger.log_status("size:", len(self.variables))
         logger.log_status("variables:")
-        logger.log_status(map(lambda x: x.get_alias(), self.variables))
+        logger.log_status([x.get_alias() for x in self.variables])
         logger.log_status("coefficients:")
         logger.log_status(self.coefficients)
         if self.equations.size > 0:
@@ -229,7 +227,7 @@ class EquationSpecification(object):
         if self.fixed_values.size > 0:
             logger.log_status("fixed_values:")
             logger.log_status(self.fixed_values)    
-        for field in self.other_fields.keys():
+        for field in list(self.other_fields.keys()):
             logger.log_status("%s:" % field)
             logger.log_status(self.other_fields[field])
 
@@ -248,14 +246,14 @@ class EquationSpecification(object):
             self.compare_and_try_raise_speclengthexception(len(self.variables),self.equations.size,"equations")
         if self.submodels.size > 0:
             self.compare_and_try_raise_speclengthexception(len(self.variables),self.submodels.size,"submodels")
-        for field in self.other_fields.keys():
+        for field in list(self.other_fields.keys()):
             self.compare_and_try_raise_speclengthexception(len(self.variables),self.other_fields[field].size, field)
 
     def get_variable_names(self):
-        return array(map(lambda x: x.get_alias(), self.variables))
+        return array([x.get_alias() for x in self.variables])
 
     def get_long_variable_names(self):
-        return array(map(lambda x: x.get_expression(), self.variables))
+        return array([x.get_expression() for x in self.variables])
 
     def get_variables(self):
         return self.variables
@@ -291,7 +289,7 @@ class EquationSpecification(object):
             idx = self.get_submodels() == submodel
         else: 
             idx = ones(fixed_values.size, dtype="bool8")
-        idx = logical_and(idx, fixed_values <> 0)
+        idx = logical_and(idx, fixed_values != 0)
         return (self.get_coefficient_names()[idx], fixed_values[idx])
         
         
@@ -313,7 +311,7 @@ class EquationSpecification(object):
         return self.other_fields
     
     def get_other_field_names(self):
-        return self.other_fields.keys()
+        return list(self.other_fields.keys())
         
     def get_other_dim_field_names(self):
         return self.other_dim_field_names
@@ -326,15 +324,14 @@ class EquationSpecification(object):
         return unique(values)
         
     def set_variable_prefix(self, prefix):
-        self.variables = tuple(map(lambda name: VariableName(prefix + name),
-                                     self.get_variable_names()))
+        self.variables = tuple([VariableName(prefix + name) for name in self.get_variable_names()])
 
     def set_dataset_name_of_variables(self, dataset_name):
         self.set_variable_prefix(dataset_name+".")
 
     def set_other_dim_field_names(self):
         """ Choose those names whose prefix correspond to self.dim_field_prefix."""
-        for field in self.other_fields.keys():
+        for field in list(self.other_fields.keys()):
             if field[0:len(self.dim_field_prefix)] == self.dim_field_prefix:
                 self.other_dim_field_names.append(field)
                 
@@ -374,7 +371,7 @@ class EquationSpecification(object):
         """
         current_aliases = self.get_variable_names()
         variables = list(self.get_variables())
-        for alias, new_expr in new_variables.iteritems():
+        for alias, new_expr in new_variables.items():
             idx = where(current_aliases == alias)[0]
             for i in range(idx.size):
                 variables[idx[i]] = VariableName(new_expr)
@@ -395,7 +392,7 @@ class EquationSpecification(object):
                     self.equations[i] = eq
                     continue
                 other_fields={}
-                for of_name, of_values in self.other_fields.iteritems():
+                for of_name, of_values in self.other_fields.items():
                     other_fields[of_name] = of_values[i]
                 subm = None
                 if self.get_submodels().size>0:
@@ -448,12 +445,12 @@ def get_specification_attributes_from_dictionary(specification_dict):
     definition = {}
     other_fields = {}
     try:
-        if "_definition_" in specification_dict.keys():
+        if "_definition_" in list(specification_dict.keys()):
             definition["variables"], definition["coefficients"], definition["equations"], dummy1, definition["fixed_values"], dummy2 = \
                             get_variables_coefficients_equations_for_submodel(specification_dict["_definition_"], "_definition_")
-            definition["alias"]  = map(lambda x: VariableName(x).get_alias(), definition["variables"])
+            definition["alias"]  = [VariableName(x).get_alias() for x in definition["variables"]]
             del specification_dict["_definition_"]
-        for sub_model, submodel_spec in specification_dict.items():
+        for sub_model, submodel_spec in list(specification_dict.items()):
             variable, coefficient, equation, submodel, fixed_value, other_field = get_variables_coefficients_equations_for_submodel(
                                                                          submodel_spec, sub_model, definition)
             variables += variable
@@ -461,17 +458,17 @@ def get_specification_attributes_from_dictionary(specification_dict):
             equations += equation
             submodels += submodel
             fixed_values += fixed_value
-            for key, value in other_field.iteritems():
+            for key, value in other_field.items():
                 if key in other_fields:
                     other_fields[key] = concatenate((other_fields[key], value))
                 else:
                     other_fields[key] = array(value)
 
-    except Exception, e:
+    except Exception as e:
         logger.log_stack_trace()
-        raise ValueError, "Wrong specification format for model specification: %s" % e
+        raise ValueError("Wrong specification format for model specification: %s" % e)
 
-    if where(array(fixed_values) <> 0)[0].size == 0: # no fixed values defined
+    if where(array(fixed_values) != 0)[0].size == 0: # no fixed values defined
         fixed_values = []
     return (array(variables), array(coefficients), array(equations, dtype="int16"), array(submodels, dtype="int16"), 
             array(fixed_values), other_fields)
@@ -501,7 +498,7 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
         else:
             del submodel_spec['name']
             other_fields['dim_%s' % name] = []
-            for other_field_value, spec in submodel_spec.iteritems():
+            for other_field_value, spec in submodel_spec.items():
                 variable, coefficient, equation, submodel, fixed_value, other_field = \
                             get_variables_coefficients_equations_for_submodel(spec, sub_model, definition)
                 variables += variable
@@ -510,7 +507,7 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
                 submodels += submodel
                 fixed_values += fixed_value
                 other_fields['dim_%s' % name] += len(variable)*[other_field_value]
-                for key, value in other_field.iteritems():
+                for key, value in other_field.items():
                     if key in other_fields:
                         other_fields[key] = concatenate((other_fields[key], value))
                     else:
@@ -525,7 +522,7 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
 
 def get_full_variable_specification_for_var_coef(var_coef, definition):
     """get full variable name from definition diectionary by looking up the alias""" 
-    if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
+    if ("variables" in list(definition.keys())) and (var_coef in definition["alias"]):
         i = definition["alias"].index(var_coef)
         variable = definition["variables"][i]
     else:
@@ -540,9 +537,9 @@ def get_variables_coefficients_equations_from_dict(dict_spec, definition={}):
     equations = []
     error = False
     
-    speckeys = dict_spec.keys()
-    if sum(map(lambda(x): isinstance(x, int), speckeys)) == len(speckeys): # keys are the equations
-        for eq, spec in dict_spec.iteritems():
+    speckeys = list(dict_spec.keys())
+    if sum([isinstance(x, int) for x in speckeys]) == len(speckeys): # keys are the equations
+        for eq, spec in dict_spec.items():
             variable, coefficient, fixed_value, error = get_variables_coefficients_from_list(
                                                                      spec, definition)
             if error:
@@ -552,13 +549,13 @@ def get_variables_coefficients_equations_from_dict(dict_spec, definition={}):
             fixed_values += fixed_value
             equations += len(variable)*[eq]
     else:
-        if dict_spec.has_key("equation_ids"):
+        if "equation_ids" in dict_spec:
             equation_ids = dict_spec["equation_ids"]
             del dict_spec["equation_ids"]
         else:
             equation_ids = None
         
-        for var, coef in dict_spec.items():
+        for var, coef in list(dict_spec.items()):
             if not equation_ids:
                 var_name, var_index = get_full_variable_specification_for_var_coef(var, definition)
                 variables.append(var_name)
@@ -617,9 +614,9 @@ def get_variables_coefficients_from_list(list_spec, definition={}):
                 logger.log_error("Wrong specification format for variable %s" % var_coef)
                 error = True
         elif isinstance(var_coef, dict):
-            var_name, var_index = get_full_variable_specification_for_var_coef(var_coef.keys()[0], definition)
+            var_name, var_index = get_full_variable_specification_for_var_coef(list(var_coef.keys())[0], definition)
             variables.append(var_name)
-            coefficients.append(var_coef.values()[0])
+            coefficients.append(list(var_coef.values())[0])
             fixed_values.append(0)
         else:
             logger.log_error("Wrong specification format for variable %s" % var_coef)
@@ -641,8 +638,8 @@ class Tests(opus_unittest.OpusTestCase):
         specification = EquationSpecification(variables, coefficients)
         specification.write(out_storage=storage, out_table_name="spec")
         result = storage.load_table(table_name="spec")
-        self.assert_(result['variable_name'][0] == variables[0], 'Error in equation_specification')
-        self.assert_(result['variable_name'][1] == variables[1], 'Error in equation_specification')
+        self.assertTrue(result['variable_name'][0] == variables[0], 'Error in equation_specification')
+        self.assertTrue(result['variable_name'][1] == variables[1], 'Error in equation_specification')
 
     def test_load_write_specification(self):
         in_storage = StorageFactory().get_storage('dict_storage')
@@ -658,9 +655,9 @@ class Tests(opus_unittest.OpusTestCase):
         specification.load(in_table_name='my_specification')
         specification.write(out_table_name="out_specification")
         result = out_storage.load_table("out_specification", column_names=["nest", "sub_model_id", "fixed_value"])
-        self.assert_(alltrue(result['nest'] == spec_data["nest"]), 'Error in equation_specification')
-        self.assert_(alltrue(result['fixed_value'] == spec_data["fixed_value"]), 'Error in equation_specification')
-        self.assert_(alltrue(result['sub_model_id'] == array([-2, -2, -2], dtype="int32")),
+        self.assertTrue(alltrue(result['nest'] == spec_data["nest"]), 'Error in equation_specification')
+        self.assertTrue(alltrue(result['fixed_value'] == spec_data["fixed_value"]), 'Error in equation_specification')
+        self.assertTrue(alltrue(result['sub_model_id'] == array([-2, -2, -2], dtype="int32")),
                      'Error in equation_specification')
         
     def test_replace_variables(self):
@@ -672,7 +669,7 @@ class Tests(opus_unittest.OpusTestCase):
         new_variables = {'z': 'xxx.my_new_variable', 'q': 'xxx.variable_not_to_be_replaced', 'y': 'y.replaces_y'}
         specification.replace_variables(new_variables)
         result = specification.get_long_variable_names()
-        self.assert_(alltrue(result == array([variables[0], 'xxx.my_new_variable', 'y.replaces_y'])),
+        self.assertTrue(alltrue(result == array([variables[0], 'xxx.my_new_variable', 'y.replaces_y'])),
                      "Error in replace_varibles")
         
     def test_load_specification(self):
@@ -693,20 +690,20 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
         fixedval = result.get_fixed_values()
-        self.assert_(alltrue(coefs == array(["BPOP", "BINC", "BART", "BHWY", "BAGE"])),
+        self.assertTrue(alltrue(coefs == array(["BPOP", "BINC", "BART", "BHWY", "BAGE"])),
                      msg = "Error in test_load_specification (coefficients)")
-        self.assert_(alltrue(vars ==
+        self.assertTrue(alltrue(vars ==
                                  array(["population", "average_income", "is_near_arterial", "is_near_highway", "lage"])),
                      msg = "Error in test_load_specification (variables)")
-        self.assert_(ma.allequal(subm, array([1, 1, 2, 2, 3])),
+        self.assertTrue(ma.allequal(subm, array([1, 1, 2, 2, 3])),
                      msg = "Error in test_load_specification (submodels)")
-        self.assert_(fixedval.size == 0, msg = "Error in test_load_specification (fixed_values should be empty)")
+        self.assertTrue(fixedval.size == 0, msg = "Error in test_load_specification (fixed_values should be empty)")
         
         # add a variable with a fixed value coefficient
         specification[3].append(("constant", "C", 1))
         result = load_specification_from_dictionary(specification)
         fixedval = result.get_fixed_values()
-        self.assert_(ma.allequal(fixedval, array([0, 0, 0, 0, 0, 1])), 
+        self.assertTrue(ma.allequal(fixedval, array([0, 0, 0, 0, 0, 1])), 
                      msg = "Error in test_load_specification (fixed_values)")
         
     def test_load_specification_with_definition(self):
@@ -732,15 +729,15 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
         fixedval = result.get_fixed_values()
-        self.assert_(alltrue(coefs == array(["BPOP", "BINC", "BAGE", "BART", "C", "BHWY"])),
+        self.assertTrue(alltrue(coefs == array(["BPOP", "BINC", "BAGE", "BART", "C", "BHWY"])),
                      msg = "Error in test_load_specification_with_definition (coefficients)")
-        self.assert_(alltrue(vars ==
+        self.assertTrue(alltrue(vars ==
                                  array(["population", "average_income", "lage", "is_near_arterial", "constant", 
                                         "is_near_highway"])),
                      msg = "Error in test_load_specification_with_definition (variables)")
-        self.assert_(ma.allequal(subm, array([1, 1, 1, 2, 2, 2])),
+        self.assertTrue(ma.allequal(subm, array([1, 1, 1, 2, 2, 2])),
                      msg = "Error in test_load_specification_with_definition (submodels)")
-        self.assert_(ma.allclose(fixedval, array([0, 0, 0, 0, 1.5, 0])), 
+        self.assertTrue(ma.allclose(fixedval, array([0, 0, 0, 0, 1.5, 0])), 
                      msg = "Error in test_load_specification_with_definition (fixed_values)")
 
     def test_load_specification_with_definition_with_implicit_coefficients(self):
@@ -764,15 +761,15 @@ class Tests(opus_unittest.OpusTestCase):
         vars = result.get_variable_names()
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
-        self.assert_(alltrue(coefs == array(["population", "average_income", "lage", "is_near_arterial", "BHWY"])),
+        self.assertTrue(alltrue(coefs == array(["population", "average_income", "lage", "is_near_arterial", "BHWY"])),
                      msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (coefficients)")
-        self.assert_(alltrue(vars ==
+        self.assertTrue(alltrue(vars ==
                                  array(["population", "average_income", "lage", "is_near_arterial", "is_near_highway"])),
                      msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (variables)")
-        self.assert_(ma.allequal(subm, array([1, 1, 1, 2, 2])),
+        self.assertTrue(ma.allequal(subm, array([1, 1, 1, 2, 2])),
                      msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (submodels)")
         # test data type
-        self.assert_(subm.dtype.name == "int16",
+        self.assertTrue(subm.dtype.name == "int16",
                      msg = "Error in data type of submodels.")
         
     def test_load_specification_with_definition_with_equations(self):
@@ -795,13 +792,13 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         eqs = result.get_equations()
         lvars = result.get_long_variable_names()
-        self.assert_(alltrue(coefs == array(["asc", "bart", "bpop", "binc"])),
+        self.assertTrue(alltrue(coefs == array(["asc", "bart", "bpop", "binc"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (coefficients)")
-        self.assert_(alltrue(vars == array(["constant",  "art", "pop", "inc"])),
+        self.assertTrue(alltrue(vars == array(["constant",  "art", "pop", "inc"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (variables)")
-        self.assert_(ma.allequal(eqs, array([1,1,1,2])),
+        self.assertTrue(ma.allequal(eqs, array([1,1,1,2])),
                      msg = "Error in test_load_specification_with_definition_with_equations (equations)")
-        self.assert_(alltrue(lvars == array(["constant",  
+        self.assertTrue(alltrue(lvars == array(["constant",  
                                              "art = urbansim.gridcell.is_near_arterial", 
                                             "pop = urbansim.gridcell.population", 
                                             "inc = urbansim.gridcell.average_income"])),
@@ -827,13 +824,13 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         eqs = result.get_equations()
         lvars = result.get_long_variable_names()
-        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
+        self.assertTrue(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
                      msg = "Error in test_load_specification_with_definition_with_equations_v2 (coefficients)")
-        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
+        self.assertTrue(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (variables)")
-        self.assert_(ma.allequal(eqs, array([1,1,1,2])),
+        self.assertTrue(ma.allequal(eqs, array([1,1,1,2])),
                      msg = "Error in test_load_specification_with_definition_with_equations (equations)")
-        self.assert_(alltrue(lvars == array(["pop = urbansim.gridcell.population", 
+        self.assertTrue(alltrue(lvars == array(["pop = urbansim.gridcell.population", 
                                              "inc = urbansim.gridcell.average_income",
                                              "constant",  
                                              "art = urbansim.gridcell.is_near_arterial", 
@@ -861,11 +858,11 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         other = result.get_other_fields()
  
-        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
+        self.assertTrue(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
                      msg = "Error in test_load_specification_with_definition_nests (coefficients)")
-        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
+        self.assertTrue(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
                      msg = "Error in test_load_specification_with_definition_nests (variables)")
-        self.assert_(ma.allequal(other['dim_nest_id'], array([1,1,1,2])),
+        self.assertTrue(ma.allequal(other['dim_nest_id'], array([1,1,1,2])),
                      msg = "Error in test_load_specification_with_definition_nests (nests)")
 
     def test_load_specification_with_definition_nest_and_equations(self):
@@ -894,13 +891,13 @@ class Tests(opus_unittest.OpusTestCase):
         eqs = result.get_equations()
         other = result.get_other_fields()
  
-        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art", "bpop", "inc"])),
+        self.assertTrue(alltrue(coefs == array(["bpop", "inc", "constant", "art", "bpop", "inc"])),
                      msg = "Error in test_load_specification_with_definition_nest_and_equations (coefficients)")
-        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art", "pop", "inc"])),
+        self.assertTrue(alltrue(vars == array(["pop", "inc", "constant",  "art", "pop", "inc"])),
                      msg = "Error in test_load_specification_with_definition_nest_and_equations (variables)")
-        self.assert_(ma.allequal(eqs, array([1,1,1,2,3,3])),
+        self.assertTrue(ma.allequal(eqs, array([1,1,1,2,3,3])),
                      msg = "Error in test_load_specification_with_definition_nest_and_equations (equations)")
-        self.assert_(ma.allequal(other['dim_nest_id'], array([1,1,1,1,2,2])),
+        self.assertTrue(ma.allequal(other['dim_nest_id'], array([1,1,1,1,2,2])),
                      msg = "Error in test_load_specification_with_definition_nest_and_equations (nests)")
 if __name__=='__main__':
     opus_unittest.main()

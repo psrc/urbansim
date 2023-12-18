@@ -9,9 +9,9 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 from opus_core.session_configuration import SessionConfiguration
-from run_transcad_macro import run_transcad_macro, run_get_file_location_macro
+from .run_transcad_macro import run_transcad_macro, run_get_file_location_macro
 from opus_core.store.attribute_cache import AttributeCache
-from set_project_ini_file import set_project_ini_file, get_project_year_dir
+from .set_project_ini_file import set_project_ini_file, get_project_year_dir
 
 class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
     """Write urbansim simulation information into a (file) format 
@@ -43,7 +43,7 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
         
         variable_list = []
         column_name = []
-        for key, val in variable_mapping.iteritems():
+        for key, val in variable_mapping.items():
             variable_list.append(key)
             column_name.append(val)
 
@@ -77,7 +77,7 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
                                            )
         
     def prepare_for_run(self, config, year):
-        if config.has_key('project_ini'):
+        if 'project_ini' in config:
             set_project_ini_file(config, year)
         
     def _update_travel_model_data_file(self, config, 

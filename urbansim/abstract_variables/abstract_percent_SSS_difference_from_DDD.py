@@ -7,7 +7,7 @@ from numpy import float32
 from opus_core.misc import safe_array_divide
 from opus_core.variables.variable import Variable
 from opus_core.simulation_state import SimulationState
-from abstract_absolute_SSS_difference_from_DDD import abstract_absolute_SSS_difference_from_DDD
+from .abstract_absolute_SSS_difference_from_DDD import abstract_absolute_SSS_difference_from_DDD
 
 
 class abstract_percent_SSS_difference_from_DDD(abstract_absolute_SSS_difference_from_DDD):
@@ -122,8 +122,8 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                        dataset_pool=dataset_pool_2002)
                 pop_2002 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allclose(pop_2002[array([0,1,2,4])], array([100,50,0,999900])))
-                self.assert_(isinf(pop_2002[3]))
+                self.assertTrue(ma.allclose(pop_2002[array([0,1,2,4])], array([100,50,0,999900])))
+                self.assertTrue(isinf(pop_2002[3]))
 
 
             def test_at_year_2000(self):
@@ -149,7 +149,7 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                        dataset_pool=dataset_pool_2000)
                 pop_2000 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allequal(pop_2000, array([0,0,0])))
+                self.assertTrue(ma.allequal(pop_2000, array([0,0,0])))
                 
         __MyTests._package_name = self.package_name
         __MyTests._dataset_name = dataset_name

@@ -129,7 +129,7 @@ def create_predict_table(LCM, agent_set, agents_index, observed_choices_id, data
             sim.increment_version('grid_id')  #to trigger recomputation in next iteration
             f += 1
             
-        print p_success
+        print(p_success)
         results.append((pred_matrix.copy(), p_success.copy()))
         
     return results
@@ -175,7 +175,7 @@ class PSRC_simulation:
         
         create_predict_table(hlcm, hhs, agents_index_for_simulation, observed_choices_id, \
                              data_objects, geographies=['faz','fazdistrict'])
-        print "Simulation done. " + str(time()-t1) + " s"
+        print("Simulation done. " + str(time()-t1) + " s")
 
 class Run_PSRCsimulation:
     def __init__(self, variables=(), coefficients=(), debuglevel=0):

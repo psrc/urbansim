@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.gridcell.vacant_home_based_job_space import vacant_home_based_job_space as gc_vacant_home_based_job_space
 
 

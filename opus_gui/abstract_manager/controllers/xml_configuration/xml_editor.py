@@ -37,7 +37,7 @@ class XML_Editor_Gui(QDialog, Ui_XML_Editor):
     def _checkImportNodeMsg(self):
         try:
             return self._checkImportNode()
-        except Exception, e:
+        except Exception as e:
             MessageBox.error(self, 'This is not a valid XML structure.', \
                              '''%s.\n\n%s''' % (e, self.ATTENTION))
             return None

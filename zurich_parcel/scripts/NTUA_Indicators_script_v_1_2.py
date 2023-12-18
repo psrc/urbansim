@@ -25,7 +25,7 @@ from time import gmtime, strftime
 opus_home = os.environ['OPUS_HOME']
 opus_data_path = os.environ['OPUS_DATA_PATH']
 
-print 'Indicators Policy Script Started on: %s' % strftime("%a, %d %b %Y %X", gmtime())
+print('Indicators Policy Script Started on: %s' % strftime("%a, %d %b %Y %X", gmtime()))
 
 # Available policy levels
 policy_levels = ['zone', 'parcel', 'gridcell']
@@ -71,31 +71,31 @@ export_computations_zone = True
 export_computations_parcel =True
 
 # Print the variables
-print 'Initializing variables set by user...'
-print '-------------------------------------'
-print 'Case Study: %s' % case_study
-print 'Policy Level: %s' % policy_level
-print 'Base Year Path: %s' % base_year_path
-print 'Simulation Runs Path: %s' % run_path
-print 'Output Path: %s' % storage_loc_save
-print 'Interest Rate: %s' % interest_rate
-print 'Value of Time: %s' % vot
-print 'Percentage of Agents (%%): %s' % percentage_of_agents
-print 'Year of Implementation: %s' % start_year
-print 'Year of Evaluation: %s' % end_year
-print 'Year Interval: %s' % year_interval
-print '-------------------------------------'
+print('Initializing variables set by user...')
+print('-------------------------------------')
+print('Case Study: %s' % case_study)
+print('Policy Level: %s' % policy_level)
+print('Base Year Path: %s' % base_year_path)
+print('Simulation Runs Path: %s' % run_path)
+print('Output Path: %s' % storage_loc_save)
+print('Interest Rate: %s' % interest_rate)
+print('Value of Time: %s' % vot)
+print('Percentage of Agents (%%): %s' % percentage_of_agents)
+print('Year of Implementation: %s' % start_year)
+print('Year of Evaluation: %s' % end_year)
+print('Year Interval: %s' % year_interval)
+print('-------------------------------------')
 
 # Detect Case Study
 
 if case_study == 'brussels' and policy_level == 'zone':
-    print 'brussels_zone Case Study'
+    print('brussels_zone Case Study')
 elif case_study == 'zurich' and policy_level == 'parcel':
-    print 'zurich_parcel Case Study'
+    print('zurich_parcel Case Study')
 elif case_study == 'paris' and policy_level == 'parcel':
-    print 'paris_parcel Case Study'
+    print('paris_parcel Case Study')
 else:
-    print 'Unknown combination'
+    print('Unknown combination')
     sys.exit()
 
 ###############################################
@@ -106,14 +106,14 @@ years_list = list()
 # Append 'base_year' to years list
 years_list.append('base_year')
 # Years to loop with interval set by user
-years_run = range(start_year, end_year, year_interval)
-print 'List of Years to loop through:'
+years_run = list(range(start_year, end_year, year_interval))
+print('List of Years to loop through:')
 # Append years to years list
 for year in years_run:
     years_list.append(str(year))
 # Retrieve years list
 for year in years_list:
-    print str(year)
+    print(str(year))
 
 ###############################################
 
@@ -138,16 +138,16 @@ swf_indicators = Dataset(in_storage = ram_storage,
 # Loop for storage location path including base year and year runs !
 
 for year in years_list:
-    print '-------------------------------------'
-    print 'Data processing for year: %s' % year
+    print('-------------------------------------')
+    print('Data processing for year: %s' % year)
     if year == 'base_year':
         storage_loc_load = base_year_path
     else:
         storage_loc_load = run_path + '/' + year
     out_table_name_person_computations = out_table_name_computations_person_prefix + year
     out_table_name_computations = out_table_name_computations_prefix + year
-    print 'Data Input Path for year %s : %s' % (year, storage_loc_load)
-    print 'Creating common datasets for year %s' % year
+    print('Data Input Path for year %s : %s' % (year, storage_loc_load))
+    print('Creating common datasets for year %s' % year)
     # Create storage object for loading the data from
     storage_input = StorageFactory().get_storage('flt_storage', 
                                                  storage_location = storage_loc_load)
@@ -174,10 +174,10 @@ for year in years_list:
                         in_table_name = 'persons',
                         id_name = 'person_id',
                         dataset_name = 'person')
-    print 'Common datasets households, buildings, building_types, persons are created successfully!'
+    print('Common datasets households, buildings, building_types, persons are created successfully!')
     # Create additional datasets according to the case study
     if case_study == 'brussels' and policy_level == 'zone':
-        print 'Creating additional datasets for brussels_zone Case Study'
+        print('Creating additional datasets for brussels_zone Case Study')
         # Create income_level dataset
         #income_level = Dataset(in_storage = storage_input,
         #             in_table_name = 'income_level',
@@ -188,17 +188,17 @@ for year in years_list:
                         in_table_name = 'zones',
                         id_name = 'zone_id',
                         dataset_name = 'zone')
-        print 'Additional dataset zones is created successfully!'
+        print('Additional dataset zones is created successfully!')
     elif case_study == 'zurich' and policy_level == 'parcel':
-        print 'Creating additional datasets for zurich_parcel Case Study'
+        print('Creating additional datasets for zurich_parcel Case Study')
         # Create parcel dataset
         parcels = Dataset(in_storage = storage_input,
                         in_table_name = 'parcels',
                         id_name = 'parcel_id',
                         dataset_name = 'parcel')
-        print 'Additional dataset parcels is created successfully!'
+        print('Additional dataset parcels is created successfully!')
     else:
-        print 'Unknown combination'
+        print('Unknown combination')
     # Set variables about pool object according to the case study
     if case_study == 'brussels' and policy_level == 'zone':
         package_order = ['urbansim_zone', 'urbansim_parcel', 'urbansim', 'opus_core']
@@ -220,9 +220,9 @@ for year in years_list:
     dataset_pool = DatasetPool(package_order = package_order,
                                 storage = storage_input,
                                 datasets_dict = datasets_dict)
-    print '**********************'
-    print 'Computing variables...'
-    print '**********************'
+    print('**********************')
+    print('Computing variables...')
+    print('**********************')
     # Set expressions according to the case study
     if case_study == 'brussels' and policy_level == 'zone':
         # expressions for brussels zone case study in interactive opus mode
@@ -262,12 +262,12 @@ for year in years_list:
         parcels.compute_variables("utility_of_residents_parcel = \
         parcel.income_per_parcel-parcel.housing_cost_per_parcel-parcel.travel_cost_per_parcel", dataset_pool = dataset_pool)
     # export output to tab file
-    print '*************************'
-    print 'Exporting to tab files...'
-    print '*************************'
+    print('*************************')
+    print('Exporting to tab files...')
+    print('*************************')
     # export computations to tab file [person level]
     if export_computations_person == True:
-        print '[Person Level] Exporting computations to: %s' % out_table_name_person_computations
+        print('[Person Level] Exporting computations to: %s' % out_table_name_person_computations)
         persons.write_dataset(attributes = ['person_id', 'home2work_travel_time_min', 'work2home_travel_time_min', 'travel_cost_per_person'], 
                             out_storage = storage_output, 
                             out_table_name = out_table_name_person_computations)
@@ -275,7 +275,7 @@ for year in years_list:
     if case_study == 'brussels' and policy_level == 'zone':
         # export computations to tab file [zone level]
         if export_computations_zone == True:
-            print '[Zone Level] Exporting computations to: %s' % out_table_name_computations
+            print('[Zone Level] Exporting computations to: %s' % out_table_name_computations)
             zones.write_dataset(attributes = ['income_per_zone', 'housing_cost_per_zone', 'travel_cost_per_zone', 'utility_of_residents_zone'], 
                             out_storage = storage_output, 
                             out_table_name = out_table_name_computations)
@@ -284,13 +284,13 @@ for year in years_list:
     elif case_study == 'zurich' and policy_level == 'parcel':
         # export computations to tab file [parcel level]
         if export_computations_parcel == True:
-            print '[Parcel Level] Exporting computations to: %s' % out_table_name_computations
+            print('[Parcel Level] Exporting computations to: %s' % out_table_name_computations)
             parcels.write_dataset(attributes = ['income_per_parcel', 'housing_cost_per_parcel', 'travel_cost_per_parcel', 'utility_of_residents_parcel'], 
                                 out_storage = storage_output, 
                                 out_table_name = out_table_name_computations)
         # Summarize utility_of_residents_zone attributes
         swf_per_year = parcels.attribute_sum('utility_of_residents_parcel')
-    print 'Social Welfare for year %s: %s' % (year, swf_per_year)
+    print('Social Welfare for year %s: %s' % (year, swf_per_year))
     # Place swf idicator value for the running year into a dict storage
     # Add swf as primary attribute for the running year
     swf_indicators.add_elements(data = {"swf_id":array([1]),
@@ -299,16 +299,16 @@ for year in years_list:
 
 # Summarize social_welfare attributes for all years
 swf_summary = swf_indicators.attribute_sum('social_welfare')
-print '-------------------------------------'
-print 'Total Social Welfare: %s' % swf_summary
+print('-------------------------------------')
+print('Total Social Welfare: %s' % swf_summary)
 # Add swf_summary as primary attribute to table swf_indicators
 swf_indicators.add_elements(data = {"swf_id":array([1]),
                                     "year":array(['swf_summary']),
                                     "social_welfare":array([swf_summary])}, require_all_attributes = True, change_ids_if_not_unique = True)
 # export social welfare indicators to tab file 
-print 'Exporting Table of Social Welfare Indicators to: %s' % out_table_name_swf_indicators
+print('Exporting Table of Social Welfare Indicators to: %s' % out_table_name_swf_indicators)
 swf_indicators.write_dataset(attributes = ['swf_id', 'year', 'social_welfare'], 
                     out_storage = storage_output, 
                     out_table_name = out_table_name_swf_indicators)
-print '-------------------------------------'
-print 'Indicators Policy Script Completed on %s !' % strftime("%a, %d %b %Y %X", gmtime())
+print('-------------------------------------')
+print('Indicators Policy Script Completed on %s !' % strftime("%a, %d %b %Y %X", gmtime()))

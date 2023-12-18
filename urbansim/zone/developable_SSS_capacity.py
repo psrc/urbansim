@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_sum_from_gridcells import abstract_sum_from_gridcells
+from .abstract_sum_from_gridcells import abstract_sum_from_gridcells
 
 class developable_SSS_capacity(abstract_sum_from_gridcells):
     """ Aggregation over the corresponding gridcell variable """ 
@@ -53,7 +53,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([1216, 3915])
         
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

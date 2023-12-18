@@ -25,7 +25,7 @@ class hdf5_storage(Storage):
     def _get_file_path(self, file_name=None):
         dataset_path = self.get_storage_location()
         if not os.path.exists(dataset_path):
-            raise StandardError("Path '%s' does not exist!" % dataset_path)
+            raise Exception("Path '%s' does not exist!" % dataset_path)
         if file_name is None:
             return dataset_path
         return os.path.join(dataset_path, file_name)
@@ -35,7 +35,7 @@ class hdf5_storage(Storage):
     
     def _load_columns(self, f, column_names, lowercase=True):
         result = {}
-        for column_name in f.keys():
+        for column_name in list(f.keys()):
             if lowercase:
                 column_name = column_name.lower()
             if column_names == Storage.ALL_COLUMNS or column_name in column_names:
@@ -63,9 +63,9 @@ class hdf5_storage(Storage):
     
     def _get_meta(self, f, column_name):
         if column_name is None:
-            meta = dict(f.attrs.items())
+            meta = dict(list(f.attrs.items()))
         else:
-            meta = dict(f[column_name].attrs.items())
+            meta = dict(list(f[column_name].attrs.items()))
         return meta
     
     def load_meta(self, table_name, column_name=None):
@@ -76,12 +76,12 @@ class hdf5_storage(Storage):
         return meta
     
     def _write_columns(self, f, column_names, table_data, table_meta={}, column_meta={}, **kwargs):
-        for mkey, mvalue in table_meta.iteritems():
+        for mkey, mvalue in table_meta.items():
             f.attrs[mkey] = mvalue
         for column_name in column_names:                    
             column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
             ds_meta = column_meta.get(column_name, {})
-            for mkey, mvalue in ds_meta.iteritems():
+            for mkey, mvalue in ds_meta.items():
                 column_ds.attrs[mkey] = mvalue
             
     def write_table(self, table_name, table_data, mode = Storage.OVERWRITE, table_meta={}, column_meta={}, driver=None, **kwargs):
@@ -108,7 +108,7 @@ class hdf5_storage(Storage):
     def get_column_names(self, table_name, lowercase=True):
         full_file_name = self._get_file_path_for_table(table_name) 
         f = h5py.File(full_file_name, 'r')
-        result = f.keys()
+        result = list(f.keys())
         if lowercase:
             result = self._lower_case(result)
         f.close()
@@ -154,7 +154,7 @@ class TestHDF5Storage(TestStorageInterface):
             column_meta = col_meta
             )          
         filename = os.path.join(self.temp_dir, 'foo.h5')
-        self.assert_(os.path.exists(filename))
+        self.assertTrue(os.path.exists(filename))
               
         actual = self.storage.load_table(
             table_name = 'foo', 

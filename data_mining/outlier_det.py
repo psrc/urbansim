@@ -6,15 +6,15 @@ try: import MySQLdb
 except: pass
 from sqlalchemy import *
 
-from data_handler.data_retrieval import Query_manager
-from data_handler.data_preparation import Data_profiler
-from output.generic_output import Output_manager
-from models.ldof_model import LDOF_model
+from .data_handler.data_retrieval import Query_manager
+from .data_handler.data_preparation import Data_profiler
+from .output.generic_output import Output_manager
+from .models.ldof_model import LDOF_model
 from opus_core import paths
 
 #loads system variables
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 #Runs all the tests
 def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) :
@@ -81,7 +81,7 @@ def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) 
           
     #Posting information about time taken 
     end = time.time()
-    print "Overall Time taken: ", int(end - start)
+    print("Overall Time taken: ", int(end - start))
     if logCB != None :
         logCB("Overall Time taken: " + str(int(end - start)))
     return 0
@@ -117,7 +117,7 @@ def update_rows(query_manager, data_profiler, test_result_obj, ldof_model):
             #updating lof id values
             k = ldof_model.k
             for v in test_result_obj.lof_id_lists[test_count] :
-                av = unicode(id_map[int(v)])
+                av = str(id_map[int(v)])
                 query_manager.current_rows[i]["lof" + str(k) + "_id"] = av
                 k -= ldof_model.num_mod
 

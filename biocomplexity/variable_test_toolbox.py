@@ -19,13 +19,13 @@ class VariableTestToolbox(object):
     def get_resources(self, data_dictionary, dataset):
         """Create resources for computing a variable. """
         resources=Resources()
-        for key in data_dictionary.keys():
+        for key in list(data_dictionary.keys()):
             if key in self.datasets:
                 data = data_dictionary[key]
-                if self.id_names[key] not in data_dictionary[key].keys() and not isinstance(self.id_names[key], list):
+                if self.id_names[key] not in list(data_dictionary[key].keys()) and not isinstance(self.id_names[key], list):
             
                     data[self.id_names[key]] = arange(1,\
-                        len(data_dictionary[key][data_dictionary[key].keys()[0]])+1) # add id array
+                        len(data_dictionary[key][list(data_dictionary[key].keys())[0]])+1) # add id array
                 
                 if key == "land_cover":
                     land_cover_storage = StorageFactory().get_storage('dict_storage')
@@ -44,10 +44,10 @@ class VariableTestToolbox(object):
                     lc.get_id_attribute()
                     n = int(ceil(sqrt(lc.size())))
                     
-                    if "relative_x" not in data.keys():
+                    if "relative_x" not in list(data.keys()):
                         x = (indices((n,n))+1)[1].ravel()
                         lc.add_attribute(x[0:lc.size()], "relative_x", metadata=1)
-                    if "relative_y" not in data.keys():
+                    if "relative_y" not in list(data.keys()):
                         y = (indices((n,n))+1)[0].ravel()
                         lc.add_attribute(y[0:lc.size()], "relative_y", metadata=1)
                         

@@ -133,7 +133,7 @@ class AutogenVariableFactory(object):
         # or a statement (this would happen if the expression consists of multiple
         # statements, which parses correctly so wouldn't be caught by the Python compiler).
         if expr.strip() == '':
-            raise ValueError, "empty expression"
+            raise ValueError("empty expression")
         full_tree = parser.ast2tuple(parser.suite(expr))
         same, vars = match(FULL_TREE_EXPRESSION, full_tree)
         if same:
@@ -141,7 +141,7 @@ class AutogenVariableFactory(object):
         same, vars = match(FULL_TREE_ASSIGNMENT, full_tree)
         if same:
             return (vars['expr'], vars['alias'])
-        raise ValueError, "invalid expression (perhaps multiple statements?): " + expr
+        raise ValueError("invalid expression (perhaps multiple statements?): " + expr)
     
     # loooong comment regarding the _generate_variable method that follows:
     # generate a new class for a variable to compute the value of self._expr 
@@ -279,7 +279,7 @@ class AutogenVariableFactory(object):
     def _analyze_number_of_agents_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_NUMBER_OF_AGENTS, args)
         if not same:
-            raise ValueError, "syntax error for number_of_agents function call"
+            raise ValueError("syntax error for number_of_agents function call")
         self._special_dataset_receivers.add(receiver)
         # 'call' is a string representing the new number_of_agents call.  Parse it, extract the args, and then add a replacement to
         # parsetree_replacements for the old args.  We want to replace just the args and not the entire call to number_of_agents,
@@ -289,13 +289,13 @@ class AutogenVariableFactory(object):
         (newtree,_) = self._parse_expr(call)
         s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
         if not s:
-            raise StandardError, 'internal error - problem generating new number_of_agents expression'
+            raise Exception('internal error - problem generating new number_of_agents expression')
         self._parsetree_replacements[args] = v['args']
        
     def _analyze_agent_times_choice_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_AGENT_TIMES_CHOICE, args)
         if not same:
-            raise ValueError, "syntax error for agent_times_choice function call"
+            raise ValueError("syntax error for agent_times_choice function call")
         self._special_dataset_receivers.add(receiver)
         # 'call' is a string representing the new agent_times_choice call.  Parse it, extract the args, and then add a replacement to
         # parsetree_replacements for the old args.  We want to replace just the args and not the entire call to agent_times_choice,
@@ -305,16 +305,16 @@ class AutogenVariableFactory(object):
         (newtree,_) = self._parse_expr(call)
         s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
         if not s:
-            raise StandardError, 'internal error - problem generating new number_of_agents expression'
+            raise Exception('internal error - problem generating new number_of_agents expression')
         self._parsetree_replacements[args] = v['args']
 
     def _analyze_aggregation_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_AGGREGATION, args)
         if not same:
-            raise ValueError, "syntax error for aggregation method call"
+            raise ValueError("syntax error for aggregation method call")
         arg_dict = self._get_arguments( ('arg1', 'arg2','arg3'), ('aggr_var', 'intermediates','function'), vars )
         if 'aggr_var' not in arg_dict:
-            raise ValueError, "syntax error for aggregation method call (problem with argument for variable being aggregated)"
+            raise ValueError("syntax error for aggregation method call (problem with argument for variable being aggregated)")
         same1, vars1 = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE_ARG, arg_dict['aggr_var'])
         if same1:
             # the aggregated variable is a fully-qualified name
@@ -336,7 +336,7 @@ class AutogenVariableFactory(object):
                 pkg = None
                 dataset = newvar.get_dataset_name()
                 if dataset is None:
-                    raise ValueError, "syntax error for aggregation method call - could not determine dataset for variable being aggregated"
+                    raise ValueError("syntax error for aggregation method call - could not determine dataset for variable being aggregated")
                 attr = newvar.get_short_name()
                 # TODO DELETE BELOW:
 #                replacements = {'dataset': dataset, 'attribute': attr}
@@ -346,7 +346,7 @@ class AutogenVariableFactory(object):
             # make sure that it really is a list
             s, v = match(SUBPATTERN_LIST_ARG, arg_dict['intermediates'])
             if not s:
-                raise ValueError, "syntax error for aggregation method call (list of intermediate datasets not a list?)"
+                raise ValueError("syntax error for aggregation method call (list of intermediate datasets not a list?)")
             intermediates = tuple(self._extract_names(arg_dict['intermediates']))
         else:
             intermediates = ()
@@ -354,7 +354,7 @@ class AutogenVariableFactory(object):
             # bind fcn to a string that is the name of the function, or to the string "None"
             s,v = match(SUBPATTERN_NAME_ARG, arg_dict['function'])
             if not s:
-                raise ValueError, "syntax error for aggregation method call (problem with the function argument in the call)"
+                raise ValueError("syntax error for aggregation method call (problem with the function argument in the call)")
             fcn = v['name']
         else:
             fcn = None
@@ -370,7 +370,7 @@ class AutogenVariableFactory(object):
         (newtree,_) = self._parse_expr(call)
         s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
         if not s:
-            raise StandardError, 'internal error - problem generating new aggregation expression'
+            raise Exception('internal error - problem generating new aggregation expression')
         self._parsetree_replacements[args] = v['args']
 
     # extract all the names from tree and return them in a list
@@ -402,22 +402,22 @@ class AutogenVariableFactory(object):
                 return result
             same, vars = match(SUBPATTERN_ARGUMENT, arg_dict[a])
             if not same:
-                raise ValueError, 'parse error for arguments'
+                raise ValueError('parse error for arguments')
             if 'part2' in vars:
                 # change to keyword mode if necessary (if we're already there, that's ok)
                 keyword_mode = True
             elif keyword_mode:
                 # we're in keyword mode, but no keyword on this arg
-                raise ValueError, 'non-keyword argument found after keyword argument'
+                raise ValueError('non-keyword argument found after keyword argument')
             if keyword_mode:
                 # get the actual keyword out of part1, and the value out of part2
                 kwd_same, kwd_vars = match(SUBPATTERN_NAME_ARG, vars['part1'])
                 if not kwd_same:
-                    raise ValueError, 'parse error for arguments'
+                    raise ValueError('parse error for arguments')
                 kwd = kwd_vars['name']
                 val = vars['part2']
                 if kwd not in formals_list:
-                    raise ValueError, 'unknown keyword %s' % kwd
+                    raise ValueError('unknown keyword %s' % kwd)
                 formals_list.remove(kwd)
                 result[kwd] = val
             else:
@@ -445,7 +445,7 @@ class AutogenVariableFactory(object):
         elif name not in self._dataset_names:
             self._dataset_names = self._dataset_names + (name,)
             if len(self._dataset_names)>2:
-                raise ValueError, "more than two dataset names in expression -- dataset names found: %s" % str(self._dataset_names)
+                raise ValueError("more than two dataset names in expression -- dataset names found: %s" % str(self._dataset_names))
             
 
     # Analyze the arguments for a function or method call.  This is a separate method from _analyze_tree
@@ -461,7 +461,7 @@ class AutogenVariableFactory(object):
             else:
                 self._analyze_tree(vars['part1'])
         else:
-            raise StandardError, 'internal error - problem analyzing arguments in expression'
+            raise Exception('internal error - problem analyzing arguments in expression')
         if len(args)>1:
             # skip the comma (which is args[1]) and analyze the remaining arguments
             # (since this passed the Python parser we know that the tree is syntactically correct - no 

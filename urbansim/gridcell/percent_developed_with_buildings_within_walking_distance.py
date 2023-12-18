@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from percent_developed_within_walking_distance import percent_developed_within_walking_distance
+from .percent_developed_within_walking_distance import percent_developed_within_walking_distance
 
 class percent_developed_with_buildings_within_walking_distance(percent_developed_within_walking_distance):
     """See percent_developed_within_walking_distance. This variable is computed using the buildings table."""

@@ -61,11 +61,11 @@ observed_shares = {
 
 
       
-observed_share_var = "observed_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (observed_shares[observed_shares.keys()[0]],
-                                                                                                     observed_shares.keys()[0])
-sampled_share_var = "sampled_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[sampled_shares.keys()[0]],
-                                                                                                     sampled_shares.keys()[0])
-for bt in observed_shares.keys()[1:len(observed_shares.keys())]:
+observed_share_var = "observed_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (observed_shares[list(observed_shares.keys())[0]],
+                                                                                                     list(observed_shares.keys())[0])
+sampled_share_var = "sampled_building_type_share = %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[list(sampled_shares.keys())[0]],
+                                                                                                     list(sampled_shares.keys())[0])
+for bt in list(observed_shares.keys())[1:len(list(observed_shares.keys()))]:
     observed_share_var = observed_share_var + " + %s * (urbansim.building.building_type_id == %s)" % (observed_shares[bt], bt)
     sampled_share_var = sampled_share_var + " + %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[bt], bt)
                    

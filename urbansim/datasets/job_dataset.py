@@ -21,7 +21,7 @@ class JobDataset(UrbansimDataset):
         return index[home_based == 0]
 
     def is_in_sector(self, sectors, index):
-        return array(map(lambda x: x in sectors, self.get_attribute_by_index("sector_id", index)))
+        return array([x in sectors for x in self.get_attribute_by_index("sector_id", index)])
 
     def get_home_based_jobs_of_sectors(self, sectors, index):
         home_based = self.get_home_based_jobs(index)

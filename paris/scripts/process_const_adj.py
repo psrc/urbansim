@@ -9,7 +9,7 @@ import numpy as np
 coef = read_csv('establishment_location_choice_model_coefficients_B4Adj.csv')
 const_raw = read_csv('elcm_const_raw2.txt', sep='\t')
 s, e = 2, 12
-coef_name, sub_model_id = zip(*product(const_raw['Name'], range(s, e)))
+coef_name, sub_model_id = list(zip(*product(const_raw['Name'], list(range(s, e)))))
 
 df = DataFrame({'coefficient_name': coef_name, 'sub_model_id': sub_model_id})
 df['adjustment'] = 0.0

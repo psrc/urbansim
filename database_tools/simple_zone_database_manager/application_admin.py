@@ -11,16 +11,16 @@ class MyApplicationAdmin(ApplicationAdmin):
   
     def get_sections(self):
         from camelot.model.memento import Memento
-        from model import AnnualEmploymentControlTotal
-        from model import AnnualHouseholdControlTotal
-        from model import Building
-        from model import BuildingType
-        from model import EmploymentSector
-        from model import Household
-        from model import HouseholdCharacteristicsForHT
-        from model import Job
-        from model import TravelData
-        from model import Zone
+        from .model import AnnualEmploymentControlTotal
+        from .model import AnnualHouseholdControlTotal
+        from .model import Building
+        from .model import BuildingType
+        from .model import EmploymentSector
+        from .model import Household
+        from .model import HouseholdCharacteristicsForHT
+        from .model import Job
+        from .model import TravelData
+        from .model import Zone
         from camelot.model.i18n import Translation
         return [Section('Scenario Tables',
                         Icon('tango/24x24/apps/system-users.png'),

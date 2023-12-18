@@ -58,7 +58,7 @@ class ExpandPersons(object):
         for i in range(households.size()):  
             if workers[i] > 0:
                 hh_ids += [household_ids[i]] * workers[i]
-                member_ids += range(1, workers[i]+1)
+                member_ids += list(range(1, workers[i]+1))
                 is_worker += [1] * workers[i]
                 job_ids += [-1] * workers[i]
 

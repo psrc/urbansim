@@ -38,7 +38,7 @@ class LCCMInputConvert():
         mask = lc.get_mask()
         idx = where(mask==0)[0]
         lcsubset = DatasetSubset(lc, idx)
-        print "Converting:"
+        print("Converting:")
         lcsubset.write_dataset(attributes=["relative_x"], out_table_name="land_covers")
         lc.delete_one_attribute("relative_x")
         lcsubset.write_dataset(attributes=["relative_y"], out_table_name="land_covers")
@@ -47,7 +47,7 @@ class LCCMInputConvert():
         gc.collect()
 #        lc_names = lc.get_primary_attribute_names()
         for attr in lc.get_primary_attribute_names():
-            print "   ", attr
+            print("   ", attr)
             lcsubset.write_dataset(attributes=[attr], out_table_name="land_covers")
             lc.delete_one_attribute(attr)
         logger.log_status("Data conversion done. " + str(time()-t1) + " s")

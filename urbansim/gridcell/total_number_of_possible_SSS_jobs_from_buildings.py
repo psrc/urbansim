@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from opus_core.misc import safe_array_divide
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class total_number_of_possible_SSS_jobs_from_buildings(Variable):
     """Computed by dividing the total buildings_commercial/industrial sqft. of location by the 

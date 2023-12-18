@@ -44,7 +44,7 @@ class RateDataset(UrbansimDataset):
                 elif alias in known_attributes:
                     dataset_attribute = dataset.get_attribute(alias)
                 else:
-                    raise ValueError, "attribute %s used in rate dataset can not be found in dataset %s" % (attribute, dataset.get_dataset_name())
+                    raise ValueError("attribute %s used in rate dataset can not be found in dataset %s" % (attribute, dataset.get_dataset_name()))
                 if attribute + '_min' in column_names and self.get_attribute(attribute+'_min')[index] != -1:
                     indicator *= dataset_attribute >= self.get_attribute(attribute+'_min')[index]
                 if attribute + '_max' in column_names and self.get_attribute(attribute+'_max')[index] != -1:
@@ -152,7 +152,7 @@ class Tests(StochasticTestCase):
         expected = array([0.4, 0.4, 0.3, 0.3, 0.2, 0.05, 0.4] )
         results = rates.get_rate(self.hhs)
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
 
     def test_get_rate2(self):        
         rates_data={
@@ -174,7 +174,7 @@ class Tests(StochasticTestCase):
         expected = array([0.4, 0.05, 0.3, 0.4, 0.4, 0.3, 0.05] )
         results = rates.get_rate(self.hhs)
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
         
     def test_get_rate3(self):        
         rates_data={
@@ -193,7 +193,7 @@ class Tests(StochasticTestCase):
         expected = array([0.0, 0.1, 0.4, 0.3, 0.3, 0.05, 0.0] )
         results = rates.get_rate(self.hhs)
         
-        self.assert_(allclose(results, expected))
+        self.assertTrue(allclose(results, expected))
         
         
 if __name__=='__main__':

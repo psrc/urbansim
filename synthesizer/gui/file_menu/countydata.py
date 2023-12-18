@@ -5,7 +5,7 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import cPickle
+import pickle
 
 class County(object):
     def __init__(self, stateID, state, countyID, county):
@@ -26,7 +26,7 @@ class CountyContainer(object):
         return len(self.counties)
 
     def __iter__(self):
-        for county in self.counties.values():
+        for county in list(self.counties.values()):
             yield county
 
     def inOrder(self):
@@ -38,7 +38,7 @@ class CountyContainer(object):
                 return QString.localeAwareCompare(a.state, b.state)
             #print a.county, b.county
             return QString.localAwareCompare(a.county, b.county)
-        return sorted(self.counties.values(), compare)
+        return sorted(list(self.counties.values()), compare)
 
     def load(self):
         exception = None
@@ -47,7 +47,7 @@ class CountyContainer(object):
             file = QFile(self.filename)
 
             if not file.open(QIODevice.ReadOnly):
-                raise IOError, unicode(file.errorString())
+                raise IOError(str(file.errorString()))
 
             while not file.atEnd():
                 a = file.readLine()
@@ -60,7 +60,7 @@ class CountyContainer(object):
                 self.counties[id(county)] = county
                 self.countyNames.add(countyName)
                 self.stateNames.add(stateName)
-        except IOError, e:
+        except IOError as e:
             exception = e
         finally:
             if file is not None:

@@ -167,4 +167,4 @@ def compute_devmdl_accvars_nodal(node_set):
     node_set.add_primary_attribute(name='avg_ind_sqft_rent', data=result)
 
 def compute_devmdl_accvars_zonal(zone_set):
-    print "Need to flesh this section out with zonal variables"
+    print("Need to flesh this section out with zonal variables")

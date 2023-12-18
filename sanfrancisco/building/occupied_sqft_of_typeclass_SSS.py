@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class occupied_sqft_of_typeclass_SSS(Variable):
     """For a given building, how many sqft is occupied?  Includes business and
@@ -101,7 +101,7 @@ class Tests(opus_unittest.OpusTestCase):
         )
         
         varname = "sanfrancisco.building.occupied_sqft_of_typeclass_apartment"
-        print tester._get_attribute(given_variable_name=varname)
+        print(tester._get_attribute(given_variable_name=varname))
         # [ (3/4)*101, (2/4)*102, 0,0, 0,0,
         #   0,0,                  0,0, (0/3)*205, (2/3)*206,
         #   (2/2)*301, (1/2)*302, 0,0, 0,0 ]
@@ -111,7 +111,7 @@ class Tests(opus_unittest.OpusTestCase):
         tester.test_is_close_for_family_variable(self, expected, varname, 0.001)
 
         varname = "sanfrancisco.building.occupied_sqft_of_typeclass_industrial"
-        print tester._get_attribute(given_variable_name=varname)
+        print(tester._get_attribute(given_variable_name=varname))
         # [ 0,0, 23+24, 25+26, 0,0,
         #   0,0, 29+30, 31+32, 0,0,
         #   0,0, 33,    34,    0,0]
@@ -121,7 +121,7 @@ class Tests(opus_unittest.OpusTestCase):
         tester.test_is_close_for_family_variable(self, expected, varname, 0.001)
 
         varname = "sanfrancisco.building.occupied_sqft_of_typeclass_mixed"
-        print tester._get_attribute(given_variable_name=varname)
+        print(tester._get_attribute(given_variable_name=varname))
         # [ 0,0, 0,0, 54+(1/2)*51, 55+(0/2)*52,
         #   27+(1/1)*101, 28+(0/1)*102, 0,0, 0,0,
         #   0,0, 0,0, 35+(2/1)*101, 0+(0/1)*102]

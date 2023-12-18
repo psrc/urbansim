@@ -16,7 +16,7 @@ from opus_core.strings import create_list_string
 def opusRun(progressCB,logCB,params):
 
     params_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         params_dict[str(key)] = str(val)
 
     opus_data_directory = params_dict['opus_data_directory']

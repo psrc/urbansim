@@ -104,7 +104,7 @@ class weighted_sampler_by_category(weighted_sampler):
             index = _searchsorted(_ncumsum(prob), _rand(num_agents * J)).reshape(-1, J)
 
             if not with_replacement:
-                raise NotImplementedError, "Sample without replacement is not implemented for this sampler yet."
+                raise NotImplementedError("Sample without replacement is not implemented for this sampler yet.")
                 #    nz = nonzero(prob)[0].size
                 #    if J < nz:
                     #        ## number of non zero weight less than alternatives, sample with replacement
@@ -232,11 +232,11 @@ class Test(opus_unittest.OpusTestCase):
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
                 chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
-                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                self.assertTrue( alltrue(equal(placed_agents_index, chosen_choice_index)) )
                 sampled_index = sampled_index[:,1:]
                 
-            self.assert_( alltrue(lookup(sampled_index.ravel(), arange(self.gridcells.size()), index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
-            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+            self.assertTrue( alltrue(lookup(sampled_index.ravel(), arange(self.gridcells.size()), index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assertTrue( all(not_equal(weight[sampled_index], 0.0)) )
                 
 if __name__ == "__main__":
     opus_unittest.main()

@@ -3,7 +3,7 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 import time
 
@@ -13,7 +13,7 @@ from PyQt4.QtSql import *
 from database.createDBConnection import createDBC
 from misc.errors import FileError
 from misc.utils import UnzipFile
-from import_data import ImportUserProvData, FileProperties
+from .import_data import ImportUserProvData, FileProperties
 
 from global_vars import *
 
@@ -33,10 +33,10 @@ class UserImportControlData():
             hhldTableQuery = self.mysqlQueries('hhld_marginals', self.project.controlUserProv.hhLocation)
 
             if not self.query.exec_(hhldTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(hhldTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
     def createGQTable(self):
         check = self.checkIfTableExists('gq_marginals')
@@ -48,10 +48,10 @@ class UserImportControlData():
                 gqTableQuery = self.mysqlQueries('gq_marginals', self.project.controlUserProv.gqLocation)
 
                 if not self.query.exec_(gqTableQuery.query1):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
                 if not self.query.exec_(gqTableQuery.query2):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
     def createPersonTable(self):
         check = self.checkIfTableExists('person_marginals')
@@ -60,10 +60,10 @@ class UserImportControlData():
             personTableQuery = self.mysqlQueries('person_marginals', self.project.controlUserProv.personLocation)
 
             if not self.query.exec_(personTableQuery.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             if not self.query.exec_(personTableQuery.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
     def mysqlQueries(self, name, filePath):
@@ -86,15 +86,15 @@ class UserImportControlData():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 class AutoImportSF2000Data():
@@ -107,7 +107,7 @@ class AutoImportSF2000Data():
         self.loc = DATA_DOWNLOAD_LOCATION + os.path.sep + self.state + os.path.sep + 'SF2000'
         self.loc = os.path.realpath(self.loc)
 
-        self.countiesSelected = self.project.region.keys()
+        self.countiesSelected = list(self.project.region.keys())
 
         self.projectDBC = createDBC(self.project.db, self.project.name)
         self.projectDBC.dbc.open()
@@ -127,7 +127,7 @@ class AutoImportSF2000Data():
         try:
             os.makedirs(self.loc)
             self.retrieveAndStoreSF(self.state)
-        except WindowsError, e:
+        except WindowsError as e:
             reply = QMessageBox.question(None, "Import",
                                          QString("""Cannot download data when the data already exists.\n\n"""
                                                  """Would you like to keep the existing files?"""
@@ -147,7 +147,7 @@ class AutoImportSF2000Data():
         web_state = web_state.replace(' ', '_')
         for i in self.rawSF:
             sf_loc = self.loc + os.path.sep + '%s%s' %(self.stateAbb[state], i)
-            urllib.urlretrieve("""http://www2.census.gov/census_2000/"""
+            urllib.request.urlretrieve("""http://www2.census.gov/census_2000/"""
                                """datasets/Summary_File_3/%s/%s%s""" %(web_state, self.stateAbb[state], i),
                                sf_loc)
 
@@ -165,15 +165,15 @@ class AutoImportSF2000Data():
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
-                        raise FileError, self.query.lastError().text()
+                        raise FileError(self.query.lastError().text())
                     return 1
                 else:
                     return 0
             else:
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         else:
             if not self.query.exec_("""drop table %s""" %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             return 1
 
 
@@ -189,9 +189,9 @@ class AutoImportSF2000Data():
                                                          "./data/sf3filestablescorr.csv",
                                                          [], [], True, True)
             if not self.query.exec_(sf3FilesTablesCorrTable.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_(sf3FilesTablesCorrTable.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
         tablename = '%sgeo' %(self.stateAbb[self.state])
 
@@ -200,7 +200,7 @@ class AutoImportSF2000Data():
             if not self.query.exec_("""create table %s (raw text, sumlev float, geocomp float, sfgeoid float, """
                                     """state float, county float, tract  float, bg float, logrecno float)"""
                                     %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             geo_loc = os.path.join(self.loc, '%s.uf3'%tablename)
             geo_loc = geo_loc.replace("\\", "/")
@@ -208,27 +208,27 @@ class AutoImportSF2000Data():
 
             if not self.query.exec_("""load data local infile '%s'"""
                                     """ into table %sgeo (raw)""" %(geo_loc, self.stateAbb[self.state])):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set sumlev = mid(raw, 9, 3)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set geocomp = mid(raw, 12, 2)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set sfgeoid = mid(raw, 19, 7)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set state = mid(raw, 30, 2)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set county = mid(raw, 32, 3)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set tract = mid(raw, 56, 6)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set bg = mid(raw, 62, 1)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set logrecno = mid(raw, 19, 7)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""alter table %sgeo modify logrecno int""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""alter table %sgeo add primary key (logrecno)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
         # Load the other necessary tables
 
@@ -242,11 +242,11 @@ class AutoImportSF2000Data():
             if self.checkIfTableExists(filename):
 
                 if not self.query.exec_(sffile.query1):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_(sffile.query2):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_("alter table %s add primary key (logrecno)" %filename):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
 
 
@@ -260,16 +260,16 @@ class AutoImportSF2000Data():
         if tablenumber is None and filenumber is not None:
             if not self.query.exec_("""select tabletype, tablenumber, numcat from sf3filestablescorr"""
                                     """ where filenumber = %s order by tablenumber""" %filenumber):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         if tablenumber is not None:
             if not self.query.exec_("""select tabletype, tablenumber, numcat from sf3filestablescorr"""
                                     """ where filenumber = %s and includeflag = 1""" %filenumber):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         if filenumber is None and tablenumber is None:
-            raise FileError, "Insufficient parameters supplied"
+            raise FileError("Insufficient parameters supplied")
 
 
-        while self.query.next():
+        while next(self.query):
             tabletype = self.query.value(0).toString()
             tablenumber = str(self.query.value(1).toInt()[0]).rjust(3, '0')
             numcat = self.query.value(2).toInt()[0]
@@ -290,7 +290,7 @@ class AutoImportSF2000Data():
     def createMasterSFTable(self):
         import copy
         var1 = copy.deepcopy(MASTER_SUMMARY_FILE_VARS)
-        if self.project.controlUserProv.defSource <> 'Census 2000':
+        if self.project.controlUserProv.defSource != 'Census 2000':
             var1.remove('geocomp')
         var1string = self.createVariableString(var1)
 
@@ -302,7 +302,7 @@ class AutoImportSF2000Data():
             self.checkIfTableExists('temp2')
             if not self.query.exec_("""create table temp1 select %s from %sgeo"""
                                     %(var1string, self.stateAbb[self.state])):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             for j in self.rawSFNamesNoExt[1:]:
                 var2, var2types = self.variableNames('%s' %j, 1)
@@ -315,14 +315,14 @@ class AutoImportSF2000Data():
 
                 if not self.query.exec_("""create table temp2 select %s from temp1, %s"""
                                         """ where temp1.logrecno = %s.logrecno""" %(var1string, tablename, tablename)):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_("""drop table temp1"""):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_("""alter table temp2 rename to temp1"""):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
 
             if not self.query.exec_("""alter table temp1 rename to mastersftable"""):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
     def createMasterSubSFTable(self):
@@ -339,7 +339,7 @@ class AutoImportSF2000Data():
             if not self.query.exec_("""create table mastersftable%s """
                                     """select * from mastersftable where sumlev = %s and geocomp = 00"""
                                     %(self.project.resolution, sumlev)):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
 
 
@@ -370,7 +370,7 @@ class AutoImportSFACSData(AutoImportSF2000Data):
         for i in self.rawSF:
             j = i %(self.stateAbb[self.state])
             sf_loc = self.loc + os.path.sep + j
-            urllib.urlretrieve("""ftp://ftp2.census.gov/acs2005_2007_3yr/summaryfile/%s/%s"""
+            urllib.request.urlretrieve("""ftp://ftp2.census.gov/acs2005_2007_3yr/summaryfile/%s/%s"""
                                %(web_state, j), sf_loc)
 
     def extractSF(self, state):
@@ -391,9 +391,9 @@ class AutoImportSFACSData(AutoImportSF2000Data):
                                                          "./data/sfacsfilestablescorr.csv",
                                                          [], [], True, True)
             if not self.query.exec_(sfacsFilesTablesCorrTable.query1):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_(sfacsFilesTablesCorrTable.query2):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
         tablename = '%sgeo' %(self.stateAbb[self.state])
 
@@ -401,7 +401,7 @@ class AutoImportSFACSData(AutoImportSF2000Data):
             if not self.query.exec_("""create table %s (raw text, sumlev float, sfgeoid float, """
                                     """state float, county float, tract  float, bg float, logrecno float)"""
                                     %tablename):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
             geo_loc = self.loc + os.path.sep + self.rawSF[0] %(self.stateAbb[self.state])
             geo_loc = geo_loc.replace("\\", "/")
@@ -409,25 +409,25 @@ class AutoImportSFACSData(AutoImportSF2000Data):
 
             if not self.query.exec_("""load data local infile '%s'"""
                                     """ into table %sgeo (raw)""" %(geo_loc, self.stateAbb[self.state])):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set sumlev = mid(raw, 9, 3)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set sfgeoid = mid(raw, 12, 2)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set state = mid(raw, 26, 2)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set county = mid(raw, 28, 3)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set tract = mid(raw, 41, 6)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set bg = mid(raw, 47, 1)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""update %sgeo set logrecno = mid(raw, 14, 7)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""alter table %sgeo modify logrecno int""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
             if not self.query.exec_("""alter table %sgeo add primary key (logrecno)""" %self.stateAbb[self.state]):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
 
         # Load the other necessary tables
 
@@ -453,11 +453,11 @@ class AutoImportSFACSData(AutoImportSF2000Data):
 
             if self.checkIfTableExists(tablename):
                 if not self.query.exec_(sffile.query1):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_(sffile.query2):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
                 if not self.query.exec_("alter table %s add primary key (logrecno)" %tablename):
-                    raise FileError, self.query.lastError().text()
+                    raise FileError(self.query.lastError().text())
         
         
     def variableNames(self, filenumber=None, tablenumber=None):
@@ -468,16 +468,16 @@ class AutoImportSFACSData(AutoImportSF2000Data):
         if tablenumber is None and filenumber is not None:
             if not self.query.exec_("""select tablenumber, numcat from sfacsfilestablescorr"""
                                     """ where filenumber = %s order by tablenumber""" %filenumber):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         if tablenumber is not None:
             if not self.query.exec_("""select tablenumber, numcat from sfacsfilestablescorr"""
                                     """ where filenumber = %s and includeflag = 1""" %filenumber):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())
         if filenumber is None and tablenumber is None:
-            raise FileError, "Insufficient parameters supplied"
+            raise FileError("Insufficient parameters supplied")
 
 
-        while self.query.next():
+        while next(self.query):
             tablenumber = str(self.query.value(0).toString()).ljust(9, '0')
             numcat = self.query.value(1).toInt()[0]
 
@@ -502,4 +502,4 @@ class AutoImportSFACSData(AutoImportSF2000Data):
             if not self.query.exec_("""create table mastersftable%s """
                                     """select * from mastersftable where sumlev = %s """
                                     %(self.project.resolution, sumlev)):
-                raise FileError, self.query.lastError().text()
+                raise FileError(self.query.lastError().text())

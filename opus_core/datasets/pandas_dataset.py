@@ -38,7 +38,7 @@ class PandasClassFactory:
             new_dataset.df = new_dataset.df.iloc[index]
         new_dataset.n = new_dataset.df.shape[0]
         
-        for attr in dataset.attribute_boxes.keys():
+        for attr in list(dataset.attribute_boxes.keys()):
             new_dataset.attribute_boxes[attr] = AttributeBox(
                  new_dataset, [],
                  variable_name=dataset.attribute_boxes[attr].get_variable_name(),
@@ -178,7 +178,7 @@ class PandasDataset(Dataset):
             self.df = concat(self.df, dfcomp)
                       
         for attr in data:
-            if not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+            if not ((attr in self._id_names) and attr in self.attribute_boxes): #do not store id_name every time
                 self.attribute_boxes[attr] = AttributeBox(self, [],
                                                 variable_name=self.create_and_check_qualified_variable_name(attr),
                                                 type=AttributeType.PRIMARY,
@@ -187,7 +187,7 @@ class PandasDataset(Dataset):
                                                 version=0)
 
         for attr in data_computed:
-            if not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+            if not ((attr in self._id_names) and attr in self.attribute_boxes): #do not store id_name every time
                 self.attribute_boxes[attr] = AttributeBox(self, [],
                                                 variable_name=self.create_and_check_qualified_variable_name(attr),
                                                 type=AttributeType.COMPUTED,
@@ -269,11 +269,11 @@ class PandasDataset(Dataset):
         workdf = dataset.df
         if attribute_name == None:
             if constant == None:
-                self._raise_error(StandardError,
+                self._raise_error(Exception,
                                   "Either 'attribute_name' or 'constant' must be given.")
             elif isinstance(constant, ndarray):
-                if constant.size <> dataset_id_values.size:
-                    self._raise_error(StandardError,
+                if constant.size != dataset_id_values.size:
+                    self._raise_error(Exception,
                                       "constant's size (%d) must be of the same as dataset's size (%d)"
                                       % (constant.size, dataset_id_values.size))
                 values = constant
@@ -325,7 +325,7 @@ class PandasDataset(Dataset):
                 result[attr] = result[attr].astype(dataset.df[attr].dtype)
             if np.isnan(result[attr].values).any():
                 k = dataset.df[attr].values.dtype.kind
-                if return_value_if_not_found is None and default_return_values_by_type.has_key(k):
+                if return_value_if_not_found is None and k in default_return_values_by_type:
                     val = default_return_values_by_type[k]
                 else:
                     val = return_value_if_not_found
@@ -361,24 +361,24 @@ class PandaDatasetTests(opus_unittest.OpusTestCase):
         # create from Opus Dataset
         ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
         pds = PandasClassFactory().get_dataset(ds)
-        self.assert_(all(pds['attr'] == array([100,200,300])))
-        self.assert_(all(pds.get_id_attribute() == array([1,2,3])))
+        self.assertTrue(all(pds['attr'] == array([100,200,300])))
+        self.assertTrue(all(pds.get_id_attribute() == array([1,2,3])))
         
         # create from data
         pds = PandasDataset(in_storage=storage, in_table_name='tests', id_name='id')
         pds.load_dataset()
-        self.assert_(all(pds['attr2'] == array([11,22,33])))
-        self.assert_(all(pds.get_id_attribute() == array([1,2,3])))
+        self.assertTrue(all(pds['attr2'] == array([11,22,33])))
+        self.assertTrue(all(pds.get_id_attribute() == array([1,2,3])))
         
         # data element
         el = pds.get_data_element(2)
-        self.assert_(el.attr == 200)
-        self.assert_(el.attr2 == 22)
+        self.assertTrue(el.attr == 200)
+        self.assertTrue(el.attr2 == 22)
         
         #subset
         pds.subset_by_ids(array([1,3]))
-        self.assert_(all(pds['attr'] == array([100,300])))
-        self.assert_(all(pds['attr2'] == array([11,33])))
+        self.assertTrue(all(pds['attr'] == array([100,300])))
+        self.assertTrue(all(pds['attr2'] == array([11,33])))
        
     def test_aggregate(self):
         # test aggregate with no function specified (so defaults to 'sum')
@@ -402,7 +402,7 @@ class PandaDatasetTests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable)'], dataset_pool=dataset_pool)
         should_be = array([4.5, 9]) 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
          
     def test_aggregate_sum_two_levels(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -440,7 +440,7 @@ class PandaDatasetTests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myneighborhood',ds3)
         values = ds3.compute_variables(['myneighborhood.aggregate(10.0*myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)'], dataset_pool=dataset_pool)
         should_be = array([1770, 240])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_two_levels")    
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_two_levels")    
         
     def test_aggregate_mean(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -463,7 +463,7 @@ class PandaDatasetTests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds2)
         values = ds2.compute_variables(['myfaz.aggregate(10.0*myzone.my_variable, function=mean)'], dataset_pool=dataset_pool)
         should_be = array([70, 45])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_mean") 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_mean") 
         
     def xtest_disaggregate(self): # disabled due to failing on the build server 
         storage = StorageFactory().get_storage('dict_storage')
@@ -486,7 +486,7 @@ class PandaDatasetTests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds2)
         values = ds.compute_variables(["myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
         should_be = array([40, 80, 40, 80])
-        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
         
 if __name__ == '__main__':
     opus_unittest.main() 

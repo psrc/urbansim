@@ -109,7 +109,7 @@ class EventsCoordinator(Model):
         """
         # argument check to resolve configuration of development project types
         if development_models is not None and models_configuration is None:
-            raise StandardError('Configurations that pass a list of development'
+            raise Exception('Configurations that pass a list of development'
                                 ' models (argument: "development_models") must '
                                 'also pass a reference to the entire models '
                                 'configuration (argument: "models_'
@@ -303,7 +303,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
             
             def get_types_for_group(self, group):
                 ids = arange(self.size())+1
-                is_group = array(map(lambda idx: group in self.groups[idx], ids))
+                is_group = array([group in self.groups[idx] for idx in ids])
                 return ids[where(is_group)]
             
         #example dev_type_data
@@ -328,26 +328,26 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000,
                                 model_configuration = self.model_configuration)
 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [4, 1, 12, 20]))) 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [3, 12, 0, 4])))
-        self.assert_(ma.allclose(gridcell_set.get_attribute("industrial_sqft"), array( [0, 21, 0, 4]))) 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_improvement_value"), array( [1, 24, 3, 389]))) 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("industrial_improvement_value"), array( [1, 24, 3, 78]))) 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [3, 2, 3, 3])))
-        self.assert_(ma.allclose(gridcell_set.get_attribute("development_type_id"), array( [1, 2, 5, 6]))) 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("grid_id"), array( [1, 2, 3, 4]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [4, 1, 12, 20]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [3, 12, 0, 4])))
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("industrial_sqft"), array( [0, 21, 0, 4]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("commercial_improvement_value"), array( [1, 24, 3, 389]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("industrial_improvement_value"), array( [1, 24, 3, 78]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [3, 2, 3, 3])))
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("development_type_id"), array( [1, 2, 5, 6]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("grid_id"), array( [1, 2, 3, 4]))) 
         
     def test_replace_type_of_changes(self):
         values = self.do_type_of_changes_test(DevelopmentEventTypeOfChange.REPLACE)
-        self.assert_(ma.allclose(values, array( [10, 1, 30, 20]))) 
+        self.assertTrue(ma.allclose(values, array( [10, 1, 30, 20]))) 
         
     def test_delete_type_of_changes(self):
         values = self.do_type_of_changes_test(DevelopmentEventTypeOfChange.DELETE)
-        self.assert_(ma.allclose(values, array( [0, 1, 0, 20]))) 
+        self.assertTrue(ma.allclose(values, array( [0, 1, 0, 20]))) 
         
     def test_add_type_of_changes(self):
         values = self.do_type_of_changes_test(DevelopmentEventTypeOfChange.ADD)
-        self.assert_(ma.allclose(values, array( [12, 1, 42, 20]))) 
+        self.assertTrue(ma.allclose(values, array( [12, 1, 42, 20]))) 
         
     def do_type_of_changes_test(self, type_of_change):
         storage = StorageFactory().get_storage('dict_storage')
@@ -408,7 +408,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000, model_configuration = self.model_configuration)
                                 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 0, 20]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 0, 20]))) 
         
     def test_different_changes_for_different_units(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -445,10 +445,10 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000, model_configuration = self.model_configuration)
                                 
-        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 6, 20])))
-        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [30, 102, 0, 3])))
-        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [0, 12, 1, 4])))
-        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_improvement_value"), array( [0, 24, 3, 389]))) 
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 6, 20])))
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [30, 102, 0, 3])))
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [0, 12, 1, 4])))
+        self.assertTrue(ma.allclose(gridcell_set.get_attribute("commercial_improvement_value"), array( [0, 24, 3, 389]))) 
         
     def test_assignment_of_development_types_in_RAM(self):
         storage = StorageFactory().get_storage('dict_storage')

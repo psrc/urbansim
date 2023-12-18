@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class sum_income(Variable):
     """Sum of all income in a zone, by summing the incomes of each household in the zone"""

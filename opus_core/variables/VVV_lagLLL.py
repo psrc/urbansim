@@ -27,7 +27,7 @@ class VVV_lagLLLTests(opus_unittest.OpusTestCase):
         vf = VariableFactory()
         var_name = VariableName('opus_core.tests.a_test_variable_lag3')
         var = vf.get_variable(var_name, None, index_name='my_id')
-        self.assert_(var.is_lag_variable())
+        self.assertTrue(var.is_lag_variable())
         self.assertEqual(var.lag_offset, 3)
 
 if __name__ == '__main__': 

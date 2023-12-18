@@ -15,8 +15,8 @@ class SSS_control_total_DDD(Variable):
     geo_name = attr_names[0]
     
     def __init__(self, what, year):
-        if what <> 'household' and what <> 'employment':
-            raise StandardError, 'Variable must start with either "household" or "employment". It starts with %s' % what
+        if what != 'household' and what != 'employment':
+            raise Exception('Variable must start with either "household" or "employment". It starts with %s' % what)
         self.year = year
         self.what = what
         Variable.__init__(self)    

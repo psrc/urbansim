@@ -10,8 +10,8 @@ from numpy import array
 from opus_core.misc import load_table_from_text_file, write_table_to_text_file
 from opus_core.misc import get_config_from_opus_path
 from opus_core.logger import logger
-from remote_run_controller import RemoteRunOptionGroup
-from remote_run_controller import RemoteRun
+from .remote_run_controller import RemoteRunOptionGroup
+from .remote_run_controller import RemoteRun
 
 class RemoteRunSetOptionGroup(RemoteRunOptionGroup):
     def __init__(self):
@@ -64,7 +64,7 @@ class RemoteRunSet(RemoteRun):
                                                             'communication_path_root': host_names_and_paths_array[i,3],
                                                             'number_of_processes': int(host_names_and_paths_array[i,4])}
                 previous_passw = None
-                if (host_names_and_paths_array[i,0] <> 'localhost'):
+                if (host_names_and_paths_array[i,0] != 'localhost'):
                     default = ''
                     if passw is not None:
                         default = ' [previous password]'
@@ -86,7 +86,7 @@ class RemoteRunSet(RemoteRun):
                                            'number_of_processes': 1,
                                            'password': password
                                            }
-        for server in self.servers_info.keys():
+        for server in list(self.servers_info.keys()):
             self.servers_info[server]['python_command'] = self.python_commands.get(server, self.python_command)
             self.servers_info[server]['running'] = 0 # 0 processes are running
  
@@ -129,14 +129,14 @@ class RemoteRunSet(RemoteRun):
             self.run_ids_dict[int(run_id)] = (int(year), server)
         
     def write_into_run_id_file(self):
-        result = array(map(lambda(x,y): [x,y[0], y[1]], self.run_ids_dict.iteritems()))
+        result = array([[x_y[0],x_y[1][0], x_y[1][1]] for x_y in iter(self.run_ids_dict.items())])
         write_table_to_text_file(self.run_id_file, result)
         
     def _do_run(self, start_year, end_year, *args, **kwargs):
 
         running_ids = []
-        for iter in range(len(self.run_ids_dict.keys())): 
-            run_id = self.run_ids_dict.keys()[iter]
+        for iter in range(len(list(self.run_ids_dict.keys()))): 
+            run_id = list(self.run_ids_dict.keys())[iter]
             finished_year, server = self.run_ids_dict[run_id]
             while True: # wait for available server
                 selected_server, restart = self.select_server(server)
@@ -196,7 +196,7 @@ class RemoteRunSet(RemoteRun):
     def select_server(self, server):
         restart = False
         selected_server = None
-        for s, info in self.servers_info.iteritems():
+        for s, info in self.servers_info.items():
             if ((server == 'NA') or (server == s)) and (info['running'] < info['number_of_processes']):
                 selected_server = s
                 break
@@ -231,14 +231,14 @@ if __name__ == "__main__":
     password=None
     if options.server_file is None:
         if options.server is None:
-            hostname = raw_input('Hostname [%s]: ' % RemoteRunSet.default_hostname)
+            hostname = input('Hostname [%s]: ' % RemoteRunSet.default_hostname)
             if len(hostname) == 0:
                 hostname = RemoteRun.default_hostname
         else:
             hostname = options.server
-        if hostname <> 'localhost':
+        if hostname != 'localhost':
             if options.user is None:
-                username = raw_input('Username [%s]: ' % RemoteRunSet.default_username)
+                username = input('Username [%s]: ' % RemoteRunSet.default_username)
                 if len(username) == 0:
                     username = RemoteRun.default_username
                 else:

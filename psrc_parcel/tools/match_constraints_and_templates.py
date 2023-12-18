@@ -61,7 +61,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     parcels_glu = parcel_dataset.compute_variables(['parcel.disaggregate(land_use_type.generic_land_use_type_id)'], dataset_pool=dataset_pool)
     if has_constraint_dataset:
         constraint_types = unique(constraints.get_attribute("constraint_type"))  #unit_per_acre, far etc
-        development_template_dataset.compute_variables(map(lambda x: "%s.%s" % (template_opus_path, x), constraint_types), dataset_pool)
+        development_template_dataset.compute_variables(["%s.%s" % (template_opus_path, x) for x in constraint_types], dataset_pool)
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 
                                                    index=index1, 
@@ -97,9 +97,9 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         has_this_template = zeros(index1.size, dtype="int32")
         if has_constraint_dataset:
             generic_land_use_type_id = generic_land_use_type_ids[i_template]
-            if generic_land_use_type_id not in parcels_acc_by_constr_wo_templ.keys():
+            if generic_land_use_type_id not in list(parcels_acc_by_constr_wo_templ.keys()):
                 parcels_acc_by_constr_wo_templ[generic_land_use_type_id] = zeros(index1.size, dtype="int32")
-            if generic_land_use_type_id not in parcels_acc_by_constr.keys():
+            if generic_land_use_type_id not in list(parcels_acc_by_constr.keys()):
                 parcels_acc_by_constr[generic_land_use_type_id] = zeros(index1.size, dtype="int32")
             #if generic_land_use_type_id not in [1,2]:
             #    continue
@@ -107,8 +107,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                                                                 dataset_pool=dataset_pool)[index1]
             is_size_fit = parcel_dataset.compute_variables(['psrc_parcel.parcel.is_size_fit_for_template_%s' % this_template_id],
                                                                 dataset_pool=dataset_pool)[index1]
-            for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].iteritems():
-                if density_types[i_template] <> constraint_type:
+            for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].items():
+                if density_types[i_template] != constraint_type:
                     continue
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:
@@ -152,7 +152,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     logger.end_block()
     ### Print summary
     ##################
-    unique_glu = parcels_acc_by_constr_wo_templ.keys()
+    unique_glu = list(parcels_acc_by_constr_wo_templ.keys())
     #parcels_wo_templ = zeros(index1.size, dtype="int32")
     
     #parcels_wo_templ = where(logical_and(vacant_land>0, logical_and(is_developable_parcel, logical_not(has_template))))[0]
@@ -210,7 +210,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         points = {'far':zeros((0,3)), 'units_per_acre':zeros((0,3))}
         npoints = {'far': 0, 'units_per_acre': 0}
         for i_template in index2:
-            if glu <> generic_land_use_type_ids[i_template]:
+            if glu != generic_land_use_type_ids[i_template]:
                 continue
             this_template_id = template_ids[i_template]
             #units_proposed = parcel_dataset['units_proposed_for_template_%s' % this_template_id]
@@ -225,8 +225,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
             missed_to_match[(unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())).astype('int32')] = True
             missed_to_match = where(logical_and(missed_to_match, parcels_acc_by_constr_wo_templ[glu]))[0]
             #missed_to_match = unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())
-            for constraint_type, constraint in parcel_dataset.development_constraints[glu].iteritems():
-                if density_types[i_template] <> constraint_type:
+            for constraint_type, constraint in parcel_dataset.development_constraints[glu].items():
+                if density_types[i_template] != constraint_type:
                     continue
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:

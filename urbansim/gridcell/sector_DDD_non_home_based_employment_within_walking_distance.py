@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_within_walking_distance import abstract_within_walking_distance
+from .abstract_within_walking_distance import abstract_within_walking_distance
 
 class sector_DDD_non_home_based_employment_within_walking_distance(abstract_within_walking_distance):
     """Sum over c in cell.walking_radius, count of j in c.placed_jobs

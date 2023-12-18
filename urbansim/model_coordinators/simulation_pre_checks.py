@@ -23,11 +23,11 @@ class TestSimulationPreChecks(opus_unittest.OpusTestCase):
         incomplete_model_set = ['home_based_employment_location_choice_model', 'another_model', 'yet_another_model']
         incomplete_model_set2 = ['scaling_jobs_model', 'another_model', 'yet_another_model']
         
-        self.assert_(SimulationPreChecks().check_satisfies_model_interdependence(complete_models), 
+        self.assertTrue(SimulationPreChecks().check_satisfies_model_interdependence(complete_models), 
                      'models were actually consistant')
-        self.assert_(not SimulationPreChecks().check_satisfies_model_interdependence(incomplete_model_set), 
+        self.assertTrue(not SimulationPreChecks().check_satisfies_model_interdependence(incomplete_model_set), 
                      'models really were not interdependent')
-        self.assert_(not SimulationPreChecks().check_satisfies_model_interdependence(incomplete_model_set2), 
+        self.assertTrue(not SimulationPreChecks().check_satisfies_model_interdependence(incomplete_model_set2), 
                      'models really were not interdependent')
         
 

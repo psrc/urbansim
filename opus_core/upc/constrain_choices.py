@@ -18,7 +18,7 @@ class constrain_choices(object):
         Optional entry 'index' (1D or 2D array) gives indices of the choices.
         """
         if probability.ndim < 2:
-            raise StandardError, "Argument 'probability' must be a 2D numpy array."
+            raise Exception("Argument 'probability' must be a 2D numpy array.")
 
         resources.check_obligatory_keys(["capacity"])
         supply = resources["capacity"]

@@ -7,7 +7,7 @@
 #this module is based on the jobs_of_sector_DDD_within_DDD_of_parcel module
 #testing has not been adapted to changes and is still original
 
-from abstract_variable_within_radius_DDD_of_parcel import abstract_variable_within_radius_DDD_of_parcel
+from .abstract_variable_within_radius_DDD_of_parcel import abstract_variable_within_radius_DDD_of_parcel
 
 class households_from_age_DDD_to_DDD_within_DDD_of_parcel(abstract_variable_within_radius_DDD_of_parcel):
     """total number of households in agegroup min_age to max_age within radius DDD of parcel"""

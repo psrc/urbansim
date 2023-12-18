@@ -81,7 +81,7 @@ class RunSemcogTravelModel(RunTravelModel):
                     win32process.TerminateProcess(pid)
                 start_program = True
             except:
-                raise RuntimeError, "Unable to kill TransCAD process in memory"
+                raise RuntimeError("Unable to kill TransCAD process in memory")
             
         ##transcad not started, try to start it
         if start_program:

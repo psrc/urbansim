@@ -65,13 +65,13 @@ luv_rgc_capacity_emp = {
 }
 
 rgc_alias_hh = ""
-for w, rgc in luv_rgc_capacity_hh.iteritems():
+for w, rgc in luv_rgc_capacity_hh.items():
     if len(rgc_alias_hh) > 0:
         rgc_alias_hh = "%s + " % rgc_alias_hh
     rgc_alias_hh = "%s%s * numpy.in1d(parcel.growth_center_id, %s)" % (rgc_alias_hh, w, rgc)
 
 rgc_alias_emp = ""
-for w, rgc in luv_rgc_capacity_emp.iteritems():
+for w, rgc in luv_rgc_capacity_emp.items():
     if len(rgc_alias_emp) > 0:
         rgc_alias_emp = "%s + " % rgc_alias_emp
     rgc_alias_emp = "%s%s * numpy.in1d(parcel.growth_center_id, %s)" % (rgc_alias_emp, w, rgc)

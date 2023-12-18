@@ -10,7 +10,7 @@ from qgis.gui import *
 from gui.misc.errors import *
 import numpy as np
 
-from coreplot import *
+from .coreplot import *
 
 class Ppdist(Matplot):
     def __init__(self, project, parent=None):
@@ -18,7 +18,7 @@ class Ppdist(Matplot):
         self.setFixedSize(800,600)
         self.project = project
         self.valid = False
-        self.variables = self.project.selVariableDicts.person.keys()
+        self.variables = list(self.project.selVariableDicts.person.keys())
 
         if self.isValid():
             self.valid = True
@@ -64,7 +64,7 @@ class Ppdist(Matplot):
     def accept(self):
         query = QSqlQuery(self.projectDBC.dbc)
         if not query.exec_("""drop table temp"""):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
         self.projectDBC.dbc.close()
         QDialog.reject(self)
@@ -82,14 +82,14 @@ class Ppdist(Matplot):
         query.exec_(""" DROP TABLE IF EXISTS temp""")
         if not query.exec_("""CREATE TABLE temp SELECT person_synthetic_data.*,%s FROM person_synthetic_data"""
             """ LEFT JOIN person_sample using (serialno,pnum)""" %(varstr)):
-            raise FileError, query.lastError().text()
+            raise FileError(query.lastError().text())
 
     def on_draw(self):
         """ Redraws the figure
         """
         self.current = '%s' %self.attrbox.getCurrentText()
         selgeog = '%s' %self.geobox.getCurrentText()
-        self.categories = self.project.selVariableDicts.person[self.current].keys()
+        self.categories = list(self.project.selVariableDicts.person[self.current].keys())
         seladjdict = self.project.adjControlsDicts.person
         
         selsorteddict = {}
@@ -97,7 +97,7 @@ class Ppdist(Matplot):
             catsplit = i.split()
             newkey = int(catsplit[len(catsplit)-1])
             selsorteddict[newkey] = self.project.selVariableDicts.person[self.current][i]
-        self.categories = selsorteddict.keys()        
+        self.categories = list(selsorteddict.keys())        
         self.categories.sort()
         #self.corrControlVariables =  self.project.selVariableDicts.person[self.current].values()
 
@@ -113,7 +113,7 @@ class Ppdist(Matplot):
             variable = "county,tract,bg"
             queryAct = self.executeSelectQuery(self.projectDBC.dbc,variable, table, "",variable)
             i=0
-            while queryAct.next():
+            while next(queryAct):
                 filstr = self.getGeogFilStr(queryAct.value(0).toInt()[0],queryAct.value(1).toInt()[0],queryAct.value(2).toInt()[0])
                 if i == 0:
                     filterAct = "(" + filterAct + filstr + ")"
@@ -138,17 +138,17 @@ class Ppdist(Matplot):
                     adjlist = seladjdict[selgeog][self.current][1]
                     actTotal.append(adjlist[i-1])
                 else:
-                    for j in seladjdict.keys():
+                    for j in list(seladjdict.keys()):
                         try:
                             actlist = seladjdict[j][self.current][0]
                             adjlist = seladjdict[j][self.current][1]
                             sumdiff = sumdiff + adjlist[i-1] - actlist[i-1]
                         except:
                             pass
-                    raise FileError, "Overrides"
+                    raise FileError("Overrides")
             except:
                 queryAct = self.executeSelectQuery(self.projectDBC.dbc,variableAct, tableAct, filterAct)
-                while queryAct.next():
+                while next(queryAct):
                     value = queryAct.value(0).toInt()[0]
                     value = value + sumdiff
                     actTotal.append(value)
@@ -161,7 +161,7 @@ class Ppdist(Matplot):
             queryEst = self.executeSelectQuery(self.projectDBC.dbc,variableEst, tableEst, filterEst)
 
             iteration = 0
-            while queryEst.next():
+            while next(queryEst):
                 value = queryEst.value(0).toInt()[0]
                 estTotal.append(value)
                 iteration = 1

@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from avg_val_per_unit_SSS import avg_val_per_unit_SSS
+from .avg_val_per_unit_SSS import avg_val_per_unit_SSS
 
 class avg_val_per_unit_vacant_land(avg_val_per_unit_SSS):
     """average value per unit of vacant_land"""
@@ -62,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([1, 23/3.0, 27])
         
-        self.assert_(ma.allclose(values, should_be, rtol=1e-3), 
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-3), 
                      msg="Error in " + self.variable_name)
 
 

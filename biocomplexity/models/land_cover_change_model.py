@@ -160,7 +160,7 @@ class LandCoverChangeModel(ChoiceModel):
     def get_probabilities(self):
         result = zeros((self.observations_mapping["index"].size,self.choice_set.size()), dtype=float32)
         self.specified_coefficients = self.get_specified_coefficients() # used to pull coefficients used in estimation
-        for submodel in self.lct_probabilities.keys():
+        for submodel in list(self.lct_probabilities.keys()):
             coef = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients,submodel)
             index = coef.get_equations_index()
             for i in range(index.size):

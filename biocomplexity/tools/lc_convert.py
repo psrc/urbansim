@@ -56,7 +56,7 @@ if __name__ == "__main__":
         flt_directory_in = options.input
         flt_directory_out = options.output
         
-        print flt_directory_out
+        print(flt_directory_out)
         
         test_flag = options.test_flag
         
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     mask = lc.get_mask()
     idx = where(mask==0)[0]
     lcsubset = DatasetSubset(lc, idx)
-    print "Converting:"
+    print("Converting:")
     lcsubset.write_dataset(attributes=["relative_x"], out_table_name="land_covers")
     #lcsubset.write_dataset(attributes=["relative_x"], out_table_name="land_covers",
     #                            valuetypes=valuetypes)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 #    shutil.move(os.path.join(srcdir,"relative_y.li4"), os.path.join(flt_directory_out, "land_covers"))
 #    shutil.rmtree(srcdir)
     for attr in lc.get_primary_attribute_names():
-        print "   ", attr
+        print("   ", attr)
         lcsubset.write_dataset(attributes=[attr], out_table_name="land_covers")
     #    lcsubset.write_dataset(attributes=[attr], out_table_name="land_covers",
     #                            valuetypes=valuetypes)

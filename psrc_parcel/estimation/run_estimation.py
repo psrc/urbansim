@@ -38,7 +38,7 @@ if __name__ == '__main__':
     #model = 'dppcm'
 
     config = Baseline()
-    if 'models_in_year' in config.keys():
+    if 'models_in_year' in list(config.keys()):
         del config['models_in_year']    
     config.merge(my_configuration)
     config['config_changes_for_estimation'] = ConfigChangesForEstimation()

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.gridcell.vacancy_rate_for_SSS import vacancy_rate_for_SSS as gc_vacancy_rate_for_SSS
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class vacancy_rate_for_SSS(gc_vacancy_rate_for_SSS):
     """ vacant units / number of units (see the corresponding code for gridcell)"""

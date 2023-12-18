@@ -31,7 +31,7 @@ class MapnikAnimation(MapnikMap):
             
         self._create_input_stores(years = source_data.years)
 
-        for name, computed_indicator in computed_indicators.items():
+        for name, computed_indicator in list(computed_indicators.items()):
             if name not in indicators_to_visualize: continue
             
             if computed_indicator.source_data != source_data:
@@ -42,7 +42,7 @@ class MapnikAnimation(MapnikMap):
             dataset_to_attribute_map[dataset_name].append(name)
         
         viz_metadata = []
-        for dataset_name, indicator_names in dataset_to_attribute_map.items():  
+        for dataset_name, indicator_names in list(dataset_to_attribute_map.items()):  
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]
                     

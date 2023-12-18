@@ -5,7 +5,7 @@
 import numpy
 from math import ceil
 from numpy import array
-import devmdl_optimize
+from . import devmdl_optimize
 
 FLOORHEIGHT = 12
 LOTRATIOS = array([.71,.79,.93,1.16]) # ratio of 1BR, 2BR, etc to average
@@ -214,7 +214,7 @@ OFFICEHIGHRISE = 130.00
 OFFICESKYSCRAPER = 140.00
 PARKINGCOSTPERSPOT = 18000.0
 SFPARKING = array([18000.0,30000.0,30000.0,36000.0])
-from shifters import RESLOCALCOST_D, NONRESLOCALCOST_D
+from .shifters import RESLOCALCOST_D, NONRESLOCALCOST_D
 '''
 RESLOCALCOST_D = {
 49:115.58*.45, # sonoma

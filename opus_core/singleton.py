@@ -8,8 +8,8 @@ class Singleton(object):
     
     def __new__(cls, *args, **kwds):
         cls._is_new_instance = False
-        if (not cls._singletons.has_key(cls)) or (kwds.has_key("new_instance") and kwds["new_instance"]):
-            if cls._singletons.has_key(cls):
+        if (cls not in cls._singletons) or ("new_instance" in kwds and kwds["new_instance"]):
+            if cls in cls._singletons:
                 del cls._singletons[cls]
             try:
                 cls._singletons[cls] = object.__new__(cls)
@@ -29,7 +29,7 @@ class Singleton(object):
             del self._singletons[klass]
             
     def remove_all_singletons(self):
-        for klass in self._singletons.keys():
+        for klass in list(self._singletons.keys()):
             self.remove_singleton_for_class(klass)
             
     def has_singleton_for_class(self, klass):
@@ -46,21 +46,21 @@ class TestSingleton(TestCase):
         
         # The only singleton should be Singleton itself.
         self.assertEqual(len(Singleton()._singletons), 1)
-        self.assert_(Singleton().has_singleton_for_class(Singleton))
-        self.assert_(not Singleton().has_singleton_for_class(singleton_class_for_this_test))
+        self.assertTrue(Singleton().has_singleton_for_class(Singleton))
+        self.assertTrue(not Singleton().has_singleton_for_class(singleton_class_for_this_test))
         
         # Create another singleton.
         singleton_class_for_this_test()
         
         # Both singletons should be in Singleton.
         self.assertEqual(len(Singleton()._singletons), 2)
-        self.assert_(Singleton().has_singleton_for_class(singleton_class_for_this_test))
+        self.assertTrue(Singleton().has_singleton_for_class(singleton_class_for_this_test))
         
         # Can we remove a singleton?
         Singleton().remove_singleton_for_class(singleton_class_for_this_test)
         self.assertEqual(len(Singleton()._singletons), 1)
-        self.assert_(Singleton().has_singleton_for_class(Singleton))
-        self.assert_(not Singleton().has_singleton_for_class(singleton_class_for_this_test))        
+        self.assertTrue(Singleton().has_singleton_for_class(Singleton))
+        self.assertTrue(not Singleton().has_singleton_for_class(singleton_class_for_this_test))        
         
 if __name__ == '__main__':
     main()

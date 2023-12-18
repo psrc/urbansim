@@ -15,7 +15,7 @@ def check_opus_home():
     valid_opus_home = False
     try:
         from opus_core.paths import OPUS_HOME
-    except Exception, e:
+    except Exception as e:
         msg = 'Could not import "paths" module from "opus_core".\n%s\n\n' \
             'Please make sure that the PYTHONPATH environment variable is set to the location of the "src" directory.' % e
     else:

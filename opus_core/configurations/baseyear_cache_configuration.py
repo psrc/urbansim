@@ -36,7 +36,7 @@ class DatabaseConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(bcc.years_to_cache, expected_years_to_cache)
 
         expected_existing_cache_to_copy = os.path.join('path', 'to', 'other', 'cache')
-        expected_years_to_cache = range(1, 2000)
+        expected_years_to_cache = list(range(1, 2000))
 
         bcc.existing_cache_to_copy = expected_existing_cache_to_copy
         bcc.years_to_cache = expected_years_to_cache

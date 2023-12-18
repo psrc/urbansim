@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 from opus_core.variables.variable import Variable
 from opus_core.misc import safe_array_divide
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class percent_high_income_households(Variable):
     """The number_of_high_income_households / number_of_households. """

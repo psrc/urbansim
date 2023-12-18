@@ -46,7 +46,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
                 (passed, msg) = self._run_stochastic_test_pearson(function, expected_results,
                             number_of_iterations, significance_level, transformation)
             else:
-                raise TypeError, "Unknown type of stochastic test."
+                raise TypeError("Unknown type of stochastic test.")
             if passed:
                 return
         # failed too many times -- show the last message
@@ -71,7 +71,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
             sum_y = sum_y + x_kr[i,:]
         muest = sum_y/float(number_of_iterations)
         sigma_1 = ((x_kr - muest)**2.0).sum()/float(number_of_iterations*K)
-        self.variance = variance(x_kr, labels=reshape(array(number_of_iterations*range(1,K+1)),
+        self.variance = variance(x_kr, labels=reshape(array(number_of_iterations*list(range(1,K+1))),
                                                     (number_of_iterations,K)),
                                  index=arange(K)+1)
         sigma_0 = ((x_kr - texpected_results)**2.0).sum()/float(number_of_iterations*K)

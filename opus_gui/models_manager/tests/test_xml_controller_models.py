@@ -25,8 +25,8 @@ class TestXmlControllerModels(OpusGUITestCase):
         local_node = p.find('model_manager/model/submodel', name='local node')
         shadowing_node = p.find('model_manager/model/submodel', name='shadow node')
 
-        self.assert_(local_node is not None)
-        self.assert_(shadowing_node is not None)
+        self.assertTrue(local_node is not None)
+        self.assertTrue(shadowing_node is not None)
 
         # created an edited version of local node
         edited_node = etree.Element('submodel', {'name': 'edited local node'})
@@ -35,20 +35,20 @@ class TestXmlControllerModels(OpusGUITestCase):
 
         controller._update_submodel(local_node, edited_node)
         # the decription should be gone and the variables and named should have changed
-        self.assert_(local_node.find('description') is None)
+        self.assertTrue(local_node.find('description') is None)
         self.assertEqual(local_node.find('variable_list/variable_spec').get('name'), '.edited_var')
         self.assertEqual(local_node.get('name'), 'edited local node')
         # make sure no new nodes was added
         self.assertEqual(len(p.findall('model_manager/model/submodel')), 3)
 
         # renaming a shadowing node should insert a new local copy and reinsert the shadowed node
-        self.assert_(shadowing_node.get('inherited') is None)
+        self.assertTrue(shadowing_node.get('inherited') is None)
         edited_node.set('name', 'new copy')
         controller._update_submodel(shadowing_node, edited_node)
         shadowing_node = p.find('model_manager/model/submodel', name='shadow node')
-        self.assert_(shadowing_node.get('inherited') is not None) # this should now be inherited
+        self.assertTrue(shadowing_node.get('inherited') is not None) # this should now be inherited
         new_copy_node = p.find('model_manager/model/submodel', name='new copy')
-        self.assert_(new_copy_node is not None)
+        self.assertTrue(new_copy_node is not None)
         # make sure only one node was added
         self.assertEqual(len(p.findall('model_manager/model/submodel')), 4)
 
@@ -60,7 +60,7 @@ class TestXmlControllerModels(OpusGUITestCase):
         manager = MockupManager(xml='', manager_node_path='model_manager', opus_project=p)
         controller = xcm.XmlController_Models(manager)
         shadowing_node = p.find('model_manager/model/submodel', name='shadow node')
-        self.assert_(shadowing_node.get('inherit_parent_values') == 'False')
+        self.assertTrue(shadowing_node.get('inherit_parent_values') == 'False')
         self.assertEqual(len(shadowing_node.findall('variable_list/variable_spec')), 1)
  
 #from opus_core.tests import opus_unittest

@@ -15,9 +15,9 @@ class MergeCache(Model):
         # cleanup
         for table in tables:
             tabdata = self.storage.load_table(table)
-            if table in cleanup_settings.keys():
+            if table in list(cleanup_settings.keys()):
                 for attr in cleanup_settings[table]:
-                    if attr in tabdata.keys():
+                    if attr in list(tabdata.keys()):
                         logger.log_status('Deleting attribute %s in %s.' % (attr, table))
                         del tabdata[attr]
             self.storage.write_table(table, tabdata)

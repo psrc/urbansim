@@ -7,8 +7,8 @@ from optparse import OptionParser
 import os, sys, shutil, glob
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration 
 from opus_core.services.run_server.run_manager import RunManager
-import winssh
-import mtc_common
+from . import winssh
+from . import mtc_common
 
 travel_model_year_mapping = {2018:2020,
                              2025:2035,

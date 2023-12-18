@@ -19,7 +19,7 @@ class max_developable_residential_capacity(Variable):
         parcels.get_development_constraints(constraints, dataset_pool, consider_constraints_as_rules=True)
         result = zeros(parcels.size())
         # iterate over GLU types
-        for glu in parcels.development_constraints.keys():
+        for glu in list(parcels.development_constraints.keys()):
             if  glu == 'index':
                 continue
             res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'] # median of building sqft per unit

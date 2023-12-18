@@ -55,7 +55,7 @@ def match(pattern, data, vars=None):
                 return True, vars
             else:
                 return match(pattern[1], data, vars)
-        raise ValueError, 'bad syntax for pattern'
+        raise ValueError('bad syntax for pattern')
     if type_pattern is not TupleType:
         return (pattern == data), vars
     if data is None:
@@ -109,7 +109,7 @@ class Tests(opus_unittest.OpusTestCase):
 
     def test_fully_qualified_varible_pattern(self):
         same, vars = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE, TEST_PATTERN_FULLY_QUALIFIED_VARIABLE)
-        self.assert_(same, msg="pattern did not match")
+        self.assertTrue(same, msg="pattern did not match")
         self.assertEqual(len(vars), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -117,7 +117,7 @@ class Tests(opus_unittest.OpusTestCase):
 
     def test_fully_qualified_varible_pattern_to_power(self):
         same, vars = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE, TEST_PATTERN_FULLY_QUALIFIED_VARIABLE_TO_POWER)
-        self.assert_(same, msg="pattern did not match")
+        self.assertTrue(same, msg="pattern did not match")
         self.assertEqual(len(vars), 4, msg="wrong number of items in dictionary")
         self.assertEqual(vars['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -137,10 +137,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "urbansim.gridcell.population"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -155,10 +155,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "urbansim.gridcell.population #comment"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -172,10 +172,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "urbansim.gridcell.population #comment\n"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -188,10 +188,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "myvar = urbansim.gridcell.population"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -206,10 +206,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "myvar = urbansim.gridcell.population # comment"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")
@@ -223,10 +223,10 @@ class Tests(opus_unittest.OpusTestCase):
         full_expr = "myvar = urbansim.gridcell.population # comment\n"
         t = parser.ast2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
-        self.assert_(same1, msg="pattern did not match")
+        self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
         same2, vars2 = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, expr_tree)
-        self.assert_(same2, msg="pattern did not match")
+        self.assertTrue(same2, msg="pattern did not match")
         self.assertEqual(len(vars2), 3, msg="wrong number of items in dictionary")
         self.assertEqual(vars2['package'], 'urbansim', msg="bad value in dictionary")
         self.assertEqual(vars2['dataset'], 'gridcell', msg="bad value in dictionary")

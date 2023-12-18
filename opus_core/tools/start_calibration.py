@@ -35,11 +35,11 @@ ENDC = '\033[0m'
 try:
     is_parallelizable = is_parallelizable
     lock = lock
-    print HEADER+"-------------- parallel --------------"+ENDC
+    print(HEADER+"-------------- parallel --------------"+ENDC)
 except NameError:
     is_parallelizable = False
     lock = None
-    print HEADER+"-------------- non parallel --------------"+ENDC
+    print(HEADER+"-------------- non parallel --------------"+ENDC)
 
 class Calibration(object):
     ''' Class to calibrate UrbanSim model coefficients.
@@ -110,7 +110,7 @@ class Calibration(object):
                                   ).get_dataset_pool()
 
         calib_datasets = {}
-        for dataset_name, calib_attr in calib_datasets.iteritems():
+        for dataset_name, calib_attr in calib_datasets.items():
             dataset = dataset_pool.get_dataset(dataset_name, 
                                                     dataset_arguments={'id_name':[]})
             assert subset is None or subset.get(dataset_name, None) is None or \
@@ -128,7 +128,7 @@ class Calibration(object):
             calib_datasets[dataset_name] = [dataset, calib_attr, index]
 
         init_v = array([], dtype='f8')
-        for dataset_name, calib in calib_datasets.iteritems():
+        for dataset_name, calib in calib_datasets.items():
             dataset, calib_attr, index = calib
             if type(calib_attr) == str:
                 init_v = np.concatenate((init_v, dataset[calib_attr][index]))
@@ -136,14 +136,14 @@ class Calibration(object):
                 for attr in calib_attr:
                     init_v = np.concatenate((init_v, dataset[attr][index]))
             else:
-                raise TypeError, "Unrecongized data type in calib_datasets"
+                raise TypeError("Unrecongized data type in calib_datasets")
 
         t0 = time.time()
 
         if is_parallelizable==True: set_parallel(True)
 
-        print OKBLUE+"\noptimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)+ENDC
-        print OKBLUE+"-------------------------------------------------------\n"+ENDC
+        print(OKBLUE+"\noptimizer = {} (is_parallel = {})".format(optimizer,is_parallelizable)+ENDC)
+        print(OKBLUE+"-------------------------------------------------------\n"+ENDC)
         if optimizer=='bfgs':
             default_kwargs = {'fprime': None, 
                       'epsilon': 1e-08,
@@ -201,7 +201,7 @@ class Calibration(object):
 
             optimizer_func = panneal
         else:
-            raise ValueError, "Unrecognized optimizer {}".format(optimizer)
+            raise ValueError("Unrecognized optimizer {}".format(optimizer))
 
         default_kwargs.update(optimizer_kwargs)
         results = optimizer_func(self.target_func, copy(init_v), **default_kwargs)
@@ -253,7 +253,7 @@ class Calibration(object):
         simulation_state.set_current_time(self.base_year)
         simulation_state.set_cache_directory(cache_directory)
 
-        for dataset_name, calib in calib_datasets.iteritems():
+        for dataset_name, calib in calib_datasets.items():
             dataset, calib_attr, index = calib
             if type(calib_attr) == str:
                 dtype = dataset[calib_attr].dtype
@@ -265,7 +265,7 @@ class Calibration(object):
                     dataset[attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
                     i_est_v += index.size
             else:
-                raise TypeError, "Unrecongized data type in calib_datasets"
+                raise TypeError("Unrecongized data type in calib_datasets")
            
             #dtype = dataset[calib_attr].dtype
             #dataset[calib_attr][index] = (est_v[i_est_v:i_est_v+index.size]).astype(dtype)
@@ -325,7 +325,7 @@ class Calibration(object):
         results = dataset.compute_variables(self.target_expression, 
                                             dataset_pool=dataset_pool)
         simulation_state.set_current_time(current_year)
-        return dict(zip(ids, results))
+        return dict(list(zip(ids, results)))
 
     def read_target(self, target_file):
         ## read (& process) target numbers into a dictionary: {id:value}
@@ -333,7 +333,7 @@ class Calibration(object):
         ## id, target
         header = file(target_file, 'r').readline().strip().split(',')
         contents = np.genfromtxt(target_file, delimiter=",", comments='#', skip_header=1)
-        target = dict(zip(contents[:,0], contents[:,1]))
+        target = dict(list(zip(contents[:,0], contents[:,1])))
 
         return target
 
@@ -350,7 +350,7 @@ class Calibration(object):
                                   ).get_dataset_pool()
 
         calib_datasets = {}
-        for dataset_name, calib_attr in calib_datasets.iteritems():
+        for dataset_name, calib_attr in calib_datasets.items():
             dataset = dataset_pool.get_dataset(dataset_name, 
                                                     dataset_arguments={'id_name':[]})
             assert subset is None or subset.get(dataset_name, None) is None or \
@@ -372,9 +372,9 @@ class Calibration(object):
         ## assuming their values to be 0
         ### every key in target should appear in prediction
         #assert np.all( np.in1d(self.target.keys(), prediction.keys()) )
-        target = np.array(self.target.values())
-        predct = np.array([prediction[k] if prediction.has_key(k) else 0 \
-                           for k in self.target.keys() ])
+        target = np.array(list(self.target.values()))
+        predct = np.array([prediction[k] if k in prediction else 0 \
+                           for k in list(self.target.keys()) ])
         results = func(predct, target)
 
         return results

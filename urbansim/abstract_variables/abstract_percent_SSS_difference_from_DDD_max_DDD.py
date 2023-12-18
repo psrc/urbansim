@@ -5,7 +5,7 @@
 
 from numpy import minimum
 from opus_core.simulation_state import SimulationState
-from abstract_percent_SSS_difference_from_DDD import abstract_percent_SSS_difference_from_DDD
+from .abstract_percent_SSS_difference_from_DDD import abstract_percent_SSS_difference_from_DDD
 
 class abstract_percent_SSS_difference_from_DDD_max_DDD(abstract_percent_SSS_difference_from_DDD):
     """An abstract class that makes it easy to provide this functionality
@@ -122,7 +122,7 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2002)
                 pop_2002 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allclose(pop_2002, array([100,50,0,9999,9999])))
+                self.assertTrue(ma.allclose(pop_2002, array([100,50,0,9999,9999])))
                 
         
             def test_at_year_2000(self):
@@ -148,7 +148,7 @@ class TestFactory(object):
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2000)
                 pop_2000 = dataset.get_attribute(variable_name)
-                self.assert_(ma.allequal(pop_2000, array([0,0,0])))
+                self.assertTrue(ma.allequal(pop_2000, array([0,0,0])))
                 
         __MyTests._package_name = self.package_name                
         __MyTests._dataset_name = dataset_name

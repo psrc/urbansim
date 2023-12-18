@@ -55,7 +55,7 @@ class MultipleRuns:
             create_file_cache_directories(directory=cache_file_location, prefix=prefix, file_name=self.caches_file_name)
             self._set_cache_set(filename)
             return 
-        raise StandardError, "Location %s not found." % (cache_file_location)
+        raise Exception("Location %s not found." % (cache_file_location))
         
     def _set_cache_set(self, filename):
         self.cache_set = load_from_text_file(filename)
@@ -140,14 +140,14 @@ class MultipleRuns:
             ds = self.get_dataset_from_first_run(self.year_of_values_from_mr, dataset_name)
         else:
             ds=dataset
-        vars = self.values_from_mr.keys()
+        vars = list(self.values_from_mr.keys())
         for var in vars:
             values = mean(self.values_from_mr[var], axis=1)
             ds.add_attribute(name=var, data=values, metadata=AttributeType.PRIMARY)
         return ds
             
     def export_values_from_mr(self, directory, prefix=''):
-        vars = self.values_from_mr.keys()
+        vars = list(self.values_from_mr.keys())
         for var in vars:
             self._do_export_values(var, self.values_from_mr[var], directory, prefix)
             
@@ -178,23 +178,23 @@ class MultipleRuns:
             return None
 
         values = try_transformation(self.values_from_mr[variable], transformation_pair[0])
-        print self.values_from_mr[variable]
-        print values
+        print(self.values_from_mr[variable])
+        print(values)
         result = normal(values+bias, sd, size=self.values_from_mr[variable].shape)
         for i in range(1,n):
             result = concatenate((result, normal(values+bias, sd, size=self.values_from_mr[variable].shape)), axis=1)
-        print result
-        print try_transformation(result, transformation_pair[1])
+        print(result)
+        print(try_transformation(result, transformation_pair[1]))
         return try_transformation(result, transformation_pair[1])
     
     def simulate_from_normal_and_export(self, directory, prefix='', variable_prefix='', n=1, bias=0, sd=1, transformation_pair=(None, None)):
-        vars = self.values_from_mr.keys()
+        vars = list(self.values_from_mr.keys())
         for var in vars:
             data = self.simulate_from_normal(var, n, bias, sd, transformation_pair)
             self._do_export_values(var, data, directory, prefix, variable_prefix)
 
     def _setup_environment(self, cache_directory, year):
-        for name, ds in self.additional_datasets.iteritems():
+        for name, ds in self.additional_datasets.items():
             ds.delete_computed_attributes()
         return setup_environment(cache_directory, year, self.package_order, self.additional_datasets)
             
@@ -223,7 +223,7 @@ def setup_environment(cache_directory, year, package_order, additional_datasets=
                          in_storage=ac)
     logger.log_status("Setup environment for year %s. Use cache directory %s." % (year, storage.get_storage_location()))
     dp = sc.get_dataset_pool()
-    for name, ds in additional_datasets.iteritems():
+    for name, ds in additional_datasets.items():
         dp.replace_dataset(name, ds)
     return dp
 

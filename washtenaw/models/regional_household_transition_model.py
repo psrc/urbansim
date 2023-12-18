@@ -19,7 +19,7 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
         control_totals.get_attribute("total_number_of_households") # to make sure they are loaded
         self.characteristics = characteristics
         self.all_categories = self.characteristics.get_attribute("characteristic")
-        self.all_categories = array(map(lambda x: x.lower(), self.all_categories))
+        self.all_categories = array([x.lower() for x in self.all_categories])
         self.scaled_characteristic_names = get_distinct_names(self.all_categories).tolist()
         self.marginal_characteristic_names = copy(control_totals.get_id_name())
         index_year = self.marginal_characteristic_names.index("year")

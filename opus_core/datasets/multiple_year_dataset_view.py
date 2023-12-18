@@ -310,7 +310,7 @@ class Tests(opus_unittest.OpusTestCase):
         ds.compute_variables(['opus_core.test.attr1_times_2'])
                 
     def _check_dataset_methods_on_dataset_view(self, ds, years_to_merge):
-        self.assert_(ds is not None)
+        self.assertTrue(ds is not None)
         ds.load_dataset(attributes='*',
                         in_table_name='tests',
                         in_storage=AttributeCache()
@@ -323,7 +323,7 @@ class Tests(opus_unittest.OpusTestCase):
         attr1_times_2 = ds.get_attribute('attr1_times_2')
         
         # Are values as expected?
-        self.assert_(ma.allequal(attr1*2, attr1_times_2))
+        self.assertTrue(ma.allequal(attr1*2, attr1_times_2))
         
         # Does results have expected number of elements?
         self.assertEqual(len(years_to_merge)*3, len(attr1_times_2))
@@ -335,7 +335,7 @@ class Tests(opus_unittest.OpusTestCase):
         )
         attr2_times_2 = ds.get_attribute('attr2_times_2')
         attr2 = ds.get_attribute('attr2')
-        self.assert_(ma.allequal(attr2*2, attr2_times_2))
+        self.assertTrue(ma.allequal(attr2*2, attr2_times_2))
             
     def test_years_1000_1001_with_same_ids_each_year(self):
         years_to_merge = [1000,1001]
@@ -357,12 +357,12 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(attr1.sum()*2, attr1_times_2.sum())
         
         # Test some other methods inherited from Dataset.
-        self.assert_(ds.has_attribute('attr1'))
-        self.assert_(not ds.has_attribute('attribute_not_there'))
+        self.assertTrue(ds.has_attribute('attr1'))
+        self.assertTrue(not ds.has_attribute('attribute_not_there'))
         
         # Can get 'year' values?
         years = ds.get_attribute('year')
-        self.assert_(ma.allequal(array([1000,1000,1000,1001,1001,1001]), years))
+        self.assertTrue(ma.allequal(array([1000,1000,1000,1001,1001,1001]), years))
         
     def test_years_1001_1002(self):
         years_to_merge = [1001,1002]

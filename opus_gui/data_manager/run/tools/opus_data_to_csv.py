@@ -12,7 +12,7 @@ from opus_core.session_configuration import SessionConfiguration
 
 def opusRun(progressCB,logCB,params):
     params_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         params_dict[str(key)] = str(val)
 
     # Output csv data path

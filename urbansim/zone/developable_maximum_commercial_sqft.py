@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 
-from developable_maximum_industrial_sqft import developable_maximum_industrial_sqft
+from .developable_maximum_industrial_sqft import developable_maximum_industrial_sqft
 
 class developable_maximum_commercial_sqft(developable_maximum_industrial_sqft):
     """How many commercial sqft are at most developable for each zone."""

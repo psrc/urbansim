@@ -44,12 +44,12 @@ class OpusGuiConfiguration(object):
         if not os.path.exists(filename):
             # Didn't have a custom gui-configuration -- copy the default one
             # into the location before loading it
-            print('Warning -- did not find GUI configuration file %s.'%
-                  filename)
+            print(('Warning -- did not find GUI configuration file %s.'%
+                  filename))
             if not create_if_missing:
                 print('Not loading any GUI configuration file')
                 return
-            print('Copying the default GUI configuration to %s'% filename)
+            print(('Copying the default GUI configuration to %s'% filename))
             default_config_dir = directory_path_from_opus_path('opus_gui.main')
             default_config_filename = os.path.join(default_config_dir,
                                                 'default_gui_configuration.xml')
@@ -62,11 +62,11 @@ class OpusGuiConfiguration(object):
                 gui_config_file.close()
                 # Clean up namespace
                 del user_config_file, gui_config_file
-            except IOError, ex:
-                print('Failed to copy default configuration to %s.\n'
+            except IOError as ex:
+                print(('Failed to copy default configuration to %s.\n'
                       '-- Error:%s\n'
                       '!- Not loading any GUI configuration file.\n'%
-                      (filename, ex))
+                      (filename, ex)))
                 return
 
         root = ElementTree(file=filename)
@@ -101,7 +101,7 @@ class OpusGuiConfiguration(object):
                 node = root.find('font_settings/%s' %node_name)
                 self.fonts[group] = int(node.text)
             except ValueError:
-                print 'Could not set font %s to "%s"' %(group, node.text or '')
+                print('Could not set font %s to "%s"' %(group, node.text or ''))
 
         # GUI Setting -- Previous projects
         node = root.find('project_history/previous_project')

@@ -63,14 +63,14 @@ class Constants(dict):
         'income_category_{income_type}_min' and 'income_category_{income_type}_max',
         or internal ranges are returned, if the user-specific ones are not set.
         """
-        all_consts = self.keys()
+        all_consts = list(self.keys())
         if "income_category_%s_min" % income_type in all_consts and "income_category_%s_max" % income_type in all_consts:
             return (self["income_category_%s_min" % income_type], self["income_category_%s_max" % income_type])
         if income_type == 1: return (0, 25000)
         if income_type == 2: return (25000, 45000)
         if income_type == 3: return (45000, 75000)
         if income_type == 4: return (75000, self["absolute_max_income"])
-        raise StandardError("No range for income type: %s" % str(income_type))
+        raise Exception("No range for income type: %s" % str(income_type))
 
     def set_near_arterial_threshold(self):
         self["near_arterial_threshold_unit"] = UrbanSimLength(self["near_arterial_threshold"],
@@ -124,6 +124,6 @@ class Constants(dict):
         self.residential_code = self["residential_code"]
 
     def uppercase(self):
-        for key in self.keys():
+        for key in list(self.keys()):
             self[key.upper()]=self[key]
 

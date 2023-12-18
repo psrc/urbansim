@@ -12,7 +12,7 @@ from opus_core import paths
 #loads system variables
 path = paths.OPUS_HOME
 path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
-execfile(path) 
+exec(compile(open(path, "rb").read(), path, 'exec')) 
 
 #Stores information about the test that was run
 class Test_result :
@@ -237,7 +237,7 @@ class LDOF_model :
         for sample in samples :
             line = str( labels[index] )
             line += " " + str(id_list[index])
-            keys = sample.keys()
+            keys = list(sample.keys())
             keys.sort()
             for key in keys :
                 line += " " + str(key) + ":" + str(sample[key])

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable, ln
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class ln_land_value(Variable):
     """log(land_value)"""

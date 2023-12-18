@@ -8,7 +8,7 @@ import MySQLdb
 def create_tables(db, project_name, path):
 
 	dbc = db.cursor()
-	print ('Create Database %s' %(project_name))
+	print(('Create Database %s' %(project_name)))
 	dbc.execute('Create Database %s' %(project_name))
 	dbc.close()
 

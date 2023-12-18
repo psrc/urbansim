@@ -13,14 +13,14 @@ class same_sector_employment_within_walking_distance(Variable):
     
     def dependencies(self):
         return [attribute_label("job", self.jobs_sector_id)] + \
-            create_dependency_name_with_number("sector_DDD_employment_within_walking_distance", "gridcell", range(1,19))
+            create_dependency_name_with_number("sector_DDD_employment_within_walking_distance", "gridcell", list(range(1,19)))
         
     def compute(self, dataset_pool):
         index = self.get_dataset().get_index(2)
         if index == None:
             index = arange(self.get_dataset().get_m())
-        values = map(lambda x,y: self.get_dataset().get_dataset(2).get_attribute_by_index("sector_"+str(int(x))+"_employment_within_walking_distance",y), 
-            self.get_dataset().get_attribute_of_dataset(self.jobs_sector_id), index)
+        values = list(map(lambda x,y: self.get_dataset().get_dataset(2).get_attribute_by_index("sector_"+str(int(x))+"_employment_within_walking_distance",y), 
+            self.get_dataset().get_attribute_of_dataset(self.jobs_sector_id), index))
         return array(values)
         
 
@@ -68,7 +68,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([4,3,4,3])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

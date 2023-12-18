@@ -4,7 +4,7 @@
 
 from numpy import *
 import numpy
-from constants import *
+from .constants import *
 
 def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_info=None ):
     proforma_inputs = {            
@@ -70,7 +70,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
     if submarket_info is not None:
         bldg_type = devmdltypes[btype-1]
         proposal_comp = proforma_inputs['proposal_component']
-        for i in xrange(proposal_comp['proposal_component_id'].size):
+        for i in range(proposal_comp['proposal_component_id'].size):
             #bldg_type = proposal_comp['building_type_id'][i]
             # submarket_sales_idx = numpy.logical_and( submarket_info['building_type'] == bldg_type,
                                                      # submarket_info['tenure_id'] == 2)
@@ -91,7 +91,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
                     proposal_comp['sales_vacancy_rates'][i] = k_sales
 
             elif submarket_sales_idx.sum() > 1:
-                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+                raise ValueError("more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i])
             #use default if the building_type & tenure isn't in submarket (submarket_sales_idx.size==0)
 
             if submarket_rent_idx.sum() == 1:
@@ -102,7 +102,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
                     k_rent = submarket_info['vacancy_rates'][submarket_rent_idx]
                     proposal_comp['vacancy_rates'][i] = k_rent
             elif submarket_sales_idx.sum() > 1:
-                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+                raise ValueError("more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i])
 
             if esubmarket_idx.sum() == 1:
                 v_leases = esubmarket_info['leases_absorption'][esubmarket_idx]
@@ -112,7 +112,7 @@ def setup_dataset_pool(opus=True, btype=None, submarket_info=None, esubmarket_in
                     k_leases = esubmarket_info['vacancy_rates'][esubmarket_idx]
                     proposal_comp['vacancy_rates'][i] = k_leases
             elif esubmarket_idx.sum() > 1:
-                raise ValueError, "more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i]
+                raise ValueError("more than 1 submarkets matched to proposal_component %s" % proposal_comp['proposal_component_id'][i])
             
         ## adjust for quarter/month
         proposal_comp['sales_absorption'] = proposal_comp['sales_absorption'] / 4

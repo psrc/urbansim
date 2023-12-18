@@ -137,7 +137,7 @@ class Tests(AbstractIndicatorTest):
     def test_create_indicator(self):
 
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
         table = DatasetTable(
                   source_data = self.source_data,
@@ -151,14 +151,14 @@ class Tests(AbstractIndicatorTest):
 
         table.create(False)
 
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.tab')))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.tab')))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
 
     def test_conditionally_eliminate_rows_through_create_indicator(self):
 
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
 
         table = DatasetTable(
                   source_data = self.source_data,
@@ -173,9 +173,9 @@ class Tests(AbstractIndicatorTest):
         table.create(False)
 
         fpath = os.path.join(indicator_path, 'test__dataset_table____1980.tab')
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(fpath))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(fpath))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
 
 
         expected_r1 = [3,7,70]
@@ -209,7 +209,7 @@ class Tests(AbstractIndicatorTest):
             id_columns=[0,3],
             exclude_mask = exclude_mask)
 
-        self.assert_(ma.allequal(actual_output,data))
+        self.assertTrue(ma.allequal(actual_output,data))
 
         exclude_mask = array([0,0,1,0])
         actual_output = dataset_table._conditionally_eliminate_rows(
@@ -227,7 +227,7 @@ class Tests(AbstractIndicatorTest):
 
         self.assertEqual(len(actual_output), len(desired_output))
         for col in range(len(actual_output)):
-            self.assert_(ma.allclose(actual_output[col], desired_output[col]))
+            self.assertTrue(ma.allclose(actual_output[col], desired_output[col]))
 
 
 if __name__ == '__main__':

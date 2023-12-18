@@ -43,7 +43,7 @@ class RunTranscadTravelModel(RunTravelModel):
 
         logger.log_status('UrbanSim data exported to travel model for year %s .' % (year))
         logger.log_status('Please run the travel model for year %s.' % (year))
-        raw_input("Please press Enter to continue after the travel model has finished running...")
+        input("Please press Enter to continue after the travel model has finished running...")
         #run_transcad_macro(macroname, ui_db_file, macro_args)
         
         logger.log_status('Next, importing traveldata back to UrbanSim...')

@@ -73,7 +73,7 @@ class TestRunEstimation(opus_unittest.TestCase):
                     failed.append(model_name)
 
             if len(succeeded) > 0:
-                print 'Succeeded in estimating the following models: %s.' % ', '.join(succeeded)
+                print('Succeeded in estimating the following models: %s.' % ', '.join(succeeded))
                 
             if len(failed) > 0:
                 self.fail('Failed to estimate the following models: %s.' % ', '.join(failed))

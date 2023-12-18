@@ -36,7 +36,7 @@ class DevelopmentProjectDataset(Dataset):
         dataset_name = "development_project"
         nchunks_default = 1
 
-        if data <> None:
+        if data != None:
             in_storage = StorageFactory().get_storage('dict_storage')
             
             in_storage.write_table(table_name='development_projects', table_data=data)
@@ -86,7 +86,7 @@ class DevelopmentProjectCreator(object):
         storage.write_table(
                 table_name=project_table_name,
                 table_data={
-                    self.id_name_default:array(range(len(values))),
+                    self.id_name_default:array(list(range(len(values)))),
                     project_table_name:transpose(values),
                     }
             )

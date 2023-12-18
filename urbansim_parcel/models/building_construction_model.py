@@ -79,7 +79,7 @@ class BuildingConstructionModel(Model):
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
         parcels.compute_variables(["urbansim_parcel.parcel.vacant_land_area"] + ["urbansim_parcel.parcel.residential_units"] + 
-                                  map(lambda x: "urbansim_parcel.parcel.%s" % x, unique_unit_names), 
+                                  ["urbansim_parcel.parcel.%s" % x for x in unique_unit_names], 
                                   dataset_pool=dataset_pool)
         parcel_is_lut_vacant = parcels.compute_variables(["urbansim_parcel.parcel.is_land_use_type_vacant"], 
                                   dataset_pool=dataset_pool)
@@ -185,7 +185,7 @@ class BuildingConstructionModel(Model):
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                     # count number of buildings by template ids
                     for icomp in range(idx_to_be_built.size):
-                        if template_ids[pidx[idx_to_be_built[icomp]]] not in number_of_new_buildings_by_template_id.keys():
+                        if template_ids[pidx[idx_to_be_built[icomp]]] not in list(number_of_new_buildings_by_template_id.keys()):
                             number_of_new_buildings_by_template_id[template_ids[pidx[idx_to_be_built[icomp]]]] = 0
                         number_of_new_buildings_by_template_id[template_ids[pidx[idx_to_be_built[icomp]]]] += 1
                                                                   
@@ -203,12 +203,12 @@ class BuildingConstructionModel(Model):
             building_dataset.modify_attribute(name="county", data=county_ids)
             
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
-        for type_id in number_of_new_buildings.keys():
+        for type_id in list(number_of_new_buildings.keys()):
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
         logger.log_status("Number of new buildings by template ids:")
         logger.log_status(number_of_new_buildings_by_template_id)
         parcels["land_use_type_id"] = parcel_lut
-        logger.log_status("%s parcels have modified land_use_type_id." % (parcel_lut_before <> parcel_lut).sum())
+        logger.log_status("%s parcels have modified land_use_type_id." % (parcel_lut_before != parcel_lut).sum())
         
         # recompute the cummulative development amount
         if velocity_function_set is not None:

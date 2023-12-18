@@ -95,7 +95,7 @@ else:
                 if dbf_type_code_for_column in ('N', 'I', 'F', 'L', 'C'):
                     result[column_name] = array(result[column_name])
                 elif dbf_type_code_for_column in ('D'): # date
-                    result[column_name] = array(map(lambda x: x.ctime() if x is not None else "", result[column_name]))
+                    result[column_name] = array([x.ctime() if x is not None else "" for x in result[column_name]])
                 else:
                     msg = ("Unsupported data type '%s' found in DBF file (column %s).  We "
                            "support Numeric (N), Integer (I), Float (F), "
@@ -353,19 +353,19 @@ else:
             if expected == None:
                 expected = values
             db = _dbf_class(self.storage._get_file_path_for_table(self.out_table_name))
-            length = max([len(values[key]) for key in values.keys()])
+            length = max([len(values[key]) for key in list(values.keys())])
             i = 0
             field_type = {}
             for name, type in [field.fieldInfo()[:2] for field in db.header.fields]:
                 field_type[name] = type
             for rec in db:
-                for key in expected.keys():
+                for key in list(expected.keys()):
                     if field_type[key.upper()] is 'F':
                         self.assertAlmostEqual(expected[key][i], rec[key])
                     else:
                         self.assertEqual(expected[key][i], rec[key])
                 i = i + 1
-            self.assertEquals(length, i, msg="More values expected than the dbf file contains")
+            self.assertEqual(length, i, msg="More values expected than the dbf file contains")
             db.close()
             
         def test_write_table_one_column_one_numeric_value(self):
@@ -502,7 +502,7 @@ else:
             open(os.path.join(self.temp_dir, 'city_name.dbf'), 'w').close()
             expected = ['city_name']
             actual = self.storage.get_table_names()
-            self.assertEquals(expected, actual)
+            self.assertEqual(expected, actual)
             
         def test_get_table_names_two_table(self):
             open(os.path.join(self.temp_dir, 'city_name.dbf'), 'w').close()
@@ -511,7 +511,7 @@ else:
             expected.sort()
             actual = self.storage.get_table_names()
             actual.sort()
-            self.assertEquals(expected, actual)
+            self.assertEqual(expected, actual)
             
 if __name__ == '__main__':
     opus_unittest.main()  

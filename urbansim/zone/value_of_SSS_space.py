@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from abstract_sum_from_gridcells import abstract_sum_from_gridcells
+from .abstract_sum_from_gridcells import abstract_sum_from_gridcells
 
 class value_of_SSS_space(abstract_sum_from_gridcells):
     """ Aggregation over the corresponding gridcell variable """ 

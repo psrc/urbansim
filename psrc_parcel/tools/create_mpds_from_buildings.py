@@ -31,7 +31,7 @@ class InverseMPDs(Model):
             ind = self.input_buildings.compute_variables(filter, dataset_pool=self.dataset_pool)
             self.input_buildings.subset_by_index(where(ind > 0)[0])
         else:
-            raise InputError, "Either input_table or filter must be given."
+            raise InputError("Either input_table or filter must be given.")
         self.parcels_not_processed = []
         self.original_templates = None
         
@@ -116,7 +116,7 @@ class InverseMPDs(Model):
                 results[bidx] = -1
                 no_template_found = no_template_found + [bidx]
                 if(land_sqft[bidx].sum() > 0):
-                    print("No template for building type:", self.input_buildings["building_type_id"][bidx])
+                    print(("No template for building type:", self.input_buildings["building_type_id"][bidx]))
                 continue
             units = zeros(templ_idx.size, dtype='float32')
             improvement_value = zeros(templ_idx.size, dtype='float32')

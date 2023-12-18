@@ -15,7 +15,7 @@ class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
     """
     
     def __init__(self):
-        print "Entering setup"
+        print("Entering setup")
         self.origin_zone_id = 'from_zone_id'
         self.destination_zone_id = 'to_zone_id'
         self.travel_data_attribute = 'single_vehicle_to_work_travel_cost'
@@ -25,16 +25,16 @@ class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
         self.preferential_zone = '20' # 20, 100, 110    # zone id of prefered zone
         self.low_travel_cost = '3.47'                   # low travel costs for prefered zone to cbd
         self.high_travel_cost = '1689.19'               # high travel costs for other zones to cbd
-        print "Leaving setup"
+        print("Leaving setup")
     
     def test_run(self):
-        print "Entering test run"
+        print("Entering test run")
         
         path = paths.get_opus_home_path('opus_matsim', 'tmp')
         # check if travel data exsits
         travel_data = os.path.join( path, "travel_data.csv" )
         if not os.path.exists(travel_data):
-            print "Travel Data not found!!!"
+            print("Travel Data not found!!!")
             sys.exit()
         
         in_storage = csv_storage(storage_location = path)
@@ -59,10 +59,10 @@ class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
         y = travel_data_set.get_index_by_origin_and_destination_ids(20, 129)
         z = travel_data_set.get_index_by_origin_and_destination_ids(20, 20)
         
-        print w
-        print x
-        print y
-        print z 
+        print(w)
+        print(x)
+        print(y)
+        print(z) 
         
         origin_zones = travel_data_set.get_attribute_as_column(self.origin_zone_id)
         destination_zones = travel_data_set.get_attribute_as_column(self.destination_zone_id)
@@ -76,7 +76,7 @@ class ManipulateTravelDataTest(object):#(opus_unittest.OpusTestCase):
         cbd_ids = where(origin_zones == 129)
         
 
-        print "Leaving test run"
+        print("Leaving test run")
         
 if __name__ == "__main__":
     # opus_unittest.main()

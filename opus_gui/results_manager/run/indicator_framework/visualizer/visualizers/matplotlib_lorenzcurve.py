@@ -128,7 +128,7 @@ class Tests(AbstractIndicatorTest):
     def skip_test_create_indicator(self):
         
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
+        self.assertTrue(not os.path.exists(indicator_path))
         
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
@@ -139,8 +139,8 @@ class Tests(AbstractIndicatorTest):
         
         lorenzcurve.create(False)
         
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__lorenzcurve__attribute__1980.png')))
+        self.assertTrue(os.path.exists(indicator_path))
+        self.assertTrue(os.path.exists(os.path.join(indicator_path, 'test__lorenzcurve__attribute__1980.png')))
 
     def skip_test_perfect_equality(self):
         """Perfect equality is when everybody has the same amount of something"""
@@ -154,7 +154,7 @@ class Tests(AbstractIndicatorTest):
         lorenzcurve._values = incomes
         lorenzcurve._compute_lorenz()
         wanted_result = vstack((arange(0, 101) / 100., arange(0, 101) / 100.))
-        self.assert_(allclose(lorenzcurve._values, wanted_result))
+        self.assertTrue(allclose(lorenzcurve._values, wanted_result))
 
     def skip_test_perfect_inequality(self):
         """Perfect inequality is when one person has all of something"""
@@ -170,7 +170,7 @@ class Tests(AbstractIndicatorTest):
         lorenzcurve._compute_lorenz()
         #We strip all the zero values, so the result consists of only two values
         wanted_result = [[0.,1.],[0.,1.]]
-        self.assert_(allclose(lorenzcurve._values, wanted_result))
+        self.assertTrue(allclose(lorenzcurve._values, wanted_result))
         
     def skip_test_small_lorenz(self):
         """Test case for less than 100 people"""
@@ -186,7 +186,7 @@ class Tests(AbstractIndicatorTest):
         wanted_result = array(
             [[ 0, 1/6.,  2/6.,  3/6.,  4/6.,  5/6.,   6/6. ],
              [ 0, 1/16., 2/16., 4/16., 7/16., 11/16., 16/16. ]])
-        self.assert_(allclose(lorenzcurve._values, wanted_result))
+        self.assertTrue(allclose(lorenzcurve._values, wanted_result))
         
     def skip_test_small_gini(self):
         """Test case for gini coefficient for the small case"""
@@ -250,12 +250,12 @@ class Tests(AbstractIndicatorTest):
         0.84530837,  0.86176801,  0.87848115,  0.89530294,  0.91223337,
         0.9293992 ,  0.94676421,  0.9643284 ,  0.98196502,  1.        ])
 
-        self.assert_(allclose(lorenzcurve._values, vstack((wanted_result_F, wanted_result_L))))
+        self.assertTrue(allclose(lorenzcurve._values, vstack((wanted_result_F, wanted_result_L))))
     
 if __name__ == '__main__':
     try: 
         import matplotlib
     except:
-        print 'could not import matplotlib'
+        print('could not import matplotlib')
     else:
         opus_unittest.main()

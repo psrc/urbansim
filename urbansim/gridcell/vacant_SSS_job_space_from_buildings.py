@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from opus_core.misc import clip_to_zero_if_needed
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class vacant_SSS_job_space_from_buildings(Variable):
     """ The SSS_sqft_from_buildings/SSS_sqft_per_job - number_of_SSS_jobs. """ 

@@ -4,7 +4,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.length_constants import UrbanSimLength, UrbanSimLengthConstants
 from numpy import array
 

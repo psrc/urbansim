@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from base_configuration import AbstractUrbansimConfiguration
+from .base_configuration import AbstractUrbansimConfiguration
 
 class tables_to_cache(object):
     def get_tables_to_cache(self):
@@ -103,7 +103,7 @@ run_configuration['models_in_year'] = \
 
 _controller_configuration = {}
 
-for model in run_configuration['models_configuration'].keys():
+for model in list(run_configuration['models_configuration'].keys()):
     if 'controller' in run_configuration['models_configuration'][model]:
         _controller_configuration[model] = run_configuration['models_configuration'][model]['controller']
 
@@ -227,8 +227,8 @@ _controller_configuration[model_name]["run"]["arguments"]["location_set"] = "zon
 
 _controller_configuration["distribute_unplaced_jobs_model"]["run"]["arguments"]["location_set"] = "zone"
 
-for model in _controller_configuration.keys():
-    if model not in run_configuration["models_configuration"].keys():
+for model in list(_controller_configuration.keys()):
+    if model not in list(run_configuration["models_configuration"].keys()):
         run_configuration["models_configuration"][model] = {}
     run_configuration["models_configuration"][model]["controller"] = _controller_configuration[model]
 

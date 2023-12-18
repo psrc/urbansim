@@ -20,7 +20,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         ###       dependencies.
     
     def do_cmd(self, cmd):
-        print cmd
+        print(cmd)
         os.system(cmd)
         
     def setUp(self):
@@ -47,8 +47,8 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
     
     def test_delete_some_years(self):            
         cache_dir = self.resources['cache_directory']
-        self.assert_(os.path.exists(cache_dir))
-        self.assert_(os.path.exists(os.path.join(cache_dir, '1981')))
+        self.assertTrue(os.path.exists(cache_dir))
+        self.assertTrue(os.path.exists(os.path.join(cache_dir, '1981')))
         path = module_path_from_opus_path('opus_core.tools.delete_run')
         
         cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --services_database=services_test'
@@ -62,11 +62,11 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
-        self.assert_(os.path.exists(cache_dir))
-        self.assert_(os.path.exists(os.path.join(cache_dir, '1981')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1982')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1983')))
-        self.assert_(os.path.exists(os.path.join(cache_dir, '1984')))
+        self.assertTrue(os.path.exists(cache_dir))
+        self.assertTrue(os.path.exists(os.path.join(cache_dir, '1981')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1982')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1983')))
+        self.assertTrue(os.path.exists(os.path.join(cache_dir, '1984')))
         
         # Now see if we can delete another year of data.
         python_cmd = cmd_template % {
@@ -76,11 +76,11 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
-        self.assert_(os.path.exists(cache_dir))
-        self.assert_(os.path.exists(os.path.join(cache_dir, '1981')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1982')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1983')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1984')))
+        self.assertTrue(os.path.exists(cache_dir))
+        self.assertTrue(os.path.exists(os.path.join(cache_dir, '1981')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1982')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1983')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1984')))
         
         # Trying to delete the same year again should be a no-op.
         python_cmd = cmd_template % {
@@ -90,11 +90,11 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
-        self.assert_(os.path.exists(cache_dir))
-        self.assert_(os.path.exists(os.path.join(cache_dir, '1981')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1982')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1983')))
-        self.assert_(not os.path.exists(os.path.join(cache_dir, '1984')))
+        self.assertTrue(os.path.exists(cache_dir))
+        self.assertTrue(os.path.exists(os.path.join(cache_dir, '1981')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1982')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1983')))
+        self.assertTrue(not os.path.exists(os.path.join(cache_dir, '1984')))
         
         # Now try to delete the rest of the years of data
         python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --services_database=services_test' % {
@@ -104,7 +104,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
-        self.assert_(not os.path.exists(cache_dir))
+        self.assertTrue(not os.path.exists(cache_dir))
     
 
 if __name__ == "__main__":

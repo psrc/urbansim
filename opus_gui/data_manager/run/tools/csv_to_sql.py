@@ -10,7 +10,7 @@ from opus_core.database_management.configurations.database_server_configuration 
     
 def opusRun(progressCB,logCB,params):
     param_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
     
     # TODO - 
@@ -93,7 +93,7 @@ def get_nln_option(table_name):
 def drop_table(dbs_config, database_name, output_table_name):
     server = DatabaseServer(database_server_configuration=dbs_config)
     db = server.get_database(database_name = database_name)
-    print db.database_name
+    print(db.database_name)
     db.drop_table(output_table_name)
 
 def opusHelp():

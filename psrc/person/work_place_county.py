@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
 class work_place_county(Variable):
@@ -67,7 +67,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array(['033', '033', '033', '035', '053'])
         
         for i in range(values.size):
-            self.assert_(values[i] == should_be[i], 
+            self.assertTrue(values[i] == should_be[i], 
                 'Error in ' + self.variable_name)
 
 

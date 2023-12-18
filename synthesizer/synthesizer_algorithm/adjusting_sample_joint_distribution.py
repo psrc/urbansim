@@ -14,7 +14,7 @@ from re import match
 from numpy import asarray as arr
 from numpy import fix as quo
 from numpy import zeros
-from defining_a_database import *
+from .defining_a_database import *
 
 def create_update_string(db, control_variables, dimensions):
     update_string = ''
@@ -36,7 +36,7 @@ def add_unique_id(db, tablename, synthesis_type, update_string):
     if len(update_string) >0:
         try:
             dbc.execute('alter table %s ADD %suniqueid bigint'%(tablename, synthesis_type))
-        except Exception, e:
+        except Exception as e:
             pass
         dbc.execute('update %s set %suniqueid = %s' %(tablename, synthesis_type, update_string))
     dbc.close()
@@ -61,7 +61,7 @@ def create_joint_dist(db, synthesis_type, control_variables, dimensions, pumano 
         dbc.execute('alter table %s_%s_joint_dist add bg bigint after tract'%(synthesis_type, pumano))
         dbc.execute('alter table %s_%s_joint_dist add frequency float(27)'%(synthesis_type, pumano))
         dbc.execute('alter table %s_%s_joint_dist add index(tract, bg)'%(synthesis_type, pumano))
-    except Exception, e:
+    except Exception as e:
         #print e
         #print 'Table %s_%s_joint_dist present' %(synthesis_type, pumano)
         pass
@@ -82,7 +82,7 @@ def create_joint_dist(db, synthesis_type, control_variables, dimensions, pumano 
         dbc.execute('select %s, count(*), %suniqueid from %s_sample where pumano = %s group by %s '%(dummy, synthesis_type, synthesis_type, pumano, dummy))
         result = arr(dbc.fetchall(), int)
         if result.shape[0] == 0:
-            print "The PUMS sample for the corresponding PUMA is empty. Therefore sample from the entire region is considered for the geography."
+            print("The PUMS sample for the corresponding PUMA is empty. Therefore sample from the entire region is considered for the geography.")
             dbc.execute('select %s, count(*), %suniqueid from %s_sample group by %s '%(dummy, synthesis_type, synthesis_type, dummy))
             result = arr(dbc.fetchall(), int)
         dummy_table[:,:3] = [pumano, tract, bg]
@@ -112,7 +112,7 @@ def num_breakdown(dimensions):
     index_array = []
     index = []
     table_size = dimensions.cumprod()[-1]
-    composite_index = range(table_size)
+    composite_index = list(range(table_size))
 
     for j in composite_index:
         n = j
@@ -241,7 +241,7 @@ def prepare_control_marginals(db, synthesis_type, control_variables, varCorrDict
         variable_marginals1=[]
         try:
             #print hhldsizeMargsMod
-            if (not hhldsizeMargsMod and synthesis_type == 'hhld') or synthesis_type <> 'hhld':
+            if (not hhldsizeMargsMod and synthesis_type == 'hhld') or synthesis_type != 'hhld':
                 #print 'household not modified in correspondence'
                 variable_marginals_adj = controlAdjDict[selGeography][selVar]
             #print 'adjustment', variable_marginals_adj[0], variable_marginals_adj[1]
@@ -252,8 +252,8 @@ def prepare_control_marginals(db, synthesis_type, control_variables, varCorrDict
                         variable_marginals1.append(0.1)
             #check_marginal_sum = sum(variable_marginals1)
             else:
-                raise Exception, 'Household marginal distributions modified to account for person total inconsistency'
-        except Exception ,e:
+                raise Exception('Household marginal distributions modified to account for person total inconsistency')
+        except Exception as e:
             #print 'Exception: %s' %e
 
             #check_marginal_sum = 0
@@ -295,7 +295,7 @@ def prepare_control_marginals(db, synthesis_type, control_variables, varCorrDict
 
     dbc.close()
     db.commit()
-    print 'marginals used', control_marginals
+    print('marginals used', control_marginals)
     return control_marginals
 
 def check_marginals(marginals, control_variables):
@@ -313,8 +313,8 @@ def check_for_zero_marginaltotals(marginals, control_variables):
         except:
             pass
         if sum(j) == 0:
-            print ("Warning: The marginals distribution sum of the %s control variable is zero."
-                   %control_variables[i])
+            print(("Warning: The marginals distribution sum of the %s control variable is zero."
+                   %control_variables[i]))
             
 def check_for_unequal_marginaltotals(marginals, control_variables):
     i = marginals[0]
@@ -331,9 +331,9 @@ def check_for_unequal_marginaltotals(marginals, control_variables):
                 j.remove(0.1)
         except:
             pass
-        if ref_sum <> sum(j):
-            print ("Warning: The marginals distribution sum of %s and %s variables are not the same."
-                   %(control_variables[0], control_variables[1+i]))
+        if ref_sum != sum(j):
+            print(("Warning: The marginals distribution sum of %s and %s variables are not the same."
+                   %(control_variables[0], control_variables[1+i])))
                       
         
 def check_for_zero_housing_totals(hhld_marginals, gq_marginals=None):
@@ -345,7 +345,7 @@ def check_for_zero_housing_totals(hhld_marginals, gq_marginals=None):
                 i.remove(0.1)
         except:
             pass
-        if len(i) <> 0:
+        if len(i) != 0:
             checkHhld = checkHhld + 1
     if not gq_marginals is None:
         for i in gq_marginals:
@@ -354,11 +354,11 @@ def check_for_zero_housing_totals(hhld_marginals, gq_marginals=None):
                     i.remove(0.1)
             except:
                 pass
-            if len(i) <> 0:
+            if len(i) != 0:
                 checkGq = checkGq + 1
 
     if checkHhld == 0 and checkGq == 0:
-        raise Exception, "There are no households/groupquarters in the geography to synthesize data"
+        raise Exception("There are no households/groupquarters in the geography to synthesize data")
 
 
 def check_for_zero_person_totals(person_marginals):
@@ -369,10 +369,10 @@ def check_for_zero_person_totals(person_marginals):
                 i.remove(0.1)
         except:
             pass
-        if len(i) <> 0:
+        if len(i) != 0:
             checkPers = checkPers + 1
     if checkPers == 0:
-        raise Exception, "There are no persons in the geography to synthesize data"
+        raise Exception("There are no persons in the geography to synthesize data")
 
 
 
@@ -404,7 +404,7 @@ def create_adjusted_frequencies(db, synthesis_type, control_variables, pumano, t
 
     puma_adjustment = (pums_prob <= upper_prob_bound) * pums_prob + (pums_prob > upper_prob_bound) * upper_prob_bound
     correction = 1 - sum((puma_prob == 0) * puma_adjustment)
-    puma_prob = ((puma_prob <> 0) * correction * puma_prob +
+    puma_prob = ((puma_prob != 0) * correction * puma_prob +
                  (puma_prob == 0) * puma_adjustment)
     puma_joint[:,-2] = sum(puma_joint[:,-2]) * puma_prob
 

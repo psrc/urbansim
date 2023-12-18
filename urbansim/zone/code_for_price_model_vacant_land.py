@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 from urbansim.gridcell.code_for_price_model_vacant_land import code_for_price_model_vacant_land as gridcell_code_for_price_model_vacant_land
 from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class code_for_price_model_vacant_land(gridcell_code_for_price_model_vacant_land):
     """Returns code according to vacant_land_and_building_types table for zones of type vacant land, 
@@ -51,7 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([2, 2, 2, 3])
 
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

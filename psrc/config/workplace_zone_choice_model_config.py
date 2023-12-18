@@ -164,8 +164,8 @@ my_controller_configuration["worker_specific_household_location_choice_model"]["
 my_controller_configuration["worker_specific_household_location_choice_model"]["prepare_for_run"]["arguments"]["coefficients_table"] = "'worker_specific_household_choice_model_coefficients'"
 
 
-for model in my_controller_configuration.keys():
-    if model not in run_configuration["models_configuration"].keys():
+for model in list(my_controller_configuration.keys()):
+    if model not in list(run_configuration["models_configuration"].keys()):
         run_configuration["models_configuration"][model] = {}    
     run_configuration["models_configuration"][model]['controller'] = my_controller_configuration[model]
 

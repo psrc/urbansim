@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-from baseline import Baseline
+from .baseline import Baseline
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 

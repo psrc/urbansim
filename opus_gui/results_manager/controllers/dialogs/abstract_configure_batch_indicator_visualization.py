@@ -215,7 +215,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         xml_node.set('hidden', 'Children') # hide all the kids
         # Convert the dictionary to XML
         fixed_node_names = ['dataset_name', 'visualization_type', 'indicators', 'output_type']
-        for key, value in viz_params.items():
+        for key, value in list(viz_params.items()):
             if key in fixed_node_names:
                 node = xml_node.find(key)
                 if node is None:
@@ -276,7 +276,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         }
     def _get_inverse_type_mapper(self):
         mapper = self._get_type_mapper()
-        inv = dict([(v,k) for k,v in mapper.items()])
+        inv = dict([(v,k) for k,v in list(mapper.items())])
 
         return inv
 

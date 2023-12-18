@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 from urbansim_parcel.building.age_masked import age_masked
 
 class building_age(age_masked):

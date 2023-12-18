@@ -46,7 +46,7 @@ class TestScanner(object):
                 
                 try:
                     exec('import %s' % module_name)
-                except Exception, val: 
+                except Exception as val: 
                     logger.log_error("Could not import %s!" % module_name)
                     
                     traceback.print_exc()
@@ -62,7 +62,7 @@ class TestScanner(object):
                     for key, value in members:
                         member_dict[key] = value
                     
-                    for key in member_dict.keys():
+                    for key in list(member_dict.keys()):
                         try:
                             is_subclass = issubclass(
                                 member_dict[key], 
@@ -124,7 +124,7 @@ class TestTestScanner(opus_unittest.OpusTestCase):
             file_name)
         
         expected = '%s.tests.utils.%s' % (package, module_name)
-        self.assert_(path == expected,
+        self.assertTrue(path == expected,
             "Unexpected module path: Expected %s. Received %s."
                 % (expected, path))
                 
@@ -139,7 +139,7 @@ class TestTestScanner(opus_unittest.OpusTestCase):
             file_name)
         
         expected = '%s.test.%s' % (package, module_name)
-        self.assert_(path == expected,
+        self.assertTrue(path == expected,
             "Unexpected module path: Expected %s. Received %s."
                 % (expected, path))
             
@@ -148,13 +148,13 @@ class TestTestScanner(opus_unittest.OpusTestCase):
         package = 'opus_core'
         test_modules = TestScanner().find_opus_test_cases_for_package(package)
         
-        self.assert_(
+        self.assertTrue(
             'opus_core.tests.utils.test_scanner' in [i[0] for i in test_modules],
             "TestScanner did not find itself "
             "(opus_core.tests.utils.test_scanner)!")
             
         for test_case in test_cases_in_this_file:
-            self.assert_(
+            self.assertTrue(
                 test_case in [i[1] for i in test_modules],
                 "TestScanner did not find one of its own test cases "
                 "(%s)!" % test_case)
@@ -177,12 +177,12 @@ class TestTestScanner(opus_unittest.OpusTestCase):
         
         f.close()
         
-        self.assert_(os.path.exists(file_name))
+        self.assertTrue(os.path.exists(file_name))
         
         package = 'opus_core'
         test_modules = TestScanner().find_opus_test_cases_for_package(package)
                             
-        self.assert_(
+        self.assertTrue(
             'opus_core.tests.utils.%s' % module_name not in test_modules,
             "TestScanner found a test file created without unit tests "
             "(opus_core.tests.utils.%s)!" % module_name)

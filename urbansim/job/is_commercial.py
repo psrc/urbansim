@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_commercial(Variable):
     """ Is this a commercial job."""
@@ -55,7 +55,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([1,0,1])
         
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

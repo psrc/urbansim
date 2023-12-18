@@ -10,7 +10,7 @@ from opus_core.database_management.opus_database import OpusDatabase
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         param_dict[str(key)] = str(val)
     
     database_server_connection = param_dict['database_server_connection']

@@ -5,7 +5,7 @@
 # this is a test of the expression alias file
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
-jobs_by_sector = map(lambda x: "number_of_jobs_of_sector_%s = county.aggregate(urbansim_parcel.building.number_of_jobs_of_sector_%s, intermediates=[parcel])" % (x, x), range(1,20))
+jobs_by_sector = ["number_of_jobs_of_sector_%s = county.aggregate(urbansim_parcel.building.number_of_jobs_of_sector_%s, intermediates=[parcel])" % (x, x) for x in range(1,20)]
 
 aliases = [
 

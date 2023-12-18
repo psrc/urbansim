@@ -35,7 +35,7 @@ class Tests(ExpectedDataTest):
             dataset = "land_cover")
         should_be = array([0, 1, 0, 1, 1, 1, 0, 0, 1])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg = "Error in " + self.variable_name)            
   
     def test_tree(self):            
@@ -49,7 +49,7 @@ class Tests(ExpectedDataTest):
              dataset = "land_cover")
         should_be = array([1, 1, 0])
         
-        self.assert_(ma.allequal(values, should_be), 
+        self.assertTrue(ma.allequal(values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class is_low_income(Variable):
     """Is income <= low_income_level"""
@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array( [1, 1, 0, 0] )
         
-        self.assert_(ma.allequal(values, should_be,), 
+        self.assertTrue(ma.allequal(values, should_be,), 
                      msg="Error in " + self.variable_name)
 
 

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 import re
 
 class is_in_county_DDD(Variable):
@@ -60,7 +60,7 @@ class Tests(opus_unittest.OpusTestCase):
             
         should_be = array([True, False, False, True, True])
         
-        self.assert_(ma.allequal(values, should_be),
+        self.assertTrue(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 

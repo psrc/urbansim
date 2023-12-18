@@ -5,7 +5,7 @@
 import psycopg2
 import os
 from opus_core import paths
-import cPickle
+import pickle
 
 class ParcelFees:
 

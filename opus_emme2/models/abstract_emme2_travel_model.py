@@ -24,7 +24,7 @@ class AbstractEmme2TravelModel(Model):
         bank_path_parts = year_config['bank']  # a list by path parts
         bank_path = os.path.sep.join(bank_path_parts)
         path = os.path.join(self.get_emme2_base_dir(), bank_path)
-        if subdir <> None:
+        if subdir != None:
             path = os.path.join(path, subdir)
         return path
     
@@ -41,7 +41,7 @@ class AbstractEmme2TravelModel(Model):
 from opus_core.tests import opus_unittest
 class AbstractEmme2TravelModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
-        self._has_travel_model = os.environ.has_key('TRAVELMODELROOT')
+        self._has_travel_model = 'TRAVELMODELROOT' in os.environ
 
     def test_get_emme2_dir(self):
         if self._has_travel_model:

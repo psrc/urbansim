@@ -6,7 +6,7 @@
 from opus_core.ndimage import correlate
 from numpy import ma
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class abstract_within_walking_distance(Variable):
     """Abstract variable for any '_within_walking_distance' variable that belongs to the gridcell set.

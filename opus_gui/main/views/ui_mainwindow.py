@@ -341,4 +341,4 @@ class Ui_MainWindow(object):
         self.actNewProject.setToolTip(QtGui.QApplication.translate("MainWindow", "Create a new project based on a built-in or custom project", None, QtGui.QApplication.UnicodeUTF8))
         self.actNewProject.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
 
-import opusmain_rc
+from . import opusmain_rc

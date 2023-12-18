@@ -34,10 +34,10 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 
 
     state, county, pumano, tract, bg = geo.state, geo.county, geo.puma5, geo.tract, geo.bg
-    print '------------------------------------------------------------------'
-    print 'Geography: PUMA ID- %s, Tract ID- %0.2f, BG ID- %s' \
-                                                                         %(pumano, float(tract)/100, bg)
-    print '------------------------------------------------------------------'
+    print('------------------------------------------------------------------')
+    print('Geography: PUMA ID- %s, Tract ID- %0.2f, BG ID- %s' \
+                                                                         %(pumano, float(tract)/100, bg))
+    print('------------------------------------------------------------------')
 
     db = MySQLdb.connect(host = '%s' %project.db.hostname, user = '%s' %project.db.username,
                          passwd = '%s' %project.db.password, db = '%s%s%s' 
@@ -76,17 +76,17 @@ def configure_and_run(fileLoc, geo, varCorrDict):
                                                                                                             varCorrDict,
                                                                                                             project.adjControlsDicts.person,
                                                                                       state, county, tract, bg)
-    print 'Step 1A: Checking if the marginals totals are non-zero and if they are consistent across variables...'
-    print '\tChecking household variables'
+    print('Step 1A: Checking if the marginals totals are non-zero and if they are consistent across variables...')
+    print('\tChecking household variables')
     synthesizer_algorithm.adjusting_sample_joint_distribution.check_marginals(hhld_marginals, hhld_control_variables)
 
-    print '\tChecking person variables\n'
+    print('\tChecking person variables\n')
     synthesizer_algorithm.adjusting_sample_joint_distribution.check_marginals(person_marginals, person_control_variables)
     
-    print 'Step 1B: Checking if the geography has any housing units to synthesize...\n'
+    print('Step 1B: Checking if the geography has any housing units to synthesize...\n')
     synthesizer_algorithm.adjusting_sample_joint_distribution.check_for_zero_housing_totals(hhld_marginals)
 
-    print 'Step 1C: Checking if the geography has any persons to synthesize...\n'
+    print('Step 1C: Checking if the geography has any persons to synthesize...\n')
     synthesizer_algorithm.adjusting_sample_joint_distribution.check_for_zero_person_totals(person_marginals)
 
 # Reading the parameters
@@ -94,34 +94,34 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 
 #______________________________________________________________________
 # Running IPF for Households
-    print 'Step 2A: Running IPF procedure for Households... '
+    print('Step 2A: Running IPF procedure for Households... ')
     hhld_objective_frequency, hhld_estimated_constraint = synthesizer_algorithm.ipf.ipf_config_run(db, 'hhld', hhld_control_variables, varCorrDict, 
                                                                              project.adjControlsDicts.hhld, 
                                                                              hhld_dimensions, 
                                                                              state, county, pumano, tract, bg, 
                                                                              parameters)
-    print 'IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti)
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
     ti = time.clock()
 
 # Running IPF for Persons
-    print 'Step 2B: Running IPF procedure for Persons... '
+    print('Step 2B: Running IPF procedure for Persons... ')
     person_objective_frequency, person_estimated_constraint = synthesizer_algorithm.ipf.ipf_config_run(db, 'person', person_control_variables, 
                                                                                  varCorrDict,
                                                                                  project.adjControlsDicts.person, 
                                                                                  person_dimensions, 
                                                                                  state, county, pumano, tract, bg, 
                                                                                  parameters)
-    print 'IPF procedure for Persons completed in %.2f sec \n'%(time.clock()-ti)
+    print('IPF procedure for Persons completed in %.2f sec \n'%(time.clock()-ti))
     ti = time.clock()
 #______________________________________________________________________
 # Creating the weights array
-    print 'Step 3: Running IPU procedure for obtaining weights that satisfy Household and Person type constraints... '
+    print('Step 3: Running IPU procedure for obtaining weights that satisfy Household and Person type constraints... ')
     dbc.execute('select rowno from sparse_matrix1_%s group by rowno'%(99999))
     result = numpy.asarray(dbc.fetchall())[:,0]
     weights = numpy.ones((1,housing_units), dtype = float)[0] * -99
     weights[result]=1
 
-    print 'Number of housing units - %s' %housing_units
+    print('Number of housing units - %s' %housing_units)
 #______________________________________________________________________
 # Creating the control array
     total_constraint = numpy.hstack((hhld_estimated_constraint[:,0], person_estimated_constraint[:,0]))
@@ -136,10 +136,10 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = synthesizer_algorithm.heuristic_algorithm_nogqs.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix, parameters)
 
-    print 'IPU procedure was completed in %.2f sec\n'%(time.clock()-ti)
+    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
     ti = time.clock()
 #_________________________________________________________________
-    print 'Step 4: Creating the synthetic households and individuals...'
+    print('Step 4: Creating the synthetic households and individuals...')
 # creating whole marginal values
     hhld_order_dummy = synthesizer_algorithm.adjusting_sample_joint_distribution.create_aggregation_string(hhld_control_variables)
     hhld_frequencies = synthesizer_algorithm.drawing_households.create_whole_frequencies(db, 'hhld', hhld_order_dummy, pumano, tract, bg, parameters)
@@ -155,7 +155,7 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 
     f.close()
 
-    print 'pIndexMatrix in - %.4f' %(time.time()-ti)
+    print('pIndexMatrix in - %.4f' %(time.time()-ti))
 
 
     hhidRowDict = synthesizer_algorithm.drawing_households.hhid_row_dictionary(housing_sample) # row in the master matrix - hhid
@@ -194,8 +194,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
     sp_matrix = None
 
     if draw_count >= parameters.synPopDraws:
-        print ('Max Iterations (%d) reached for drawing households with the best draw having a p-value of %.4f'
-               %(parameters.synPopDraws, max_p))
+        print(('Max Iterations (%d) reached for drawing households with the best draw having a p-value of %.4f'
+               %(parameters.synPopDraws, max_p)))
     if max_p == 0:
         max_p = p_value
         max_p_housing_attributes = synthetic_housing_attributes
@@ -203,7 +203,7 @@ def configure_and_run(fileLoc, geo, varCorrDict):
         min_chi = stat
 
     else:
-        print 'Population with desirable p-value of %.4f was obtained in %d iterations' %(max_p, draw_count)
+        print('Population with desirable p-value of %.4f was obtained in %d iterations' %(max_p, draw_count))
 
     if max_p_housing_attributes.shape[0] < 2500:
         synthesizer_algorithm.drawing_households.storing_synthetic_attributes1(db, 'housing', max_p_housing_attributes, county, tract, bg)
@@ -216,15 +216,15 @@ def configure_and_run(fileLoc, geo, varCorrDict):
     values = (int(state), int(county), int(tract), int(bg), min_chi, max_p, draw_count, iteration, conv_crit_array[-1])
     synthesizer_algorithm.drawing_households.store_performance_statistics(db, geo, values)
 
-    print 'Number of Synthetic Household/Group quarters - %d' %(sum(max_p_housing_attributes[:,-2]))
+    print('Number of Synthetic Household/Group quarters - %d' %(sum(max_p_housing_attributes[:,-2])))
     for i in range(len(hhld_control_variables)):
-        print '%s variable\'s marginal distribution sum is %d' %(hhld_control_variables[i], sum(hhld_marginals[i]))
+        print('%s variable\'s marginal distribution sum is %d' %(hhld_control_variables[i], sum(hhld_marginals[i])))
 
 
-    print 'Number of Synthetic Persons - %d' %(sum(max_p_person_attributes[:,-2]))
+    print('Number of Synthetic Persons - %d' %(sum(max_p_person_attributes[:,-2])))
     for i in range(len(person_control_variables)):
-        print '%s variable\'s marginal distribution sum is %d' %(person_control_variables[i], sum(person_marginals[i]))
-    print 'Synthetic households created for the geography in %.2f\n' %(time.time()-ti)
+        print('%s variable\'s marginal distribution sum is %d' %(person_control_variables[i], sum(person_marginals[i])))
+    print('Synthetic households created for the geography in %.2f\n' %(time.time()-ti))
 
 
 
@@ -232,7 +232,7 @@ def configure_and_run(fileLoc, geo, varCorrDict):
     dbc.close()
     db.close()
 
-    print 'Blockgroup synthesized in %.4f s' %(time.clock()-tii)
+    print('Blockgroup synthesized in %.4f s' %(time.clock()-tii))
 
 def run_parallel(job_server, project, geoIds, varCorrDict):
 

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
+from .variable_functions import my_attribute_label
 
 class residential_units_when_has_eg_DDD_households(Variable):
     """"""
@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([1, 0, 3, 0, 3]) #would be a 2-D array if it spanned more than one 'directory'
 
-        self.assert_(ma.allclose(values, should_be, rtol=1e-05),
+        self.assertTrue(ma.allclose(values, should_be, rtol=1e-05),
             'Error in ' + self.variable_name)
 
 

@@ -54,7 +54,7 @@ class VariableName(object):
             self._dataset_name = None
             self._interaction_set_names = dataset_names
         else:
-            raise ValueError, "couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(dataset_names)
+            raise ValueError("couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(dataset_names))
         self._short_name = short_name
         self._alias = alias
         if autogen_class is not None:
@@ -119,14 +119,14 @@ class Tests(opus_unittest.OpusTestCase):
         v1 = VariableName('p = urbansim.gridcell.population')
         v2 = VariableName('p=urbansim.gridcell.population')  # same as v1, but no spaces
         v3 = VariableName('x')
-        self.assert_(v1==v2)
-        self.assert_(not (v1!=v2))
-        self.assert_(v1!=v3)
-        self.assert_(not (v1==v3))
+        self.assertTrue(v1==v2)
+        self.assertTrue(not (v1!=v2))
+        self.assertTrue(v1!=v3)
+        self.assertTrue(not (v1==v3))
 
     def test_is_anonymous_autogen_name(self):
-        self.assert_(is_anonymous_autogen_name('autogenvar05'))
-        self.assert_(not is_anonymous_autogen_name('population'))
+        self.assertTrue(is_anonymous_autogen_name('autogenvar05'))
+        self.assertTrue(not is_anonymous_autogen_name('population'))
         
 if __name__=='__main__':
     opus_unittest.main()

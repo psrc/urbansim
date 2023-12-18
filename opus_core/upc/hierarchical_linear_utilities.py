@@ -45,7 +45,7 @@ class hierarchical_linear_utilities(linear_utilities):
                 d = d.compress(filter, axis=2)
                 addpar[nest] = coefficients[:,idx_logsum, nest].sum()
             else:
-                raise StandardError, "Coefficients have wrong dimension."
+                raise Exception("Coefficients have wrong dimension.")
             u = linear_utilities.run(self, d, coef, resources)
             result = result+u
             

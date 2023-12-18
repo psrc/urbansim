@@ -64,7 +64,7 @@ class SessionConfiguration(Singleton, GeneralResources):
         self.exceptions_out_table_names = data
         
     def get_exception(self, exception, object_name):
-        if (exception <> None) and (object_name in exception):
+        if (exception != None) and (object_name in exception):
             return exception[object_name]
         return None 
             
@@ -91,7 +91,7 @@ class SessionConfiguration(Singleton, GeneralResources):
         self.get_dataset_pool().remove_all_datasets()
         # TODO: remove rest of this method, once not being used.
         from opus_core.datasets.dataset import Dataset
-        for item in self.keys():
+        for item in list(self.keys()):
             if isinstance(self[item], Dataset):
                 del self[item]
                 

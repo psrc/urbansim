@@ -18,31 +18,31 @@ import os, tempfile
 class TravelModelTest(opus_unittest.OpusTestCase):
     
     def setUp(self):
-        print "entering setUp"
+        print("entering setUp")
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        print "leaving setUp"
+        print("leaving setUp")
 
     def tearDown(self):
-        print "entering tearDown"
+        print("entering tearDown")
 #        # Turn off the logger, so we can delete the cache directory.
 #        logger.disable_all_file_logging()
-        print "leaving tearDown"
+        print("leaving tearDown")
 
     def cleanup_test_run(self):
-        print "entering cleanup_test_run"
+        print("entering cleanup_test_run")
 #        cache_dir = self.resources['cache_directory']
 #        if os.path.exists(cache_dir):
 #            rmtree(cache_dir)
         if os.path.exists(self.temp_dir):
             rmtree(self.temp_dir, True) # if second argument == True ignores errors (no exception raised)
-        print "leaving cleanup_test_run"
+        print("leaving cleanup_test_run")
         
     def test_run(self):
  
         # The paths work as follows: opus_matsim.__path__ is the path of the opus_matsim python module.  So we can use that
         # as anchor ...
         config_location = os.path.join(opus_matsim.__path__[0], 'tests')
-        print "location: ", config_location
+        print("location: ", config_location)
         run_config = XMLConfiguration( os.path.join(config_location,"test_config.xml")).get_run_configuration("Test")
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
@@ -62,7 +62,7 @@ class TravelModelTest(opus_unittest.OpusTestCase):
         run_manager.run_run(run_config, run_as_multiprocess = True )
         
 
-        self.assert_(True)
+        self.assertTrue(True)
         
         self.cleanup_test_run()
 

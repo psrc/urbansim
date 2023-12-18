@@ -25,7 +25,7 @@ class Configuration(GeneralResources):
         """
         self._parent = parent
         if data is not None:
-            for key in data.keys():
+            for key in list(data.keys()):
                 self[key] = data[key]
                 
     def add_item(self, key, value):
@@ -74,7 +74,7 @@ class Configuration(GeneralResources):
         new_copy = my_class()
         
         # Remove any data created by the import
-        for key in new_copy.keys():
+        for key in list(new_copy.keys()):
             del new_copy[key]
             
         # Copy my data into this copy
@@ -92,8 +92,8 @@ class Configuration(GeneralResources):
         """
         if config is None:
             return
-        for key, value in config.iteritems():
-            if key in self.keys():
+        for key, value in config.items():
+            if key in list(self.keys()):
                 if isinstance(value, dict) or isinstance(value, Configuration):
                     self[key].merge(value)
                 else:
@@ -111,7 +111,7 @@ class Configuration(GeneralResources):
         """
         if config is None:
             return
-        for key, value in config.iteritems():
+        for key, value in config.items():
             self[key] = value
         
     def merge_defaults_with_arguments_and_config(self, config, **kwargs):
@@ -186,9 +186,9 @@ class ConfigurationTests(opus_unittest.OpusTestCase):
         ext = {
             'a':self.extended_dict()
             }
-        self.assert_(ext['a'].has_new_method())
+        self.assertTrue(ext['a'].has_new_method())
         d = Configuration(ext)
-        self.assert_(d['a'].has_new_method())
+        self.assertTrue(d['a'].has_new_method())
                      
     def test_insert(self):
         a = Configuration({
@@ -209,7 +209,7 @@ class ConfigurationTests(opus_unittest.OpusTestCase):
             c['not a key']
         except KeyError:
             raised_exception = True
-        self.assert_(raised_exception)
+        self.assertTrue(raised_exception)
      
     def test_one_level_get(self):
         c = Configuration({'a':10,'b':20})

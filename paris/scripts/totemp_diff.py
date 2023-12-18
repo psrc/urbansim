@@ -8,7 +8,7 @@ from pandas import read_csv
 
 sep = "\s*"
 if len(sys.argv) != 3:
-    print "Usage: python " + sys.argv[0] + " file1 file2"
+    print("Usage: python " + sys.argv[0] + " file1 file2")
     sys.exit(0)
 f1, f2 = sys.argv[1], sys.argv[2]
 
@@ -30,6 +30,6 @@ v1['target'] = v2[v2.columns[-1]]
 v1['%diff'] = 100 * (v1['totemp'] / (v1['target']).astype('f') - 1)
 rmse = np.sqrt( np.mean( (v1['totemp'] - v1['target'])**2 ) )
 
-print v1
-print
-print 'rmse:', rmse
+print(v1)
+print()
+print('rmse:', rmse)

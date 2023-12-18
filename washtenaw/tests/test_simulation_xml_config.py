@@ -52,7 +52,7 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
                         shell = True
                         ).communicate()
         except:
-            print "Error when downloading and unzipping file from %s." % ftp_url
+            print("Error when downloading and unzipping file from %s." % ftp_url)
             raise
 
         services_db = ServicesDatabaseConfiguration( database_name = 'services',                         

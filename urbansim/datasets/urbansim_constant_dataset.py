@@ -17,7 +17,7 @@ class UrbansimConstantDataset(Dataset):
     def __init__(self, **kwargs):
         self.constants_dict = Constants(**kwargs)
         data = {}
-        for attr, value in self.constants_dict.iteritems():
+        for attr, value in self.constants_dict.items():
             if isscalar(value):
                 new_value = array([value])
                 data[attr] = new_value
@@ -69,7 +69,7 @@ class Tests(opus_unittest.OpusTestCase):
         urbansim_constant = UrbansimConstantDataset(in_storage=AttributeCache())
         self.assertEqual(urbansim_constant['absolute_min_year'], 1800)
         self.assertAlmostEqual(urbansim_constant['acres'], 150*150*0.0002471, 6)
-        self.assert_(urbansim_constant["walking_distance_footprint"].ndim == 2)
+        self.assertTrue(urbansim_constant["walking_distance_footprint"].ndim == 2)
         
     def testLoadTable(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -82,9 +82,9 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool(package_order=['urbansim'],
                                    storage=storage)
         urbansim_constant = dataset_pool.get_dataset('urbansim_constant')
-        self.assert_('young_age' in urbansim_constant.get_primary_attribute_names(), msg = "Some constants are missing.")
-        self.assert_(urbansim_constant['young_age']==30, msg = "Wrong constant value.")
-        self.assert_(isscalar(urbansim_constant['young_age']), msg = "Constant  is an array.")
+        self.assertTrue('young_age' in urbansim_constant.get_primary_attribute_names(), msg = "Some constants are missing.")
+        self.assertTrue(urbansim_constant['young_age']==30, msg = "Wrong constant value.")
+        self.assertTrue(isscalar(urbansim_constant['young_age']), msg = "Constant  is an array.")
         
     def test_expression(self):
         dataset_pool = DatasetPool(package_order=['urbansim'],

@@ -154,9 +154,9 @@ if __name__=='__main__':
         db_server.drop_database('temporary_flattened_scenario_database')        
         
     else:
-        print "usage: \n create_database_subset_by_city_or_county.py hostname city/county name"
-        print "       ex: python create_database_subset_by_city_or_county.py myserver.mydomain.org city Seattle"
-        print "       ex: python create_database_subset_by_city_or_county.py myserver.mydomain.org county King"
-        print " (supported counties: King, Pierce, Kitsap, Snohomish)"
+        print("usage: \n create_database_subset_by_city_or_county.py hostname city/county name")
+        print("       ex: python create_database_subset_by_city_or_county.py myserver.mydomain.org city Seattle")
+        print("       ex: python create_database_subset_by_city_or_county.py myserver.mydomain.org county King")
+        print(" (supported counties: King, Pierce, Kitsap, Snohomish)")
     
 

@@ -34,7 +34,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         bts = self.dataset_pool.get_dataset('building_type')
         all_building_types = bts.get_id_attribute()
         
-        self.bt_do_not_count = array(map(lambda x: x not in tv_building_types, all_building_types))
+        self.bt_do_not_count = array([x not in tv_building_types for x in all_building_types])
         self.bt_do_not_count =  all_building_types[self.bt_do_not_count]
         self.do_not_count_residential_units  = self.get_do_not_count_residential_units(zones)
         
@@ -134,7 +134,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         return (self.proposal_set, [])
     
     def _is_target_reached(self, column_value=()):
-        if column_value and not self.second_pass.has_key(column_value):
+        if column_value and column_value not in self.second_pass:
             self.second_pass[column_value] = True
             # set total spaces, occupied spaces and target spaces
             realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
@@ -148,15 +148,15 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                 return True
             if not self.is_residential_bt[column_value] and not self.build_in_zone["non_residential"]:
                 return True
-            if self.accounting.has_key(column_value):
+            if column_value in self.accounting:
                 # build as long as there is demand over all types of res/nonres
                 tot = 0
                 prop = 0
                 demol = 0
-                for bt in self.occuppied_estimate.keys():
+                for bt in list(self.occuppied_estimate.keys()):
                     if (self.is_residential_bt[column_value] and not self.is_residential_bt[bt]) or (not self.is_residential_bt[column_value] and self.is_residential_bt[bt]):
                         continue
-                    if not self.accounting.has_key(bt):
+                    if bt not in self.accounting:
                         realestate_indexes = where(logical_and(self.get_index_by_condition(self.realestate_dataset.column_values, column_value), 
                                        self.realestate_dataset['zone_id'] == self.zone))
                         tot = tot + self.realestate_dataset.total_spaces[realestate_indexes].sum()
@@ -175,7 +175,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) )) and (
                          accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                   for column_value, accounting in self.accounting.items() ]
+                   for column_value, accounting in list(self.accounting.items()) ]
         return all(results)
         
     def get_do_not_count_residential_units(self, zones):
@@ -189,9 +189,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         building_type_dataset = self.dataset_pool.get_dataset('building_type')
         alldata = self.dataset_pool.get_dataset('alldata')
         building_type_ids = building_type_dataset.get_id_attribute()
-        alldata.compute_variables(map(lambda type: 
-            "number_of_jobs_for_bt_%s = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs * (building.building_type_id == %s))" % (type,type),
-                building_type_ids) + 
+        alldata.compute_variables(["number_of_jobs_for_bt_%s = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs * (building.building_type_id == %s))" % (type,type) for type in building_type_ids] + 
               ["number_of_nhb_jobs = alldata.aggregate_all(psrc_parcel.building.number_of_non_home_based_jobs)"], 
                                   dataset_pool=self.dataset_pool)
         job_building_type_distribution = zeros(building_type_ids.size)

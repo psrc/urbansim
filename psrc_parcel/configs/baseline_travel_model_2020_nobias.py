@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from baseline_travel_model_2020_biaspf_varpf import BaselineTravelModel2020BiaspfVarpf
+from .baseline_travel_model_2020_biaspf_varpf import BaselineTravelModel2020BiaspfVarpf
 
 class BaselineTravelModel2020Nobias(BaselineTravelModel2020BiaspfVarpf):
     

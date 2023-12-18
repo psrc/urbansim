@@ -273,9 +273,9 @@ from opus_core.tests import opus_unittest
 class Tests(opus_unittest.OpusTestCase):
     def test(self):
         config = GeneralConfiguration()
-        self.assert_('models' in config)
-        self.assert_('scenario_database_configuration' not in config)
-        self.assert_('estimation_database_configuration' not in config)
+        self.assertTrue('models' in config)
+        self.assertTrue('scenario_database_configuration' not in config)
+        self.assertTrue('estimation_database_configuration' not in config)
         
         
 if __name__ == '__main__':

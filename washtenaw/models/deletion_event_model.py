@@ -39,7 +39,7 @@ class DeletionEventModel(Model):
         # load attributes and datasets needed
         delete_agents = {"job": False, "household": False}
         agent_sets = {}
-        for attribute_name, dataset_name in agents_dict.iteritems():
+        for attribute_name, dataset_name in agents_dict.items():
             if attribute_name in deletion_event_set.get_known_attribute_names():
                 values = deletion_event_set.get_attribute_by_index(attribute_name, idx_of_events_this_year)
                 if values.sum() > 0:
@@ -50,7 +50,7 @@ class DeletionEventModel(Model):
                                                                                            self.dataset_pool)
                     delete_agents[dataset_name] = True
                     
-        for attribute_name, dataset_name in agents_dict.iteritems():
+        for attribute_name, dataset_name in agents_dict.items():
             if not delete_agents[dataset_name]:
                 continue
             # iterate over locations
@@ -132,12 +132,12 @@ class DeletionEventsTests(opus_unittest.OpusTestCase):
         DeletionEventModel().run(gridcell_set, event_set, 2000, dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove 5 jobs from gridcell 5 and all jobs from gridcell 10
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,5,10,10,10,10,0]))) 
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,5,10,10,10,10,0]))) 
 
         DeletionEventModel().run(gridcell_set, event_set, 2001, dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         # the model should remove another 3 jobs from gridcell 5
-        self.assert_(ma.allclose(number_of_jobs, array( [10,10,10,10,2,10,10,10,10,0])))
+        self.assertTrue(ma.allclose(number_of_jobs, array( [10,10,10,10,2,10,10,10,10,0])))
         
     def test_deletion_of_jobs_and_households(self):
         self._add_households_to_storage()
@@ -150,18 +150,18 @@ class DeletionEventsTests(opus_unittest.OpusTestCase):
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove 3 jobs from gridcell 1 and 5 jobs from gridcell 5
-        self.assert_(ma.allclose(number_of_jobs, array( [7,10,10,10,5,10,10,10,10,10])))
+        self.assertTrue(ma.allclose(number_of_jobs, array( [7,10,10,10,5,10,10,10,10,10])))
         # the model should remove 7 households from gridcell 1
-        self.assert_(ma.allclose(number_of_households, array( [3,0,30,0,0,0,0,0,0,0]))) 
+        self.assertTrue(ma.allclose(number_of_households, array( [3,0,30,0,0,0,0,0,0,0]))) 
 
         DeletionEventModel().run(gridcell_set, event_set, 2001, dataset_pool)
         number_of_jobs = gridcell_set.compute_variables("urbansim.gridcell.number_of_jobs", dataset_pool=dataset_pool)
         number_of_households = gridcell_set.compute_variables("urbansim.gridcell.number_of_households", 
                                                               dataset_pool=dataset_pool)
         # the model should remove another 3 jobs from gridcell 5 and all jobs from gridcell 2
-        self.assert_(ma.allclose(number_of_jobs, array( [7,0,10,10,2,10,10,10,10,10]))) 
+        self.assertTrue(ma.allclose(number_of_jobs, array( [7,0,10,10,2,10,10,10,10,10]))) 
         # the model should remove 25 households from gridcell 3
-        self.assert_(ma.allclose(number_of_households, array( [3,0,5,0,0,0,0,0,0,0])))
+        self.assertTrue(ma.allclose(number_of_households, array( [3,0,5,0,0,0,0,0,0,0])))
         
 if __name__=="__main__":
     opus_unittest.main()

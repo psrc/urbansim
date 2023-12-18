@@ -4,7 +4,7 @@
 
 #DISCLAIMER: THIS FILE IS OUT OF DATE AND NEEDS SIGNIFICANT MODIFICATIONS 
 #            TO MAKE IT WORK
-print "Create MySQL connection"
+print("Create MySQL connection")
 from urbansim.store.scenario_database import ScenarioDatabase
 
 dbcon = ScenarioDatabase(hostname = "trondheim.cs.washington.edu",
@@ -12,13 +12,13 @@ dbcon = ScenarioDatabase(hostname = "trondheim.cs.washington.edu",
                          password = "wewantH2O",
                          database_name = "water_demand_seattle")
 
-print "Create Storage object."
+print("Create Storage object.")
 from urbansim.storage_creator import StorageCreator
 storage = StorageCreator().build_storage(type="mysql", location=dbcon)
 
 consumption_type = "WRSR"
 
-print "Create ConsumptionDataset object"
+print("Create ConsumptionDataset object")
 from waterdemand.datasets.consumption_dataset import ConsumptionDataset
 consumption = ConsumptionDataset(in_storage = storage, in_table_name=consumption_type + "_grid")
 
@@ -34,10 +34,10 @@ import os
 from numpy import where, zeros, arange
 cache_directory = "D:/urbansim_cache/water_demand"
 for year in arange(1991, 2001):
-    print year
+    print(year)
     flt_storage = StorageCreator().build_storage(type="flt", location=os.path.join(cache_directory, str(year)))
     gridcells = GridcellDataset(in_storage=flt_storage)
-    grid_id_idx = array(map(lambda x: gridcells.try_id_mapping(x, -1), consumption_grid_id))
+    grid_id_idx = array([gridcells.try_id_mapping(x, -1) for x in consumption_grid_id])
     year_idx = where(years==year)[0]
     grid_id_idx_for_year = grid_id_idx[year_idx]
     for attr in gridcells.get_known_attribute_names():

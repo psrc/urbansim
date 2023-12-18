@@ -15,9 +15,9 @@ make basic modifications to its behavior."""
 how to start a lccm run?
 
 1). need urbansim cache for the run.
-    - create a new folder in your local drive: c:\urbansim_cache
+    - create a new folder in your local drive: c:\\urbansim_cache
     - use windows explorer go to this address: \\ukiah\lccm_urbansim_cache
-    - copy the 2006_02_14__11_43 folder to c:\urbansim_cache
+    - copy the 2006_02_14__11_43 folder to c:\\urbansim_cache
 
 2). go to biocomplexity.examples.lccm_runner_sample, fill in the
 configurations for the run (Notice that if you use the same folder name

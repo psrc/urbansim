@@ -14,19 +14,19 @@ class AbstractTravelModel(Model):
     def get_travel_model_data_dir(self, config, *args, **kwargs):
         """Returns the full path to the directory for travel model-urbansim data exchange,
         """
-        if os.environ.has_key("TRAVELMODELDATAROOT"):
+        if "TRAVELMODELDATAROOT" in os.environ:
             drive = os.environ['TRAVELMODELDATAROOT']
         else:
             logger.log_warning("TRAVELMODELDATAROOT is not set; will try to use the current drive")
             drive = '\\'
-        if config['travel_model_configuration'].has_key('directory'):
+        if 'directory' in config['travel_model_configuration']:
             return os.path.join(drive, config['travel_model_configuration']['directory'])
         else:
             return drive
             
     def run_travel_model_macro(self):
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")
         
     
     def prepare_for_run(self, config, year):
-        raise NotImplementedError, "subclass responsibility"
+        raise NotImplementedError("subclass responsibility")

@@ -18,11 +18,11 @@ class linear_utilities(Utilities):
             it can be created by InteractionDataset.create_logit_data(...).
         """
         if data.ndim < 3:
-            raise StandardError, "Argument 'data' must be a 3D numpy array."
+            raise Exception("Argument 'data' must be a 3D numpy array.")
 
         if coefficients.ndim > 1:
             if not check_dimensions(data[0,:,:], coefficients):
-                raise StandardError, "Mismatch in dimensions of data and coefficients."
+                raise Exception("Mismatch in dimensions of data and coefficients.")
 
         utility = inner1d(data, coefficients)
         return utility

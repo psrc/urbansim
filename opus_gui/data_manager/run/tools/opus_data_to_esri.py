@@ -9,14 +9,14 @@ try:
     from opus_core.store.esri_storage import esri_storage
     esri_is_avail = True
 except ImportError:
-    print "Unable to import esri_storage\n"
+    print("Unable to import esri_storage\n")
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 
 def opusRun(progressCB,logCB,params):
     params_dict = {}
-    for key, val in params.iteritems():
+    for key, val in params.items():
         params_dict[str(key)] = str(val)
 
     # Output esri data path

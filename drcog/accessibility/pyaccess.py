@@ -57,7 +57,7 @@ class PyAccess():
         return _pyaccess.initialize_acc_var(cat,nodeids,accvar)
 
     def LatLongtoNode(my,lat,long):
-        xy = numpy.array([(lat,long)],dtype=numpy.int32)
+        xy = numpy.array([(lat,int)],dtype=numpy.int32)
         returntoNode(xy)[0]
 
     def XYtoNode(my,xy,distance=-1):

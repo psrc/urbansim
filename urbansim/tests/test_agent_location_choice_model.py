@@ -189,7 +189,7 @@ class Test(StochasticTestCase):
         storage.write_table(table_name='households',
             table_data = {
                 'household_id': arange(10000)+1,
-                'grid_id': array(100*range(100))+1
+                'grid_id': array(100*list(range(100)))+1
                 }
             )
         households = HouseholdDataset(in_storage=storage, in_table_name='households')

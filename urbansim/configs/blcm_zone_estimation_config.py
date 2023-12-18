@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from estimation_config_for_model_members import model_member_configuration
-from estimation_zone_config import run_configuration as config
+from .estimation_config_for_model_members import model_member_configuration
+from .estimation_zone_config import run_configuration as config
 
 class blcm_configuration(model_member_configuration):
     def __init__(self, type, add_member_prefix=False):

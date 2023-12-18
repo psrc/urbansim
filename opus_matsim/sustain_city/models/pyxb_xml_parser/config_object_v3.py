@@ -135,7 +135,7 @@ class MATSimConfigObjectV3(object):
             self.sub_config_exists = (file_path != None)
         except:
             if required:
-                raise StandardError('File not found: %s' %file_path)
+                raise Exception('File not found: %s' %file_path)
                 self.sub_config_exists = False
         if self.sub_config_exists:
             self.check_abolute_path( file_path )
@@ -163,7 +163,7 @@ class MATSimConfigObjectV3(object):
         """ raises an exception if an absolute path is given
         """
         if(path.startswith('/')):
-            raise StandardError('Absolute path names are not supported by now! Check: %s' %path)
+            raise Exception('Absolute path names are not supported by now! Check: %s' %path)
     
     def checkAndCreateFolder(self, path):
         if not os.path.exists(path):

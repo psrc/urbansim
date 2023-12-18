@@ -41,7 +41,7 @@ class Simulation(object):
     package_path = OpusPackage().get_path_for_package("biocomplexity") 
     #lct_attribute = "biocomplexity.land_cover.lct_recoded"
     lct_attribute = "lct"
-    possible_lcts = range(1,15)
+    possible_lcts = list(range(1,15))
     
     def _clean_up_land_cover_cache(self, path):
         if os.path.exists(path):

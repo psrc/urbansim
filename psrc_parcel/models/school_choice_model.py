@@ -37,7 +37,7 @@ class SchoolChoiceModel(AgentLocationChoiceModel):
             return i
 	
         nchoices = self.get_choice_set_size()
-        if nchoices <> self.choice_set.size() or self.filter is None:
+        if nchoices != self.choice_set.size() or self.filter is None:
             return AgentLocationChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config, submodels, **kwargs)
         
         # apply filter without doing sampling
@@ -84,13 +84,13 @@ class SchoolChoiceModel(AgentLocationChoiceModel):
                 maxsize = maximum(maxsize, choice_index[(submodel, group)].size)
                 
         filter_index = -1 + zeros((agents_index.size, maxsize), dtype="int32")
-        for submodel, group in choice_index.keys():    
+        for submodel, group in list(choice_index.keys()):    
             filter_index[where_group[(submodel, group)],0:choice_index[(submodel, group)].size] = choice_index[(submodel, group)][newaxis, :].repeat(where_group[(submodel, group)].size, axis=0)
         self.model_interaction.create_interaction_datasets(agents_index, filter_index)
         
         if config.get('include_chosen_choice', False):
             chosen_choice_attr = zeros((agents_index.size, maxsize), dtype="bool8")
-            for submodel, group in chosen_choice.keys():  
+            for submodel, group in list(chosen_choice.keys()):  
                 chosen_choice_attr[where_group[(submodel, group)], chosen_choice[(submodel, group)].flat] = True
             self.model_interaction.interaction_dataset.add_attribute(data=chosen_choice_attr, name="chosen_choice")
                     

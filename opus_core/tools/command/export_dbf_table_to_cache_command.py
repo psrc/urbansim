@@ -100,8 +100,8 @@ else:
             values = attribute_cache.load_table(table_name)
             
             self.assertEqual(set(['keyid', 'works']), set(values.keys()))
-            self.assert_(ma.allequal(array([1,2,3,4,5]), values['keyid']))
-            self.assert_(ma.allequal(array([1,1,-1,0,0]), values['works']))
+            self.assertTrue(ma.allequal(array([1,2,3,4,5]), values['keyid']))
+            self.assertTrue(ma.allequal(array([1,1,-1,0,0]), values['works']))
             
             SimulationState().set_current_time(old_time)
             
@@ -129,8 +129,8 @@ else:
             command.execute()
             
             self.assertEqual('a-table-name', command._get_exporter().dataset_name)
-            self.assert_(isinstance(command._get_exporter().in_storage, dbf_storage))
-            self.assert_(isinstance(command._get_exporter().out_storage, AttributeCache))
+            self.assertTrue(isinstance(command._get_exporter().in_storage, dbf_storage))
+            self.assertTrue(isinstance(command._get_exporter().out_storage, AttributeCache))
             self.assertEqual('a-dbf-directory', 
                              command._get_exporter().in_storage._get_base_directory())
             self.assertEqual('a-cache-directory', 

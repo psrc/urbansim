@@ -53,7 +53,7 @@ class AttributeCache(Storage):
         """
         if year is None:
             return None
-        if year not in self._flt_storage_per_year.keys():
+        if year not in list(self._flt_storage_per_year.keys()):
             base_directory = os.path.join(self.get_storage_location(), str(year))
             self._flt_storage_per_year[year] = flt_storage(storage_location=base_directory)
         return self._flt_storage_per_year[year]
@@ -92,7 +92,7 @@ class AttributeCache(Storage):
         storage = flt_storage(storage_directory)
         tables = storage.get_table_names()
         tables = [table for table in tables if (table.endswith('.computed'))]
-        deleted = array(map(lambda table: storage.delete_table(table), tables))
+        deleted = array([storage.delete_table(table) for table in tables])
         if deleted.size > 0:
             return array(tables)[deleted]
         return array(tables)
@@ -132,7 +132,7 @@ class AttributeCache(Storage):
             except:
                 pass
         if not found:
-            raise StandardError,"Table %s not found" % table_name
+            raise Exception("Table %s not found" % table_name)
         return result
         
     
@@ -298,10 +298,10 @@ class AttributeCacheWriteTests(opus_unittest.OpusTestCase):
         # file name will be e.g. 'int_column.li4' for a little-endian machine
         full_name = os.path.join(self.temp_dir, str(year),  self.table_name, 'int_column.%(endian)si4'%replacements)
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(full_name))
+        self.assertTrue(os.path.exists(full_name))
         # dtype will be e.g. '<i4' for a little-endian machine
         actual = numpy.fromfile(full_name, dtype='%(numpy_endian)si4' % replacements)
-        self.assert_((expected==actual).all())
+        self.assertTrue((expected==actual).all())
         
 class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -324,7 +324,7 @@ class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):
         expected.sort()
         actual = self.storage.get_table_names()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
         
     def test_get_table_names_from_1981(self):
         SimulationState().set_current_time(1981)
@@ -332,7 +332,7 @@ class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):
         expected.sort()
         actual = self.storage.get_table_names()
         actual.sort()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
   
 class AttributeCacheDeleteTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -359,15 +359,15 @@ class AttributeCacheDeleteTests(opus_unittest.OpusTestCase):
         SimulationState().set_current_time(year)
         #check if all tables exist before the test
         for table in tables_keep+tables_delete: 
-            self.assert_(os.path.exists(self.get_table_path(year, table)))
+            self.assertTrue(os.path.exists(self.get_table_path(year, table)))
         self.storage.delete_computed_tables()
         
         #check if the right tables exist
         for table in tables_keep: 
-            self.assert_(os.path.exists(self.get_table_path(year, table)))
+            self.assertTrue(os.path.exists(self.get_table_path(year, table)))
         # and not the others
         for table in tables_delete: 
-            self.assert_(not os.path.exists(self.get_table_path(year, table)))
+            self.assertTrue(not os.path.exists(self.get_table_path(year, table)))
  
     def test_delete_computed_tables_if_nothing_to_delete(self):
         year = 1980
@@ -380,17 +380,17 @@ class AttributeCacheDeleteTests(opus_unittest.OpusTestCase):
         SimulationState().set_current_time(year)
         #check if all tables exist before the test
         for table in tables_keep+tables_delete: 
-            self.assert_(os.path.exists(self.get_table_path(year, table)))
+            self.assertTrue(os.path.exists(self.get_table_path(year, table)))
         self.storage.delete_computed_tables()
         
         #check if the right tables exist
         for table in tables_keep: 
-            self.assert_(os.path.exists(self.get_table_path(year, table)))
+            self.assertTrue(os.path.exists(self.get_table_path(year, table)))
 
     def test_delete_computed_tables_if_cache_doesnt_exist(self):
         SimulationState().set_current_time(1990)
         res = self.storage.delete_computed_tables()
-        self.assert_(res.size == 0)
+        self.assertTrue(res.size == 0)
         
 if __name__ == '__main__':
     opus_unittest.main()

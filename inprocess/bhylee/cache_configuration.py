@@ -110,4 +110,4 @@ class CacheConfiguration(Configuration):
         }
 
 if __name__ == '__main__':
-    print "start caching with command create_baseyear_cache -cinprocess.psrc_parcel.baseyear_data_caching_configuration"
+    print("start caching with command create_baseyear_cache -cinprocess.psrc_parcel.baseyear_data_caching_configuration")

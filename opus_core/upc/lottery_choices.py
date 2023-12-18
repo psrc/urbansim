@@ -30,7 +30,7 @@ class lottery_choices(Choices):
         Optional entry 'index' (1D or 2D array) gives indices of the choices.
         """
         if probability.ndim < 2:
-            raise StandardError, "Argument 'probability' must be a 2D numpy array."
+            raise Exception("Argument 'probability' must be a 2D numpy array.")
 
         resources.check_obligatory_keys(["capacity"])
         capacity = resources["capacity"]
@@ -44,8 +44,8 @@ class lottery_choices(Choices):
             units = ones((nobs,))
         if not isinstance(units, ndarray):
             units = array(units)
-        if nobs <> units.size:
-            raise StandardError, "Mismatch in shape of probability and length of agent_units."
+        if nobs != units.size:
+            raise Exception("Mismatch in shape of probability and length of agent_units.")
         index = resources.get("index", None)
         if index is None:
             index = arange(ncap)

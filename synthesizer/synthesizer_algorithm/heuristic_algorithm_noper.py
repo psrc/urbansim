@@ -5,7 +5,7 @@
 
 # Running IPF on Person and Household data
 
-from psuedo_sparse_matrix import generate_index_matrix
+from .psuedo_sparse_matrix import generate_index_matrix
 import time
 import MySQLdb
 from math import exp, log
@@ -33,7 +33,7 @@ def heuristic_adjustment(db, pumano, index_matrix, weights, control, sp_matrix, 
     conv_criterion = 0
     convergence = 0
 #    print 'Starting the Heuristic Procedure'
-    print 'iteration, Sum_Wts_Hhld_Adj, Constraints, e-statistic, convergence (0/1)'
+    print('iteration, Sum_Wts_Hhld_Adj, Constraints, e-statistic, convergence (0/1)')
     while (iteration < parameters.ipuIter and convergence == 0):
         ti = time.clock()
         iteration = iteration + 1
@@ -48,7 +48,7 @@ def heuristic_adjustment(db, pumano, index_matrix, weights, control, sp_matrix, 
 # Adjusting for housing types including both household and group quarters
         for i in index_matrix[:hh_colno,:]:
             if control[i[0]-4] == 0:
-                print 'Zero Control'
+                print('Zero Control')
             adjustment = control[i[0]-4] / sum(weights[sp_matrix[i[1]-1:i[2], 2]])
             weights[sp_matrix[i[1]-1:i[2], 2]] = weights[sp_matrix[i[1]-1:i[2], 2]] * adjustment
 
@@ -81,7 +81,7 @@ def heuristic_adjustment(db, pumano, index_matrix, weights, control, sp_matrix, 
                 convergence = 0
         conv_criterion = 0
     conv_criterion = conv_criterion / (hh_colno)
-    print '%d, %.4f, %d, %.4f, %d'%(iteration, sum(weights), tot_colno, conv_criterion_array[-1], convergence)
+    print('%d, %.4f, %d, %.4f, %d'%(iteration, sum(weights), tot_colno, conv_criterion_array[-1], convergence))
     return iteration, weights, conv_criterion_array, wts_personadj
 
 # How to deal with the fact that zero marginals will multiply the weights out to zeros

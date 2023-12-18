@@ -203,10 +203,10 @@ class DatasetFactory(object):
 
         args = {}
         args.update(additional_arguments)
-        for dataset_name, dataset_info in datasets_to_create.iteritems():
+        for dataset_name, dataset_info in datasets_to_create.items():
             argstmp = args.copy()
             
-            if "arguments" in dataset_info.keys():
+            if "arguments" in list(dataset_info.keys()):
                 argstmp.update(dataset_info["arguments"])
                 
             datasets[dataset_name] = self.get_dataset(
@@ -230,7 +230,7 @@ class DatasetFactory(object):
                 return t[1:]
         module_name = dataset_name + '_dataset'
         split_names = dataset_name.split('_')
-        class_name = "".join(map(lambda name: name.capitalize(), split_names)) + "Dataset"
+        class_name = "".join([name.capitalize() for name in split_names]) + "Dataset"
         return (dataset_name, module_name, class_name)
     
     def _table_module_class_names_for_dataset_deprecated(self, dataset_name):
@@ -245,7 +245,7 @@ class DatasetFactory(object):
         table_name = dataset_name + 's'
         module_name = dataset_name + '_dataset'
         split_names = dataset_name.split('_')
-        class_name = "".join(map(lambda name: name.capitalize(), split_names)) + "Dataset"
+        class_name = "".join([name.capitalize() for name in split_names]) + "Dataset"
         return (table_name, module_name, class_name)
 
 

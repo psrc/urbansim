@@ -182,7 +182,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             # print 'creatgui element %d, %s' %(i, param)
             #Swap in the passed params if they exist... loop through each passed
             #param and see if it matches... if so swap it in
-            if self.optional_params.has_key(str(param[0])):
+            if str(param[0]) in self.optional_params:
                 param[2] = self.optional_params[str(param[0])]
             #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
@@ -255,7 +255,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         tool_path = self.optional_params.get('tool_path','')
         try:
             exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.module_name)
-            exec exec_stmt
+            exec(exec_stmt)
             help_ = QString(opusHelp()) #@UndefinedVariable
         except Exception:
             help_ = 'could not find opusHelp function in tool module'

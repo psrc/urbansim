@@ -65,7 +65,7 @@ class ScheduledEventsModel(Model):
                     try:
                         dataset_attribute = self.dataset.compute_one_variable_with_unknown_package(attribute, dataset_pool=dataset_pool)
                     except:
-                        raise ValueError, "attribute %s used in scheduled events dataset can not be found in dataset %s" % (attribute, self.dataset.get_dataset_name())
+                        raise ValueError("attribute %s used in scheduled events dataset can not be found in dataset %s" % (attribute, self.dataset.get_dataset_name()))
                 
 #                if attribute in column_names: 
                 aval = scheduled_events_for_this_year.get_attribute(attribute)[index]
@@ -104,7 +104,7 @@ class ScheduledEventsModel(Model):
         else:
             ## if attributes are not fully specified, the missing attributes will be filled with 0's
             for attr in dataset.get_primary_attribute_names():
-                if data_dict.has_key(attr):
+                if attr in data_dict:
                     new_data[attr] = resize(array(data_dict[attr]), amount)
                 else:
                     if attr == dataset.get_id_name()[0]:

@@ -98,7 +98,7 @@ class ForkProcess(object):
         if self.popen is not None and \
            self.popen.returncode is not None and \
            self.popen.returncode not in (0, 10):
-            raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
+            raise Exception("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
 
     def cleanup(self):
         if os.path.exists(self._pickle_dir):
@@ -138,7 +138,7 @@ class TestForkProcess(opus_unittest.TestCase):
             rmtree(self.temp_dir)
             
     def test_module_invalid(self):
-        self.assertRaises(StandardError,
+        self.assertRaises(Exception,
                           ForkProcess().fork_new_process,
                           module_name='xxx',
                           resources=None,
@@ -163,7 +163,7 @@ class TestForkProcess(opus_unittest.TestCase):
         old_sys_path = sys.path[:]
         sys.path.append(self.temp_dir)
         try:
-            self.assertRaises(StandardError,
+            self.assertRaises(Exception,
                               ForkProcess().fork_new_process,
                               module_name='raise_exception',
                               resources=None,

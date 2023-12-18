@@ -51,7 +51,7 @@ class VariableTestToolbox(object):
         "plan_type_group":"group_id",
         "building": "building_id",
     }
-    datasets = id_names.keys()
+    datasets = list(id_names.keys())
     interactions = [
         "household_x_gridcell", 
         "job_x_gridcell", 
@@ -64,14 +64,14 @@ class VariableTestToolbox(object):
         """Create resources for computing a variable. """
         resources=Resources()
         
-        for key in data_dictionary.keys():
+        for key in list(data_dictionary.keys()):
             if key in self.datasets:
                 data = data_dictionary[key]
                 
                 storage = StorageFactory().get_storage('dict_storage')
                 
-                if self.id_names[key] not in data_dictionary[key].keys() and not isinstance(self.id_names[key], list):
-                    data[self.id_names[key]] = arange(1, len(data_dictionary[key][data_dictionary[key].keys()[0]])+1) # add id array
+                if self.id_names[key] not in list(data_dictionary[key].keys()) and not isinstance(self.id_names[key], list):
+                    data[self.id_names[key]] = arange(1, len(data_dictionary[key][list(data_dictionary[key].keys())[0]])+1) # add id array
                 
                 id_name = self.id_names[key]
                 storage.write_table(table_name = 'data', table_data = data)
@@ -82,10 +82,10 @@ class VariableTestToolbox(object):
                     # add relative_x and relative_y
                     gc.get_id_attribute()
                     n = int(ceil(sqrt(gc.size())))
-                    if "relative_x" not in data.keys():
+                    if "relative_x" not in list(data.keys()):
                         x = (indices((n,n))+1)[1].ravel()
                         gc.add_attribute(x[0:gc.size()], "relative_x", metadata=1)
-                    if "relative_y" not in data.keys():
+                    if "relative_y" not in list(data.keys()):
                         y = (indices((n,n))+1)[0].ravel()
                         gc.add_attribute(y[0:gc.size()], "relative_y", metadata=1)
                     resources.merge({key: gc})

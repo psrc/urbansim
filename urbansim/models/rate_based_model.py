@@ -56,7 +56,7 @@ class RateBasedModel(Model):
             movers_indices = array([], dtype='int32')
 
         if reset_attribute_value and movers_indices.size > 0:
-            for key, value in reset_attribute_value.items():
+            for key, value in list(reset_attribute_value.items()):
                 agent_set.modify_attribute(name=key, 
                                            data=resize(asarray(value), movers_indices.size),
                                            index=movers_indices)            

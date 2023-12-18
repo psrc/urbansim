@@ -31,7 +31,7 @@ class HierarchicalChoiceModel(ChoiceModel):
     def set_choice_set_size(self, **kwargs):
         if self.sampler_size is None:
             self.sampler_size = 0
-            for nest, values in self.nested_structure.iteritems():
+            for nest, values in self.nested_structure.items():
                 self.sampler_size += len(values)
         ChoiceModel.set_choice_set_size(self, **kwargs)
         
@@ -49,7 +49,7 @@ class HierarchicalChoiceModel(ChoiceModel):
             strat[strat<=0] = NO_STRATUM_ID # valid stratum must be larger than 0
         if nested_structure is None:
             if strat is None:
-                raise StandardError, "Either 'nested_structure' or 'stratum' must be given."
+                raise Exception("Either 'nested_structure' or 'stratum' must be given.")
             sampler_size = None
             if self.sampler_class is not None:
                 sampler_size = self.sampler_size
@@ -58,7 +58,7 @@ class HierarchicalChoiceModel(ChoiceModel):
         else:
             self.nested_structure = nested_structure
             if self.sampler_class is not None and self.sampler_size is not None:
-                for nest, values in self.nested_structure.iteritems():
+                for nest, values in self.nested_structure.items():
                     self.nested_structure[nest] = values[0:self.sampler_size]
 
         self.number_of_nests = len(self.nested_structure)
@@ -72,7 +72,7 @@ class HierarchicalChoiceModel(ChoiceModel):
         # Uncomment the following line when the stratified sampler can handle an array for sample_size_from_each_stratum.
         # Right now it can handle only single number.
         #sample_size_for_each_stratum = array(map(lambda x: len(self.nested_structure[x]), self.nested_structure.keys()))
-        sample_size_for_each_stratum = len(self.nested_structure[self.nested_structure.keys()[0]])
+        sample_size_for_each_stratum = len(self.nested_structure[list(self.nested_structure.keys())[0]])
         if self.estimate_config.get("sample_size_from_each_stratum", None) is None:
             self.estimate_config["sample_size_from_each_stratum"] = sample_size_for_each_stratum
         if self.run_config.get("sample_size_from_each_stratum", None) is None:
@@ -99,7 +99,7 @@ class HierarchicalChoiceModel(ChoiceModel):
         return ChoiceModel.estimate(self, specification, *args, **kwargs)
     
     def add_logsum_to_specification(self, specification, coefficients):
-        idx = where(array(map(lambda x: x.startswith('__logsum_'), coefficients.get_names())))[0]
+        idx = where(array([x.startswith('__logsum_') for x in coefficients.get_names()]))[0]
         if specification.get_equations().size > 0:
             eqid = min(specification.get_equations())
         else:
@@ -113,7 +113,7 @@ class HierarchicalChoiceModel(ChoiceModel):
             
     def delete_logsum_from_specification(self, specification):
         variable_names = specification.get_variable_names()
-        idx = where(array(map(lambda x: x.startswith('__logsum_'), variable_names)))[0]
+        idx = where(array([x.startswith('__logsum_') for x in variable_names]))[0]
         specification.delete(variable_names[idx])
         
     def run_sampler_class(self, agent_set, index1=None, index2=None, sample_size=None, weight=None, 
@@ -142,7 +142,7 @@ class HierarchicalChoiceModel(ChoiceModel):
             return
         self.estimate_config['correct_for_sampling'] = True
         stratum_sample_size = self.estimate_config["sample_size_from_each_stratum"]
-        keys = sort(self.nested_structure.keys())
+        keys = sort(list(self.nested_structure.keys()))
         self.estimate_config["sampling_rate"] = ones(self.number_of_nests)
         self.estimate_config["keys"] = keys
         self.estimate_config["sampling_size"] = ones(self.number_of_nests)
@@ -158,11 +158,11 @@ class HierarchicalChoiceModel(ChoiceModel):
             self.estimate_config["sampling_nest_size"][nest] = idx.size
             
     def add_logsum_to_coefficients(self, estimation_results):
-        for submodel, res in estimation_results.iteritems():
-            idx = where(array(map(lambda x: x.startswith('__logsum'), res['coefficient_names'])))[0]
+        for submodel, res in estimation_results.items():
+            idx = where(array([x.startswith('__logsum') for x in res['coefficient_names']]))[0]
             for i in idx:
                 om = {}
-                for om_name, om_values in res['other_measures'].iteritems():
+                for om_name, om_values in res['other_measures'].items():
                     om[om_name]=om_values[i]
                 self.coefficients.add_item(res['coefficient_names'][i], res['estimators'][i], 
                                        res['standard_errors'][i], submodel=submodel, 
@@ -233,7 +233,7 @@ class HierarchicalChoiceModel(ChoiceModel):
 from opus_core.choice_model import ModelInteraction
 class ModelInteractionHM(ModelInteraction):
     def create_specified_coefficients(self, coefficients, specification, choice_ids=None):
-        for nest, ids in self.model.nested_structure.iteritems():
+        for nest, ids in self.model.nested_structure.items():
             specification.copy_equations_for_dim_if_needed(ids, 'dim_%s' % self.model.nest_id_name, nest)
         return ModelInteraction.create_specified_coefficients(self, coefficients, specification, choice_ids)
             
@@ -243,18 +243,18 @@ def create_tree_structure_from_dict(nested_structure):
     tree_structure = {}
     ns = nested_structure
     while len(ns) > 0: # get number of levels from the first branch
-        value = ns[ns.keys()[0]]
+        value = ns[list(ns.keys())[0]]
         if not isinstance(value, dict):
             break
         levels +=1
-        ns = ns[ns.keys()[0]]
+        ns = ns[list(ns.keys())[0]]
     if levels > 1:
-        raise StandardError, "Support for nested structure with more than one level is not implemented."
+        raise Exception("Support for nested structure with more than one level is not implemented.")
             
     ns = nested_structure
     lns = len(ns)
     current_ts_l = 0
-    keys = sort(ns.keys())
+    keys = sort(list(ns.keys()))
     for ins in range(lns):
         lchi = len(ns[keys[ins]])
         if tree_structure.get(current_ts_l, None) is None:
@@ -269,7 +269,7 @@ def create_3D_tree_structure_from_stratum(stratum, nested_structure):
     result = {}
     current_ts_l = 0
     lns = len(nested_structure)
-    keys = sort(nested_structure.keys())
+    keys = sort(list(nested_structure.keys()))
     result[current_ts_l] = zeros((stratum.shape[0], lns, stratum.shape[1]), dtype='bool8')
     for nest in range(lns):
         idx = where(stratum == keys[nest])
@@ -288,7 +288,7 @@ def create_nested_structure_from_list(stratum, choice_set, sampler_size=None, va
         w = where(stratum == nest)[0]
         if sampler_size is not None:
             c = min(w.size, sampler_size)
-            nested_structure[nest] = range(count, count+c)
+            nested_structure[nest] = list(range(count, count+c))
             count += c
         else:
             nested_structure[nest] = choice_ids[w]
@@ -297,7 +297,7 @@ def create_nested_structure_from_list(stratum, choice_set, sampler_size=None, va
         
 def create_stratum_from_nests(nested_structure, choice_set):
     result = zeros(choice_set.size())
-    for nest, values in nested_structure.iteritems():
+    for nest, values in nested_structure.items():
         for v in values:
             result[where(result == v)] = nest
     return result
@@ -316,7 +316,7 @@ class HierarchicalChoiceModelTests(opus_unittest.OpusTestCase):
         nested_structure = {0: [1,2,3,4], 1: [5,6,7]}
         ts = create_tree_structure_from_dict(nested_structure)
         should_be = array([[1,1,1,1,0,0,0], [0,0,0,0,1,1,1]])
-        self.assert_(ma.allequal(ts[0], should_be), "Error in test_create_tree_structure_1level.")
+        self.assertTrue(ma.allequal(ts[0], should_be), "Error in test_create_tree_structure_1level.")
 
                 
 if __name__ == '__main__':

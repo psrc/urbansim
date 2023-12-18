@@ -90,24 +90,24 @@ class ExternalDemographicModel(Model):
         n_hhs = hh_ids.size
         results = {}
         results[household_id] = hh_ids
-        for k, v in demographic_attributes.iteritems():
+        for k, v in demographic_attributes.items():
             results[k] = hhs_new.compute_variables(v)
 
         logger.log_status( ('Loaded demographic characteristics {0} for {1} ' +\
                             'households from external file {2}.').format(
-                            demographic_attributes.keys(), n_hhs, 
+                            list(demographic_attributes.keys()), n_hhs, 
                             demographic_data_file) )
 
         p_ids = ps_new[person_id]
         n_ps = p_ids.size
         results_p = {}
         results_p[person_id] = p_ids
-        for k, v in demographic_attributes_p.iteritems():
+        for k, v in demographic_attributes_p.items():
             results_p[k] = ps_new.compute_variables(v)
 
         logger.log_status( ('Loaded demographic characteristics {0} for {1} ' +\
                             'persons from external file {2}.').format(
-                            demographic_attributes_p.keys(), n_ps, 
+                            list(demographic_attributes_p.keys()), n_ps, 
                             demographic_data_file) )
 
         is_existing = in1d(hh_ids, household_dataset[household_id])
@@ -297,24 +297,24 @@ class Tests(opus_unittest.OpusTestCase):
         
         new_hh_ds = self.dataset_pool.get_dataset('household')
 
-        self.assert_(allclose(new_hh_ds['household_id'], array([ 5, 1,  2,  3])))
-        self.assert_(allclose(new_hh_ds['building_id'],  array([-1, 11, 22, 33])))
-        self.assert_(allclose(new_hh_ds['keep'],         array([-1,4.1, 4.2, 4.3])))
-        self.assert_(allclose(new_hh_ds['income'],       array([65, 61, 62, 63])*1000.0))
-        self.assert_(allclose(new_hh_ds['size'],         array([ 2, 3,  3,  3])))
-        self.assert_(allclose(new_hh_ds['age_of_head'],  array([67, 30, -1, 23])))
+        self.assertTrue(allclose(new_hh_ds['household_id'], array([ 5, 1,  2,  3])))
+        self.assertTrue(allclose(new_hh_ds['building_id'],  array([-1, 11, 22, 33])))
+        self.assertTrue(allclose(new_hh_ds['keep'],         array([-1,4.1, 4.2, 4.3])))
+        self.assertTrue(allclose(new_hh_ds['income'],       array([65, 61, 62, 63])*1000.0))
+        self.assertTrue(allclose(new_hh_ds['size'],         array([ 2, 3,  3,  3])))
+        self.assertTrue(allclose(new_hh_ds['age_of_head'],  array([67, 30, -1, 23])))
         
         new_p_ds = self.dataset_pool.get_dataset('person')
         
-        print('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])')
-        self.assert_(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 5, 6, 9, 10, 7, 8, 81])))
-        self.assert_(allclose(new_p_ds['household_id'], array([1, 1, 1, 2, 2, 2, 5, 5, 3, 3, 3])))
-        self.assert_(allclose(new_p_ds['age'], array([76, 72, 30, -1, 57, 17, 67, 71, 23, 21, 2])))
-        self.assert_(allclose(new_p_ds['age_months'], array([912, 864, 360, -12, 684, 204, 804, 852, 276, 252, 24])))
-        self.assert_((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])'))
+        self.assertTrue(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 5, 6, 9, 10, 7, 8, 81])))
+        self.assertTrue(allclose(new_p_ds['household_id'], array([1, 1, 1, 2, 2, 2, 5, 5, 3, 3, 3])))
+        self.assertTrue(allclose(new_p_ds['age'], array([76, 72, 30, -1, 57, 17, 67, 71, 23, 21, 2])))
+        self.assertTrue(allclose(new_p_ds['age_months'], array([912, 864, 360, -12, 684, 204, 804, 852, 276, 252, 24])))
+        self.assertTrue((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
 
         model.run(self.dmgh_data_file, self.hh_ds, self.p_ds,
                   year=2001, 
@@ -326,24 +326,24 @@ class Tests(opus_unittest.OpusTestCase):
 
         new_hh_ds = self.dataset_pool.get_dataset('household')
 
-        self.assert_(allclose(new_hh_ds['household_id'], array([ 1])))
-        self.assert_(allclose(new_hh_ds['building_id'],  array([11])))
-        self.assert_(allclose(new_hh_ds['keep'],         array([4.1])))
-        self.assert_(allclose(new_hh_ds['income'],       array([71])*1000.0))
-        self.assert_(allclose(new_hh_ds['size'],         array([ 5])))
-        self.assert_(allclose(new_hh_ds['age_of_head'],  array([31])))
+        self.assertTrue(allclose(new_hh_ds['household_id'], array([ 1])))
+        self.assertTrue(allclose(new_hh_ds['building_id'],  array([11])))
+        self.assertTrue(allclose(new_hh_ds['keep'],         array([4.1])))
+        self.assertTrue(allclose(new_hh_ds['income'],       array([71])*1000.0))
+        self.assertTrue(allclose(new_hh_ds['size'],         array([ 5])))
+        self.assertTrue(allclose(new_hh_ds['age_of_head'],  array([31])))
 
         new_p_ds = self.dataset_pool.get_dataset('person')
         
-        print('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])')
-        print('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])')
-        self.assert_(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 31])))
-        self.assert_(allclose(new_p_ds['household_id'], array([1, 1, 1, 1, 1])))
-        self.assert_(allclose(new_p_ds['age'], array([77, 73, 31, 35, 1])))
-        self.assert_(allclose(new_p_ds['age_months'], array([924, 876, 372, 420, 12])))
-        self.assert_((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['person_id']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['household_id']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['age']]) + '])'))
+        print(('array([' + ', '.join([str(i) for i in new_p_ds['age_months']]) + '])'))
+        self.assertTrue(allclose(new_p_ds['person_id'], array([1, 2, 3, 4, 31])))
+        self.assertTrue(allclose(new_p_ds['household_id'], array([1, 1, 1, 1, 1])))
+        self.assertTrue(allclose(new_p_ds['age'], array([77, 73, 31, 35, 1])))
+        self.assertTrue(allclose(new_p_ds['age_months'], array([924, 876, 372, 420, 12])))
+        self.assertTrue((new_p_ds['age'] * 12 == new_p_ds['age_months']).all(), 'age_months computed correctly')
         
 if __name__ == '__main__':
     opus_unittest.main()

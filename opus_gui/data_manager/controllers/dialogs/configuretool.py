@@ -63,7 +63,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         newChild.text = str(self.typeSelection)
 
         # for key,val in self.vars.iteritems():
-        for x in xrange(1,len(self.test_text)):
+        for x in range(1,len(self.test_text)):
             #self.vars[self.test_text[x].text()] = self.test_line[x].text()
             if type(self.test_line[x]) == QComboBox:
                 key = self.test_text[x].text()

@@ -19,7 +19,7 @@ if __name__ == "__main__":
         # Dump the environment to the cache dir so that if we need to debug this on
         # the command line it's trivial to set up
         f = open(os.path.join(ws, "hudson.env"), "w")
-        for k,v in os.environ.iteritems():
+        for k,v in os.environ.items():
             f.write('export ' + k + '="' + v + '"\n')
         f.close()
 

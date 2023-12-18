@@ -102,16 +102,16 @@ if __name__ == "__main__":
         
     indicators = {"households": "number_of_households", "employment": "number_of_jobs", "population": "population"}
     #indicators = {"population": "population"}
-    for geo, bm in bmgeos.iteritems():
-        print geo
-        print "======="
+    for geo, bm in bmgeos.items():
+        print(geo)
+        print("=======")
         # Main computation
         weights = bm.compute_weights()
-        print weights 
+        print(weights) 
         # compute and export CIs
         #for year in [2017, 2050]:
-        for year in [2017] + range(2020, 2051, 5): # needed for R-reports
-            for indkey, indvalue in indicators.iteritems():
+        for year in [2017] + list(range(2020, 2051, 5)): # needed for R-reports
+            for indkey, indvalue in indicators.items():
                 bm.set_posterior(year, quantity_of_interest=variables[indkey][geo],
                                  propagation_factor=[0,1])
                 med = bm.get_exact_quantile(0.5)

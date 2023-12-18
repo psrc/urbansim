@@ -6,7 +6,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
-from visum_functions import load_version_file
+from .visum_functions import load_version_file
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -33,7 +33,7 @@ class RunTravelModel(AbstractTravelModel):
 	    Visum.Procedures.Execute()
         except Exception:
 	    error_msg = "Loading and executing procedures file failed"
-	    raise StandardError(error_msg)
+	    raise Exception(error_msg)
 
 	#Save version file
 	#This saves over the existing version file
@@ -41,7 +41,7 @@ class RunTravelModel(AbstractTravelModel):
         	Visum.SaveVersion(fileName)
         except Exception:
         	error_msg = "Saving version file failed"
-        	raise StandardError(error_msg)
+        	raise Exception(error_msg)
 	    
 if __name__ == "__main__":
     try: import wingdbstub
