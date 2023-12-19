@@ -341,7 +341,7 @@ class Coefficients(object):
             tex_file.write('\\\\\n')
         tex_file.write(r'\hline')
         tex_file.write("\n")
-        tex_file.write(string.replace(header, "_", "\_"))
+        tex_file.write(header.replace("_", "\_"))
         tex_file.write("\n")
 
         for row in range(self.size()):
@@ -349,7 +349,7 @@ class Coefficients(object):
                 tex_file.write("%s & " % str(self.get_submodels()[row]))
 
             coeff_name = self.get_names()[row]
-            tex_file.write("%s " % string.replace(coeff_name, "_", "\_"))
+            tex_file.write("%s " % coeff_name.replace("_", "\_"))
 
             values = zeros(2+len(list(self.other_measures.keys())), dtype=float32)
             values[0] = self.get_values()[row]
@@ -362,7 +362,7 @@ class Coefficients(object):
             for value in values:
                 # if the number is 0, big enough to not need sci notation, or a number like .001,
                 # then just write out in x.xxxx format
-                split_value = string.split("%s"%value,".")
+                split_value = ("%s"%value).split(".")
                 if  (0 == value) or (abs(value) >= .01) or (len(split_value)>1 and len(split_value[1]) < 5):
                     tex_file.write("& $ %.4f $" % value)
                 # otherwise, write out in sci notation
@@ -393,7 +393,7 @@ class Coefficients(object):
                     info_header = other_headers[info]
                 else:
                     info_header = info
-                info_header = string.replace(info_header, "_", "\_")
+                info_header = info_header.replace("_", "\_")
                 header=header + r" &  " + info_header
             header = header + r'\\ \hline'
             tex_file.write(header)
@@ -402,9 +402,9 @@ class Coefficients(object):
                 tex_file.write('%s' % submodel)
                 for info in other_info_keys:
                     value = self.other_info[submodel][info]
-                    if(len(string.split("%s"%value,".")) == 1 or float(string.split("%s"%value,".")[1]) == 0):
+                    if(len(("%s"%value).split(".")) == 1 or float(("%s"%value).split(".")[1]) == 0):
                         tex_file.write("& $ %i $" % value)
-                    elif  (0 == value) or (abs(value) >= .01) or len(string.split("%s"%value,".")[1]) < 5:
+                    elif  (0 == value) or (abs(value) >= .01) or len(("%s"%value).split(".")[1]) < 5:
                         tex_file.write("& $ %.4f $" % value)
                     else:
                         tex_file.write("& $ %.1e $" % value)

@@ -61,17 +61,14 @@ try:
     if os.path.supports_unicode_filenames:
         _base = str
         _getcwd = os.getcwd
-except AttributeError:
+except (AttributeError):
     pass
 
 # Pre-2.3 workaround for booleans
-try:
-    True, False
-except NameError:
-    try:
-        True, False = 1, 0
-    except:
-        pass
+#try:
+    #True, False
+#except (NameError):
+    #True, False = 1, 0
 
 # Pre-2.3 workaround for basestring.
 try:
@@ -81,8 +78,8 @@ except NameError:
 
 # Universal newline support
 _textmode = 'r'
-if hasattr(file, 'newlines'):
-    _textmode = 'U'
+#if hasattr(file, 'newlines'):
+#    _textmode = 'U'
 
 
 class TreeWalkWarning(Warning):
