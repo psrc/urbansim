@@ -98,13 +98,13 @@ if __name__ == "__main__":
             class_name = opus_path.split('.')[-1]
             class_name = convert_lower_case_with_underscores_into_camel_case(class_name)
             import_stmt = 'from %s import %s as config_class' % (opus_path, class_name)
-            exec(import_stmt)
+            exec(import_stmt, globals())
             is_class = True
         except ImportError:
             # TODO: Once all fully-specified configurations are stored as classes,
             #       get rid of this use.
             import_stmt = 'from %s import config' % opus_path
-            exec(import_stmt)
+            exec(import_stmt, globals())
             is_class = False
     else:
         parser.print_help()

@@ -2110,7 +2110,7 @@ class DbfTable(object):
             query_result['keep'] = False
             g['fld'] = record
             g['query_result'] = query_result
-            exec(select, g)
+            exec(select, g, globals())
             if query_result['keep'] is True:
                 possible.append(record)
         return possible

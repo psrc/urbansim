@@ -22,7 +22,7 @@ class CreateBaseyearCache(object):
         
         exec(create_import_for_class(
             config['creating_baseyear_cache_configuration'].cache_scenario_database,
-            'CacheScenarioDatabase'))
+            'CacheScenarioDatabase'), globals())
         
         CacheScenarioDatabase().run(config)
         logger.log_status("Database %s cached to %s" % (config['scenario_database_configuration'].database_name,
@@ -57,7 +57,7 @@ if __name__ == "__main__":
             config = get_config_from_opus_path(opus_path)
         except ImportError:
             import_stmt = 'from %s import run_configuration as config' % opus_path
-            exec(import_stmt)
+            exec(import_stmt, globals())
     elif options.xml_configuration is not None:
         if options.scenario_name is None:
             parser.print_help()

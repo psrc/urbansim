@@ -86,7 +86,7 @@ class Estimator(ModelExplorer):
         if specification_module_name is not None:
             exec("import " + specification_module_name)
             eval("reload (" + specification_module_name + ")")
-            exec("specification_dict =" + specification_module_name + ".specification")
+            exec("specification_dict =" + specification_module_name + ".specification", globals(), globals())
             
         if type is not None:
             specification_dict = specification_dict[type]

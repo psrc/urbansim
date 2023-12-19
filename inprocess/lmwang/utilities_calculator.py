@@ -175,7 +175,7 @@ if __name__ == "__main__":
     file_name_root = os.path.join(cache_directory, 'diagnostic_data')
 
     if re.search('dplcm', model):  # if it is DPLCM
-        exec(test_settings[model]['agent_class'])
+        exec(test_settings[model]['agent_class'], globals())
         agent_set = DevelopmentProjectDataset(categories=test_settings[model]['categories'],
                                                   what = test_settings[model]['what'],
                                                   attribute_name=test_settings[model]['attribute_name'],
@@ -187,7 +187,7 @@ if __name__ == "__main__":
             Resources({'values': test_settings[model]['agent_attributes'],
                        'out_table_name':agent_set_name,
                 } ) )
-        exec("%s as AgentClass" % test_settings[model]['agent_class'])
+        exec("%s as AgentClass" % test_settings[model]['agent_class'], globals())
         agent_set = AgentClass( in_storage=storage, in_table_name=agent_set_name )
 
     if not os.path.exists(file_name_root):

@@ -21,7 +21,7 @@ class OpusSyntaxChecker(object):
         Prints a list of files in the root with tabs in the *.py files or files which do not contain GPL license.
         """
         import_cmd = 'import %s' % opus_package_name
-        exec(import_cmd)
+        exec(import_cmd, globals())
         root_dir = eval('%s.__path__[0]' % opus_package_name)
         self._check_syntax_for_dir(root_dir, file_names_that_do_not_need_gpl)
 

@@ -31,7 +31,7 @@ class ClassFactory(object):
              
         ev = "from " + module_c_name.get_full_name() + " import " + class_name
         try:
-            exec(ev)
+            exec(ev, globals())
         except ImportError:
             raise ImportError("Module named '%s' does not exist or could not "
                 "import class '%s' from it." 

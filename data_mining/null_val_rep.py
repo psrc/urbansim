@@ -19,7 +19,7 @@ from opus_core import paths
 
 #loads system variables
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-exec(compile(open(path, "rb").read(), path, 'exec')) 
+exec(compile(open(path, "rb").read(), path, 'exec'), globals()) 
 
 #Checking if pygame has been installed
 use_drawing = True

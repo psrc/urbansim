@@ -219,7 +219,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         if spec_replace_module_variable_pair is not None:
             exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
-                                                            spec_replace_module_variable_pair[1]))
+                                                            spec_replace_module_variable_pair[1]), globals())
             specification.replace_variables(spec_replacement)
 
         # switch flush_variables to the original value

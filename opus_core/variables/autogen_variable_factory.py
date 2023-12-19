@@ -206,7 +206,7 @@ class AutogenVariableFactory(object):
             (classname, self._generate_dependencies_method(), self._generate_name_method(), self._generate_compute_method())
         # Now create the new class by executing the string we've built up.
         # This class will be defined in the current environment (might want to change that later).
-        exec(classexpr)
+        exec(classexpr, globals())
         # Return a tuple consisting of the name of the new class and the new class
         return (classname, locals()[classname])
     

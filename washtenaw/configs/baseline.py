@@ -160,7 +160,7 @@ class Baseline(GeneralConfiguration):
         self.merge(config)
         self.merge_with_controller()
         try:
-            exec('from %s_local_config import my_configuration' % getuser())
+            exec('from %s_local_config import my_configuration' % getuser(), globals())
             local_config = True
         except:
             logger.log_note("No user's settings found or error occured when loading.")

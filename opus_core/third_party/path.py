@@ -68,7 +68,10 @@ except AttributeError:
 try:
     True, False
 except NameError:
-    True, False = 1, 0
+    try:
+        True, False = 1, 0
+    except:
+        pass
 
 # Pre-2.3 workaround for basestring.
 try:

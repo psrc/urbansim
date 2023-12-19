@@ -255,7 +255,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         tool_path = self.optional_params.get('tool_path','')
         try:
             exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.module_name)
-            exec(exec_stmt)
+            exec(exec_stmt, globals())
             help_ = QString(opusHelp()) #@UndefinedVariable
         except Exception:
             help_ = 'could not find opusHelp function in tool module'

@@ -71,7 +71,7 @@ class OpusTool(object):
         try:
             importString = "from %s import opusRun" % (self.toolInclude)
             #print importString
-            exec(importString)
+            exec(importString, globals())
             self.params = self.buildparams()
             if self.startingCallback != None:
                 self.startingCallback()

@@ -33,7 +33,7 @@ def run(full_path_to_temp_file):
     f = open(full_path_to_temp_file,'w')
     for dataset in datasets:
         cmd = 'from mag_zone.%s.aliases import aliases' % dataset
-        exec(cmd)
+        exec(cmd, globals())
         for alias in aliases:
             alias = alias.replace('<','&lt;')
             alias = alias.replace('>','&gt;')

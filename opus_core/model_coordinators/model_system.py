@@ -198,7 +198,7 @@ class ModelSystem(object):
                 for dataset_name, its_dataset in dataset_pool.datasets_in_pool().items():
                     self.vardict[dataset_name] = its_dataset
                     datasets[dataset_name] = its_dataset
-                    exec('%s=its_dataset' % dataset_name)
+                    exec('%s=its_dataset' % dataset_name, globals())
 
                 # This is needed. It resides in locals()
                 # and is passed on to models as they run.
@@ -251,14 +251,14 @@ class ModelSystem(object):
                                     ds = dataset_pool.get_dataset(dataset_name)
                                     self.vardict[dataset_name] = ds
                                     datasets[dataset_name] = ds
-                                    exec('%s=ds' % dataset_name)
+                                    exec('%s=ds' % dataset_name, globals())
                             except:
                                 logger.log_warning('Failed to load dataset %s.' % dataset_name)
                         # import part
                         if "import" in list(controller_config.keys()):
                             import_config = controller_config["import"]
                             for import_module in list(import_config.keys()):
-                                exec("from %s import %s" % (import_module, import_config[import_module]))
+                                exec("from %s import %s" % (import_module, import_config[import_module]), globals())
 
                         # gui_import_replacements part
                         # This is a temporary hack -- replicates the functionality of the "import" section
@@ -270,7 +270,7 @@ class ModelSystem(object):
                             for model_name in list(import_replacement_config.keys()):
                                 pair = import_replacement_config[model_name]
                                 temp = pair[1]
-                                exec(("%s = temp") % pair[0])
+                                exec(("%s = temp") % pair[0], globals())
 
                         # init part
                         model = self.do_init(locals())
@@ -282,14 +282,14 @@ class ModelSystem(object):
                             model.set_model_system_status_parameters(year, n_models, model_number, resources.get('status_file_for_gui', None))
                             model.write_status_for_gui()
                             # prepare part
-                            exec(self.do_prepare(locals()))
+                            exec(self.do_prepare(locals()), globals())
                             processmodel_config = controller_config[process]
                             if "output" in list(processmodel_config.keys()):
                                 outputvar = processmodel_config["output"]
                             else:
                                 outputvar = "process_output"
                             self.vardict[outputvar] = self.do_process(locals())
-                            exec(outputvar+'=self.vardict[outputvar]')
+                            exec(outputvar+'=self.vardict[outputvar]', globals())
 
                             # check command file from gui, if the simulation should be stopped or paused
                             self.do_commands_from_gui(resources.get('command_file_for_gui', None))
@@ -324,7 +324,7 @@ class ModelSystem(object):
         # give this method the same local variables as its calling method has.
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key))
+                exec('%s = parent_state["%s"]' % (key, key), globals())
         init_config = parent_state['controller_config']["init"]
         group_member = parent_state['group_member']
         if group_member is None: # No model group
@@ -348,7 +348,7 @@ class ModelSystem(object):
         # give this method the same local variables as its calling method has.
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key))
+                exec('%s = parent_state["%s"]' % (key, key), globals())
         key_name = "prepare_for_%s" % process
         if key_name in list(controller_config.keys()):
             prepare_config = controller_config[key_name]
@@ -367,7 +367,7 @@ class ModelSystem(object):
     def do_process(self, parent_state):
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key))
+                exec('%s = parent_state["%s"]' % (key, key), globals())
         ev = "model.%s(%s)" % (process,
                                self.construct_arguments_from_config(processmodel_config))
         return eval(ev)

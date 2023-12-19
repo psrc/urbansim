@@ -25,7 +25,7 @@ class delimited_storage(Storage):
     #     import csv when specifying a quoting behavior.
     for property in dir(csv):
         if property.startswith('QUOTE_'):
-            exec('%s = csv.%s' % (property, property))
+            exec('%s = csv.%s' % (property, property), globals())
     
     def __init__(self, 
             storage_location, 

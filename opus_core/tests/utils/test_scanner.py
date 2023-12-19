@@ -45,7 +45,7 @@ class TestScanner(object):
                 module_name = self._get_module_name(package, root, path, file)
                 
                 try:
-                    exec('import %s' % module_name)
+                    exec('import %s' % module_name, globals())
                 except Exception as val: 
                     logger.log_error("Could not import %s!" % module_name)
                     
@@ -195,7 +195,7 @@ for i in range(5):
     name = 'AutoTestCase%s' % i
     test_cases_in_this_file.append(name)
     exec("""class %s(opus_unittest.OpusTestCase):
-    \"""Automatic test case generated for %s.\""" """ % (name, main_test_case))
+    \"""Automatic test case generated for %s.\""" """ % (name, main_test_case), globals())
 
     
 if __name__ == '__main__':

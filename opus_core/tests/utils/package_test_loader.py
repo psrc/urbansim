@@ -29,7 +29,7 @@ class PackageTestLoader(object):
             # Create a unique import name.
             import_name = '%s___%s' % (module, test_case)
             import_name = '__'.join(import_name.split('.'))
-            exec('from %s import %s as %s' % (module, test_case, import_name))
+            exec('from %s import %s as %s' % (module, test_case, import_name), globals())
             test_case_objects.append((import_name, eval(import_name)))
         
         for object_name, object in test_case_objects:

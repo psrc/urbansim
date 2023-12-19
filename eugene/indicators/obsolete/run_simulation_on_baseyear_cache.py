@@ -70,7 +70,7 @@ if __name__ == '__main__':
     years_to_run = args.number_of_years_to_run
     
     exec(create_import_for_camel_case_class(classpath, 
-        import_as='ImportedConfiguration'))
+        import_as='ImportedConfiguration'), globals())
     
     config = ImportedConfiguration()
     

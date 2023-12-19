@@ -200,7 +200,7 @@ class Baseline(UrbansimParcelConfiguration):
 
     def sample_inputs(self):
         from opus_core.misc import get_camel_case_class_name_from_opus_path
-        exec("from %s  import %s as MultipleRunsModification" % (self.multiple_runs_config, get_camel_case_class_name_from_opus_path(self.multiple_runs_config)))
+        exec("from %s  import %s as MultipleRunsModification" % (self.multiple_runs_config, get_camel_case_class_name_from_opus_path(self.multiple_runs_config)), globals())
         MultipleRunsModification().modify_configuration(self)
 
 #if __name__ == "__main__":

@@ -108,7 +108,7 @@ class DatasetPool(object):
     
     def _create_dataset(self, module_path, dataset_arguments):
         import_stmt = create_import_for_camel_case_class(module_path, 'ImportedDataset')
-        exec(import_stmt)
+        exec(import_stmt, globals())
         dataset = ImportedDataset(in_storage=self._storage, **dataset_arguments)
 
         return dataset

@@ -12,7 +12,7 @@ from opus_core import paths
 #loads system variables
 path = paths.OPUS_HOME
 path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
-exec(compile(open(path, "rb").read(), path, 'exec')) 
+exec(compile(open(path, "rb").read(), path, 'exec'), globals()) 
 
 #Stores information about the test that was run
 class Test_result :

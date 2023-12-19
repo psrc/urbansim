@@ -123,7 +123,7 @@ class RunManager(AbstractService):
 
 
             # Run simulation
-            exec('from %s import ModelSystem' % model_system_class_path)
+            exec('from %s import ModelSystem' % model_system_class_path, globals())
 
             model_system = ModelSystem()
             self.model_system = model_system
@@ -217,7 +217,7 @@ class RunManager(AbstractService):
             run_resources["skip_urbansim"] = skip_urbansim
             self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0], run_name = run_name)
 
-            exec('from %s import ModelSystem' % model_system_class_path)
+            exec('from %s import ModelSystem' % model_system_class_path, globals())
 
             # add years run
             model_system = ModelSystem()

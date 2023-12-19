@@ -79,7 +79,7 @@ def copy_dataset(dataset):
     attr_list = ['set', 'attribute_names', 'id_mapping', 'nonderived_attribute_names']
     new_dataset = copy.copy(dataset)
     for attr in attr_list:
-        exec("new_dataset." + attr + " = copy.deepcopy(dataset." + attr + ")")
+        exec("new_dataset." + attr + " = copy.deepcopy(dataset." + attr + ")", globals())
     return new_dataset
 
 def create_predict_table(LCM, agent_set, agents_index, observed_choices_id, data_objects, geographies=[]):

@@ -14,7 +14,7 @@ from opus_core import paths
 
 #loads system variables
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-exec(compile(open(path, "rb").read(), path, 'exec')) 
+exec(compile(open(path, "rb").read(), path, 'exec'), globals()) 
 
 #Runs all the tests
 def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) :

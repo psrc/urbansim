@@ -183,7 +183,7 @@ class esri_storage(Storage):
                 else:
                     exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], column_value[i])
                 # Execute the statement built above
-                exec(exec_stmt)
+                exec(exec_stmt, globals())
             # Insert the row
             rows.InsertRow(row)
 
@@ -247,7 +247,7 @@ class esri_storage(Storage):
         # converting unicode and the special 'PyTime'
         # types to strings
         while row:
-            exec(exec_stmt)
+            exec(exec_stmt, globals())
             if type(row_values) != tuple:
                 row_values = (row_values,)
             x = 0

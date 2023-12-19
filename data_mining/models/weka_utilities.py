@@ -4,7 +4,7 @@ from opus_core import paths
 
 #loads system variables                                                                               
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-exec(compile(open(path, "rb").read(), path, 'exec')) 
+exec(compile(open(path, "rb").read(), path, 'exec'), globals()) 
 
 #utility functions used for WEKA models
 def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query_manager, model):

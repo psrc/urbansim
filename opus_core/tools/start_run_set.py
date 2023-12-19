@@ -62,7 +62,7 @@ if __name__ == "__main__":
             # TODO: Once all fully-specified configurations are stored as classes,
             #       get rid of this use.
             import_stmt = 'from %s import run_configuration as config' % opus_path
-            exec(import_stmt)
+            exec(import_stmt, globals())
         insert_auto_generated_cache_directory_if_needed(config)
     elif options.xml_configuration is not None:
         if options.scenario_name is None:

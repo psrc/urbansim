@@ -200,7 +200,7 @@ class XmlController_DataTools(XmlController):
             module_name = tool_node.find('class_module').text
             import_path = params['tool_path'] + '.' + module_name
             importString = "from %s import opusRun" % (import_path)
-            exec(importString)
+            exec(importString, globals())
         except Exception as e:
             print(e)
             MessageBox.error(mainwindow = self.view,
@@ -272,7 +272,7 @@ class XmlController_DataTools(XmlController):
                 tool_path = get_path_to_tool_modules(self.project)
                 import_path = tool_path + '.' + module_name
                 importString = "from %s import opusRun" % (import_path)
-                exec(importString)
+                exec(importString, globals())
                 tool_config_to_tool_name[tool_config_node] = import_path
             except Exception as e:
                 MessageBox.error(mainwindow = self.view,

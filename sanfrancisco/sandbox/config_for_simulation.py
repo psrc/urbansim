@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from getpass import getuser
-exec('from %s_simulation_config import my_configuration' % getuser())
+exec('from %s_simulation_config import my_configuration' % getuser(), globals())
 from opus_core.configuration import Configuration
 
 from urbansim.configs.base_config_zone import run_configuration as config

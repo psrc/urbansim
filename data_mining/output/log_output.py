@@ -10,7 +10,7 @@ from opus_core import paths
 
 #loads system variables                                                                                  
 path = paths.get_opus_home_path("src", "data_mining", "SYSTEM_VARIABLES.py")
-exec(compile(open(path, "rb").read(), path, 'exec')) 
+exec(compile(open(path, "rb").read(), path, 'exec'), globals()) 
 
 class Log_manager :
     def __init__(self, xml_elem, config_address):

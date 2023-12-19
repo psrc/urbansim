@@ -2125,7 +2125,7 @@ class AbstractDataset(object):
         attr_list = ['id_mapping', '_primary_attribute_names']
         new_dataset = copy.copy(self)
         for attr in attr_list:
-            exec("new_dataset." + attr + " = copy.deepcopy(self." + attr + ")")
+            exec("new_dataset." + attr + " = copy.deepcopy(self." + attr + ")", globals())
         new_dataset.attribute_boxes = {}
         for attr in list(self.attribute_boxes.keys()):
             new_dataset.attribute_boxes[attr] = AttributeBox(

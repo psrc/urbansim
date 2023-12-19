@@ -805,7 +805,7 @@ class XMLConfiguration(object):
         else:
             # use the fully-qualified class name rather than a 'from pkg import classname'
             # to avoid cluttering up the local name space
-            exec('import %s' % path)
+            exec('import %s' % path, globals())
             cls = eval('%s.%s' % (path, class_name))
         inst = cls.__new__(cls)
         inst.__init__(**keyword_args)

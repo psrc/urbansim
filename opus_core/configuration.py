@@ -70,7 +70,7 @@ class Configuration(GeneralResources):
     def copy(self):
         """Return a new instance of same class populated with copy of the same data."""
         ev = 'from %s import %s as my_class' % (self.__module__, self.__class__.__name__)
-        exec(ev)
+        exec(ev, globals())
         new_copy = my_class()
         
         # Remove any data created by the import
@@ -251,10 +251,10 @@ class ConfigurationTests(opus_unittest.OpusTestCase):
                 }
             }
         c = Configuration(data)
-        f = open('c.pickle', 'w')
+        f = open('c.pickle', 'wb')
         pickle.dump(c, f)
         f.close()
-        f = open('c.pickle', 'r')
+        f = open('c.pickle', 'rb')
         d = Configuration(pickle.load(f))
         f.close()
         self.assertEqual(c['top_2']['middle_a'], d['top_2']['middle_a'])

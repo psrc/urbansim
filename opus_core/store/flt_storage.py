@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import re
-from types import StringType
+from types import *
 from .file_flt_storage import file_flt_storage
 from .sftp_flt_storage import sftp_flt_storage
         
@@ -13,7 +13,7 @@ def flt_storage(storage_location):
     """
     ## TODO: this should be merged to storage_factory class, but it requires to refactor
     ## all direct references to flt_storage to use storage_factory instead 
-    if type(storage_location) is StringType and re.search("^sftp://", storage_location):
+    if type(storage_location) is str and re.search("^sftp://", storage_location):
         return sftp_flt_storage(storage_location)
     else:
         return file_flt_storage(storage_location)

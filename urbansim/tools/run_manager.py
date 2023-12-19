@@ -45,7 +45,7 @@ class RunManager(CoreRunManager):
             run_resources["skip_travel_model"] = skip_travel_model
             self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0])
 
-            exec('from %s import ModelSystem' % model_system)
+            exec('from %s import ModelSystem' % model_system, globals())
 
             # add years run
             model_system = ModelSystem()

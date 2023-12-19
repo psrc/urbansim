@@ -39,7 +39,7 @@ if __name__ == "__main__":
             config = get_config_from_opus_path(opus_path)
         except ImportError:
             import_stmt = 'from %s import run_configuration as config' % opus_path
-            exec(import_stmt)
+            exec(import_stmt, globals())
     config['cache_directory'] = options.cache_directory
     
     results = run_manager.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % options.run_id)

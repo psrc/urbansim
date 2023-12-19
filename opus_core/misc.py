@@ -83,7 +83,7 @@ def directory_path_from_opus_path(opus_path):
     e.g. 'opus_core.docs.database_tables' might be translated to 'C:\workspace\opus_core\docs\database_tables'
     """
     parts = opus_path.split('.')
-    exec('import %s as _start_package' % parts[0])
+    exec('import %s as _start_package' % parts[0], globals())
     path = _start_package.__path__[0]
     if len(parts) > 1:
         for part in parts[1:]:
@@ -684,11 +684,11 @@ def create_import_for_camel_case_class(opus_path, import_as=None):
 def get_config_from_opus_path(opus_path):
     class_name = get_camel_case_class_name_from_opus_path(opus_path)
     import_stmt = 'from %s import %s' % (opus_path, class_name)
-    exec(import_stmt)
+    exec(import_stmt, globals())
 
     # Create a local variable 'config' with the configuration.
     stmt = 'config = %s()' % class_name
-    exec(stmt)
+    exec(stmt, globals())
 
     # Return the config that we just created.
     return config
@@ -738,7 +738,7 @@ def try_transformation(data, transformation):
         tdata = data
     else:
         try:
-            exec("from numpy import %s" % transformation)
+            exec("from numpy import %s" % transformation, globals())
             tdata = eval("%s(data)" % transformation)
         except:
             try:
