@@ -292,26 +292,26 @@ class BayesianMelding(MultipleRuns):
         return ones(dataset.size(), dtype="int32")
 
     def estimate_bias(self):
-        mode="wb"
+        mode="w"
         for l in list(self.mu.keys()):
             self.ahat[l] = (reshape(self.y[l], (self.y[l].size,1)) - self.mu[l]).mean()
             # for zone-specific bias
             #self.ahat[l] = mean(reshape(self.y[l], (self.y[l].size,1)) - self.mu[l], axis=1)
             if l > 0:
-                mode="ab" # add to existing file
+                mode="a" # add to existing file
             write_to_text_file(os.path.join(self.output_directory, self.bias_file_name),
                            array([self.ahat[l]]), mode=mode)
                            # for zone-specific bias
                            #self.ahat[l], mode=mode, delimiter=" ")
 
     def estimate_variance(self):
-        mode="wb"
+        mode="w"
         for l in list(self.mu.keys()):
             self.v[l] = zeros(self.number_of_runs, dtype=float32)
             for i in range(self.number_of_runs):
                 self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
             if l > 0:
-                mode="ab" # add to existing file
+                mode="a" # add to existing file
             write_to_text_file(os.path.join(self.output_directory, self.variance_file_name),
                            self.v[l], mode=mode, delimiter=" ")
 
@@ -768,7 +768,7 @@ class BayesianMeldingFromFile(BayesianMelding):
             2. bias variance  
         """
         content = load_from_text_file(filename)
-        nvar = (content.size-1)/2
+        nvar = int((content.size-1)/2)
         self.base_year, self.year = [int(x) for x in content[0].split(' ')]
         self.variable_names = []
         self.ahat = {}

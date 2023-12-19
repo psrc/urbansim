@@ -198,7 +198,7 @@ class ModelSystem(object):
                 for dataset_name, its_dataset in dataset_pool.datasets_in_pool().items():
                     self.vardict[dataset_name] = its_dataset
                     datasets[dataset_name] = its_dataset
-                    exec('%s=its_dataset' % dataset_name, globals())
+                    exec('%s=its_dataset' % dataset_name, globals(), locals())
 
                 # This is needed. It resides in locals()
                 # and is passed on to models as they run.
@@ -270,7 +270,7 @@ class ModelSystem(object):
                             for model_name in list(import_replacement_config.keys()):
                                 pair = import_replacement_config[model_name]
                                 temp = pair[1]
-                                exec(("%s = temp") % pair[0], globals())
+                                exec(("%s = temp") % pair[0], globals(), locals())
 
                         # init part
                         model = self.do_init(locals())
@@ -282,14 +282,14 @@ class ModelSystem(object):
                             model.set_model_system_status_parameters(year, n_models, model_number, resources.get('status_file_for_gui', None))
                             model.write_status_for_gui()
                             # prepare part
-                            exec(self.do_prepare(locals()), globals())
+                            exec(self.do_prepare(locals()), globals(), locals())
                             processmodel_config = controller_config[process]
                             if "output" in list(processmodel_config.keys()):
                                 outputvar = processmodel_config["output"]
                             else:
                                 outputvar = "process_output"
                             self.vardict[outputvar] = self.do_process(locals())
-                            exec(outputvar+'=self.vardict[outputvar]', globals())
+                            exec(outputvar+'=self.vardict[outputvar]', globals(), locals())
 
                             # check command file from gui, if the simulation should be stopped or paused
                             self.do_commands_from_gui(resources.get('command_file_for_gui', None))

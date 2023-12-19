@@ -118,7 +118,8 @@ def create_package(package_parent_dir, package_name):
     new_package_dir=path(package_parent_dir) / package_name
     if not os.path.exists(new_package_dir.parent):
         os.makedirs(new_package_dir.parent)
-    copytree(package_template, new_package_dir, skip_subdirectories=['CVS', '.svn'])
+    #copytree(package_template, new_package_dir, skip_subdirectories=['CVS', '.svn'])
+    shutil.copytree(package_template, new_package_dir, ignore = shutil.ignore_patterns('CSV', '.svn', '*.pyc', '.git'))
     # Replace each instance of opus_core.package_template in any of the
     # template files with the actual name of this Opus package.
     replace_string_in_files(new_package_dir, 'opus_core.package_template', package_name)

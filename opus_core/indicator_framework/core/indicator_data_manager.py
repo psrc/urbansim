@@ -170,7 +170,7 @@ class IndicatorDataManager:
             params['attribute'] = params['attributes'][0]
             del params['attributes']
                     
-        exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class), globals())
+        exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class), globals(), locals())
         indicator = locals()[indicator_class](**params)
         
         for attr, value in list(non_constructor_attributes.items()):

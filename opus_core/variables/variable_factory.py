@@ -65,6 +65,7 @@ class VariableFactory(object):
                 try:
                     stmt = 'from %s.%s.aliases import aliases' % (package_name, dataset_name)
                     exec(stmt, globals())
+                    aliases = globals()["aliases"]
                 except ImportError:
                     aliases = []
                 for a in aliases:
@@ -100,6 +101,7 @@ class VariableFactory(object):
                 ev = "from %s import %s as variable_subclass" % (module, true_short_name)
                 debug.print_debug("Evaluating '" + ev + "'.",12)
                 exec(ev, globals())
+                variable_subclass = globals()["variable_subclass"]
                 debug.print_debug("Successful.", 12)
             except ImportError as e:
                 if not quiet:

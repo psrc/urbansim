@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import copy, os, pprint
+import copy, os, pprint, io
 from numpy import array
 from lxml.etree import ElementTree, tostring, fromstring, Element, _Comment, Comment
 from opus_core.configuration import Configuration
@@ -164,7 +164,7 @@ class XMLConfiguration(object):
         (a string representing an xml configuration).  Ignore any temporary or
         inherited nodes in newconfig_str (this gets freshly initialized)."""
         # Note that this doesn't change the name of this configuration, or the full_filename
-        str_io = StringIO.StringIO(newconfig_str)
+        str_io = io.BytesIO(newconfig_str.encode())
         etree = ElementTree(file=str_io)
         # don't strip comments anymore
         # remove any old followers nodes
@@ -477,7 +477,7 @@ class XMLConfiguration(object):
         if self.xml_version < minimum_xml_version:
             raise XMLVersionException(("XML version for this project file is less than the minimum required XML version.\n"
                 + "  File name: %s \n  XML version found: %s  \n  minimum required: %s") % (self.full_filename, self.xml_version, minimum_xml_version))
-        if self.xml_version > maximum_xml_version:
+        if not self.xml_version == maximum_xml_version:
             raise XMLVersionException(("XML version for this project file is greater than the maximum expected XML version.\n"
                 + "(Likely fix: update your version of the Opus/UrbanSim code.)\n"
                 + "  File name: %s \n  XML version found: %s \n  maximum expected: %s") % (self.full_filename, self.xml_version, maximum_xml_version))
@@ -1353,6 +1353,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config['years_to_run'], (1981, 2000))
 
     def test_find(self):
+        # HS 12/19/2023: it only works with lxml version 4.6.5 (pip install lxml==4.6.5) 
         # CK: disabling this for a while -- it's unreliable to test string representations
         # as the arguments can appear in an arbitrary order
 
@@ -1512,7 +1513,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test saving as a new file name - this should also test save()
         f = os.path.join(self.test_configs, 'grandchild1.xml')
         c = XMLConfiguration(f)
-        str_io = io.StringIO()
+        str_io = io.BytesIO()
         c.save_as(file_object = str_io)
         # compare the strings removing white space
         saved_root = fromstring(str_io.getvalue())
@@ -1574,7 +1575,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           </opus_project>
         """
         config.update(update_str)
-        str_io = io.StringIO()
+        str_io = io.BytesIO()
         config.save_as(file_object = str_io)
         saved_root = fromstring(str_io.getvalue())
         should_be_root = fromstring(
@@ -1628,7 +1629,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config.full_tree.find('general/mydict/x').get('followers'), 'd')
         # now write it out to a StringIO file-like object, and make sure it has
         # the correct contents
-        str_io = io.StringIO()
+        str_io = io.BytesIO()
         config.save_as(file_object = str_io)
         element_saved = fromstring(str_io.getvalue())
         # squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')

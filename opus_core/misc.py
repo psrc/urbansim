@@ -110,14 +110,14 @@ def read_dataset_from_flt(dataset_name, file_path='.'):
 def write_to_file(filename, data, byteorder=DEFAULT_BYTEORDER):
     """Writes float data to a file."""
     byteswap_if_needed(data, byteorder)
-    float_file = file(filename, mode="wb")
+    float_file = open(filename, mode="w")
     data.tofile(float_file)
     float_file.close()
     byteswap_if_needed(data, byteorder)
 
-def write_to_text_file(filename, data, mode="wb", delimiter="\n", end_delimiter="\n"):
+def write_to_text_file(filename, data, mode="w", delimiter="\n", end_delimiter="\n"):
     """Writes data to a text file."""
-    text_file = file(filename, mode=mode)
+    text_file = open(filename, mode=mode)
     try:
         if isinstance(data, list):
             n = len(data)
@@ -133,13 +133,13 @@ def write_to_text_file(filename, data, mode="wb", delimiter="\n", end_delimiter=
             text_file.write(end_delimiter)
 
     finally:
-        text_file.close
+        text_file.close()
 
-def write_table_to_text_file(filename, table, mode="wb", delimiter=' '):
+def write_table_to_text_file(filename, table, mode="w", delimiter=' '):
     """Writes table (2D array) into a text file. Entries in each row are delimited by 'delimiter'"""
     write_to_text_file(filename, table[0,:], mode=mode, delimiter=delimiter)
     for k in range(1,table.shape[0]):
-        write_to_text_file(filename, table[k,:], delimiter=delimiter, mode="ab")
+        write_to_text_file(filename, table[k,:], delimiter=delimiter, mode="a")
 
 def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=' ', header=False, comment=None):
 
@@ -160,16 +160,16 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
             line = text_file.readline()
         return line
     
-    text_file = file(filename, "rb")
+    text_file = open(filename, "r")
     
     line = readlineandignorecomments()
  
     header_line = None
     if header:
-        header_line = re.split('\s+', line)[0:-1]
+        header_line = re.split('[ ]+', line)[0:-1]
         line = readlineandignorecomments()
 
-    line_list = re.split('\s+', line)
+    line_list = re.split('[ ]+', line)
     ncol = len(line_list)-1
     data = []
     nrow=0
@@ -178,7 +178,7 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
         for column_number in range(ncol):
             data.append(line_list[column_number])
         line = readlineandignorecomments()
-        line_list = re.split('\s+', line)
+        line_list = re.split('[ ]+', line)
     text_file.close()
     if convert_to_float:
         def split_and_convert(row):
@@ -196,7 +196,7 @@ def load_from_text_file(filename, convert_to_float=False, split_delimiter=' ', c
     """
     from numpy import array
 
-    text_file = file(filename, "rb")
+    text_file = open(filename, "r")
     line = text_file.readline()
     data = []
     while (line != ''):
@@ -232,8 +232,9 @@ def replace_string_in_files(directory, find, replace):
 
     dir = path(directory)
     for file in dir.walkfiles():
-        f = open(file)
+        f = open(file, mode = "r")
         in_text = f.read()
+        f.close()
         out_text = in_text.replace(find, replace)
         if in_text != out_text:
             file.write_text(out_text)
@@ -1206,7 +1207,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         file_name = os.path.join(self.temp_dir,'misc_test_file')
         arr = array(['a', 'b', 'c'])
         delim = '|'
-        write_to_text_file(file_name, arr, 'wb', delim)
+        write_to_text_file(file_name, arr, 'w', delim)
         written_data = ''
         i=0
         for i in range(len(arr)-1):

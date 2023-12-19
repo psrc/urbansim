@@ -6,12 +6,14 @@
 # Match function for parse trees, along with parse tree patterns for use in autogenerating variable classes.
 # See the file utils/parsetree_pattern_generator for utility functions for generating new tree fragments.
 
-from types import ListType, TupleType
 
 # the match function is adapted from the example in the Python documentation for the parser module
 # Section 18.1.6.2 Information Discovery
 # It matches a pattern against a parse tree (represented as a tuple), and extracts variables
 # It is augmented from the Python documentation version with patterns that allow optional element.
+
+from itertools import zip_longest
+
 def match(pattern, data, vars=None):
     """Match `data' to `pattern', with variable extraction.
 
@@ -44,7 +46,7 @@ def match(pattern, data, vars=None):
     if vars is None:
         vars = {}
     type_pattern = type(pattern)
-    if type_pattern is ListType:
+    if type_pattern is list:
         lpattern = len(pattern)
         if lpattern==1:
             # pattern is of the form ['varname']
@@ -56,7 +58,7 @@ def match(pattern, data, vars=None):
             else:
                 return match(pattern[1], data, vars)
         raise ValueError('bad syntax for pattern')
-    if type_pattern is not TupleType:
+    if type_pattern is not tuple:
         return (pattern == data), vars
     if data is None:
         # we're trying to match a pattern that isn't a list (so not an optional element)
@@ -64,8 +66,8 @@ def match(pattern, data, vars=None):
         return False, vars
     if len(data)>len(pattern):
         return False, vars
-    # the call to 'map' extends data with Nones to make it the same length as 'pattern'
-    for pattern, data in map(None, pattern, data):
+
+    for pattern, data in zip_longest(pattern, data):
         same, vars = match(pattern, data, vars)
         if not same:
             break
@@ -135,7 +137,7 @@ class Tests(opus_unittest.OpusTestCase):
         between versions of Python.
         """
         full_expr = "urbansim.gridcell.population"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
@@ -153,7 +155,7 @@ class Tests(opus_unittest.OpusTestCase):
         for Python 2.7.
         """
         full_expr = "urbansim.gridcell.population #comment"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
@@ -170,7 +172,7 @@ class Tests(opus_unittest.OpusTestCase):
         this checks if comments terminated by newline are supported for a variable.  Currently broken for Python 2.6.
         """
         full_expr = "urbansim.gridcell.population #comment\n"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_EXPRESSION, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
@@ -186,7 +188,7 @@ class Tests(opus_unittest.OpusTestCase):
         Parse an assignment and match it.  Similar to test_full_expression.
         """
         full_expr = "myvar = urbansim.gridcell.population"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
@@ -204,7 +206,7 @@ class Tests(opus_unittest.OpusTestCase):
         for Python 2.7.
         """
         full_expr = "myvar = urbansim.gridcell.population # comment"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']
@@ -221,7 +223,7 @@ class Tests(opus_unittest.OpusTestCase):
         this checks if comments terminated by newline are supported for a variable.  Currently broken for Python 2.6.
         """
         full_expr = "myvar = urbansim.gridcell.population # comment\n"
-        t = parser.ast2tuple(parser.suite(full_expr))
+        t = parser.st2tuple(parser.suite(full_expr))
         same1, vars1 = match(FULL_TREE_ASSIGNMENT, t)
         self.assertTrue(same1, msg="pattern did not match")
         expr_tree = vars1['expr']

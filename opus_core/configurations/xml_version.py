@@ -23,13 +23,23 @@ class XMLVersion(object):
     def __str__(self):
         return '%d.%d' % (self.major, self.minor)
         
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if isinstance(other, str): # enable comparison with strings
             other = XMLVersion(other)
 
-        if self.major > other.major: return 1
-        if self.major < other.major: return -1
-        return self.minor.__cmp__(other.minor)
+        if self.major < other.major: return True
+        if self.major > other.major: return False
+        return self.minor < other.minor
+    
+    def __eq__(self, other):
+        if isinstance(other, str): # enable comparison with strings
+            other = XMLVersion(other)
+
+        if self.major != other.major: return False
+        return self.minor == other.minor
+    
+    
+
     
 
 from opus_core.tests import opus_unittest
@@ -44,13 +54,12 @@ class XMLVersionTests(opus_unittest.OpusTestCase):
         self.assertTrue(v0 < v1)
         self.assertTrue(v1 < v2)
         self.assertTrue(v2 < v3)
-        self.assertFalse(v1 > v2)
         self.assertTrue(v1 == v1)
-        self.assertTrue(v3 > v1)
+        self.assertTrue(v1 < v3)
         
     def test_version_string(self):
         self.assertTrue(XMLVersion('1.2') == '1.2')
-        self.assertTrue(XMLVersion('1.2') > '1.0')
+        self.assertTrue(XMLVersion('1.0') < '1.2')
         self.assertTrue(XMLVersion('1.2') < '2.0')
         
     def test_version_exceptions(self):

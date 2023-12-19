@@ -18,13 +18,13 @@ from pprint import pprint
 # in some code you'll need to replace the quotes with nothing
 # (except for the actual string constants ...)
 def print_eval_tree(expr):
-    t = parser.ast2tuple(parser.expr(expr))
+    t = parser.st2tuple(parser.expr(expr))
 #    t = parser.ast2tuple(parser.suite(expr))
     pprint(integer2symbolic(t))
 
 # same as print_eval_tree, except as for use with 'exec' (for definitions, statements, etc)
 def print_exec_tree(expr):
-    t = parser.ast2tuple(parser.suite(expr))
+    t = parser.st2tuple(parser.suite(expr))
     pprint(integer2symbolic(t))
 
 

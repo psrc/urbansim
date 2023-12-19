@@ -5,7 +5,6 @@
 # helper functions for autogen_variable_factory
 
 import symbol, token
-from types import TupleType
 
 
 # return a string in quotes, or else 'None' 
@@ -35,7 +34,7 @@ def parsetree_substitute(parsetree, dict):
     """function that takes a parsetree and returns a new tree, substituting subtrees in dict 
        with the corresponding replacement tree.  dict is a dictionary whose keys are the 
        tree fragments to replace and whose values are the replacement tree fragments"""
-    if type(parsetree) is TupleType:
+    if type(parsetree) is tuple:
         newtree = ()
         for t in parsetree:
             if t in dict:
@@ -65,31 +64,31 @@ class Tests(opus_unittest.OpusTestCase):
     
     def test_var_parsetree_to_string(self):
         expr = "x"
-        t = parser.ast2tuple(parser.suite(expr))
+        t = parser.st2tuple(parser.suite(expr))
         s = parsetree_to_string(t)
         self.assertEqual(s, expr)
 
     def test_constant_parsetree_to_string(self):
         expr = "42"
-        t = parser.ast2tuple(parser.suite(expr))
+        t = parser.st2tuple(parser.suite(expr))
         s = parsetree_to_string(t)
         self.assertEqual(s, expr)
 
     def test_expr1_parsetree_to_string(self):
         expr = "urbansim.gridcell.population"
-        t = parser.ast2tuple(parser.suite(expr))
+        t = parser.st2tuple(parser.suite(expr))
         s = parsetree_to_string(t)
         self.assertEqual(s, expr)
 
     def test_expr2_parsetree_to_string(self):
         expr = "myneighborhood.aggregate(10*myzone.my_variable,intermediates=[myfaz,myfazdistr],function=sum)"
-        t = parser.ast2tuple(parser.suite(expr))
+        t = parser.st2tuple(parser.suite(expr))
         s = parsetree_to_string(t)
         self.assertEqual(s, expr)
         
     def test_adjacent_keywords_parsetree_to_string(self):
         expr = "x not in dict and y<3*z"
-        t = parser.ast2tuple(parser.suite(expr))
+        t = parser.st2tuple(parser.suite(expr))
         s = parsetree_to_string(t)
         self.assertEqual(s, expr)
        

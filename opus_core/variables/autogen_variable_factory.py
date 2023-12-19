@@ -11,7 +11,6 @@
 # Note regarding imports: even if PyDev complains that some of these imports are unused, 
 # generally they ARE in fact used when executing the generated code.
 import parser
-from types import TupleType
 from opus_core.variables.variable import Variable
 from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.datasets.dataset_factory import DatasetFactory
@@ -134,7 +133,7 @@ class AutogenVariableFactory(object):
         # statements, which parses correctly so wouldn't be caught by the Python compiler).
         if expr.strip() == '':
             raise ValueError("empty expression")
-        full_tree = parser.ast2tuple(parser.suite(expr))
+        full_tree = parser.st2tuple(parser.suite(expr))
         same, vars = match(FULL_TREE_EXPRESSION, full_tree)
         if same:
             return (vars['expr'], None)
@@ -206,14 +205,14 @@ class AutogenVariableFactory(object):
             (classname, self._generate_dependencies_method(), self._generate_name_method(), self._generate_compute_method())
         # Now create the new class by executing the string we've built up.
         # This class will be defined in the current environment (might want to change that later).
-        exec(classexpr, globals())
+        exec(classexpr, globals(), locals())
         # Return a tuple consisting of the name of the new class and the new class
         return (classname, locals()[classname])
     
     def _analyze_tree(self, tree):
         # add the dependents of parse tree 'tree' to 'dependents'
         # base case - if tree isn't a tuple, we're at a leaf -- no dependents in that case
-        if type(tree) is not TupleType:
+        if type(tree) is not tuple:
             return
         # if tree matches the fully qualified variable subpattern, then add that variable as the dependent
         same, vars = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE, tree)
