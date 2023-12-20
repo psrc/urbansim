@@ -6,7 +6,7 @@ import os
 import re
 import xml.etree.cElementTree as ET
 
-from numpy import array, dtype, empty
+from numpy import array, dtype, empty, char
 
 from opus_core.opus_error import OpusError
 from opus_core.store.storage import Storage
@@ -111,9 +111,9 @@ class fixed_field_storage(Storage):
         except:
             raise Exception('Could not parse the format string for the fixed field indicator: %s'%format)
         # Normalize the format XML string
-        format = ET.tostring(format_et).replace('\n','').replace('\r','')
+        format = ET.tostring(format_et).decode().replace('\n','').replace('\r','')
 
-        output = open(self._get_file_path_for_table(table_name), 'wb')
+        output = open(self._get_file_path_for_table(table_name), 'w')
 
         # Write out the format XML, either to the data header, or to a separate file
         if self._format_location == self.Location.HEADER:
@@ -121,7 +121,7 @@ class fixed_field_storage(Storage):
                          + format.replace(self._line_terminator,'')
                          + self._line_terminator)
         elif self._format_location == self.Location.FILE:
-            format_output = open(self._get_format_file_path_for_table(table_name), 'wb')
+            format_output = open(self._get_format_file_path_for_table(table_name), 'w')
             format_output.write(format)
             format_output.close()
 
@@ -130,6 +130,8 @@ class fixed_field_storage(Storage):
             row = {}
             for column_name, column_values in table_data.items():
                 row[column_name] = column_values[row_index]
+                if isinstance(row[column_name], bytes):
+                    row[column_name] = row[column_name].decode()    
             formatted_row = python_format % row
             if len(formatted_row) != target_size:
                 raise ValueError('Input data went over fixed field size.')
@@ -309,13 +311,13 @@ class TestFixedFieldStorageBase(object):
     format_list = [['strs','5s'], ['flts','6.2f'], ['ints',' 05i']]
     data_in = {
         'ints': array([1,2202,-303]),
-        'strs': array(['one', 'two', 'three']),
+        'strs': char.encode(['one', 'two', 'three']),
         'flts': array([1.11,22.2,3.3333]),
         'misc': array([10,20,30])
         }
     data_out = {
         'ints': array([1,2202,-303]),
-        'strs': array(['one', 'two', 'three']),
+        'strs': char.encode(['one', 'two', 'three']),
         'flts': array([1.11,22.2,3.33])
         }
     data_text = '  one  1.11 0001\n  two 22.20 2202\nthree  3.33-0303\n'
@@ -372,10 +374,10 @@ class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldSto
         file.close()
         
     def fixed_field_read_setup(self):
-        format_file = open(self.temp_dir+'/foo.fmt', 'wb')
+        format_file = open(self.temp_dir+'/foo.fmt', 'w')
         format_file.write(self.format_xml)
         format_file.close()
-        data_file = open(self.temp_dir+'/foo.dat', 'wb')
+        data_file = open(self.temp_dir+'/foo.dat', 'w')
         data_file.write(self.data_text)
         data_file.close()
     
@@ -404,7 +406,7 @@ class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldS
         file.close()
 
     def fixed_field_read_setup(self):
-        data_file = open(self.temp_dir+'/foo.dat', 'wb')
+        data_file = open(self.temp_dir+'/foo.dat', 'w')
         data_file.write('# ' + self.format_xml.replace('\n','') + '\n')
         data_file.write(self.data_text)
         data_file.close()

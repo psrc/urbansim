@@ -5,7 +5,6 @@
 from opus_core.logger import logger
 from opus_core.store.storage import Storage
 from numpy import empty, append, ma, array
-from string import count, lower as lwr
 from random import randint
 import types, os
 
@@ -338,7 +337,7 @@ class esri_storage(Storage):
                 pass
             else:
                 #esri_column_types.append(str(field.Type))
-                esri_column_types[str(lwr(field.Name))] = str(field.Type)
+                esri_column_types[str(field.Name).lower()] = str(field.Type)
             field = fields.Next()
 
         return esri_column_types
@@ -664,6 +663,8 @@ if has_arcgis:
             esri_storage_object.write_table(table_name, table_data)
             table_exists = esri_storage_object.table_exists(table_name)
             self.assertEqual(table_exists, True)
+
+from opus_core.tests import opus_unittest
 
 if __name__ == '__main__':
     opus_unittest.main()

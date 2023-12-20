@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-from numpy import array
+from numpy import array, char
 from opus_core.misc import unique
 from opus_core.store.storage import Storage
 from opus_core.store.flt_storage import flt_storage
@@ -165,6 +165,12 @@ from opus_core.tests import opus_unittest
 from opus_core.opus_package import OpusPackage
 from numpy import int32
 
+def compare_dicts(first, second):
+    """Return whether two dicts of arrays are exactly equal"""
+    if first.keys() != second.keys():
+        return False
+    return all(np.array_equal(first[key], second[key]) for key in first)
+
 class AttributeCacheTests(opus_unittest.OpusTestCase):
     def setUp(self):
         opus_core_path = OpusPackage().get_opus_core_path()
@@ -223,8 +229,8 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
     def test_load_table_1980_if_not_in_1981(self):
         SimulationState().set_current_time(1981)
         expected = {
-            'county_id': array([39]),
-            'county_name': array(['Lane']),
+            'county_id': array([39], dtype = "int32"),
+            'county_name': char.encode(['Lane']),
             }
         actual = self.storage.load_table('counties')
         self.assertEqual(expected, actual)
@@ -241,7 +247,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         SimulationState().set_current_time(1980)
         expected = {
             'city_id': array([3, 1, 2], dtype='<i4'),
-            'city_name': array(['Unknown', 'Eugene', 'Springfield']),
+            'city_name': char.encode(['Unknown', 'Eugene', 'Springfield'])
             }
         actual = self.storage.load_table('cities')
         self.assertDictsEqual(expected, actual)
@@ -250,7 +256,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         SimulationState().set_current_time(1981)
         expected = {
             'city_id': array([3, 1, 2], dtype='<i4'),
-            'city_name': array(['NotUnknownAnymore', 'Eugene', 'Springfield']),
+            'city_name': char.encode(['NotUnknownAnymore', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
         self.assertDictsEqual(expected, actual)
@@ -260,7 +266,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         expected = {
             'dumb_dataset_id': array([1, 2, 3, 4], dtype='int32'),                                   ##attribute values read from 1981
             'dumb_number':     array([97, 101, 8, 79], dtype='int32'),                               ##attribute values read from 1981
-            'dumb_name':       array(['ninety-seven', 'one hundred one', 'eight'], dtype='|S15')   ##attribute values read from 1980
+            'dumb_name':       char.encode(['ninety-seven', 'one hundred one', 'eight'])   ##attribute values read from 1980
             }
         actual = self.storage.load_table('dumb_datasets')
         self.assertDictsEqual(expected, actual)

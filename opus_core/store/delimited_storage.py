@@ -23,9 +23,14 @@ class delimited_storage(Storage):
     
     # Grab all of the csv.QUOTE_* properties to save the user from the need to
     #     import csv when specifying a quoting behavior.
-    for property in dir(csv):
-        if property.startswith('QUOTE_'):
-            exec('%s = csv.%s' % (property, property), globals())
+    QUOTE_ALL = csv.QUOTE_ALL
+    QUOTE_MINIMAL = csv.QUOTE_MINIMAL
+    QUOTE_NONE = csv.QUOTE_NONE
+    QUOTE_NONNUMERIC = csv.QUOTE_NONNUMERIC
+    
+    #for property in dir(csv):
+    #    if property.startswith('QUOTE_'):
+    #        exec('%s = csv.%s' % (property, property), globals())
     
     def __init__(self, 
             storage_location, 
@@ -64,7 +69,7 @@ class delimited_storage(Storage):
             quoting = self._quoting
             skipinitialspace = self._skipinitialspace
         
-        csv.register_dialect(self._dialect_name, MyDialect)
+        csv.register_dialect(self._dialect_name, MyDialect) 
         
     def get_storage_location(self):
         return self._output_directory
@@ -89,7 +94,7 @@ class delimited_storage(Storage):
         column_size, column_names = self._get_column_size_and_names(table_data)
         
         if fixed_column_order is None:
-            column_names.sort()
+            column_names.sort(key=str.lower)
         else:
             column_names = fixed_column_order
         
@@ -239,8 +244,10 @@ class delimited_storage(Storage):
                 if inferred_column_types is None:
                     inferred_column_types = self.__infer_header_information_in_table(table_name)
                 column_types[i] = inferred_column_types[i]
+            elif re.match(r'U[0-9]+', column_types[i]):
+                column_types[i] = 'U'
             elif re.match(r'S[0-9]+', column_types[i]):
-                column_types[i] = 'S'
+                column_types[i] = 'S'                
                 
         return column_names, column_types
     
@@ -306,7 +313,7 @@ class delimited_storage(Storage):
             try:
                 float(column_value)
             except ValueError:
-                header_information.append('S')
+                header_information.append('U')
                 
             else:
                 header_information.append('f8')
@@ -567,7 +574,7 @@ class TestDelimitedStorage(TestStorageInterface):
         
     def test_get_header_information_in_table(self):
         dummy_column_names, column_types = self.storage._delimited_storage__get_header_information_from_table(self.table_name)      
-        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
+        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'U4']
         self.assertEqual(column_types, expected_column_types)
         
     def test_column_name_and_type_pattern(self):
@@ -615,7 +622,7 @@ class TestDelimitedStorage(TestStorageInterface):
         inferred_header_information = self.storage._delimited_storage__infer_header_information_in_table(
             table_name = self.table_name, 
             )
-        expected_header_information = ['f8', 'f8', 'S']
+        expected_header_information = ['f8', 'f8', 'U']
         self.assertEqual(expected_header_information, inferred_header_information)
         self.storage.write_table(
             table_name = 'foo',
@@ -631,7 +638,7 @@ class TestDelimitedStorage(TestStorageInterface):
         # Header information exists:
         column_names, column_types = self.storage._get_header_information(self.table_name)
         expected_column_names = ['attribute1', 'attribute2', 'attribute3']
-        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S']
+        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'U']
         self.assertEqual(expected_column_names, column_names)
         self.assertEqual(expected_column_types, column_types)
         # Make a file with no header information:
@@ -645,7 +652,7 @@ class TestDelimitedStorage(TestStorageInterface):
             foo.close()
         column_names, column_types = self.storage._get_header_information('foo')
         expected_column_names = ['attribute1', 'attribute2', 'attribute3']
-        expected_column_types = ['f8', 'f8', 'S']
+        expected_column_types = ['f8', 'f8', 'U']
         self.assertEqual(expected_column_names, column_names)
         self.assertEqual(expected_column_types, column_types)
         

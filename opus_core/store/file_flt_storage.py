@@ -240,7 +240,7 @@ from opus_core.tests import opus_unittest
 from opus_core.opus_package import OpusPackage
 from opus_core.store.storage import TestStorageInterface
 from opus_core.tests.utils.cache_extension_replacements import replacements
-from numpy import array, fromfile, int32
+from numpy import array, fromfile, int32, char
 from shutil import rmtree
 from tempfile import mkdtemp
 
@@ -285,7 +285,7 @@ class StorageTests(opus_unittest.OpusTestCase):
     def test_load_table(self):
         expected = {
             'city_id': array([3, 1, 2], dtype='<i4'),
-            'city_name': array(['Unknown', 'Eugene', 'Springfield']),
+            'city_name': char.encode(['Unknown', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
         self.assertDictsEqual(expected, actual)
@@ -321,7 +321,7 @@ class StorageWriteTests(TestStorageInterface):
             rmtree(self.temp_dir)
             
     def test_write_char_array(self):
-        expected = array(['string1', 'string227'])
+        expected = char.encode(['string1', 'string227'])
         table_data = {
             'char_column': expected,
             }
@@ -375,7 +375,7 @@ class StorageWriteTests(TestStorageInterface):
         
         column_name= "some_column"
         os.mkdir(os.path.join(self.temp_dir, self.table_name)) 
-        existing_file = file(os.path.join(self.temp_dir , self.table_name, column_name + ".li4"), "w")
+        existing_file = open(os.path.join(self.temp_dir , self.table_name, column_name + ".li4"), "w")
         existing_file.close()
         storage = file_flt_storage(storage_location=self.temp_dir)
         # Test writing 
@@ -392,9 +392,9 @@ class StorageWriteTests(TestStorageInterface):
 
         column_name= "some_column"
         os.mkdir(os.path.join(self.temp_dir, self.table_name)) 
-        existing_file_1 = file(os.path.join(self.temp_dir , self.table_name, column_name + ".li4"), "w")
+        existing_file_1 = open(os.path.join(self.temp_dir , self.table_name, column_name + ".li4"), "w")
         existing_file_1.close()
-        existing_file_2 = file(os.path.join(self.temp_dir , self.table_name, column_name + ".bi4"), "w")
+        existing_file_2 = open(os.path.join(self.temp_dir , self.table_name, column_name + ".bi4"), "w")
         existing_file_2.close()           
         storage = file_flt_storage(storage_location=self.temp_dir)
         # Test writing 
