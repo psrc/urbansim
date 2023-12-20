@@ -56,7 +56,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         logger.log_status('***********************************************', tags=tags, verbosity_level=verbosity_level)
         if warnflag:
             logger.log_warning(warnflag, tags=tags, verbosity_level=verbosity_level)
-        #logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=verbosity_level)
+        #logger.log_status('Elapsed time: ',time.perf_counter()-self.start_time, 'seconds', tags=tags, verbosity_level=verbosity_level)
 
         
     def run(self, data, upc_sequence, resources):

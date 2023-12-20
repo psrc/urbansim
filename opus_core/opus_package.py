@@ -158,7 +158,7 @@ class OpusPackageTests(opus_unittest.OpusTestCase):
         (path, package_name) = os.path.split(path)
         self.assertEqual(package_name, "opus_core")
 
-        self.assertRaises(ValueError, self.package.get_path_for_package, "...an invalid package name..")
+        self.assertRaises(ModuleNotFoundError, self.package.get_path_for_package, "...an invalid package name..")
         
     def test_create_package(self):
         test_package_name = "test_create_package"

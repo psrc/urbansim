@@ -33,11 +33,11 @@ def check_table(name):
 
 if __name__ == '__main__':
 
-    ti = time.clock()
+    ti = time.perf_counter()
     print("start - ",ti)
 
     db = MySQLdb.connect(user = 'root', passwd = '1234', db = 'ncpopsyn')
 
     clean_database(db)
 
-    print("End - ",time.clock()-ti)
+    print("End - ",time.perf_counter()-ti)

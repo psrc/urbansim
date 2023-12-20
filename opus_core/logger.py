@@ -303,8 +303,8 @@ class _Logger(Singleton):
         
     def memory_info(self):
         p = psutil.Process(os.getpid())
-        meminfo = p.get_memory_info() #returns (resident set size, virtual memory size)
-        if meminfo != None and len(meminfo) == 2:
+        meminfo = p.memory_info() #returns (resident set size, virtual memory size)
+        if meminfo != None and len(meminfo) > 1:
             return meminfo[1]
         return 0
     

@@ -147,7 +147,7 @@ class bfgs_nl_estimation(EstimationProcedure):
                                                             tvalues[index_of_not_fixed_values[i]], mingrad[i]), 
                               tags=tags, verbosity_level=vl)
         logger.log_status('***********************************************', tags=tags, verbosity_level=vl)
-        logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=vl)
+        logger.log_status('Elapsed time: ',time.perf_counter()-self.start_time, 'seconds', tags=tags, verbosity_level=vl)
         df=nvars+M-index_of_fixed_values.size
         lrts = -2*(l_0-l_1)
         return {"estimators":beta, "coefficient_names": names, "standard_errors":se, "other_measures":{"t_statistic": tvalues},

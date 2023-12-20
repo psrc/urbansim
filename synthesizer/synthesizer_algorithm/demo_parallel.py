@@ -45,8 +45,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 
     dbc = db.cursor()
 
-    tii = time.clock()
-    ti = time.clock()
+    tii = time.perf_counter()
+    ti = time.perf_counter()
 
 # Identifying the number of housing units in the disaggregate sample
 # Make Sure that the file is sorted by hhid
@@ -114,8 +114,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
                                                                                                    county, pumano, 
                                                                                                    tract, bg, parameters,
                                                                                                    project.selVariableDicts.hhldMargsModify)
-    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for GQ
     print('Step 1B: Running IPF procedure for Gqs... ')
@@ -126,8 +126,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
                                                                                                gq_dimensions, 
                                                                                                state, county, pumano, 
                                                                                                tract, bg, parameters)
-    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for Persons
     print('Step 1C: Running IPF procedure for Persons... ')
@@ -138,8 +138,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
                                                                                                        person_dimensions,
                                                                                                        state, county, pumano, 
                                                                                                        tract, bg, parameters)
-    print('IPF procedure for Persons completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Persons completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 
 #______________________________________________________________________
@@ -166,8 +166,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = synthesizer_algorithm.heuristic_algorithm.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix, parameters)
 
-    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPU procedure was completed in %.2f sec\n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 
 #_________________________________________________________________
@@ -264,14 +264,14 @@ def configure_and_run(fileLoc, geo, varCorrDict):
     for i in range(len(person_control_variables)):
         print('%s variable\'s marginal distribution sum is %d' %(person_control_variables[i], sum(person_marginals[i])))
 
-    print('Synthetic households created for the geography in %.2f\n' %(time.clock()-ti))
+    print('Synthetic households created for the geography in %.2f\n' %(time.perf_counter()-ti))
 
 
     db.commit()
     dbc.close()
     db.close()
 
-    print('Blockgroup synthesized in %.4f s' %(time.clock()-tii))
+    print('Blockgroup synthesized in %.4f s' %(time.perf_counter()-tii))
 
 def run_parallel(job_server, project, geoIds, varCorrDict):
 

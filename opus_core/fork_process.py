@@ -148,13 +148,13 @@ class TestForkProcess(opus_unittest.TestCase):
     def test_hide_error_messages_if_ask_to_run_silently(self):
         # Create file that raises an error when executed
         path_to_python_file_to_invoke = os.path.join(self.temp_dir, 'raise_exception.py')
-        f = file(path_to_python_file_to_invoke, 'w')
+        f = open(path_to_python_file_to_invoke, 'w')
         try:
             f.write('if __name__ == "__main__": raise Exception()')
         finally:
             f.close()
             
-        f = file(os.path.join(self.temp_dir, '__init__.py'), 'w')
+        f = open(os.path.join(self.temp_dir, '__init__.py'), 'w')
         try:
             f.write('')
         finally:

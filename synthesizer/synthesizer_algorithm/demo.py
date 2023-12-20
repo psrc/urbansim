@@ -38,8 +38,8 @@ def configure_and_run(project, geo, varCorrDict):
                          %(project.name, 'scenario', project.scenario))
     dbc = db.cursor()
 
-    tii = time.clock()
-    ti = time.clock()
+    tii = time.perf_counter()
+    ti = time.perf_counter()
 
 # Identifying the number of housing units in the disaggregate sample
 # Make Sure that the file is sorted by hhid
@@ -100,8 +100,8 @@ def configure_and_run(project, geo, varCorrDict):
                                                                              hhld_dimensions, 
                                                                              state, county, pumano, tract, bg, 
                                                                              parameters, project.selVariableDicts.hhldMargsModify)
-    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for GQ
     print('Step 2B: Running IPF procedure for Gqs... ')
@@ -110,8 +110,8 @@ def configure_and_run(project, geo, varCorrDict):
                                                                          gq_dimensions, 
                                                                          state, county, pumano, tract, bg, 
                                                                          parameters)
-    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for Persons
     print('Step 2C: Running IPF procedure for Persons... ')
@@ -121,8 +121,8 @@ def configure_and_run(project, geo, varCorrDict):
                                                                                  person_dimensions, 
                                                                                  state, county, 
                                                                                  pumano, tract, bg, parameters)
-    print('IPF procedure for Persons completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Persons completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #______________________________________________________________________
 # Creating the weights array
     print('Step 3: Running IPU procedure for obtaining weights that satisfy Household and Person type constraints... ')
@@ -146,8 +146,8 @@ def configure_and_run(project, geo, varCorrDict):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = heuristic_algorithm.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix, parameters)
 
-    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPU procedure was completed in %.2f sec\n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #_________________________________________________________________
     print('Step 4: Creating the synthetic households and individuals...')
 # creating whole marginal values
@@ -249,12 +249,12 @@ def configure_and_run(project, geo, varCorrDict):
     db.commit()
     dbc.close()
     db.close()
-    print('Blockgroup synthesized in %.4f s' %(time.clock()-tii))
+    print('Blockgroup synthesized in %.4f s' %(time.perf_counter()-tii))
 
 if __name__ == '__main__':
 
-    start = time.clock()
-    ti = time.clock()
+    start = time.perf_counter()
+    ti = time.perf_counter()
     db = MySQLdb.connect(host = 'localhost', user = 'root', passwd = '1234', db = 'aacog')
     dbc = db.cursor()
 #______________________________________________________________________
@@ -270,7 +270,7 @@ if __name__ == '__main__':
 
     geography = (5601, 170401, 3)
     configure_and_run(index_matrix, p_index_matrix, geography)
-    print('Synthesis for the geography was completed in %.2f' %(time.clock()-ti))
+    print('Synthesis for the geography was completed in %.2f' %(time.perf_counter()-ti))
 
     dbc.close()
     db.commit()

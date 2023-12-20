@@ -15,7 +15,7 @@ from numpy import ones, zeros
 
 def heuristic_adjustment(db, pumano, index_matrix, weights, control, sp_matrix, parameters):
     dbc = db.cursor()
-    ti =time.clock()
+    ti =time.perf_counter()
 
 
 # Adjusting for household types
@@ -33,7 +33,7 @@ def heuristic_adjustment(db, pumano, index_matrix, weights, control, sp_matrix, 
 #    print 'Starting the Heuristic Procedure'
     print('iteration, Sum_Wts_Hhld_Adj, Constraints, e-statistic, convergence (0/1)')
     while (iteration < parameters.ipuIter and convergence == 0):
-        ti = time.clock()
+        ti = time.perf_counter()
         iteration = iteration + 1
 
 # Adjusting for person types

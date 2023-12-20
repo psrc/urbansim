@@ -31,8 +31,8 @@ def configure_and_run(index_matrix, p_index_matrix, geoid):
     db = MySQLdb.connect(host = 'localhost', user = 'root', passwd = '1234', db = 'northcarolina')
     dbc = db.cursor()
 
-    tii = time.clock()
-    ti = time.clock()
+    tii = time.perf_counter()
+    ti = time.perf_counter()
 
 # Identifying the number of housing units in the disaggregate sample
 # Make Sure that the file is sorted by hhid
@@ -59,20 +59,20 @@ def configure_and_run(index_matrix, p_index_matrix, geoid):
 # Running IPF for Households
     print('Step 1A: Running IPF procedure for Households... ')
     hhld_objective_frequency, hhld_estimated_constraint = ipf.ipf_config_run(db, 'hhld', hhld_control_variables, hhld_dimensions, pumano, tract, bg)
-    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for GQ
     print('Step 1B: Running IPF procedure for Gqs... ')
     gq_objective_frequency, gq_estimated_constraint = ipf.ipf_config_run(db, 'gq', gq_control_variables, gq_dimensions, pumano, tract, bg)
-    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for GQ was completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Running IPF for Persons
     print('Step 1C: Running IPF procedure for Persons... ')
     person_objective_frequency, person_estimated_constraint = ipf.ipf_config_run(db, 'person', person_control_variables, person_dimensions, pumano, tract, bg)
-    print('IPF procedure for Persons completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Persons completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #______________________________________________________________________
 # Creating the weights array
     print('Step 2: Running IPU procedure for obtaining weights that satisfy Household and Person type constraints... ')
@@ -88,8 +88,8 @@ def configure_and_run(index_matrix, p_index_matrix, geoid):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = heuristic_algorithm.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix)
 
-    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPU procedure was completed in %.2f sec\n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #_________________________________________________________________
     print('Step 3: Creating the synthetic households and individuals...')
 # creating whole marginal values
@@ -149,7 +149,7 @@ def configure_and_run(index_matrix, p_index_matrix, geoid):
 
     print('Number of Synthetic Household - %d, and given Household total from the Census SF - %d' %(sum(max_p_housing_attributes[:,-2]), housingtotal))
     print('Number of Synthetic Persons - %d and given Person total from the Census SF - %d' %(sum(max_p_person_attributes[:,-1]), persontotal))
-    print('Synthetic households created for the geography in %.2f\n' %(time.clock()-ti))
+    print('Synthetic households created for the geography in %.2f\n' %(time.perf_counter()-ti))
 
     db.commit()
     dbc.close()
@@ -158,8 +158,8 @@ def configure_and_run(index_matrix, p_index_matrix, geoid):
 
 if __name__ == '__main__':
 
-    start = time.clock()
-    ti = time.clock()
+    start = time.perf_counter()
+    ti = time.perf_counter()
     db = MySQLdb.connect(host = 'localhost', user = 'root', passwd = '1234', db = 'northcarolina')
     dbc = db.cursor()
 #______________________________________________________________________
@@ -175,11 +175,11 @@ if __name__ == '__main__':
 
     geography = (2900, 20100, 1)
     configure_and_run(index_matrix, p_index_matrix, geography)
-    print('Synthesis for the geography was completed in %.2f' %(time.clock()-ti))
+    print('Synthesis for the geography was completed in %.2f' %(time.perf_counter()-ti))
 
     geography = (2802, 101, 1)
     configure_and_run(index_matrix, p_index_matrix, geography)
-    print('Synthesis for the geography was completed in %.2f' %(time.clock()-ti))
+    print('Synthesis for the geography was completed in %.2f' %(time.perf_counter()-ti))
 
 
     dbc.close()

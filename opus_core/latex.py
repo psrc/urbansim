@@ -155,8 +155,7 @@ class LatexTests(opus_unittest.OpusTestCase):
                       lines)
         self.assertTrue(m is not None, 'Too few \\hline\'s found!')           
 
-        m = re.search(r'^(\s|.)*\\hline(\s|.)*\\hline(\s|.)*\\hline(\s|.)*'
-                      '\\hline(\s|.)*$', lines)
+        m = re.search(r'^(\s|.)*\\hline(\s|.)*\\hline(\s|.)*\\hline(\s|.)*\\hline(\s|.)*$', lines)
         self.assertTrue(m is None, 'Too many \\hline\'s found!')
         
     

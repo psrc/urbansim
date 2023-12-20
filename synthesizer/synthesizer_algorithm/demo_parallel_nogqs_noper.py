@@ -45,8 +45,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 
     dbc = db.cursor()
 
-    tii = time.clock()
-    ti = time.clock()
+    tii = time.perf_counter()
+    ti = time.perf_counter()
 
 # Identifying the number of housing units in the disaggregate sample
 # Make Sure that the file is sorted by hhid
@@ -91,8 +91,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
                                                                              hhld_dimensions, 
                                                                              state, county, pumano, tract, bg, 
                                                                              parameters)
-    print('IPF procedure for Households completed in %.2f sec \n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPF procedure for Households completed in %.2f sec \n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 #______________________________________________________________________
 # Creating the weights array
@@ -117,8 +117,8 @@ def configure_and_run(fileLoc, geo, varCorrDict):
 # Running the heuristic algorithm for the required geography
     iteration, weights, conv_crit_array, wts_array = synthesizer_algorithm.heuristic_algorithm_nogqs_noper.heuristic_adjustment(db, 0, index_matrix, weights, total_constraint, sp_matrix, parameters)
 
-    print('IPU procedure was completed in %.2f sec\n'%(time.clock()-ti))
-    ti = time.clock()
+    print('IPU procedure was completed in %.2f sec\n'%(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #_________________________________________________________________
     print('Step 4: Creating the synthetic households and individuals...')
 # creating whole marginal values
@@ -207,7 +207,7 @@ def configure_and_run(fileLoc, geo, varCorrDict):
     dbc.close()
     db.close()
 
-    print('Blockgroup synthesized in %.4f s' %(time.clock()-tii))
+    print('Blockgroup synthesized in %.4f s' %(time.perf_counter()-tii))
 
 def run_parallel(job_server, project, geoIds, varCorrDict):
 

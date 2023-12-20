@@ -13,7 +13,7 @@ def prepare_data(db):
 # Identifying the number of housing units to build the Master Matrix
     dbc.execute('select * from housing_pums')
     housing_units = dbc.rowcount
-    ti = time.clock()
+    ti = time.perf_counter()
 # Identifying the control variables for the households, gq's, and persons
     hhld_control_variables = adjusting_pums_joint_distribution.choose_control_variables(db, 'hhld')
     gq_control_variables = adjusting_pums_joint_distribution.choose_control_variables(db, 'gq')
@@ -24,8 +24,8 @@ def prepare_data(db):
     gq_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'gq', gq_control_variables))
     person_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'person', person_control_variables))
         
-    print('Dimensions and Control Variables created in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Dimensions and Control Variables created in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     
     update_string = adjusting_pums_joint_distribution.create_update_string(db, hhld_control_variables, hhld_dimensions)
     adjusting_pums_joint_distribution.add_unique_id(db, 'hhld', update_string)
@@ -34,24 +34,24 @@ def prepare_data(db):
     update_string = adjusting_pums_joint_distribution.create_update_string(db, person_control_variables, person_dimensions)
     adjusting_pums_joint_distribution.add_unique_id(db, 'person', update_string)
     
-    print('Uniqueid\'s created in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Uniqueid\'s created in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     
 # Populating the Master Matrix	
     populated_matrix = psuedo_sparse_matrix.populate_master_matrix(db, 0, housing_units, hhld_dimensions, 
                                                                                                gq_dimensions, person_dimensions)
-    print('Frequency Matrix Populated in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Frequency Matrix Populated in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Sparse representation of the Master Matrix    
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 0)
-    print('Psuedo Sparse Representation of the Frequency Matrix created in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Psuedo Sparse Representation of the Frequency Matrix created in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #______________________________________________________________________
 #Creating Index Matrix
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 0)
-    print('Index matrix created in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Index matrix created in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     dbc.close()
 #______________________________________________________________________
 # creating synthetic_population tables in MySQL

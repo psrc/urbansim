@@ -147,15 +147,15 @@ if __name__ == '__main__':
     update_string = adjusting_pums_joint_distribution.create_update_string(db, person_control_variables, person_dimensions)
     adjusting_pums_joint_distribution.add_unique_id(db, 'person', update_string)
 
-    ti = time.clock()
+    ti = time.perf_counter()
     print('start - %s'%ti)
     populated_matrix = populate_master_matrix(db, pumano, sample_size, hhld_dimensions, person_dimensions)
-    print('End Populated matrix - %s'%(time.clock()-ti))
+    print('End Populated matrix - %s'%(time.perf_counter()-ti))
 
 
-    ti = time.clock()
+    ti = time.perf_counter()
     ps_sp_matrix = psuedo_sparse_matrix(db, populated_matrix, pumano)
-    print('Psuedo Sparse Matrix- %s'%(time.clock()-ti))
+    print('Psuedo Sparse Matrix- %s'%(time.perf_counter()-ti))
 
 
     index = generate_index_matrix(db, 0)

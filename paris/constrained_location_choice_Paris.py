@@ -13,7 +13,7 @@ from opus_core.resources import Resources
 from opus_core.misc import unique
 from urbansim.constrain_choices import constrain_choices
 
-program_start = time.clock()
+program_start = time.perf_counter()
 alts = 8
 
 Con = MySQLdb.connect(host=os.environ['MYSQLHOSTNAME'],
@@ -68,4 +68,4 @@ C.compute(probability,resources)
 
 #B = bhhh_estimation()
 #B.compute(data,resources)
-print('Total Elapsed Time:',time.clock()-program_start)
+print('Total Elapsed Time:',time.perf_counter()-program_start)

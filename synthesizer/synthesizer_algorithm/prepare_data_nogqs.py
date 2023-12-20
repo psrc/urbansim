@@ -63,7 +63,7 @@ def prepare_data_nogqs(db, project):
     dbc.execute('select * from hhld_sample')
     hhld_units = dbc.rowcount
 
-    ti = time.clock()
+    ti = time.perf_counter()
 # Identifying the control variables for the households, and persons
     hhld_control_variables = project.hhldVars
     person_control_variables = project.personVars
@@ -75,32 +75,32 @@ def prepare_data_nogqs(db, project):
     print('------------------------------------------------------------------')
     print('Preparing Data for the Synthesizer Run')
     print('------------------------------------------------------------------')
-    print('Dimensions and Control Variables in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Dimensions and Control Variables in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
     update_string = adjusting_sample_joint_distribution.create_update_string(db, hhld_control_variables, hhld_dimensions)
     adjusting_sample_joint_distribution.add_unique_id(db, 'hhld_sample', 'hhld', update_string)
     update_string = adjusting_sample_joint_distribution.create_update_string(db, person_control_variables, person_dimensions)
     adjusting_sample_joint_distribution.add_unique_id(db, 'person_sample', 'person', update_string)
 
-    print('Uniqueid\'s in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Uniqueid\'s in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Populating the Master Matrix
     populated_matrix = psuedo_sparse_matrix_nogqs.populate_master_matrix(db, 99999, hhld_units, hhld_dimensions,
                                                                    person_dimensions)
-    print('Populated in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Populated in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Sparse representation of the Master Matrix
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 99999)
-    print('Psuedo Sparse Matrix in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Psuedo Sparse Matrix in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #______________________________________________________________________
 #Creating Index Matrix
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 99999)
-    print('Index Matrix in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Index Matrix in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     dbc.close()
 
 #______________________________________________________________________

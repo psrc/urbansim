@@ -72,7 +72,7 @@ def prepare_data(db, project):
     dbc.execute('select * from gq_sample')
     gq_units = dbc.rowcount
 
-    ti = time.clock()
+    ti = time.perf_counter()
 # Identifying the control variables for the households, gq's, and persons
     hhld_control_variables = project.hhldVars
     gq_control_variables = project.gqVars
@@ -90,8 +90,8 @@ def prepare_data(db, project):
 
 
 
-    print('Dimensions and Control Variables in %.4f' %(time.clock()-ti))
-    ti = time.clock()
+    print('Dimensions and Control Variables in %.4f' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
     update_string = adjusting_sample_joint_distribution.create_update_string(db, hhld_control_variables, hhld_dimensions)
     adjusting_sample_joint_distribution.add_unique_id(db, 'hhld_sample', 'hhld', update_string)
@@ -100,26 +100,26 @@ def prepare_data(db, project):
     update_string = adjusting_sample_joint_distribution.create_update_string(db, person_control_variables, person_dimensions)
     adjusting_sample_joint_distribution.add_unique_id(db, 'person_sample', 'person', update_string)
 
-    print('Uniqueid\'s in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Uniqueid\'s in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     """
 # Populating the Master Matrix
     populated_matrix = psuedo_sparse_matrix_new.populate_master_matrix(db, 0, 
                                                                    hhld_units, gq_units, 
                                                                    hhld_control_variables, gq_control_variables, person_control_variables,
                                                                    hhld_dimensions, gq_dimensions, person_dimensions)
-    print 'Populated in %.4fs' %(time.clock()-ti)
-    ti = time.clock()
+    print 'Populated in %.4fs' %(time.perf_counter()-ti)
+    ti = time.perf_counter()
 
 # Sparse representation of the Master Matrix
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 0)
-    print 'Psuedo Sparse Matrix in %.4fs' %(time.clock()-ti)
-    ti = time.clock()
+    print 'Psuedo Sparse Matrix in %.4fs' %(time.perf_counter()-ti)
+    ti = time.perf_counter()
 #______________________________________________________________________
 #Creating Index Matrix
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 0)
-    print 'Index Matrix in %.4fs' %(time.clock()-ti)
-    ti = time.clock()
+    print 'Index Matrix in %.4fs' %(time.perf_counter()-ti)
+    ti = time.perf_counter()
     dbc.close()
     """
     
@@ -127,18 +127,18 @@ def prepare_data(db, project):
     populated_matrix = psuedo_sparse_matrix.populate_master_matrix(db, 99999, 
                                                                    hhld_units, gq_units, 
                                                                    hhld_dimensions, gq_dimensions, person_dimensions)
-    print('Populated in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Populated in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 
 # Sparse representation of the Master Matrix for Household Types
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 99999)
-    print('Psuedo Sparse Matrix in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Psuedo Sparse Matrix in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
 #______________________________________________________________________
 #Creating Index Matrix of the Master Matrix for Household Types
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 99999)
-    print('Index Matrix in %.4fs' %(time.clock()-ti))
-    ti = time.clock()
+    print('Index Matrix in %.4fs' %(time.perf_counter()-ti))
+    ti = time.perf_counter()
     dbc.close()
 
 #______________________________________________________________________

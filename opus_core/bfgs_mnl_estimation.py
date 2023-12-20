@@ -130,7 +130,7 @@ class bfgs_mnl_estimation(bhhh_mnl_estimation):
                   }
         self.print_results(results)
         logger.end_block()
-        #logger.log_status('Elapsed time: ', time.clock()-self.start_time, 'seconds',
+        #logger.log_status('Elapsed time: ', time.perf_counter()-self.start_time, 'seconds',
         #                  tags=tags, verbosity_level=vl)
         return results
 

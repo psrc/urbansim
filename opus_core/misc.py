@@ -153,11 +153,11 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
     from numpy import array, reshape
 
     def readlineandignorecomments():
-        line = text_file.readline()
+        line = text_file.readline().rstrip()
         while (line != ''):
             if (comment is None) or not line.startswith(comment):
                 break
-            line = text_file.readline()
+            line = text_file.readline().rstrip()
         return line
     
     text_file = open(filename, "r")
@@ -166,11 +166,11 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
  
     header_line = None
     if header:
-        header_line = re.split('[ ]+', line)[0:-1]
+        header_line = re.split('[ ]+|\t+', line)[0:-1]
         line = readlineandignorecomments()
 
-    line_list = re.split('[ ]+', line)
-    ncol = len(line_list)-1
+    line_list = re.split('[ ]+|\t+', line)
+    ncol = len(line_list)
     data = []
     nrow=0
     while (line != ''):
@@ -178,7 +178,7 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
         for column_number in range(ncol):
             data.append(line_list[column_number])
         line = readlineandignorecomments()
-        line_list = re.split('[ ]+', line)
+        line_list = re.split('[ ]+|\t+', line)
     text_file.close()
     if convert_to_float:
         def split_and_convert(row):

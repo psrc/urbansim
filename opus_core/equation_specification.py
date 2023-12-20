@@ -8,7 +8,7 @@ from numpy import asarray, array, where, ndarray, ones, concatenate, maximum, re
 from opus_core.misc import ematch, unique
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
-import sys
+import sys, collections
 
 class EquationSpecification(object):
     # Names of attributes for specification data on storage
@@ -792,16 +792,17 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         eqs = result.get_equations()
         lvars = result.get_long_variable_names()
-        self.assertTrue(alltrue(coefs == array(["asc", "bart", "bpop", "binc"])),
+        self.assertTrue(alltrue(coefs == array(["bpop", "binc", "bart", "asc"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (coefficients)")
-        self.assertTrue(alltrue(vars == array(["constant",  "art", "pop", "inc"])),
+        self.assertTrue(alltrue(vars == array(["pop", "inc", "art", "constant"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (variables)")
-        self.assertTrue(ma.allequal(eqs, array([1,1,1,2])),
+        self.assertTrue(ma.allequal(eqs, array([1,2,1,1])),
                      msg = "Error in test_load_specification_with_definition_with_equations (equations)")
-        self.assertTrue(alltrue(lvars == array(["constant",  
-                                             "art = urbansim.gridcell.is_near_arterial", 
-                                            "pop = urbansim.gridcell.population", 
-                                            "inc = urbansim.gridcell.average_income"])),
+        self.assertTrue(alltrue(lvars == array([
+            "pop = urbansim.gridcell.population", 
+            "inc = urbansim.gridcell.average_income",
+            "art = urbansim.gridcell.is_near_arterial", 
+            "constant"])),
                      msg = "Error in test_load_specification_with_definition_with_equations (long names of variables)")
         
     def test_load_specification_with_definition_with_equations_v2(self):

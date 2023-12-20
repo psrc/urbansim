@@ -248,24 +248,24 @@ class StorageFileTests(opus_unittest.OpusTestCase):
     
     def test_get_short_name(self):
         storage_file = file_flt_storage.storage_file('path/to/table/test.li4')
-        self.assertEqual('<i4', storage_file.get_type())
+        self.assertEqual('<i4'.encode(), storage_file.get_type())
         self.assertEqual('test', storage_file.get_short_name())
         
         storage_file = file_flt_storage.storage_file('path/to/table/foo.iS11')
-        self.assertEqual('|S11', storage_file.get_type())
+        self.assertEqual('|S11'.encode(), storage_file.get_type())
         self.assertEqual('foo', storage_file.get_short_name())
         
     def test_new_storage_file(self):
         storage_file = file_flt_storage.storage_file.new_storage_file('test', '<i4', 'path/to/table')
         self.assertEqual('test', storage_file.get_short_name())
-        self.assertEqual('<i4', storage_file.get_type())
+        self.assertEqual('<i4'.encode(), storage_file.get_type())
         expected = os.path.join('path/to/table', 'test.li4')
         self.assertEqual(expected, storage_file.get_name())
         
     def test_get_type_from_unicode_filename(self):
         storage_file = file_flt_storage.storage_file('path/to/table/test.li4')
-        self.assertEqual('<i4', storage_file.get_type())
-        self.assertEqual(type('<i4'), type(storage_file.get_type()))
+        self.assertEqual('<i4'.encode(), storage_file.get_type())
+        self.assertEqual(type('<i4'.encode()), type(storage_file.get_type()))
         
 class StorageTests(opus_unittest.OpusTestCase):
     

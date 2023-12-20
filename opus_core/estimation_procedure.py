@@ -11,7 +11,7 @@ class EstimationProcedure(ModelComponent):
     """
     
     def run_dcm(self, data, upc_sequence=None, resources=None):
-        self.start_time = time.clock()
+        self.start_time = time.perf_counter()
         self.minimum_probability = exp(-745.)
         self.upc_sequence = upc_sequence
         self.resources = resources
