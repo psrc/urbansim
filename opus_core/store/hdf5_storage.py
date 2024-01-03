@@ -40,6 +40,9 @@ class hdf5_storage(Storage):
                 column_name = column_name.lower()
             if column_names == Storage.ALL_COLUMNS or column_name in column_names:
                 result[column_name] = f[column_name][...]
+                # convert S to U
+                if result[column_name].dtype.kind == "S":
+                    result[column_name] = result[column_name].astype("U")
         return result
     
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
@@ -78,8 +81,12 @@ class hdf5_storage(Storage):
     def _write_columns(self, f, column_names, table_data, table_meta={}, column_meta={}, **kwargs):
         for mkey, mvalue in table_meta.items():
             f.attrs[mkey] = mvalue
-        for column_name in column_names:                    
-            column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
+        for column_name in column_names:
+            if table_data[column_name].dtype.kind == "U":
+                # h5py does not support the U type, so convert
+                column_ds = f.create_dataset(column_name, data=table_data[column_name].astype("S"), **kwargs)
+            else:
+                column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
             ds_meta = column_meta.get(column_name, {})
             for mkey, mvalue in ds_meta.items():
                 column_ds.attrs[mkey] = mvalue

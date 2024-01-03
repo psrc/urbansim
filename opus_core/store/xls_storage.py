@@ -9,6 +9,8 @@ from opus_core.logger import logger
 from opus_core.store.storage import Storage
 import os
 
+from opus_core.tests import opus_unittest
+
 try:
     import xlwt
     import xlrd
@@ -23,7 +25,7 @@ except:
 
     class TestXlsStorage(opus_unittest.OpusTestCase):
         def test(self):
-            self.assertRaises(ImportError, dbf_storage)
+            self.assertRaises(ImportError, xls_storage)
 
 else:
     class xls_storage(Storage):
@@ -135,7 +137,6 @@ else:
         def get_column_names(self, table_name, lowercase=True):
             raise NotImplementedError()
 
-    from opus_core.tests import opus_unittest
     from opus_core.store.storage import TestStorageInterface
     from tempfile import mkdtemp
     from shutil import rmtree    

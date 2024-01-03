@@ -274,6 +274,7 @@ class sql_storage(Storage):
             'i':Integer,
             'f':Float,
             'S':Text,
+            'U':Text,
             'b':Boolean
             }
         
@@ -289,11 +290,11 @@ class sql_storage(Storage):
                     'FLOAT': dtype('f'),
                     'DOUBLE': dtype('f8'),
                     
-                    'CHAR': dtype('S'),
-                    'VARCHAR': dtype('S'),
-                    'TEXT': dtype('S'),
-                    'MEDIUMTEXT': dtype('S'),
-                    'STRING': dtype('S'),
+                    'CHAR': dtype('U'),
+                    'VARCHAR': dtype('U'),
+                    'TEXT': dtype('U'),
+                    'MEDIUMTEXT': dtype('U'),
+                    'STRING': dtype('U'),
                     'UNICODE': dtype('U'),
                     
                     'BOOLEAN': dtype('b'),
@@ -311,7 +312,7 @@ class sql_storage(Storage):
         elif isinstance(column_type, Numeric):
             default_type = dtype('f')
         elif isinstance(column_type, Text):
-            default_type = dtype('S')
+            default_type = dtype('U')
         elif isinstance(column_type, Boolean):
             default_type = dtype('b')
         else:
@@ -564,7 +565,7 @@ else:
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(server.engine.dialect.type_descriptor(Float))
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
                     
-                    expected_numpy_type = dtype('S')
+                    expected_numpy_type = dtype('U')
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Text())
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(server.engine.dialect.type_descriptor(Text))
@@ -684,7 +685,7 @@ else:
                     expected_data = {
                         'd': array([4], dtype='i'),
                         'e': array([5.5], dtype='f'),
-                        'f': array(['6'], dtype='S'),
+                        'f': array(['6'], dtype='U'),
                         }
                     
                     actual_data = storage.load_table('bar')
@@ -712,7 +713,7 @@ else:
                     expected_data = {
                         'd': array([], dtype='i'),
                         'e': array([], dtype='f'),
-                        'f': array([], dtype='S'),
+                        'f': array([], dtype='U'),
                         'g': array([], dtype='i'),
                         }
                     
@@ -747,7 +748,7 @@ else:
                     expected_data = {
                         'd': array([4, 1], dtype='i'),
                         'e': array([5.5, 2.25], dtype='f'),
-                        'f': array(['6', '3'], dtype='S'),
+                        'f': array(['6', '3'], dtype='U'),
                         }
                     
                     actual_data = storage.load_table('bar')
