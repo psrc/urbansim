@@ -48,7 +48,7 @@ class LandPriceModel(RegressionModel):
                                                resources=res)
         ln_total_land_value = RegressionModel.run(self, specification, coefficients, dataset, index, chunk_specification,
                                      run_config=run_config, debuglevel=debuglevel)
-        if (ln_total_land_value == None) or (ln_total_land_value.size <=0):
+        if (ln_total_land_value is None) or (ln_total_land_value.size <=0):
             return ln_total_land_value
         if index == None:
              index = arange(dataset.size())

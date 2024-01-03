@@ -82,7 +82,7 @@ class Constants(dict):
 
     def set_walking_distance_footprint(self):
         wd_gc = int(2*self["walking_distance_circle_radius"]/self["cell_size"]+1)
-        center = (wd_gc-1)/2
+        center = int((wd_gc-1)/2)
         distance = ones((wd_gc,wd_gc), dtype=float32)
         distance[center,center]=0.0
         distance = distance_transform_edt(distance)

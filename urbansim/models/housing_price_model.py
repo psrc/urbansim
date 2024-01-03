@@ -40,7 +40,7 @@ class HousingPriceModel(RegressionModel):
                                                dataset_pool=self.dataset_pool, resources=res)
         housing_price = RegressionModel.run(self, specification, coefficients, dataset, index, chunk_specification,
                                      run_config=run_config, debuglevel=debuglevel)
-        if (housing_price == None) or (housing_price.size <=0):
+        if (housing_price is None) or (housing_price.size <=0):
             return housing_price
         if index == None:
              index = arange(dataset.size())

@@ -46,7 +46,7 @@ from numpy import array, ma
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from opus_core.coefficients import Coefficients
 from opus_core.equation_specification import EquationSpecification 
-from .land_price_model import LandPriceModel
+from urbansim.models.land_price_model import LandPriceModel
 from opus_core.storage_factory import StorageFactory
 
 

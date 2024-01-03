@@ -122,7 +122,7 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
                     'resources': 'model_resources',
                     'vacancy_table': 'vacancy_table',
                     'year': 'year',
-                    'resources': "{'industrial_vacant_variable': 'gridcell.my_industrial_vacant_var','commercial_vacant_variable': 'gridcell.my_commercial_vacant_var',}"
+                    'resources': "{'commercial_vacant_variable': 'gridcell.my_commercial_vacant_var','industrial_vacant_variable': 'gridcell.my_industrial_vacant_var',}"
                     },
                 'output': 'output_results'
                 }

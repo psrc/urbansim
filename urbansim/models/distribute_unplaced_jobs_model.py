@@ -87,14 +87,14 @@ class Test(opus_unittest.OpusTestCase):
         # unplace first 500 jobs of sector 15
         jobs.modify_attribute(name='grid_id', data=zeros(500), index=arange(500))
         # unplace first 500 jobs of sector 1
-        jobs.modify_attribute(name='grid_id', data=zeros(500), index=arange(7000, 7501))
+        jobs.modify_attribute(name='grid_id', data=zeros(500), index=arange(7000, 7500))
         # place only unplaced jobs of sector 1
         model.run(gridcells, jobs, agents_filter='job.sector_id == 1')
         # 500 jobs of sector 15 should be unplaced
         result3 = where(jobs.get_attribute("grid_id")<=0)[0]
         self.assertEqual(result3.size, 500)
         # jobs of sector 1 are placed
-        result4 = jobs.get_attribute_by_index("grid_id", arange(7000, 7501))
+        result4 = jobs.get_attribute_by_index("grid_id", arange(7000, 7500))
         self.assertEqual((result4 <= 0).sum(), 0)
         
 if __name__=="__main__":
