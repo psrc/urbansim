@@ -41,9 +41,9 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(autogen().dependencies(), ['opus_core.tests.a_test_variable'], 
                          msg="dependencies are incorrect")
         
-    def skip_test_dataset_qualified_name(self):
+    def test_dataset_qualified_name(self):
         # this tests expressions with a dataset-qualified name
-        expr = "sqrt(tests.a_test_variable)"
+        expr = "sqrt(tests.a_dependent_variable)"
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
             table_name='tests',
@@ -54,7 +54,7 @@ class Tests(opus_unittest.OpusTestCase):
             )
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
         result = dataset.compute_variables([expr])
-        should_be = array([3.16227766, 7.0710678, 10])
+        should_be = array([1, 2.23606798, 3.16227766])
         self.assertEqual(ma.allclose(result, should_be, rtol=1e-5), True)
         
     def test_attr_power(self):

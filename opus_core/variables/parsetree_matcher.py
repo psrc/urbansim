@@ -85,16 +85,18 @@ from opus_core.variables.parsetree_patterns import *
 
 TEST_PATTERN_FULLY_QUALIFIED_VARIABLE =  \
     (symbol.power,
+     (symbol.atom_expr,
      (symbol.atom, (token.NAME, 'urbansim')),
      (symbol.trailer,
       (token.DOT, '.'),
       (token.NAME, 'gridcell')),
      (symbol.trailer,
       (token.DOT, '.'),
-      (token.NAME, 'population')))
+      (token.NAME, 'population'))))
     
 TEST_PATTERN_FULLY_QUALIFIED_VARIABLE_TO_POWER =  \
     (symbol.power,
+     (symbol.atom_expr,
      (symbol.atom, (token.NAME, 'urbansim')),
      (symbol.trailer,
       (token.DOT, '.'),
@@ -105,7 +107,8 @@ TEST_PATTERN_FULLY_QUALIFIED_VARIABLE_TO_POWER =  \
      (token.DOUBLESTAR, '**'),
      (symbol.factor,
       (symbol.power,
-       (symbol.atom, (token.NUMBER, '2')))))    
+       (symbol.atom_expr,
+       (symbol.atom, (token.NUMBER, '2')))))))
     
 class Tests(opus_unittest.OpusTestCase):
 

@@ -405,7 +405,7 @@ class VariableTests(opus_unittest.OpusTestCase):
         result = Variable().safely_divide_two_arrays(array([10,20,30,0]).astype(int8), array([2,0,2,0]).astype(int8))
         self.assertTrue(ma.allclose(array([5,0,15,0]), result))
         # Types are done correctly
-        self.assertEqual(result.dtype.type, int8)
+        self.assertEqual(result.dtype.name, "float64")
         
         result = Variable().safely_divide_two_arrays(array([1,2,3,0]), array([2.,0.,2.,0.]))
         self.assertTrue(ma.allclose(array([.5, 0, 1.5, 0]), result))

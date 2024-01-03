@@ -77,13 +77,11 @@ EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE =  \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr,
-                   (symbol.atom, (token.NAME, ['package'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['dataset'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['shortname'])))))))))))))))))
+                    (symbol.atom, (token.NAME, ['package'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'), (token.NAME, ['dataset'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'), (token.NAME, ['shortname'])))))))))))))))))
 
 # This pattern matches an expression that is simply a dataset qualified variable (not a more
 # complex expression).
@@ -103,10 +101,10 @@ EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE =  \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr,
-                   (symbol.atom, (token.NAME, ['dataset'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['shortname'])))))))))))))))))
+                    (symbol.atom, (token.NAME, ['dataset'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'), 
+                     (token.NAME, ['shortname'])))))))))))))))))
 
 # This pattern matches an expression that is simply an attribute (not a more
 # complex expression).
@@ -126,7 +124,7 @@ EXPRESSION_IS_ATTRIBUTE =  \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr,
-                   (symbol.atom, (token.NAME, ['shortname'])))))))))))))))))
+                    (symbol.atom, (token.NAME, ['shortname'])))))))))))))))))
 
 # ************************************************************************************
 # The patterns named SUBPATTERN_* match bits of expressions consisting of the named item.
@@ -142,31 +140,31 @@ EXPRESSION_IS_ATTRIBUTE =  \
 SUBPATTERN_FULLY_QUALIFIED_VARIABLE =  \
     (symbol.power,
      (symbol.atom_expr,
-     (symbol.atom, (token.NAME, ['package'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['dataset'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['shortname'])),
-     ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+      (symbol.atom, (token.NAME, ['package'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['dataset'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['shortname']))),
+      ['?', (token.DOUBLESTAR, '**')],
+      ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_FULLY_QUALIFIED_VARIABLE_WITH_CAST =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['package'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['dataset'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['shortname'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, 'astype')),
-     (symbol.trailer,
-      (token.LPAR, '('),
+      (symbol.atom, (token.NAME, ['package'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['dataset'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['shortname'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, 'astype')),
+      (symbol.trailer,
+       (token.LPAR, '('),
        (symbol.arglist,
         (symbol.argument,
          (symbol.test,
@@ -192,25 +190,25 @@ SUBPATTERN_FULLY_QUALIFIED_VARIABLE_WITH_CAST =  \
 SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['dataset'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['shortname'])),
-     ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+      (symbol.atom, (token.NAME, ['dataset'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['shortname']))),
+      ['?', (token.DOUBLESTAR, '**')],
+      ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE_WITH_CAST =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['dataset'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['shortname'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, 'astype')),
-     (symbol.trailer,
-      (token.LPAR, '('),
+      (symbol.atom, (token.NAME, ['dataset'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['shortname'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, 'astype')),
+      (symbol.trailer,
+       (token.LPAR, '('),
        (symbol.arglist,
         (symbol.argument,
          (symbol.test,
@@ -229,27 +227,27 @@ SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE_WITH_CAST =  \
                       (symbol.atom_expr, 
                       (symbol.atom,
                        (token.NAME, ['type'])))))))))))))))))),
-      (token.RPAR, ')')),
+      (token.RPAR, ')'))),
      ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 # match a single attribute name
 SUBPATTERN_ATTRIBUTE =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['shortname'])),
-     ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+      (symbol.atom, (token.NAME, ['shortname']))),
+      ['?', (token.DOUBLESTAR, '**')],
+      ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_ATTRIBUTE_WITH_CAST =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['shortname'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, 'astype')),
-     (symbol.trailer,
-      (token.LPAR, '('),
+      (symbol.atom, (token.NAME, ['shortname'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, 'astype')),
+      (symbol.trailer,
+       (token.LPAR, '('),
        (symbol.arglist,
         (symbol.argument,
          (symbol.test,
@@ -268,9 +266,9 @@ SUBPATTERN_ATTRIBUTE_WITH_CAST =  \
                       (symbol.atom_expr, 
                       (symbol.atom,
                        (token.NAME, ['type'])))))))))))))))))),
-      (token.RPAR, ')')),
+      (token.RPAR, ')'))),
      ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 
 SUBPATTERN_ARGLIST = symbol.arglist
@@ -280,33 +278,33 @@ SUBPATTERN_ARGLIST = symbol.arglist
 SUBPATTERN_METHOD_CALL_WITH_ARGS =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['receiver'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['method'])),
-     (symbol.trailer,
-      (token.LPAR, '('),
-      ['args'],
-      (token.RPAR, ')')),
-     ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+      (symbol.atom, (token.NAME, ['receiver'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['method'])),
+      (symbol.trailer,
+       (token.LPAR, '('),
+       ['args'],
+       (token.RPAR, ')'))),
+      ['?', (token.DOUBLESTAR, '**')],
+      ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_METHOD_CALL_WITH_ARGS_WITH_CAST =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, ['receiver'])),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, ['method'])),
-     (symbol.trailer,
-      (token.LPAR, '('),
-      ['args'],
-      (token.RPAR, ')')),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, 'astype')),
-     (symbol.trailer,
-      (token.LPAR, '('),
+      (symbol.atom, (token.NAME, ['receiver'])),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, ['method'])),
+      (symbol.trailer,
+       (token.LPAR, '('),
+       ['args'],
+       (token.RPAR, ')')),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, 'astype')),
+      (symbol.trailer,
+       (token.LPAR, '('),
        (symbol.arglist,
         (symbol.argument,
          (symbol.test,
@@ -325,9 +323,9 @@ SUBPATTERN_METHOD_CALL_WITH_ARGS_WITH_CAST =  \
                       (symbol.atom_expr, 
                       (symbol.atom,
                        (token.NAME, ['type'])))))))))))))))))),
-      (token.RPAR, ')')),
+      (token.RPAR, ')'))),
      ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_NAME = (token.NAME, ['name'])
 
@@ -348,9 +346,9 @@ SUBPATTERN_NUMBER_OF_AGENTS = \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr, 
-                   (symbol.atom,
-                    (token.NAME,
-                     ['agent']))))))))))))))))))
+                    (symbol.atom,
+                     (token.NAME,
+                      ['agent']))))))))))))))))))
     
 SUBPATTERN_AGENT_TIMES_CHOICE = \
     (symbol.arglist,
@@ -369,9 +367,9 @@ SUBPATTERN_AGENT_TIMES_CHOICE = \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr, 
-                   (symbol.atom,
-                    (token.NAME,
-                     ['attribute']))))))))))))))))))
+                    (symbol.atom,
+                     (token.NAME,
+                      ['attribute']))))))))))))))))))
 
 # Pattern that matches the arguments to a call to aggregate(...) and disaggregate(...)
 # The first argument is required.  The remaining 2 arguments are optional.
@@ -406,13 +404,13 @@ SUBPATTERN_FULLY_QUALIFIED_VARIABLE_ARG =  \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr, 
-                   (symbol.atom, (token.NAME, ['package'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['dataset'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['shortname']))))))))))))))))
+                    (symbol.atom, (token.NAME, ['package'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'),
+                     (token.NAME, ['dataset'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'),
+                     (token.NAME, ['shortname']))))))))))))))))
 
 # match an expression that is simply a dataset qualified variable (not a more complex expression)
 SUBPATTERN_DATASET_QUALIFIED_VARIABLE_ARG =  \
@@ -430,10 +428,10 @@ SUBPATTERN_DATASET_QUALIFIED_VARIABLE_ARG =  \
                  (symbol.factor,
                   (symbol.power,
                    (symbol.atom_expr, 
-                   (symbol.atom, (token.NAME, ['dataset'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME, ['shortname']))))))))))))))))
+                    (symbol.atom, (token.NAME, ['dataset'])),
+                    (symbol.trailer,
+                     (token.DOT, '.'),
+                     (token.NAME, ['shortname']))))))))))))))))
 
 # match an argument consisting of just a name
 SUBPATTERN_NAME_ARG = \
@@ -451,8 +449,8 @@ SUBPATTERN_NAME_ARG = \
                (symbol.factor,
                 (symbol.power,
                  (symbol.atom_expr, 
-                 (symbol.atom,
-                  (token.NAME, ['name']))))))))))))))))
+                  (symbol.atom,
+                   (token.NAME, ['name']))))))))))))))))
 
 # match an argument consisting of a list (either empty or nonempty)
 SUBPATTERN_LIST_ARG = \
@@ -470,10 +468,10 @@ SUBPATTERN_LIST_ARG = \
                (symbol.factor,
                 (symbol.power,
                  (symbol.atom_expr, 
-                 (symbol.atom,
-                  (token.LSQB, '['),
-                  ['?', ['list']],  # if the list is empty this will match the right bracket; otherwise the list contents
-                  ['?', (token.RSQB, ']')])))))))))))))))
+                  (symbol.atom,
+                   (token.LSQB, '['),
+                   ['?', ['list']],  # if the list is empty this will match the right bracket; otherwise the list contents
+                   ['?', (token.RSQB, ']')])))))))))))))))
     
     
 # match an entire method call, without type conversions or exponentiation or other clutter
@@ -494,10 +492,10 @@ FULL_EXPRESSION_METHOD_CALL = \
                 (symbol.factor,
                  (symbol.power,
                   (symbol.atom_expr, 
-                  (symbol.atom, (token.NAME, ['receiver'])),
-                  (symbol.trailer,
-                   (token.DOT, '.'),
-                   (token.NAME, ['method'])),
+                   (symbol.atom, (token.NAME, ['receiver'])),
+                   (symbol.trailer,
+                    (token.DOT, '.'),
+                    (token.NAME, ['method'])),
                    (symbol.trailer,
                     (token.LPAR, '('),
                     ['args'],
@@ -506,8 +504,8 @@ FULL_EXPRESSION_METHOD_CALL = \
 DATASET_QUALIFIED_VARIABLE_TEMPLATE =  \
     (symbol.power,
      (symbol.atom_expr, 
-     (symbol.atom, (token.NAME, 'dataset')),
-     (symbol.trailer,
-      (token.DOT, '.'),
-      (token.NAME, 'attribute'))))
+      (symbol.atom, (token.NAME, 'dataset')),
+      (symbol.trailer,
+       (token.DOT, '.'),
+       (token.NAME, 'attribute'))))
 
