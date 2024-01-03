@@ -103,12 +103,12 @@ TEST_PATTERN_FULLY_QUALIFIED_VARIABLE_TO_POWER =  \
       (token.NAME, 'gridcell')),
      (symbol.trailer,
       (token.DOT, '.'),
-      (token.NAME, 'population')),
+      (token.NAME, 'population'))),
      (token.DOUBLESTAR, '**'),
      (symbol.factor,
       (symbol.power,
        (symbol.atom_expr,
-       (symbol.atom, (token.NUMBER, '2')))))))
+       (symbol.atom, (token.NUMBER, '2'))))))
     
 class Tests(opus_unittest.OpusTestCase):
 

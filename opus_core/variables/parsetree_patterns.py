@@ -183,9 +183,9 @@ SUBPATTERN_FULLY_QUALIFIED_VARIABLE_WITH_CAST =  \
                       (symbol.atom_expr, 
                       (symbol.atom,
                        (token.NAME, ['type'])))))))))))))))))),
-      (token.RPAR, ')')),
+      (token.RPAR, ')'))),
      ['?', (token.DOUBLESTAR, '**')],
-     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))]))
+     ['?', (symbol.factor, (symbol.power, (symbol.atom_expr, (symbol.atom, (token.NUMBER, ['exponent'])))))])
 
 SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE =  \
     (symbol.power,
