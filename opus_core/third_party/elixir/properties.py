@@ -105,11 +105,10 @@ class CounterMeta(type):
         return instance
 
 
-class Property(EntityBuilder):
+class Property(EntityBuilder, metaclass=CounterMeta):
     '''
     Abstract base class for all properties of an Entity.
     '''
-    __metaclass__ = CounterMeta
 
     def __init__(self, *args, **kwargs):
         self.entity = None

@@ -7,6 +7,9 @@ import opus_core.version_numbers
 __version__ = opus_core.version_numbers.get_opus_version_number(__name__)
 
 import os
-dirname=__path__[0]
-__path__.append(os.path.join(dirname, 'models'))
-__path__.append(os.path.join(dirname, 'upc'))
+try:
+    dirname=__path__[0]
+    __path__.append(os.path.join(dirname, 'models'))
+    __path__.append(os.path.join(dirname, 'upc'))
+except:
+    pass

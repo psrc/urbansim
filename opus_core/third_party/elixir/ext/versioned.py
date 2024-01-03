@@ -52,10 +52,10 @@ from sqlalchemy            import Table, Column, and_, desc
 from sqlalchemy.orm        import mapper, MapperExtension, EXT_CONTINUE, \
                                   object_session
 
-from elixir                import Integer, DateTime
-from elixir.statements     import Statement
-from elixir.properties     import EntityBuilder
-from elixir.entity         import getmembers
+from opus_core.third_party.elixir                import Integer, DateTime
+from opus_core.third_party.elixir.statements     import Statement
+from opus_core.third_party.elixir.properties     import EntityBuilder
+from opus_core.third_party.elixir.entity         import getmembers
 
 __all__ = ['acts_as_versioned', 'after_revert']
 __doc_all__ = []
@@ -106,12 +106,12 @@ class VersionedMapperExtension(MapperExtension):
         ignored = instance.__class__.__ignored_fields__
         version_colname, timestamp_colname = \
             instance.__class__.__versioned_column_names__
-        for key in instance.table.c.keys():
+        for key in list(instance.table.c.keys()):
             if key in ignored:
                 continue
             if getattr(instance, key) != old_values[key]:
                 # the instance was really updated, so we create a new version
-                dict_values = dict(old_values.items())
+                dict_values = dict(list(old_values.items()))
                 connection.execute(
                     instance.__class__.__history_table__.insert(), dict_values)
                 old_version = getattr(instance, version_colname)
@@ -244,7 +244,7 @@ class VersionedEntityBuilder(EntityBuilder):
             )).execute().fetchone()
 
             entity.table.update(get_entity_where(self)).execute(
-                dict(old_version.items())
+                dict(list(old_version.items()))
             )
 
             table.delete(and_(get_history_where(self),

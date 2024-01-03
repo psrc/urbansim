@@ -18,7 +18,6 @@ from opus_core.simulation_state import SimulationState
 from opus_core.resource_factory import ResourceFactory
 from opus_core.variables.attribute_type import AttributeType
 
-from exceptions import Exception
 from opus_core.variables.variable_name import VariableName
 
 class MoreDatasetTests(opus_unittest.OpusTestCase):

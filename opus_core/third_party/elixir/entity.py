@@ -3,7 +3,7 @@ This module provides the ``Entity`` base class, as well as its metaclass
 ``EntityMeta``.
 '''
 
-from py23compat import sorted
+from .py23compat import sorted
 
 import sys
 import types
@@ -15,7 +15,7 @@ import sqlalchemy
 from sqlalchemy import Table, Column, Integer, desc, ForeignKey, and_, \
                        ForeignKeyConstraint
 from sqlalchemy.orm import MapperExtension, mapper, object_session, \
-                           EXT_CONTINUE, polymorphic_union, ScopedSession, \
+                           EXT_CONTINUE, polymorphic_union, scoped_session, \
                            ColumnProperty
 from sqlalchemy.sql import ColumnCollection
 
@@ -55,7 +55,7 @@ class EntityDescriptor(object):
     def __init__(self, entity):
         self.entity = entity
         self.parent = None
-
+        
         bases = []
         for base in entity.__bases__:
             if isinstance(base, EntityMeta):
@@ -108,9 +108,9 @@ class EntityDescriptor(object):
 
         complete_defaults = options.options_defaults.copy()
         complete_defaults.update({
-            'metadata': elixir.metadata,
-            'session': elixir.session,
-            'collection': elixir.entities
+            'metadata': opus_core.third_party.elixir.metadata,
+            'session': opus_core.third_party.elixir.session,
+            'collection':opus_core.third_party.elixir.entities
         })
 
         # set default value for other options
@@ -138,7 +138,7 @@ class EntityDescriptor(object):
         Setup any values that might depend on the "using_options" class
         mutator. For example, the tablename or the metadata.
         '''
-        elixir.metadatas.add(self.metadata)
+        opus_core.third_party.elixir.metadatas.add(self.metadata)
         if self.collection is not None:
             self.collection.append(self.entity)
 
@@ -172,7 +172,7 @@ class EntityDescriptor(object):
             self.identity = self.identity(entity)
 
         if self.polymorphic:
-            if not isinstance(self.polymorphic, basestring):
+            if not isinstance(self.polymorphic, str):
                 self.polymorphic = options.DEFAULT_POLYMORPHIC_COL_NAME
 
     #---------------------
@@ -226,7 +226,7 @@ class EntityDescriptor(object):
                         if col.primary_key:
                             self.add_column(col.copy())
             elif not self.has_pk and self.auto_primarykey:
-                if isinstance(self.auto_primarykey, basestring):
+                if isinstance(self.auto_primarykey, str):
                     colname = self.auto_primarykey
                 else:
                     colname = options.DEFAULT_AUTO_PRIMARYKEY_NAME
@@ -298,7 +298,7 @@ class EntityDescriptor(object):
                                        options.POLYMORPHIC_COL_TYPE))
 
             if self.version_id_col:
-                if not isinstance(self.version_id_col, basestring):
+                if not isinstance(self.version_id_col, str):
                     self.version_id_col = options.DEFAULT_VERSION_ID_COL_NAME
                 self.add_column(Column(self.version_id_col, Integer))
 
@@ -306,7 +306,7 @@ class EntityDescriptor(object):
         self.entity.table = Table(self.tablename, self.metadata,
                                   *args, **kwargs)
         if DEBUG:
-            print self.entity.table.repr2()
+            print(self.entity.table.repr2())
 
     def setup_reltables(self):
         self.call_builders('create_tables')
@@ -365,7 +365,7 @@ class EntityDescriptor(object):
         return children
 
     def translate_order_by(self, order_by):
-        if isinstance(order_by, basestring):
+        if isinstance(order_by, str):
             order_by = [order_by]
 
         order = []
@@ -452,13 +452,13 @@ class EntityDescriptor(object):
         # do the mapping
         if self.session is None:
             self.entity.mapper = mapper(self.entity, *args, **kwargs)
-        elif isinstance(self.session, ScopedSession):
+        elif isinstance(self.session, scoped_session):
             session_mapper = session_mapper_factory(self.session)
             self.entity.mapper = session_mapper(self.entity, *args, **kwargs)
         else:
             raise Exception("Failed to map entity '%s' with its table or "
                             "selectable. You can only bind an Entity to a "
-                            "ScopedSession object or None for manual session "
+                            "scoped_session object or None for manual session "
                             "management."
                             % self.entity.__name__)
 
@@ -505,12 +505,12 @@ class EntityDescriptor(object):
         # get one in any case.
         table = type.__getattribute__(self.entity, 'table')
         if table is not None:
-            if check_duplicate and col.key in table.columns.keys():
+            if check_duplicate and col.key in list(table.columns.keys()):
                 raise Exception("Column '%s' already exist in table '%s' ! " %
                                 (col.key, table.name))
             table.append_column(col)
             if DEBUG:
-                print "table.append_column(%s)" % col
+                print("table.append_column(%s)" % col)
 
     def add_constraint(self, constraint):
         self.constraints.append(constraint)
@@ -537,7 +537,7 @@ class EntityDescriptor(object):
         if mapper:
             mapper.add_property(name, property)
             if DEBUG:
-                print "mapper.add_property('%s', %s)" % (name, repr(property))
+                print("mapper.add_property('%s', %s)" % (name, repr(property)))
 
     def add_mapper_extension(self, extension):
         extensions = self.mapper_options.get('extension', [])
@@ -795,7 +795,7 @@ def instrument_class(cls):
 
     # Process attributes (using the assignment syntax), looking for
     # 'Property' instances and attaching them to this entity.
-    properties = [(name, attr) for name, attr in cls.__dict__.iteritems()
+    properties = [(name, attr) for name, attr in cls.__dict__.items()
                                if isinstance(attr, Property)]
     sorted_props = sorted(base_props + properties,
                           key=lambda i: i[1]._counter)
@@ -924,7 +924,7 @@ def setup_entities(entities):
         # delete all Elixir properties so that it doesn't interfere with
         # SQLAlchemy. At this point they should have be converted to
         # builders.
-        for name, attr in entity.__dict__.items():
+        for name, attr in list(entity.__dict__.items()):
             if isinstance(attr, Property):
                 delattr(entity, name)
 
@@ -1004,7 +1004,7 @@ class EntityBase(object):
         self.set(**kwargs)
 
     def set(self, **kwargs):
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     def update_or_create(cls, data, surrogate=True):
@@ -1038,7 +1038,7 @@ class EntityBase(object):
 
         mapper = sqlalchemy.orm.object_mapper(self)
 
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if isinstance(value, dict):
                 dbvalue = getattr(self, key)
                 rel_class = mapper.get_property(key).mapper.class_
@@ -1074,7 +1074,7 @@ class EntityBase(object):
                                       if isinstance(p, ColumnProperty)]
         data = dict([(name, getattr(self, name))
                      for name in col_prop_names if name not in exclude])
-        for rname, rdeep in deep.iteritems():
+        for rname, rdeep in deep.items():
             dbdata = getattr(self, rname)
             #FIXME: use attribute names (ie coltoprop) instead of column names
             fks = self.mapper.get_property(rname).remote_side
@@ -1145,7 +1145,7 @@ class EntityBase(object):
     get = classmethod(get)
 
 
-class Entity(EntityBase):
+class Entity(EntityBase, metaclass=EntityMeta):
     '''
     The base class for all entities
 
@@ -1167,6 +1167,5 @@ class Entity(EntityBase):
     For further information, please refer to the provided examples or
     tutorial.
     '''
-    __metaclass__ = EntityMeta
 
 

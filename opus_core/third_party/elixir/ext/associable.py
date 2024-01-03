@@ -109,7 +109,7 @@ The generated Elixir Statement has several options available:
 |               | lazily loaded.                                              |
 +---------------+-------------------------------------------------------------+
 '''
-from elixir.statements import Statement
+from opus_core.third_party.elixir.statements import Statement
 import sqlalchemy as sa
 
 __doc_all__ = ['associable']

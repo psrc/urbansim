@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 import sys, os, inspect
-from string import find, join, lower, split, strip, rfind, rstrip
+#from string import find, join, lower, split, strip, rfind, rstrip
 from pydoc import pathdirs, ispackage, synopsis, Scanner
 
 class ModuleScanner(Scanner):

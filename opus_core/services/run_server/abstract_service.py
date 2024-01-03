@@ -5,7 +5,7 @@
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.services.services_tables import *
 from opus_core.logger import logger
-from elixir import setup_all, metadata, create_all
+from opus_core.third_party.elixir import setup_all, metadata, create_all
 
 
 class AbstractService(object):

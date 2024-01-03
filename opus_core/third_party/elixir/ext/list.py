@@ -92,8 +92,8 @@ this model in practice:
 For more examples, refer to the unit tests for this plugin.
 '''
 
-from elixir.statements import Statement
-from elixir.events import before_insert, before_delete
+from opus_core.third_party.elixir.statements import Statement
+from opus_core.third_party.elixir.events import before_insert, before_delete
 from sqlalchemy import Column, Integer, select, func, literal, and_
 import warnings
 

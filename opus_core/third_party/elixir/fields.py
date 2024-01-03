@@ -162,7 +162,7 @@ class Field(Property):
     def create_properties(self):
         if self.deferred:
             group = None
-            if isinstance(self.deferred, basestring):
+            if isinstance(self.deferred, str):
                 group = self.deferred
             self.property = deferred(self.column, group=group)
         elif self.name != self.colname:

@@ -33,7 +33,7 @@ database row.
 '''
 
 from Crypto.Cipher import Blowfish
-from elixir.statements import Statement
+from opus_core.third_party.elixir.statements import Statement
 from sqlalchemy.orm import MapperExtension, EXT_CONTINUE, EXT_STOP
 
 try:

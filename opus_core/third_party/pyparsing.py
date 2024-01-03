@@ -97,7 +97,7 @@ def _ustr(obj):
 def _str2dict(strg):
     return dict( [(c,0) for c in strg] )
 
-alphas     = string.lowercase + string.uppercase
+alphas     = string.ascii_lowercase + string.ascii_uppercase
 nums       = string.digits
 hexnums    = nums + "ABCDEFabcdef"
 alphanums  = alphas + nums    
@@ -2168,7 +2168,7 @@ class Upcase(TokenConverter):
                        DeprecationWarning,stacklevel=2)
     
     def postParse( self, instring, loc, tokenlist ):
-        return list(map( string.upper, tokenlist ))
+        return list(map( str.upper, tokenlist ))
 
 
 class Combine(TokenConverter):
