@@ -26,8 +26,10 @@ class average_school_SSS(Variable):
         valid_idx = values > 0
         result = mean(values[valid_idx], labels=schools[ds.get_id_name()[0]][valid_idx], 
                         index=ds.get_id_attribute())
+        # if there are any NAs, replace them with faz average
         is_nan = isnan(result)
-        result[is_nan] = ds["_school_faz_measure"]
+        if is_nan.sum() > 0:
+            result[is_nan] = ds["_school_faz_measure"][is_nan]
         return result
     
 from opus_core.tests import opus_unittest

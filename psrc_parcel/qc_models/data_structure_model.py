@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-from sets import Set
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.store.attribute_cache import AttributeCache
@@ -42,9 +41,9 @@ class DataStructureModel(Model):
         tables = self.cache.get_table_names() 
         for table in tables:
             columns_list = self.cache.get_column_names(table)
-            columns = Set(columns_list)
+            columns = set(columns_list)
             ref_columns_list = self.reference_storage.get_column_names(table, lowercase=True)
-            ref_columns = Set(ref_columns_list)
+            ref_columns = set(ref_columns_list)
             more = columns.difference(ref_columns)
             less = ref_columns.difference(columns)
             samesize = True
