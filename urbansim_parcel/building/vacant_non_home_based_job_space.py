@@ -54,7 +54,7 @@ class Tests(opus_unittest.OpusTestCase):
         }
         )
         
-        should_be = array([5, 0, 2000/80, 1000/60, 1000/50, 0, 0, 4000/10, 4000/60, 0])
+        should_be = array([5, 0, 2000/80, 1000/60, 1000/50, 0, 0, 4000/10, 4000/60, 0]).astype("int")
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

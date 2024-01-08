@@ -110,7 +110,7 @@ class proforma(Variable):
                                                           component_sales_revenue)),
                                             axis=1
                                                ).sum()
-                    component_sales_revenue -= c['sales_absorption']
+                    component_sales_revenue -= c['sales_absorption'].astype(component_sales_revenue.dtype)
                     np.clip(component_sales_revenue, 
                             0, component_sales_revenue.max(),
                             out=component_sales_revenue)
