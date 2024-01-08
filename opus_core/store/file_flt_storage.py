@@ -143,6 +143,8 @@ class file_flt_storage(Storage):
                 
             if column_names == Storage.ALL_COLUMNS or column_name in column_names:
                 result[column_name] = numpy.fromfile(file.get_name(), dtype=file.get_type())
+                if result[column_name].dtype.kind == "S": # decode character columns
+                    result[column_name] = numpy.char.decode(result[column_name])
         
         return result
     

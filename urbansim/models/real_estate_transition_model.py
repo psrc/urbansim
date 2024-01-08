@@ -2,6 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from pkg_resources import packaging
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
@@ -98,7 +99,7 @@ class RealEstateTransitionModel(Model):
         #log header
         if PrettyTable is not None:
             status_log = PrettyTable()
-            if prettytable.__version__ >= 0.6: # compatibility issue
+            if packaging.version.parse(prettytable.__version__) >= packaging.version.parse("0.6"): # compatibility issue
                 status_log.field_names = column_names + ["actual", "target", "difference", "action"]
             else:
                 status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])

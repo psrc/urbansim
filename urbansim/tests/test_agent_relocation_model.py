@@ -300,7 +300,7 @@ class Tests(StochasticTestCase):
         #sum up the number of relocated jobs in sector 1
         def run_model_sector_1():
             list_of_tallies = run_model()
-            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if not(i/2%2)]
+            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if not(int(i/2)%2)]
             list_of_tallies_summed = sum([list_of_tallies[x] for x in list_of_tallies_summed])
             return list_of_tallies_summed
         
@@ -310,7 +310,7 @@ class Tests(StochasticTestCase):
         #sum up the number of relocated jobs in sector 2
         def run_model_sector_2():
             list_of_tallies = run_model()
-            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if i/2%2]
+            list_of_tallies_summed = [i for i in range(len(list_of_tallies)) if int(i/2)%2]
             list_of_tallies_summed = sum([list_of_tallies[x] for x in list_of_tallies_summed])
             return list_of_tallies_summed
         should_be = array([150 + 50 + 50 + 50 + 12 + 37])

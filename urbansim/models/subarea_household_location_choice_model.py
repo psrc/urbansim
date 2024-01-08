@@ -90,7 +90,7 @@ class Test(StochasticTestCase):
 
         nhhs = 100
         ngcs = 10
-        ngcs_attr = ngcs/2
+        ngcs_attr = int(ngcs/2)
         hh_grid_ids = array(nhhs*[-1])
         lareas = array(ngcs_attr*[1] + ngcs_attr*[2])
         hh_lareas = array(70*[1] + 30*[2])

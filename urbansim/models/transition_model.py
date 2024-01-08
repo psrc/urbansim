@@ -2,6 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 import re, copy
+from pkg_resources import packaging
 from numpy.lib.type_check import asscalar
 from numpy import array, asarray, where, ones, zeros, ones_like 
 from numpy import arange, concatenate, resize, int32, float64
@@ -347,7 +348,7 @@ class TransitionModel(Model):
         #log header
         if PrettyTable is not None:
             status_log = PrettyTable()
-            if prettytable.__version__ >= 0.6: # compatibility issue
+            if packaging.version.parse(prettytable.__version__) >= packaging.version.parse("0.6"): # compatibility issue
                 status_log.field_names = column_names + ["actual", "target", "difference", "action", "note"]
             else:
                 status_log.set_field_names(column_names + ["actual", "target", "difference", "action", "note"])

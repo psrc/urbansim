@@ -48,7 +48,7 @@ class Test(StochasticTestCase):
         storage.write_table(table_name = 'gridcells',
             table_data = {
                 'grid_id': arange(ngrids)+1,
-                'cost':array(ngrids/2*[100] + ngrids/2*[1000])
+                'cost':array(int(ngrids/2)*[100] + int(ngrids/2)*[1000])
                 }
             )
         gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')
@@ -75,11 +75,11 @@ class Test(StochasticTestCase):
             result_more_attractive = gridcells.get_attribute_by_id("number_of_households", arange(ngrids/2)+1)
             return result_more_attractive
             
-        expected_results = array(ngrids/2*[nhouseholds*0.71/(ngrids/2)])
+        expected_results = array(int(ngrids/2)*[nhouseholds*0.71/(ngrids/2)])
         self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="pearson", transformation=None)
 
         # Make sure it fails when expected distribution is different from actual.
-        expected_results = array(ngrids/2*[nhouseholds*0.61/(ngrids/2)])
+        expected_results = array(int(ngrids/2)*[nhouseholds*0.61/(ngrids/2)])
         try:
             self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="poisson", transformation=None)
         except AssertionError:

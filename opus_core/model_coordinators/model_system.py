@@ -324,7 +324,7 @@ class ModelSystem(object):
         # give this method the same local variables as its calling method has.
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key), globals())
+                exec('%s = parent_state["%s"]' % (key, key), globals(), locals())
         init_config = parent_state['controller_config']["init"]
         group_member = parent_state['group_member']
         if group_member is None: # No model group
@@ -348,10 +348,10 @@ class ModelSystem(object):
         # give this method the same local variables as its calling method has.
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key), globals())
-        key_name = "prepare_for_%s" % process
-        if key_name in list(controller_config.keys()):
-            prepare_config = controller_config[key_name]
+                exec('%s = parent_state["%s"]' % (key, key), globals(), locals())
+        key_name = "prepare_for_%s" % locals()["process"]
+        if key_name in list(locals()["controller_config"].keys()):
+            prepare_config = locals()["controller_config"][key_name]
             if "output" in list(prepare_config.keys()):
                 outputvar = prepare_config["output"]
             else:
@@ -367,9 +367,9 @@ class ModelSystem(object):
     def do_process(self, parent_state):
         for key in list(parent_state.keys()):
             if key != 'self':
-                exec('%s = parent_state["%s"]' % (key, key), globals())
-        ev = "model.%s(%s)" % (process,
-                               self.construct_arguments_from_config(processmodel_config))
+                exec('%s = parent_state["%s"]' % (key, key), globals(), locals())
+        ev = "model.%s(%s)" % (locals()["process"],
+                               self.construct_arguments_from_config(locals()["processmodel_config"]))
         return eval(ev)
 
     def get_number_of_models_and_model_group_members_to_run(self, models, models_configuration):
