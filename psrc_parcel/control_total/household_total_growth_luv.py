@@ -64,7 +64,7 @@ class Tests(opus_unittest.OpusTestCase):
                         }
                        }
             )
-        defval = household_absolute_growth_luv.GROWTH_FOR_NO_MATCH
+        defval = household_total_growth_luv.GROWTH_FOR_NO_MATCH
         should_be = array([defval, defval, 7-5, 11-6, defval, defval, defval, defval, defval])
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

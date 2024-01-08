@@ -28,19 +28,24 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')
   
+        building_types = array([3, 22, 3, 5, 13, 13, 8])
         storage.write_table(
                  table_name='buildings',
                  table_data={
                     'building_id':       array([1, 2, 3, 4, 5, 6, 7]),
-                    'building_type_id':  array([3, 22, 3, 5, 13, 13, 8])
+                    'building_type_id':  building_types
                     }
                 )
         dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
         buildings = dataset_pool.get_dataset('building')
         
         values = buildings.compute_variables(self.variable_name, dataset_pool=dataset_pool)
-        
-        should_be = array([21.1, 0.1, 21.1, 1.2, 40.4, 40.4, 2.3 ])/100.0
+        # copied from the parent class 
+        distr = array([  0.00,  0.41,  0.00,  1.35,  0.00,  8.24,  0.00,  0.00,  9.33,  0.00,  0.05,  0.00,  0.00, 48.94,  0.00,  0.00,  5.91,  0.98,  
+                         0.00,  0.00,  0.88, 17.06,  0.00,  6.84 ])
+        distr[distr == 0] = distr[distr == 0] + 0.1
+        should_be = distr[building_types]/100.0
+
         self.assertTrue(ma.allclose(values, should_be),
             'Error in ' + self.variable_name)
 

@@ -100,7 +100,7 @@ class Test(StochasticTestCase):
 
         nhhs = 100
         ngcs = 10
-        ngcs_attr = ngcs/2
+        ngcs_attr = int(ngcs/2)
         hh_grid_ids = array(nhhs*[-1])
         lareas = array(ngcs_attr*[1] + ngcs_attr*[2])
         hh_lareas = array(70*[1] + 30*[2])
@@ -108,13 +108,15 @@ class Test(StochasticTestCase):
         household_data = {
             'household_id': arange(nhhs)+1,
             'grid_id': hh_grid_ids,
-            'faz_id': hh_lareas
+            'faz_id': hh_lareas,
+            'city_id': array(nhhs*[1])
             }
 
         gridcell_data = {
             'grid_id': arange(ngcs)+1,
             'cost':array(ngcs*[100]),
-            'faz_id': lareas            
+            'faz_id': lareas,
+            'city_id': array(ngcs*[1])
             }
 
         storage.write_table(table_name = 'households', table_data = household_data)

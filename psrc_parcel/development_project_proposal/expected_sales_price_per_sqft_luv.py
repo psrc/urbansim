@@ -8,7 +8,6 @@ from scipy import ndimage as nd
 from opus_core.variables.variable import Variable
 from opus_core.variables.functions import expfin
 from opus_core.logger import logger
-from ctypes.test import is_resource_enabled
 
 
 class expected_sales_price_per_sqft_luv(Variable):

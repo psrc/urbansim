@@ -129,7 +129,7 @@ def delete_households(zone_id, num_hh_to_delete):
 
 # create engine and connection
 password = 'CHANGE ME'
-engine = create_engine('mysql://urbansim:%s@trondheim/psrc_2005_parcel_baseyear_change_20071120' % (password))
+engine = create_engine('mysql+pymysql://urbansim:%s@trondheim/psrc_2005_parcel_baseyear_change_20071120' % (password))
 conn = engine.connect()
 
 # These zones have either 0 households from the synthesizer or

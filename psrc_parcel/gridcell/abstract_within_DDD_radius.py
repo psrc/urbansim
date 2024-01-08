@@ -34,7 +34,7 @@ class abstract_within_DDD_radius(Variable):
         cell_size = dataset_pool.get_dataset('urbansim_constant')["cell_size"]
         wd_gc = int(2*self.radius/cell_size+1)
         distance = ones((wd_gc,wd_gc), dtype=float32)
-        center = (wd_gc-1)/2
+        center = int((wd_gc-1)/2)
         distance[center,center]=0.0
         distance = distance_transform_edt(distance)
         return where(distance*cell_size <= self.radius, 1, 0)
