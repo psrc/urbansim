@@ -905,8 +905,8 @@ class AbstractDataset(object):
         """
         dataset_id_values = dataset.get_attribute(self._id_names[0]).astype(int32)
         used = where(dataset_id_values > 0)[0] # only individuals that have assigned ids
-        if attribute_name == None:
-            if constant == None:
+        if attribute_name is None:
+            if constant is None:
                 self._raise_error(Exception,
                                   "Either 'attribute_name' or 'constant' must be given.")
             elif isinstance(constant, ndarray):
