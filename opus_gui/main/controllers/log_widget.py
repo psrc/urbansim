@@ -4,8 +4,8 @@
 
 import tempfile, sys
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSlot
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSlot
 from opus_gui.main.views.ui_log_widget import Ui_LogWidget
 
 class _MultiWriter(object):
@@ -19,12 +19,12 @@ class _MultiWriter(object):
         for stream in self.streams:
             stream.flush()
 
-class LogWidget(QtGui.QDialog, Ui_LogWidget):
+class LogWidget(QtWidgets.QDialog, Ui_LogWidget):
 
     MAX_LOG_SIZE = 1024*1024*32 # limit file size of log to 32mb
 
     def __init__(self, parent_widget):
-        QtGui.QDialog.__init__(self, parent_widget)
+        QtWidgets.QDialog.__init__(self, parent_widget)
         self.setupUi(self)
         self.temp_file = None
 

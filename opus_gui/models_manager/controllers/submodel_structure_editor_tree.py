@@ -2,13 +2,13 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 from lxml import etree
 from opus_gui.util.convenience import get_unique_name
 from opus_gui.models_manager.models.submodel_structure_item import SubmodelStructureItem
 
 
-class SubmodelStructureEditorTree(QtGui.QTreeWidget):
+class SubmodelStructureEditorTree(QtWidgets.QTreeWidget):
 
     '''
     Custom Tree Widget that has some convenience methods and supports drag and drop assignments of
@@ -16,7 +16,7 @@ class SubmodelStructureEditorTree(QtGui.QTreeWidget):
     '''
 
     def __init__(self, parent_widget = None):
-        QtGui.QTreeWidget.__init__(self, parent_widget)
+        QtWidgets.QTreeWidget.__init__(self, parent_widget)
         self._root_node = None
         self.setAcceptDrops(True)
 
@@ -39,7 +39,7 @@ class SubmodelStructureEditorTree(QtGui.QTreeWidget):
             etree.SubElement(structure_node, 'variable_list', {'type': 'variable_list'})
         # and insert the item
         self.addTopLevelItem(item)
-        self.emit(QtCore.SIGNAL('structure_changed'))
+        self.emit(QtCore.pyqtSignal('structure_changed'))
 
     def delete_struct_item(self, item):
         ''' deletes the given item from the tree and the XML '''
@@ -51,10 +51,10 @@ class SubmodelStructureEditorTree(QtGui.QTreeWidget):
             index = self.indexOfTopLevelItem(item)
             self.takeTopLevelItem(index)
         node.getparent().remove(node)
-        self.emit(QtCore.SIGNAL('structure_changed'))
+        self.emit(QtCore.pyqtSignal('structure_changed'))
 
     def mousePressEvent(self, event):
-        QtGui.QTreeWidget.mousePressEvent(self, event)
+        QtWidgets.QTreeWidget.mousePressEvent(self, event)
         # start drags when the left mouse button is pressed
         if event.buttons() == QtCore.Qt.LeftButton:
             mime = QtCore.QMimeData() # the data object to be passed with the event
@@ -63,12 +63,12 @@ class SubmodelStructureEditorTree(QtGui.QTreeWidget):
             if item is None:
                 return
             mime.dragged_item = item
-            drag = QtGui.QDrag(self)
+            drag = QtWidgets.QDrag(self)
             drag.setMimeData(mime)
             # prompt the submode editor to rebuild the structure when the drop was made
             if drag.start(QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
                 # item._node.getparent().remove(item._node)
-                self.emit(QtCore.SIGNAL('structure_changed'))
+                self.emit(QtCore.pyqtSignal('structure_changed'))
 
     def _target_and_source_from_event(self, event):
         ''' convenience to get the target and source item from an event '''

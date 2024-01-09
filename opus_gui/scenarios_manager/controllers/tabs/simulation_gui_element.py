@@ -4,8 +4,8 @@
 
 from time import localtime, strftime
 
-from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer, pyqtSlot
-from PyQt4.QtGui import QWidget, QIcon, QDialog
+from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant,  , QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QIcon, QDialog
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
@@ -98,7 +98,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
-        #self.summaryYearRangeLabel.setText(QString("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
+        #self.summaryYearRangeLabel.setText(("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
 
     def on_cbYear_stateChanged(self, state):
         if self.cbYear.isChecked():
@@ -129,12 +129,12 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         datasets = get_available_dataset_names(self.project)
 
         for dataset in datasets:
-            self.diagnostic_dataset_name.addItem(QString(dataset))
+            self.diagnostic_dataset_name.addItem((dataset))
 
         self.setup_diagnostic_indicators()
         self.indicatorResultsTab.removeTab(0)
-        QObject.connect(self.diagnostic_go_button,SIGNAL("clicked()"),self.on_indicatorBox)
-        QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)
+        QObject.connect(self.diagnostic_go_button,pyqtSignal("clicked()"),self.on_indicatorBox)
+        QObject.connect(self.diagnostic_dataset_name, pyqtSignal("currentIndexChanged()"), self.on_diagnostic_dataset_name_currentIndexChanged)
 
     def setup_diagnostic_indicators(self):
         dataset = str(self.diagnostic_dataset_name.currentText())
@@ -158,7 +158,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.setup_diagnostic_indicators()
 
     def setup_indicator_batch_combobox(self):
-        self.cboOptionalIndicatorBatch.addItem(QString('(None)'))
+        self.cboOptionalIndicatorBatch.addItem(('(None)'))
         # Get available batches
         batch_nodes = get_available_batch_nodes(self.project)
         for batch_node in batch_nodes:
@@ -167,7 +167,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
     def setup_run_name_line_edit(self, run_name=None):
         if run_name is None:
             run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
-        self.leRunName.setText(QString(run_name))
+        self.leRunName.setText((run_name))
 
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
@@ -214,9 +214,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                               thread_object = self.batch_processor)
 
         # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.diagnosticThread, SIGNAL("runFinished(PyQt_PyObject)"),
+        QObject.connect(self.diagnosticThread, pyqtSignal("runFinished(PyQt_PyObject)"),
                         self.visualizationsCreated)
-        QObject.connect(self.diagnosticThread, SIGNAL("runError(PyQt_PyObject)"),
+        QObject.connect(self.diagnosticThread, pyqtSignal("runError(PyQt_PyObject)"),
                         self.runErrorFromThread)
 
         self.diagnosticThread.start()
@@ -262,14 +262,14 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             if success:
                 self.paused = True
                 self.timer.stop()
-                self.pbnStartModel.setText(QString("Resume simulation run..."))
+                self.pbnStartModel.setText(("Resume simulation run..."))
         elif self.running and self.paused:
             # Need to resume a paused run
             success = self.runThread.resume()
             if success:
                 self.paused = False
                 self.timer.start(1000)
-                self.pbnStartModel.setText(QString("Pause simulation run..."))
+                self.pbnStartModel.setText(("Pause simulation run..."))
         elif not self.running:
             run_name = str(self.leRunName.text())
             if run_name == '':
@@ -309,7 +309,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def _init_run(self, run_name):
         # Fire up a new thread and run the model
-        self.pbnStartModel.setText(QString("Pause simulation run..."))
+        self.pbnStartModel.setText(("Pause simulation run..."))
         # References to the GUI elements for status for this run...
         self.progressBarTotal = self.runProgressBarTotal
         self.progressBarYear = self.runProgressBarYear
@@ -336,14 +336,14 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                                         run_name)
 
         # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+        QObject.connect(self.runThread, pyqtSignal("runFinished(PyQt_PyObject)"),
                         self.runFinishedFromThread)
-        QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
+        QObject.connect(self.runThread, pyqtSignal("runError(PyQt_PyObject)"),
                         self.runErrorFromThread)
         # Use this timer to call a function in the thread to check status if the thread is unable
         # to produce its own signal above
         self.timer = QTimer()
-        QObject.connect(self.timer, SIGNAL("timeout()"),
+        QObject.connect(self.timer, pyqtSignal("timeout()"),
                         self.runStatusFromThread)
         self.timer.start(1000)
         self.running = True
@@ -362,9 +362,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.progressBarModel.setValue(100)
 
         msg = 'Simulation ran successfully!' if success else 'Simulation failed.'
-        self.summaryCurrentYearValue.setText(QString(msg))
-        self.summaryCurrentModelValue.setText(QString("Finished"))
-        self.summaryCurrentPieceValue.setText(QString("Finished"))
+        self.summaryCurrentYearValue.setText((msg))
+        self.summaryCurrentModelValue.setText(("Finished"))
+        self.summaryCurrentPieceValue.setText(("Finished"))
 
         self.timer.stop()
         # Get the final logfile update after model finishes...
@@ -372,11 +372,11 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Simulation Run..."))
+        self.pbnStartModel.setText(("Start Simulation Run..."))
 
         #get the last year to show up in the diagnostics tab.
         self.yearItems[-1][1] = True
-        self.diagnostic_year.addItem(QString(str(self.yearItems[-1][0])))
+        self.diagnostic_year.addItem((str(self.yearItems[-1][0])))
 
         if self.runThread.batch_name is not None:
             all_visualizations = self.runThread.batch_processor.get_visualizations()
@@ -450,20 +450,20 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                     totalProgress = yearProgress / total_years + 100.0 * ((current_year - self.start_year) / total_years)
 
                     currentYearString = "("+str(int((current_year - self.start_year))+1)+"/"+str(int(total_years))+") "+str(int(current_year))
-                    self.summaryCurrentYearValue.setText(QString(currentYearString))
+                    self.summaryCurrentYearValue.setText((currentYearString))
 
                     currentModelString = "("+str(int(current_model)+1)+"/"+str(int(total_models))+") "+current_model_display_name
-                    self.summaryCurrentModelValue.setText(QString(currentModelString))
+                    self.summaryCurrentModelValue.setText((currentModelString))
 
                     currentPieceString = "("+str(int(current_piece)+1)+"/"+str(int(total_pieces))+") "+current_piece_name
-                    self.summaryCurrentPieceValue.setText(QString(currentPieceString))
+                    self.summaryCurrentPieceValue.setText((currentPieceString))
 
                     boxTitle = current_model_display_name
 
                     # detect if a year has been completed
                     for item in self.yearItems:
                         if item[0] < current_year and not item[1] :
-                            self.diagnostic_year.addItem(QString(str(item[0])))
+                            self.diagnostic_year.addItem((str(item[0])))
                             item[1] = True
                             #hook into indicator group computation here
 
@@ -475,7 +475,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             except IOError:
                 boxTitle = "Simulation run is initializing..."
 
-        newString = QString(boxTitle)
+        newString = (boxTitle)
 
         newString.leftJustified(60)
 #        self.simprogressGroupBox.setTitle(newString)
@@ -489,7 +489,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
     def runErrorFromThread(self,errorMessage):
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Simulation Run..."))
+        self.pbnStartModel.setText(("Start Simulation Run..."))
         MessageBox.warning(mainwindow = self.mainwindow,
                           text = "There was a problem running the simulation.",
                           detailed_text = errorMessage)

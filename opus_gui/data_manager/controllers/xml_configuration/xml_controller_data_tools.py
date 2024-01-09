@@ -4,8 +4,9 @@
 
 import os
 from lxml.etree import Element, SubElement, ElementTree
-from PyQt4.QtCore import QString, QFileInfo
-from PyQt4.QtGui import QMenu, QCursor, QFileDialog
+from PyQt5.QtCore  import  QFileInfo
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QMenu, QFileDialog
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.data_manager.data_manager_functions import *
@@ -179,10 +180,10 @@ class XmlController_DataTools(XmlController):
 #        fileInfo = QFileInfo(filePath)
 #        baseInfo = QFileInfo(self.toolboxbase.xml_file)
 #        baseDir = baseInfo.absolutePath()
-#        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+#        newFile = QFileInfo((baseDir).append("/").append((fileInfo.filePath())))
 #        fileName = newFile.absoluteFilePath().trimmed()
 #        x = util.documentationbase.DocumentationTab(self.mainwindow,
-#                                                    QString(fileName))
+#                                                    (fileName))
 
     def execToolFile(self):
         '''

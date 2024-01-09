@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 
@@ -85,8 +85,8 @@ class Indgeo(Matplot):
             self.setLayout(self.vbox1)
 
             self.draw_boxselect()
-            self.connect(self.geocombobox, SIGNAL("currSelChanged"), self.draw_boxselect)
-            self.connect(self.toolbar, SIGNAL("currentGeoChanged"), self.draw_mapselect)
+            self.connect(self.geocombobox, pyqtSignal("currSelChanged"), self.draw_boxselect)
+            self.connect(self.toolbar, pyqtSignal("currentGeoChanged"), self.draw_mapselect)
 
             self.selcounty = "0"
             self.seltract = "0"

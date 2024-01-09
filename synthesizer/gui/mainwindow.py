@@ -7,8 +7,8 @@
 
 
 import os, sys, pickle, re
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 from database.createDBConnection import createDBC
@@ -384,10 +384,10 @@ class MainWindow(QMainWindow):
         fileManagerDockWidget.setWidget(self.fileManager)
         self.addDockWidget(Qt.LeftDockWidgetArea, fileManagerDockWidget)
         
-        #self.connect(self.fileManager, SIGNAL("itemDoubleClicked(QTreeWidgetItem *,int)"), self.fileManager.editItem)
-        self.connect(self.fileManager, SIGNAL("itemClicked(QTreeWidgetItem *,int)"), self.fileManager.click)
-        self.connect(self, SIGNAL("Dirty(bool)"), self.windowDirty)
-        self.connect(self.scenarioComboBox, SIGNAL("currentIndexChanged(int)"), self.scenarioChanged)
+        #self.connect(self.fileManager, pyqtSignal("itemDoubleClicked(QTreeWidgetItem *,int)"), self.fileManager.editItem)
+        self.connect(self.fileManager, pyqtSignal("itemClicked(QTreeWidgetItem *,int)"), self.fileManager.click)
+        self.connect(self, pyqtSignal("Dirty(bool)"), self.windowDirty)
+        self.connect(self.scenarioComboBox, pyqtSignal("currentIndexChanged(int)"), self.scenarioChanged)
 
     def scenarioChanged(self, index):
         file = (self.project.location + os.path.sep 
@@ -419,11 +419,11 @@ class MainWindow(QMainWindow):
             self.runWizard()
         else:
             reply = QMessageBox.question(None, "Project Setup Wizard",
-                                         QString("""A PopGen project already open. Would you like to continue?"""),
+                                         ("""A PopGen project already open. Would you like to continue?"""),
                                          QMessageBox.Yes| QMessageBox.No)
             if reply == QMessageBox.Yes:
                 save = QMessageBox.question(None, "Project Setup Wizard",
-                                            QString("""Would you like to save the project?"""),
+                                            ("""Would you like to save the project?"""),
                                             QMessageBox.Yes| QMessageBox.No)
                 self.fileManager.clear()
                 self.fileManager.setEnabled(False)
@@ -471,11 +471,11 @@ class MainWindow(QMainWindow):
         if not project.file.isEmpty():
             if self.fileManager.isEnabled():
                 reply = QMessageBox.warning(None, "Open Existing Project",
-                                            QString("""A PopGen project already open. Would you like to continue?"""),
+                                            ("""A PopGen project already open. Would you like to continue?"""),
                                             QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     save = QMessageBox.warning(None, "Save Existing Project",
-                                               QString("""Would you like to save the project?"""),
+                                               ("""Would you like to save the project?"""),
                                                QMessageBox.Yes| QMessageBox.No)
                     if save == QMessageBox.Yes:
                         SaveProject(self.project)
@@ -505,7 +505,7 @@ class MainWindow(QMainWindow):
 
 
     def projectSaveAs(self):
-        file = QFileDialog.getSaveFileName(self, QString("Save As..."), 
+        file = QFileDialog.getSaveFileName(self, ("Save As..."), 
                                                              "%s" %self.project.location, 
                                                              "PopGen File (*.pop)")
         
@@ -513,7 +513,7 @@ class MainWindow(QMainWindow):
         filename = file[-2]
         if not filename.isEmpty():
             reply = QMessageBox.warning(self, "Save Existing Project As...",
-                                        QString("""Would you like to continue?"""), 
+                                        ("""Would you like to continue?"""), 
                                         QMessageBox.Yes| QMessageBox.No)
             if reply == QMessageBox.Yes:
                 self.project.filename = filename
@@ -947,7 +947,7 @@ class MainWindow(QMainWindow):
             action.setToolTip(tip)
             action.setStatusTip(tip)
         if slot is not None:
-            self.connect(action, SIGNAL(signal), slot)
+            self.connect(action, pyqtSignal(signal), slot)
         if checkable:
             action.setCheckable(True)
         if disabled:
@@ -986,8 +986,8 @@ class SplashScreen(QDialog):
         
         self.setLayout(vLayout)
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
     
 
 def main():

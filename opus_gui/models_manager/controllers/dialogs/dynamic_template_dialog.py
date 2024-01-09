@@ -8,14 +8,14 @@ from opus_gui.util.convenience import hide_widget_on_value_change
 import sys
 import copy
 
-from PyQt4.QtCore import SIGNAL, Qt
-from PyQt4 import QtGui
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5 import QtWidgets
 from lxml.etree import SubElement
 from opus_gui.models_manager.views.ui_model_from_template_dialog_base import Ui_DynamicTemplateDialog
 from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
 from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
 
-class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
+class DynamicTemplateDialog(QtWidgets.QDialog, Ui_DynamicTemplateDialog):
     '''Base dialog class to allow for easy creation of more specific model
     template creation dialogs
 
@@ -37,7 +37,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         '''
         # parent window for the dialog box
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        QtGui.QDialog.__init__(self, parent_widget, flags)
+        QtWidgets.QDialog.__init__(self, parent_widget, flags)
         self.setupUi(self)
 
         self.model_node = copy.deepcopy(model_node)
@@ -47,7 +47,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         self.fields_to_data_methods = {}
         self.widgets = []
 
-        QSP = QtGui.QSizePolicy # temporary alias
+        QSP = QtWidgets.QSizePolicy # temporary alias
         self.label_size_policy = QSP(QSP.Expanding, QSP.MinimumExpanding)
         self.widget_size_policy = QSP(QSP.Expanding, QSP.Maximum)
         self.description_size_policy = QSP(QSP.Fixed, QSP.Fixed)
@@ -195,7 +195,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
 
         # dataset
         if data_type == 'dataset':
-            widget = QtGui.QComboBox()
+            widget = QtWidgets.QComboBox()
             for dataset_name in get_available_dataset_names(self.project):
                 widget.addItem(dataset_name)
             return (widget, widget.currentText)
@@ -203,7 +203,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         # model variable
         if data_type == 'model_variable':
             variables_per_dataset = get_variable_nodes_per_dataset(self.project)
-            widget = QtGui.QComboBox()
+            widget = QtWidgets.QComboBox()
             for dataset, variables in list(variables_per_dataset.items()):
                 for variable in variables:
                     widget.addItem('%s: %s' % (dataset, variable.get('name')))
@@ -234,9 +234,9 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         if data_type  in ['integer', 'float']:
 
             if data_type == 'integer':
-                widget = QtGui.QSpinBox()
+                widget = QtWidgets.QSpinBox()
             else:
-                widget = QtGui.QDoubleSpinBox()
+                widget = QtWidgets.QDoubleSpinBox()
 
             widget.setMaximum(2147483646) # docs says int is the limit here, assuming int32
             widget.setMinimum(-widget.maximum())
@@ -250,7 +250,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
 
         # Boolean
         if data_type == 'boolean':
-            widget = QtGui.QCheckBox()
+            widget = QtWidgets.QCheckBox()
             widget.setChecked(default_value == 'True')
             def boolean_converter(_widget = widget):
                 if widget.isChecked():
@@ -259,7 +259,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             return (widget, lambda x = widget: 'True' if x.isChecked() else 'False')
 
         # default to QLineEdit (string value editing)
-        widget = QtGui.QLineEdit()
+        widget = QtWidgets.QLineEdit()
         widget.setText(default_value)
         return (widget, widget.text)
 
@@ -308,7 +308,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             self.fields_to_data_methods[field_id] = lambda fn = data_method: str(fn()).strip()
             if widget is not None:
                 current_row = len(self.widgets)
-                label = QtGui.QLabel(field_id)
+                label = QtWidgets.QLabel(field_id)
                 label.setMinimumWidth(100)
                 label.setSizePolicy(self.label_size_policy)
                 self.dynamic_widgets.addWidget(label, current_row, 0)
@@ -318,7 +318,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
 
                 field_description = node.get('field_description')
                 if field_description:
-                    description_label = QtGui.QLabel()
+                    description_label = QtWidgets.QLabel()
                     description_label.setSizePolicy(self.description_size_policy)
                     description_label.setPixmap(IconLibrary.icon('info_small').pixmap(32, 32))
                     desc = '<qt><b>%s</b><br/>%s</qt>' % (field_id, field_description)

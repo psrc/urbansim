@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 import sys, os, re
 from . import newproject
@@ -48,8 +48,8 @@ class Wizard(QWizard):
 
         self.setWindowTitle("Project Setup Wizard")
 
-        self.connect(self.button(QWizard.CancelButton), SIGNAL("pressed()"), self.reject)
-        self.connect(self, SIGNAL("currentIdChanged(int)"), self.update)
+        self.connect(self.button(QWizard.CancelButton), pyqtSignal("pressed()"), self.reject)
+        self.connect(self, pyqtSignal("currentIdChanged(int)"), self.update)
 
     def countyDicts(self):
         file = QFile("./data/counties.csv")
@@ -79,7 +79,7 @@ class Wizard(QWizard):
 
     def reject(self):
         reply = QMessageBox.warning(None, "Project Setup Wizard",
-                                    QString("Would you like to continue?"),
+                                    ("Would you like to continue?"),
                                     QMessageBox.Yes| QMessageBox.No)
         if reply == QMessageBox.Yes:
             QWizard.reject(self)
@@ -100,14 +100,14 @@ class Wizard(QWizard):
                 resolution = 'County'
 
         if id == 2:
-            self.page3.emit(SIGNAL("resolutionChanged"), resolution)
+            self.page3.emit(pyqtSignal("resolutionChanged"), resolution)
 
 
         if id == 3:
-            self.page4.emit(SIGNAL("resolutionChanged"), resolution)
+            self.page4.emit(pyqtSignal("resolutionChanged"), resolution)
 
         if id == 4:
-            self.page5.hostnameLineEdit.emit(SIGNAL("editingFinished()"))
+            self.page5.hostnameLineEdit.emit(pyqtSignal("editingFinished()"))
 
 
         if id == 5:

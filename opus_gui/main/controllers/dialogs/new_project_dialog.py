@@ -4,11 +4,11 @@
 
 import sys
 
-from PyQt4.QtCore import SIGNAL, Qt, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
-from PyQt4.QtGui import QDialog, QSizePolicy
+from PyQt5.QtWidgets import QDialog, QSizePolicy
 
 from opus_gui.main.opus_project import OpusProject
 from opus_gui.util.icon_library import IconLibrary
@@ -29,7 +29,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         '''
         # parent window for the dialog box
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        QtGui.QDialog.__init__(self, parent_widget, flags)
+        QtWidgets.QDialog.__init__(self, parent_widget, flags)
         self.setupUi(self)
         
         self.template_nodes = template_project.get_template_nodes()
@@ -95,10 +95,10 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         #  integers and float generates a numeric input only widget
         if data_type  in ['integer', 'float']:
             if data_type == 'integer':
-                widget = QtGui.QSpinBox()
+                widget = QtWidgets.QSpinBox()
                 widget.setMaximum(2**31-1)
             else:
-                widget = QtGui.QDoubleSpinBox()
+                widget = QtWidgets.QDoubleSpinBox()
                 widget.setMaximum(2**64-1)
             widget.setMinimum(-widget.maximum())
 
@@ -113,12 +113,12 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
 
         # boolean generates a checkbox that outputs "True" or "False"
         if data_type == 'boolean':
-            widget = QtGui.QCheckBox()
+            widget = QtWidgets.QCheckBox()
             widget.setChecked(default_value == 'True')
             return (widget, lambda x = widget: 'True' if x.isChecked() else 'False')
 
         # default to QLineEdit (string value editing). Outputs it's value as a Python string
-        widget = QtGui.QLineEdit()
+        widget = QtWidgets.QLineEdit()
         widget.setText(default_value)
         return (widget, lambda x = widget: str(x.text()))
 
@@ -141,7 +141,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         
         def get_widget_label(text):
             ''' Helper to generate a QLabel containing the given text '''
-            l = QtGui.QLabel(field_id)
+            l = QtWidgets.QLabel(field_id)
             l.setMinimumWidth(100)
             l.setSizePolicy(label_size_policy)
             return l
@@ -183,7 +183,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
             # argument was given 
             field_description = node.get('field_description') 
             if field_description:
-                description_label = QtGui.QLabel()
+                description_label = QtWidgets.QLabel()
                 description_label.setSizePolicy(description_size_policy)
                 description_label.setPixmap(IconLibrary.icon('info_small').pixmap(32, 32))
                 desc = '<qt><b>%s</b><br/>%s</qt>' % (field_id, field_description)
@@ -223,7 +223,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
     @pyqtSlot()
     def on_tb_browse_folder_clicked(self):
         ''' User clicked the "browse" for save file name '''
-        project_filename = QtGui.QFileDialog.getSaveFileName(self)
+        project_filename = QtWidgets.QFileDialog.getSaveFileName(self)
         if len(str(project_filename)) == 0:
             return
         
@@ -241,7 +241,7 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
     
     def on_buttonBox_accepted(self):
         ''' User accepted the values in the dialog '''
-        # convert values from QString to Python strings
+        # convert values from  to Python strings
         project_name = str(self.le_project_name.text())
         project_filename = str(self.le_project_filename.text())
         project_description = str(self.le_project_description.text())

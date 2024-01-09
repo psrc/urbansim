@@ -4,8 +4,8 @@
 
 from lxml import etree
 
-from PyQt4.QtGui import QMenu, QCursor, QFont
-from PyQt4.QtCore import SIGNAL
+from PyQt5.QtWidgets import QMenu, QCursor, QFont
+from PyQt5.QtCore import pyqtSignal
 
 from opus_core.logger import logger
 from opus_gui.models_manager.run.run_estimation import OpusEstimation

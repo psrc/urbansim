@@ -2,10 +2,10 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel
-from PyQt4.QtCore import QString
-from PyQt4.QtGui import QColor, QFont, QIcon, QStyle, QMessageBox
-from PyQt4.Qt import qApp # For platform specific icons
+from PyQt5.QtCore import Qt, QVariant, pyqtSignal, QModelIndex, QAbstractItemModel
+from PyQt5.QtWidgets import QMessageBox, QStyle
+from PyQt5.QtGui import QColor, QFont, QIcon
+from PyQt5.Qt import qApp # For platform specific icons
 from opus_gui.util.icon_library import IconLibrary
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
@@ -74,9 +74,9 @@ class XmlModel(QAbstractItemModel):
 
     def rebuild_tree(self):
         ''' Rebuilds the tree from the underlying XML structure '''
-        self.emit(SIGNAL('layoutAboutToBeChanged()'))
+        self.layoutAboutToBeChanged.emit()
         self._root_item.rebuild()
-        self.emit(SIGNAL('layoutChanged()'))
+        self.layoutChanged.emit()
 
     def rowCount(self, parent_index):
         ''' PyQt API Method -- See the PyQt documentation for a description '''
@@ -121,7 +121,7 @@ class XmlModel(QAbstractItemModel):
             return False
         child_item = parent_item.child_item(row)
 
-        self.emit(SIGNAL("layoutAboutToBeChanged()"))
+        self.emit(pyqtSignal("layoutAboutToBeChanged()"))
         self.beginRemoveRows(parent_index, row, row)
         # remove the child item from it's parent's list of children
         child_item.parent_item.child_items.remove(child_item)
@@ -132,7 +132,7 @@ class XmlModel(QAbstractItemModel):
         else:
             reinserted_node = self.project.delete_or_update_node(child_item.node, new_node)
         self.endRemoveRows()
-        self.emit(SIGNAL("layoutChanged()"))
+        self.emit(pyqtSignal("layoutChanged()"))
 
         if reinserted_node is not None:
             self.insertRow(row, parent_index, reinserted_node, reinserting = True)
@@ -447,9 +447,9 @@ class XmlModel(QAbstractItemModel):
         value = value.toString()
         changed_value = node.text != value
         if changed_value:
-            node.text = str(value) # avoid QString's in the xml
+            node.text = str(value) # avoid 's in the xml
             self.dirty = True
-            s = SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)")
+            s = pyqtSignal("dataChanged(const QModelIndex &, const QModelIndex &)")
             self.emit(s, index, index)
         return True
 
@@ -480,7 +480,7 @@ class XmlModel(QAbstractItemModel):
         if row < 0 or row > self.rowCount(parent_index):
             return False
 
-        self.emit(SIGNAL("layoutAboutToBeChanged()"))
+        self.emit(pyqtSignal("layoutAboutToBeChanged()"))
         self.beginInsertRows(parent_index, row, row)
 
         # Get a valid parent_item
@@ -511,7 +511,7 @@ class XmlModel(QAbstractItemModel):
         new_item.rebuild()
         parent_item.child_items.insert(row, new_item)
         self.endInsertRows()
-        self.emit(SIGNAL("layoutChanged()"))
+        self.emit(pyqtSignal("layoutChanged()"))
 
         # If the item was created we store it so that XmlViews can access it
         self.last_inserted_index = self.index(row, 0, parent_index) if new_item else None
@@ -562,7 +562,7 @@ class XmlModel(QAbstractItemModel):
         parent_item.child_items.insert(row, above_item)
         self.make_item_local(this_item)
         self.make_item_local(above_item)
-        self.emit(SIGNAL('layoutChanged()'))
+        self.emit(pyqtSignal('layoutChanged()'))
         self.dirty = True
         if view:
             view.setExpanded(self.index(row, 0, self.parent(index)), above_item_expanded)
@@ -590,7 +590,7 @@ class XmlModel(QAbstractItemModel):
         parent_item.child_items.insert(row + 1, this_item)
         self.make_item_local(this_item)
         self.make_item_local(below_item)
-        self.emit(SIGNAL('layoutChanged()'))
+        self.emit(pyqtSignal('layoutChanged()'))
         self.dirty = True
         if view:
             view.setExpanded(self.index(row+1, 0, self.parent(index)), this_item_expanded)

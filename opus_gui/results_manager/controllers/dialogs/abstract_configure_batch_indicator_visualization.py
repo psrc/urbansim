@@ -5,8 +5,8 @@
 import os
 from lxml.etree import SubElement
 
-from PyQt4.QtCore import QString,QFileInfo, pyqtSlot, QModelIndex
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
+from PyQt5.QtCore import QFileInfo, pyqtSlot, QModelIndex
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
 from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
@@ -35,7 +35,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
 #        self.model = resultManagerBase.toolboxBase.resultsManagerTree.model
 #        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
-        self.leVizName.setText(QString('New visualization'))
+        self.leVizName.setText(('New visualization'))
         self.dataset_name = None
 #        self.twAvailableIndicators.verticalHeader().hide()
 #        self.twIndicatorsToVisualize.verticalHeader().hide()
@@ -46,7 +46,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         self.lblOption1.hide()
         self.leOption1.hide()
         self.pbn_set_storage_location.hide()
-        #self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
+        #self.setToolTip(('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
         self.spatial_datasets = get_available_spatial_dataset_names(project = project)
 
     def _setup_indicators(self, existing_indicators = []):
@@ -71,15 +71,15 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 #        self.twAvailableIndicators.setRowCount(len(indicators) - len(existing_indicators))
 
         col = QTableWidgetItem()
-        col.setText(QString('Name'))
+        col.setText(('Name'))
         self.twAvailableIndicators.setHorizontalHeaderItem(0,col)
 
         #col = QTableWidgetItem()
-        #col.setText(QString('Dataset'))
+        #col.setText(('Dataset'))
         #self.twAvailableIndicators.setHorizontalHeaderItem(1,col)
 
         col = QTableWidgetItem()
-        col.setText(QString('Definition'))
+        col.setText(('Definition'))
         self.twAvailableIndicators.setHorizontalHeaderItem(1,col)
 
         self.indicator_nodes = {}
@@ -170,7 +170,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         loc = -1
         self.cboOutputType.clear()
         for idx,(k,v) in enumerate(available_output_types.items()):
-            self.cboOutputType.addItem(QString(k))
+            self.cboOutputType.addItem((k))
 
             if k == value:
                 loc = idx
@@ -178,14 +178,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         if loc != -1:
             self.cboOutputType.setCurrentIndex(loc)
             if loc == 0:
-                self.on_cboOutputType_currentIndexChanged(QString(value))
+                self.on_cboOutputType_currentIndexChanged((value))
 
     def _setup_co_dataset_name(self, value = None):
         available_datasets = get_available_dataset_names(self.project)
         # self.xml_helper.get_available_datasets()
 
         for dataset in available_datasets:
-            self.cboDataset.addItem(QString(dataset))
+            self.cboDataset.addItem((dataset))
 
         if value is not None:
             idx = self.cboDataset.findText(value)
@@ -194,7 +194,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 self.cboDataset.setCurrentIndex(idx)
 
         if value is None or idx == -1:
-            self.dataset_name = QString(str(self.cboDataset.currentText()))
+            self.dataset_name = (str(self.cboDataset.currentText()))
 
     def _setup_co_viz_type(self, value = None):
 
@@ -257,15 +257,15 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         dataset = param
         if self.dataset_name != dataset:
-            self.dataset_name = QString(str(dataset))
+            self.dataset_name = (str(dataset))
             self._setup_indicators()
 
-        map_pos = self.cboVizType.findText(QString('Map'))
+        map_pos = self.cboVizType.findText(('Map'))
         if self.dataset_name not in self.spatial_datasets and map_pos > -1:
             self.cboVizType.removeItem(map_pos)
             self._setup_co_viz_type()
         elif self.dataset_name in self.spatial_datasets and map_pos == -1:
-            self.cboVizType.addItem(QString('Map'))
+            self.cboVizType.addItem(('Map'))
             self._setup_co_viz_type()
 
     def _get_type_mapper(self):
@@ -292,14 +292,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         viz_type = self.cboVizType.currentText()
         translation = self._get_output_types(viz_type)
         dataset_name = self.dataset_name
-        output_type = QString(translation[str(self.cboOutputType.currentText())])
-        indicators = QString(str(self._get_column_values(column = 0)))
+        output_type = (translation[str(self.cboOutputType.currentText())])
+        indicators = (str(self._get_column_values(column = 0)))
 
         vals = {
                 'indicators': indicators,
                 'output_type': output_type,
                 'dataset_name': dataset_name,
-                'visualization_type': QString(self._get_type_mapper()[str(viz_type)])
+                'visualization_type': (self._get_type_mapper()[str(viz_type)])
         }
 
         if output_type == 'mapnik_map' or output_type == 'mapnik_animated_map':
@@ -316,7 +316,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         elif output_type == 'fixed_field':
             try:
-                fixed_field_params = QString(str(self._get_column_values(column = 1)))
+                fixed_field_params = (str(self._get_column_values(column = 1)))
             except:
                 errorInfo = formatExceptionInfo()
                 logger.log_error(errorInfo)
@@ -338,7 +338,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 output_style = Table.PER_ATTRIBUTE
             elif self.rbTablePerYear.isChecked():
                 output_style = Table.PER_YEAR
-            vals['output_style'] = QString(str(output_style))
+            vals['output_style'] = (str(output_style))
             if self.appendTypeCheckBox.isChecked():
                 vals['append_col_type'] = True
             else:
@@ -419,30 +419,30 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.pbn_set_storage_location.hide()
 
         if output_type == 'Fixed field file (.dat)':
-            self.lblOption1.setText(QString('ID format:'))
-            self.lblOption1.setToolTip(QString('The fixed format of all id \ncolumns of the indicator result'))
+            self.lblOption1.setText(('ID format:'))
+            self.lblOption1.setToolTip(('The fixed format of all id \ncolumns of the indicator result'))
         elif output_type == 'Export to SQL database':
-            self.lblOption1.setText(QString('Database name:'))
-            self.lblOption1.setToolTip(QString('The name of the SQL database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
+            self.lblOption1.setText(('Database name:'))
+            self.lblOption1.setToolTip(('The name of the SQL database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
         elif output_type == 'ESRI database':
-            self.lblOption1.setText(QString('Path:'))
-            self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))
+            self.lblOption1.setText(('Path:'))
+            self.lblOption1.setToolTip(('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))
         elif output_type == 'Excel (.xls)':
-            self.lblOption1.setText(QString('Filename:'))
-            self.lblOption1.setToolTip(QString('The location on disk of the xls file'))
+            self.lblOption1.setText(('Filename:'))
+            self.lblOption1.setToolTip(('The location on disk of the xls file'))
 
     @pyqtSlot()
     def on_pbn_set_storage_location_released(self):
         start_dir = paths.OPUS_PROJECT_CONFIGS_PATH
 
         configDialog = QFileDialog()
-        filter_str = QString("*.gdb")
+        filter_str = ("*.gdb")
         fd = configDialog.getExistingDirectory(self,
-                    QString("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
-                    QString(start_dir), QFileDialog.ShowDirsOnly)
+                    ("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
+                    (start_dir), QFileDialog.ShowDirsOnly)
         if len(fd) != 0:
-            fileName = QString(fd)
-            fileNameInfo = QFileInfo(QString(fd))
+            fileName = (fd)
+            fileNameInfo = QFileInfo((fd))
             fileNameBaseName = fileNameInfo.completeBaseName()
             self.leOption1.setText(fileName)
 
@@ -454,7 +454,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         cur_value = from_table_widget.item(row, 0)
         if cur_value is not None:
-            indicator_name = QString(cur_value.text())
+            indicator_name = (cur_value.text())
             last_row = to_table_widget.rowCount()
             to_table_widget.insertRow(last_row)
             to_table_widget.setItem(last_row, 0, QTableWidgetItem(indicator_name))

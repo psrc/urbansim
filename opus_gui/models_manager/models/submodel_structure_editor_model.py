@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt, QVariant # these are used so frequently so a shorter name is nicer
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import Qt, QVariant # these are used so frequently so a shorter name is nicer
 
 class SubmodelStructureEditorModel(QtCore.QAbstractTableModel):
 
@@ -62,7 +62,7 @@ class SubmodelStructureEditorModel(QtCore.QAbstractTableModel):
         self._variable_nodes.append(variable_spec_node)
         return_val = QtCore.QAbstractItemModel.insertRow(self, row, parent_index)
         self.endInsertRows()
-        self.emit(QtCore.SIGNAL('layoutChanged()'))
+        self.emit(QtCore.pyqtSignal('layoutChanged()'))
         return return_val
 
     def removeRow(self, row, parent_index = QtCore.QModelIndex()):
@@ -70,7 +70,7 @@ class SubmodelStructureEditorModel(QtCore.QAbstractTableModel):
         self._variable_nodes.pop(row)
         return_val = QtCore.QAbstractItemModel.removeRow(self, row, parent_index)
         self.endRemoveRows()
-        self.emit(QtCore.SIGNAL('layoutChanged()'))
+        self.emit(QtCore.pyqtSignal('layoutChanged()'))
         return return_val
 
     def data(self, index, role):
@@ -116,7 +116,7 @@ class SubmodelStructureEditorModel(QtCore.QAbstractTableModel):
                 return QVariant(Qt.Checked if node.get('keep_fixed') == 'True' else Qt.Unchecked)
 
         if role == Qt.FontRole:
-            font = QtGui.QFont()
+            font = QtWidgets.QFont()
             if header == self.HEADER_VARIABLE:
                 if node.get('ignore') != 'True':
                     font.setBold(True)
@@ -129,7 +129,7 @@ class SubmodelStructureEditorModel(QtCore.QAbstractTableModel):
             # color default values of coefficient name as light gray
             if header == self.HEADER_COEFF_NAME:
                 if 'coefficient_name' not in node.attrib:
-                    return QVariant(QtGui.QColor(Qt.gray))
+                    return QVariant(QtWidgets.QColor(Qt.gray))
 
         if role == Qt.ToolTipRole:
             if header == self.HEADER_DEFINITION: # defs easily get cramped so show in tool tip as well
@@ -208,21 +208,21 @@ if __name__ == '__main__':
         </variable_list>
     </opus_project>
     '''
-    app = QtGui.QApplication([], True)
+    app = QtWidgets.QApplication([])
     p = MockupOpusProject(xml)
 
-    f = QtGui.QFrame()
-    l = QtGui.QVBoxLayout()
+    f = QtWidgets.QFrame()
+    l = QtWidgets.QVBoxLayout()
     f.setLayout(l)
-    tv = QtGui.QTableView()
+    tv = QtWidgets.QTableView()
     m = VariableSelectorTableModel(p)
     v_defs = p.findall('expression_library/variable')
     m.init_for_variable_node_list(p.find('variable_list'))
     tv.setModel(m)
-    l.addWidget(QtGui.QLabel('Hello'))
+    l.addWidget(QtWidgets.QLabel('Hello'))
     l.addWidget(tv)
-    pb = QtGui.QPushButton('reload')
-    lbl = QtGui.QLabel()
+    pb = QtWidgets.QPushButton('reload')
+    lbl = QtWidgets.QLabel()
     def update_text():
         text = ''
         for v in m._variable_nodes:
@@ -232,9 +232,9 @@ if __name__ == '__main__':
         node = p.find('variables/variable', name='add me')
         m.add_selection_for_variable_node(node)
 
-    pb.connect(pb, QtCore.SIGNAL("clicked()"), update_text)
-    pb2 = QtGui.QPushButton('add')
-    pb2.connect(pb2, QtCore.SIGNAL("clicked()"), add_variable)
+    pb.connect(pb, QtCore.pyqtSignal("clicked()"), update_text)
+    pb2 = QtWidgets.QPushButton('add')
+    pb2.connect(pb2, QtCore.pyqtSignal("clicked()"), add_variable)
 
     l.addWidget(pb)
     l.addWidget(pb2)

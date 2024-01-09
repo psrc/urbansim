@@ -14,8 +14,8 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 
 class HelpForm(QDialog):
@@ -45,12 +45,12 @@ class HelpForm(QDialog):
         layout.addWidget(self.textBrowser, 1)
         self.setLayout(layout)
 
-        self.connect(backAction, SIGNAL("triggered()"),
+        self.connect(backAction, pyqtSignal("triggered()"),
                      self.textBrowser, SLOT("backward()"))
-        self.connect(homeAction, SIGNAL("triggered()"),
+        self.connect(homeAction, pyqtSignal("triggered()"),
                     self.textBrowser, SLOT("home()"))
-        #self.connect(homeAction, SIGNAL("triggered()"),self.home)
-        self.connect(self.textBrowser, SIGNAL("sourceChanged(QUrl)"),
+        #self.connect(homeAction, pyqtSignal("triggered()"),self.home)
+        self.connect(self.textBrowser, pyqtSignal("sourceChanged(QUrl)"),
                      self.updatePageTitle)
 
         self.textBrowser.setSearchPaths([":/"])

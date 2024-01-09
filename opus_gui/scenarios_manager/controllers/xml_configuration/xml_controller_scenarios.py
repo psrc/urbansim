@@ -6,7 +6,7 @@ import io
 from lxml import etree
 from lxml.etree import Element
 
-from PyQt4.QtGui import QMenu, QCursor
+from PyQt5.QtWidgets import QMenu, QCursor
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController

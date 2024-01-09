@@ -7,8 +7,8 @@ from opus_gui.util import common_dialogs
 import copy
 from lxml.etree import SubElement
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.Qt import pyqtSlot
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.Qt import pyqtSlot
 
 from opus_gui.util.convenience import create_qt_action
 from opus_core.configurations.xml_configuration import get_variable_name
@@ -22,7 +22,7 @@ from opus_gui.models_manager.views.ui_submodel_editor import Ui_SubModelEditor
 from opus_gui.models_manager.models.submodel_structure_item import SubmodelStructureItem
 from opus_gui.models_manager.models.variable_selector_table_model import VariableSelectorTableModel
 
-class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
+class SubModelEditor(QtWidgets.QDialog, Ui_SubModelEditor):
 
     '''
     Submodel Editing dialog.
@@ -43,7 +43,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
     '''
 
     def __init__(self, project, parent_widget = None):
-        QtGui.QDialog.__init__(self, parent_widget)
+        QtWidgets.QDialog.__init__(self, parent_widget)
         self.setupUi(self)
 
 
@@ -60,7 +60,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         # hide the name warning when the user edit the name
         hide_widget_on_value_change(self.lbl_name_warning, self.le_name)
 
-        S = QtCore.SIGNAL # temporarily use a shorter name for all the connections below
+        S = QtCore.pyqtSignal # temporarily use a shorter name for all the connections below
 
         self.connect(self.selector_table_model, S('layoutChanged()'), self._selector_model_column_resize)
         signal = S("currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)")
@@ -305,7 +305,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
     def _right_click_variables(self, point):
         ''' construct and show an operations operations_menu when the user right clicks the variable selector '''
-        operations_menu = QtGui.QMenu(self)
+        operations_menu = QtWidgets.QMenu(self)
         add_variable_menu = self._create_add_variable_menu()
         add_variable_menu.setTitle('Add a variable')
         add_variable_menu.setIcon(IconLibrary.icon('add'))
@@ -324,7 +324,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         else:
             # if the index is not valid -- assume that the user clicked the "white space" of the table
             pass
-        operations_menu.exec_(QtGui.QCursor.pos())
+        operations_menu.exec_(QtWidgets.QCursor.pos())
 
     def _in_simple_mode(self):
         return self.tree_structure_selector.topLevelItemCount() == 0
@@ -353,7 +353,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         not_selected_variables = [var_node for var_node in available_variable_nodes if
                                   not var_node.get('name') in selected_variable_names]
         for variable_node in not_selected_variables:
-            item = QtGui.QListWidgetItem(self.lst_available_variables)
+            item = QtWidgets.QListWidgetItem(self.lst_available_variables)
             item.setIcon(IconLibrary.icon('variable'))
             item.node = variable_node # monkey in the node for adding later
             item.setText(get_variable_name(variable_node))
@@ -415,7 +415,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 self.split_struct_variables.setSizes([0, 10])
             self._show_advanced_parameters()
             # sometimes the table gets messed up when shown again so force refresh
-            self.selector_table_model.emit(QtCore.SIGNAL("layoutChanged()"))
+            self.selector_table_model.emit(QtCore.pyqtSignal("layoutChanged()"))
         self.cb_show_advanced_parameters.setEnabled(not visible)
         self.pb_remove_variable.setVisible(visible)
         self.pb_show_picker.setChecked(visible)
@@ -499,7 +499,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
     @pyqtSlot()
     def on_pb_help_on_clicked(self):
-        QtGui.QWhatsThis.enterWhatsThisMode()
+        QtWidgets.QWhatsThis.enterWhatsThisMode()
 
 #    @pyqtSlot()
 #    def on_pb_add_variable_clicked(self):
@@ -512,7 +512,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 #        if not self.table_selected_variables.isEnabled():
 #            return
 #        menu = self._create_add_variable_menu()
-#        menu.exec_(QtGui.QCursor.pos())
+#        menu.exec_(QtWidgets.QCursor.pos())
 
     @pyqtSlot()
     def on_pb_show_picker_clicked(self):
@@ -534,7 +534,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
     @pyqtSlot()
     def on_cb_show_advanced_parameters_clicked(self):
         self._show_advanced_parameters()
-        self.selector_table_model.emit(QtCore.SIGNAL('layoutChanged()'))
+        self.selector_table_model.emit(QtCore.pyqtSignal('layoutChanged()'))
 
     @pyqtSlot()
     def on_pb_delete_struct_clicked(self):
@@ -714,7 +714,7 @@ if __name__ == '__main__':
       </opus_project>
     '''
     p = MockupOpusProject(xml)
-    app = QtGui.QApplication([], True)
+    app = QtWidgets.QApplication([])
     w = SubModelEditor(p)
     # model_node = p.find('model_manager/models/model', name='land_price_model')
     model_node = p.find('model_manager/models/model', name='land_price_model')

@@ -10,7 +10,7 @@ from . import drawing_households
 from . import psuedo_sparse_matrix
 import time
 
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
 
 def prepare_data(db, project):
 

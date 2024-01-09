@@ -4,7 +4,7 @@
 
 import os
 
-from PyQt4.QtGui import QIcon
+from PyQt5.QtGui import QIcon
 
 class IconLibrary(object):
     '''
@@ -110,8 +110,8 @@ class IconLibrary(object):
 
 if __name__ == '__main__':
     # TODO unit tests
-    from PyQt4.QtGui import QApplication
-    app = QApplication([], True)
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication([])
     b = IconLibrary.icon('fisk')
     b2 = IconLibrary.icon('fisk')
     b4 = IconLibrary.icon('fisk')

@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString, QObject, SIGNAL
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore  import  QObject, pyqtSignal
+from PyQt5.QtWidgets import QDialog
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
@@ -43,11 +43,11 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
 
         for i in range(start, end + 1):
             if i not in years: continue
-            yr = QString(repr(i))
+            yr = (repr(i))
             self.co_start_year.addItem(yr)
             self.co_end_year.addItem(yr)
         for i in range(1, end - start + 2):
-            yr = QString(repr(i))
+            yr = (repr(i))
             self.co_every_year.addItem(yr)
 
     def removeElement(self):
@@ -76,9 +76,9 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
                               thread_object = self.batch_processor)
 
         # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+        QObject.connect(self.runThread, pyqtSignal("runFinished(PyQt_PyObject)"),
                         self.runFinishedFromThread)
-        QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
+        QObject.connect(self.runThread, pyqtSignal("runError(PyQt_PyObject)"),
                         self.runErrorFromThread)
 
         self.runThread.start()

@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL
-from PyQt4.QtGui import QTextBrowser
+from PyQt5.QtCore import Qt, QVariant, QAbstractTableModel, pyqtSignal
+from PyQt5.QtWidgets import QTextBrowser
 
 import sys
 import operator
@@ -70,7 +70,7 @@ class TableModel(QAbstractTableModel):
         """Sort table by given column number.
         """
         self.ncol = ncol
-        self.emit(SIGNAL("layoutAboutToBeChanged()"))
+        self.emit(pyqtSignal("layoutAboutToBeChanged()"))
         # Create a list to order the sort by
         orderList = list(range(len(self.headerdata)))
         orderList.remove(self.ncol)
@@ -85,7 +85,7 @@ class TableModel(QAbstractTableModel):
         if order == Qt.DescendingOrder:
             if isinstance(self.arraydata,list):
                 self.arraydata.reverse()
-        self.emit(SIGNAL("layoutChanged()"))
+        self.emit(pyqtSignal("layoutChanged()"))
 
 class CatchOutput(QTextBrowser):
     class Output:

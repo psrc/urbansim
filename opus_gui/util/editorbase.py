@@ -3,10 +3,10 @@
 # See opus_core/LICENSE
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QString
-from PyQt4.QtGui import QFont, QFontMetrics, QColor, QIcon, QLabel, QWidget, QVBoxLayout
-from PyQt4.Qsci import QsciScintilla, QsciLexerPython
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import Qt, 
+from PyQt5.QtWidgets import QFont, QFontMetrics, QColor, QIcon, QLabel, QWidget, QVBoxLayout
+from PyQt5.Qsci import QsciScintilla, QsciLexerPython
 
 # Main
 class EditorBase(QsciScintilla):
@@ -75,7 +75,7 @@ class EditorTab(object):
         self.editorStatusLabel = QLabel(self.tab)
         self.editorStatusLabel.setAlignment(Qt.AlignCenter)
         self.editorStatusLabel.setObjectName("editorStatusLabel")
-        self.editorStatusLabel.setText(QString("No files currently loaded..."))
+        self.editorStatusLabel.setText(("No files currently loaded..."))
         self.widgetLayout.addWidget(self.editorStatusLabel)
         self.editorStuff = EditorBase(self.mainwindow)
         self.widgetLayout.addWidget(self.editorStuff)
@@ -86,7 +86,7 @@ class EditorTab(object):
         for l in f.readlines():
             self.editorStuff.append(l)
         f.close()
-        self.editorStatusLabel.setText(QString(filePath))
+        self.editorStatusLabel.setText((filePath))
 
         self.mainwindow.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
         self.mainwindow.tabWidget.setCurrentIndex(0)

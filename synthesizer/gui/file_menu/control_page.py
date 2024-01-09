@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from misc.widgets import *
 
 
@@ -36,15 +36,15 @@ class ControlDataPage(QWizardPage):
         controlPersonLocationLabel = QLabel("Select the person marginal total file")
 
         self.controlHHLocationComboBox = ComboBoxFile()
-        self.controlHHLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlHHLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlHHLocationLabel.setBuddy(self.controlHHLocationComboBox)
 
         self.controlGQLocationComboBox = ComboBoxFile()
-        self.controlGQLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlGQLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlGQLocationLabel.setBuddy(self.controlGQLocationComboBox)
 
         self.controlPersonLocationComboBox = ComboBoxFile()
-        self.controlPersonLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlPersonLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlPersonLocationLabel.setBuddy(self.controlPersonLocationComboBox)
 
         controlUserProvWarning = QLabel("""<font color = blue> Note: Groupquarter data is optional; but if the person marginal"""
@@ -80,31 +80,31 @@ class ControlDataPage(QWizardPage):
         vLayout.addWidget(controlUserProvWarning)
         self.setLayout(vLayout)
 
-        self.connect(self.controlHHLocationComboBox, SIGNAL("activated(int)"), self.controlHHCheck)
-        self.connect(self.controlGQLocationComboBox, SIGNAL("activated(int)"), self.controlGQLocationComboBox.browseFile)
-        self.connect(self.controlPersonLocationComboBox, SIGNAL("activated(int)"), self.controlPersonCheck)
-        self.connect(self.sourceComboBox, SIGNAL("activated(int)"), self.sourceCheck)
+        self.connect(self.controlHHLocationComboBox, pyqtSignal("activated(int)"), self.controlHHCheck)
+        self.connect(self.controlGQLocationComboBox, pyqtSignal("activated(int)"), self.controlGQLocationComboBox.browseFile)
+        self.connect(self.controlPersonLocationComboBox, pyqtSignal("activated(int)"), self.controlPersonCheck)
+        self.connect(self.sourceComboBox, pyqtSignal("activated(int)"), self.sourceCheck)
 
-        self.connect(self.controlAutoRadio, SIGNAL("clicked()"), self.controlAutoAction)
-        self.connect(self.controlUserProvRadio, SIGNAL("clicked()"), self.controlUserProvAction)
-        self.connect(self, SIGNAL("resolutionChanged"), self.resolutionAction)
+        self.connect(self.controlAutoRadio, pyqtSignal("clicked()"), self.controlAutoAction)
+        self.connect(self.controlUserProvRadio, pyqtSignal("clicked()"), self.controlUserProvAction)
+        self.connect(self, pyqtSignal("resolutionChanged"), self.resolutionAction)
 
     def resolutionAction(self, resolution):
         if resolution != 'County':
             self.sourceComboBox.clear()
-            self.sourceComboBox.addItems([QString(""), 
-                                          QString("Census 2000")])
+            self.sourceComboBox.addItems([(""), 
+                                          ("Census 2000")])
         else:
             self.sourceComboBox.clear()
-            self.sourceComboBox.addItems([QString(""), 
-                                          QString("Census 2000"), 
-                                          QString("ACS 2005-2007")])
+            self.sourceComboBox.addItems([(""), 
+                                          ("Census 2000"), 
+                                          ("ACS 2005-2007")])
 
 
 
         if resolution == 'TAZ':
             self.controlUserProvRadio.setChecked(True)
-            self.controlUserProvRadio.emit(SIGNAL("clicked()"))
+            self.controlUserProvRadio.emit(pyqtSignal("clicked()"))
             self.controlAutoRadio.setEnabled(False)
         else:
             self.controlAutoRadio.setEnabled(True)
@@ -120,7 +120,7 @@ class ControlDataPage(QWizardPage):
         self.controlPersonLocationDummy = True
         self.controlHHLocationDummy = True
         self.sourceDummy = False
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def controlUserProvAction(self):
         self.controlUserProvGroupBox.setEnabled(True)
@@ -138,7 +138,7 @@ class ControlDataPage(QWizardPage):
         self.sourceComboBox.setCurrentIndex(0)
         self.sourceDummy = True
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def controlHHCheck(self, index):
@@ -148,7 +148,7 @@ class ControlDataPage(QWizardPage):
         else:
             self.controlHHLocationDummy = True
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def controlPersonCheck(self, index):
         self.controlPersonLocationComboBox.browseFile(index)
@@ -157,7 +157,7 @@ class ControlDataPage(QWizardPage):
         else:
             self.controlPersonLocationDummy = True
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def sourceCheck(self, index):
         if index>0:
@@ -165,7 +165,7 @@ class ControlDataPage(QWizardPage):
         else:
             self.sourceDummy = False
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def isComplete(self):

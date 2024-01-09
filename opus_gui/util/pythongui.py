@@ -3,8 +3,8 @@
 # See opus_core/LICENSE
 
 
-from PyQt4.QtCore import QObject, SIGNAL, QString
-from PyQt4.QtGui import QTextBrowser, QFont
+from PyQt5.QtCore import QObject, pyqtSignal, 
+from PyQt5.QtWidgets import QTextBrowser, QFont
 # General system includes
 import sys
 from code import InteractiveConsole
@@ -19,7 +19,7 @@ class OpusPythonShell(QTextBrowser):
 
     def __init__( self, parent, cmdline, localdict={} ):
         QTextBrowser.__init__( self, parent )
-        QObject.connect( cmdline, SIGNAL( "returnPressed()" ),
+        QObject.connect( cmdline, pyqtSignal( "returnPressed()" ),
                          self.returnPressed )
         self.setFont(QFont("Fixed",10))
         self.console = InteractiveConsole( localdict )
@@ -49,4 +49,4 @@ class OpusPythonShell(QTextBrowser):
         line = str(self.cmdline.text())
         self.cmdline.clear()
         self.processInput( line )
-        self.append( QString("--------") )
+        self.append( ("--------") )

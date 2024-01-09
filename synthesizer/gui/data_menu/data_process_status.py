@@ -4,8 +4,8 @@
 # See PopGen/License
 
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from .pums_data import AutoImportPUMS2000Data, AutoImportPUMSACSData, UserImportSampleData
 from .sf_data import AutoImportSF2000Data, AutoImportSFACSData, UserImportControlData
 from .geocorr_data import AutoImportGeocorrData, UserImportGeocorrData
@@ -92,8 +92,8 @@ class DataDialog(QDialog):
 
         self.setLayout(layout)
 
-        self.connect(self.dialogButtonBox, SIGNAL("clicked(QAbstractButton *)"), self.start)
-        self.connect(self.dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(self.dialogButtonBox, pyqtSignal("clicked(QAbstractButton *)"), self.start)
+        self.connect(self.dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
     def start(self, button):
         for i in self.dialogButtonBox.buttons():

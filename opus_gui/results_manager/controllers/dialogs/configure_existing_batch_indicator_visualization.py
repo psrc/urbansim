@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString
+from PyQt5.QtCore import 
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
@@ -33,7 +33,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             viz_type = 'Table'
         elif viz_type not in ['Map']:
             viz_type = self._get_inverse_type_mapper()[viz_type]
-        prev_viz_type = QString(viz_type)
+        prev_viz_type = (viz_type)
 
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
@@ -48,13 +48,13 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             id_format = viz_spec['id_format'] or ''
             specs = self._process_xml_stored_list_of_strings(value = fixed_field_specification)
             self._set_column(column = 1, values = specs)
-            self.leOption1.setText(QString(id_format))
+            self.leOption1.setText((id_format))
         elif prev_output_type in ('esri'):
             storage_location = viz_spec['storage_location'] or ''
-            self.leOption1.setText(QString(storage_location))
+            self.leOption1.setText((storage_location))
         elif prev_output_type == 'sql':
             database_name = viz_spec['database_name'] or ''
-            self.leOption1.setText(QString(database_name))
+            self.leOption1.setText((database_name))
         elif prev_output_type in ('tab', 'xls'):
             append = 'False'
             try:
@@ -76,7 +76,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                     self.rbTablePerYear.setChecked(True)
             if prev_output_type == 'xls':
                 storage_location = viz_spec['storage_location'] or ''
-                self.leOption1.setText(QString(storage_location))
+                self.leOption1.setText((storage_location))
 
         elif prev_output_type == 'mapnik_map' or prev_output_type == 'mapnik_animated_map':
             self.mapnik_options['mapnik_bucket_ranges'] = viz_spec['mapnik_bucket_ranges']

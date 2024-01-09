@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtGui import QDialog, QMenu, QCursor, QFont
-from PyQt4.QtCore import Qt, SIGNAL, pyqtSlot
+from PyQt5.QtWidgets import QDialog, QMenu, QCursor, QFont
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 
 from opus_gui.general_manager.views.ui_variable_library import Ui_VariableLibrary
 from opus_gui.general_manager.views.variables_table_view import VariablesTableView
@@ -52,13 +52,13 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         self.table_container.addWidget(self.variables_table)
 
         # Automatically update the save button state on model data change
-        self.connect(self.model, SIGNAL('model_changed'), self._update_apply_button)
+        self.connect(self.model, pyqtSignal('model_changed'), self._update_apply_button)
 
         # Automatically enable or disable the validate selected vars button
         def on_sel_change(dummy_a, dummy_b):
             enabled = len(self.variables_table.selectedIndexes()) > 0
             self.pb_validate_selected.setEnabled(enabled)
-        sel_changed = SIGNAL('selectionChanged(const QItemSelection&,const QItemSelection&)')
+        sel_changed = pyqtSignal('selectionChanged(const QItemSelection&,const QItemSelection&)')
         self.connect(self.variables_table.selectionModel(), sel_changed, on_sel_change)
 
         # Double clicking an item in the table brings up the editor
@@ -66,23 +66,23 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             variable = self.model.variables[index.row()]
             if not variable['inherited']:
                 self._edit_variable(variable)
-        self.connect(self.variables_table, SIGNAL('doubleClicked(QModelIndex)'), edit_wrapper)
+        self.connect(self.variables_table, pyqtSignal('doubleClicked(QModelIndex)'), edit_wrapper)
 
         def apply_and_close():
             self._apply_variable_changes()
             self.accept()
         def cancel_validation():
             self.cancel_validation_flag['value'] = True
-        self.connect(self.pb_apply_and_close, SIGNAL("clicked()"), apply_and_close)
-        self.connect(self.pb_apply, SIGNAL("clicked()"), self._apply_variable_changes)
-        self.connect(self.pb_create_new, SIGNAL("clicked()"), self._add_variable)
-        self.connect(self.pb_problems, SIGNAL("clicked()"), self._show_problem_variables)
-        self.connect(self.pb_cancel_validation, SIGNAL("clicked()"), cancel_validation)
+        self.connect(self.pb_apply_and_close, pyqtSignal("clicked()"), apply_and_close)
+        self.connect(self.pb_apply, pyqtSignal("clicked()"), self._apply_variable_changes)
+        self.connect(self.pb_create_new, pyqtSignal("clicked()"), self._add_variable)
+        self.connect(self.pb_problems, pyqtSignal("clicked()"), self._show_problem_variables)
+        self.connect(self.pb_cancel_validation, pyqtSignal("clicked()"), cancel_validation)
 
-        signal = SIGNAL('customContextMenuRequested(const QPoint &)')
+        signal = pyqtSignal('customContextMenuRequested(const QPoint &)')
         self.connect(self.variables_table, signal, self._show_right_click_menu)
 
-        signal = SIGNAL('currentIndexChanged(int)')
+        signal = pyqtSignal('currentIndexChanged(int)')
         self.connect(self.cbo_dataset_filter, signal, lambda x: self._set_dataset_filter())
 
         self.validator = VariableValidator(self.project)
@@ -111,7 +111,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
                                          parent_widget = self.variables_table)
         self.variables_table.setModel(self.model)
         self.model.re_sort()
-        self.connect(self.model, SIGNAL('layoutChanged()'), self.variables_table.resizeRowsToContents)
+        self.connect(self.model, pyqtSignal('layoutChanged()'), self.variables_table.resizeRowsToContents)
         self._update_apply_button()
 
         self.group_progress.setVisible(False)
@@ -245,7 +245,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         self.initialize()
         something_changed = bool(update_set or create_set or delete_set)
         update_mainwindow_savestate(something_changed)
-        get_mainwindow_instance().emit(SIGNAL('variables_updated'))
+        get_mainwindow_instance().emit(pyqtSignal('variables_updated'))
         return True
 
     def _edit_variable(self, variable):

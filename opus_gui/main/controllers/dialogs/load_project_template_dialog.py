@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, Qt, pyqtSlot
-from PyQt4 import QtGui
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog
 from opus_gui.main.opus_project import OpusProject
 from opus_gui.main.built_in_project_templates import get_builtin_project_templates
 from opus_gui.main.views.dialogs.ui_load_project_template_dialog import Ui_LoadProjectTemplateDialog
@@ -24,7 +24,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             '''
             # parent window for the dialog box
             flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-            QtGui.QDialog.__init__(self, parent_widget, flags)
+            QtWidgets.QDialog.__init__(self, parent_widget, flags)
             self.setupUi(self)
             
             self.template_project = None
@@ -118,7 +118,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
     def on_tb_custom_browse_clicked(self):
         # let the user browse for a custom template project to load
         self.rb_use_custom.setChecked(True)
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Something', '', "OPUS Project (*.xml)")
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Something', '', "OPUS Project (*.xml)")
         if len(str(filename)) == 0: # user canceled dialog
             return
         self.le_custom_filename.setText(filename)
@@ -134,7 +134,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
         if project is None:
             return
         
-        # QtGui.QMessageBox.information(self, '', 'Loading project: ' + project.name)
+        # QtWidgets.QMessageBox.information(self, '', 'Loading project: ' + project.name)
         # Got a reference to a valid project to load. Setup the expected response property of the dialog.
         self.template_project = project
         self.accept()

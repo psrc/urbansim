@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 from opus_gui.results_manager.views.ui_get_run_info import Ui_dlgGetRunInfo
 from opus_gui.results_manager.results_manager_functions import get_years_for_simulation_run
 from opus_gui.main.controllers.instance_handlers import get_manager_instance
 from opus_gui.results_manager.results_manager_functions import get_years_range_for_simulation_run
-import PyQt4.QtCore
+import PyQt5.QtCore
 
 class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
     def __init__(self, run_node, parent_widget = None):
@@ -45,9 +45,9 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
         self.lblCache_directory.setText(cache_directory)
         self.lblRunId.setText(run_id)
         
-    @PyQt4.QtCore.pyqtSlot()
+    @PyQt5.QtCore.pyqtSlot()
     def on_tb_select_cachedir_clicked(self):
-        PyQt4.QtGui.QDesktopServices.openUrl(PyQt4.QtCore.QUrl('file:///%s' % self.lblCache_directory.text()))
+        PyQt5.QtWidgets.QDesktopServices.openUrl(PyQt5.QtCore.QUrl('file:///%s' % self.lblCache_directory.text()))
 
     def on_buttonBox_rejected(self):
         self.reject()

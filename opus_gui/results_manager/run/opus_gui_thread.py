@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-# PyQt4 includes for python bindings to QT
+# PyQt5 includes for python bindings to QT
 
-from PyQt4.QtCore import QThread, SIGNAL
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 from opus_core.logger import logger
@@ -38,7 +38,7 @@ class OpusGuiThread(QThread):
         self.thread_object.run(args)
         
     def progressCallback(self,percent):
-        self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
+        self.emit(pyqtSignal("runPing(PyQt_PyObject)"),percent)
 
     def finishedCallback(self,success):
 #        if success:
@@ -46,7 +46,7 @@ class OpusGuiThread(QThread):
 #        else:
 #            logger.log_warning("Error returned from results")
         logger.log_note('Results finished.')
-        self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
+        self.emit(pyqtSignal("runFinished(PyQt_PyObject)"),success)
 
     def errorCallback(self,errorMessage):
-        self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
+        self.emit(pyqtSignal("runError(PyQt_PyObject)"),errorMessage)

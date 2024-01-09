@@ -5,9 +5,9 @@
 
 
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from database.createDBConnection import createDBC
 from misc.errors import FileError
 from misc.widgets import VariableSelectionDialog
@@ -34,7 +34,7 @@ class SaveFile(QFileDialog):
             self.fileSep = ','
         elif self.fileType == 'dat':
             self.fileSep = '\t'
-        self.folder = self.getExistingDirectory(self, QString("""Select a folder for storing the files. """
+        self.folder = self.getExistingDirectory(self, ("""Select a folder for storing the files. """
                                                               """Note that two files are exported for every data table: """
                                                               """a data file containing the data in the format chosen and a """
                                                               """metadata file which gives a list of the column names"""),
@@ -305,7 +305,7 @@ class SaveFile(QFileDialog):
             fileInfo = os.stat(file)
 
             reply = QMessageBox.question(None, "Import",
-                                         QString("""File %s exists. Would you like to overwrite?""" %(file)),
+                                         ("""File %s exists. Would you like to overwrite?""" %(file)),
                                          QMessageBox.Yes| QMessageBox.No)
 
             if reply == QMessageBox.Yes:

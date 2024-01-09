@@ -3,9 +3,9 @@
 # See opus_core/LICENSE
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QVariant
-from PyQt4.QtGui import QFileDialog, QItemDelegate, QComboBox, QLineEdit
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore  import  Qt, QVariant
+from PyQt5.QtWidgets import QFileDialog, QItemDelegate, QComboBox, QLineEdit
 
 # We need to know the database connection names for Tools that use the 'db_connection' hook
 # CK: is this is some hack used for tools that have database connections or is it more general?
@@ -66,7 +66,7 @@ class XmlItemDelegate(QItemDelegate):
             # Select files and folders
             elif node.get('type') in ('file_path', 'dir_path'):
                 editor_file = QFileDialog()
-                filter_str = QString("*.*")
+                filter_str = ("*.*")
                 editor_file.setFilter(filter_str)
                 editor_file.setAcceptMode(QFileDialog.AcceptOpen)
                 current_value = \
@@ -83,7 +83,7 @@ class XmlItemDelegate(QItemDelegate):
                 if len(fd) == 0:
                     new_value = current_value
                 else:
-                    new_value = QString(fd)
+                    new_value = (fd)
                 editor = QItemDelegate.createEditor(self, self.parent_view,
                                                     option, index)
                 if type(editor) == QLineEdit:

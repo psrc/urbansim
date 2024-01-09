@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from database.createDBConnection import createDBC
 from misc.errors import FileError
 from .import_data import ImportUserProvData, FileProperties
@@ -44,7 +44,7 @@ class UserImportGeocorrData():
         if not self.query.exec_("""create table %s (dummy text)""" %tablename):
             if self.query.lastError().number() == 1050:
                 reply = QMessageBox.question(None, "Import",
-                                             QString("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
+                                             ("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
@@ -91,7 +91,7 @@ class AutoImportGeocorrData():
         if not self.query.exec_("""create table %s (dummy text)""" %tablename):
             if self.query.lastError().number() == 1050:
                 reply = QMessageBox.question(None, "Import",
-                                             QString("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
+                                             ("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):

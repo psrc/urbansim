@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtGui import QTreeView
-from PyQt4.QtCore import QModelIndex
+from PyQt5.QtWidgets import QTreeView
+from PyQt5.QtCore import QModelIndex
 
 class XmlView(QTreeView):
 

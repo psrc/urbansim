@@ -3,8 +3,8 @@
 # See opus_core/LICENSE
 
 
-from PyQt4.QtCore import QString
-from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
+from PyQt5.QtCore import 
+from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
 
 
 class ViewImageForm(QWidget):
@@ -20,7 +20,7 @@ class ViewImageForm(QWidget):
         self.scroll = QScrollArea()
         file_path = self.visualization.get_file_path()
 
-        self.lbl_image = QImage(QString(file_path))
+        self.lbl_image = QImage((file_path))
         self.label = QLabel()
         self.label.setPixmap(QPixmap.fromImage(self.lbl_image))
         self.scroll.setWidget(self.label)

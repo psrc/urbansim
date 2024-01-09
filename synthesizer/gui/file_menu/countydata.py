@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import pickle
 
 class County(object):
@@ -16,7 +16,7 @@ class County(object):
 
 
 class CountyContainer(object):
-    def __init__(self, filename=QString()):
+    def __init__(self, filename=()):
         self.filename = filename
         self.counties = {}
         self.countyNames = set()
@@ -35,9 +35,9 @@ class CountyContainer(object):
     def inStateOrder(self):
         def compare(a,b):
             if a.state != b.state:
-                return QString.localeAwareCompare(a.state, b.state)
+                return .localeAwareCompare(a.state, b.state)
             #print a.county, b.county
-            return QString.localAwareCompare(a.county, b.county)
+            return .localAwareCompare(a.county, b.county)
         return sorted(list(self.counties.values()), compare)
 
     def load(self):

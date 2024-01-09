@@ -9,9 +9,9 @@ import MySQLdb
 import pp
 import pickle as pickle
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from PyQt4.QtSql import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtSql import *
 
 from database.createDBConnection import createDBC
 from synthesizer_algorithm.prepare_data import prepare_data
@@ -95,10 +95,10 @@ class RunDialog(QDialog):
 
         self.setLayout(vLayout3)
 
-        self.connect(self.selGeographiesButton, SIGNAL("clicked()"), self.selGeographies)
-        self.connect(self.runSynthesizerButton, SIGNAL("clicked()"), self.runSynthesizer)
-        self.connect(self.dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(self.dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(self.selGeographiesButton, pyqtSignal("clicked()"), self.selGeographies)
+        self.connect(self.runSynthesizerButton, pyqtSignal("clicked()"), self.runSynthesizer)
+        self.connect(self.dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(self.dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
 
     def accept(self):
@@ -504,7 +504,7 @@ class RunDialog(QDialog):
                 pass
         except KeyError as e:
         
-            QMessageBox.warning(self, "Run Synthesizer", QString("""Check the <b>hhid, serialno</b> columns in the """
+            QMessageBox.warning(self, "Run Synthesizer", ("""Check the <b>hhid, serialno</b> columns in the """
                                                                  """data. If you wish not to synthesize groupquarters, make"""
                                                                  """ sure that you delete all person records corresponding """
                                                                  """to groupquarters. In PopGen, when Census data is used, """
@@ -514,7 +514,7 @@ class RunDialog(QDialog):
                                                                  """ and run synthesizer again."""), 
                                 QMessageBox.Ok)
             
-            self.dialogButtonBox.emit(SIGNAL("accepted()"))
+            self.dialogButtonBox.emit(pyqtSignal("accepted()"))
         db.commit()
         db.close()
                                                          
@@ -611,18 +611,18 @@ class RunDialog(QDialog):
         vars.sort()
 
         hhldsizePEQPString = ''
-        hhldsizePEQString = ''
+        hhldsizePE = ''
         hhldsizePSumString = ''
         size = 1
         for i in vars[:-1]:
             hhldsizePEQPString = hhldsizePEQPString + 'p' + i + '*%s+' %size
-            hhldsizePEQString = hhldsizePEQString + i + '*%s+' %size
+            hhldsizePE = hhldsizePE + i + '*%s+' %size
             hhldsizePSumString = hhldsizePSumString + 'p' + i + '+'
             size = size + 1
         hhldsizePEQPString = hhldsizePEQPString[:-1]
         hhldSize = self.project.selVariableDicts.aveHhldSizeLastCat
-        hhldsizePEQString = hhldsizePEQString + vars[-1]+'*%s' %hhldSize
-        #print 'hhldsizemod string after - ', hhldsizePEQString + vars[-1]+'*%s' %hhldSize
+        hhldsizePE = hhldsizePE + vars[-1]+'*%s' %hhldSize
+        #print 'hhldsizemod string after - ', hhldsizePE + vars[-1]+'*%s' %hhldSize
 
         # this is a makeshift change to modify the marginals distributions
         print(hhldsizePEQPString)
@@ -636,7 +636,7 @@ class RunDialog(QDialog):
         if not query.exec_("""alter table hhld_marginals_modpgq add column perseq bigint"""):
             print("FileError: %s" %query.lastError().text())
 
-        if not query.exec_("""update hhld_marginals_modpgq set perseq = %s + gqtotal""" %(hhldsizePEQString)):
+        if not query.exec_("""update hhld_marginals_modpgq set perseq = %s + gqtotal""" %(hhldsizePE)):
             raise FileError(query.lastError().text())
 
         # Creating person total deficiency
@@ -653,7 +653,7 @@ class RunDialog(QDialog):
         if not query.exec_("""update hhld_marginals_modpgq set hhldeqdef = perstotdef/(%s)""" %hhldsizePEQPString):
             raise FileError(query.lastError().text())
 
-        #print 'PEQ string', hhldsizePEQString            
+        #print 'PEQ string', hhldsizePE            
         #print 'PEQP String', hhldsizePEQPString
         #print 'PSUM String', hhldsizePSumString
 
@@ -831,7 +831,7 @@ class RunDialog(QDialog):
         if not self.query.exec_("""create table %s (dummy text)""" %tablename):
             if self.query.lastError().number() == 1050:
                 reply = QMessageBox.question(None, "Processing Data",
-                                             QString("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
+                                             ("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):

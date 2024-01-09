@@ -5,9 +5,9 @@
 
 import sys
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 from gui.misc.widgets import *
 
@@ -121,8 +121,8 @@ class ParametersDialog(QDialog):
 
         self.setLayout(vLayout)
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
 
         #Connect the edit events with updating the self.project.parameter variables

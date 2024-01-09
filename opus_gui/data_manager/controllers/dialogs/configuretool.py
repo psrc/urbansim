@@ -7,9 +7,10 @@ import copy
 
 from lxml.etree import Element, SubElement
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QFrame, QComboBox
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore  import  Qt, QRegExp, QObject, pyqtSignal, QSize, pyqtSlot
+from PyQt5.QtGui import QPalette
+from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QFrame, QComboBox
 
 from opus_gui.data_manager.views.ui_configuretool import Ui_ConfigureToolGui
 
@@ -42,12 +43,12 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                 self.comboBox.addItem(tool_file_node.get('name'))
 
         # Now we hook up to the user selecting the type desired
-        QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
+        QObject.connect(self.comboBox, pyqtSignal("currentIndexChanged(int)"),
                         self.toolTypeSelected)
 
         self.tooltypearray = []
         self.typeSelection = None
-        self.setWindowTitle(QString("Add and configure tool..."))
+        self.setWindowTitle(("Add and configure tool..."))
 
     @pyqtSlot()
     def on_createConfig_clicked(self):
@@ -118,16 +119,16 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                 widgetTemp.setLineWidth(2)
             else:
                 widgetTemp = QWidget(self.variableBox)
-            widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
+            widgetTemp.setObjectName(("test_widget").append((i)))
             self.test_widget.append(widgetTemp)
             hlayout = QHBoxLayout(widgetTemp)
             self.hboxlayout.append(hlayout)
             hlayout.setMargin(4)
             hlayout.setSpacing(4)
-            hlayout.setObjectName(QString("hboxlayout").append(QString(i)))
+            hlayout.setObjectName(("hboxlayout").append((i)))
             test_text = QLabel(widgetTemp)
             self.test_text.append(test_text)
-            test_text.setObjectName(QString("test_text").append(QString(i)))
+            test_text.setObjectName(("test_text").append((i)))
             if type_val == "Required":
                 palette = test_text.palette()
                 palette.setColor(QPalette.WindowText,Qt.red)
@@ -135,31 +136,31 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
             test_text.setText(paramName)
             test_text_type = QLabel(widgetTemp)
             self.test_text_type.append(test_text_type)
-            test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
+            test_text_type.setObjectName(("test_text_type").append((i)))
             paramName = type_val
-            test_text_type.setText(QString("(").append(paramName).append(QString(")")))
+            test_text_type.setText(("(").append(paramName).append((")")))
             hlayout.addWidget(test_text)
             hlayout.addWidget(test_text_type)
             if type_val == 'db_connection_hook':
                 test_line = QComboBox(widgetTemp)
                 db_connection_choices = get_db_connection_names()
                 for i in db_connection_choices:
-                    test_line.addItem(QString(i))
+                    test_line.addItem((i))
                 self.test_line.append(test_line)
                 test_line.setEnabled(True)
                 test_line.setMinimumSize(QSize(200,0))
-                test_line.setObjectName(QString("test_line").append(QString(i)))
+                test_line.setObjectName(("test_line").append((i)))
             else:
                 test_line = QLineEdit(widgetTemp)
                 self.test_line.append(test_line)
                 test_line.setEnabled(True)
                 test_line.setMinimumSize(QSize(200,0))
-                test_line.setObjectName(QString("test_line").append(QString(i)))
+                test_line.setObjectName(("test_line").append((i)))
 #            test_line = QLineEdit(widgetTemp)
 #            self.test_line.append(test_line)
 #            test_line.setEnabled(True)
 #            test_line.setMinimumSize(QSize(200,0))
-#            test_line.setObjectName(QString("test_line").append(QString(i)))
-#            test_line.setText(QString(""))
+#            test_line.setObjectName(("test_line").append((i)))
+#            test_line.setText((""))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)

@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, QString, Qt
-from PyQt4.QtGui import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip, QPalette
+from PyQt5.QtCore import pyqtSignal,  , Qt
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip, QPalette
 from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Mapnik_Options
 
 class MapOptions(QDialog, Ui_Mapnik_Options):
@@ -12,14 +12,14 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.setupUi(self)
         self.show()
         self.setWindowTitle('Mapnik Options')
-        self.connect(self.pb_applyChanges, SIGNAL("clicked()"), self.applyChanges(options_dict))
-        self.connect(self.cb_colorScalingType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
-        self.connect(self.cb_labelType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
-        self.connect(self.cb_colorScheme, SIGNAL("currentIndexChanged(int)"), self.greyOutComboBoxes)
-        self.connect(self.cb_divergeIndex, SIGNAL("currentIndexChanged(int)"), self.greyOutComboBoxes)
+        self.connect(self.pb_applyChanges, pyqtSignal("clicked()"), self.applyChanges(options_dict))
+        self.connect(self.cb_colorScalingType, pyqtSignal("currentIndexChanged(int)"), self.greyOutLineEdits)
+        self.connect(self.cb_labelType, pyqtSignal("currentIndexChanged(int)"), self.greyOutLineEdits)
+        self.connect(self.cb_colorScheme, pyqtSignal("currentIndexChanged(int)"), self.greyOutComboBoxes)
+        self.connect(self.cb_divergeIndex, pyqtSignal("currentIndexChanged(int)"), self.greyOutComboBoxes)
         self.loadXML(options_dict)
         self.initWindow(options_dict)
-        self.connect(self.tbl_Colors, SIGNAL('itemChanged(QTableWidgetItem *)'), self.readTableCellInput)
+        self.connect(self.tbl_Colors, pyqtSignal('itemChanged(QTableWidgetItem *)'), self.readTableCellInput)
 
     def initWindow(self, options_dict):        
         # Perform actions that need to be executed once when the options window first opens
@@ -29,13 +29,13 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
             self.cb_colorScalingType.setCurrentIndex(3)
         else:
             self.cb_colorScalingType.setCurrentIndex(1)
-            self.le_customScale.setText(QString(options_dict['mapnik_bucket_ranges']))
+            self.le_customScale.setText((options_dict['mapnik_bucket_ranges']))
 
         if options_dict['mapnik_bucket_labels'] == 'range_labels':
             self.cb_labelType.setCurrentIndex(0)
         else:
             self.cb_labelType.setCurrentIndex(1)
-            self.le_customLabels.setText(QString(options_dict['mapnik_bucket_labels']))
+            self.le_customLabels.setText((options_dict['mapnik_bucket_labels']))
 
         self.greyOutLineEdits()
         self.greyOutComboBoxes()
@@ -257,7 +257,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         for i in range(self.num_buckets):
             colorPB = QPushButton()
             colorPB.setStyleSheet("QPushButton { background-color: %s; margin: 1px; border: 0px; }" % self.color_list[i])
-            colorPB.connect(colorPB, SIGNAL('clicked()'), self.makeChooseColor(colorPB,i))
+            colorPB.connect(colorPB, pyqtSignal('clicked()'), self.makeChooseColor(colorPB,i))
             self.tbl_Colors.setCellWidget(i,0,colorPB)
 
     def setRangeList(self, options_dict):
@@ -458,7 +458,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         colorPB = QPushButton()
         if (not color is None):
             colorPB.setStyleSheet("QPushButton { background-color: %s; margin: 1px; border: 0px; }" % color)
-        colorPB.connect(colorPB, SIGNAL('clicked()'), self.makeChooseColor(colorPB,row))
+        colorPB.connect(colorPB, pyqtSignal('clicked()'), self.makeChooseColor(colorPB,row))
         self.tbl_Colors.setCellWidget(row,0,colorPB)
 
     def listToString(self, list):
@@ -493,12 +493,12 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
 
     """ display the values in options_dict in the GUI window """
     def setSizeOptionValues(self, options_dict):
-        self.le_resolution.setText(QString(options_dict['mapnik_resolution']))
+        self.le_resolution.setText((options_dict['mapnik_resolution']))
         self.cb_pageDims.setCurrentIndex(self.convertPageDimToIndex(options_dict['mapnik_page_dims']))
-        self.le_map_lower_left.setText(QString(options_dict['mapnik_map_lower_left']))
-        self.le_map_upper_right.setText(QString(options_dict['mapnik_map_upper_right']))
-        self.le_legend_lower_left.setText(QString(options_dict['mapnik_legend_lower_left']))
-        self.le_legend_upper_right.setText(QString(options_dict['mapnik_legend_upper_right']))
+        self.le_map_lower_left.setText((options_dict['mapnik_map_lower_left']))
+        self.le_map_upper_right.setText((options_dict['mapnik_map_upper_right']))
+        self.le_legend_lower_left.setText((options_dict['mapnik_legend_lower_left']))
+        self.le_legend_upper_right.setText((options_dict['mapnik_legend_upper_right']))
 
     """ save the settings entered into the GUI """
     def setSizeOptions(self, options_dict):
@@ -524,21 +524,21 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         else:
             return 0 # return 0 as the default value
         
-    """ get the selected page dimension in self.cb_pageDims as a correctly formatted QString """
+    """ get the selected page dimension in self.cb_pageDims as a correctly formatted  """
     def getPageDims(self):
         page_dim = self.cb_pageDims.currentText()
         page_dim_list = str(page_dim).split(' x ')
-        return QString(str(page_dim_list[0])+','+str(page_dim_list[1]))
+        return (str(page_dim_list[0])+','+str(page_dim_list[1]))
         
-    """ get the entered value in the given line edit box as a correctly formatted QString """
+    """ get the entered value in the given line edit box as a correctly formatted  """
     def getCoordInput(self, coordInput):
         coordList = self.stringToList(coordInput)
         if coordList.__len__() >= 2:
-            return QString(str(coordList[0])+','+str(coordList[1]))
+            return (str(coordList[0])+','+str(coordList[1]))
         elif coordList.__len__() == 1:
-            return QString(str(coordList[0])+',')
+            return (str(coordList[0])+',')
         else:
-            return QString('')
+            return ('')
 
 
 from opus_core.tests import opus_unittest
@@ -626,7 +626,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.assertEqual(self.options_dict['mapnik_bucket_ranges'], 'linear_scale')
 
         self.mapOptionsInst.cb_colorScalingType.setCurrentIndex(custom_scaling)
-        self.mapOptionsInst.le_customScale.setText(QString(self.range_str))
+        self.mapOptionsInst.le_customScale.setText((self.range_str))
         self.mapOptionsInst.setRangeList(self.options_dict)
         self.assertEqual(self.options_dict['mapnik_bucket_ranges'], self.range_str)
 
@@ -638,7 +638,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.assertEqual(self.options_dict['mapnik_bucket_labels'], 'range_labels')
 
         self.mapOptionsInst.cb_labelType.setCurrentIndex(custom_labels)
-        self.mapOptionsInst.le_customScale.setText(QString(self.label_str))
+        self.mapOptionsInst.le_customScale.setText((self.label_str))
         self.mapOptionsInst.setLabelList(self.options_dict)
         self.assertEqual(self.options_dict['mapnik_bucket_labels'], self.label_str)
 

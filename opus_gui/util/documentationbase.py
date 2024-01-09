@@ -3,9 +3,9 @@
 # See opus_core/LICENSE 
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QUrl, Qt, QString, QObject, SIGNAL
-from PyQt4.QtGui import QTextBrowser, QWidget, QIcon, QVBoxLayout, QLabel, QPushButton
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import QUrl, Qt,  , QObject, pyqtSignal
+from PyQt5.QtWidgets import QTextBrowser, QWidget, QIcon, QVBoxLayout, QLabel, QPushButton
 
 
 # Main 
@@ -33,19 +33,19 @@ class DocumentationTab(QWidget):
         self.docStatusLabel = QLabel(self.tab)
         self.docStatusLabel.setAlignment(Qt.AlignCenter)
         self.docStatusLabel.setObjectName("docStatusLabel")
-        self.docStatusLabel.setText(QString("No documentation currently loaded..."))
+        self.docStatusLabel.setText(("No documentation currently loaded..."))
         self.widgetLayout.addWidget(self.docStatusLabel)
 
         self.pbnRemoveDoc = QPushButton(self.tab)
         self.pbnRemoveDoc.setObjectName("pbnRemoveDoc")
-        self.pbnRemoveDoc.setText(QString("Remove Documentation"))
-        QObject.connect(self.pbnRemoveDoc, SIGNAL("clicked()"),
+        self.pbnRemoveDoc.setText(("Remove Documentation"))
+        QObject.connect(self.pbnRemoveDoc, pyqtSignal("clicked()"),
                         self.clicked)
         self.widgetLayout.addWidget(self.pbnRemoveDoc)
 
         self.docStuff = DocumentationBase(self.mainwindow,filePath)
         self.widgetLayout.addWidget(self.docStuff)
-        self.docStatusLabel.setText(QString(filePath))
+        self.docStatusLabel.setText((filePath))
 
         self.mainwindow.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
         self.mainwindow.tabWidget.setCurrentIndex(0)

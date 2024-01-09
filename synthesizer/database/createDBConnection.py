@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtSql import *
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtSql import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 import sys
 from gui.file_menu.newproject import DBInfo
 
@@ -38,7 +38,7 @@ def main():
     try:
         if not a.dbc.open():
             QMessageBox.warning(None, "oisdf", 
-                                QString("Database Error: %1").arg(a.dbc.lastError().text()))
+                                ("Database Error: %1").arg(a.dbc.lastError().text()))
 
             query = QSqlQuery()
             if not query.exec_("""show tables"""):
@@ -48,7 +48,7 @@ def main():
             a.dbc.close()
         else:
             QMessageBox.warning(None, "oisdf", 
-                                QString("Found"))
+                                ("Found"))
 
             b = createDBC(db, "fayken1")
             b.dbc.open()

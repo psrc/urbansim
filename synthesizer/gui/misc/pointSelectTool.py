@@ -6,8 +6,8 @@
 from qgis.core import *
 from qgis.gui import *
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 class ClickTool(QgsMapTool):
     def __init__(self, canvas):
@@ -27,7 +27,7 @@ class ClickTool(QgsMapTool):
             QgsPoint(coord.x()*(1-self.precision),coord.y()*(1-self.precision)),
             QgsPoint(coord.x()*(1+self.precision),coord.y()*(1+self.precision))
             )
-        self.o.emit(SIGNAL("finished()"))
+        self.o.emit(pyqtSignal("finished()"))
 
 
     def isZoomTool(self):

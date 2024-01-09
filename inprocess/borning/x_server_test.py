@@ -6,8 +6,8 @@
 # (to make sure we can test the GUI under CruiseControl on the build machine)
 
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from opus_core.tests import opus_unittest
 
 class Tests(opus_unittest.OpusTestCase):

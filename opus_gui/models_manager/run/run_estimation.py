@@ -3,8 +3,8 @@
 # See opus_core/LICENSE
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QThread, SIGNAL, QString
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import QThread, pyqtSignal, 
 
 import os, time, gc
 
@@ -35,17 +35,17 @@ class RunEstimationThread(QThread):
 
     def progressCallback(self,percent):
         print("Ping From Estimation")
-        self.emit(SIGNAL("estimationPing(PyQt_PyObject)"),percent)
+        self.emit(pyqtSignal("estimationPing(PyQt_PyObject)"),percent)
 
     def finishedCallback(self,success):
         if success:
             print("Success returned from Estimation")
         else:
             print("Error returned from Estimation")
-        self.emit(SIGNAL("estimationFinished(PyQt_PyObject)"),success)
+        self.emit(pyqtSignal("estimationFinished(PyQt_PyObject)"),success)
 
     def errorCallback(self,errorMessage):
-        self.emit(SIGNAL("estimationError(PyQt_PyObject)"),errorMessage)
+        self.emit(pyqtSignal("estimationError(PyQt_PyObject)"),errorMessage)
 
 
 class OpusEstimation(object):
@@ -168,6 +168,6 @@ class OpusEstimation(object):
                     self.guiElement.logText.append("No logfile yet")
                     self.firstRead = False
                 else:
-                    self.guiElement.logText.insertPlainText(QString("."))
+                    self.guiElement.logText.insertPlainText(("."))
             #self.guiElement.logText.append("ping")
         return newKey

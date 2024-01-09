@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 import shutil, urllib.request, urllib.parse, urllib.error, os
 
@@ -55,20 +55,20 @@ class QTreeWidgetCMenu(QTreeWidget):
         menuTableEdit.addSeparator()
         defaultTransforAction = menuTableEdit.addAction("Default Transformation")
 
-        self.connect(importDataAction, SIGNAL("triggered()"), self.importData)
-        self.connect(editProjectAction, SIGNAL("triggered()"), self.editProject)
-        self.connect(displayTableAction, SIGNAL("triggered()"), self.displayTable)
-        self.connect(recodeCatsAction, SIGNAL("triggered()"), self.modifyCategories)
-        self.connect(createVarAction, SIGNAL("triggered()"), self.createVariable)
-        self.connect(deleteColAction, SIGNAL("triggered()"), self.deleteColumns)
-        self.connect(deleteRowsAction, SIGNAL("triggered()"), self.deleteRows)
-        self.connect(copyAction, SIGNAL("triggered()"), self.copyTable)
-        self.connect(renameAction, SIGNAL("triggered()"), self.renameTable)
-        self.connect(dropAction, SIGNAL("triggered()"), self.dropTable)
+        self.connect(importDataAction, pyqtSignal("triggered()"), self.importData)
+        self.connect(editProjectAction, pyqtSignal("triggered()"), self.editProject)
+        self.connect(displayTableAction, pyqtSignal("triggered()"), self.displayTable)
+        self.connect(recodeCatsAction, pyqtSignal("triggered()"), self.modifyCategories)
+        self.connect(createVarAction, pyqtSignal("triggered()"), self.createVariable)
+        self.connect(deleteColAction, pyqtSignal("triggered()"), self.deleteColumns)
+        self.connect(deleteRowsAction, pyqtSignal("triggered()"), self.deleteRows)
+        self.connect(copyAction, pyqtSignal("triggered()"), self.copyTable)
+        self.connect(renameAction, pyqtSignal("triggered()"), self.renameTable)
+        self.connect(dropAction, pyqtSignal("triggered()"), self.dropTable)
 
-        self.connect(exportActionCSV, SIGNAL("triggered()"), self.exportTableCSV)
-        self.connect(exportActionTab, SIGNAL("triggered()"), self.exportTableTab)
-        self.connect(defaultTransforAction, SIGNAL("triggered()"), self.defaultTransformations)
+        self.connect(exportActionCSV, pyqtSignal("triggered()"), self.exportTableCSV)
+        self.connect(exportActionTab, pyqtSignal("triggered()"), self.exportTableTab)
+        self.connect(defaultTransforAction, pyqtSignal("triggered()"), self.defaultTransformations)
 
 
         if self.item.parent() is None:
@@ -212,7 +212,7 @@ class QTreeWidgetCMenu(QTreeWidget):
             if len(whereExpression)<1:
                 whereExpression = '1'
             if len(numericExpression) <1:
-                QMessageBox.warning(self, "Data", QString("""Invalid numeric expression, enter again"""))
+                QMessageBox.warning(self, "Data", ("""Invalid numeric expression, enter again"""))
             else:
                 query = QSqlQuery(projectDBC.dbc)
                 if not query.exec_("""alter table %s add column %s text""" %(tablename, newVarName)):
@@ -425,8 +425,8 @@ class QTreeWidgetCMenu(QTreeWidget):
         self.setEnabled(True)
         self.clear()
 
-        projectAncestor = QTreeWidgetItem(self, [QString("Project: " + self.project.name)])
-        informationParent = QTreeWidgetItem(projectAncestor, [QString("Information")])
+        projectAncestor = QTreeWidgetItem(self, [("Project: " + self.project.name)])
+        informationParent = QTreeWidgetItem(projectAncestor, [("Information")])
 
         dummy = ""
         if self.project.region is not None:
@@ -452,17 +452,17 @@ class QTreeWidgetCMenu(QTreeWidget):
                             "Region":dummy,
                             "Resolution":resolution}
         for i,j in list(informationItems.items()):
-            child = QTreeWidgetItem(informationParent, [i, QString(j)])
+            child = QTreeWidgetItem(informationParent, [i, (j)])
 
-        geocorrParent = QTreeWidgetItem(projectAncestor, [QString("Geographic Correspondence")])
+        geocorrParent = QTreeWidgetItem(projectAncestor, [("Geographic Correspondence")])
         geocorrUserProvText = self.userProvText(self.project.geocorrUserProv.userProv)
         geocorrItems = {"User Provided":geocorrUserProvText,
                         "Location":self.project.geocorrUserProv.location}
 
         for i,j in list(geocorrItems.items()):
-            child = QTreeWidgetItem(geocorrParent, [i, QString("%s"%j)])
+            child = QTreeWidgetItem(geocorrParent, [i, ("%s"%j)])
 
-        sampleParent = QTreeWidgetItem(projectAncestor, [QString("Sample")])
+        sampleParent = QTreeWidgetItem(projectAncestor, [("Sample")])
         sampleUserProvText = self.userProvText(self.project.sampleUserProv.userProv, 
                                                self.project.sampleUserProv.defSource)
         sampleItems = {"User Provided":sampleUserProvText,
@@ -471,9 +471,9 @@ class QTreeWidgetCMenu(QTreeWidget):
                        "Person Data Location": self.project.sampleUserProv.personLocation}
 
         for i,j in list(sampleItems.items()):
-            child = QTreeWidgetItem(sampleParent, [i, QString("%s"%j)])
+            child = QTreeWidgetItem(sampleParent, [i, ("%s"%j)])
 
-        controlParent = QTreeWidgetItem(projectAncestor, [QString("Control")])
+        controlParent = QTreeWidgetItem(projectAncestor, [("Control")])
         controlUserProvText = self.userProvText(self.project.controlUserProv.userProv,
                                                 self.project.controlUserProv.defSource)
         controlItems = {"User Provided":controlUserProvText,
@@ -482,19 +482,19 @@ class QTreeWidgetCMenu(QTreeWidget):
                        "Person Data Location": self.project.controlUserProv.personLocation}
 
         for i,j in list(controlItems.items()):
-            child = QTreeWidgetItem(controlParent, [i, QString("%s"%j)])
+            child = QTreeWidgetItem(controlParent, [i, ("%s"%j)])
 
-        dbParent = QTreeWidgetItem(projectAncestor, [QString("Database")])
+        dbParent = QTreeWidgetItem(projectAncestor, [("Database")])
         dbItems = {"Hostname":self.project.db.hostname,
                    "Username":self.project.db.username}
         #"Password":self.project.db.password}
 
         for i,j in list(dbItems.items()):
-            child = QTreeWidgetItem(dbParent, [QString(i), QString(j)])
+            child = QTreeWidgetItem(dbParent, [(i), (j)])
 
 
-        projectTableParent = QTreeWidgetItem(projectAncestor, [QString("Project Tables")])
-        scenarioTableParent = QTreeWidgetItem(projectAncestor, [QString("Scenario Tables")])
+        projectTableParent = QTreeWidgetItem(projectAncestor, [("Project Tables")])
+        scenarioTableParent = QTreeWidgetItem(projectAncestor, [("Scenario Tables")])
 
         self.tableChildren(projectTableParent, 0)
         self.tableChildren(scenarioTableParent, 1)
@@ -543,7 +543,7 @@ class QTreeWidgetCMenu(QTreeWidget):
         tableItems.sort()
 
         for i in tableItems:
-            child = QTreeWidgetItem(parent, [QString(i)])
+            child = QTreeWidgetItem(parent, [(i)])
 
     def expandSort(self, item, index):
         self.expandItem(item)

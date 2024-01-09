@@ -4,11 +4,11 @@
 
 
 
-# PyQt4 includes for python bindings to QT
+# PyQt5 includes for python bindings to QT
 import os
 
-from PyQt4.QtCore import QString, pyqtSlot
-from PyQt4.QtGui import QDialog, QFileDialog
+from PyQt5.QtCore  import  pyqtSlot
+from PyQt5.QtWidgets import QDialog, QFileDialog
 
 from opus_core.logger import logger
 from opus_core.services.run_server.run_manager import RunManager
@@ -48,10 +48,10 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
         start_dir = paths.get_opus_home_path('runs', os.environ['OPUSPROJECTNAME'])
 
         fd = QFileDialog.getExistingDirectory(self,
-                    QString("Please select a run directory..."), #, *.sde, *.mdb)..."),
-                    QString(start_dir), QFileDialog.ShowDirsOnly)
+                    ("Please select a run directory..."), #, *.sde, *.mdb)..."),
+                    (start_dir), QFileDialog.ShowDirsOnly)
         if len(fd) != 0:
-            fileName = QString(fd)
+            fileName = (fd)
             self.lePath.setText(fileName)
 #        if self.twIndicatorsToVisualize.rowCount() == 0:
 #            self.dataset_name = None

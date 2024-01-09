@@ -6,7 +6,7 @@
 import os
 import gc
 
-from PyQt4.QtCore import QThread, QString, SIGNAL
+from PyQt5.QtCore import QThread,  , pyqtSignal
 
 from opus_core.services.run_server.run_manager import SimulationRunError
 from opus_gui.results_manager.results_manager_functions import get_batch_configuration
@@ -65,7 +65,7 @@ class RunModelThread(QThread):
         
     def progressCallback(self,percent):
         print("Ping From Model")
-        self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
+        self.emit(pyqtSignal("runPing(PyQt_PyObject)"),percent)
 
     def startedCallback(self, run_id, run_name, scenario_name, run_resources, status):
         cache_directory = os.path.normpath(run_resources['cache_directory'])
@@ -96,7 +96,7 @@ class RunModelThread(QThread):
 
         sync_available_runs(self.project)
         self.modelguielement.model.run_manager.close()
-        self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
+        self.emit(pyqtSignal("runFinished(PyQt_PyObject)"),success)
 
     def get_run_name(self):
         return self.modelguielement.model.run_name
@@ -125,7 +125,7 @@ class RunModelThread(QThread):
         return
 
     def errorCallback(self,errorMessage):
-        self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
+        self.emit(pyqtSignal("runError(PyQt_PyObject)"),errorMessage)
 
 class OpusModel(object):
     def __init__(self, manager, xml_config, scenariotorun):
@@ -334,7 +334,7 @@ class OpusModel(object):
 
     def _read_log(self,filename,key):
         newKey = key
-        logText = QString("")
+        logText = ("")
         try:
             logfile = open(filename)
             logfile.seek(key)
@@ -343,14 +343,14 @@ class OpusModel(object):
             if newKey != key:
                 logText.append(lines)
             else:
-                logText.append(QString(".."))
+                logText.append((".."))
             logfile.close()
         except IOError:
             if self.firstRead == True:
                 logText.append("No logfile yet")
                 self.firstRead = False
             else:
-                logText.append(QString("."))
+                logText.append(("."))
         return [newKey,logText]
 
     def _get_current_log(self, key):
@@ -397,7 +397,7 @@ class OpusModel(object):
                 key = 0
                 self.currentLogfileYear = year
                 # Mark the transition in the GUI log so it is easier to see
-                self.guiElement.logText.insertPlainText(QString("\n\n\n ******** Moving to next year logfile *********\n\n\n"))
+                self.guiElement.logText.insertPlainText(("\n\n\n ******** Moving to next year logfile *********\n\n\n"))
             # Now we can read in from the current log for the current year
             [newKey,logText] = self._read_log(currentYearLogfile,key)
             self.guiElement.logText.insertPlainText(logText)

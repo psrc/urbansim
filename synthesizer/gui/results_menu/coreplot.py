@@ -5,7 +5,7 @@
 
 """
 This demo demonstrates how to embed a matplotlib (mpl) plot
-into a PyQt4 GUI application, including:
+into a PyQt5 GUI application, including:
 
 * Using the navigation toolbar
 * Adding data to the plot
@@ -21,9 +21,9 @@ License: this code is in the public domain
 Last modified: 19.01.2009
 """
 import sys, os, random
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from misc.errors import FileError
 from database.createDBConnection import createDBC
 
@@ -55,7 +55,7 @@ class Matplot(QDialog):
 
         self.dialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok)
 
-        self.connect(self.dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
+        self.connect(self.dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
 
 
     def isValid(self):
@@ -76,7 +76,7 @@ class Matplot(QDialog):
             action.setToolTip(tip)
             action.setStatusTip(tip)
         if slot is not None:
-            self.connect(action, SIGNAL(signal), slot)
+            self.connect(action, pyqtSignal(signal), slot)
         if checkable:
             action.setCheckable(True)
         return action
@@ -146,12 +146,12 @@ class LabComboBox(QWidget):
 
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.combobox)
-        self.connect(self.combobox, SIGNAL("currentIndexChanged(const QString&)"), self.emitSignal)
+        self.connect(self.combobox, pyqtSignal("currentIndexChanged(const &)"), self.emitSignal)
         self.label.setFixedWidth(70)
         self.setFixedWidth(300)
 
     def emitSignal(self):
-        self.emit(SIGNAL("currSelChanged"))
+        self.emit(pyqtSignal("currSelChanged"))
 
     def getCurrentText(self):
         return self.combobox.currentText()

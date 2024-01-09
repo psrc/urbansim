@@ -4,9 +4,9 @@
 
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtGui import QDialog
-from PyQt4.Qt import SIGNAL
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtWidgets import QDialog
+from PyQt5.Qt import pyqtSignal
 
 from opus_gui.abstract_manager.views.ui_renamedialog import Ui_RenameDialog
 from opus_gui.util.convenience import hide_widget_on_value_change

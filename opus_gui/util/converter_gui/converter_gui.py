@@ -6,9 +6,9 @@ import os
 
 from lxml import etree
 
-from PyQt4.QtGui import QDialog, QApplication, QFileDialog
-from PyQt4.QtGui import QTextEdit, QVBoxLayout, QPushButton
-from PyQt4.QtCore import SIGNAL, SLOT, Qt, pyqtSlot
+from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
+from PyQt5.QtWidgets import QTextEdit, QVBoxLayout, QPushButton
+from PyQt5.QtCore import pyqtSignal, SLOT, Qt, pyqtSlot
 
 from opus_core.tools.converter import Converter
 from opus_gui.util.converter_gui.ui_converter_gui import Ui_ConverterGui
@@ -19,8 +19,8 @@ class ConverterGui(QDialog, Ui_ConverterGui):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.frame_log.setVisible(False)
-        self.connect(self.pb_get_filename, SIGNAL("clicked()"), self._get_filename)
-        self.connect(self.pb_get_filename_out, SIGNAL("clicked()"), self._get_filename)
+        self.connect(self.pb_get_filename, pyqtSignal("clicked()"), self._get_filename)
+        self.connect(self.pb_get_filename_out, pyqtSignal("clicked()"), self._get_filename)
         self.le_filename.setText('')
         self.converter = None
         self.stack_steps.setCurrentIndex(0)
@@ -158,7 +158,7 @@ class ConverterGui(QDialog, Ui_ConverterGui):
         txt.setLineWrapMode(txt.NoWrap)
         txt.document().setPlainText('\n'.join(self.converter.warnings))
         pb = QPushButton('Close')
-        self.connect(pb, SIGNAL("clicked()"), win.accept)
+        self.connect(pb, pyqtSignal("clicked()"), win.accept)
         layout.addWidget(txt)
         layout.addWidget(pb)
         win.setLayout(layout)
@@ -184,9 +184,9 @@ class ConverterGui(QDialog, Ui_ConverterGui):
             f.close()
 
 if __name__ == '__main__':
-    app = QApplication([], True)
+    app = QApplication([])
     d = ConverterGui()
-    app.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
+    app.connect(app, pyqtSignal("lastWindowClosed()"), app, SLOT("quit()"))
     d.show()
     d.raise_()
     d.activateWindow()

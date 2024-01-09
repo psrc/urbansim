@@ -4,8 +4,8 @@
 
 import os
 
-from PyQt4.QtCore import QString, QByteArray
-from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy, QMovie
+from PyQt5.QtCore  import  QByteArray
+from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy, QMovie
 
 
 class ViewAnimationForm(QWidget):
@@ -23,7 +23,7 @@ class ViewAnimationForm(QWidget):
         file_path = self.visualization.get_file_path()       
         self.label = QLabel()
         
-        movie = QMovie(QString(file_path), QByteArray(), self)
+        movie = QMovie((file_path), QByteArray(), self)
         movie.setCacheMode(QMovie.CacheAll)
         self.label.setMovie(movie)
         movie.start() 

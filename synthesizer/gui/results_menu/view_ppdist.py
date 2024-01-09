@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 from gui.misc.errors import *
@@ -44,8 +44,8 @@ class Ppdist(Matplot):
 
             self.makeTempTables()
             self.on_draw()
-            self.connect(self.attrbox, SIGNAL("currSelChanged"), self.on_draw)
-            self.connect(self.geobox, SIGNAL("currSelChanged"), self.on_draw)
+            self.connect(self.attrbox, pyqtSignal("currSelChanged"), self.on_draw)
+            self.connect(self.geobox, pyqtSignal("currSelChanged"), self.on_draw)
         else:
             QMessageBox.warning(self, "Results", """If you have supplied a person marginals table, """
                                 """and wish to compare person distributions irrespective of whether """

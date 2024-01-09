@@ -5,8 +5,8 @@
 import os
 
 from lxml.etree import ElementTree, SubElement
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QSplashScreen, QPixmap
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QSplashScreen, QPixmap
 
 from opus_core.misc import directory_path_from_opus_path
 from opus_core import paths

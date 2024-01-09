@@ -3,8 +3,8 @@
 # See opus_core/LICENSE
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QThread, SIGNAL
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
@@ -25,21 +25,21 @@ class RunToolThread(QThread):
         self.opusTool.run()
 
     def startingCallback(self):
-        self.emit(SIGNAL("toolStarting()"))
+        self.emit(pyqtSignal("toolStarting()"))
 
     def progressCallback(self,percent):
         #print "Ping From Tool"
-        self.emit(SIGNAL("toolProgressPing(PyQt_PyObject)"),percent)
+        self.emit(pyqtSignal("toolProgressPing(PyQt_PyObject)"),percent)
 
     def logCallback(self,log):
-        self.emit(SIGNAL("toolLogPing(PyQt_PyObject)"),log)
+        self.emit(pyqtSignal("toolLogPing(PyQt_PyObject)"),log)
 
     def finishedCallback(self,success):
         #if success:
         #    print "Success returned from Model"
         #else:
         #    print "Error returned from Model"
-        self.emit(SIGNAL("toolFinished(PyQt_PyObject)"),success)
+        self.emit(pyqtSignal("toolFinished(PyQt_PyObject)"),success)
 
 
 class OpusTool(object):

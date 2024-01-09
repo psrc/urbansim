@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from qgis.core import *
 from qgis.gui import *
 from misc.map_toolbar import *
@@ -35,11 +35,11 @@ class ComboBoxFolder(QComboBox):
 
     def browseFolder(self, index):
         if index  == self.count()-1:
-            location = QFileDialog.getExistingDirectory(self, QString("Project Location"), "/home", QFileDialog.ShowDirsOnly)
+            location = QFileDialog.getExistingDirectory(self, ("Project Location"), "/home", QFileDialog.ShowDirsOnly)
             if not location.isEmpty():
                 indexOfFolder = self.isPresent(location)
                 if indexOfFolder is None:
-                    self.insertItem(0, QString(location))
+                    self.insertItem(0, (location))
                     self.setCurrentIndex(0)
                 else:
                     self.setCurrentIndex(indexOfFolder)
@@ -58,11 +58,11 @@ class ComboBoxFile(QComboBox):
 
     def browseFile(self, index):
         if index == self.count()-1:
-            file = QFileDialog.getOpenFileName(self, QString("Browse to select file"), "/home", "Data Files (*.dat *.csv)")
+            file = QFileDialog.getOpenFileName(self, ("Browse to select file"), "/home", "Data Files (*.dat *.csv)")
             if not file.isEmpty():
                 indexOfFile = self.isPresent(file)
                 if indexOfFile is None:
-                    self.insertItem(1, QString(file))
+                    self.insertItem(1, (file))
                     self.setCurrentIndex(1)
                 else:
                     self.setCurrentIndex(indexOfFile)
@@ -149,9 +149,9 @@ class NameDialog(QDialog):
 
         self.setLayout(vLayout)
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-        self.connect(self.nameLineEdit, SIGNAL("textChanged(const QString&)"), self.checkName)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+        self.connect(self.nameLineEdit, pyqtSignal("textChanged(const &)"), self.checkName)
 
     def checkName(self, text):
         try:
@@ -221,14 +221,14 @@ class VariableSelectionDialog(QDialog):
         self.variableListWidget.populate()
 
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-        self.connect(dialogButtonBox, SIGNAL("clicked(QAbstractButton *)"), self.resetandrestore)
-        self.connect(selectButton, SIGNAL("clicked()"), self.moveSelected)
-        self.connect(unselectButton, SIGNAL("clicked()"), self.moveUnselected)
-        self.connect(self.variableListWidget, SIGNAL("itemDoubleClicked(QListWidgetItem *)"), self.moveSelected)
-        self.connect(self.variableListWidget, SIGNAL("currentRowChanged(int)"), self.displayVariableDescription)
-        self.connect(self.selectedVariableListWidget, SIGNAL("currentRowChanged(int)"), self.displaySelectedVariableDescription)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+        self.connect(dialogButtonBox, pyqtSignal("clicked(QAbstractButton *)"), self.resetandrestore)
+        self.connect(selectButton, pyqtSignal("clicked()"), self.moveSelected)
+        self.connect(unselectButton, pyqtSignal("clicked()"), self.moveUnselected)
+        self.connect(self.variableListWidget, pyqtSignal("itemDoubleClicked(QListWidgetItem *)"), self.moveSelected)
+        self.connect(self.variableListWidget, pyqtSignal("currentRowChanged(int)"), self.displayVariableDescription)
+        self.connect(self.selectedVariableListWidget, pyqtSignal("currentRowChanged(int)"), self.displaySelectedVariableDescription)
 
 
     def accept(self):
@@ -405,11 +405,11 @@ class RecodeDialog(QDialog):
 
         self.setLayout(layout)
 
-        self.connect(self.variableList, SIGNAL("itemDoubleClicked(QListWidgetItem *)"), self.moveSelectedVar)
-        self.connect(self.variableNewEdit, SIGNAL("textChanged(const QString&)"), self.checkNewVarName)
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-        self.connect(self.oldNewButton, SIGNAL("clicked()"), self.relationOldNew)
+        self.connect(self.variableList, pyqtSignal("itemDoubleClicked(QListWidgetItem *)"), self.moveSelectedVar)
+        self.connect(self.variableNewEdit, pyqtSignal("textChanged(const &)"), self.checkNewVarName)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+        self.connect(self.oldNewButton, pyqtSignal("clicked()"), self.relationOldNew)
 
     def accept(self):
         QDialog.accept(self)
@@ -594,17 +594,17 @@ class OldNewRelation(QDialog):
 
         self.populate()
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-        self.connect(dialogButtonBox, SIGNAL("clicked(QAbstractButton *)"), self.reset)
-        self.connect(self.varCatsList, SIGNAL("itemSelectionChanged()"), self.enableAddCrit)
-        self.connect(self.varCatsList, SIGNAL("itemSelectionChanged()"), self.enableCopyOldCrit)
-        self.connect(self.newCatEdit, SIGNAL("textChanged(const QString&)"), self.enableAddCrit)
-        self.connect(self.recodeCritList, SIGNAL("itemSelectionChanged()"), self.enableRemoveCrit)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+        self.connect(dialogButtonBox, pyqtSignal("clicked(QAbstractButton *)"), self.reset)
+        self.connect(self.varCatsList, pyqtSignal("itemSelectionChanged()"), self.enableAddCrit)
+        self.connect(self.varCatsList, pyqtSignal("itemSelectionChanged()"), self.enableCopyOldCrit)
+        self.connect(self.newCatEdit, pyqtSignal("textChanged(const &)"), self.enableAddCrit)
+        self.connect(self.recodeCritList, pyqtSignal("itemSelectionChanged()"), self.enableRemoveCrit)
 
-        self.connect(self.addRecCrit, SIGNAL("clicked()"), self.addRecCritList)
-        self.connect(self.removeRecCrit, SIGNAL("clicked()"), self.removeRecCritList)
-        self.connect(self.copyOldCrit, SIGNAL("clicked()"), self.addCopyOldCritList)
+        self.connect(self.addRecCrit, pyqtSignal("clicked()"), self.addRecCritList)
+        self.connect(self.removeRecCrit, pyqtSignal("clicked()"), self.removeRecCritList)
+        self.connect(self.copyOldCrit, pyqtSignal("clicked()"), self.addCopyOldCritList)
 
 
     def accept(self):
@@ -619,7 +619,7 @@ class OldNewRelation(QDialog):
                 QDialog.accept(self)
         else:
             reply = QMessageBox.question(self, "PopGen: Display and Modify Data",
-                                         QString("No recode criterion set. Do you wish to continue?"),
+                                         ("No recode criterion set. Do you wish to continue?"),
                                          QMessageBox.Yes| QMessageBox.No)
             if reply == QMessageBox.Yes:
                 QDialog.accept(self)
@@ -800,10 +800,10 @@ class CreateVariable(QDialog):
         self.setLayout(layout)
         self.populate()
 
-        self.connect(self.newVarNameEdit, SIGNAL("textChanged(const QString&)"), self.checkNewVarName)
-        self.connect(self.variableListWidget, SIGNAL("itemSelectionChanged()"), self.displayCats)
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(self.newVarNameEdit, pyqtSignal("textChanged(const &)"), self.checkNewVarName)
+        self.connect(self.variableListWidget, pyqtSignal("itemSelectionChanged()"), self.displayCats)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
 
     def displayCats(self):
@@ -943,9 +943,9 @@ class DeleteRows(QDialog):
         self.setLayout(layout)
         self.populate()
 
-        self.connect(self.variableListWidget, SIGNAL("itemSelectionChanged()"), self.displayCats)
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(self.variableListWidget, pyqtSignal("itemSelectionChanged()"), self.displayCats)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
     def displayCats(self):
         varname = self.variableListWidget.currentItem().text()
@@ -1121,11 +1121,11 @@ class DisplayMapsDlg(QDialog):
             self.setLayout(layout)
             self.populate()
         
-            self.connect(self.variableListWidget, SIGNAL("itemSelectionChanged()"), self.displayCats)
-            self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-            self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-            self.connect(self.variableCatsListWidget, SIGNAL("itemSelectionChanged()"), self.displayMap)
-            self.connect(self, SIGNAL("updateLimits()"), self.updateCatLimits)
+            self.connect(self.variableListWidget, pyqtSignal("itemSelectionChanged()"), self.displayCats)
+            self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+            self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+            self.connect(self.variableCatsListWidget, pyqtSignal("itemSelectionChanged()"), self.displayMap)
+            self.connect(self, pyqtSignal("updateLimits()"), self.updateCatLimits)
 
 
     def updateCatLimits(self):
@@ -1400,7 +1400,7 @@ class DisplayMapsDlg(QDialog):
 
         self.canvas.refresh()
 
-        self.emit(SIGNAL("updateLimits()"))
+        self.emit(pyqtSignal("updateLimits()"))
         
 
 
@@ -1489,7 +1489,7 @@ class ChangeMargsDlg(DisplayMapsDlg):
         check = self.isValid()
         
         if check:
-            self.emit(SIGNAL("rejected()"))
+            self.emit(pyqtSignal("rejected()"))
             
 
         self.projectDBC = createDBC(self.project.db, self.project.name)
@@ -1597,18 +1597,18 @@ class ChangeMargsDlg(DisplayMapsDlg):
         #self.variableListWidget.setItemSelected(self.variableListWidget.item(0), True)
 
 
-        self.connect(self.variableListWidget, SIGNAL("itemSelectionChanged()"), self.unhideSliders)
-        self.connect(self.geographyComboBox, SIGNAL("currentIndexChanged(int)"), self.unhideSliders)
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(self.variableListWidget, pyqtSignal("itemSelectionChanged()"), self.unhideSliders)
+        self.connect(self.geographyComboBox, pyqtSignal("currentIndexChanged(int)"), self.unhideSliders)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
         for j in range(len(self.sliders)):
-            self.connect(self.sliders[j].sliderAdj.slider, SIGNAL("sliderMoved(int)"), self.updateTotals)
-            self.connect(self.sliders[j].sliderAdj.valueBox, SIGNAL("valueChanged(int)"), self.updateTotals)
+            self.connect(self.sliders[j].sliderAdj.slider, pyqtSignal("sliderMoved(int)"), self.updateTotals)
+            self.connect(self.sliders[j].sliderAdj.valueBox, pyqtSignal("valueChanged(int)"), self.updateTotals)
 
 
-        self.connect(addToScenarioButton, SIGNAL("clicked()"), self.addToScenario)
-        self.connect(delFromScenarioButton, SIGNAL("clicked()"), self.delFromScenario)
+        self.connect(addToScenarioButton, pyqtSignal("clicked()"), self.addToScenario)
+        self.connect(delFromScenarioButton, pyqtSignal("clicked()"), self.delFromScenario)
 
 
     def addToScenario(self):
@@ -1970,8 +1970,8 @@ class SliderBox(QWidget):
         
         self.setLayout(vLayout1)
 
-        self.connect(self.slider, SIGNAL("sliderMoved(int)"), self.sliderMoved)
-        self.connect(self.valueBox, SIGNAL("valueChanged(int)"), self.valueChanged)
+        self.connect(self.slider, pyqtSignal("sliderMoved(int)"), self.sliderMoved)
+        self.connect(self.valueBox, pyqtSignal("valueChanged(int)"), self.valueChanged)
 
     def sliderMoved(self, value):
         self.valueBox.setValue(value)

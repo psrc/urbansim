@@ -4,7 +4,7 @@
 
 
 from opus_gui.results_manager.views.ui_add_indicator_batch import Ui_dlgAddIndicatorBatch
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 
 class AddIndicatorBatch(Ui_dlgAddIndicatorBatch, QDialog):
 

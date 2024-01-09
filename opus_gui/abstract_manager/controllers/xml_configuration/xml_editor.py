@@ -1,10 +1,10 @@
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QDialog
 
 from opus_gui.abstract_manager.views.ui_xml_editor import Ui_XML_Editor
 from lxml.etree import tostring, fromstring
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 class XML_Editor_Gui(QDialog, Ui_XML_Editor):
     ATTENTION = '''Attention: This function didn't check whether the syntax makes sense to OPUS.  It just checks for a valid XML structure.'''

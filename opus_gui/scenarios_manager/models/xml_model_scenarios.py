@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QVariant, Qt
-from PyQt4.QtGui import QColor
+from PyQt5.QtCore import QVariant, Qt
+from PyQt5.QtWidgets import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.models_manager.models_manager_functions import get_model_names

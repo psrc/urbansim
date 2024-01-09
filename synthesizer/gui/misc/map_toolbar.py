@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 import sys, os
@@ -73,14 +73,14 @@ class Toolbar(QToolBar):
         self.toolZoomOut.setAction(self.mpActionZoomOut)
 
         # create the actions behaviours
-        self.connect(self.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
-        self.connect(self.mpActionZoomOut, SIGNAL("triggered()"), self.zoomOut)
-        self.connect(self.mpActionZoomFull, SIGNAL("triggered()"), self.zoomFull)
-        self.connect(self.mpActionPan, SIGNAL("triggered()"), self.pan)
-        self.connect(self.mpActionSelect, SIGNAL("triggered()"), self.select)
-        self.connect(self.mpActionClickSelect, SIGNAL("triggered()"), self.clickSelect)
-        self.connect(self.toolSelect.o, SIGNAL("finished()"), self.doneRectangle)
-        self.connect(self.toolClickSelect.o, SIGNAL("finished()"), self.donePointSelect)
+        self.connect(self.mpActionZoomIn, pyqtSignal("triggered()"), self.zoomIn)
+        self.connect(self.mpActionZoomOut, pyqtSignal("triggered()"), self.zoomOut)
+        self.connect(self.mpActionZoomFull, pyqtSignal("triggered()"), self.zoomFull)
+        self.connect(self.mpActionPan, pyqtSignal("triggered()"), self.pan)
+        self.connect(self.mpActionSelect, pyqtSignal("triggered()"), self.select)
+        self.connect(self.mpActionClickSelect, pyqtSignal("triggered()"), self.clickSelect)
+        self.connect(self.toolSelect.o, pyqtSignal("finished()"), self.doneRectangle)
+        self.connect(self.toolClickSelect.o, pyqtSignal("finished()"), self.donePointSelect)
 
     def zoomIn(self):
         self.canvas.setMapTool(self.toolZoomIn)
@@ -111,7 +111,7 @@ class Toolbar(QToolBar):
         feat = QgsFeature()
         provider.getNextFeature(feat)
         attrMap = feat.attributeMap()
-        self.emit(SIGNAL("currentGeoChanged"), provider, feat)
+        self.emit(pyqtSignal("currentGeoChanged"), provider, feat)
 
     def doneRectangle(self):
         provider = self.layer.getDataProvider()

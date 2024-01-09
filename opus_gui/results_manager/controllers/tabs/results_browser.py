@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QObject, SIGNAL, Qt, pyqtSlot
-from PyQt4.QtGui import QTabWidget, QWidget, QTableWidgetItem, QSizePolicy
+from PyQt5.QtCore import QObject, pyqtSignal, Qt, pyqtSlot
+from PyQt5.QtWidgets import QTabWidget, QWidget, QTableWidgetItem, QSizePolicy
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
@@ -34,13 +34,13 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         #TODO handle this as the variables are handled
         try:
             obj = get_manager_instance('results').xml_controller.model
-            self.connect(obj, SIGNAL("layoutChanged()"), self._setup_simulation_data)
+            self.connect(obj, pyqtSignal("layoutChanged()"), self._setup_simulation_data)
         except AttributeError:
             pass
 
         def test():
             print('Variables updated')
-        self.connect(get_mainwindow_instance(), SIGNAL('variables_updated'), test)
+        self.connect(get_mainwindow_instance(), pyqtSignal('variables_updated'), test)
 
         tool_tip = ('If checked, indicator results will automatically be\n'
                     'created for the currently selected simulation run,\n'
@@ -295,8 +295,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                                   thread_object = self.batch_processor)
 
             # Use this signal from the thread if it is capable of producing its own status signal
-            self.connect(batch_processor_thread, SIGNAL("runFinished(PyQt_PyObject)"), self._run_finished)
-            self.connect(batch_processor_thread, SIGNAL("runError(PyQt_PyObject)"), self._run_error)
+            self.connect(batch_processor_thread, pyqtSignal("runFinished(PyQt_PyObject)"), self._run_finished)
+            self.connect(batch_processor_thread, pyqtSignal("runError(PyQt_PyObject)"), self._run_error)
 
             batch_processor_thread.start()
         else:
@@ -347,9 +347,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         self.already_browsed[key] = (tab_widget, map_widget)
 
-#        self.lblViewIndicator.setText(QString(key[1]))
-#        self.lblViewRun.setText(QString(key[0]))
-#        self.lblViewYear.setText(QString(repr(key[2])))
+#        self.lblViewIndicator.setText((key[1]))
+#        self.lblViewRun.setText((key[0]))
+#        self.lblViewYear.setText((repr(key[2])))
 
         swap = self.queued_results is not None and self.queued_results[0] == 'swap'
 
@@ -366,8 +366,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                                   thread_object = self.batch_processor)
 
             # Use this signal from the thread if it is capable of producing its own status signal
-            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"), self._run_finished)
-            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"), self._run_error)
+            QObject.connect(runThread, pyqtSignal("runFinished(PyQt_PyObject)"), self._run_finished)
+            QObject.connect(runThread, pyqtSignal("runError(PyQt_PyObject)"), self._run_error)
             runThread.start()
         else:
 #            if swap:
@@ -397,8 +397,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 #        self.tabwidget_visualizations.addTab(self.tabTable, "")
 #        self.tabwidget_visualizations.addTab(self.tabMap, "")
 #
-#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabTable), QString('Table'))
-#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabMap), QString('Map'))
+#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabTable), ('Table'))
+#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabMap), ('Map'))
 #        #self.tabMap.show()
 #        #self.tabTable.show()
 #

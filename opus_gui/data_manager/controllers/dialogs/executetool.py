@@ -4,14 +4,15 @@
 
 from lxml.etree import Element, SubElement
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot, QVariant
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox, QCheckBox
+from PyQt5.QtCore  import  Qt, QRegExp, QObject, pyqtSignal, QSize, pyqtSlot, QVariant
+from PyQt5.QtGui import QPalette
+from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox, QCheckBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
 from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 from opus_gui.data_manager.data_manager_functions import get_tool_node_by_name, get_tool_library_node
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 class FileDialogSignal(QWidget):
     ''' NO DOCUMENTATION '''
@@ -34,7 +35,7 @@ class FileDialogSignal(QWidget):
     def relayButtonSignal(self):
         ''' NO DOCUMENTATION '''
         #print "relayButtonSignal"
-        self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
+        self.o.emit(pyqtSignal("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
@@ -144,11 +145,11 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
         opus_tool = OpusTool(import_path, params)
         run_tool_thread = RunToolThread(opus_tool)
-        QObject.connect(run_tool_thread, SIGNAL("toolFinished(PyQt_PyObject)"),
+        QObject.connect(run_tool_thread, pyqtSignal("toolFinished(PyQt_PyObject)"),
                         self.toolFinishedFromThread)
-        QObject.connect(run_tool_thread, SIGNAL("toolProgressPing(PyQt_PyObject)"),
+        QObject.connect(run_tool_thread, pyqtSignal("toolProgressPing(PyQt_PyObject)"),
                         self.toolProgressPingFromThread)
-        QObject.connect(run_tool_thread, SIGNAL("toolLogPing(PyQt_PyObject)"),
+        QObject.connect(run_tool_thread, pyqtSignal("toolLogPing(PyQt_PyObject)"),
                         self.toolLogPingFromThread)
         run_tool_thread.start()
 
@@ -186,16 +187,16 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 param[2] = self.optional_params[str(param[0])]
             #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
-            widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
+            widgetTemp.setObjectName(("test_widget").append((i)))
             self.test_widget.append(widgetTemp)
             hlayout = QHBoxLayout(widgetTemp)
             self.hboxlayout.append(hlayout)
             hlayout.setMargin(4)
             hlayout.setSpacing(4)
-            hlayout.setObjectName(QString("hboxlayout").append(QString(i)))
+            hlayout.setObjectName(("hboxlayout").append((i)))
             test_text = QLabel(widgetTemp)
             self.test_text.append(test_text)
-            test_text.setObjectName(QString("test_text").append(QString(i)))
+            test_text.setObjectName(("test_text").append((i)))
             paramName = param[0].strip()
             if param[2].strip() == "Required":
                 palette = test_text.palette()
@@ -205,20 +206,20 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_text.setMaximumSize(test_text.sizeHint())
             test_text_type = QLabel(widgetTemp)
             self.test_text_type.append(test_text_type)
-            test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
+            test_text_type.setObjectName(("test_text_type").append((i)))
             paramName = param[1].strip()
-            test_text_type.setText(QString("(").append(paramName).append(QString(")")))
+            test_text_type.setText(("(").append(paramName).append((")")))
             hlayout.addWidget(test_text)
             hlayout.addWidget(test_text_type)
             if param[1] == 'db_connection_hook':
                 test_line = QComboBox(widgetTemp)
                 db_connection_choices = get_db_connection_names()
                 for i in db_connection_choices:
-                    test_line.addItem(QString(i))
+                    test_line.addItem((i))
                 self.test_line.append(test_line)
                 test_line.setEnabled(True)
                 test_line.setMinimumSize(QSize(200,0))
-                test_line.setObjectName(QString("test_line").append(QString(i)))
+                test_line.setObjectName(("test_line").append((i)))
                 index = test_line.findText(param[2], Qt.MatchExactly)
                 test_line.setCurrentIndex(index)
             elif param[1] == 'boolean':
@@ -228,24 +229,24 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 test_line.setChecked(checked)
                 test_line.setEnabled(True)
                 test_line.setMaximumSize(QSize(test_line.sizeHint()))
-                test_line.setObjectName(QString("test_line").append(QString(i)))
+                test_line.setObjectName(("test_line").append((i)))
             else:
                 test_line = QLineEdit(widgetTemp)
                 self.test_line.append(test_line)
                 test_line.setEnabled(True)
                 test_line.setMinimumSize(QSize(200,0))
-                test_line.setObjectName(QString("test_line").append(QString(i)))
-                test_line.setText(QString(param[2]))
+                test_line.setObjectName(("test_line").append((i)))
+                test_line.setText((param[2]))
             hlayout.addWidget(test_line)
             # If we have a dir_path or file_path add a select button
-            if (paramName == QString('dir_path')) or (paramName == QString('file_path')):
+            if (paramName == ('dir_path')) or (paramName == ('file_path')):
                 pbnSelect = QPushButton(widgetTemp)
-                pbnSelect.setObjectName(QString('pbnSelect').append(QString(i)))
-                pbnSelect.setText(QString("Select..."))
+                pbnSelect.setObjectName(('pbnSelect').append((i)))
+                pbnSelect.setText(("Select..."))
                 pbnSelectDelegate = FileDialogSignal(typeName=paramName,param=test_line)
-                QObject.connect(pbnSelectDelegate.o, SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),
+                QObject.connect(pbnSelectDelegate.o, pyqtSignal("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),
                                 self.on_pbnSelect_clicked)
-                QObject.connect(pbnSelect, SIGNAL("clicked()"), pbnSelectDelegate.relayButtonSignal)
+                QObject.connect(pbnSelect, pyqtSignal("clicked()"), pbnSelectDelegate.relayButtonSignal)
                 self.test_line_delegates.append(pbnSelectDelegate)
                 self.test_line_buttons.append(pbnSelect)
                 hlayout.addWidget(pbnSelect)
@@ -256,7 +257,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         try:
             exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.module_name)
             exec(exec_stmt, globals())
-            help_ = QString(opusHelp()) #@UndefinedVariable
+            help_ = (opusHelp()) #@UndefinedVariable
         except Exception:
             help_ = 'could not find opusHelp function in tool module'
         finally:
@@ -266,18 +267,18 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def on_pbnSelect_clicked(self,typeName,line):
         #print "on_pbnSelect_clicked recieved"
         editor_file = QFileDialog()
-        filter_str = QString("*.*")
+        filter_str = ("*.*")
         editor_file.setFilter(filter_str)
         editor_file.setAcceptMode(QFileDialog.AcceptOpen)
-        if typeName == QString("file_path"):
-            fd = editor_file.getOpenFileName(self,QString("Please select a file..."),
+        if typeName == ("file_path"):
+            fd = editor_file.getOpenFileName(self,("Please select a file..."),
                                              line.text())
         else:
-            fd = editor_file.getExistingDirectory(self,QString("Please select a directory..."),
+            fd = editor_file.getExistingDirectory(self,("Please select a directory..."),
                                                   line.text())
         # Check for cancel
         if len(fd) != 0:
-            fileName = QString(fd)
+            fileName = (fd)
             line.setText(fileName)
 
     def presentToolFileGUI(self):
@@ -297,13 +298,13 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         if success:
             self.progressBar.setValue(100)
         self.execTool.setEnabled(True)
-        self.cancelExec.setText(QString('Close'))
+        self.cancelExec.setText(('Close'))
 
     def toolLogPingFromThread(self,log):
         #print "toolLogPingFromThread - %s" % (log)
-        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.textEdit.moveCursor(QtWidgets.QTextCursor.End)
         self.textEdit.insertPlainText(log)
-        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.textEdit.moveCursor(QtWidgets.QTextCursor.End)
 
     def toolProgressPingFromThread(self,progress):
         #print "toolProgressPingFromThread - %s" % (progress)

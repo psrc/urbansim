@@ -2,10 +2,10 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import QVariant
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import QVariant
 
-class SubmodelStructureItem(QtGui.QTreeWidgetItem):
+class SubmodelStructureItem(QtWidgets.QTreeWidgetItem):
 
     '''
     Provide custom display of items in a submodel structure tree
@@ -14,7 +14,7 @@ class SubmodelStructureItem(QtGui.QTreeWidgetItem):
     EQUATION_ID = 'equation_id'
 
     def __init__(self, node, editable = False, parent_widget = None):
-        QtGui.QTreeWidgetItem.__init__(self, parent_widget)
+        QtWidgets.QTreeWidgetItem.__init__(self, parent_widget)
         self._node = node
         self._editable = bool(editable)
         if node.tag == 'equation':
@@ -30,7 +30,7 @@ class SubmodelStructureItem(QtGui.QTreeWidgetItem):
         self.setText(2, node.get('number_of_samples') or '')
 
         if self._type_id == self.EQUATION_ID:
-            font = QtGui.QFont()
+            font = QtWidgets.QFont()
             font.setBold(True)
             self.setFont(0, font)
 
@@ -68,7 +68,7 @@ class SubmodelStructureItem(QtGui.QTreeWidgetItem):
                     else:
                         return
 
-        QtGui.QTreeWidgetItem.setData(self, column, role, qt_value)
+        QtWidgets.QTreeWidgetItem.setData(self, column, role, qt_value)
 
     def data(self, column, role):
         # override the data retrieval to make the item interact with the node rather than the
@@ -95,9 +95,9 @@ class SubmodelStructureItem(QtGui.QTreeWidgetItem):
             return QVariant(display_value)
         elif role == QtCore.Qt.ForegroundRole:
             if column == 0 and self._type_id == self.NEST_ID and len(self._node) == 0:
-                return QVariant(QtGui.QColor(QtCore.Qt.gray))
+                return QVariant(QtWidgets.QColor(QtCore.Qt.gray))
         # use default for everything else
-        return QtGui.QTreeWidgetItem.data(self, column, role)
+        return QtWidgets.QTreeWidgetItem.data(self, column, role)
 
     def variable_list(self):
         ''' return the variable_list node if the represented node has one '''

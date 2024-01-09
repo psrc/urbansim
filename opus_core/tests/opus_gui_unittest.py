@@ -4,13 +4,13 @@
 
 import os
 from opus_core.tests import opus_unittest
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 class OpusGUITestCase(opus_unittest.OpusTestCase):
 
     def __init__(self, methodName = 'runTest'):
         opus_unittest.OpusTestCase.__init__(self, methodName)
-        self.app = QtGui.QApplication([], True)
+        self.app = QtWidgets.QApplication([])
 
     def get_data_from_test_files(self, filename, base_file):
         ''' Get data from <filename> in ./test_files (a subdir of the base_file's path)

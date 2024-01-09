@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from qgis.core import *
 from qgis.gui import *
 import sys, os, re, shutil
@@ -34,9 +34,9 @@ class ComboBoxFolder(QComboBox):
 
     def browseFolder(self, index):
         if index  == self.count()-1:
-            location = QFileDialog.getExistingDirectory(self, QString("Project Location"), "/home", QFileDialog.ShowDirsOnly)
+            location = QFileDialog.getExistingDirectory(self, ("Project Location"), "/home", QFileDialog.ShowDirsOnly)
             if not location.isEmpty():
-                self.insertItem(0, QString(location))
+                self.insertItem(0, (location))
                 self.setCurrentIndex(0)
             else:
                 self.setCurrentIndex(0)
@@ -47,9 +47,9 @@ class ComboBoxFile(QComboBox):
 
     def browseFile(self, index):
         if index == self.count()-1:
-            file = QFileDialog.getOpenFileName(self, QString("Browse to select file"), "/home", "Data Files (*.dat *.txt)")
+            file = QFileDialog.getOpenFileName(self, ("Browse to select file"), "/home", "Data Files (*.dat *.txt)")
             if not file.isEmpty():
-                self.insertItem(1, QString(file))
+                self.insertItem(1, (file))
                 self.setCurrentIndex(1)
             else:
                 self.setCurrentIndex(0)
@@ -97,7 +97,7 @@ class Wizard(QWizard):
         super(Wizard, self).__init__(parent)
         self.setFixedSize(QSize(800,500))
         self.setWizardStyle(QWizard.ClassicStyle)
-        self.counties = countydata.CountyContainer(QString("./data/counties.csv"))
+        self.counties = countydata.CountyContainer(("./data/counties.csv"))
         self.selectedCounties = None
         self.addPage(self.createIntroPage())
         self.addPage(self.createResolutionPage())
@@ -107,38 +107,38 @@ class Wizard(QWizard):
         self.addPage(self.createSummaryPage())
         self.setWindowTitle("New Project Wizard")
 
-        self.connect(self.locationComboBox, SIGNAL("activated(int)"), self.locationComboBox.browseFolder)
-        self.connect(self.geocorrLocationComboBox, SIGNAL("activated(int)"), self.geocorrLocationComboBox.browseFile)
-        self.connect(self.sampleHHLocationComboBox, SIGNAL("activated(int)"), self.sampleHHLocationComboBox.browseFile)
-        self.connect(self.sampleGQLocationComboBox, SIGNAL("activated(int)"), self.sampleGQLocationComboBox.browseFile)
-        self.connect(self.samplePersonLocationComboBox, SIGNAL("activated(int)"), self.samplePersonLocationComboBox.browseFile)
-        self.connect(self.controlHHLocationComboBox, SIGNAL("activated(int)"), self.controlHHLocationComboBox.browseFile)
-        self.connect(self.controlGQLocationComboBox, SIGNAL("activated(int)"), self.controlGQLocationComboBox.browseFile)
-        self.connect(self.controlPersonLocationComboBox, SIGNAL("activated(int)"), self.controlPersonLocationComboBox.browseFile)
+        self.connect(self.locationComboBox, pyqtSignal("activated(int)"), self.locationComboBox.browseFolder)
+        self.connect(self.geocorrLocationComboBox, pyqtSignal("activated(int)"), self.geocorrLocationComboBox.browseFile)
+        self.connect(self.sampleHHLocationComboBox, pyqtSignal("activated(int)"), self.sampleHHLocationComboBox.browseFile)
+        self.connect(self.sampleGQLocationComboBox, pyqtSignal("activated(int)"), self.sampleGQLocationComboBox.browseFile)
+        self.connect(self.samplePersonLocationComboBox, pyqtSignal("activated(int)"), self.samplePersonLocationComboBox.browseFile)
+        self.connect(self.controlHHLocationComboBox, pyqtSignal("activated(int)"), self.controlHHLocationComboBox.browseFile)
+        self.connect(self.controlGQLocationComboBox, pyqtSignal("activated(int)"), self.controlGQLocationComboBox.browseFile)
+        self.connect(self.controlPersonLocationComboBox, pyqtSignal("activated(int)"), self.controlPersonLocationComboBox.browseFile)
 
-        #self.connect(self.nameLineEdit, SIGNAL("editingFinished()"), self.nameLineEdit.check)
-        #self.connect(self.hostnameLineEdit, SIGNAL("editingFinished()"), self.hostnameLineEdit.check)
-        #self.connect(self.usernameLineEdit, SIGNAL("editingFinished()"), self.usernameLineEdit.check)
+        #self.connect(self.nameLineEdit, pyqtSignal("editingFinished()"), self.nameLineEdit.check)
+        #self.connect(self.hostnameLineEdit, pyqtSignal("editingFinished()"), self.hostnameLineEdit.check)
+        #self.connect(self.usernameLineEdit, pyqtSignal("editingFinished()"), self.usernameLineEdit.check)
 
-        self.connect(self.geocorrAutoRadio, SIGNAL("clicked()"), self.geocorrAutoAction)
-        self.connect(self.geocorrUserProvRadio, SIGNAL("clicked()"), self.geocorrUserProvAction)
-        self.connect(self.sampleAutoRadio, SIGNAL("clicked()"), self.sampleAutoAction)
-        self.connect(self.sampleUserProvRadio, SIGNAL("clicked()"), self.sampleUserProvAction)
-        self.connect(self.controlAutoRadio, SIGNAL("clicked()"), self.controlAutoAction)
-        self.connect(self.controlUserProvRadio, SIGNAL("clicked()"), self.controlUserProvAction)
+        self.connect(self.geocorrAutoRadio, pyqtSignal("clicked()"), self.geocorrAutoAction)
+        self.connect(self.geocorrUserProvRadio, pyqtSignal("clicked()"), self.geocorrUserProvAction)
+        self.connect(self.sampleAutoRadio, pyqtSignal("clicked()"), self.sampleAutoAction)
+        self.connect(self.sampleUserProvRadio, pyqtSignal("clicked()"), self.sampleUserProvAction)
+        self.connect(self.controlAutoRadio, pyqtSignal("clicked()"), self.controlAutoAction)
+        self.connect(self.controlUserProvRadio, pyqtSignal("clicked()"), self.controlUserProvAction)
 
-        self.connect(self.countySelectTree, SIGNAL("itemSelectionChanged()"), self.showCountySelection)
+        self.connect(self.countySelectTree, pyqtSignal("itemSelectionChanged()"), self.showCountySelection)
 
-        self.connect(self, SIGNAL("currentIdChanged(int)"), self.updateSummary)
+        self.connect(self, pyqtSignal("currentIdChanged(int)"), self.updateSummary)
 
-        self.connect(self.button(QWizard.CancelButton), SIGNAL("pressed()"), self.reject)
+        self.connect(self.button(QWizard.CancelButton), pyqtSignal("pressed()"), self.reject)
 
         sampleGQLocationComboBox = QLabel("Select the groupquarter sample file")
         samplePersonLocationComboBox = QLabel("Select the population sample file")
 
     def reject(self):
         reply = QMessageBox.question(None, "PopGen: New Project Wizard",
-                                     QString("Do you wish to continue?"),
+                                     ("Do you wish to continue?"),
                                      QMessageBox.Yes| QMessageBox.No)
         if reply == QMessageBox.Yes:
             QDialog.reject(self)
@@ -190,8 +190,8 @@ class Wizard(QWizard):
         nameLabel.setBuddy(self.nameLineEdit)
         locationLabel = QLabel("Project Location")
         self.locationComboBox = ComboBoxFolder()
-        #self.locationComboBox.addItems([QString("C:/"), QString("Browse to select folder...")])
-        self.locationComboBox.addItems([QString("C:/SynTest"), QString("Browse to select folder...")])
+        #self.locationComboBox.addItems([("C:/"), ("Browse to select folder...")])
+        self.locationComboBox.addItems([("C:/SynTest"), ("Browse to select folder...")])
         locationLabel.setBuddy(self.locationComboBox)
         descLabel = QLabel("Project Description")
         self.descTextEdit = QTextEdit()
@@ -209,10 +209,10 @@ class Wizard(QWizard):
         self.countySelectTree.setColumnCount(1)
         self.countySelectTree.setHeaderLabels(["State/County"])
         self.countySelectTree.setItemsExpandable(True)
-        state = QTreeWidgetItem(self.countySelectTree, [QString("State")])
-        county = QTreeWidgetItem(state, [QString("County")])
-        state = QTreeWidgetItem(self.countySelectTree, [QString("State1")])
-        county = QTreeWidgetItem(state, [QString("County1")])
+        state = QTreeWidgetItem(self.countySelectTree, [("State")])
+        county = QTreeWidgetItem(state, [("County")])
+        state = QTreeWidgetItem(self.countySelectTree, [("State1")])
+        county = QTreeWidgetItem(state, [("County1")])
         # Displaying counties and selecting counties using the map
         canvas = QgsMapCanvas()
         canvas.setCanvasColor(QColor(0,0,0))
@@ -260,13 +260,13 @@ class Wizard(QWizard):
         for county in self.counties:
             ancestor = parentFromState.get(county.stateName)
             if ancestor is None:
-                ancestor = QTreeWidgetItem(self.countySelectTree, [QString(county.stateName)])
+                ancestor = QTreeWidgetItem(self.countySelectTree, [(county.stateName)])
                 parentFromState[county.stateName]=ancestor
 
             stateCounty = "%s%s%s" %(county.stateName, "/", county.countyName)
             parent = parentFromStateCounty.get(stateCounty)
             if parent is None:
-                parent = QTreeWidgetItem(ancestor, [QString(county.countyName)])
+                parent = QTreeWidgetItem(ancestor, [(county.countyName)])
                 parentFromStateCounty[stateCounty] = parent
 
 
@@ -285,7 +285,7 @@ class Wizard(QWizard):
 
         resolutionLabel = QLabel("At what resolution do you want to synthesize the population (County/Tract/Blockgroup level)?")
         self.resolutionComboBox = QComboBox()
-        self.resolutionComboBox.addItems([QString("County"), QString("Tract"), QString("Blockgroup")])
+        self.resolutionComboBox.addItems([("County"), ("Tract"), ("Blockgroup")])
         self.resolutionComboBox.setFixedSize(QSize(250,20))
         self.geocorrGroupBox = QGroupBox("Will you provide Geographic Correspondence between the Geography and PUMA?")
         self.geocorrUserProvRadio = QRadioButton("Yes")
@@ -298,7 +298,7 @@ class Wizard(QWizard):
 
         geocorrLocationLabel = QLabel("Select the geographic correspondence file")
         self.geocorrLocationComboBox = ComboBoxFile()
-        self.geocorrLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.geocorrLocationComboBox.addItems([(""), ("Browse to select file...")])
         geocorrLocationLabel.setBuddy(self.geocorrLocationComboBox)
         self.geocorrUserProvGroupBox = QGroupBox("User provided:")
         geocorrVLayout = QVBoxLayout()
@@ -334,15 +334,15 @@ class Wizard(QWizard):
         samplePersonLocationLabel = QLabel("Select the population sample file")
 
         self.sampleHHLocationComboBox = ComboBoxFile()
-        self.sampleHHLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.sampleHHLocationComboBox.addItems([(""), ("Browse to select file...")])
         sampleHHLocationLabel.setBuddy(self.sampleHHLocationComboBox)
 
         self.sampleGQLocationComboBox = ComboBoxFile()
-        self.sampleGQLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.sampleGQLocationComboBox.addItems([(""), ("Browse to select file...")])
         sampleGQLocationLabel.setBuddy(self.sampleGQLocationComboBox)
 
         self.samplePersonLocationComboBox = ComboBoxFile()
-        self.samplePersonLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.samplePersonLocationComboBox.addItems([(""), ("Browse to select file...")])
         samplePersonLocationLabel.setBuddy(self.samplePersonLocationComboBox)
 
         self.sampleUserProvGroupBox = QGroupBox("User provided:")
@@ -381,15 +381,15 @@ class Wizard(QWizard):
         controlPersonLocationLabel = QLabel("Select the population control file")
 
         self.controlHHLocationComboBox = ComboBoxFile()
-        self.controlHHLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlHHLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlHHLocationLabel.setBuddy(self.controlHHLocationComboBox)
 
         self.controlGQLocationComboBox = ComboBoxFile()
-        self.controlGQLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlGQLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlGQLocationLabel.setBuddy(self.controlGQLocationComboBox)
 
         self.controlPersonLocationComboBox = ComboBoxFile()
-        self.controlPersonLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.controlPersonLocationComboBox.addItems([(""), ("Browse to select file...")])
         controlPersonLocationLabel.setBuddy(self.controlPersonLocationComboBox)
 
         self.controlUserProvGroupBox = QGroupBox("User provided:")
@@ -631,14 +631,14 @@ class Wizard(QWizard):
             projectLocationDummy = True
         except WindowsError as e:
             reply = QMessageBox.question(None, "PopGen: Processing Data",
-                                         QString("""Database Error: %s. \n\nDo you wish"""
+                                         ("""Database Error: %s. \n\nDo you wish"""
                                                  """ to keep the previous data?"""
                                                  """\n    If Yes then rescpecify project location. """
                                                  """\n    If you wish to delete the previous data press No."""%e),
                                          QMessageBox.Yes|QMessageBox.No)
             if reply == QMessageBox.No:
                 confirm = QMessageBox.question(None, "PopGen: Processing Data",
-                                               QString("""Are you sure you want to continue?"""),
+                                               ("""Are you sure you want to continue?"""),
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     shutil.rmtree("%s/%s" %(self.project.location, self.project.name))
@@ -649,27 +649,27 @@ class Wizard(QWizard):
             else:
                 projectLocationDummy = False
         self.currentPage().projectLocationDummy = projectLocationDummy
-        self.currentPage().emit(SIGNAL("completeChanged()"))
+        self.currentPage().emit(pyqtSignal("completeChanged()"))
 
     def checkProjectDatabase(self):
         projectDBC = createDBC(self.project.db, self.project.name)
 
         if not projectDBC.dbc.open():
             QMessageBox.warning(None, "PopGen: Processing Data",
-                                QString("DatabaseError: %s" %projectDBC.dbc.lastError().text()))
+                                ("DatabaseError: %s" %projectDBC.dbc.lastError().text()))
             projectDatabaseDummy = False
         else:
             query = QSqlQuery(projectDBC.dbc)
             if not query.exec_("""Create Database %s""" %(self.project.name)):
                 reply = QMessageBox.question(None, "PopGen: Processing Data",
-                                             QString("""QueryError: %s. \n\n"""
+                                             ("""QueryError: %s. \n\n"""
                                                      """Do you wish to keep the old MySQL database?"""
                                                      """\n    If Yes then respecify the project name."""
                                                      """\n    If you wish to delete press No."""%query.lastError().text()),
                                              QMessageBox.Yes|QMessageBox.No)
                 if reply == QMessageBox.No:
                     confirm = QMessageBox.question(None, "PopGen: Processing Data",
-                                                   QString("""Are you sure you want to continue?"""),
+                                                   ("""Are you sure you want to continue?"""),
                                                    QMessageBox.Yes|QMessageBox.No)
                     if confirm == QMessageBox.Yes:
                         d1 = query.exec_("""Drop Database %s""" %(self.project.name))
@@ -684,7 +684,7 @@ class Wizard(QWizard):
 
 
         self.currentPage().projectDatabaseDummy = projectDatabaseDummy
-        self.currentPage().emit(SIGNAL("completeChanged()"))
+        self.currentPage().emit(pyqtSignal("completeChanged()"))
         projectDBC.dbc.close()
 
 def main():

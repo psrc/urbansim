@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 from misc.widgets import RecodeDialog
 from file_menu.newproject import DBInfo
@@ -77,11 +77,11 @@ class DisplayTable(QDialog):
 
         self.setLayout(vLayout)
 
-        self.connect(buttonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
-        self.connect(buttonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
+        self.connect(buttonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
+        self.connect(buttonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
 
-        self.connect(descButton, SIGNAL("clicked()"), self.descriptives)
-        self.connect(freqButton, SIGNAL("clicked()"), self.frequencies)
+        self.connect(descButton, pyqtSignal("clicked()"), self.descriptives)
+        self.connect(freqButton, pyqtSignal("clicked()"), self.frequencies)
 
 
     def descriptives(self):
@@ -191,7 +191,7 @@ class DisplayTableStructure(QDialog):
         layout.addWidget(buttonBox)
         self.setLayout(layout)
 
-        self.connect(buttonBox, SIGNAL("accepted()"), self, SLOT("accept()"))
+        self.connect(buttonBox, pyqtSignal("accepted()"), self, SLOT("accept()"))
 
 
     def accept(self):

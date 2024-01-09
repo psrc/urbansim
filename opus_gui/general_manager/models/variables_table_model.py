@@ -6,9 +6,9 @@ from lxml.etree import Element
 import sys
 import traceback
 
-from PyQt4.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
-from PyQt4.QtCore import SIGNAL, QEventLoop
-from PyQt4.QtGui import QColor, qApp, QFont
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
+from PyQt5.QtCore import pyqtSignal, QEventLoop
+from PyQt5.QtWidgets import QColor, qApp, QFont
 from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
 from opus_gui.util.icon_library import IconLibrary
 
@@ -200,27 +200,27 @@ class VariablesTableModel(QAbstractTableModel):
         self.re_sort()
 
     def flags(self, index):
-        ''' PyQt4 API Method '''
+        ''' PyQt5 API Method '''
         flags = Qt.ItemIsEnabled # all variables are enabled
         if index.isValid(): # valid items are selectable
             flags = flags | Qt.ItemIsSelectable
         return flags
 
     def rowCount(self, parent = QModelIndex()):
-        ''' PyQt4 API Method '''
+        ''' PyQt5 API Method '''
         if parent.isValid():
             return 0
         return len(self.variables)
 
     def columnCount(self, parent = QModelIndex()):
-        ''' PyQt4 API Method '''
+        ''' PyQt5 API Method '''
         # don't display columns when there are no rows
         if not self.rowCount(parent):
             return 0
         return len(self.headers)
 
     def data(self, index, role):
-        ''' PyQt4 API Method '''
+        ''' PyQt5 API Method '''
         if not index.isValid():
             return QVariant()
 
@@ -298,13 +298,13 @@ class VariablesTableModel(QAbstractTableModel):
         self.dirty = True
         idx_start = self.createIndex(row, 0)
         idx_end = self.createIndex(row, self.columnCount() - 1)
-        self.emit(SIGNAL("dataChanged(const QModelIndex&, const QModelIndex&)"),
+        self.emit(pyqtSignal("dataChanged(const QModelIndex&, const QModelIndex&)"),
                   idx_start, idx_end)
-        self.emit(SIGNAL('model_changed'))
+        self.emit(pyqtSignal('model_changed'))
         return returnval
 
     def removeRow(self, row, parent = QModelIndex()):
-        ''' PyQt4 API Method '''
+        ''' PyQt5 API Method '''
         returnval = QAbstractTableModel.removeRow(self, row, parent)
         self.beginRemoveRows(parent, row, row)
         var_to_delete = self.variables.pop(row)
@@ -313,7 +313,7 @@ class VariablesTableModel(QAbstractTableModel):
         assert(var_to_delete in [var for var in self.all_variables if var['delete']])
         self.endRemoveRows()
         self.dirty = True
-        self.emit(SIGNAL('model_changed'))
+        self.emit(pyqtSignal('model_changed'))
         return returnval
 
     def headerData(self, col, orientation, role):
@@ -338,7 +338,7 @@ class VariablesTableModel(QAbstractTableModel):
                 # sort by key, then by name
                 return cmp((x[sort_key], x[name_key]), (y[sort_key], y[name_key]))
         self.variables.sort(cmp_, reverse = order == Qt.DescendingOrder)
-        self.emit(SIGNAL("layoutChanged()"))
+        self.emit(pyqtSignal("layoutChanged()"))
 
     def re_sort(self):
         self.sort(self.sorted_by_column, self.sorting_order)
@@ -367,7 +367,7 @@ class VariablesTableModel(QAbstractTableModel):
             self.dirty = True
         if original_var['dirty']:
             self.dirty = True
-        self.emit(SIGNAL('model_changed'))
+        self.emit(pyqtSignal('model_changed'))
 
     def delete_variable(self, variable):
         '''
@@ -403,7 +403,7 @@ class VariablesTableModel(QAbstractTableModel):
             variable['dirty'] = True
         # Emit update signal
         self.dirty = True
-        self.emit(SIGNAL('model_changed'))
+        self.emit(pyqtSignal('model_changed'))
         return True
 
     def get_variables(self):

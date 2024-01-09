@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 #from misc.errors import *
 from misc.widgets import *
 
@@ -35,15 +35,15 @@ class SampleDataPage(QWizardPage):
         samplePersonLocationLabel = QLabel("Select the person sample file")
 
         self.sampleHHLocationComboBox = ComboBoxFile()
-        self.sampleHHLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.sampleHHLocationComboBox.addItems([(""), ("Browse to select file...")])
         sampleHHLocationLabel.setBuddy(self.sampleHHLocationComboBox)
 
         self.sampleGQLocationComboBox = ComboBoxFile()
-        self.sampleGQLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.sampleGQLocationComboBox.addItems([(""), ("Browse to select file...")])
         sampleGQLocationLabel.setBuddy(self.sampleGQLocationComboBox)
 
         self.samplePersonLocationComboBox = ComboBoxFile()
-        self.samplePersonLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.samplePersonLocationComboBox.addItems([(""), ("Browse to select file...")])
         samplePersonLocationLabel.setBuddy(self.samplePersonLocationComboBox)
 
         sampleUserProvWarning = QLabel("""<font color = blue> Note: Groupquarter data is optional; but if the person control"""
@@ -55,9 +55,9 @@ class SampleDataPage(QWizardPage):
 
         sourceGroupBox = QGroupBox("b. Choose the Census data source you want PopGen to use.")
         self.sourceComboBox = QComboBox()
-        self.sourceComboBox.addItems([QString(""), 
-                                      QString("Census 2000"), 
-                                      QString("ACS 2005-2007")])
+        self.sourceComboBox.addItems([(""), 
+                                      ("Census 2000"), 
+                                      ("ACS 2005-2007")])
 
 
         sourceLayout = QHBoxLayout()
@@ -87,21 +87,21 @@ class SampleDataPage(QWizardPage):
         self.setLayout(vLayout)
 
 
-        self.connect(self.sampleHHLocationComboBox, SIGNAL("activated(int)"), self.sampleHHCheck)
-        self.connect(self.sampleGQLocationComboBox, SIGNAL("activated(int)"), self.sampleGQLocationComboBox.browseFile)
-        self.connect(self.samplePersonLocationComboBox, SIGNAL("activated(int)"), self.samplePersonCheck)
-        self.connect(self.sourceComboBox, SIGNAL("activated(int)"), self.sourceCheck)
+        self.connect(self.sampleHHLocationComboBox, pyqtSignal("activated(int)"), self.sampleHHCheck)
+        self.connect(self.sampleGQLocationComboBox, pyqtSignal("activated(int)"), self.sampleGQLocationComboBox.browseFile)
+        self.connect(self.samplePersonLocationComboBox, pyqtSignal("activated(int)"), self.samplePersonCheck)
+        self.connect(self.sourceComboBox, pyqtSignal("activated(int)"), self.sourceCheck)
 
-        self.connect(self.sampleAutoRadio, SIGNAL("clicked()"), self.sampleAutoAction)
-        self.connect(self.sampleUserProvRadio, SIGNAL("clicked()"), self.sampleUserProvAction)
-        self.connect(self, SIGNAL("resolutionChanged"), self.resolutionAction)
+        self.connect(self.sampleAutoRadio, pyqtSignal("clicked()"), self.sampleAutoAction)
+        self.connect(self.sampleUserProvRadio, pyqtSignal("clicked()"), self.sampleUserProvAction)
+        self.connect(self, pyqtSignal("resolutionChanged"), self.resolutionAction)
 
 
 
     def resolutionAction(self, resolution):
         if resolution == 'TAZ':
             self.sampleUserProvRadio.setChecked(True)
-            self.sampleUserProvRadio.emit(SIGNAL("clicked()"))
+            self.sampleUserProvRadio.emit(pyqtSignal("clicked()"))
             self.sampleAutoRadio.setEnabled(False)
         else:
             self.sampleAutoRadio.setEnabled(True)
@@ -117,7 +117,7 @@ class SampleDataPage(QWizardPage):
         self.sampleHHLocationDummy = True
         self.samplePersonLocationDummy = True
         self.sourceDummy = False
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def sampleUserProvAction(self):
@@ -138,7 +138,7 @@ class SampleDataPage(QWizardPage):
 
         #print 'made true'
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def sampleHHCheck(self, index):
@@ -148,7 +148,7 @@ class SampleDataPage(QWizardPage):
         else:
             self.sampleHHLocationDummy = True
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def samplePersonCheck(self, index):
         self.samplePersonLocationComboBox.browseFile(index)
@@ -157,7 +157,7 @@ class SampleDataPage(QWizardPage):
         else:
             self.samplePersonLocationDummy = True
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def sourceCheck(self, index):
@@ -166,7 +166,7 @@ class SampleDataPage(QWizardPage):
         else:
             self.sourceDummy = False
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
         
     def isComplete(self):

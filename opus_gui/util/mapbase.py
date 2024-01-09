@@ -3,9 +3,9 @@
 # See opus_core/LICENSE
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
-from PyQt4.QtGui import QVBoxLayout
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore  import  Qt, QFileInfo, QObject, pyqtSignal
+from PyQt5.QtWidgets import QVBoxLayout
 
 # QGIS bindings for mapping functions
 # CK: avoid star imports
@@ -31,7 +31,7 @@ class MapBase(object):
         self.canvas.useQImageToRender(False)
         self.canvas.show()
         self.canvas.parentWin = mainwindow
-        debugString = QString("Finished Loading Canvas...")
+        debugString = ("Finished Loading Canvas...")
         self.mainwindow.statusbar.showMessage(debugString)
 
         # lay our widgets out in the main window
@@ -39,9 +39,9 @@ class MapBase(object):
         self.layout.addWidget(self.canvas)
 
         # Link in the map tools
-        QObject.connect(self.mainwindow.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
-        QObject.connect(self.mainwindow.mpActionZoomOut, SIGNAL("triggered()"), self.zoomOut)
-        QObject.connect(self.mainwindow.mpActionPan, SIGNAL("triggered()"), self.pan)
+        QObject.connect(self.mainwindow.mpActionZoomIn, pyqtSignal("triggered()"), self.zoomIn)
+        QObject.connect(self.mainwindow.mpActionZoomOut, pyqtSignal("triggered()"), self.zoomOut)
+        QObject.connect(self.mainwindow.mpActionPan, pyqtSignal("triggered()"), self.pan)
 
         # Map tools
         self.toolPan = QgsMapToolPan(self.canvas)
@@ -54,15 +54,15 @@ class MapBase(object):
         ##### Lets test out a simple map
         self.layers = []
         f = "data/st99_d00.shp"
-        f_string = QString(f)
-        info = QFileInfo(QString(f))
+        f_string = (f)
+        info = QFileInfo((f))
 
         # create layer
-        layer = QgsVectorLayer(QString(f), info.completeBaseName(), "ogr")
+        layer = QgsVectorLayer((f), info.completeBaseName(), "ogr")
 
         if not layer.isValid():
             # Deal with the error
-            debugString = QString("Error Loading Layer...")
+            debugString = ("Error Loading Layer...")
             self.mainwindow.statusbar.showMessage(debugString)
             return
         QgsMapLayerRegistry.instance().addMapLayer(layer)

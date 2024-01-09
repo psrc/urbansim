@@ -9,9 +9,9 @@ import urllib.request, urllib.parse, urllib.error
 import os
 import copy
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 from database.createDBConnection import createDBC
 from misc.errors import FileError
 from misc.utils import UnzipFile
@@ -101,7 +101,7 @@ class UserImportSampleData():
         if not self.query.exec_("""create table %s (dummy text)""" %tablename):
             if self.query.lastError().number() == 1050:
                 reply = QMessageBox.question(None, "Import",
-                                             QString("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
+                                             ("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
@@ -165,7 +165,7 @@ class AutoImportPUMS2000Data():
         if not self.query.exec_("""create table %s (dummy text)""" %tablename):
             if self.query.lastError().number() == 1050:
                 reply = QMessageBox.question(None, "Import",
-                                             QString("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
+                                             ("""A table with name %s already exists. Would you like to overwrite?""" %tablename),
                                              QMessageBox.Yes| QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     if not self.query.exec_("""drop table %s""" %tablename):
@@ -188,13 +188,13 @@ class AutoImportPUMS2000Data():
             self.retrieveAndStorePUMS()
         except WindowsError as e:
             reply = QMessageBox.question(None, "Import",
-                                         QString("""Cannot download data when the data already exists.\n\n"""
+                                         ("""Cannot download data when the data already exists.\n\n"""
                                                  """Would you like to keep the existing files?"""
                                                  """\nSelect No if you would like to download the files again."""),
                                          QMessageBox.Yes|QMessageBox.No)
             if reply == QMessageBox.No:
                 confirm = QMessageBox.question(None, "Import",
-                                               QString("""Would you like to continue?"""),
+                                               ("""Would you like to continue?"""),
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     self.retrieveAndStorePUMS()
@@ -314,7 +314,7 @@ class AutoImportPUMS2000Data():
             fileInfo = os.stat(file)
 
             reply = QMessageBox.question(None, "Import",
-                                         QString("""File %s exists. Would you like to overwrite?""" %(file)),
+                                         ("""File %s exists. Would you like to overwrite?""" %(file)),
                                          QMessageBox.Yes| QMessageBox.No)
 
             if reply == QMessageBox.Yes:
@@ -431,7 +431,7 @@ class AutoImportPUMS2000Data():
                             state = i[9:11]
                             nhousing = nhousing + 1
                 else:
-                    QMessageBox.warning(None, "Import", QString("""Empty person PUMS File and empty person PUMS"""
+                    QMessageBox.warning(None, "Import", ("""Empty person PUMS File and empty person PUMS"""
                                                                 """ table will be created since no"""
                                                                 """ variables were selected for extraction."""),
                                         QMessageBox.Ok)
@@ -454,7 +454,7 @@ class AutoImportPUMS2000Data():
                             fhousing.write(housingRec)
 
                 else:
-                    QMessageBox.warning(None, "Import", QString("""Empty housing PUMS File and empty housing PUMS"""
+                    QMessageBox.warning(None, "Import", ("""Empty housing PUMS File and empty housing PUMS"""
                                                                 """ table will be created since no"""
                                                                 """ variables were selected for extraction."""),
                                         QMessageBox.Ok)
@@ -613,13 +613,13 @@ class AutoImportPUMSACSData(AutoImportPUMS2000Data):
             
             open(filename)
             reply = QMessageBox.question(None, "Import",
-                                         QString("""Cannot download data when the data already exists.\n\n"""
+                                         ("""Cannot download data when the data already exists.\n\n"""
                                                  """Would you like to keep the existing files?"""
                                                  """\nSelect No if you would like to download the files again."""),
                                          QMessageBox.Yes|QMessageBox.No)
             if reply == QMessageBox.No:
                 confirm = QMessageBox.question(None, "Import",
-                                               QString("""Would you like to continue?"""),
+                                               ("""Would you like to continue?"""),
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     self.retrieveAndStorePUMS(filetype)

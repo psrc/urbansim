@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QVariant, Qt
+from PyQt5.QtCore import QVariant, Qt
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists

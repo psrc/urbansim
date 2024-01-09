@@ -3,9 +3,9 @@
 # See opus_core/LICENSE 
 
 '''
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
+from PyQt5.QtCore import , QObject, SIGNAL, \
                          Qt, QTimer, QModelIndex, QFileInfo, pyqtSlot
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
+from PyQt5.QtWidgets import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
                         QFileDialog, QLineEdit, QListWidget
@@ -56,7 +56,7 @@ class AdvancedVisualizationForm(QWidget):
         # Add Generate button...
         self.pbn_go = QPushButton(self.resultsGroupBox)
         self.pbn_go.setObjectName('pbn_go')
-        self.pbn_go.setText(QString('Go!'))
+        self.pbn_go.setText(('Go!'))
         
         QObject.connect(self.pbn_go, SIGNAL("clicked()"),
                         self.on_pbn_go_clicked)
@@ -64,7 +64,7 @@ class AdvancedVisualizationForm(QWidget):
         
         self.pbn_set_esri_storage_location = QPushButton(self.optionsGroupBox)
         self.pbn_set_esri_storage_location.setObjectName('pbn_set_esri_storage_location')
-        self.pbn_set_esri_storage_location.setText(QString('...'))
+        self.pbn_set_esri_storage_location.setText(('...'))
         self.pbn_set_esri_storage_location.hide()
         
         QObject.connect(self.pbn_set_esri_storage_location, SIGNAL("clicked()"),
@@ -93,7 +93,7 @@ class AdvancedVisualizationForm(QWidget):
 
         self.lbl_results = QLabel(self.resultsGroupBox)
         self.lbl_results.setObjectName('lbl_results')
-        self.lbl_results.setText(QString('Results'))
+        self.lbl_results.setText(('Results'))
         self.gridlayout.addWidget(self.lbl_results,0,0,1,3)
 
         self._setup_co_results()
@@ -101,7 +101,7 @@ class AdvancedVisualizationForm(QWidget):
 
         self.pbn_add = QPushButton(self.resultsGroupBox)
         self.pbn_add.setObjectName('pbn_add')
-        self.pbn_add.setText(QString('+'))
+        self.pbn_add.setText(('+'))
         
         QObject.connect(self.pbn_add, SIGNAL("clicked()"),
                         self.on_pbn_add_clicked)
@@ -113,7 +113,7 @@ class AdvancedVisualizationForm(QWidget):
 
         self.pbn_remove = QPushButton(self.resultsGroupBox)
         self.pbn_remove.setObjectName('pbn_remove')
-        self.pbn_remove.setText(QString('-'))
+        self.pbn_remove.setText(('-'))
         
         QObject.connect(self.pbn_remove, SIGNAL("clicked()"),
                         self.on_pbn_remove_clicked)
@@ -130,7 +130,7 @@ class AdvancedVisualizationForm(QWidget):
                 
         self.lbl_result_style_sep = QLabel(self.resultsGroupBox)
         self.lbl_result_style_sep.setObjectName('lbl_result_style_sep')
-        self.lbl_result_style_sep.setText(QString('<center>as</center>'))
+        self.lbl_result_style_sep.setText(('<center>as</center>'))
         self.gridlayout2.addWidget(self.lbl_result_style_sep,1,2,1,1)
 
         self._setup_co_result_type()
@@ -157,13 +157,13 @@ class AdvancedVisualizationForm(QWidget):
         
         self.co_results = QComboBox(self.resultsGroupBox)
         self.co_results.setObjectName('co_results')
-        self.co_results.addItem(QString('[select]'))
+        self.co_results.addItem(('[select]'))
         
         results = self.xml_helper.get_available_results()
             
         for result in results:
             name = '%i.%s'%(result['run_id'],result['indicator_name'])
-            self.co_results.addItem(QString(name))
+            self.co_results.addItem((name))
 
     def _setup_co_result_style(self):
         available_styles = [
@@ -174,7 +174,7 @@ class AdvancedVisualizationForm(QWidget):
         self.co_result_style.setObjectName('co_result_style')
         
         for dataset in available_styles:
-            self.co_result_style.addItem(QString(dataset))
+            self.co_result_style.addItem((dataset))
 
     def _setup_co_result_type(self):
         available_types = [
@@ -188,7 +188,7 @@ class AdvancedVisualizationForm(QWidget):
         self.co_result_type.setObjectName('co_result_type')
         
         for dataset in available_types:
-            self.co_result_type.addItem(QString(dataset))
+            self.co_result_type.addItem((dataset))
                     
     @pyqtSlot()
     def on_pbnRemoveModel_clicked(self):
@@ -230,7 +230,7 @@ class AdvancedVisualizationForm(QWidget):
             
         self.co_result_type.clear()
         for result_type in available_types:
-            r_type = QString(result_type)
+            r_type = (result_type)
             self.co_result_type.addItem(r_type)
     
     def on_co_result_type_changed(self, ind):
@@ -258,12 +258,12 @@ class AdvancedVisualizationForm(QWidget):
         start_dir = directory_path_from_opus_path('opus_gui.projects')
 
         configDialog = QFileDialog()
-        filter_str = QString("*.gdb")
-        fd = configDialog.getExistingDirectory(self,QString("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
-                                          QString(start_dir), QFileDialog.ShowDirsOnly)
+        filter_str = ("*.gdb")
+        fd = configDialog.getExistingDirectory(self,("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
+                                          (start_dir), QFileDialog.ShowDirsOnly)
         if len(fd) != 0:
-            fileName = QString(fd)
-            fileNameInfo = QFileInfo(QString(fd))
+            fileName = (fd)
+            fileNameInfo = QFileInfo((fd))
             fileNameBaseName = fileNameInfo.completeBaseName()
             self.le_esri_storage_location.setText(fileName)
             
@@ -275,7 +275,7 @@ class AdvancedVisualizationForm(QWidget):
 
         # References to the GUI elements for status for this run...
         #self.statusLabel = self.runStatusLabel
-        #self.statusLabel.setText(QString('Model initializing...'))
+        #self.statusLabel.setText(('Model initializing...'))
         
         indicator_names = []
         for i in range(self.lw_indicators.count()):

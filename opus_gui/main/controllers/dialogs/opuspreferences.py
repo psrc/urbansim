@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QObject, SIGNAL, pyqtSlot
-from PyQt4.QtGui import QDialog
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QDialog
 
 # UI specific includes
 from opus_gui.main.views.ui_opuspreferences import Ui_PreferencesDialog

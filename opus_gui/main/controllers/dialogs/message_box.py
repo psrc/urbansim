@@ -34,10 +34,10 @@ The interface is very similar to QMessageBox. Here are some sample uses:
                               detailed_text = msg)
 '''
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QString, pyqtSlot
-from PyQt4.QtGui import QDialog
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore  import  pyqtSlot
+from PyQt5.QtWidgets import QDialog
 # UI specific includes
 from opus_gui.util.icon_library import IconLibrary
 from opus_gui.main.views.ui_message_box import Ui_MessageBox
@@ -60,7 +60,7 @@ class MessageBox(QDialog, Ui_MessageBox):
         self.lblImage.setPixmap(pixmap)
         self.lblText.setText('<qt><b>%s</b></qt>'%text)
         if detailed_text:
-            self.lblDetailText.setText(QString(detailed_text))
+            self.lblDetailText.setText((detailed_text))
         else:
             self.pbnShowDetails.hide()
         self.details_showing = True
@@ -121,10 +121,10 @@ class MessageBox(QDialog, Ui_MessageBox):
         frm.exec_()
 
 if __name__ == '__main__':
-    import PyQt4.QtGui
+    import PyQt5.QtWidgets
     from opus_gui.main.views import opusmain_rc
-    app = PyQt4.QtGui.QApplication([], True)
-    w = PyQt4.QtGui.QFrame()
+    app = PyQt5.QtWidgets.QApplication([])
+    w = PyQt5.QtWidgets.QFrame()
     MessageBox.information(w, 'test', 'detail')
     MessageBox.warning(w, 'test', 'detail')
     MessageBox.error(w, 'test', 'detail')

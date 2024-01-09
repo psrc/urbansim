@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, QObject
-from PyQt4 import QtGui
+from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5 import QtWidgets
 from opus_gui.util.icon_library import IconLibrary
 
 def create_qt_action(icon_name, text, callback, parent_qt_object):
@@ -16,10 +16,10 @@ def create_qt_action(icon_name, text, callback, parent_qt_object):
     @return: the created action (QAction)
     '''
     if icon_name is None:
-        action = QtGui.QAction(text, parent_qt_object)
+        action = QtWidgets.QAction(text, parent_qt_object)
     else:
-        action = QtGui.QAction(IconLibrary.icon(icon_name), text, parent_qt_object)
-    QObject.connect(action, SIGNAL('triggered()'), callback)
+        action = QtWidgets.QAction(IconLibrary.icon(icon_name), text, parent_qt_object)
+    QObject.connect(action, pyqtSignal('triggered()'), callback)
     return action
 
 def get_unique_name(base_name, list_of_current_names):
@@ -52,11 +52,11 @@ def dictionary_to_menu(source_dict, callback, display_func = None, parent_widget
     'two' contains two items; 'orange' and 'apple'
     'three' contains two submenus; 'four' and 'five'. Both submenus has one item 'guppy'
     '''
-    top_menu = QtGui.QMenu(parent_widget)
+    top_menu = QtWidgets.QMenu(parent_widget)
     if not display_func:
         display_func = str
     for key, items in list(source_dict.items()):
-        sub_menu = QtGui.QMenu(str(key), parent_widget)
+        sub_menu = QtWidgets.QMenu(str(key), parent_widget)
         if isinstance(items, dict):
             dict_menu = dictionary_to_menu(items, callback, parent_widget)
             sub_menu.addMenu(dict_menu)
@@ -69,7 +69,8 @@ def dictionary_to_menu(source_dict, callback, display_func = None, parent_widget
     return top_menu
 
 def hide_widget_on_value_change(widget_to_hide, value_holding_widget,
-                               signal = 'textChanged(const QString &)',
+                               #signal = 'textChanged(const  &)',
+                               signal = 'textChanged',
                                hide_method = None):
     ''' Hide a widget whenever the value of another widget is changed.
     This method is useful to automatically hide warning labels about erroroneus user input when the
@@ -83,4 +84,6 @@ def hide_widget_on_value_change(widget_to_hide, value_holding_widget,
         def default_hide_method(_, widget = widget_to_hide):
             widget.setVisible(False)
         hide_method = default_hide_method
-    QtGui.QWidget.connect(value_holding_widget, SIGNAL(signal), hide_method)
+    cmd = "value_holding_widget.%s.connect(hide_method)" % signal
+    exec(cmd)
+    #QtWidgets.QWidget.connect(value_holding_widget, pyqtSignal(signal), hide_method)

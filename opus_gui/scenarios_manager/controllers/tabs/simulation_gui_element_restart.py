@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer, pyqtSlot
-from PyQt4.QtGui import QWidget, QIcon, QDialog
+from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant,  , QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QIcon, QDialog
 from opus_gui.scenarios_manager.views.ui_input_restart_years_dialog import Ui_dlgInputRestartYears
 from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import SimulationGuiElement
 from opus_gui.results_manager.results_manager_functions import get_run_manager
@@ -23,7 +23,7 @@ class SimulationGuiElementRestart(SimulationGuiElement):
                  scenario_name=None,
                  *args, **kwargs):
         SimulationGuiElement.__init__(self, *args, **kwargs)
-        self.pbnStartModel.setText(QString("Restart simulation run..."))
+        self.pbnStartModel.setText(("Restart simulation run..."))
         self.setup_run_name_line_edit(run_name=run_name)
         self.leRunName.setReadOnly(True)  #disable editing run_name
         self.run_id = run_id
@@ -40,14 +40,14 @@ class SimulationGuiElementRestart(SimulationGuiElement):
             if success:
                 self.paused = True
                 self.timer.stop()
-                self.pbnStartModel.setText(QString("Resume simulation run"))
+                self.pbnStartModel.setText(("Resume simulation run"))
         elif self.running and self.paused:
             # Need to resume a paused run
             success = self.runThread.resume()
             if success:
                 self.paused = False
                 self.timer.start(1000)
-                self.pbnStartModel.setText(QString("Pause simulation run"))
+                self.pbnStartModel.setText(("Pause simulation run"))
         elif not self.running:
             #this is to work around that results_manager_functions.add_simulation_run function
             #isn't able to update existing runs and years information in simulation_runs/run 
@@ -105,9 +105,9 @@ class SimulationGuiElementRestart(SimulationGuiElement):
     def runFinishedFromThread(self,*args, **kwargs):
         """overrided to correct button label"""
         SimulationGuiElement.runFinishedFromThread(self, *args, **kwargs)
-        self.pbnStartModel.setText(QString("Restart Simulation Run..."))
+        self.pbnStartModel.setText(("Restart Simulation Run..."))
             
     def runErrorFromThread(self, *args, **kwargs):
         """overrided to correct button label"""
         SimulationGuiElement.runErrorFromThread(self, *args, **kwargs)
-        self.pbnStartModel.setText(QString("Restart Simulation Run..."))
+        self.pbnStartModel.setText(("Restart Simulation Run..."))

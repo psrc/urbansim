@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 from database.createDBConnection import createDBC
 from misc.widgets import *
@@ -188,14 +188,14 @@ class SummaryPage(QWizardPage):
         except WindowsError as e:
             print(e)
             reply = QMessageBox.question(self, "Project Setup Wizard",
-                                         QString("""Cannot create a project folder when the folder already exists. \n\nDo you wish"""
+                                         ("""Cannot create a project folder when the folder already exists. \n\nDo you wish"""
                                                  """ to keep the previous data?"""
                                                  """\n    If Yes then re-specify the project location. """
                                                  """\n    If you wish to delete the previous data, select No."""),
                                          QMessageBox.Yes|QMessageBox.No)
             if reply == QMessageBox.No:
                 confirm = QMessageBox.question(self, "Project Setup Wizard",
-                                               QString("""Are you sure you want to continue?"""),
+                                               ("""Are you sure you want to continue?"""),
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     shutil.rmtree("%s/%s" %(projectLocation, projectName))
@@ -205,7 +205,7 @@ class SummaryPage(QWizardPage):
                     self.projectLocationDummy = False
             else:
                 self.projectLocationDummy = False
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def checkProjectDatabase(self, db, projectName):
         projectDBC = createDBC(db)
@@ -215,14 +215,14 @@ class SummaryPage(QWizardPage):
         if not query.exec_("""Create Database %s""" %(projectName)):
             print(query.lastError().text())
             reply = QMessageBox.question(self, "Project Setup Wizard",
-                                         QString("""Cannot create a MySQL database when the database already exists. \n\n"""
+                                         ("""Cannot create a MySQL database when the database already exists. \n\n"""
                                                  """Do you wish to keep the old MySQL database?"""
                                                  """\n    If Yes then re-specify the project name."""
                                                  """\n    If you wish to delete the previous MySQL data, select No."""),
                                          QMessageBox.Yes|QMessageBox.No)
             if reply == QMessageBox.No:
                 confirm = QMessageBox.question(self, "Project Setup Wizard",
-                                               QString("""Are you sure you want to continue?"""),
+                                               ("""Are you sure you want to continue?"""),
                                                QMessageBox.Yes|QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     if not query.exec_("""Drop Database %s""" %(projectName)):
@@ -258,5 +258,5 @@ class SummaryPage(QWizardPage):
             self.projectDatabaseDummy = True
 
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 

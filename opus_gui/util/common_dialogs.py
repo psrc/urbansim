@@ -8,7 +8,7 @@ NO = 0
 YES = 1
 CANCEL = 2
 
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 def _action_before_continue(question, buttons, parent_widget):

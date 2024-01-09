@@ -42,9 +42,9 @@ class TestDynamicTemplateDialog(OpusGUITestCase):
         # the tooltip of the description should get the correct formatting
         self.assertEqual(apple_desc.toolTip(), '<qt><b>apple field</b><br/>Apples are red</qt>')
         # check that the correct widget types was generated
-        self.assertTrue(isinstance(generated_orange, QtGui.QLineEdit))
-        self.assertTrue(isinstance(generated_apple, QtGui.QSpinBox))
-        self.assertTrue(isinstance(generated_checkbox, QtGui.QCheckBox))
+        self.assertTrue(isinstance(generated_orange, QtWidgets.QLineEdit))
+        self.assertTrue(isinstance(generated_apple, QtWidgets.QSpinBox))
+        self.assertTrue(isinstance(generated_checkbox, QtWidgets.QCheckBox))
         # check that the field methods return the correct values
         self.assertEqual(self.instance.fields_to_data_methods['orange field'](), 'mandarin')
         self.assertEqual(self.instance.fields_to_data_methods['apple field'](), '42')

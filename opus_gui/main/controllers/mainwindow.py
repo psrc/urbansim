@@ -6,12 +6,12 @@ from opus_gui.util.icon_library import IconLibrary
 import os, sys
 
 from lxml.etree import ElementTree, Comment
-from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
-from PyQt4.QtCore import QSettings, QRegExp
-from PyQt4 import QtGui
-from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
-from PyQt4.QtGui import QWidget, QTabWidget
-from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
+from PyQt5.QtCore import Qt, QVariant, QThread,  , QObject, pyqtSignal
+from PyQt5.QtCore import QSettings, QRegExp
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QSpinBox, QMenu, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTabWidget
+from PyQt5.QtWidgets import QAction, QFileDialog, QToolButton, QIcon
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.main.controllers.instance_handlers import set_opusgui_instance
@@ -105,7 +105,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #self.menuUtilities.removeAction(self.actionLog_View)
         self.menuUtilities.removeAction(self.actEditorView)
 
-        self.connect(self, SIGNAL('variables_updated'), self.update_saved_state)
+        self.connect(self, pyqtSignal('variables_updated'), self.update_saved_state)
         self.update_saved_state()
 
     def _setup_actions(self):
@@ -126,7 +126,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Connect trigger slots using a little quickie function
         def connect(action, callback):
-            QObject.connect(action, SIGNAL("triggered()"), callback)
+            QObject.connect(action, pyqtSignal("triggered()"), callback)
         connect(self.actNewProject, self.newProject)
         connect(self.actOpenProject, self.openProject)
         connect(self.actSaveProject, self.saveProject)
@@ -263,7 +263,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             title = 'OPUS' if not at else at # Show just application title
             self.actSaveProject.setEnabled(False)
 
-        self.setWindowTitle(QString(title))
+        self.setWindowTitle((title))
 
     def openProject(self, project_filename = None, text = None):
         '''
@@ -284,7 +284,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             if os.path.exists(project_configs):
                 start_dir = project_configs
 
-            filter_str = QString("*.xml")
+            filter_str = ("*.xml")
             msg = "Select project file to load"
             project_filename = QFileDialog().getOpenFileName(self, msg,
                                                      start_dir, filter_str)
@@ -379,14 +379,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # get the location for the new config file on disk
             start_dir = paths.OPUS_PROJECT_CONFIGS_PATH
             configDialog = QFileDialog()
-            filter_str = QString("*.xml")
-            fd = configDialog.getSaveFileName(self,QString("Save As..."),
-                                              QString(start_dir), filter_str)
+            filter_str = ("*.xml")
+            fd = configDialog.getSaveFileName(self,("Save As..."),
+                                              (start_dir), filter_str)
             # Check for cancel
             if not fd:
                 return
 
-            filename = QString(fd)
+            filename = (fd)
             # append xml extension if no extension was given
             if not filename.endsWith('.xml') and len(filename.split('.')) == 1:
                 filename = filename + '.xml'

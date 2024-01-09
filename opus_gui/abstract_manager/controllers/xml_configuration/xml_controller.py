@@ -7,8 +7,9 @@
 import os
 from copy import deepcopy
 
-from PyQt4.QtCore import QObject, SIGNAL, Qt, QString, QFileInfo
-from PyQt4.QtGui import QCursor, QMenu, QFileDialog, QAction
+from PyQt5.QtCore import QObject, pyqtSignal, Qt, QFileInfo
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QMenu, QFileDialog, QAction
 
 from lxml.etree import ElementTree
 
@@ -57,11 +58,11 @@ class XmlController(object):
         self.manager.base_widget.layout().addWidget(self.view)
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.view,
-                        SIGNAL("customContextMenuRequested(const QPoint &)"),
+                        pyqtSignal("customContextMenuRequested(const QPoint &)"),
                         self.process_custom_menu)
         
         QObject.connect(self.view,
-                        SIGNAL('activated(const QModelIndex&)'),
+                        pyqtSignal('activated(const QModelIndex&)'),
                         self.on_activated)
 
         # Actions for common menu choices
@@ -342,14 +343,14 @@ class XmlController(object):
         # Ask the users where they want to save the file
         start_dir= paths.get_project_configs_path()
         configDialog = QFileDialog()
-        filter_str = QString("*.xml")
+        filter_str = ("*.xml")
         fd = configDialog.getSaveFileName(self.manager.base_widget,
-                                          QString("Save As..."),
-                                          QString(start_dir), filter_str)
+                                          ("Save As..."),
+                                          (start_dir), filter_str)
         # Check for cancel
         if len(fd) == 0:
             return
-        fileNameInfo = QFileInfo(QString(fd))
+        fileNameInfo = QFileInfo((fd))
         fileName = fileNameInfo.fileName().trimmed()
         fileNamePath = fileNameInfo.absolutePath().trimmed()
         saveName = os.path.join(str(fileNamePath), str(fileName))
@@ -374,14 +375,14 @@ class XmlController(object):
         # First, prompt the user for the filename to read in
         start_dir= paths.get_project_configs_path()
         configDialog = QFileDialog()
-        filter_str = QString("*.xml")
+        filter_str = ("*.xml")
         fd = configDialog.getOpenFileName(self.manager.base_widget,
                                           "Please select an XML file to import...",
                                           start_dir, filter_str)
         # Check for cancel
         if len(fd) == 0:
             return
-        fileName = QString(fd)
+        fileName = (fd)
 
         # Pass that in to create a new XMLConfiguration
         try:

@@ -2,10 +2,10 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
-# PyQt4 includes for python bindings to QT
+# PyQt5 includes for python bindings to QT
 
-from PyQt4.QtCore import SIGNAL, SLOT
-from PyQt4.QtGui import QApplication, QIcon, QMessageBox
+from PyQt5.QtCore import pyqtSignal, SLOT
+from PyQt5.QtWidgets import QApplication, QIcon, QMessageBox
 
 # General system includes
 import sys, os
@@ -86,7 +86,7 @@ def main():
     app.setWindowIcon(applicationIcon)
 
     # Set the app style
-    # app.setStyle(QString("plastique"))
+    # app.setStyle(("plastique"))
 
     # QGIS References are removed for the time being...
     #try:
@@ -111,7 +111,7 @@ def main():
     wnd.activateWindow()
 
     # Create signal for app finish
-    app.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
+    app.connect(app, pyqtSignal("lastWindowClosed()"), app, SLOT("quit()"))
 
     # Start the app up
     retval = app.exec_()

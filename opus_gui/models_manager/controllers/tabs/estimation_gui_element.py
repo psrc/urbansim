@@ -1,8 +1,8 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
-from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, QVariant, QString, QTimer, pyqtSlot
-from PyQt4.QtGui import QWidget, QIcon, QMessageBox
+from PyQt5.QtCore import QFileInfo, pyqtSignal, QObject, QVariant,  , QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QIcon, QMessageBox
 
 from opus_gui.models_manager.run.run_estimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement
@@ -29,7 +29,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         self.manager = modelsManagerBase
 
         self.tabIcon = IconLibrary.icon('estimation')
-        self.tabLabel = QString('%s estimation'%estimation.model_name)
+        self.tabLabel = ('%s estimation'%estimation.model_name)
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
 
@@ -57,14 +57,14 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
             self.paused = True
             self.timer.stop()
             self.runThread.pause()
-            self.pbnStartModel.setText(QString("Resume Estimation..."))
+            self.pbnStartModel.setText(("Resume Estimation..."))
 
         elif self.running == True and self.paused == True:
             # Need to resume a paused run
             self.paused = False
             self.timer.start(1000)
             self.runThread.resume()
-            self.pbnStartModel.setText(QString("Pause Estimation..."))
+            self.pbnStartModel.setText(("Pause Estimation..."))
 
         elif self.running == False:
             self.logFileKey = 0
@@ -74,19 +74,19 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
             # References to the GUI elements for status for this run...
             self.progressBar = self.runProgressBar
             self.statusLabel = self.runStatusLabel
-            self.pbnStartModel.setText(QString("Pause Estimation..."))
+            self.pbnStartModel.setText(("Pause Estimation..."))
             self.progressBar.setValue(0)
-            self.statusLabel.setText(QString("Estimation initializing..."))
+            self.statusLabel.setText(("Estimation initializing..."))
             self.runThread = RunEstimationThread(get_mainwindow_instance(), self)
             # Use this signal from the thread if it is capable of producing its own status signal
-            QObject.connect(self.runThread, SIGNAL("estimationFinished(PyQt_PyObject)"),
+            QObject.connect(self.runThread, pyqtSignal("estimationFinished(PyQt_PyObject)"),
                             self.runFinishedFromThread)
-            QObject.connect(self.runThread, SIGNAL("estimationError(PyQt_PyObject)"),
+            QObject.connect(self.runThread, pyqtSignal("estimationError(PyQt_PyObject)"),
                             self.runErrorFromThread)
             # Use this timer to call a function in the thread to check status if the thread is unable
             # to produce its own signal above
             self.timer = QTimer()
-            QObject.connect(self.timer, SIGNAL("timeout()"),
+            QObject.connect(self.timer, pyqtSignal("timeout()"),
                             self.runStatusFromThread)
             self.timer.start(1000)
             self.running = True
@@ -106,9 +106,9 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         print("Estimation Finished with sucess = ", success)
         self.progressBar.setValue(100)
         if success:
-            self.statusLabel.setText(QString("Estimation finished successfully"))
+            self.statusLabel.setText(("Estimation finished successfully"))
         else:
-            self.statusLabel.setText(QString("Estimation failed"))
+            self.statusLabel.setText(("Estimation failed"))
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)
@@ -116,12 +116,12 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
 
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Estimation..."))
+        self.pbnStartModel.setText(("Start Estimation..."))
 
     def runStatusFromThread(self):
         status = self.runThread.estimationguielement.estimation._compute_progress()
         self.progressBar.setValue(status["percentage"])
-        newString = QString(status["message"])
+        newString = (status["message"])
         newString.leftJustified(60)
         self.statusLabel.setText(newString)
         self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)
@@ -129,7 +129,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
     def runErrorFromThread(self,errorMessage):
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Estimation..."))
+        self.pbnStartModel.setText(("Start Estimation..."))
         MessageBox.warning(mainwindow = self,
                           text = "There was a problem with the estimation.",
                           detailed_text = errorMessage)

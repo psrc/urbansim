@@ -9,9 +9,9 @@ import numpy
 
 from collections import defaultdict
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 
 from database.createDBConnection import createDBC
@@ -71,10 +71,10 @@ class SetCorrDialog(QDialog):
             gqSelVariableDicts = copy.deepcopy(self.project.selVariableDicts.gq)
             self.populate(gqSelVariableDicts, self.tabWidget.gqTab)
 
-        self.connect(dialogButtonBox, SIGNAL("accepted()"), self.acceptCheck)
-        self.connect(dialogButtonBox, SIGNAL("rejected()"), self, SLOT("reject()"))
-        self.connect(self.persControlYes, SIGNAL("clicked()"), self.persControlYesAction)
-        self.connect(self.persControlNo, SIGNAL("clicked()"), self.persControlNoAction)
+        self.connect(dialogButtonBox, pyqtSignal("accepted()"), self.acceptCheck)
+        self.connect(dialogButtonBox, pyqtSignal("rejected()"), self, SLOT("reject()"))
+        self.connect(self.persControlYes, pyqtSignal("clicked()"), self.persControlYesAction)
+        self.connect(self.persControlNo, pyqtSignal("clicked()"), self.persControlNoAction)
 
     def persControlYesAction(self):
         #self.tabWidget.personTab.setEnabled(True)
@@ -246,7 +246,7 @@ class SetCorrDialog(QDialog):
         if len (list(vardict.keys())) > 0 or override:
             controlVariables = ['%s' %i for i in list(vardict.keys())]
             controlVariables.sort()
-            #controlDimensions = numpy.asarray([len(vardict[QString(i)].keys()) for i in controlVariables])
+            #controlDimensions = numpy.asarray([len(vardict[(i)].keys()) for i in controlVariables])
             controlDimensions = numpy.asarray([len(list(vardict[i].keys())) for i in controlVariables])
 
             #print controlVariables, controlDimensions
@@ -490,8 +490,8 @@ class TabWidgetItems(QWidget):
 
             layout.addWidget(modifyMargsGrpBox)
             
-            self.connect(self.modifyMargsYes, SIGNAL("clicked()"), self.modifyMargsYesAction)
-            self.connect(self.modifyMargsNo, SIGNAL("clicked()"), self.modifyMargsNoAction)
+            self.connect(self.modifyMargsYes, pyqtSignal("clicked()"), self.modifyMargsYesAction)
+            self.connect(self.modifyMargsNo, pyqtSignal("clicked()"), self.modifyMargsNoAction)
 
 
         layout.addLayout(hLayout1)
@@ -501,17 +501,17 @@ class TabWidgetItems(QWidget):
 
         self.setLayout(layout)
 
-        self.connect(self.addRelation, SIGNAL("clicked()"), self.addRelationAction)
-        self.connect(self.relationsListWidget, SIGNAL("itemSelectionChanged()"), self.deleteRelationAction)
-        self.connect(self.sampleVarListWidget, SIGNAL("itemSelectionChanged()"), self.enableSelButton)
-        self.connect(self.selSampleVarListWidget, SIGNAL("itemSelectionChanged()"), self.enableDeselButton)
-        self.connect(self, SIGNAL("addSampleVar(QListWidgetItem *)"), self.addSampleVarCats)
-        self.connect(self, SIGNAL("removeSampleVar(QListWidgetItem *)"), self.removeSampleVarCats)
-        self.connect(self.selSampleVar, SIGNAL("clicked()"), self.moveSelVars)
-        self.connect(self.deselSampleVar, SIGNAL("clicked()"), self.moveDeselVars)
-        self.connect(self.deleteRelation, SIGNAL("clicked()"), self.deleteRelationNow)
-        self.connect(self.sampleTableComboBox, SIGNAL("highlighted(int)"), self.populateSampleVariables)
-        self.connect(self.controlTableComboBox, SIGNAL("highlighted(int)"), self.populateControlVariables)
+        self.connect(self.addRelation, pyqtSignal("clicked()"), self.addRelationAction)
+        self.connect(self.relationsListWidget, pyqtSignal("itemSelectionChanged()"), self.deleteRelationAction)
+        self.connect(self.sampleVarListWidget, pyqtSignal("itemSelectionChanged()"), self.enableSelButton)
+        self.connect(self.selSampleVarListWidget, pyqtSignal("itemSelectionChanged()"), self.enableDeselButton)
+        self.connect(self, pyqtSignal("addSampleVar(QListWidgetItem *)"), self.addSampleVarCats)
+        self.connect(self, pyqtSignal("removeSampleVar(QListWidgetItem *)"), self.removeSampleVarCats)
+        self.connect(self.selSampleVar, pyqtSignal("clicked()"), self.moveSelVars)
+        self.connect(self.deselSampleVar, pyqtSignal("clicked()"), self.moveDeselVars)
+        self.connect(self.deleteRelation, pyqtSignal("clicked()"), self.deleteRelationNow)
+        self.connect(self.sampleTableComboBox, pyqtSignal("highlighted(int)"), self.populateSampleVariables)
+        self.connect(self.controlTableComboBox, pyqtSignal("highlighted(int)"), self.populateControlVariables)
 
         self.populate()
 
@@ -687,13 +687,13 @@ class TabWidgetItems(QWidget):
         item = self.sampleVarListWidget.currentItem()
         self.sampleVarListWidget.remove()
         self.selSampleVarListWidget.addItem(item)
-        self.emit(SIGNAL("addSampleVar(QListWidgetItem *)"), item)
+        self.emit(pyqtSignal("addSampleVar(QListWidgetItem *)"), item)
 
     def moveDeselVars(self):
         item = self.selSampleVarListWidget.currentItem()
         self.selSampleVarListWidget.remove()
         self.sampleVarListWidget.addItem(item)
-        self.emit(SIGNAL("removeSampleVar(QListWidgetItem *)"), item)
+        self.emit(pyqtSignal("removeSampleVar(QListWidgetItem *)"), item)
 
 
     def addSampleVarCats(self, item):
@@ -813,8 +813,8 @@ class TabWidgetItems(QWidget):
     def populate(self):
         self.sampleTableComboBox.addItem(self.sampleTable)
         self.controlTableComboBox.addItem(self.controlTable)
-        self.sampleTableComboBox.emit(SIGNAL("highlighted(int)"), 0)
-        self.controlTableComboBox.emit(SIGNAL("highlighted(int)"), 0)
+        self.sampleTableComboBox.emit(pyqtSignal("highlighted(int)"), 0)
+        self.controlTableComboBox.emit(pyqtSignal("highlighted(int)"), 0)
 
 
 

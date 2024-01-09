@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from misc.widgets import *
 from qgis.core import *
 from qgis.gui import *
@@ -31,8 +31,8 @@ class IntroPage(QWizardPage):
         nameLabel.setBuddy(self.nameLineEdit)
         locationLabel = QLabel("b. Select a project file location")
         self.locationComboBox = ComboBoxFolder()
-        #self.locationComboBox.addItems([QString("C:/"), QString("Browse to select folder...")])
-        self.locationComboBox.addItems([QString("C:/SynTest"), QString("Browse to select folder...")])
+        #self.locationComboBox.addItems([("C:/"), ("Browse to select folder...")])
+        self.locationComboBox.addItems([("C:/SynTest"), ("Browse to select folder...")])
         locationLabel.setBuddy(self.locationComboBox)
         descLabel = QLabel("c. Enter project description (Optional)")
         self.descTextEdit = QTextEdit()
@@ -53,10 +53,10 @@ class IntroPage(QWizardPage):
         self.countySelectTree.setColumnCount(1)
         self.countySelectTree.setHeaderLabels(["State/County"])
         self.countySelectTree.setItemsExpandable(True)
-        state = QTreeWidgetItem(self.countySelectTree, [QString("State")])
-        county = QTreeWidgetItem(state, [QString("County")])
-        state = QTreeWidgetItem(self.countySelectTree, [QString("State1")])
-        county = QTreeWidgetItem(state, [QString("County1")])
+        state = QTreeWidgetItem(self.countySelectTree, [("State")])
+        county = QTreeWidgetItem(state, [("County")])
+        state = QTreeWidgetItem(self.countySelectTree, [("State1")])
+        county = QTreeWidgetItem(state, [("County1")])
         countySelectWarningLabel = QLabel("<font color = blue>Note: Counties cannot be chosen across multiple states.</font>")
 
 
@@ -157,25 +157,25 @@ class IntroPage(QWizardPage):
         self.hLayout.addLayout(self.vLayout2)
         self.setLayout(self.hLayout)
 
-        self.counties = countydata.CountyContainer(QString("./data/counties.csv"))
+        self.counties = countydata.CountyContainer(("./data/counties.csv"))
         self.populateCountySelectTree()
 
-        self.connect(self.locationComboBox, SIGNAL("activated(int)"), self.locationComboBox.browseFolder)
-        self.connect(self.nameLineEdit, SIGNAL("textEdited(const QString&)"), self.nameCheck)
-        self.connect(self.locationComboBox, SIGNAL("currentIndexChanged(int)"), self.locationCheck)
-        self.connect(self.countySelectTree, SIGNAL("itemPressed(QTreeWidgetItem *,int)"), self.regionCheck)
+        self.connect(self.locationComboBox, pyqtSignal("activated(int)"), self.locationComboBox.browseFolder)
+        self.connect(self.nameLineEdit, pyqtSignal("textEdited(const &)"), self.nameCheck)
+        self.connect(self.locationComboBox, pyqtSignal("currentIndexChanged(int)"), self.locationCheck)
+        self.connect(self.countySelectTree, pyqtSignal("itemPressed(QTreeWidgetItem *,int)"), self.regionCheck)
 
 
     def nameCheck(self, text):
         self.nameDummy = self.nameLineEdit.check(text)
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def locationCheck(self, int):
         if self.locationComboBox.currentText() == '':
             self.locationDummy = False
         else:
             self.locationDummy = True
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def regionCheck(self, item):
         try:
@@ -209,7 +209,7 @@ class IntroPage(QWizardPage):
             self.canvas.setHidden(False)
         self.highlightSelectedCounties()        
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
 
     def selectParentBranch(self):
@@ -264,13 +264,13 @@ class IntroPage(QWizardPage):
         for county in self.counties:
             ancestor = parentFromState.get(county.stateName)
             if ancestor is None:
-                ancestor = QTreeWidgetItem(self.countySelectTree, [QString(county.stateName)])
+                ancestor = QTreeWidgetItem(self.countySelectTree, [(county.stateName)])
                 parentFromState[county.stateName]=ancestor
 
             stateCounty = "%s%s%s" %(county.stateName, "/", county.countyName)
             parent = parentFromStateCounty.get(stateCounty)
             if parent is None:
-                parent = QTreeWidgetItem(ancestor, [QString(county.countyName)])
+                parent = QTreeWidgetItem(ancestor, [(county.countyName)])
                 parentFromStateCounty[stateCounty] = parent
 
         self.countySelectTree.sortItems(0, Qt.AscendingOrder)

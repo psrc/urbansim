@@ -3,44 +3,44 @@
 # Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/run/estimation_gui_element.ui'
 #
 # Created: Thu Sep 25 11:57:22 2008
-#      by: PyQt4 UI code generator 4.3.3
+#      by: PyQt5 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 class Ui_EstimationGuiElement(object):
     def setupUi(self, EstimationGuiElement):
         EstimationGuiElement.setObjectName("EstimationGuiElement")
         EstimationGuiElement.resize(709, 546)
-        self.widgetLayout = QtGui.QGridLayout(EstimationGuiElement)
+        self.widgetLayout = QtWidgets.QGridLayout(EstimationGuiElement)
         self.widgetLayout.setObjectName("widgetLayout")
-        self.pbnStartModel = QtGui.QPushButton(EstimationGuiElement)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self.pbnStartModel = QtWidgets.QPushButton(EstimationGuiElement)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pbnStartModel.sizePolicy().hasHeightForWidth())
         self.pbnStartModel.setSizePolicy(sizePolicy)
         self.pbnStartModel.setObjectName("pbnStartModel")
         self.widgetLayout.addWidget(self.pbnStartModel, 0, 0, 1, 1)
-        self.runProgressBar = QtGui.QProgressBar(EstimationGuiElement)
+        self.runProgressBar = QtWidgets.QProgressBar(EstimationGuiElement)
         self.runProgressBar.setProperty("value", QtCore.QVariant(24))
         self.runProgressBar.setObjectName("runProgressBar")
         self.widgetLayout.addWidget(self.runProgressBar, 0, 1, 1, 2)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.widgetLayout.addItem(spacerItem, 1, 0, 1, 2)
-        self.runStatusLabel = QtGui.QLabel(EstimationGuiElement)
+        self.runStatusLabel = QtWidgets.QLabel(EstimationGuiElement)
         self.runStatusLabel.setObjectName("runStatusLabel")
         self.widgetLayout.addWidget(self.runStatusLabel, 1, 2, 1, 1)
-        self.tabWidget = QtGui.QTabWidget(EstimationGuiElement)
+        self.tabWidget = QtWidgets.QTabWidget(EstimationGuiElement)
         self.tabWidget.setObjectName("tabWidget")
-        self.tab = QtGui.QWidget()
+        self.tab = QtWidgets.QWidget()
         self.tab.setGeometry(QtCore.QRect(0, 0, 679, 431))
         self.tab.setObjectName("tab")
-        self.gridLayout = QtGui.QGridLayout(self.tab)
+        self.gridLayout = QtWidgets.QGridLayout(self.tab)
         self.gridLayout.setContentsMargins(0, 5, 0, 5)
         self.gridLayout.setObjectName("gridLayout")
-        self.logText = QtGui.QTextEdit(self.tab)
+        self.logText = QtWidgets.QTextEdit(self.tab)
         self.logText.setLineWidth(0)
         self.logText.setReadOnly(True)
         self.logText.setObjectName("logText")
@@ -53,8 +53,8 @@ class Ui_EstimationGuiElement(object):
         QtCore.QMetaObject.connectSlotsByName(EstimationGuiElement)
 
     def retranslateUi(self, EstimationGuiElement):
-        EstimationGuiElement.setWindowTitle(QtGui.QApplication.translate("EstimationGuiElement", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnStartModel.setText(QtGui.QApplication.translate("EstimationGuiElement", "Start Estimation...", None, QtGui.QApplication.UnicodeUTF8))
-        self.runStatusLabel.setText(QtGui.QApplication.translate("EstimationGuiElement", "Press Start to run the estimation...", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("EstimationGuiElement", "Estimation result log", None, QtGui.QApplication.UnicodeUTF8))
+        EstimationGuiElement.setWindowTitle(QtWidgets.QApplication.translate("EstimationGuiElement", "Form", None, QtWidgets.QApplication.UnicodeUTF8))
+        self.pbnStartModel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Start Estimation...", None, QtWidgets.QApplication.UnicodeUTF8))
+        self.runStatusLabel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Press Start to run the estimation...", None, QtWidgets.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("EstimationGuiElement", "Estimation result log", None, QtWidgets.QApplication.UnicodeUTF8))
 

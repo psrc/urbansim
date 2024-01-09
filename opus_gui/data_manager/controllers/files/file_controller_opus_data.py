@@ -4,8 +4,9 @@
 
 from io import StringIO
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QModelIndex
-from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAction, QVBoxLayout, QMenu, QCursor
+from PyQt5.QtCore  import  Qt, QRegExp, QObject, pyqtSignal, QModelIndex
+from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtWidgets import QTextBrowser, QGroupBox, QTableView, QWidget, QAction, QVBoxLayout, QMenu
 
 from opus_gui.util.icon_library import IconLibrary
 from opus_core.storage_factory import StorageFactory
@@ -23,13 +24,13 @@ class FileController_OpusData(FileController):
         FileController.__init__(self, manager, data_path, parent_widget)
 
         self.actRefresh = QAction(IconLibrary.icon('reload'), "Refresh Tree", self.treeview)
-        QObject.connect(self.actRefresh, SIGNAL("triggered()"), self.refreshAction)
+        QObject.connect(self.actRefresh, pyqtSignal("triggered()"), self.refreshAction)
 
         self.actViewDataset = QAction(IconLibrary.icon('inspect'), "View Dataset", self.treeview)
-        QObject.connect(self.actViewDataset, SIGNAL("triggered()"), self.viewDatasetAction)
+        QObject.connect(self.actViewDataset, pyqtSignal("triggered()"), self.viewDatasetAction)
 
         self.actOpenTextFile = QAction(IconLibrary.icon('text'), "Open Text File", self.treeview)
-        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"), self.openTextFile)
+        QObject.connect(self.actOpenTextFile, pyqtSignal("triggered()"), self.openTextFile)
 
         self.tool_library_node = self.manager.project.find('data_manager/tool_library')
         
@@ -65,7 +66,7 @@ class FileController_OpusData(FileController):
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
-        summaryGroupBox.setTitle(QString("Year: %s  Run name: %s" % (parent_name,table_name_full.split('/')[-3])))
+        summaryGroupBox.setTitle(("Year: %s  Run name: %s" % (parent_name,table_name_full.split('/')[-3])))
         summaryGroupBox.setFlat(True)
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Grab the summary data
@@ -81,7 +82,7 @@ class FileController_OpusData(FileController):
         widgetLayout.addWidget(summaryGroupBox)
 
         tableGroupBox = QGroupBox(container)
-        tableGroupBox.setTitle(QString("Table View"))
+        tableGroupBox.setTitle(("Table View"))
         tableGroupBox.setFlat(True)
         tableGroupBoxLayout = QVBoxLayout(tableGroupBox)
         tv = QTableView()
@@ -104,7 +105,7 @@ class FileController_OpusData(FileController):
         widgetLayout.addWidget(tableGroupBox)
 
         container.tabIcon = IconLibrary.icon('inspect')
-        container.tabLabel = QString(table_name)
+        container.tabLabel = (table_name)
         self.manager._attach_tab(container)
 
     def parse_dataset_summary(self, summary):
@@ -166,7 +167,7 @@ class FileController_OpusData(FileController):
         except:
             pass
         html.append('</div></body>')
-        return QString('\n'.join(html))
+        return ('\n'.join(html))
 
 
     def refreshAction(self):
@@ -191,7 +192,7 @@ class FileController_OpusData(FileController):
 #            for l in f.readlines():
 #                self.mainwindow.editorStuff.append(l)
 #            f.close()
-#            self.mainwindow.editorStatusLabel.setText(QString(filename))
+#            self.mainwindow.editorStatusLabel.setText((filename))
 #            self.mainwindow.openEditorTab()
 
     def fillInAvailableTools(self):
@@ -299,8 +300,8 @@ class FileController_OpusData(FileController):
 #                            for x in xrange(0,tschildren.count(),1):
 #                                if tschildren.item(x).isElement():
 #                                    tselement = tschildren.item(x).toElement()
-#                                    if tselement.hasAttribute(QString("type")) and \
-#                                           (tselement.attribute(QString("type")) == QString("acts_on")):
+#                                    if tselement.hasAttribute(("type")) and \
+#                                           (tselement.attribute(("type")) == ("acts_on")):
 #                                        if tselement.hasChildNodes():
 #                                            classchildren = tselement.childNodes()
 #                                            for x in xrange(0,classchildren.count(),1):
@@ -308,8 +309,8 @@ class FileController_OpusData(FileController):
 #                                                    print "Found some text in the classification element"
 #                                                    classificationtext = classchildren.item(x).nodeValue()
 #                                                    classificationtext = str(classchildren.item(x).nodeValue()).split(',')
-#                                    if tselement.hasAttribute(QString("type")) and \
-#                                           (tselement.attribute(QString("type")) == QString("exports_to")):
+#                                    if tselement.hasAttribute(("type")) and \
+#                                           (tselement.attribute(("type")) == ("exports_to")):
 #                                        print tselement.text()
 #                                        export_to_text = tselement.text()
 #                        tagName = tsitem.domNode.toElement().tagName()
@@ -326,7 +327,7 @@ class FileController_OpusData(FileController):
         return self.dataActionMenuFunction(self.export_dynactions, action)
 
     def dataActionMenuFunction(self, dynactions, action):
-        QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
+        QObject.disconnect(self.menu, pyqtSignal("triggered(QAction*)"),self.dataActionMenuFunction)
         if action != self.actRefresh:
             actiontext = str(action.text())
             tool_node = dynactions[actiontext]
@@ -381,9 +382,9 @@ class FileController_OpusData(FileController):
                 export_choices, import_choices = self.fillInAvailableTools()
                 
                 if self.classification == "dataset" or self.classification == "database" or self.classification == "database_collection":
-                    self.export_menu = QMenu(QString('Export Opus %s to' % self.classification), self.treeview)
+                    self.export_menu = QMenu(('Export Opus %s to' % self.classification), self.treeview)
                     self.export_menu.setIcon(IconLibrary.icon('export'))
-                    self.import_menu = QMenu(QString('Import Opus %s from' % self.classification), self.treeview)
+                    self.import_menu = QMenu(('Import Opus %s from' % self.classification), self.treeview)
                     self.import_menu.setIcon(IconLibrary.icon('import'))
                     
                     if len(export_choices) > 0:
@@ -392,7 +393,7 @@ class FileController_OpusData(FileController):
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.export_dynactions[export_type] = tool_node
-                        QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
+                        QObject.connect(self.export_menu, pyqtSignal("triggered(QAction*)"),
                                         self.dataActionMenuFunctionExport)
                         self.menu.addMenu(self.export_menu)
                         
@@ -402,7 +403,7 @@ class FileController_OpusData(FileController):
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), import_type, self.treeview)
                             self.import_menu.addAction(dynaction)
                             self.import_dynactions[import_type] = tool_node
-                        QObject.connect(self.import_menu, SIGNAL("triggered(QAction*)"),
+                        QObject.connect(self.import_menu, pyqtSignal("triggered(QAction*)"),
                                         self.dataActionMenuFunctionImport)
                         self.menu.addMenu(self.import_menu)
                         

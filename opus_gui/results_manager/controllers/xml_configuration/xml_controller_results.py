@@ -4,7 +4,7 @@
 
 from lxml.etree import Element
 import time
-from PyQt4.QtGui import QMenu, QCursor, QDialog
+from PyQt5.QtWidgets import QMenu, QCursor, QDialog
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.add_indicator_batch import AddIndicatorBatch
 from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo

@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from collections import defaultdict
 
 from misc.zipfile import ZipFile
@@ -29,7 +29,7 @@ class UnzipFile:
             try:
                 fileExtrInfo = os.stat(os.path.join(self.mountpoint, i))
                 reply = QMessageBox.question(None, "Extracting Data",
-                                             QString("""Would you like to replace the existing file <font color = brown>"""
+                                             ("""Would you like to replace the existing file <font color = brown>"""
                                                      """%s (size %s) </font>"""
                                                      """ with the file <font color = blue>%s (size %s)</font>"""
                                                      """ from the zip folder?"""

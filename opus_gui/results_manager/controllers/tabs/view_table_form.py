@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString
-from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, QTableWidget, QTableWidgetItem
+from PyQt5.QtCore import 
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QIcon, QSizePolicy, QTableWidget, QTableWidgetItem
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
@@ -53,7 +53,7 @@ class ViewTableForm(QWidget):
         j = 0
         for key in keys:
             col = QTableWidgetItem()
-            col.setText(QString(key))
+            col.setText((key))
             self.tableWidget.setHorizontalHeaderItem(j,col)
             j += 1
 
@@ -67,7 +67,7 @@ class ViewTableForm(QWidget):
             j = 0
             for key in keys:
                 item = QTableWidgetItem()
-                item.setText(QString(str(table_data[key][idx])))
+                item.setText((str(table_data[key][idx])))
                 self.tableWidget.setItem(i,j,item)
                 j += 1
             if i > limit:

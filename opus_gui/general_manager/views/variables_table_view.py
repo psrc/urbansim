@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtGui import QTableView
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QTableView
+from PyQt5.QtCore import Qt
 
 class VariablesTableView(QTableView):
     def __init__(self, parent_widget = None):

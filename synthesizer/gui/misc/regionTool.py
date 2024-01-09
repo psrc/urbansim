@@ -6,8 +6,8 @@
 from qgis.core import *
 from qgis.gui import *
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 class regionTool(QgsMapTool):
     def __init__(self, canvas):
@@ -53,7 +53,7 @@ class regionTool(QgsMapTool):
             QgsPoint(ll.x(),ll.y()),
             QgsPoint(ur.x(),ur.y())
             )
-        self.o.emit(SIGNAL("finished()"))
+        self.o.emit(pyqtSignal("finished()"))
 #        self.msg.hide()
 
 

@@ -3,9 +3,9 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 
 import sys
 
@@ -67,24 +67,24 @@ class DBConnectionPage(QWizardPage):
         vLayout.addWidget(connectionWarning)
         self.setLayout(vLayout)
 
-        self.connect(self.hostnameLineEdit, SIGNAL("editingFinished()"), self.hostnameCheck)
-        self.connect(self.usernameLineEdit, SIGNAL("editingFinished()"), self.usernameCheck)
-        self.connect(self.passwordLineEdit, SIGNAL("editingFinished()"), self.passwordCheck)
-        self.connect(self, SIGNAL("checkCredentials()"), self.check)
+        self.connect(self.hostnameLineEdit, pyqtSignal("editingFinished()"), self.hostnameCheck)
+        self.connect(self.usernameLineEdit, pyqtSignal("editingFinished()"), self.usernameCheck)
+        self.connect(self.passwordLineEdit, pyqtSignal("editingFinished()"), self.passwordCheck)
+        self.connect(self, pyqtSignal("checkCredentials()"), self.check)
 
     def hostnameCheck(self):
         text = self.hostnameLineEdit.text()
         self.hostnameDummy = self.hostnameLineEdit.check(text)
-        self.emit(SIGNAL("checkCredentials()"))
+        self.emit(pyqtSignal("checkCredentials()"))
 
     def usernameCheck(self):
         text = self.usernameLineEdit.text()
         self.usernameDummy = self.usernameLineEdit.check(text)
-        self.emit(SIGNAL("checkCredentials()"))
+        self.emit(pyqtSignal("checkCredentials()"))
 
 
     def passwordCheck(self):
-        self.emit(SIGNAL("checkCredentials()"))
+        self.emit(pyqtSignal("checkCredentials()"))
 
     def check(self):
         db = DBInfo(self.hostnameLineEdit.text(),
@@ -102,7 +102,7 @@ class DBConnectionPage(QWizardPage):
             dbconnection.dbc.close()
             self.connectionDummy = False
 
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def isComplete(self):
         validate = self.connectionDummy

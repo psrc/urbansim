@@ -3,8 +3,8 @@
 # See opus_core/LICENSE 
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtGui import QGridLayout
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtWidgets import QGridLayout
 
 from opus_gui.util.pythongui import OpusPythonShell
 

@@ -4,9 +4,9 @@
 
 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QStringList, QDir, QObject, SIGNAL
-from PyQt4.QtGui import QTreeView, QDirModel
+# PyQt5 includes for python bindings to QT
+from PyQt5.QtCore import Qt, QDir, QObject, pyqtSignal
+from PyQt5.QtWidgets import QTreeView, QDirModel
 
 class FileController(object):
     def __init__(self, manager, opusDataPath, parentWidget, listen_to_menu = True):
@@ -20,7 +20,7 @@ class FileController(object):
         self.manager = manager
         if listen_to_menu:
             QObject.connect(self.treeview,
-                            SIGNAL("customContextMenuRequested(const QPoint &)"),
+                            pyqtSignal("customContextMenuRequested(const QPoint &)"),
                             self.process_custom_menu)
 
 
@@ -29,7 +29,7 @@ class FileController(object):
         self.opusDataPath = opusDataPath
 
         self.treeview = QTreeView()
-        filters = QStringList()
+        filters = []
         filters.append("*.*")
         #filters.append("*.py")
         #filters.append("*.shp")

@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtGui import QDialog, qApp
-from PyQt4.QtCore import SIGNAL, QEventLoop
+from PyQt5.QtWidgets import QDialog, qApp
+from PyQt5.QtCore import pyqtSignal, QEventLoop
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.variables_table_model import batch_check_syntax
@@ -32,9 +32,9 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.callback = None
         def check_data(): self.check_variable(check = 'data')
         def check_syntax(): self.check_variable(check = 'syntax')
-        self.connect(self.btnCheckData, SIGNAL("clicked()"), check_data)
-        self.connect(self.btnCheckSyntax, SIGNAL("clicked()"), check_syntax)
-        self.connect(self.buttonBox, SIGNAL('rejected()'), self.reject)
+        self.connect(self.btnCheckData, pyqtSignal("clicked()"), check_data)
+        self.connect(self.btnCheckSyntax, pyqtSignal("clicked()"), check_syntax)
+        self.connect(self.buttonBox, pyqtSignal('rejected()'), self.reject)
 
         self.frame_name_warning.setVisible(False)
         hide_widget_on_value_change(self.frame_name_warning, self.leVarName)
@@ -45,12 +45,12 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         qApp.processEvents(QEventLoop.AllEvents)
 
         # give instant feedback in the information label when settings are changed
-        self.connect(self.rbUseBoth, SIGNAL('clicked()'), self._update_variable_info)
-        self.connect(self.rbUseIndicator, SIGNAL('clicked()'), self._update_variable_info)
-        self.connect(self.rbUseModel, SIGNAL('clicked()'), self._update_variable_info)
-        self.connect(self.cboVarType, SIGNAL('currentIndexChanged(int)'),
+        self.connect(self.rbUseBoth, pyqtSignal('clicked()'), self._update_variable_info)
+        self.connect(self.rbUseIndicator, pyqtSignal('clicked()'), self._update_variable_info)
+        self.connect(self.rbUseModel, pyqtSignal('clicked()'), self._update_variable_info)
+        self.connect(self.cboVarType, pyqtSignal('currentIndexChanged(int)'),
                      lambda x: self._update_variable_info())
-        self.connect(self.pb_change, SIGNAL("clicked()"), self._toggle_settings)
+        self.connect(self.pb_change, pyqtSignal("clicked()"), self._toggle_settings)
 
     def init_for_variable(self, variable, validator, existing_variables):
         ''' Prepare the editor to edit a variable.

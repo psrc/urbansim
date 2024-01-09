@@ -3,8 +3,8 @@
 # Copyright (C) 2009, Arizona State University
 # See PopGen/License
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from misc.widgets import *
 
 
@@ -17,8 +17,8 @@ class ResolutionPage(QWizardPage):
         self.setTitle("Step 2: Geographic Resolution")
 
         self.resolutionComboBox = QComboBox()
-        self.resolutionComboBox.addItems([QString("County"), QString("Census Tract"),
-                                          QString("Census Blockgroup"), QString("Traffic Analysis Zone (TAZ)")])
+        self.resolutionComboBox.addItems([("County"), ("Census Tract"),
+                                          ("Census Blockgroup"), ("Traffic Analysis Zone (TAZ)")])
         self.resolutionComboBox.setFixedSize(QSize(250,20))
 
         resolutionVLayout = QVBoxLayout()
@@ -50,7 +50,7 @@ class ResolutionPage(QWizardPage):
 
         geocorrLocationLabel = QLabel("Select the Geographic Correspondence file")
         self.geocorrLocationComboBox = ComboBoxFile()
-        self.geocorrLocationComboBox.addItems([QString(""), QString("Browse to select file...")])
+        self.geocorrLocationComboBox.addItems([(""), ("Browse to select file...")])
         geocorrLocationLabel.setBuddy(self.geocorrLocationComboBox)
 
         self.geocorrUserProvGroupBox = QGroupBox("c. User provided")
@@ -69,15 +69,15 @@ class ResolutionPage(QWizardPage):
         vLayout.addWidget(self.geocorrUserProvGroupBox)
         self.setLayout(vLayout)
 
-        self.connect(self.geocorrAutoRadio, SIGNAL("clicked()"), self.geocorrAutoAction)
-        self.connect(self.geocorrUserProvRadio, SIGNAL("clicked()"), self.geocorrUserProvAction)
-        self.connect(self.geocorrLocationComboBox, SIGNAL("activated(int)"), self.fileCheck)
-        self.connect(self.resolutionComboBox, SIGNAL("activated(int)"), self.resolutionAction)
+        self.connect(self.geocorrAutoRadio, pyqtSignal("clicked()"), self.geocorrAutoAction)
+        self.connect(self.geocorrUserProvRadio, pyqtSignal("clicked()"), self.geocorrUserProvAction)
+        self.connect(self.geocorrLocationComboBox, pyqtSignal("activated(int)"), self.fileCheck)
+        self.connect(self.resolutionComboBox, pyqtSignal("activated(int)"), self.resolutionAction)
 
     def resolutionAction(self):
         if self.resolutionComboBox.currentText() == 'Traffic Analysis Zone (TAZ)':
             self.geocorrUserProvRadio.setChecked(True)
-            self.geocorrUserProvRadio.emit(SIGNAL("clicked()"))
+            self.geocorrUserProvRadio.emit(pyqtSignal("clicked()"))
             self.geocorrAutoRadio.setEnabled(False)
         else:
             self.geocorrAutoRadio.setEnabled(True)
@@ -86,12 +86,12 @@ class ResolutionPage(QWizardPage):
         self.geocorrUserProvGroupBox.setEnabled(False)
         self.geocorrLocationComboBox.setCurrentIndex(0)
         self.geocorrLocationDummy = True
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def geocorrUserProvAction(self):
         self.geocorrUserProvGroupBox.setEnabled(True)
         self.geocorrLocationDummy = False
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def fileCheck(self, index):
         self.geocorrLocationComboBox.browseFile(index)
@@ -99,7 +99,7 @@ class ResolutionPage(QWizardPage):
             self.geocorrLocationDummy = False
         else:
             self.geocorrLocationDummy = True
-        self.emit(SIGNAL("completeChanged()"))
+        self.emit(pyqtSignal("completeChanged()"))
 
     def isComplete(self):
         validate = self.geocorrLocationDummy

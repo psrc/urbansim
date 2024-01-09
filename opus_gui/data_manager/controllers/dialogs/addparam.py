@@ -2,8 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize, pyqtSlot
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
+from PyQt5.QtCore  import  Qt, QRegExp, QObject, pyqtSignal, QSize, pyqtSlot
+from  PyQt5.QtGui import QPalette
+from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
 from opus_gui.data_manager.views.ui_addparam import Ui_AddParamGui
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 

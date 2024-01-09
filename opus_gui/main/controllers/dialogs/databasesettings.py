@@ -6,8 +6,8 @@ import os
 import re
 from lxml.etree import ElementTree
 
-from PyQt4.QtGui import QDialog
-from PyQt4 import QtGui, QtCore
+from PyQt5.QtWidgets import QDialog
+from PyQt5 import QtWidgets, QtCore
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.util import common_dialogs
@@ -38,10 +38,10 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
                           '%(conf_file_path)s'
                           )
                          )
-        desc = QtGui.QApplication.translate("DatabaseSettingsEditGui", desc, None, QtGui.QApplication.UnicodeUTF8)
+        desc = QtWidgets.QApplication.translate("DatabaseSettingsEditGui", desc, None, QtWidgets.QApplication.UnicodeUTF8)
         desc = str(desc) % dict([(n, eval('DatabaseServerConfiguration.%s'%n)) for n in dir(DatabaseServerConfiguration) if re.match('.*_TAG$', n)] +
                                     [('conf_file_path', DatabaseServerConfiguration.get_default_configuration_file_path())])
-        desc = QtCore.QString(desc)
+        desc = QtCore.(desc)
         
         self.description.setText(desc)
 
