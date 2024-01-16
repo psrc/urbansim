@@ -41,7 +41,7 @@ class Ui_dlgAddIndicatorBatch(object):
         QtCore.QMetaObject.connectSlotsByName(dlgAddIndicatorBatch)
 
     def retranslateUi(self, dlgAddIndicatorBatch):
-        dlgAddIndicatorBatch.setWindowTitle(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "Add new indicator batch", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "Batch name:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.leBatchName.setText(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "untitled_indicator_batch", None, QtWidgets.QApplication.UnicodeUTF8))
+        dlgAddIndicatorBatch.setWindowTitle(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "Add new indicator batch", None))
+        self.label.setText(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "Batch name:", None))
+        self.leBatchName.setText(QtWidgets.QApplication.translate("dlgAddIndicatorBatch", "untitled_indicator_batch", None))
 

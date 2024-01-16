@@ -58,11 +58,11 @@ class Ui_ListEditor(object):
         QtCore.QMetaObject.connectSlotsByName(ListEditor)
 
     def retranslateUi(self, ListEditor):
-        ListEditor.setWindowTitle(QtWidgets.QApplication.translate("ListEditor", "Form", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_up.setText(QtWidgets.QApplication.translate("ListEditor", "^", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_down.setText(QtWidgets.QApplication.translate("ListEditor", "v", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("ListEditor", "Selected:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.toolButton.setText(QtWidgets.QApplication.translate("ListEditor", "-", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_change.setText(QtWidgets.QApplication.translate("ListEditor", "=", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_add.setText(QtWidgets.QApplication.translate("ListEditor", "+", None, QtWidgets.QApplication.UnicodeUTF8))
+        ListEditor.setWindowTitle(QtWidgets.QApplication.translate("ListEditor", "Form", None))
+        self.tb_up.setText(QtWidgets.QApplication.translate("ListEditor", "^", None))
+        self.tb_down.setText(QtWidgets.QApplication.translate("ListEditor", "v", None))
+        self.label.setText(QtWidgets.QApplication.translate("ListEditor", "Selected:", None))
+        self.toolButton.setText(QtWidgets.QApplication.translate("ListEditor", "-", None))
+        self.tb_change.setText(QtWidgets.QApplication.translate("ListEditor", "=", None))
+        self.tb_add.setText(QtWidgets.QApplication.translate("ListEditor", "+", None))
 

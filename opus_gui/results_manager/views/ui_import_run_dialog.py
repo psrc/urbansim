@@ -60,7 +60,7 @@ class Ui_dlgImportRun(object):
         QtCore.QMetaObject.connectSlotsByName(dlgImportRun)
 
     def retranslateUi(self, dlgImportRun):
-        dlgImportRun.setWindowTitle(QtWidgets.QApplication.translate("dlgImportRun", "Import run from disk", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lblOption1.setText(QtWidgets.QApplication.translate("dlgImportRun", "Path to run directory:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pbn_set_run_directory.setText(QtWidgets.QApplication.translate("dlgImportRun", "...", None, QtWidgets.QApplication.UnicodeUTF8))
+        dlgImportRun.setWindowTitle(QtWidgets.QApplication.translate("dlgImportRun", "Import run from disk", None))
+        self.lblOption1.setText(QtWidgets.QApplication.translate("dlgImportRun", "Path to run directory:", None))
+        self.pbn_set_run_directory.setText(QtWidgets.QApplication.translate("dlgImportRun", "...", None))
 

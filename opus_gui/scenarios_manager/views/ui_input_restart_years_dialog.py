@@ -51,11 +51,11 @@ class Ui_dlgInputRestartYears(object):
         QtCore.QMetaObject.connectSlotsByName(dlgInputRestartYears)
 
     def retranslateUi(self, dlgInputRestartYears):
-        dlgInputRestartYears.setWindowTitle(QtWidgets.QApplication.translate("dlgInputRestartYears", "The First and Last Year of Restart Run", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.leFirstYear.setToolTip(QtWidgets.QApplication.translate("dlgInputRestartYears", "The first year of restart run", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.leLastYear.setToolTip(QtWidgets.QApplication.translate("dlgInputRestartYears", "The last year of restart run", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "First Year:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "Last Year:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "End Year", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "Base Year", None, QtWidgets.QApplication.UnicodeUTF8))
+        dlgInputRestartYears.setWindowTitle(QtWidgets.QApplication.translate("dlgInputRestartYears", "The First and Last Year of Restart Run", None))
+        self.leFirstYear.setToolTip(QtWidgets.QApplication.translate("dlgInputRestartYears", "The first year of restart run", None))
+        self.leLastYear.setToolTip(QtWidgets.QApplication.translate("dlgInputRestartYears", "The last year of restart run", None))
+        self.label_2.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "First Year:", None))
+        self.label_3.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "Last Year:", None))
+        self.label.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "End Year", None))
+        self.label_4.setText(QtWidgets.QApplication.translate("dlgInputRestartYears", "Base Year", None))
 

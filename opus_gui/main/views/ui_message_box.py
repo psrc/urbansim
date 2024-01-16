@@ -107,7 +107,7 @@ class Ui_MessageBox(object):
         QtCore.QMetaObject.connectSlotsByName(MessageBox)
 
     def retranslateUi(self, MessageBox):
-        MessageBox.setWindowTitle(QtWidgets.QApplication.translate("MessageBox", "Opus Message", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pbnShowDetails.setText(QtWidgets.QApplication.translate("MessageBox", "Show Details...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.btnOk.setText(QtWidgets.QApplication.translate("MessageBox", "OK", None, QtWidgets.QApplication.UnicodeUTF8))
+        MessageBox.setWindowTitle(QtWidgets.QApplication.translate("MessageBox", "Opus Message", None))
+        self.pbnShowDetails.setText(QtWidgets.QApplication.translate("MessageBox", "Show Details...", None))
+        self.btnOk.setText(QtWidgets.QApplication.translate("MessageBox", "OK", None))
 

@@ -29,6 +29,6 @@ class Ui_dlgOverwriteRun(object):
         QtCore.QMetaObject.connectSlotsByName(dlgOverwriteRun)
 
     def retranslateUi(self, dlgOverwriteRun):
-        dlgOverwriteRun.setWindowTitle(QtWidgets.QApplication.translate("dlgOverwriteRun", "Overwrite existing run?", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("dlgOverwriteRun", "A simulation run already has that name. Would you like to overwrite the existing simulation run?", None, QtWidgets.QApplication.UnicodeUTF8))
+        dlgOverwriteRun.setWindowTitle(QtWidgets.QApplication.translate("dlgOverwriteRun", "Overwrite existing run?", None))
+        self.label.setText(QtWidgets.QApplication.translate("dlgOverwriteRun", "A simulation run already has that name. Would you like to overwrite the existing simulation run?", None))
 

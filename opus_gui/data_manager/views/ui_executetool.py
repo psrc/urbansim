@@ -90,12 +90,12 @@ class Ui_ExecuteToolGui(object):
         QtCore.QMetaObject.connectSlotsByName(ExecuteToolGui)
 
     def retranslateUi(self, ExecuteToolGui):
-        ExecuteToolGui.setWindowTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Variables", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.executionBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Log/Status", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtWidgets.QApplication.translate("ExecuteToolGui", "Tool Setup", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtWidgets.QApplication.translate("ExecuteToolGui", "Tool Help", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.saveBack.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Save Configuration", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.execTool.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Execute Tool", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cancelExec.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Cancel", None, QtWidgets.QApplication.UnicodeUTF8))
+        ExecuteToolGui.setWindowTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Dialog", None))
+        self.variableBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Variables", None))
+        self.executionBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolGui", "Log/Status", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtWidgets.QApplication.translate("ExecuteToolGui", "Tool Setup", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtWidgets.QApplication.translate("ExecuteToolGui", "Tool Help", None))
+        self.saveBack.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Save Configuration", None))
+        self.execTool.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Execute Tool", None))
+        self.cancelExec.setText(QtWidgets.QApplication.translate("ExecuteToolGui", "Cancel", None))
 

@@ -178,18 +178,18 @@ class Ui_ResultsBrowser(object):
         QtCore.QMetaObject.connectSlotsByName(ResultsBrowser)
 
     def retranslateUi(self, ResultsBrowser):
-        ResultsBrowser.setWindowTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Result Browser", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.groupBox_3.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Configure an indicator to view", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Simulation Runs", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Years", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.groupBox_4.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Indicators", None, QtWidgets.QApplication.UnicodeUTF8))
+        ResultsBrowser.setWindowTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Result Browser", None))
+        self.groupBox_3.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Configure an indicator to view", None))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Simulation Runs", None))
+        self.groupBox_2.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Years", None))
+        self.groupBox_4.setTitle(QtWidgets.QApplication.translate("ResultsBrowser", "Indicators", None))
         self.indicator_table.setSortingEnabled(False)
-        self.cb_auto_gen.setToolTip(QtWidgets.QApplication.translate("ResultsBrowser", "Automatically generate and view the indicator when it\'s selected", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cb_auto_gen.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Automatically generate", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_current_selection.setText(QtWidgets.QApplication.translate("ResultsBrowser", "current selection", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_generate_results.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Generate results", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.starttab), QtWidgets.QApplication.translate("ResultsBrowser", "starttab", None, QtWidgets.QApplication.UnicodeUTF8))
+        self.cb_auto_gen.setToolTip(QtWidgets.QApplication.translate("ResultsBrowser", "Automatically generate and view the indicator when it\'s selected", None))
+        self.cb_auto_gen.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Automatically generate", None))
+        self.lbl_current_selection.setText(QtWidgets.QApplication.translate("ResultsBrowser", "current selection", None))
+        self.pb_generate_results.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Generate results", None))
+        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.starttab), QtWidgets.QApplication.translate("ResultsBrowser", "starttab", None))
 
         ################################3
-        self.cb_auto_gen.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Uncertainty options generate", None, QtWidgets.QApplication.UnicodeUTF8))
+        self.cb_auto_gen.setText(QtWidgets.QApplication.translate("ResultsBrowser", "Uncertainty options generate", None))
   

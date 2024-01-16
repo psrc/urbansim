@@ -56,8 +56,8 @@ class Ui_ExecuteToolSetGui(object):
         QtCore.QMetaObject.connectSlotsByName(ExecuteToolSetGui)
 
     def retranslateUi(self, ExecuteToolSetGui):
-        ExecuteToolSetGui.setWindowTitle(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.executionBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Log/Status", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.execToolSet.setText(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Execute Tool Set", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cancelExec.setText(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Cancel", None, QtWidgets.QApplication.UnicodeUTF8))
+        ExecuteToolSetGui.setWindowTitle(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Dialog", None))
+        self.executionBox.setTitle(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Log/Status", None))
+        self.execToolSet.setText(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Execute Tool Set", None))
+        self.cancelExec.setText(QtWidgets.QApplication.translate("ExecuteToolSetGui", "Cancel", None))
 

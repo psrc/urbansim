@@ -63,22 +63,22 @@ class Ui_wizardStep1Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(wizardStep1Dialog)
 
     def retranslateUi(self, wizardStep1Dialog):
-        wizardStep1Dialog.setWindowTitle(QtWidgets.QApplication.translate("wizardStep1Dialog", "Project Wizard", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.nextWizButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Next >>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cancelWizButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Cancel", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.newWizGroupBox.setTitle(QtWidgets.QApplication.translate("wizardStep1Dialog", "New Project", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.nameLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Name", None, QtWidgets.QApplication.UnicodeUTF8))
+        wizardStep1Dialog.setWindowTitle(QtWidgets.QApplication.translate("wizardStep1Dialog", "Project Wizard", None))
+        self.nextWizButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Next >>", None))
+        self.cancelWizButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Cancel", None))
+        self.newWizGroupBox.setTitle(QtWidgets.QApplication.translate("wizardStep1Dialog", "New Project", None))
+        self.nameLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Name", None))
         self.namePromptLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; color:#0000ff;\">Enter name</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.locationLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Location", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; color:#0000ff;\">Enter name</span></p></body></html>", None))
+        self.locationLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Location", None))
         self.locationPromptLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><span style=\" color:#0000ff;\">Enter location</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.locationBrowserButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.descriptionLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Description", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><span style=\" color:#0000ff;\">Enter location</span></p></body></html>", None))
+        self.locationBrowserButton.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "...", None))
+        self.descriptionLabel.setText(QtWidgets.QApplication.translate("wizardStep1Dialog", "Description", None))
 

@@ -107,12 +107,12 @@ class Ui_NewProjectDynamicDialog(object):
         NewProjectDynamicDialog.setTabOrder(self.tb_browse_folder, self.buttonBox)
 
     def retranslateUi(self, NewProjectDynamicDialog):
-        NewProjectDynamicDialog.setWindowTitle(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_header.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Step 2 of 2: Creating new project based on X", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_error.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "<error message>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_project_name.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Project name:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_desc.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Description:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_project_filename.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Save to:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_browse_folder.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Project specific options", None, QtWidgets.QApplication.UnicodeUTF8))
+        NewProjectDynamicDialog.setWindowTitle(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Dialog", None))
+        self.lbl_header.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Step 2 of 2: Creating new project based on X", None))
+        self.lbl_error.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "<error message>", None))
+        self.lbl_project_name.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Project name:", None))
+        self.lbl_desc.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Description:", None))
+        self.lbl_project_filename.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Save to:", None))
+        self.tb_browse_folder.setText(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "...", None))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("NewProjectDynamicDialog", "Project specific options", None))
 

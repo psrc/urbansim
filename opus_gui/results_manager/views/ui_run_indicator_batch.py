@@ -51,9 +51,9 @@ class Ui_runIndicatorBatch(object):
         QtCore.QMetaObject.connectSlotsByName(runIndicatorBatch)
 
     def retranslateUi(self, runIndicatorBatch):
-        runIndicatorBatch.setWindowTitle(QtWidgets.QApplication.translate("runIndicatorBatch", "Run indicator batch", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "From", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "To", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "Every", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "years", None, QtWidgets.QApplication.UnicodeUTF8))
+        runIndicatorBatch.setWindowTitle(QtWidgets.QApplication.translate("runIndicatorBatch", "Run indicator batch", None))
+        self.label.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "From", None))
+        self.label_2.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "To", None))
+        self.label_3.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "Every", None))
+        self.label_4.setText(QtWidgets.QApplication.translate("runIndicatorBatch", "years", None))
 

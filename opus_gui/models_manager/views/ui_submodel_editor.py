@@ -220,10 +220,10 @@ class Ui_SubModelEditor(object):
         QtCore.QMetaObject.connectSlotsByName(SubModelEditor)
 
     def retranslateUi(self, SubModelEditor):
-        SubModelEditor.setWindowTitle(QtWidgets.QApplication.translate("SubModelEditor", "Submodel Editor", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.group_submodel_info.setTitle(QtWidgets.QApplication.translate("SubModelEditor", "Submodel Information", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("SubModelEditor", "Name", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.le_name.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "The name of the submodel", None, QtWidgets.QApplication.UnicodeUTF8))
+        SubModelEditor.setWindowTitle(QtWidgets.QApplication.translate("SubModelEditor", "Submodel Editor", None))
+        self.group_submodel_info.setTitle(QtWidgets.QApplication.translate("SubModelEditor", "Submodel Information", None))
+        self.label.setText(QtWidgets.QApplication.translate("SubModelEditor", "Name", None))
+        self.le_name.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "The name of the submodel", None))
         self.le_name.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -232,9 +232,9 @@ class Ui_SubModelEditor(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This is primarliy used to make it easier for users to distinguish between submodels when working with them in the GUI.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that inheritance between Opus Projects always works on the name of the submodel, not the ID.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtWidgets.QApplication.translate("SubModelEditor", "ID", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.spin_id.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "The submodel ID", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that inheritance between Opus Projects always works on the name of the submodel, not the ID.</p></body></html>", None))
+        self.label_4.setText(QtWidgets.QApplication.translate("SubModelEditor", "ID", None))
+        self.spin_id.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "The submodel ID", None))
         self.spin_id.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -242,27 +242,27 @@ class Ui_SubModelEditor(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">The submodel ID.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The value -2 is special and can used when the ID does not matter.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Please refer to the Opus Manual for a full explanation of how the modeling systems handles submodels.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("SubModelEditor", "<name warning here>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtWidgets.QApplication.translate("SubModelEditor", "Description", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.le_description.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "A brief description of the submodel (optional)", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Please refer to the Opus Manual for a full explanation of how the modeling systems handles submodels.</p></body></html>", None))
+        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("SubModelEditor", "<name warning here>", None))
+        self.label_2.setText(QtWidgets.QApplication.translate("SubModelEditor", "Description", None))
+        self.le_description.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "A brief description of the submodel (optional)", None))
         self.le_description.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Can be used to give a brief description of the submodel.</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtWidgets.QApplication.translate("SubModelEditor", "Show variables from:", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Can be used to give a brief description of the submodel.</span></p></body></html>", None))
+        self.label_3.setText(QtWidgets.QApplication.translate("SubModelEditor", "Show variables from:", None))
         self.cbo_dataset_filter.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Filter what variables to display for adding by dataset.\n"
-"The list of variables is not filtered if [All datasets] is selected.", None, QtWidgets.QApplication.UnicodeUTF8))
+"The list of variables is not filtered if [All datasets] is selected.", None))
         self.lst_available_variables.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Tahoma\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The list of available model variables that can be added to the the right side list.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This list only shows variables that are not already selected and that belong the selected dataset.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_add_variable.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Add the selected variable(s) to the right side list.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_add_variable.setText(QtWidgets.QApplication.translate("SubModelEditor", "Add >>", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This list only shows variables that are not already selected and that belong the selected dataset.</p></body></html>", None))
+        self.pb_add_variable.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Add the selected variable(s) to the right side list.", None))
+        self.pb_add_variable.setText(QtWidgets.QApplication.translate("SubModelEditor", "Add >>", None))
         self.tree_structure_selector.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -270,9 +270,9 @@ class Ui_SubModelEditor(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Select which equation (showed in <span style=\" font-weight:600;\">bold</span>) to assign variables to.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The hiearchical structure, as well as the names of these nodes can be edited </p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">under the tab \"Edit Nests and Equations\"</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tree_structure_selector.headerItem().setText(0, QtWidgets.QApplication.translate("SubModelEditor", "Name", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tree_structure_selector.headerItem().setText(1, QtWidgets.QApplication.translate("SubModelEditor", "ID", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">under the tab \"Edit Nests and Equations\"</p></body></html>", None))
+        self.tree_structure_selector.headerItem().setText(0, QtWidgets.QApplication.translate("SubModelEditor", "Name", None))
+        self.tree_structure_selector.headerItem().setText(1, QtWidgets.QApplication.translate("SubModelEditor", "ID", None))
         self.table_selected_variables.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -290,36 +290,36 @@ class Ui_SubModelEditor(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The last column shows the variable definition. Note that variables are defined by both the dataset and the name. The displayed definition <span style=\" font-style:italic;\">might</span> be for another variable than what is selected by the modeling system at run time. </p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">You can remove a variable from the list by <span style=\" font-weight:600;\">right clicking </span>and selecting<span style=\" font-weight:600;\"> \"Remove &lt;name&gt;\" </span>(the name of the variable under the cursor will be shown instead of &lt;name&gt;). To remove more than one variable: click the Add/Remove variables button, select which variables you want to delete and click <span style=\" font-weight:600;\">\"&lt;&lt; Remove selected\"</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_remove_variable.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Remove the selected variable", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">You can remove a variable from the list by <span style=\" font-weight:600;\">right clicking </span>and selecting<span style=\" font-weight:600;\"> \"Remove &lt;name&gt;\" </span>(the name of the variable under the cursor will be shown instead of &lt;name&gt;). To remove more than one variable: click the Add/Remove variables button, select which variables you want to delete and click <span style=\" font-weight:600;\">\"&lt;&lt; Remove selected\"</span></p></body></html>", None))
+        self.pb_remove_variable.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Remove the selected variable", None))
         self.pb_remove_variable.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Remove the selected variables from the equation / submodel.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable a variable you can click the \"<span style=\" font-weight:600;\">ignore</span>\" checkbox on the far left side of the list.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_remove_variable.setText(QtWidgets.QApplication.translate("SubModelEditor", "<< Remove selected", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_show_picker.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Add a variable from the expression librarry to the current list", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_show_picker.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Toggles the list of available variable models that can be added to the submodel.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_show_picker.setText(QtWidgets.QApplication.translate("SubModelEditor", "Add/Remove variables...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cb_show_advanced_parameters.setText(QtWidgets.QApplication.translate("SubModelEditor", "Show advanced variable parameters", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_variable_selector), QtWidgets.QApplication.translate("SubModelEditor", "Variables", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable a variable you can click the \"<span style=\" font-weight:600;\">ignore</span>\" checkbox on the far left side of the list.</p></body></html>", None))
+        self.pb_remove_variable.setText(QtWidgets.QApplication.translate("SubModelEditor", "<< Remove selected", None))
+        self.pb_show_picker.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Add a variable from the expression librarry to the current list", None))
+        self.pb_show_picker.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Toggles the list of available variable models that can be added to the submodel.", None))
+        self.pb_show_picker.setText(QtWidgets.QApplication.translate("SubModelEditor", "Add/Remove variables...", None))
+        self.cb_show_advanced_parameters.setText(QtWidgets.QApplication.translate("SubModelEditor", "Show advanced variable parameters", None))
+        self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_variable_selector), QtWidgets.QApplication.translate("SubModelEditor", "Variables", None))
         self.pb_create_nest.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Creates a new &lt;nest&gt; node in the table to the right.</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_create_nest.setText(QtWidgets.QApplication.translate("SubModelEditor", "Create Nest", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_create_equation.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Create a new <equation>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_create_equation.setText(QtWidgets.QApplication.translate("SubModelEditor", "Create Equation", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Creates a new &lt;nest&gt; node in the table to the right.</span></p></body></html>", None))
+        self.pb_create_nest.setText(QtWidgets.QApplication.translate("SubModelEditor", "Create Nest", None))
+        self.pb_create_equation.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "Create a new <equation>", None))
+        self.pb_create_equation.setText(QtWidgets.QApplication.translate("SubModelEditor", "Create Equation", None))
         self.pb_delete_struct.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Delete the selected nest or equation.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that variable lists associated with a deleted equation will be cleared.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_delete_struct.setText(QtWidgets.QApplication.translate("SubModelEditor", "Delete Selected", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that variable lists associated with a deleted equation will be cleared.</p></body></html>", None))
+        self.pb_delete_struct.setText(QtWidgets.QApplication.translate("SubModelEditor", "Delete Selected", None))
         self.pb_update_model_structure.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -327,8 +327,8 @@ class Ui_SubModelEditor(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">This functionality </span><span style=\" font-size:8pt; font-weight:600;\">only</span><span style=\" font-size:8pt;\"> applies to Nested Logit Models.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Update the model\'s structure with the information from this dialog.</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This must be done before the model is evaluated or run as part of a simulation. </p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_update_model_structure.setText(QtWidgets.QApplication.translate("SubModelEditor", "Update model structure", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This must be done before the model is evaluated or run as part of a simulation. </p></body></html>", None))
+        self.pb_update_model_structure.setText(QtWidgets.QApplication.translate("SubModelEditor", "Update model structure", None))
         self.tree_structure_editor.setWhatsThis(QtWidgets.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -338,12 +338,12 @@ class Ui_SubModelEditor(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">To construct the hierarchical structure: drag the <span style=\" font-weight:600;\">equation </span>and drop it on a &lt;nest&gt;. You can drag and drop &lt;nest&gt;:s onto each other to construct nested structures with multiple levels.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The new structure is automatically updated under the tab \"Assign Variables\".</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tree_structure_editor.headerItem().setText(0, QtWidgets.QApplication.translate("SubModelEditor", "Name", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tree_structure_editor.headerItem().setText(1, QtWidgets.QApplication.translate("SubModelEditor", "ID", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tree_structure_editor.headerItem().setText(2, QtWidgets.QApplication.translate("SubModelEditor", "# of samples", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_structure_editor), QtWidgets.QApplication.translate("SubModelEditor", "Nests and Equations", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_help_on.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Click on this button and then click on any item you want a description for.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_help_on.setText(QtWidgets.QApplication.translate("SubModelEditor", "Help on...", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The new structure is automatically updated under the tab \"Assign Variables\".</p></body></html>", None))
+        self.tree_structure_editor.headerItem().setText(0, QtWidgets.QApplication.translate("SubModelEditor", "Name", None))
+        self.tree_structure_editor.headerItem().setText(1, QtWidgets.QApplication.translate("SubModelEditor", "ID", None))
+        self.tree_structure_editor.headerItem().setText(2, QtWidgets.QApplication.translate("SubModelEditor", "# of samples", None))
+        self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_structure_editor), QtWidgets.QApplication.translate("SubModelEditor", "Nests and Equations", None))
+        self.pb_help_on.setToolTip(QtWidgets.QApplication.translate("SubModelEditor", "Click on this button and then click on any item you want a description for.", None))
+        self.pb_help_on.setText(QtWidgets.QApplication.translate("SubModelEditor", "Help on...", None))
 
 from opus_gui.models_manager.controllers.submodel_structure_editor_tree import SubmodelStructureEditorTree

@@ -47,7 +47,7 @@ class Ui_UrbansimAbout(object):
         QtCore.QMetaObject.connectSlotsByName(UrbansimAbout)
 
     def retranslateUi(self, UrbansimAbout):
-        UrbansimAbout.setWindowTitle(QtWidgets.QApplication.translate("UrbansimAbout", "About Urbansim", None, QtWidgets.QApplication.UnicodeUTF8))
+        UrbansimAbout.setWindowTitle(QtWidgets.QApplication.translate("UrbansimAbout", "About Urbansim", None))
         self.aboutTextEdit.setHtml(QtWidgets.QApplication.translate("UrbansimAbout", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -55,10 +55,10 @@ class Ui_UrbansimAbout(object):
 "<p align=\"center\" style=\" margin-top:10px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; vertical-align:middle;\"><img src=\":/Images/Images/logo64px.png\" style=\"vertical-align: middle;\" />  <span style=\" font-size:18pt; font-weight:600;\">Urbansim</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">UrbanSim is a software-based simulation model for integrated planning and analysis of urban development, incorporating the interactions between land use, transportation, and public policy. </p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">It is intended for use by Metropolitan Planning Organizations and others needing to interface existing travel models with new land use forecasting and analysis capabilities. UrbanSim is the centerpiece of the research activities of the Center for Urban Simulation and Policy Analysis, located at the Point 5 Laboratory, on the Ave a few blocks from the University of Washington campus. </p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The UrbanSim software, including full source code, is available for download via the webside below. It is licensed under the GNU General Public License, which means it is free, open source, and any derived works are also covered under the license. The intent of this licensing approach is to avoid proprietary obstacles and costs, and to facilitate collaboration between researchers and practitioners in improving land use and transportation planning and policy.</p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.webPushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Web Site", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.docPushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Documentation", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.licensePushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "License", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.buttonCancel.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Ok", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The UrbanSim software, including full source code, is available for download via the webside below. It is licensed under the GNU General Public License, which means it is free, open source, and any derived works are also covered under the license. The intent of this licensing approach is to avoid proprietary obstacles and costs, and to facilitate collaboration between researchers and practitioners in improving land use and transportation planning and policy.</p></body></html>", None))
+        self.webPushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Web Site", None))
+        self.docPushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Documentation", None))
+        self.licensePushButton.setText(QtWidgets.QApplication.translate("UrbansimAbout", "License", None))
+        self.buttonCancel.setText(QtWidgets.QApplication.translate("UrbansimAbout", "Ok", None))
 
 from . import opusmain_rc

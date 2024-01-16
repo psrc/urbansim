@@ -51,7 +51,7 @@ class Ui_DependencyViewer(object):
         QtCore.QMetaObject.connectSlotsByName(DependencyViewer)
 
     def retranslateUi(self, DependencyViewer):
-        DependencyViewer.setWindowTitle(QtWidgets.QApplication.translate("DependencyViewer", "Variable editor", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_error.setText(QtWidgets.QApplication.translate("DependencyViewer", "You do not appear to have GraphViz installed. The visualization can not be shown.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.closeWindow.setText(QtWidgets.QApplication.translate("DependencyViewer", "Close", None, QtWidgets.QApplication.UnicodeUTF8))
+        DependencyViewer.setWindowTitle(QtWidgets.QApplication.translate("DependencyViewer", "Variable editor", None))
+        self.lbl_error.setText(QtWidgets.QApplication.translate("DependencyViewer", "You do not appear to have GraphViz installed. The visualization can not be shown.", None))
+        self.closeWindow.setText(QtWidgets.QApplication.translate("DependencyViewer", "Close", None))
 

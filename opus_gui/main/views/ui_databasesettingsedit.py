@@ -32,5 +32,5 @@ class Ui_DatabaseSettingsEditGui(object):
         QtCore.QMetaObject.connectSlotsByName(DatabaseSettingsEditGui)
 
     def retranslateUi(self, DatabaseSettingsEditGui):
-        DatabaseSettingsEditGui.setWindowTitle(QtWidgets.QApplication.translate("DatabaseSettingsEditGui", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtWidgets.QApplication.translate("DatabaseSettingsEditGui", "Database Settings", None, QtWidgets.QApplication.UnicodeUTF8))
+        DatabaseSettingsEditGui.setWindowTitle(QtWidgets.QApplication.translate("DatabaseSettingsEditGui", "Dialog", None))
+        self.variableBox.setTitle(QtWidgets.QApplication.translate("DatabaseSettingsEditGui", "Database Settings", None))

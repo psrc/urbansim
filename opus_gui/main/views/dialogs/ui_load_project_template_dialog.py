@@ -80,10 +80,10 @@ class Ui_LoadProjectTemplateDialog(object):
         QtCore.QMetaObject.connectSlotsByName(LoadProjectTemplateDialog)
 
     def retranslateUi(self, LoadProjectTemplateDialog):
-        LoadProjectTemplateDialog.setWindowTitle(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_header.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Step 1 of 2: Load project template", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_error.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "<error message>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rb_use_builtin.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Use builtin project template", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rb_use_custom.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Use custom template", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tb_custom_browse.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "...", None, QtWidgets.QApplication.UnicodeUTF8))
+        LoadProjectTemplateDialog.setWindowTitle(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Dialog", None))
+        self.lbl_header.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Step 1 of 2: Load project template", None))
+        self.lbl_error.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "<error message>", None))
+        self.rb_use_builtin.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Use builtin project template", None))
+        self.rb_use_custom.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "Use custom template", None))
+        self.tb_custom_browse.setText(QtWidgets.QApplication.translate("LoadProjectTemplateDialog", "...", None))
 

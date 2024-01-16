@@ -48,9 +48,9 @@ class Ui_ConfigureToolGui(object):
         QtCore.QMetaObject.connectSlotsByName(ConfigureToolGui)
 
     def retranslateUi(self, ConfigureToolGui):
-        ConfigureToolGui.setWindowTitle(QtWidgets.QApplication.translate("ConfigureToolGui", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtWidgets.QApplication.translate("ConfigureToolGui", "Select Tool", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtWidgets.QApplication.translate("ConfigureToolGui", "Tool Variables", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.createConfig.setText(QtWidgets.QApplication.translate("ConfigureToolGui", "Add Tool", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cancelConfig.setText(QtWidgets.QApplication.translate("ConfigureToolGui", "Cancel", None, QtWidgets.QApplication.UnicodeUTF8))
+        ConfigureToolGui.setWindowTitle(QtWidgets.QApplication.translate("ConfigureToolGui", "Dialog", None))
+        self.comboBox.addItem(QtWidgets.QApplication.translate("ConfigureToolGui", "Select Tool", None))
+        self.variableBox.setTitle(QtWidgets.QApplication.translate("ConfigureToolGui", "Tool Variables", None))
+        self.createConfig.setText(QtWidgets.QApplication.translate("ConfigureToolGui", "Add Tool", None))
+        self.cancelConfig.setText(QtWidgets.QApplication.translate("ConfigureToolGui", "Cancel", None))
 

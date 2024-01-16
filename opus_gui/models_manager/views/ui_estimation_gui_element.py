@@ -53,8 +53,8 @@ class Ui_EstimationGuiElement(object):
         QtCore.QMetaObject.connectSlotsByName(EstimationGuiElement)
 
     def retranslateUi(self, EstimationGuiElement):
-        EstimationGuiElement.setWindowTitle(QtWidgets.QApplication.translate("EstimationGuiElement", "Form", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pbnStartModel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Start Estimation...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.runStatusLabel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Press Start to run the estimation...", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("EstimationGuiElement", "Estimation result log", None, QtWidgets.QApplication.UnicodeUTF8))
+        EstimationGuiElement.setWindowTitle(QtWidgets.QApplication.translate("EstimationGuiElement", "Form", None))
+        self.pbnStartModel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Start Estimation...", None))
+        self.runStatusLabel.setText(QtWidgets.QApplication.translate("EstimationGuiElement", "Press Start to run the estimation...", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("EstimationGuiElement", "Estimation result log", None))
 

@@ -37,7 +37,7 @@ class Ui_LogWidget(object):
         QtCore.QMetaObject.connectSlotsByName(LogWidget)
 
     def retranslateUi(self, LogWidget):
-        LogWidget.setWindowTitle(QtWidgets.QApplication.translate("LogWidget", "Form", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_refresh.setText(QtWidgets.QApplication.translate("LogWidget", "Refresh", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_save.setText(QtWidgets.QApplication.translate("LogWidget", "Save output", None, QtWidgets.QApplication.UnicodeUTF8))
+        LogWidget.setWindowTitle(QtWidgets.QApplication.translate("LogWidget", "Form", None))
+        self.pb_refresh.setText(QtWidgets.QApplication.translate("LogWidget", "Refresh", None))
+        self.pb_save.setText(QtWidgets.QApplication.translate("LogWidget", "Save output", None))
 

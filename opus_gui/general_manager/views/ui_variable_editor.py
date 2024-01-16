@@ -127,34 +127,34 @@ class Ui_VariableEditor(object):
         QtCore.QMetaObject.connectSlotsByName(VariableEditor)
 
     def retranslateUi(self, VariableEditor):
-        VariableEditor.setWindowTitle(QtWidgets.QApplication.translate("VariableEditor", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "A name for this variable. Use only alphanumeric characters", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("VariableEditor", "Name:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("VariableEditor", "_name warning_", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtWidgets.QApplication.translate("VariableEditor", "Definition:", None, QtWidgets.QApplication.UnicodeUTF8))
+        VariableEditor.setWindowTitle(QtWidgets.QApplication.translate("VariableEditor", "Dialog", None))
+        self.label.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "A name for this variable. Use only alphanumeric characters", None))
+        self.label.setText(QtWidgets.QApplication.translate("VariableEditor", "Name:", None))
+        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("VariableEditor", "_name warning_", None))
+        self.label_3.setText(QtWidgets.QApplication.translate("VariableEditor", "Definition:", None))
         self.lbl_info.setText(QtWidgets.QApplication.translate("VariableEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This variable is an <span style=\" font-weight:600;\">expression</span> that will be used as a <span style=\" font-weight:600;\">Model Variable</span></p></body></html>", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.pb_change.setText(QtWidgets.QApplication.translate("VariableEditor", "Hide Settings", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.group_settings.setTitle(QtWidgets.QApplication.translate("VariableEditor", "Variable settings", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseModel.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as a Model Variable", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseModel.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as a Model Variable", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseIndicator.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as an Indicator", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseIndicator.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as an Indicator", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseBoth.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as both a Model Variable and an Indicator", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.rbUseBoth.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as as both Model Variable and Indicator", None, QtWidgets.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This variable is an <span style=\" font-weight:600;\">expression</span> that will be used as a <span style=\" font-weight:600;\">Model Variable</span></p></body></html>", None))
+        self.pb_change.setText(QtWidgets.QApplication.translate("VariableEditor", "Hide Settings", None))
+        self.group_settings.setTitle(QtWidgets.QApplication.translate("VariableEditor", "Variable settings", None))
+        self.rbUseModel.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as a Model Variable", None))
+        self.rbUseModel.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as a Model Variable", None))
+        self.rbUseIndicator.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as an Indicator", None))
+        self.rbUseIndicator.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as an Indicator", None))
+        self.rbUseBoth.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "The variable will be used as both a Model Variable and an Indicator", None))
+        self.rbUseBoth.setText(QtWidgets.QApplication.translate("VariableEditor", "Use as as both Model Variable and Indicator", None))
         self.label_4.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "Where the variable definition derives from. \n"
 "An \"expression\" uses the Tekoa domain-specific language, \n"
 "\"python class\" is a path to a variable defined in a python module (e.g. urbansim.gridcell.population), \n"
-"and \"primary attribute\" refers to a primary attribute of the given dataset. ", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtWidgets.QApplication.translate("VariableEditor", "Variable type:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cboVarType.setItemText(0, QtWidgets.QApplication.translate("VariableEditor", "expression", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cboVarType.setItemText(1, QtWidgets.QApplication.translate("VariableEditor", "primary attribute", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.cboVarType.setItemText(2, QtWidgets.QApplication.translate("VariableEditor", "Python class", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.btnCheckSyntax.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "Verify that the syntax of variable definition parses correctly.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.btnCheckSyntax.setText(QtWidgets.QApplication.translate("VariableEditor", "Check syntax", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.btnCheckData.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "Verify that the variable can be computed against the baseyear data for this project.", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.btnCheckData.setText(QtWidgets.QApplication.translate("VariableEditor", "Check against data", None, QtWidgets.QApplication.UnicodeUTF8))
+"and \"primary attribute\" refers to a primary attribute of the given dataset. ", None))
+        self.label_4.setText(QtWidgets.QApplication.translate("VariableEditor", "Variable type:", None))
+        self.cboVarType.setItemText(0, QtWidgets.QApplication.translate("VariableEditor", "expression", None))
+        self.cboVarType.setItemText(1, QtWidgets.QApplication.translate("VariableEditor", "primary attribute", None))
+        self.cboVarType.setItemText(2, QtWidgets.QApplication.translate("VariableEditor", "Python class", None))
+        self.btnCheckSyntax.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "Verify that the syntax of variable definition parses correctly.", None))
+        self.btnCheckSyntax.setText(QtWidgets.QApplication.translate("VariableEditor", "Check syntax", None))
+        self.btnCheckData.setToolTip(QtWidgets.QApplication.translate("VariableEditor", "Verify that the variable can be computed against the baseyear data for this project.", None))
+        self.btnCheckData.setText(QtWidgets.QApplication.translate("VariableEditor", "Check against data", None))
 

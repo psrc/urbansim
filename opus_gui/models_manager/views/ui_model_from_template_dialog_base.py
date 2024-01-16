@@ -73,8 +73,8 @@ class Ui_DynamicTemplateDialog(object):
         QtCore.QMetaObject.connectSlotsByName(DynamicTemplateDialog)
 
     def retranslateUi(self, DynamicTemplateDialog):
-        DynamicTemplateDialog.setWindowTitle(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Dialog", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_header.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Creating model from template X", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.label.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Model name:", None, QtWidgets.QApplication.UnicodeUTF8))
-        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "There is already a model \"X\", please enter another name.", None, QtWidgets.QApplication.UnicodeUTF8))
+        DynamicTemplateDialog.setWindowTitle(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Dialog", None))
+        self.lbl_header.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Creating model from template X", None))
+        self.label.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "Model name:", None))
+        self.lbl_name_warning.setText(QtWidgets.QApplication.translate("DynamicTemplateDialog", "There is already a model \"X\", please enter another name.", None))
 
