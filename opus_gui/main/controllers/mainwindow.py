@@ -33,7 +33,7 @@ from opus_gui.util import common_dialogs
 
 from opus_gui.main.controllers.dialogs.load_project_template_dialog import LoadProjectTemplateDialog
 from opus_gui.main.controllers.dialogs.new_project_dialog import NewProjectDynamicDialog
-from opus_gui.general_manager.controllers.variable_library import VariableLibrary
+#from opus_gui.general_manager.controllers.variable_library import VariableLibrary
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core import paths
 
