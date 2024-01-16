@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtWidgets
 
 try:
-    _fromUtf8 = QtCore..fromUtf8
+    _fromUtf8 = QtCore.fromUtf8
 except AttributeError:
     _fromUtf8 = lambda s: s
 

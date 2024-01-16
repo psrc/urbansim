@@ -4,7 +4,8 @@
 
 from lxml import etree
 
-from PyQt5.QtWidgets import QMenu, QCursor, QFont
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtGui import QCursor, QFont
 from PyQt5.QtCore import pyqtSignal
 
 from opus_core.logger import logger

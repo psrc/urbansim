@@ -6,12 +6,13 @@ from opus_gui.util.icon_library import IconLibrary
 import os, sys
 
 from lxml.etree import ElementTree, Comment
-from PyQt5.QtCore import Qt, QVariant, QThread,  , QObject, pyqtSignal
+from PyQt5.QtCore import Qt, QVariant, QThread, QObject, pyqtSignal
 from PyQt5.QtCore import QSettings, QRegExp
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QSpinBox, QMenu, QMainWindow, QMessageBox
 from PyQt5.QtWidgets import QWidget, QTabWidget
-from PyQt5.QtWidgets import QAction, QFileDialog, QToolButton, QIcon
+from PyQt5.QtWidgets import QAction, QFileDialog, QToolButton
+from PyQt5.QtGui import QIcon
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.main.controllers.instance_handlers import set_opusgui_instance

@@ -41,7 +41,6 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         desc = QtWidgets.QApplication.translate("DatabaseSettingsEditGui", desc, None, QtWidgets.QApplication.UnicodeUTF8)
         desc = str(desc) % dict([(n, eval('DatabaseServerConfiguration.%s'%n)) for n in dir(DatabaseServerConfiguration) if re.match('.*_TAG$', n)] +
                                     [('conf_file_path', DatabaseServerConfiguration.get_default_configuration_file_path())])
-        desc = QtCore.(desc)
         
         self.description.setText(desc)
 

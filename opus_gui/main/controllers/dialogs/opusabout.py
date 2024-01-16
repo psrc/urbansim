@@ -6,7 +6,9 @@
 
 # PyQt5 includes for python bindings to QT
 from PyQt5.QtCore  import  QUrl, pyqtSlot
-from PyQt5.QtWidgets import QDialog, QDesktopServices
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtGui import QDesktopServices
+
 # UI specific includes
 from opus_gui.main.views.ui_opusabout import Ui_UrbansimAbout
 

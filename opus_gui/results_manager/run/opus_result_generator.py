@@ -111,7 +111,6 @@ class OpusResultGenerator(object):
                     self.guiElement.logText.append("No logfile yet")
                     self.firstRead = False
                 else:
-                    from PyQt5.QtCore import 
-                    self.guiElement.logText.insertPlainText(("."))
+                    self.guiElement.logText.insertPlainText(".")
             #self.guiElement.logText.append("ping")
         return newKey

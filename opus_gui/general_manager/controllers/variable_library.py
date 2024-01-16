@@ -2,7 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt5.QtWidgets import QDialog, QMenu, QCursor, QFont
+from PyQt5.QtWidgets import QDialog, QMenu
+from PyQt5.QtGui import QCursor, QFont
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 
 from opus_gui.general_manager.views.ui_variable_library import Ui_VariableLibrary

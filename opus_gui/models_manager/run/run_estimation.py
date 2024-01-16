@@ -4,7 +4,7 @@
 
 
 # PyQt5 includes for python bindings to QT
-from PyQt5.QtCore import QThread, pyqtSignal, 
+from PyQt5.QtCore import QThread, pyqtSignal
 
 import os, time, gc
 

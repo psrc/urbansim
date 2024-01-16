@@ -4,8 +4,9 @@
 
 from time import localtime, strftime
 
-from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant,  , QTimer, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QIcon, QDialog
+from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant, QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QDialog
+from PyQt5.QtGui import QIcon
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration

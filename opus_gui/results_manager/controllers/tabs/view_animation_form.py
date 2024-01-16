@@ -5,8 +5,8 @@
 import os
 
 from PyQt5.QtCore  import  QByteArray
-from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy, QMovie
-
+from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QGridLayout, QLabel, QScrollArea, QSizePolicy
+from PyQt5.QtGui import QIcon, QImage,  QPainter, QPixmap, QMovie
 
 class ViewAnimationForm(QWidget):
     def __init__(self, visualization, parent_widget = None):

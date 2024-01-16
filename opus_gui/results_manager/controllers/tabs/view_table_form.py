@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt5.QtCore import 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QIcon, QSizePolicy, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy, QTableWidget, QTableWidgetItem
+from PyQt5.QtGui import QIcon
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
@@ -59,7 +59,7 @@ class ViewTableForm(QWidget):
 
         self.tableWidget.resizeColumnsToContents()
 
-        order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): int(v*100)-int(v2*100))
+        order = sorted(enumerate(table_data[keys[0]]), lambda i_v_j_v2: int(i_v_j_v2[0][1]*100)-int(i_v_j_v2[1][1]*100))
 
         for i, (idx,v) in enumerate(order):
             row = QTableWidgetItem()

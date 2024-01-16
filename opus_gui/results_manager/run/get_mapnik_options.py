@@ -2,8 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt5.QtCore import pyqtSignal,  , Qt
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip, QPalette
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip
+from PyQt5.QtGui import QPalette
 from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Mapnik_Options
 
 class MapOptions(QDialog, Ui_Mapnik_Options):

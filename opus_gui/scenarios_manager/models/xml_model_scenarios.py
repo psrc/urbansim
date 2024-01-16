@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from PyQt5.QtCore import QVariant, Qt
-from PyQt5.QtWidgets import QColor
+from PyQt5.QtGui import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.models_manager.models_manager_functions import get_model_names

@@ -3,8 +3,8 @@
 # See opus_core/LICENSE
 
 
-from PyQt5.QtCore import 
-from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QGridLayout, QLabel, QScrollArea, QSizePolicy
+from PyQt5.QtGui import QIcon, QImage,  QPainter, QPixmap
 
 
 class ViewImageForm(QWidget):

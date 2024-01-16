@@ -1,8 +1,9 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
-from PyQt5.QtCore import QFileInfo, pyqtSignal, QObject, QVariant,  , QTimer, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QIcon, QMessageBox
+from PyQt5.QtCore import QFileInfo, pyqtSignal, QObject, QVariant, QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5.QtGui import QIcon
 
 from opus_gui.models_manager.run.run_estimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement

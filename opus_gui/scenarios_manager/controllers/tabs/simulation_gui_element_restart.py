@@ -2,8 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant,  , QTimer, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QIcon, QDialog
+from PyQt5.QtCore import pyqtSignal, QObject, Qt, QVariant, QTimer, pyqtSlot
+from PyQt5.QtWidgets import QWidget,QDialog
+from PyQt5.QtGui import  QIcon
 from opus_gui.scenarios_manager.views.ui_input_restart_years_dialog import Ui_dlgInputRestartYears
 from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import SimulationGuiElement
 from opus_gui.results_manager.results_manager_functions import get_run_manager

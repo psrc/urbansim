@@ -6,7 +6,7 @@
 import os
 import gc
 
-from PyQt5.QtCore import QThread,  , pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from opus_core.services.run_server.run_manager import SimulationRunError
 from opus_gui.results_manager.results_manager_functions import get_batch_configuration

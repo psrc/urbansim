@@ -8,7 +8,8 @@ import traceback
 
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
 from PyQt5.QtCore import pyqtSignal, QEventLoop
-from PyQt5.QtWidgets import QColor, qApp, QFont
+from PyQt5.QtWidgets import qApp
+from PyQt5.QtGui import QColor, QFont
 from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
 from opus_gui.util.icon_library import IconLibrary
 

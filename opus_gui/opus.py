@@ -4,8 +4,9 @@
 # See opus_core/LICENSE
 # PyQt5 includes for python bindings to QT
 
-from PyQt5.QtCore import pyqtSignal, SLOT
-from PyQt5.QtWidgets import QApplication, QIcon, QMessageBox
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtGui import QIcon
 
 # General system includes
 import sys, os
@@ -50,7 +51,7 @@ def load_gui():
         return
     
     # create Qt application
-    app = QApplication(sys.argv,True)
+    app = QApplication(sys.argv)
 
     # Do this first, because loading the gui_config requires OPUS_HOME
     if not check_opus_home():
@@ -111,8 +112,9 @@ def main():
     wnd.activateWindow()
 
     # Create signal for app finish
-    app.connect(app, pyqtSignal("lastWindowClosed()"), app, SLOT("quit()"))
-
+    #app.connect(app, pyqtSignal("lastWindowClosed()"), app, SLOT("quit()"))
+    app.lastWindowClosed.connect(quit)
+    
     # Start the app up
     retval = app.exec_()
 
