@@ -83,7 +83,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Restoring application geometry from last shut down
         settings = QSettings()
-        self.restoreGeometry(settings.value("Geometry").toByteArray())
+        if settings.value("Geometry") is not None:
+            self.restoreGeometry(settings.value("Geometry"))
         self.updateFontSize()
         self.setFocus()
 
@@ -106,7 +107,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #self.menuUtilities.removeAction(self.actionLog_View)
         self.menuUtilities.removeAction(self.actEditorView)
 
-        self.connect(self, pyqtSignal('variables_updated'), self.update_saved_state)
+#        self.connect(self, pyqtSignal('variables_updated'), self.update_saved_state)
+#        self.variables_updated.connect(self.update_saved_state) # HS: TODO: after variable library is fixed
         self.update_saved_state()
 
     def _setup_actions(self):
@@ -127,7 +129,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Connect trigger slots using a little quickie function
         def connect(action, callback):
-            QObject.connect(action, pyqtSignal("triggered()"), callback)
+            action.triggered.connect(callback)
         connect(self.actNewProject, self.newProject)
         connect(self.actOpenProject, self.openProject)
         connect(self.actSaveProject, self.saveProject)
@@ -279,7 +281,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.closeProject()
 
         # Ask for filename if one was not provided
-        if project_filename is None:
+        if project_filename is None or project_filename is False:
             start_dir = ''
             project_configs = paths.OPUS_PROJECT_CONFIGS_PATH
             if os.path.exists(project_configs):
@@ -292,6 +294,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             if not project_filename:
                 return # Cancel
 
+        if len(project_filename) > 1:
+            project_filename = project_filename[0]
+            
         loaded_ok, msg = self.project.open(project_filename)
         if not loaded_ok:
             QMessageBox.warning(self, 'Failed to load project', msg)

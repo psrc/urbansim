@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/new-logo-medium-no-mirror.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #icon.addPixmap(QtGui.QPixmap(":/Images/Images/new-logo-medium-no-mirror.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off) # HS
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")

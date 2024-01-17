@@ -19,7 +19,7 @@ def create_qt_action(icon_name, text, callback, parent_qt_object):
         action = QtWidgets.QAction(text, parent_qt_object)
     else:
         action = QtWidgets.QAction(IconLibrary.icon(icon_name), text, parent_qt_object)
-    QObject.connect(action, pyqtSignal('triggered()'), callback)
+    action.triggered.connect(callback)
     return action
 
 def get_unique_name(base_name, list_of_current_names):

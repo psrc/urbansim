@@ -43,8 +43,9 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                 self.comboBox.addItem(tool_file_node.get('name'))
 
         # Now we hook up to the user selecting the type desired
-        QObject.connect(self.comboBox, pyqtSignal("currentIndexChanged(int)"),
-                        self.toolTypeSelected)
+        #QObject.connect(self.comboBox, pyqtSignal("currentIndexChanged(int)"),
+        #                self.toolTypeSelected)
+        self.comboBox.currentIndexChanged.connect(self.toolTypeSelected)
 
         self.tooltypearray = []
         self.typeSelection = None

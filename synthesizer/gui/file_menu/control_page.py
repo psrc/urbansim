@@ -80,14 +80,21 @@ class ControlDataPage(QWizardPage):
         vLayout.addWidget(controlUserProvWarning)
         self.setLayout(vLayout)
 
-        self.connect(self.controlHHLocationComboBox, pyqtSignal("activated(int)"), self.controlHHCheck)
-        self.connect(self.controlGQLocationComboBox, pyqtSignal("activated(int)"), self.controlGQLocationComboBox.browseFile)
-        self.connect(self.controlPersonLocationComboBox, pyqtSignal("activated(int)"), self.controlPersonCheck)
-        self.connect(self.sourceComboBox, pyqtSignal("activated(int)"), self.sourceCheck)
+        #self.connect(self.controlHHLocationComboBox, pyqtSignal("activated(int)"), self.controlHHCheck)
+        self.controlHHLocationComboBox.activated.connect(self.controlHHCheck)
+        #self.connect(self.controlGQLocationComboBox, pyqtSignal("activated(int)"), self.controlGQLocationComboBox.browseFile)
+        self.controlGQLocationComboBox.activated.connect(self.controlGQLocationComboBox.browseFile)
+        #self.connect(self.controlPersonLocationComboBox, pyqtSignal("activated(int)"), self.controlPersonCheck)
+        self.controlPersonLocationComboBox.activatedconnect(self.controlPersonCheck)
+        #self.connect(self.sourceComboBox, pyqtSignal("activated(int)"), self.sourceCheck)
+        self.sourceComboBox.activatedconnect(self.sourceCheck)
 
-        self.connect(self.controlAutoRadio, pyqtSignal("clicked()"), self.controlAutoAction)
-        self.connect(self.controlUserProvRadio, pyqtSignal("clicked()"), self.controlUserProvAction)
-        self.connect(self, pyqtSignal("resolutionChanged"), self.resolutionAction)
+        #self.connect(self.controlAutoRadio, pyqtSignal("clicked()"), self.controlAutoAction)
+        self.controlAutoRadio.clicked.connect(self.controlAutoAction)
+        #self.connect(self.controlUserProvRadio, pyqtSignal("clicked()"), self.controlUserProvAction)
+        self.controlUserProvRadio.clicked.connect(self.controlUserProvAction)
+        #self.connect(self, pyqtSignal("resolutionChanged"), self.resolutionAction)
+        self.resolutionChanged.connect(self.resolutionAction)
 
     def resolutionAction(self, resolution):
         if resolution != 'County':

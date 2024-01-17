@@ -57,13 +57,15 @@ class XmlController(object):
         self.view.openDefaultItems()
         self.manager.base_widget.layout().addWidget(self.view)
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
-        QObject.connect(self.view,
-                        pyqtSignal("customContextMenuRequested(const QPoint &)"),
-                        self.process_custom_menu)
+        #QObject.connect(self.view,
+        #                pyqtSignal("customContextMenuRequested(const QPoint &)"),
+        #                self.process_custom_menu)
+        self.view.customContextMenuRequested.connect(self.process_custom_menu)
         
-        QObject.connect(self.view,
-                        pyqtSignal('activated(const QModelIndex&)'),
-                        self.on_activated)
+        #QObject.connect(self.view,
+        #                pyqtSignal('activated(const QModelIndex&)'),
+        #                self.on_activated)
+        self.view.activated.connect(self.on_activated)
 
         # Actions for common menu choices
         # Note that revert and delete are the same action, but we want to present them differently
