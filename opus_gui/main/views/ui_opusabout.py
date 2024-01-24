@@ -33,7 +33,7 @@ class Ui_UrbansimAbout(object):
         self.verticalLayout.addWidget(self.licensePushButton)
         self.hboxlayout = QtWidgets.QHBoxLayout()
         self.hboxlayout.setSpacing(6)
-        self.hboxlayout.setMargin(0)
+        self.hboxlayout.setContentsMargins(0, 0, 0, 0)
         self.hboxlayout.setObjectName("hboxlayout")
         spacerItem = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.hboxlayout.addItem(spacerItem)

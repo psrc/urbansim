@@ -56,7 +56,7 @@ class Ui_DynamicTemplateDialog(object):
         font.setBold(False)
         self.lbl_name_warning.setFont(font)
         self.lbl_name_warning.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.lbl_name_warning.setMargin(5)
+        self.lbl_name_warning.setContentsMargins(5, 5, 5, 5)
         self.lbl_name_warning.setObjectName("lbl_name_warning")
         self.verticalLayout_2.addWidget(self.lbl_name_warning)
         self.verticalLayout.addWidget(self.frame)

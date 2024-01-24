@@ -134,8 +134,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
         self.setup_diagnostic_indicators()
         self.indicatorResultsTab.removeTab(0)
-        QObject.connect(self.diagnostic_go_button,pyqtSignal("clicked()"),self.on_indicatorBox)
-        QObject.connect(self.diagnostic_dataset_name, pyqtSignal("currentIndexChanged()"), self.on_diagnostic_dataset_name_currentIndexChanged)
+        self.diagnostic_go_button.clicked.connect(self.on_indicatorBox)
+        self.diagnostic_dataset_name.currentIndexChanged.connect(self.on_diagnostic_dataset_name_currentIndexChanged)
 
     def setup_diagnostic_indicators(self):
         dataset = str(self.diagnostic_dataset_name.currentText())
@@ -215,10 +215,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                               thread_object = self.batch_processor)
 
         # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.diagnosticThread, pyqtSignal("runFinished(PyQt_PyObject)"),
-                        self.visualizationsCreated)
-        QObject.connect(self.diagnosticThread, pyqtSignal("runError(PyQt_PyObject)"),
-                        self.runErrorFromThread)
+        self.diagnosticThread.runFinished.connect(self.visualizationsCreated)
+        self.diagnosticThread.runError.connect(self.runErrorFromThread)
 
         self.diagnosticThread.start()
 
@@ -337,15 +335,12 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                                         run_name)
 
         # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.runThread, pyqtSignal("runFinished(PyQt_PyObject)"),
-                        self.runFinishedFromThread)
-        QObject.connect(self.runThread, pyqtSignal("runError(PyQt_PyObject)"),
-                        self.runErrorFromThread)
+        self.runThread.runFinished.connect(self.runFinishedFromThread)
+        self.runThread.runError.connect(self.runErrorFromThread)
         # Use this timer to call a function in the thread to check status if the thread is unable
         # to produce its own signal above
         self.timer = QTimer()
-        QObject.connect(self.timer, pyqtSignal("timeout()"),
-                        self.runStatusFromThread)
+        self.timer.timeout.connect(self.runStatusFromThread)
         self.timer.start(1000)
         self.running = True
         self.paused = False        

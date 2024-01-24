@@ -251,7 +251,7 @@ class ModelSystem(object):
                                     ds = dataset_pool.get_dataset(dataset_name)
                                     self.vardict[dataset_name] = ds
                                     datasets[dataset_name] = ds
-                                    exec('%s=ds' % dataset_name, globals())
+                                    exec('%s=ds' % dataset_name, globals(), locals())
                             except:
                                 logger.log_warning('Failed to load dataset %s.' % dataset_name)
                         # import part

@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import QMenuBar
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -92,7 +93,8 @@ class Ui_MainWindow(object):
         self.toolBox.addTab(self.resultsmanager_page, "")
         self.verticalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        #self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar = QMenuBar()
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1093, 27))
         self.menubar.setObjectName("menubar")
         self.menuProject = QtWidgets.QMenu(self.menubar)

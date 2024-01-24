@@ -24,13 +24,13 @@ class FileController_OpusData(FileController):
         FileController.__init__(self, manager, data_path, parent_widget)
 
         self.actRefresh = QAction(IconLibrary.icon('reload'), "Refresh Tree", self.treeview)
-        QObject.connect(self.actRefresh, pyqtSignal("triggered()"), self.refreshAction)
+        self.actRefresh.triggered.connect(self.refreshAction)
 
         self.actViewDataset = QAction(IconLibrary.icon('inspect'), "View Dataset", self.treeview)
-        QObject.connect(self.actViewDataset, pyqtSignal("triggered()"), self.viewDatasetAction)
+        self.actViewDataset.triggered.connect(self.viewDatasetAction)
 
         self.actOpenTextFile = QAction(IconLibrary.icon('text'), "Open Text File", self.treeview)
-        QObject.connect(self.actOpenTextFile, pyqtSignal("triggered()"), self.openTextFile)
+        self.actOpenTextFile.triggered.connect(self.openTextFile)
 
         self.tool_library_node = self.manager.project.find('data_manager/tool_library')
         
@@ -327,7 +327,7 @@ class FileController_OpusData(FileController):
         return self.dataActionMenuFunction(self.export_dynactions, action)
 
     def dataActionMenuFunction(self, dynactions, action):
-        QObject.disconnect(self.menu, pyqtSignal("triggered(QAction*)"),self.dataActionMenuFunction)
+        self.menu.triggered.disconnect(self.dataActionMenuFunction)
         if action != self.actRefresh:
             actiontext = str(action.text())
             tool_node = dynactions[actiontext]
@@ -393,8 +393,7 @@ class FileController_OpusData(FileController):
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.export_dynactions[export_type] = tool_node
-                        QObject.connect(self.export_menu, pyqtSignal("triggered(QAction*)"),
-                                        self.dataActionMenuFunctionExport)
+                        self.export_menu.triggered.connect(self.dataActionMenuFunctionExport)
                         self.menu.addMenu(self.export_menu)
                         
                     if len(import_choices) > 0:
@@ -403,8 +402,7 @@ class FileController_OpusData(FileController):
                             dynaction = QAction(IconLibrary.icon('spreadsheet'), import_type, self.treeview)
                             self.import_menu.addAction(dynaction)
                             self.import_dynactions[import_type] = tool_node
-                        QObject.connect(self.import_menu, pyqtSignal("triggered(QAction*)"),
-                                        self.dataActionMenuFunctionImport)
+                        self.import_menu.triggered.connect(self.dataActionMenuFunctionImport)
                         self.menu.addMenu(self.import_menu)
                         
                     self.menu.addSeparator()

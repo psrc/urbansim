@@ -28,8 +28,9 @@ class ResultsManager(AbstractManager):
         self.xml_controller = XmlController_Results(self)
 
     def scanForRuns(self):
-        self._scanForRuns()
+        # self._scanForRuns() HS
         #thread.start_new_thread(self._scanForRuns, ())
+        pass
 
     def _scanForRuns(self):
         data_path = self.project.data_path()

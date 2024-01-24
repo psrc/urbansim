@@ -19,9 +19,7 @@ class FileController(object):
 
         self.manager = manager
         if listen_to_menu:
-            QObject.connect(self.treeview,
-                            pyqtSignal("customContextMenuRequested(const QPoint &)"),
-                            self.process_custom_menu)
+            self.treeview.customContextMenuRequested.connect(self.process_custom_menu)
 
 
     def addTree(self, opusDataPath, parentWidget):

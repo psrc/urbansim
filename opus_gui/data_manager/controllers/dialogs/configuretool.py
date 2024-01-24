@@ -27,7 +27,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
-        self.vboxlayout.setMargin(9)
+        self.vboxlayout.setContentsMargins(9, 9, 9, 9)
         self.vboxlayout.setSpacing(6)
         self.vboxlayout.setObjectName("vboxlayout")
         self.test_widget = []
@@ -124,7 +124,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
             self.test_widget.append(widgetTemp)
             hlayout = QHBoxLayout(widgetTemp)
             self.hboxlayout.append(hlayout)
-            hlayout.setMargin(4)
+            hlayout.setContentsMargins(4, 4, 4, 4)
             hlayout.setSpacing(4)
             hlayout.setObjectName(("hboxlayout").append((i)))
             test_text = QLabel(widgetTemp)

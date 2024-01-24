@@ -376,14 +376,14 @@ class RunManager(AbstractService):
     def _unpickle(self, resources):
         if self.server_config.blob_compression:
             try:
-                r = pickle.loads(zlib.decompress(str(resources)))
+                r = pickle.loads(zlib.decompress(resources))
             except zlib.error:
                 # There is the possibility that the user enabled blob
                 # compression after some number of runs.  We still want to
                 # decompress these runs correctly.
-                r = pickle.loads(str(resources))
+                r = pickle.loads(resources)
         else:
-            r = pickle.loads(str(resources))
+            r = pickle.loads(resources)
         return r
 
     def get_runs_rs(self, **kwargs):

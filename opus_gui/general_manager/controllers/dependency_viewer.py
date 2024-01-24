@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-from PyQt5 import QtWidgets, Qt, QtCore
+from PyQt5 import QtWidgets, Qt, QtCore, QtGui
 from PyQt5.QtCore import pyqtSlot
 from opus_gui.general_manager.views.ui_dependency_viewer import Ui_DependencyViewer
 
@@ -24,7 +24,7 @@ class DependencyViewer(QtWidgets.QDialog, Ui_DependencyViewer):
         self.scrollArea.setVisible(True)
         self.setWindowTitle("Dependency graph of %s" % name)
         self.image_file = file_path
-        pix = QtWidgets.QPixmap.fromImage(QtWidgets.QImage(file_path))
+        pix = QtGui.QPixmap.fromImage(QtWidgets.QImage(file_path))
         self.label.setPixmap(pix)
         self.scrollAreaWidgetContents.setMinimumSize(pix.width(), pix.height())
         self.label.setMinimumSize(pix.width(), pix.height())

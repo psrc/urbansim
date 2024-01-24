@@ -15,7 +15,7 @@ class ConsoleBase(object):
 
         self.pythonGui = OpusPythonShell(self.mainwindow.pythonWidget,self.mainwindow.pythonLineEdit,self.mainwindow.__dict__)
         self.pythonLayout = QGridLayout(self.mainwindow.pythonWidget)
-        self.pythonLayout.setMargin(9)
+        self.pythonLayout.setContentsMargins(9, 9, 9, 9)
         self.pythonLayout.setSpacing(6)
         self.pythonLayout.setObjectName("pythonLayout")
         self.pythonLayout.addWidget(self.pythonGui)

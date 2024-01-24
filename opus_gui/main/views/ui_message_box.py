@@ -7,7 +7,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 class Ui_MessageBox(object):
     def setupUi(self, MessageBox):
@@ -38,7 +38,7 @@ class Ui_MessageBox(object):
         self.frame.setLineWidth(0)
         self.frame.setObjectName("frame")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.frame)
-        self.horizontalLayout_2.setMargin(0)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lblImage = QtWidgets.QLabel(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -47,7 +47,7 @@ class Ui_MessageBox(object):
         sizePolicy.setHeightForWidth(self.lblImage.sizePolicy().hasHeightForWidth())
         self.lblImage.setSizePolicy(sizePolicy)
         self.lblImage.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.lblImage.setPixmap(QtWidgets.QPixmap("Images/big_error.png"))
+        self.lblImage.setPixmap(QtGui.QPixmap("Images/big_error.png"))
         self.lblImage.setAlignment(QtCore.Qt.AlignCenter)
         self.lblImage.setObjectName("lblImage")
         self.horizontalLayout_2.addWidget(self.lblImage)
@@ -84,7 +84,7 @@ class Ui_MessageBox(object):
         self.frame_details.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_details.setObjectName("frame_details")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.frame_details)
-        self.verticalLayout_2.setMargin(0)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.line = QtWidgets.QFrame(self.frame_details)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
