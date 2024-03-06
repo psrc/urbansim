@@ -27,7 +27,7 @@ class BuildingSqftPerJobDataset(UrbansimDataset):
         bts = self.get_attribute("building_type_id")
         sqft = self.get_attribute("building_sqft_per_job")
         table = resize(array([sqft.mean()]), (max(zone_ids.max(), zone_max) + 1, 
-                                              max(bts.max(), building_type_max) + 1))
+                                              max(bts.max(), int(building_type_max)) + 1))
         table[zone_ids, bts] = sqft
         return table
     

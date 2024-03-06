@@ -20,7 +20,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         self.subarea_id_name = subarea_id_name
     
     def run(self, specification, coefficients, agent_set, agents_index=None, agents_filter=None, 
-            flush_after_each_subarea=False, run_no_area=True, **kwargs):
+            flush_after_each_subarea=False, run_no_area=True, run_by_cities = False, **kwargs):
         if agents_index is None:
             if agents_filter is None:
                 agents_index = arange(agent_set.size())
@@ -34,8 +34,9 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         regions = agent_set.get_attribute(self.subarea_id_name)
         
         self.choice_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
-        city_subarea = pd.DataFrame({'city_id':self.choice_set['city_id'], 
-                                     self.subarea_id_name: self.choice_set[self.subarea_id_name]})
+        city_subarea = pd.DataFrame({self.subarea_id_name: self.choice_set[self.subarea_id_name]})
+        if run_by_cities:
+            city_subarea[["city_id"]] = self.choice_set['city_id']
         city_subarea = city_subarea.drop_duplicates().groupby(self.subarea_id_name).size()
         valid_region = where(regions[agents_index] > 0)[0]
         filter0 = self.filter #keep a copy of the original self.filter
@@ -47,7 +48,8 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[agents_index[valid_region]] = True
             for i in sort(unique(city_subarea.values)):
-                logger.log_status("HLCM for areas belonging to %s cities" % i)
+                if run_by_cities:
+                    logger.log_status("HLCM for areas belonging to %s cities" % i)
                 these_regions = city_subarea.index[city_subarea.values == i]
                 for area in these_regions:
                     new_index = where(logical_and(cond_array, regions == area))[0]
