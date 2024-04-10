@@ -89,6 +89,9 @@ class hdf5_storage(Storage):
                 column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
             ds_meta = column_meta.get(column_name, {})
             for mkey, mvalue in ds_meta.items():
+                if mvalue.dtype.kind == "U":
+                    # convert to S type
+                    mvalue = mvalue.astype("S")
                 column_ds.attrs[mkey] = mvalue
             
     def write_table(self, table_name, table_data, mode = Storage.OVERWRITE, table_meta={}, column_meta={}, driver=None, **kwargs):
