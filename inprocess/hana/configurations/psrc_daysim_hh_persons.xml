@@ -19,7 +19,7 @@
             <name name="name" type="string">TravelDataLinkModel</name>
           </init>
           <run type="dictionary">
-            <argument name="directory" parser_action="quote_string" type="string">/Users/hana/workspace/data/SoundCastLT/skims/2010</argument>
+            <argument name="directory" parser_action="quote_string" type="string">E:/soundcast/skims/2040</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
           </run>
         </structure>
@@ -29,10 +29,10 @@
   <scenario_manager>
     <scenario executable="True" name="daysim_scenario" type="scenario">
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2014</base_year>
+      <base_year type="integer">2023</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2014</firstyear>
-        <lastyear type="integer">2014</lastyear>
+        <firstyear type="integer">2023</firstyear>
+        <lastyear type="integer">2023</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable name="create_travel_data_link" type="model_choice">False</selectable>
@@ -40,8 +40,8 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData/Cache</argument>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2023SoundCastData/by23on18_to_soundcast_080124</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">src_parcel/2023SoundCastData/by23on18_from_urbansim_080124</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -56,9 +56,11 @@
           <households type="dictionary">
             <variable name="hhno" type="string">(household.household_id).astype(int32)</variable>
             <variable name="hhsize" type="string">(household.persons).astype(int32)</variable>
-            <variable name="hhincome" type="string">(household.income / 1.005**t(2040-2014)).astype(int32)</variable>
-            <!-- The income variable is divided by a factor to account for real income growth. The exponent is the difference between the end year (the first number) and the start year (the second number). To not use RIG, make the end year the same as the start year. -->
-            <variable name="hownrent" type="string">(numpy.logical_or(household.tenure == 1, household.tenure == 2) + 2*(household.tenure == 3) + 9*(household.tenure &gt; 3)).astype(int32)</variable>
+            <variable name="hhincome" type="string">(household.income / 1.005**(2040-2040)).astype(int32)</variable>
+            <!-- The income variable is divided by a factor to account for real income growth - currently not being applied. The exponent is the difference between the end year (the first number) and the start year (the second number). To not use RIG, make the end year the same as the start year. -->
+            <!--Orig pre-2023 BY version<variable name="hownrent" type="string">(numpy.logical_or(household.tenure == 1, household.tenure == 2) + 2*(household.tenure == 3) + 9*(household.tenure &gt; 3)).astype(int32)</variable> -->
+            <!--New 2023 BY version w/o collapsed Owner categories <variable name="hownrent" type="string">((household.tenure == 1) + 2*(household.tenure == 2) + 3*(household.tenure &gt;= 3) + 9*(household.tenure==-1)).astype(int32)</variable> -->
+            <variable name="hownrent" type="string">(((household.tenure == 1) + (household.tenure == 2)) + 2*(household.tenure == 3) + 3*(household.tenure &gt;= 4) + 9*(household.tenure==-1)).astype(int32)</variable>
             <variable name="hhparcel" type="string">(urbansim_parcel.household.parcel_id).astype(int32)</variable>
             <variable name="hhtaz" type="string">(urbansim_parcel.household.zone_id).astype(int32)</variable>
             <variable name="hrestype" type="string">(household.disaggregate(1*urbansim.building.is_single_family_residential + 2*urbansim.building.is_multi_family_residential + 3*urbansim.building.is_condo_residential + 4*urbansim.building.is_mobile_home)).astype(int32)</variable>
@@ -70,9 +72,11 @@
             <variable name="hhno" type="string">(person.household_id).astype(int32)</variable>
             <variable name="pno" type="string">(person.member_id).astype(int32)</variable>
             <variable name="pptyp" type="string">(1*(person.employment_status==1) + 2*(person.employment_status==2)*(person.student==0) + 3*(person.employment_status &lt; 1)*(person.student==0)*(person.age &gt; 64) + 4*(person.employment_status &lt; 1)*(person.student==0)*(person.age &gt; 15)*(person.age &lt; 65) + 5*(person.employment_status!=1)*(person.student==1)*(person.age &gt; 18) + 6*(person.employment_status!=1)*(person.student==1)*(person.age &gt; 15)*(person.age &lt; 19) + 7*(person.age &gt; 4)*(person.age &lt; 16) + 8*(person.age &lt; 5)).astype(int32)</variable>
+            <variable name="prace" type="string">(person.race_id).astype(int32)</variable>
             <variable name="pagey" type="string">(person.age).astype(int32)</variable>
             <variable name="pgend" type="string">(person.sex).astype(int32)</variable>
-            <variable name="pwtyp" type="string">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>
+            <variable name="pwtyp" type="string">(1*(person.employment_status==1) + 2*(person.employment_status==2)).astype(int32)</variable>
+	    <!--<variable name="pwtyp" type="string">(1*(person.employment_status==1)*(urbansim_parcel.person.is_worker_with_job==1) + 2*(person.employment_status==2)*(urbansim_parcel.person.is_worker_with_job==1)).astype(int32)</variable>-->
             <variable name="pwpcl" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <variable name="pwtaz" type="string">(-1 * (person.person_id &gt; 0)).astype(int32)</variable>
             <!--<variable name="pwpcl" type="string">(urbansim_parcel.person.is_non_home_based_worker_with_job * person.disaggregate(urbansim_parcel.job.parcel_id) + (urbansim_parcel.person.is_non_home_based_worker==0) * urbansim_parcel.person.is_worker * urbansim_parcel.person.parcel_id - 1*(urbansim_parcel.person.is_worker==0)).astype(int32)</variable>
@@ -137,12 +141,12 @@
           <selectable name="inprocess.hana.opus_daysim.models.run_daysim_travel_model" type="selectable">False</selectable>
           <selectable name="inprocess.hana.opus_daysim.models.get_daysim_data_into_cache" type="selectable">False</selectable>
         </models>
-        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData</daysim_base_directory>
+        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2023SoundCastData/by23on18_to_soundcast_080124</daysim_base_directory>
         <years_to_run key_name="year" type="category_with_special_keys">
           <run_description type="dictionary">
-            <year type="integer">2014</year>
-            <daysim_exchange_dir type="string">urbansim_outputs/2014</daysim_exchange_dir>
-            <daysim_skim_dir type="string">skims/2040</daysim_skim_dir>
+            <year type="integer">2023</year>
+            <daysim_exchange_dir type="string">soundcast_files</daysim_exchange_dir>
+            <daysim_skim_dir type="string">skims/2018</daysim_skim_dir>
           </run_description>
           <!-- <run_description type="dictionary">
 			  <year type="integer">2041</year>
