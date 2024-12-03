@@ -116,7 +116,7 @@ class InverseMPDs(Model):
                 results[bidx] = -1
                 no_template_found = no_template_found + [bidx]
                 if(land_sqft[bidx].sum() > 0):
-                    print(("No template for building type:", self.input_buildings["building_type_id"][bidx]))
+                    print(("No template for building type:", self.input_buildings["building_type_id"][bidx], " on parcel", pcl))
                 continue
             units = zeros(templ_idx.size, dtype='float32')
             improvement_value = zeros(templ_idx.size, dtype='float32')
@@ -165,13 +165,14 @@ if __name__ == '__main__':
     #    buildings (optional)
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/inverse_templates"
-    input_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/2018"
+    #input_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/2018"
+    input_cache =  "/Users/hana/opus/urbansim_data/data/psrc_parcel/BY2023prep/MPDs/2023"
     
     # Name of the dataset from which the MPDs are generated.
     # It should live in input_cache and should have all attributes that a buildings dataset has.
     # Set it to None if the standard 'buildings' dataset should be used.
     #input_buildings_table = "buildings1999"
-    input_buildings_table = "buildings"
+    input_buildings_table = "buildings_mpd_cons_in"
     #input_buildings_table = None
     
     # If input_buildings_table is None, use this to filter out buildings from the input cache 
@@ -180,8 +181,9 @@ if __name__ == '__main__':
     
     # Where the output is going to go and name of the output table.
     #output_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/inverse_templates"
-    output_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/2018"
-    output_buildings_table = "buildings_out"
+    #output_cache =  "/Users/hana/workspace/data/psrc_parcel/MPDs/2018"
+    output_cache =  "/Users/hana/opus/urbansim_data/data/psrc_parcel/BY2023prep/MPDs/2023"
+    output_buildings_table = "buildings_mpd_out"
     #output_buildings_table = "buildings2025outtest"
     
     # type of storage
