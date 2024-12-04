@@ -119,7 +119,7 @@ else:
                 field_type[name] = type
             for rec in db:
                 for key in list(values.keys()):
-                    if field_type[key.upper()] is 'F':
+                    if field_type[key.upper()] == 'F':
                         self.assertAlmostEqual(values[key][i], rec[key], 4)
                     else:
                         self.assertEqual(values[key][i], rec[key])

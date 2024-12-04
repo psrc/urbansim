@@ -90,7 +90,7 @@ class TestScanner(object):
             path = path[1:]
         module_path = path.replace(os.sep, '.')
         
-        if module_path is not '':
+        if module_path != '':
             module_path = '.'.join([package, module_path])
         else:
             module_path = package

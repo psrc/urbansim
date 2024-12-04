@@ -179,7 +179,7 @@ class Variable(object):
         if self._return_type == type:
             return values
         if self.should_check(arguments):
-            max_value = ma.maximum(values)
+            max_value = ma.amax(values)
             if max_value > self._max_storable_value[self._return_type]:
                 max_value_str = str(max_value)
                 logger.log_error("Variable '%s' is being cast to type '%s', but contains a value (%s) too large to fit into that type."

@@ -5,4 +5,4 @@ import numpy
 
 UNPLACED_ID = -1
 NO_STRATUM_ID = -1
-DTYPE = numpy.int  #default data type
+DTYPE = numpy.int32  #default data type

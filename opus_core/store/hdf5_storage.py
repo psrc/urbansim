@@ -5,6 +5,7 @@
 import h5py
 import os
 from glob import glob
+import numpy as np
 from numpy import array, dtype
 from opus_core.misc import unique
 from opus_core.logger import logger
@@ -89,7 +90,7 @@ class hdf5_storage(Storage):
                 column_ds = f.create_dataset(column_name, data=table_data[column_name], **kwargs)
             ds_meta = column_meta.get(column_name, {})
             for mkey, mvalue in ds_meta.items():
-                if mvalue.dtype.kind == "U":
+                if isinstance(mvalue, np.ndarray) and mvalue.dtype.kind == "U":
                     # convert to S type
                     mvalue = mvalue.astype("S")
                 column_ds.attrs[mkey] = mvalue

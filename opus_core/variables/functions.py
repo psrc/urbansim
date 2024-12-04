@@ -50,7 +50,7 @@ def ln_shifted(v, shift=1):
 def ln_shifted_auto(v):
     """If 'v' has values <= 0, it is shifted in a way that min(v)=1 before doing log. 
     Otherwise the log is done on the original 'v'."""
-    vmin = ma.minimum(v)
+    vmin = ma.amin(v)
     if vmin <= 0:
         values = v - vmin + 1
     else:

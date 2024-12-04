@@ -184,7 +184,7 @@ def median(input, labels = None, index = None):
     
     """
 
-    return labeled_comprehension(input, labels, index, numpy.median, numpy.float, 0.0, pass_positions=False)
+    return labeled_comprehension(input, labels, index, numpy.median, numpy.float32, 0.0, pass_positions=False)
 
 def variance(input, labels=None, index=None):
     _fix_dtype(input)
