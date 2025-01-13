@@ -33,7 +33,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         regions = self.dataset_pool.get_dataset(self.subarea_name)
         self.subarea_id_name = regions.get_id_name()[0]
         if not process_planned:
-            self.proposal_set.id_planned = 99999 # to switch processing of planned proposals of
+            self.proposal_set.id_planned = 99999 # to switch processing of planned proposals
         
         target_vacancies = self.dataset_pool.get_dataset('target_vacancy')
         tv_building_types = unique(target_vacancies.get_attribute('building_type_id'))
@@ -111,10 +111,18 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
             if self.type["non_residential"]:
                 if to_be_placed_jobs[subarea_index] > 0:
                     self.build_in_subarea["non_residential"] = True
-            if not self.build_in_subarea["residential"] and not self.build_in_subarea["non_residential"]:
-                continue
+                    
             where_subarea = region_ids_in_proposals == self.subarea
             idx_subarea_in_prop = where(where_subarea)[0]
+            
+            if not self.build_in_subarea["residential"] and not self.build_in_subarea["non_residential"]:
+                if process_planned and (self.proposal_set.id_planned in status[idx_subarea_in_prop]):
+                    # keep only planned proposals
+                    where_subarea = logical_and(where_subarea, status == self.proposal_set.id_planned)
+                    idx_subarea_in_prop = where(where_subarea)[0]
+                else:
+                    continue # no need to process this area
+
             if (self.proposal_set.id_active in status[idx_subarea_in_prop]) or (self.proposal_set.id_refused in status[idx_subarea_in_prop]):
                 continue # this subarea was handled previously
             if idx_subarea_in_prop.size <= 0:

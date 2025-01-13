@@ -103,7 +103,7 @@
         <years_to_run key_name="year" type="category_with_special_keys">
           <run_description type="dictionary">
             <year type="integer">2023</year>
-            <daysim_exchange_dir type="string">soundcast_files</daysim_exchange_dir>
+            <daysim_exchange_dir type="string">urbansim_outputs/2023</daysim_exchange_dir>
           </run_description>
           <!-- <run_description type="dictionary">
 			  <year type="integer">2041</year>
