@@ -16,9 +16,9 @@ class MySQLServerManager(AbstractDatabaseEngineManager):
             password = server_config.password
             
         if password is not None:
-            connect_string = 'mysql://%s:%s@%s'%(server_config.user_name, password, server_config.host_name) 
+            connect_string = 'mysql+pymysql://%s:%s@%s'%(server_config.user_name, password, server_config.host_name) 
         else:
-            connect_string = 'mysql://%s@%s'%(server_config.user_name, server_config.host_name) 
+            connect_string = 'mysql+pymysql://%s@%s'%(server_config.user_name, server_config.host_name) 
 
         if database_name:
             connect_string += '/%s'%(database_name) 

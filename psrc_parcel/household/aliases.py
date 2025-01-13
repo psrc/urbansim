@@ -45,7 +45,9 @@ aliases = [
            "subreg_id = household.disaggregate(parcel.subreg_id, intermediates=[building])", 
 		   "zone_control_hct_id = household.disaggregate(parcel.zone_control_hct_id, intermediates=[building])",
            "census_block_group_id = household.disaggregate(parcel.census_block_group_id, intermediates=[building])",
+           "census_2020_block_group_id = household.disaggregate(parcel.census_2020_block_group_id, intermediates=[building])",
            "census_tract_id = household.disaggregate(census_block_group.census_tract_id, intermediates=[census_block, parcel, building])",
+           "census_2020_tract_id = household.disaggregate(census_2020_block_group.census_2020_tract_id, intermediates=[census_2020_block, parcel, building])",
            "region_id = household.household_id > 0" # we want here the number 1 for all records
            ]
 for cat in range(1,6):

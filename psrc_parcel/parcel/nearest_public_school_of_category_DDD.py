@@ -25,6 +25,7 @@ class nearest_public_school_of_category_DDD(abstract_nearest_id_of_SSS_dataset):
             self.filter = 'psrc_parcel.school.is_in_category_%s' % cats[0]
             for cat in cats[1:len(cats)]:
                 self.filter = '%s + psrc_parcel.school.is_in_category_%s' % (self.filter, cat)
+            self.filter = "(school.public == 1) * (%s)" % self.filter
         Variable.__init__(self)
         
 from opus_core.tests import opus_unittest
@@ -49,16 +50,17 @@ class Tests(opus_unittest.OpusTestCase):
              "parcel_id":array([1,2,3,7, 7, 1, 8]),
              #"sxcoord":array([1,2,3,2,2,1,3]),
              #"sycoord":array([1,1,1,2,2,1,3]),
+             "public":  array([1, 1, 0, 1, 1, 0, 1]), 
              "category": array(['K', 'E', 'EMH', 'M', 'EM', 'E', 'E'])
              },
         })
-        should_be = array([6, 2, 3, 3, 5, 7, 5, 7])
+        should_be = array([1, 2, 2, 5, 5, 7, 5, 7])
 
-        instance_name = 'psrc_parcel.parcel.nearest_school_of_category_2'
+        instance_name = 'psrc_parcel.parcel.nearest_public_school_of_category_2'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
         
-        instance_name = 'psrc_parcel.parcel.nearest_school_of_category_12'
-        should_be = array([1, 2, 3, 3, 5, 7, 5, 7])
+        instance_name = 'psrc_parcel.parcel.nearest_public_school_of_category_12'
+        should_be = array([1, 2, 2, 5, 5, 7, 5, 7])
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 

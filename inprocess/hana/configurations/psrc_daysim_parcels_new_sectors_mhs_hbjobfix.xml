@@ -21,8 +21,8 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData</argument>
-        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData/soundcast_estimation</argument>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2023SoundCastData/by23on18_to_soundcast_080124</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2023SoundCastData/by23on18_from_urbansim_080124</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
@@ -70,8 +70,10 @@
             <variable name="pprichrp" type="string">(parcel.parking_price_hourly * 100).astype(int32)</variable>
             <variable name="nparks" type="string">(1*(parcel.land_use_type_id==19)).astype(int32)</variable>
             <variable name="aparks" type="string">(1*(parcel.land_use_type_id==19) * (parcel_sqft)).astype(int32)</variable>
-			<variable name="sfunits" type="string">(parcel.aggregate(building.residential_units * (building.building_type_id == 19))).astype(int32)</variable>
-			<variable name="mfunits" type="string">(parcel.aggregate(building.residential_units * numpy.logical_or(building.building_type_id == 4, building.building_type_id == 10, building.building_type_id == 12))).astype(int32)</variable>
+			<!--<variable name="sfunits" type="string">(parcel.aggregate(building.residential_units * (building.building_type_id == 19))).astype(int32)</variable> -->
+			<variable name="sfunits" type="string">(parcel.aggregate((building.residential_units * (building.building_type_id == 19))+ (building.residential_units * (building.building_type_id == 11)))).astype(int32)</variable>
+			<!--<variable name="mfunits" type="string">(parcel.aggregate(building.residential_units * numpy.logical_or(building.building_type_id == 4, building.building_type_id == 10, building.building_type_id == 12))).astype(int32)</variable> -->
+			<variable name="mfunits" type="string">(parcel.aggregate((building.residential_units * (building.building_type_id == 4))+ (building.residential_units * (building.building_type_id == 10))+(building.residential_units * (building.building_type_id == 12)))).astype(int32)</variable>
           </parcels>
           <!-- <buildings type="dictionary">
         	<variable type="string" name="building_id">building.building_id</variable>
@@ -97,7 +99,7 @@
           <selectable name="inprocess.hana.opus_daysim.models.run_daysim_travel_model" type="selectable">False</selectable>
           <selectable name="inprocess.hana.opus_daysim.models.get_daysim_data_into_cache" type="selectable">False</selectable>
         </models>
-        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2014SoundCastData</daysim_base_directory>
+        <daysim_base_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/2023SoundCastData/by23on18_to_soundcast_080124</daysim_base_directory>
         <years_to_run key_name="year" type="category_with_special_keys">
           <run_description type="dictionary">
             <year type="integer">2023</year>
