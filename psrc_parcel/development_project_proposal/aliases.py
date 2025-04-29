@@ -45,6 +45,12 @@ aliases = [
                     "psrc_parcel.development_project_proposal.minimum_1DU_per_legal_rural_lot_yield",
                     "psrc_parcel.development_project_proposal.minimum_1DU_per_legal_urban_lot_yield",
              ),
+            # HB 1110
+            "units_proposed_hb1110 = numpy.maximum(units_proposed_plus_minimum_1DU_per_legal_lot_yield, numpy.logical_and(%s, %s))" % (
+                "numpy.logical_not(development_project_proposal.disaggregate(urbansim_parcel.development_template.is_far))", # is not FAR
+                "development_project_proposal.disaggregate(psrc_parcel.parcel.max_units_for_hb1110)" 
+            ), 
+
              "developable_capacity = clip_to_zero(development_project_proposal.disaggregate(psrc_parcel.parcel.max_developable_capacity)-urbansim_parcel.development_project_proposal.building_sqft)",
              #"acquisition_cost = clip_to_zero(development_project_proposal.disaggregate(parcel.total_value_per_sqft*parcel.parcel_sqft) - development_project_proposal.disaggregate(urbansim_parcel.parcel.improvement_value) * (development_project_proposal.is_redevelopment == 0))",
              "acquisition_cost = clip_to_zero(development_project_proposal.disaggregate(parcel.land_value + urbansim_parcel.parcel.improvement_value) - development_project_proposal.disaggregate(urbansim_parcel.parcel.improvement_value) * (development_project_proposal.is_redevelopment == 0))",
