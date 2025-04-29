@@ -43,7 +43,12 @@ aliases = [
        "number_of_white_households = parcel.aggregate(psrc_parcel.household.is_head_white, intermediates=[building])",
        "white_population = parcel.aggregate(psrc_parcel.household.persons_white, intermediates=[building])",
        "non_white_population = parcel.aggregate(psrc_parcel.household.persons_non_white, intermediates=[building])",
-           ]
+       "max_units_for_hb1110 = %s + %s + %s" % (
+           "(parcel.hb_tier == 1) * (4 + 2 * (parcel.hb_hct_buffer == 1))",
+           "(parcel.hb_tier == 2) * (2 + 2 * (parcel.hb_hct_buffer == 1))",
+           "(parcel.hb_tier == 3) * 2"
+       )
+       ]
 
 
 # Factors for increasing capacity in RGCs relative to their zoning
