@@ -610,11 +610,11 @@ from opus_core.tests import opus_unittest
 
 class DummyStorage(Storage):
         def get_column_names(self, table_name, lowercase=True):
-            if table_name is 'table_doc':
+            if table_name == 'table_doc':
                 return ['col1','col2','col3','col4','col5']
-            if table_name is 'table_20':
+            if table_name == 'table_20':
                 return list(range(20))
-            if table_name is 'table_3':
+            if table_name == 'table_3':
                 return ['col1','col2','col3']
             return []
 

@@ -319,7 +319,7 @@ class AbstractDataset(object):
 #            attribute_data = attribute_data.astype('int32')
 #            type = attribute_data.dtype.type
             
-        minz = ma.minimum(attribute_data)
+        minz = ma.min(attribute_data)
         minx = int(ma.minimum.reduce(x))
         miny = int(ma.minimum.reduce(y))
         difx = maxx-minx

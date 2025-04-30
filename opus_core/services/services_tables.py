@@ -29,7 +29,7 @@ class RunsRunActivity(Entity):
     processor_name = Field(Text)
     date_time = Field(DateTime)
     status = Field(Text)
-    resources = Field(BLOB)
+    resources = Field(Text)
     project_name = Field(Text)
 
 

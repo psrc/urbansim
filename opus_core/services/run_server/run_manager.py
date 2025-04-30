@@ -471,12 +471,15 @@ class RunManager(AbstractService):
 
     def add_row_to_history(self, run_id, resources, status, run_name=None, scenario_name=''):
         """update the run history table to indicate changes to the state of this run history trail."""
-
+        import base64
         self.update_environment_variables(run_resources = resources)
         resources['run_id'] = run_id
         if self.server_config.blob_compression:
             pickled_resources = zlib.compress(pickle.dumps(resources), 9)
         else:
+            #pickled_resources = pickle.dumps(str(resources).encode('utf-8'))
+            #pickled_resources = pickle.dumps(str(resources).encode('base64', 'strict'))
+            #pickled_resources = pickle.dumps(resources, protocol=pickle.HIGHEST_PROTOCOL)
             pickled_resources = pickle.dumps(resources)
         description = resources.get('description', 'No description')
         if run_name is None:
@@ -489,11 +492,12 @@ class RunManager(AbstractService):
              'processor_name':'%s' % get_host_name(),
              'date_time':datetime.datetime.now(),
              'resources':'%s' % pickled_resources,
+             #'resources':'%s' % str.encode(base64.b64encode(pickled_resources).decode('ascii')), 
              'cache_directory': resources['cache_directory'],
              'project_name': resources.get('project_name', None),
              'scenario_name': scenario_name
              }
-
+        self.services_db.get_schema_from_table('run_activity')
         run_activity_table = self.services_db.get_table('run_activity')
         if (not 'project_name' in run_activity_table.c):
             del values['project_name']
