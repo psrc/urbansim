@@ -48,7 +48,7 @@ class ParcelDataset(UrbansimDataset):
         
         """
         if (self.development_constraints is not None) and (not recompute_flag):
-            if (index is not None) and alltrue(self.development_constraints["index"] == index):
+            if (index is not None) and self.development_constraints["index"].size == index.size and alltrue(self.development_constraints["index"] == index):
                 return self.development_constraints
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
