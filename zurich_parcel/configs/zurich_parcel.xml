@@ -264,7 +264,7 @@
             <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
             <argument name="append_to_realestate_dataset" type="string">True</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="sample_filter" type="string">"numpy.logical_and(building.year_built &gt; 1990, building.building_type_id&lt;&gt;7)"</argument>
+            <argument name="sample_filter" type="string">"numpy.logical_and(building.year_built &gt; 1990, building.building_type_id != 7)"</argument>
             <argument name="resources" type="string">model_resources</argument>
           </run>
         </structure>
@@ -700,7 +700,7 @@
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="compute_capacity_flag" type="boolean">True</key>
               <key convert_blank_to_none="True" name="capacity_string" type="string" model_dependency_type="variable">(zurich_parcel.job.is_untaken_non_home_based_job).astype(int32)</key>
-              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id)&lt;&gt;1).astype(int32)</key>
+              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id) != 1).astype(int32)</key>
               <key convert_blank_to_none="True" name="number_of_agents_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>

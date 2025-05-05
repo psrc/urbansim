@@ -225,7 +225,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.number_of_jobs&lt;&gt;0</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.building.number_of_jobs != 0</argument>
             <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string" model_dependency_type="variable"/>
             <argument convert_blank_to_none="True" name="location_id_string" parser_action="quote_string" type="string" model_dependency_type="variable">urbansim_parcel.person.building_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -355,7 +355,7 @@
             <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
             <argument name="append_to_realestate_dataset" type="string">True</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="sample_filter" type="string">"numpy.logical_and(building.year_built &gt; 1990, building.building_type_id&lt;&gt;7)"</argument>
+            <argument name="sample_filter" type="string">"numpy.logical_and(building.year_built &gt; 1990, building.building_type_id != 7)"</argument>
             <argument name="resources" type="string">model_resources</argument>
           </run>
         </structure>
@@ -808,7 +808,7 @@
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
               <key name="compute_capacity_flag" type="boolean">True</key>
               <key convert_blank_to_none="True" name="capacity_string" type="string" model_dependency_type="variable">(zurich_parcel.job.is_untaken_non_home_based_job).astype(int32)</key>
-              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id)&lt;&gt;1).astype(int32)</key>
+              <key convert_blank_to_none="True" name="number_of_units_string" type="string" model_dependency_type="variable">(job.disaggregate(building.building_type_id) != 1).astype(int32)</key>
               <key convert_blank_to_none="True" name="number_of_agents_string" type="string" model_dependency_type="variable">job.number_of_agents(person)</key>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>

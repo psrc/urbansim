@@ -3,14 +3,13 @@
 # See opus_core/LICENSE
 import re, copy
 from pkg_resources import packaging
-from numpy.lib.type_check import asscalar
 from numpy import array, asarray, where, ones, zeros, ones_like 
-from numpy import arange, concatenate, resize, int32, float64
-from numpy import asscalar, setdiff1d, ceil, logical_and, logical_not
-from numpy import searchsorted, argsort
+from numpy import arange, concatenate, resize, int32
+from numpy import setdiff1d, ceil, logical_and, logical_not
+from numpy import argsort
 from opus_core import ndimage
 from opus_core.misc import ismember, unique
-from opus_core.model import Model
+from opus_core.models.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.simulation_state import SimulationState
@@ -400,11 +399,11 @@ class TransitionModel(Model):
                     ## override those passed in through arguments in configuration
                     threshold_raw_this = threshold_raw  # for logging
                     if threshold_ct is not None:
-                        threshold_val_ct = get_threshold_val(asscalar(threshold_ct[index]),
+                        threshold_val_ct = get_threshold_val(threshold_ct[index].item(),
                                                              dataset_pool=dataset_pool
                                                             )
                         if threshold_val_ct is not None:
-                            threshold_raw_this = asscalar(threshold_ct[index])
+                            threshold_raw_this = threshold_ct[index].item()
                             threshold_val_this = threshold_val_ct[this_year_index][index]
     
                     hierarchy_this = sampling_hierarchy
@@ -502,7 +501,7 @@ class TransitionModel(Model):
                     if reset_hierarchy_attribute and hierarchy_this[0] in \
                        self.dataset.get_primary_attribute_names():
                         h = hierarchy_this[0]
-                        k = asscalar(self.control_totals[h][index])
+                        k = self.control_totals[h][index].item()
                         
                         if h in reset_hierarchy_value:
                             if k in reset_hierarchy_value[h]:
@@ -786,7 +785,7 @@ from opus_core.misc import ismember
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.resources import Resources
 from numpy import array, logical_and, int32, int8, ma, all, allclose
-from scipy import histogram
+from numpy import histogram
 from opus_core.datasets.dataset import Dataset
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset

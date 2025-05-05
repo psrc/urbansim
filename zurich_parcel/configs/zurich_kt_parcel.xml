@@ -768,7 +768,7 @@
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">(zurich_parcel.job.is_untaken_non_home_based_job).astype(int32)</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(job.disaggregate(building.building_type_id)&lt;&gt;1).astype(int32)</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(job.disaggregate(building.building_type_id) != 1).astype(int32)</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>
@@ -925,7 +925,7 @@
               <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"></key>
               <key name="compute_capacity_flag" type="boolean">True</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="capacity_string" type="string">(zurich_parcel.living_unit.is_untaken_living_unit).astype(int32)</key>
-              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(living_unit.disaggregate(building.residential_units)&lt;&gt;0).astype(Int32)</key>
+              <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_units_string" type="string">(living_unit.disaggregate(building.residential_units) != 0).astype(Int32)</key>
               <key convert_blank_to_none="True" model_dependency_type="variable" name="number_of_agents_string" type="string">living_unit.number_of_agents(household)</key>
               <key name="lottery_max_iterations" type="integer">10</key>
             </argument>

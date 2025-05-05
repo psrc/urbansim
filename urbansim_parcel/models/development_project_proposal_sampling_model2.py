@@ -2,6 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from pkg_resources import parse_version
 from opus_core.resources import Resources
 from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset import Dataset, DatasetSubset
@@ -261,7 +262,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         
         if PrettyTable is not None:
             status_log = PrettyTable()
-            if prettytable.__version__ >= 0.6: # compatibility issue
+            if parse_version(prettytable.__version__) >= parse_version("0.6"): # compatibility issue
                 status_log.field_names = self.column_names + logging_header
                 for header in logging_header:
                     status_log.align[header] = 'r' 
