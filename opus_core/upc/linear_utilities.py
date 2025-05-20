@@ -2,9 +2,9 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import sum
+from numpy import diagonal
 from opus_core.misc import check_dimensions
-from opus_core.utilities import Utilities
+from opus_core.upc.utilities import Utilities
 from numpy import inner
 
 class linear_utilities(Utilities):
@@ -24,7 +24,9 @@ class linear_utilities(Utilities):
             if not check_dimensions(data[0,:,:], coefficients):
                 raise Exception("Mismatch in dimensions of data and coefficients.")
 
-        utility = inner(data, coefficients).sum(axis = 1)
+        utility = inner(data, coefficients)
+        if utility.ndim > 2:
+            utility = diagonal(utility, axis1=1, axis2 = 2)
         return utility
 
 from opus_core.tests import opus_unittest
