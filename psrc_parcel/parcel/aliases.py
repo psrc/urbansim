@@ -47,6 +47,10 @@ aliases = [
            "(parcel.hb_tier == 1) * (4 + 2 * (parcel.hb_hct_buffer == 1))",
            "(parcel.hb_tier == 2) * (2 + 2 * (parcel.hb_hct_buffer == 1))",
            "(parcel.hb_tier == 3) * 2"
+       ),
+       "sqft_per_du_hb1110 = 1400 * (%s == 2)  + 1200 * (%s == 4) + 1000 * (%s == 6) + 1553 * (%s == 0)" % (
+           "psrc_parcel.parcel.max_units_for_hb1110", "psrc_parcel.parcel.max_units_for_hb1110",
+           "psrc_parcel.parcel.max_units_for_hb1110", "psrc_parcel.parcel.max_units_for_hb1110"
        )
        ]
 
