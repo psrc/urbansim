@@ -13,7 +13,7 @@ class max_developable_capacity_hb1110(Variable):
     """
 
     def dependencies(self):
-        return ["development_constraint.constraint_type", "psrc_parcel.parcel.max_units_for_hb1110"]
+        return ["development_constraint.constraint_type", "psrc_parcel.parcel.max_units_for_hb1110", "psrc_parcel.parcel.sqft_per_du_hb1110"]
 
     def compute(self,  dataset_pool):
         parcels = dataset_pool.get_dataset("parcel")
@@ -26,7 +26,7 @@ class max_developable_capacity_hb1110(Variable):
                 continue
             result = maximum(result, parcels.development_constraints[glu]['far'][:, 1]*parcels['parcel_sqft'])  #max constraint
             res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'] * 1553 # median of building sqft per unit
-            res_constraints = maximum((res_constraints > 0) * parcels["max_units_for_hb1110"]/parcels['parcel_sqft'] * 1553,  res_constraints)
+            res_constraints = maximum((res_constraints > 0) * parcels["max_units_for_hb1110"] * parcels["sqft_per_du_hb1110"],  res_constraints)
             result = maximum(result, res_constraints)
         return result
 
