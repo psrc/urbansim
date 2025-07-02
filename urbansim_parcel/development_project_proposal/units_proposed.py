@@ -34,13 +34,13 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'development_template':
             {
-                'template_id': array([1,2,3,4]),
-                'building_type_id': array([1, 1, 2, 3]),
-                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre']),                
-                'density':array([0.6, 2.0, 10, 5]),
-                'percent_land_overhead':array([0, 10, 0, 20]),
-                'land_sqft_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
-                'land_sqft_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
+                'template_id': array([1,2,3,4, 5]),
+                'building_type_id': array([1, 1, 2, 3, 3]),
+                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre', 'units_per_lot']),                
+                'density':array([0.6, 2.0, 10, 5, 4]),
+                'percent_land_overhead':array([0, 10, 0, 20, 0]),
+                'land_sqft_min': array([0, 10, 4, 30, 40],dtype=int32) * self.ACRE,
+                'land_sqft_max': array([2, 20, 8, 100, 200],dtype=int32) * self.ACRE
             },
             'parcel':
             {
@@ -49,14 +49,14 @@ class Tests(opus_unittest.OpusTestCase):
             },
             'development_project_proposal':
             {
-                "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11]),
-                "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3,  3 ]),
-                "template_id":array([1,  2,  3,  4, 2,  3, 4, 1, 2, 3,  4])
+                "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11, 12, 13]),
+                "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3,  3, 3, 3]),
+                "template_id":array([1,  2,  3,  4, 2,  3, 4, 5, 1, 2, 3,  4, 5])
             }
         })
-        should_be = array([1, 0,  0,            0,
-                              36, 80*self.ACRE, 200,  
-                           1, 36, 80*self.ACRE, 400]) 
+        should_be = array([1, 0,  0,            0,  
+                              36, 80*self.ACRE, 200, 4, 
+                           1, 36, 80*self.ACRE, 400, 4]) 
 
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

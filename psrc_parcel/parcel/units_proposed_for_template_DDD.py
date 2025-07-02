@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from numpy import where, logical_and, logical_or, logical_not
+from numpy import where, ones, logical_and, logical_or, logical_not
 
 class units_proposed_for_template_DDD(Variable):
     """Total units (as real numbers) proposed (residential units, and/or non residential sqft) 
@@ -24,7 +24,7 @@ class units_proposed_for_template_DDD(Variable):
 
     def compute(self, dataset_pool):
         ds = self.get_dataset()
-        templates = dataset_pool.get_dataset('development_template')
+        templates = dataset_pool.get_dataset('development_template')        
         this_template = templates.get_data_element_by_id(self.template_id, all_attributes=True)
         self.add_and_solve_dependencies([])
         
@@ -39,7 +39,10 @@ class units_proposed_for_template_DDD(Variable):
         density_convertor = 1.0
         if this_template.density_type == 'units_per_acre':
             density_convertor = 1.0 / self.ACRE_TO_SQFT
-        result = land_area_taken * usable_ratio * this_template.density * density_convertor
+        if this_template.density_type == 'units_per_lot':
+            result = ones(land_area_taken.size, dtype = "int32") * this_template.density
+        else:
+            result = land_area_taken * usable_ratio * this_template.density * density_convertor
         min_rural = logical_and(result <= 0.5, logical_and(result > 0, logical_and(ds['parcel_sqft'] > 9999, 
                                                             logical_not(ds['is_inside_urban_growth_boundary']))))
         min_urban = logical_and(result <= 0.5, logical_and(result > 0, logical_and(ds['parcel_sqft'] > 3499, 

@@ -3,7 +3,6 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-#from variable_functions import my_attribute_label
 from numpy import where, zeros
 
 class units_per_acre(Variable):
@@ -28,8 +27,6 @@ class units_per_acre(Variable):
         self.do_check("x >= 0", values)
 
 from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 

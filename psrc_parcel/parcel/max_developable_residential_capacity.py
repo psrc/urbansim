@@ -22,6 +22,8 @@ class max_developable_residential_capacity(Variable):
         for glu in list(parcels.development_constraints.keys()):
             if  glu == 'index':
                 continue
-            res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'] # median of building sqft per unit
-            result = maximum(result, res_constraints)
+            if 'units_per_acre' in parcels.development_constraints[glu].keys():
+                result = maximum(result, parcels.development_constraints[glu]['units_per_acre'][:, 1] /43560.0 * parcels['parcel_sqft'])
+            if 'units_per_lot' in parcels.development_constraints[glu].keys():
+                result = maximum(result, parcels.development_constraints[glu]['units_per_lot'][:, 1])
         return result

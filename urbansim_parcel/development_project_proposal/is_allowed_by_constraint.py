@@ -8,7 +8,7 @@ from opus_core.misc import unique
 
 class is_allowed_by_constraint(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints,
-    compare if parcel.min_constraint <= development_template.density <=  parcel.min_constraint
+    compare if parcel.min_constraint <= development_template.density <=  parcel.max_constraint
     """
     template_opus_path = "urbansim_parcel.development_template"
     
@@ -38,7 +38,7 @@ class is_allowed_by_constraint(Variable):
         parcel_index = parcels.development_constraints['index'][i_sort].searchsorted(parcel_index)
         constraint_types = unique(constraints.get_attribute("constraint_type"))
         templates.compute_variables(["%s.%s" % (self.template_opus_path, x) for x in constraint_types], dataset_pool)
-        template_ids = templates.get_id_attribute()
+        templates.compute_variables(["%s.is_%s" % (self.template_opus_path, x) for x in constraint_types], dataset_pool)
         generic_land_use_type_ids = templates.get_attribute("generic_land_use_type_id")
         proposal_template_ids = proposals.get_attribute("template_id")
         results = zeros(proposals.size(), dtype=bool8)
@@ -47,7 +47,9 @@ class is_allowed_by_constraint(Variable):
             i_template = templates.get_id_index(this_template_id)
             fit_indicator = (proposal_template_ids == this_template_id )
             building_type_id = generic_land_use_type_ids[i_template]
-            for constraint_type, constraint in parcels.development_constraints[building_type_id].items():                
+            for constraint_type, constraint in parcels.development_constraints[building_type_id].items():
+                if not templates["is_%s" % constraint_type][i_template]:
+                    continue
                 template_attribute = templates.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name           
                 min_constraint = constraint[:, 0][parcel_index].copy() 
                 max_constraint = constraint[:, 1][parcel_index].copy()
@@ -71,8 +73,6 @@ class is_allowed_by_constraint(Variable):
         self.do_check("x >= 0", values)
     
 from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
@@ -84,28 +84,26 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'development_template':
             {
-                'template_id': array([1,2,3,4]),
-                "land_use_type_id":array([1, 1, 2, 2]),
-                'density_type':   array(['units_per_acre', 'units_per_acre', 'far', 'far']),
-#                'constraint_name':array(['units_per_acre', 'units_per_acre', 'far', 'far']),
-                'units_per_acre': array([0.2, 2, 0, 0]),
-                'far':array([0, 0, 25, 7])
+                'template_id': array([1,2,3,4, 5]),
+                "land_use_type_id":array([1, 1, 2, 2, 1]),
+                'density_type':   array(['units_per_acre', 'units_per_acre', 'far', 'far', 'units_per_lot']),
+                "density": array([0.2, 2, 25, 7, 6])
+                #'units_per_acre': array([0.2, 2, 0, 0]),
+                #'far':array([0, 0, 25, 7])
             },
             'land_use_type':
             {
                 "land_use_type_id":array([1, 2]),
                 "generic_land_use_type_id":array([1, 2]),
-#                'density_type':   array(['units_per_acre','far']),
-
             },
             'development_constraint':
             {
-                'constraint_id': array([1,2,3,4]),
-                'is_constrained': array([0, 1, 1, 0]),
-                'generic_land_use_type_id': array([1, 1, 2, 2]),
-                'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far']),                
-                'minimum': array([0,  0,   0,  0]),
-                'maximum': array([3, 0.2, 10, 100]),                
+                'constraint_id': array([1,2,3,4, 5]),
+                'is_constrained': array([0, 1, 1, 0, 1]),
+                'generic_land_use_type_id': array([1, 1, 2, 2, 1]),
+                'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far', 'units_per_lot']),                
+                'minimum': array([0,  0,   0,  0, 2]),
+                'maximum': array([3, 0.2, 10, 100, 6]),                
             },
             'parcel':
             {
@@ -114,16 +112,17 @@ class Tests(opus_unittest.OpusTestCase):
             },
             'development_project_proposal':
             {
-                "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
-                "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
-                "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4])
+                "proposal_id":array([1,  2, 3, 4, 5,  6, 7, 8, 9, 10, 11, 12]),
+                "parcel_id":  array([1,  1, 1, 1, 2,  2, 2, 3, 3, 3, 3, 1]),
+                "template_id":array([1,  2, 3, 4, 2,  3, 4, 1, 2, 3, 4, 5])
             }
             }
         )
         
         should_be = array([1, 0,  0, 1,  
-                             1, 1, 1, 
-                             1, 0, 0, 1])
+                           1, 1, 1, 
+                           1, 0, 0, 1,
+                           1])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

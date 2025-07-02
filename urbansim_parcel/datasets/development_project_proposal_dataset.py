@@ -227,14 +227,14 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                             logical_and(template_attribute >= min_constraint,
                                                         template_attribute <= max_constraint))
                 
-
+                # the following if statements are for debugging purposes only
                 if constraint_type == "units_per_acre":
                     res_units_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint / 43560.0 
                     debug.print_debug("template_id %s (GLU ID %s) max total residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ), 12)
-                else:
+                elif constraint_type == "far":
                     non_res_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint
                     debug.print_debug("template_id %s (GLU ID %s) max total non residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ), 12)
-                
+                    
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, resize(array([this_template_id]), fit_indicator.sum())))
         
@@ -266,31 +266,31 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(
             table_name='development_templates',
             table_data={
-                'template_id': array([1,2,3,4]),
-                'project_size': array([0, 1999, 2000, 10]),
-                'building_type_id': array([1, 1, 2, 3]),
-                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre']),                
-                'density':array([0.6, 2.0, 10, 5]),
-                'percent_land_overhead':array([0, 10, 0, 20]),
-                'land_sqft_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
-                'land_sqft_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
+                'template_id': array([1,2,3,4, 5]),
+                'project_size': array([0, 1999, 2000, 10, 20]),  # used for testing computing any proposal variable (disaggregation)
+                'building_type_id': array([1, 1, 2, 3, 1]),
+                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre', 'units_per_lot']),                
+                'density':array([0.6, 2.0, 10, 5, 6]),
+                'percent_land_overhead':array([0, 10, 0, 20, 0]),
+                'land_sqft_min': array([0, 10, 4, 30, 0.15],dtype=int32) * self.ACRE,
+                'land_sqft_max': array([2, 20, 8, 100, 1000],dtype=int32) * self.ACRE
             }
         )
         storage.write_table(
             table_name='parcels',
             table_data={
-                "parcel_id": array([1,   2,    3]),
-                "lot_size":  array([0,   2005, 23]),
-                "vacant_land_area": array([1, 50,  200],dtype=int32)* self.ACRE,
+                "parcel_id": array([1,   2,    3, 4]),
+                "lot_size":  array([0,   2005, 23, 1]), # used for testing computing any proposal variable (disaggregation)
+                "vacant_land_area": array([1, 50,  200, 1],dtype=int32)* self.ACRE,
             }
         )
         storage.write_table(
             table_name='development_project_proposals',
             table_data={
-                "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11, 12]),
-                "parcel_id":  array([1,  2,  3,  1, 2, 3,  1, 2, 3, 1, 2, 3 ]),
-                "template_id":array([1,  1,  1,  2, 2, 2,  3, 3, 3, 4, 4, 4]),
-                "units_proposed": array([1, 1, 1, 0, 36, 36, 0, 3484800, 3484800,0, 200, 400])
+                "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]),
+                "parcel_id":  array([1,  2,  3,  4, 1, 2, 3,  4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]),
+                "template_id":array([1,  1,  1,  1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]),
+                "units_proposed": array([1, 1, 1, 1, 0, 36, 36, 0, 0, 3484800, 3484800, 0, 0, 200, 400, 0, 6, 6, 6, 6])
             }
         )
 
@@ -312,20 +312,24 @@ class Tests(opus_unittest.OpusTestCase):
 
 
     def test_compute(self):
-
+        # Since there is no constraints dataset, it combines all templates with all parcels (5 x 4)
+        # minus proposals with zero units (6), i.e. 14 proposals,
+        # where units are computed via the (rounded) units_proposed_fraction variable.
         self.dataset.compute_variables("development_template.project_size",
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("project_size")
-        should_be = array([0, 0,  0, 1999,  1999, 2000, 2000, 10, 10])
+        should_be = array([0, 0,  0, 0, 1999,  1999, 2000, 2000, 10, 10, 20, 20, 20, 20])
+        
+        values = self.dataset.get_attribute("units_proposed")
+        should_be = array([1, 1,  1, 1, 36, 36, 3484800, 3484800, 200, 400, 6, 6, 6, 6])        
         
         self.assertTrue(ma.allequal( values, should_be),
-                     msg = "Error in " + "development_template.project_size")
+                     msg = "Error in " + "units_proposed")
 
         self.dataset.compute_variables("parcel.lot_size",
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("lot_size")
-        #should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
-        should_be = array([0, 2005, 23, 2005, 23,  2005, 23, 2005, 23])        
+        should_be = array([0, 2005, 23, 1, 2005, 23,  2005, 23, 2005, 23, 0, 2005, 23, 1])        
         self.assertTrue(ma.allequal( values, should_be),
                      msg = "Error in " + "parcel.lot_size")
 

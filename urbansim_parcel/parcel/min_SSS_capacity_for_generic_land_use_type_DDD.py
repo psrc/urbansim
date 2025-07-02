@@ -3,7 +3,6 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from .variable_functions import my_attribute_label
 
 class min_SSS_capacity_for_generic_land_use_type_DDD(Variable):
     """ minimum SSS capacity (far, units_per_acre, etc) allowed by development constraints
@@ -41,12 +40,12 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'development_constraint':
             {
-                'constraint_id': array([1,2,3,4]),
-                'is_constrained': array([0, 1, 1, 0]),
-                'generic_land_use_type_id': array([1, 1, 2, 2]),
-                'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far']),                
-                'minimum': array([1,  0,   0,  0]),
-                'maximum': array([3, 0.2, 10, 100]),                
+                'constraint_id': array([1,2,3,4, 5]),
+                'is_constrained': array([0, 1, 1, 0, 1]),
+                'generic_land_use_type_id': array([1, 1, 2, 2, 1]),
+                'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far', 'units_per_lot']),                
+                'minimum': array([1,  0,   0,  0, 2]),
+                'maximum': array([3, 0.2, 10, 100, 6]),                
             },
             'parcel':
             {
@@ -65,6 +64,11 @@ class Tests(opus_unittest.OpusTestCase):
         
         instance_name = 'urbansim_parcel.parcel.min_units_per_acre_capacity_for_generic_land_use_type_1'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
+        
+        should_be = array([2, 0, 2])
+        
+        instance_name = 'urbansim_parcel.parcel.min_units_per_lot_capacity_for_generic_land_use_type_1'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)        
 
 if __name__=='__main__':
     opus_unittest.main()

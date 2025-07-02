@@ -7,6 +7,9 @@
 
 aliases = [
    "generic_land_use_type_id=development_template.disaggregate(land_use_type.generic_land_use_type_id)",
+   "units_per_lot = numpy.where(development_template.density_type =='units_per_lot', development_template.density, 0)",
+   "is_units_per_acre = development_template.density_type =='units_per_acre'",
+   "is_units_per_lot = development_template.density_type =='units_per_lot'",
     ##TODO(lmwang): not compute cost at template, but at component level, and have proposals sum cost by proposal_components
     #aggregate construction_cost_per_unit from unit_cost for each building component
     #result = sum over all components (percent_of_building_sqft * construction_cost_per_unit / sqft_per_unit)

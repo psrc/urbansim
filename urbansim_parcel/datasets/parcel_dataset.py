@@ -157,20 +157,20 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='land_use_types',
             table_data={
                 "land_use_type_id":array([1, 2]),
-                'density_name':   array(['units_per_acre','far']),
-                'constraint_name':array(['units_per_acre','far']),
+                #'density_name':   array(['units_per_acre','far']),
+                #'constraint_name':array(['units_per_acre','far']),
             }
         )
 
         storage.write_table(
             table_name='development_constraints',
             table_data={
-                'constraint_id': array([1,  2, 3, 4, 5, 6, 7, 8]),
-                'is_constrained': array([0, 0, 1, 1, 1, 0, 0, 1]),
-                'generic_land_use_type_id': array([1, 1, 1, 1, 2, 2, 2, 2]),
-                'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far", "far"]),
-                'minimum': array([0, 0,  0,  0,  2,  0, 0, -1]),
-                'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100, -1]),
+                'constraint_id': array([1,  2, 3, 4, 5, 6, 7, 8, 9]),
+                'is_constrained': array([0, 0, 1, 1, 1, 0, 0, 1, 1]),
+                'generic_land_use_type_id': array([1, 1, 1, 1, 2, 2, 2, 2, 1]),
+                'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far", "far", "units_per_lot"]),
+                'minimum': array([0, 0,  0,  0,  2,  0, 0, -1, 2]),
+                'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100, -1, 6]),
             }
         )
         storage.write_table(
@@ -195,7 +195,11 @@ class Tests(opus_unittest.OpusTestCase):
                          "far":array([[0, 1],
                                      [0,  0],
                                      [0,  1]]
-                                     ),                              
+                                     ),
+                         "units_per_lot":array([[2, 6],
+                                                [-1, -1],
+                                                [2, 6]]
+                                                    ),                         
                            },
                       2:{"unit_per_acre":array([[-1, -1],
                                                 [0, 0.4],
@@ -204,7 +208,7 @@ class Tests(opus_unittest.OpusTestCase):
                          "far":array([[2,-1],
                                      [0, 100],
                                      [2, -1]]
-                                     )         
+                                     )           
                           }
                      }
         for bt, ct in should_be.items():

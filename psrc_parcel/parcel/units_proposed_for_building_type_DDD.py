@@ -47,7 +47,7 @@ class Tests(opus_unittest.OpusTestCase):
              'development_template':
             {
                 'template_id': array([1,2,3,4]),
-                'density_type': array(['units_per_acre', 'far', 'units_per_acre', 'far']),
+                'density_type': array(['units_per_acre', 'far', 'units_per_lot', 'far']),
             },
             'parcel':
             {
