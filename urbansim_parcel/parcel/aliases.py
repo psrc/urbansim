@@ -54,7 +54,7 @@ aliases = [
               "urbansim_parcel.parcel.plan_18",
               "urbansim_parcel.parcel.plan_20"),
         # this is a better alternative for checking residential zoning
-       "is_zoned_res_or_mix = numpy.logical_or(numpy.logical_or(psrc_parcel.parcel.is_zoned_for_glu_1, psrc_parcel.parcel.is_zoned_for_glu_2), psrc_parcel.parcel.is_zoned_for_glu_6)",    
+       "is_zoned_res_or_mix = numpy.logical_or(numpy.logical_or(urbansim_parcel.parcel.is_zoned_for_glu_1, urbansim_parcel.parcel.is_zoned_for_glu_2), urbansim_parcel.parcel.is_zoned_for_glu_6)",    
        "used_land_area = (parcel.aggregate(building.land_area, function=sum)).astype(int32)",
        "vacant_land_area = parcel.parcel_sqft - urbansim_parcel.parcel.used_land_area",
        "unit_name = parcel.disaggregate(land_use_type.unit_name)",
