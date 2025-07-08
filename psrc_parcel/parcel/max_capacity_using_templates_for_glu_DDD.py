@@ -14,7 +14,6 @@ class max_capacity_using_templates_for_glu_DDD(Variable):
     def compute(self,  dataset_pool):
         parcels = self.get_dataset()
         templates = dataset_pool.get_dataset('development_template')
-        template_components = dataset_pool.get_dataset('development_template_component')
         proposals = create_from_parcel_and_development_template(
                                     parcels, templates, 
                                     filter_attribute="has_vacant_land=urbansim_parcel.parcel.vacant_land_area > 0",

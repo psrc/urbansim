@@ -16,7 +16,7 @@ class max_developable_capacity(Variable):
         return ["development_constraint.constraint_type"]
 
     def compute(self,  dataset_pool):
-        parcels = dataset_pool.get_dataset("parcel")
+        parcels = self.get_dataset()
         constraints = dataset_pool.get_dataset("development_constraint") 
         parcels.get_development_constraints(constraints, dataset_pool, consider_constraints_as_rules=True)
         result = zeros(parcels.size())
