@@ -17,10 +17,9 @@ class SSS_package_SSS_dataset_SSS_wwd(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ['%s = %s.gridcell.%s' % (self.var_name, self.var_package, self.var_name),
-                "gridcell.grid_id",
+        return ["gridcell.grid_id",
                 "urbansim_parcel.%s.grid_id" % self.var_dataset, 
-                "_%s_wwd = urbansim_parcel.gridcell.%s_within_walking_distance" % (self.var_name, self.var_name)
+                '_%s_wwd = %s.gridcell.sum_%s_within_walking_distance' % (self.var_name, self.var_package, self.var_name)
                 ]
 
     def compute(self, dataset_pool):
