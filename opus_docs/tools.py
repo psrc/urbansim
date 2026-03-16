@@ -158,8 +158,8 @@ class run_result:
         self.command = command
         self.cwd = cwd
         self.returncode = returncode
-        self.stdout = stdout
-        self.stderr = stderr
+        self.stdout = stdout.decode("ISO-8859-1")
+        self.stderr = stderr.decode("ISO-8859-1")
         self.log = log
 
 def run(command, cwd, log=None):
