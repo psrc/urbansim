@@ -18,7 +18,7 @@ class units_proposed_fraction(Variable):
                 "urbansim_parcel.development_project_proposal.land_area_taken",
                 "density = development_project_proposal.disaggregate(urbansim_parcel.development_template.density)",
                 "density_convertor = development_project_proposal.disaggregate(urbansim_parcel.development_template.density_converter)",  # land area is in sqft
-                "usable_ratio = (1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0).astype(float32)",
+                "usable_ratio = (development_project_proposal.percent_lot_coverage / 100.0).astype(float32)",
                 "density_is_units_per_lot = development_project_proposal.disaggregate(urbansim_parcel.development_template.is_units_per_lot)"
                  ]
 

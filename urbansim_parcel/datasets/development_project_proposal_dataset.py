@@ -12,7 +12,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique, DebugPrinter
 from opus_core.logger import logger
-from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones
+from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones, minimum
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -132,19 +132,20 @@ def create_from_parcel_and_development_template(parcel_dataset,
     storage = StorageFactory().get_storage('dict_storage')
     current_year = SimulationState().get_current_time()
     
-    def _get_data(parcel_ids, template_ids):
+    def _get_data(parcel_ids, template_ids, lc):
         return {
                 "proposal_id": arange(1, parcel_ids.size+1, 1),
                 "parcel_id" : parcel_ids,
                 "template_id": template_ids,
+                "percent_lot_coverage": lc,
                 "start_year": array(parcel_ids.size*[current_year]),
                 "status_id": resize(array([DevelopmentProjectProposalDataset.id_tentative], dtype="int16"), 
                     parcel_ids.size)
                 }
         
-    def _create_project_proposals(parcel_ids, template_ids):
+    def _create_project_proposals(parcel_ids, template_ids, lc):
         storage.write_table(table_name='development_project_proposals',
-            table_data = _get_data(parcel_ids, template_ids)
+            table_data = _get_data(parcel_ids, template_ids, lc)
             )
         development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),
                                                                           dataset1 = parcel_dataset,
@@ -200,8 +201,13 @@ def create_from_parcel_and_development_template(parcel_dataset,
     parcel_ids = parcel_dataset.get_id_attribute()
     template_ids = development_template_dataset.get_id_attribute()
     
+    # update lot coverage with values in the constraints dataset
+    lot_coverage =  100 - development_template_dataset.get_attribute("percent_land_overhead")
+    
     proposal_parcel_ids = array([],dtype="int32")
     proposal_template_ids = array([],dtype="int32")
+    proposal_lc = array([],dtype="float32")
+    
     logger.start_block("Combine parcels, templates and constraints")
     for i_template in index2:
         this_template_id = template_ids[i_template]
@@ -214,7 +220,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
                     continue
                 min_constraint = constraint[:, 0].copy()
                 max_constraint = constraint[:, 1].copy()
-                ## treat -1 as unconstrainted
+                lc_constraint = constraint[:, 2].copy()
+                ## treat -1 as unconstraint
                 w_unconstr = min_constraint == -1
                 if w_unconstr.any():
                     min_constraint[w_unconstr] = template_attribute
@@ -227,19 +234,22 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                             logical_and(template_attribute >= min_constraint,
                                                         template_attribute <= max_constraint))
                 
-                # the following if statements are for debugging purposes only
+                # the following 'if' statements are for debugging purposes only
                 if constraint_type == "units_per_acre":
                     res_units_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint / 43560.0 
                     debug.print_debug("template_id %s (GLU ID %s) max total residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ), 12)
                 elif constraint_type == "far":
                     non_res_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint
                     debug.print_debug("template_id %s (GLU ID %s) max total non residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ), 12)
-                    
+        else:
+            lc_constraint = 100 * ones(index1.size, dtype="float32")
+            
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, resize(array([this_template_id]), fit_indicator.sum())))
+        proposal_lc = concatenate((proposal_lc, minimum(lc_constraint[fit_indicator], lot_coverage[i_template])))
         
     logger.end_block()
-    proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
+    proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids, proposal_lc)
     proposals = _subset_by_filter(proposals)
 
     # eliminate proposals with zero units_proposed

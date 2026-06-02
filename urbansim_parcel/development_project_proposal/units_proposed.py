@@ -51,7 +51,8 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11, 12, 13]),
                 "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3,  3, 3, 3]),
-                "template_id":array([1,  2,  3,  4, 2,  3, 4, 5, 1, 2, 3,  4, 5])
+                "template_id":array([1,  2,  3,  4, 2,  3, 4, 5, 1, 2, 3,  4, 5]),
+                "percent_lot_coverage": array([100,  90,  100,  80, 90,  100, 80, 100, 100, 90, 100, 80,  100]),
             }
         })
         should_be = array([1, 0,  0,            0,  
