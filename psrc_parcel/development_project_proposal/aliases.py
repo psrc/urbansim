@@ -49,7 +49,14 @@ aliases = [
             "units_proposed_hb1110 = numpy.maximum(psrc_parcel.development_project_proposal.units_proposed_plus_minimum_1DU_per_legal_lot_yield, %s * %s)" % (
                 "development_project_proposal.disaggregate(psrc_parcel.parcel.max_units_for_hb1110)", 
                 "numpy.logical_not(development_project_proposal.disaggregate(urbansim_parcel.development_template.is_far))" # is not FAR
-            ), 
+            ),
+            # use units_per_lot only for redevelopment if there are units on the ground
+            "units_proposed_flu26 = psrc_parcel.development_project_proposal.units_proposed_plus_minimum_1DU_per_legal_lot_yield * numpy.logical_or(%s, %s * numpy.logical_or(%s, %s))" % (
+                "numpy.logical_not(development_project_proposal.disaggregate(urbansim_parcel.development_template.is_units_per_lot))",
+                "development_project_proposal.disaggregate(urbansim_parcel.development_template.is_units_per_lot)", # Assure that for units_per_lot it is always new development if there are units on the ground. It cannot be infill.
+                "(development_project_proposal.is_redevelopment == 1) * (urbansim_parcel.development_project_proposal.existing_units > 0)",
+                "(development_project_proposal.is_redevelopment == 0)  * (urbansim_parcel.development_project_proposal.existing_units == 0)" 
+            ),             
 
              "developable_capacity = clip_to_zero(development_project_proposal.disaggregate(psrc_parcel.parcel.max_developable_capacity)-urbansim_parcel.development_project_proposal.building_sqft)",
              #"acquisition_cost = clip_to_zero(development_project_proposal.disaggregate(parcel.total_value_per_sqft*parcel.parcel_sqft) - development_project_proposal.disaggregate(urbansim_parcel.parcel.improvement_value) * (development_project_proposal.is_redevelopment == 0))",
