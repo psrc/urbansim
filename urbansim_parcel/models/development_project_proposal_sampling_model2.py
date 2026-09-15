@@ -159,7 +159,19 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_component_set.total_spaces = self.proposal_component_set[total_spaces_variable]
         self.realestate_dataset.occupied_spaces = self.realestate_dataset[occupied_spaces_variable]
         
+        # things for speeding-up the computation 
+        self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
+        self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
+        self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])        
+        
+        self._proposal_parcel_id = self.proposal_set['parcel_id']
+        self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
+        self._proposal_id = self.proposal_set['proposal_id']
+        
         self.accounting = {}; self.logging = {}
+        self._component_indexes_by_key = {}
+        self._eliminated_keys = set()
+        
         #has_needed_components = zeros(self.proposal_set.size(), dtype='bool')
         for index in range(target_vacancy_for_this_year.size()):
             column_value = tuple(target_vacancy_for_this_year.column_values[index,:].tolist())
@@ -167,6 +179,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
             realestate_indexes = self.get_index_by_condition(self.realestate_dataset.column_values, column_value)
             component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, column_value)
+            self._component_indexes_by_key[column_value] = component_indexes   # keep it for reuse
             
             this_total_spaces_variable, this_occupied_spaces_variable = total_spaces_variable, occupied_spaces_variable
             ## total/occupied_spaces_variable can be specified either as a universal name for all realestate
@@ -320,6 +333,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if variable not in known_attributes and alias not in known_attributes:
                 dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
 
+    def _build_index_map(id_array):
+        """One-time O(N log N) pass; returns {id: ndarray of indexes} instead of scanning per lookup."""
+        if id_array.size == 0:
+            return {}
+        order = argsort(id_array, kind='stable')
+        sorted_ids = id_array[order]
+        boundaries = where(concatenate(([True], sorted_ids[1:] != sorted_ids[:-1])))[0]
+        boundaries = concatenate((boundaries, [sorted_ids.size]))
+        return {sorted_ids[boundaries[i]]: order[boundaries[i]:boundaries[i+1]]
+                for i in range(boundaries.size - 1)}
+    
     def get_index_by_condition(self, array, condition):
         from numpy import alltrue
         #assert array.ndim == 2
@@ -331,7 +355,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
     
     def consider_proposals(self, proposal_indexes, force_accepting=False):
         is_proposal_rejected = zeros(proposal_indexes.size, dtype="bool")
-        sites = self.proposal_set["parcel_id"][proposal_indexes]
+        sites = self._proposal_parcel_id[proposal_indexes]
         for i, proposal_index in enumerate(proposal_indexes):
             if not is_proposal_rejected[i] and ((self.weight[proposal_index] > 0) or force_accepting):
                 accepted = self.consider_proposal(proposal_index, force_accepting=force_accepting)
@@ -339,16 +363,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     is_proposal_rejected[ sites == sites[i]] = True
         
     def consider_proposal(self, proposal_index, force_accepting=False):
-        this_site = self.proposal_set["parcel_id"][proposal_index]            
+        this_site = self._proposal_parcel_id[proposal_index]            
         building_indexes = array([], dtype='i')
         demolished_spaces = defaultdict(int)
-        if self.proposal_set["is_redevelopment"][proposal_index] or force_accepting:  #redevelopment proposal
-            building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
+        if self._proposal_is_redevelopment[proposal_index] or force_accepting:  #redevelopment proposal
+            building_indexes = self._building_indexes_by_parcel.get(this_site, array([], dtype='i'))
             for building_index in building_indexes:
                 column_value = tuple(self.realestate_dataset.column_values[building_index,:].tolist())
                 demolished_spaces[column_value] += self.realestate_dataset.total_spaces[building_index]
 
-        component_indexes = where(self.proposal_component_set['proposal_id']==self.proposal_set['proposal_id'][proposal_index])[0]
+        component_indexes = self._component_indexes_by_proposal.get(
+                self._proposal_id[proposal_index], array([], dtype='i'))        
         proposed_spaces = defaultdict(int) 
         #[(self.proposal_component_set.column_values[component_index,:], self.proposal_component_set.total_spaces[component_indexes])]            
         for component_index in component_indexes:
@@ -385,30 +410,33 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.accepted_proposals.append(proposal_index)
         
         # don't consider proposals for this site in future sampling
-        self.weight[proposal_index] = 0.0
-        self.weight[self.proposal_set["parcel_id"] == this_site] = 0.0
+        #self.weight[proposal_index] = 0.0
+        self.weight[self._proposal_indexes_by_parcel[this_site]] = 0.0
         return True
     
     def eliminate_proposals_if_target_reached(self, key):
+        if key in self._eliminated_keys:
+            return
+        
         if self._is_target_reached(key):  ## disable proposals from sampling
-            component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+            component_indexes = self._component_indexes_by_key[key]
             proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
             self.weight[proposal_indexes] = 0.0
+            self._eliminated_keys.add(key)
         return
         
     def _is_target_reached(self, column_value=()):
         if column_value:
-            if column_value in self.accounting:
-                accounting = self.accounting[column_value]
-                result = accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
+            accounting = self.accounting.get(column_value)
+            if accounting is None:
+                return True            
+            return accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                                 accounting.get("demolished_spaces",0) )
-                return result
-            else:
-                return True
-        results = [  accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
+
+
+        return all(accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) ) 
-                   for column_value, accounting in list(self.accounting.items()) ]
-        return all(results)
+                   for accounting in self.accounting.values())
 
 ## TODO: enable unittests     
 #from opus_core.tests import opus_unittest

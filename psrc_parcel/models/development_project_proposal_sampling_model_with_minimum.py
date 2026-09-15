@@ -162,7 +162,19 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         self.proposal_component_set.total_spaces = self.proposal_component_set[total_spaces_variable]
         self.realestate_dataset.occupied_spaces = self.realestate_dataset[occupied_spaces_variable]
         
+        # things for speeding-up the computation 
+        self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
+        self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
+        self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])
+        
+        self._proposal_parcel_id = self.proposal_set['parcel_id']
+        self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
+        self._proposal_id = self.proposal_set['proposal_id']
+        
         self.accounting = {}; self.logging = {}
+        self._component_indexes_by_key = {}
+        self._eliminated_keys = set()
+        
         #has_needed_components = zeros(self.proposal_set.size(), dtype='bool')
         for index in range(target_vacancy_for_this_year.size()):
             column_value = tuple(target_vacancy_for_this_year.column_values[index,:].tolist())
@@ -171,6 +183,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                 accounting['minimum_spaces'] = target_vacancy_for_this_year[minimum_spaces_attribute][index]
             realestate_indexes = self.get_index_by_condition(self.realestate_dataset.column_values, column_value)
             component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, column_value)
+            self._component_indexes_by_key[column_value] = component_indexes   # keep it for reuse
             
             this_total_spaces_variable, this_occupied_spaces_variable = total_spaces_variable, occupied_spaces_variable
             ## total/occupied_spaces_variable can be specified either as a universal name for all realestate
