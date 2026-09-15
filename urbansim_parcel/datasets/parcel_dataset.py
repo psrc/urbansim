@@ -52,7 +52,7 @@ class ParcelDataset(UrbansimDataset):
                 return self.development_constraints
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
-                   set([constraints.get_id_name()[0], "generic_land_use_type_id", "constraint_type", "minimum", "maximum"])
+                   set([constraints.get_id_name()[0], "generic_land_use_type_id", "constraint_type", "minimum", "maximum", "lc"])
         attributes_with_prefix = ["%s.%s" % (variable_package_name, attr) for attr in attributes]
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         attributes = [VariableName(attr) for attr in attributes]
@@ -71,6 +71,11 @@ class ParcelDataset(UrbansimDataset):
             
         constraint_minimum = constraints.get_attribute("minimum")
         constraint_maximum = constraints.get_attribute("maximum")
+        if constraints.has_attribute("lc"):
+            constraint_lc = constraints.get_attribute("lc") * 100
+        else:
+            constraint_lc = ones(constraints.size(), dtype="int32") * 100
+            
         type_constraint_max = {}
         #initialize results, set max to the max value found in constraints for each type
         for type_id in unique(type_ids):
@@ -79,9 +84,10 @@ class ParcelDataset(UrbansimDataset):
             type_constraint_max[type_id] = {}
             for constraint_type in unique(constraint_types[w_this_type]):
                 if consider_constraints_as_rules:
-                    self.development_constraints[type_id].update({ constraint_type : -2*ones((index.size,2), dtype="float32") })
+                    self.development_constraints[type_id].update({ constraint_type : -2*ones((index.size,3), dtype="float32") })
                 else:
-                    self.development_constraints[type_id].update({ constraint_type : -1*ones((index.size,2), dtype="float32") })
+                    self.development_constraints[type_id].update({ constraint_type : -1*ones((index.size,3), dtype="float32") })
+                self.development_constraints[type_id][constraint_type][:, 2] = 100
                 w_this_type_and_constraint_type = where( logical_and(type_ids == type_id, constraint_types == constraint_type ) )
                 if w_this_type_and_constraint_type[0].size > 0:
                 # initialize the maximum value, because minimum of maximum value below need to have this initial value to work
@@ -95,13 +101,18 @@ class ParcelDataset(UrbansimDataset):
             type_id = type_ids[iconstr]
             constraint_type = constraint_types[iconstr]
             w = where(self._get_one_constraint(iconstr, constraints, index, attributes))[0]
-            if w.size > 0: 
+            if w.size > 0:
+                # if multiple contraints match the same parcel, take the max of constraints minimums,
+                # min of constraints maximums and min of constraints lot coverage
                 self.development_constraints[type_id][constraint_type][w,0] = \
                     maximum(self.development_constraints[type_id][constraint_type][w,0],
                         constraint_minimum[iconstr])
                 self.development_constraints[type_id][constraint_type][w,1] = \
                     minimum(type_constraint_max[type_id][constraint_type],
                             constraint_maximum[iconstr])
+                self.development_constraints[type_id][constraint_type][w,2] = \
+                    minimum(self.development_constraints[type_id][constraint_type][w,2], 
+                            constraint_lc[iconstr])
                 
         if consider_constraints_as_rules:
             for type_id in all_types:
@@ -109,7 +120,7 @@ class ParcelDataset(UrbansimDataset):
                     self.development_constraints[type_id] = {}
                 for constraint_type in all_unique_constraint_types:
                     if constraint_type not in self.development_constraints[type_id]:
-                        self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
+                        self.development_constraints[type_id].update({ constraint_type : zeros((index.size,3), dtype="float32") })
                     else:
                         # change the initial value of -2 in minimum for 0 (i.e. not allowed)
                         self.development_constraints[type_id][constraint_type][where(self.development_constraints[type_id][constraint_type]<-1.5)] = 0
@@ -171,6 +182,7 @@ class Tests(opus_unittest.OpusTestCase):
                 'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far", "far", "units_per_lot"]),
                 'minimum': array([0, 0,  0,  0,  2,  0, 0, -1, 2]),
                 'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100, -1, 6]),
+                'lc': array( [ 0.1, 0.9, 0.8, 0.5,  0.4, 0.2, 0.3, 0.5, 0.6])
             }
         )
         storage.write_table(
@@ -188,26 +200,26 @@ class Tests(opus_unittest.OpusTestCase):
         constraints = dataset_pool.get_dataset('development_constraint')
 
         values = parcels.get_development_constraints(constraints, dataset_pool)
-        should_be = { 1:{"unit_per_acre":array([[0,0.2],
-                                                [0, 3],
-                                                [0,0.2]]
+        should_be = { 1:{"unit_per_acre":array([[0, 0.2, 80],
+                                                [0, 3, 10],
+                                                [0,0.2, 80]]
                                               ),
-                         "far":array([[0, 1],
-                                     [0,  0],
-                                     [0,  1]]
+                         "far":array([[0, 1, 50],
+                                     [0,  0, 90],
+                                     [0,  1, 50]]
                                      ),
-                         "units_per_lot":array([[2, 6],
-                                                [-1, -1],
-                                                [2, 6]]
+                         "units_per_lot":array([[2, 6, 60],
+                                                [-1, -1, 100],
+                                                [2, 6, 60]]
                                                     ),                         
                            },
-                      2:{"unit_per_acre":array([[-1, -1],
-                                                [0, 0.4],
-                                                [-1, -1]]
+                      2:{"unit_per_acre":array([[-1, -1, 100],
+                                                [0, 0.4, 20],
+                                                [-1, -1, 100]]
                                                ),
-                         "far":array([[2,-1],
-                                     [0, 100],
-                                     [2, -1]]
+                         "far":array([[2,-1, 40],
+                                     [0, 100, 30],
+                                     [2, -1, 40]]
                                      )           
                           }
                      }
