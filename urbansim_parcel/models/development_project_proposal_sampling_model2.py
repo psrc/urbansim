@@ -28,17 +28,6 @@ try:
 except:
     PrettyTable = None
     
-@staticmethod
-def _build_index_map(id_array):
-    """One-time O(N log N) pass; returns {id: ndarray of indexes} instead of scanning per lookup."""
-    if id_array.size == 0:
-        return {}
-    order = argsort(id_array, kind='stable')
-    sorted_ids = id_array[order]
-    boundaries = where(concatenate(([True], sorted_ids[1:] != sorted_ids[:-1])))[0]
-    boundaries = concatenate((boundaries, [sorted_ids.size]))
-    return {sorted_ids[boundaries[i]]: order[boundaries[i]:boundaries[i+1]]
-            for i in range(boundaries.size - 1)}
     
 class DevelopmentProjectProposalSamplingModel(Model):
     """ this is refactory of development_project_proposal_sampling_model
@@ -83,7 +72,18 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
             self.weight = self.weight * self.proposal_set.get_attribute(filter_attribute)
 
-
+    @staticmethod
+    def _build_index_map(id_array):
+        """One-time O(N log N) pass; returns {id: ndarray of indexes} instead of scanning per lookup."""
+        if id_array.size == 0:
+            return {}
+        order = argsort(id_array, kind='stable')
+        sorted_ids = id_array[order]
+        boundaries = where(concatenate(([True], sorted_ids[1:] != sorted_ids[:-1])))[0]
+        boundaries = concatenate((boundaries, [sorted_ids.size]))
+        return {sorted_ids[boundaries[i]]: order[boundaries[i]:boundaries[i+1]]
+                for i in range(boundaries.size - 1)}
+    
     def run(self, n=500, 
             realestate_dataset_name = 'building',
             current_year=None,

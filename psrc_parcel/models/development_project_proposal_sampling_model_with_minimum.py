@@ -348,36 +348,51 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         #parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible])
         #min_type = {}
         #egligible_proposals = {}
+        
+        proposal_ids = self.proposal_set.get_id_attribute()
+        component_proposal_id = self.proposal_component_set['proposal_id']
+        number_of_components = self.proposal_set["number_of_components"]
+        proposal_parcel_id = self.proposal_set['parcel_id']
+        proposal_parcel_id_wegligible = proposal_parcel_id[wegligible]        
+        
+        # compute each (key, btype) homogeneity mask once; it's needed by both the
+        # "categories" block below and the "adjfactor" block further down
+        is_homogeneous_type = {}
+        for key in self.column_names:
+            masks = {}
+            for btype in unique(self.proposal_component_set[key]):
+                masks[btype] = (ndimage.sum(self.proposal_component_set[key] == btype,
+                                            labels=component_proposal_id,
+                                            index=proposal_ids
+                                            ) == number_of_components)
+            is_homogeneous_type[key] = masks        
+        
         tobechosen_ind = ones(wegligible.size).astype('bool8')
         if not compete_among_types:
             for key in self.column_names:
-                utypes_all = unique(self.proposal_component_set[key])
                 categories = zeros(self.proposal_set.size(), dtype='int32')
-                for btype in utypes_all:
-                    w = where(ndimage.sum(self.proposal_component_set[key] == btype,
-                                          labels=self.proposal_component_set['proposal_id'], 
-                                          index=self.proposal_set.get_id_attribute()
-                                          ) == self.proposal_set["number_of_components"])[0]
-                    categories[w] = btype
+                for btype, mask in is_homogeneous_type[key].items():
+                    categories[where(mask)[0]] = btype
                 # categories equal zero means mix-used type with components of different type
-
+                
                 utypes = unique(categories[wegligible])           
                 for value in utypes:
                     type_is_value_ind = categories[wegligible]==value
                     for i in range(nmax):
-                        parcels_with_proposals = (unique(self.proposal_set['parcel_id'][wegligible][where(type_is_value_ind)])).astype(int32)
+                        parcels_with_proposals = (unique(proposal_parcel_id_wegligible[where(type_is_value_ind)])).astype(int32)
                         if parcels_with_proposals.size <= 0:
                             continue
-                        labels = (self.proposal_set['parcel_id'][wegligible])*type_is_value_ind               
+                        labels = proposal_parcel_id_wegligible*type_is_value_ind               
                         chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                             labels=labels, 
                                             index=parcels_with_proposals)).flatten().astype(int32)               
                         egligible[wegligible[chosen_prop]] = False
                         type_is_value_ind[chosen_prop] = False
         else:
-            parcels_with_proposals = unique(self.proposal_set['parcel_id'][wegligible]).astype(int32)
+            parcels_with_proposals = unique(proposal_parcel_id_wegligible).astype(int32)
+            proposal_parcel_id_wegligible_for_max = proposal_parcel_id[wegligible_for_max_proposal]
             max_prop = array(maximum_position(within_parcel_weights[wegligible_for_max_proposal], 
-                                            labels=self.proposal_set['parcel_id'][wegligible_for_max_proposal], 
+                                            labels=proposal_parcel_id_wegligible_for_max, 
                                             index=parcels_with_proposals)).flatten().astype(int32)                                            
             max_value_by_parcel = within_parcel_weights[wegligible_for_max_proposal][max_prop]
             incompetition = ones(wegligible.size, dtype='bool8')
@@ -385,15 +400,15 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             incompetition[wmaxprop] = False
             egligible[wegligible[wmaxprop]] = False            
             for i in range(nmax-1):
-                labels = (self.proposal_set['parcel_id'][wegligible])*incompetition 
-                valid_parcels = where(in1d(parcels_with_proposals, self.proposal_set['parcel_id'][wegligible][where(incompetition)]))[0]
+                labels = proposal_parcel_id_wegligible*incompetition 
+                valid_parcels = where(in1d(parcels_with_proposals, proposal_parcel_id_wegligible[where(incompetition)]))[0]
                 if valid_parcels.size <= 0:
                     break
                 chosen_prop = array(maximum_position(within_parcel_weights[wegligible], 
                                             labels=labels, 
                                             index=parcels_with_proposals[valid_parcels])).flatten().astype(int32)
                 percent = within_parcel_weights[wegligible][chosen_prop]/(max_value_by_parcel[valid_parcels]/100.0)
-                where_lower = where(in1d(self.proposal_set['parcel_id'][wegligible], parcels_with_proposals[valid_parcels][percent <= filter_threshold]))[0]
+                where_lower = where(in1d(proposal_parcel_id_wegligible, parcels_with_proposals[valid_parcels][percent <= filter_threshold]))[0]
                 egligible[wegligible[setdiff1d(chosen_prop, where_lower)]] = False   # proposals with egligible=True get eliminated, so we dont want to set it to False for the where_lower ones
                 incompetition[union1d(chosen_prop, where_lower)] = False
                 if incompetition.sum() <= 0:
@@ -453,18 +468,14 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         # adjust for number of proposals per parcel by building type
         to_adjust = logical_or(self.proposal_set["status_id"] == self.proposal_set.id_tentative,
                                self.proposal_set["status_id"] == self.proposal_set.id_proposed)
+        
+        adjfactor = ones(self.proposal_set.size(), dtype='float32')
         for key in self.column_names:
-            utypes_all = unique(self.proposal_component_set[key])
-            adjfactor = ones(self.proposal_set.size(), dtype='float32')
-            for btype in utypes_all:
-                is_bt = ndimage.sum(self.proposal_component_set[key] == btype,
-                                    labels=self.proposal_component_set['proposal_id'], 
-                                    index=self.proposal_set.get_id_attribute()
-                                    )  == self.proposal_set["number_of_components"]
+            for btype, is_bt in is_homogeneous_type[key].items():
                 toadj = logical_and(to_adjust, is_bt)                   
                 # number of proposals per parcel of this building type
-                nbtprops = ndimage.sum(toadj, labels=self.proposal_set['parcel_id'], 
-                                       index=self.proposal_set['parcel_id']
+                nbtprops = ndimage.sum(toadj, labels=proposal_parcel_id, 
+                                       index=proposal_parcel_id
                                     )
                 wadj = where(toadj)[0]
                 adjfactor[wadj] = 1./nbtprops[wadj]
@@ -472,8 +483,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
             
         # rescale the adjustment factor to sum up to 1
         adjfactor[where(to_adjust == False)] = 0
-        sadjfactor = ndimage.sum(adjfactor, labels=self.proposal_set['parcel_id'], 
-                                               index=self.proposal_set['parcel_id'])  
+        sadjfactor = ndimage.sum(adjfactor, labels=proposal_parcel_id, index=proposal_parcel_id)  
         adjfactor_scaled = safe_array_divide(adjfactor, sadjfactor)
         wto_adjust = where(to_adjust)[0]
         self.weight[wto_adjust] = self.weight[wto_adjust] * adjfactor_scaled[wto_adjust]
