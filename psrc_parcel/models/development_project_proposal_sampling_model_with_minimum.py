@@ -174,6 +174,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         self.accounting = {}; self.logging = {}
         self._component_indexes_by_key = {}
         self._eliminated_keys = set()
+        self._above_threshold_mask = self.proposal_component_set["percent_building_sqft"] > self.elimination_threshold
         
         #has_needed_components = zeros(self.proposal_set.size(), dtype='bool')
         for index in range(target_vacancy_for_this_year.size()):
@@ -296,28 +297,32 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         return (self.proposal_set, self.realestate_dataset.get_id_attribute()[self.demolished_buildings])
 
     def eliminate_proposals_if_target_reached(self, key):
+        if key in self._eliminated_keys:
+            return        
         if self._is_target_reached(key):  ## disable proposals from sampling
-            component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
-            component_indexes = logical_and(component_indexes, self.proposal_component_set["percent_building_sqft"] > self.elimination_threshold)
+            component_indexes = logical_and(self._component_indexes_by_key[key], self._above_threshold_mask)
+            #component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+            #component_indexes = logical_and(component_indexes, self.proposal_component_set["percent_building_sqft"] > self.elimination_threshold)
             proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
             self.weight[proposal_indexes] = 0.0
+            self._eliminated_keys.add(key)
         return
     
     def _is_target_reached(self, column_value=()):
         if column_value:
-            if column_value in self.accounting:
-                accounting = self.accounting[column_value]
-                result = (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
+            accounting = self.accounting.get(column_value)
+            if accounting is None:
+                return True            
+            return (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                                 accounting.get("demolished_spaces",0) )) and (
                          accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                return result
-            else:
-                return True
-        results = [  (accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
+
+        return all((accounting.get("target_spaces",0) <= ( accounting.get("total_spaces",0) + accounting.get("proposed_spaces",0) - 
                                                             accounting.get("demolished_spaces",0) )) and (
                          accounting.get("proposed_spaces",0) >= accounting.get("minimum_spaces",0))
-                   for column_value, accounting in list(self.accounting.items()) ]
-        return all(results)
+                   for accounting in self.accounting.values()
+                   )
+                   
 
     def select_proposals_within_parcels(self, nmax=2, weight_string=None, compete_among_types=False, filter_threshold=75, 
                                         MU_same_weight=False, transpose_interpcl_weight=True, 

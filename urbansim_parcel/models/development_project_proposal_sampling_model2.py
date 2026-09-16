@@ -28,6 +28,18 @@ try:
 except:
     PrettyTable = None
     
+@staticmethod
+def _build_index_map(id_array):
+    """One-time O(N log N) pass; returns {id: ndarray of indexes} instead of scanning per lookup."""
+    if id_array.size == 0:
+        return {}
+    order = argsort(id_array, kind='stable')
+    sorted_ids = id_array[order]
+    boundaries = where(concatenate(([True], sorted_ids[1:] != sorted_ids[:-1])))[0]
+    boundaries = concatenate((boundaries, [sorted_ids.size]))
+    return {sorted_ids[boundaries[i]]: order[boundaries[i]:boundaries[i+1]]
+            for i in range(boundaries.size - 1)}
+    
 class DevelopmentProjectProposalSamplingModel(Model):
     """ this is refactory of development_project_proposal_sampling_model
     It will replace urbansim_parcel.models.development_project_proposal_sampling_model once it stablizes.
@@ -333,17 +345,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if variable not in known_attributes and alias not in known_attributes:
                 dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
 
-    def _build_index_map(id_array):
-        """One-time O(N log N) pass; returns {id: ndarray of indexes} instead of scanning per lookup."""
-        if id_array.size == 0:
-            return {}
-        order = argsort(id_array, kind='stable')
-        sorted_ids = id_array[order]
-        boundaries = where(concatenate(([True], sorted_ids[1:] != sorted_ids[:-1])))[0]
-        boundaries = concatenate((boundaries, [sorted_ids.size]))
-        return {sorted_ids[boundaries[i]]: order[boundaries[i]:boundaries[i+1]]
-                for i in range(boundaries.size - 1)}
-    
     def get_index_by_condition(self, array, condition):
         from numpy import alltrue
         #assert array.ndim == 2
