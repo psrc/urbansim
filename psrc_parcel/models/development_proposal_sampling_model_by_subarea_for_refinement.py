@@ -269,7 +269,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         if proposal_indexes.size == 0:
             return
         is_proposal_rejected = zeros(proposal_indexes.size, dtype="bool")
-        sites = self.proposal_set["parcel_id"][proposal_indexes]
+        sites = self._proposal_parcel_id[proposal_indexes]
         self.proposal_set.compute_variables(['is_res = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.is_residential) > 0',
                                              'total_spaces = development_project_proposal.aggregate(psrc_parcel.development_project_proposal_component.total_spaces)'],
                                                     dataset_pool=self.dataset_pool)
@@ -283,14 +283,14 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                 accepted = self.has_more_cubicles(proposal_index, force_accepting=force_accepting) and self.consider_proposal(proposal_index, force_accepting=force_accepting)
                 if accepted:
                     is_proposal_rejected[ sites == sites[i]] = True
-                    
+                       
     def has_more_cubicles(self, proposal_index, force_accepting=False):
-        if force_accepting or not self.proposal_set["is_redevelopment"][proposal_index] or self.proposal_set["is_res"][proposal_index]:
+        if force_accepting or not self._proposal_is_redevelopment[proposal_index] or self.proposal_set["is_res"][proposal_index]:
             return True
         # check this only for non-residential redevelopment proposals
-        this_site = self.proposal_set["parcel_id"][proposal_index]
-        building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
+        this_site = self._proposal_parcel_id[proposal_index]
+        building_indexes = self._building_indexes_by_parcel.get(this_site, array([], dtype='i'))
         if self.realestate_dataset['is_residential'][building_indexes].any():
             return True
         # only accept if it fits more jobs then the existing structure
-        return self.proposal_set["total_spaces"][proposal_index] >= self.realestate_dataset["total_spaces"][building_indexes].sum()
+        return self.proposal_set["total_spaces"][proposal_index] >= self.realestate_dataset["total_spaces"][building_indexes].sum()    

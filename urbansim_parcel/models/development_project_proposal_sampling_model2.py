@@ -171,14 +171,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_component_set.total_spaces = self.proposal_component_set[total_spaces_variable]
         self.realestate_dataset.occupied_spaces = self.realestate_dataset[occupied_spaces_variable]
         
-        # things for speeding-up the computation 
-        self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
-        self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
-        self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])        
-        
-        self._proposal_parcel_id = self.proposal_set['parcel_id']
-        self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
-        self._proposal_id = self.proposal_set['proposal_id']
+        # things for speeding-up the computation
+        if not hasattr(self, '_building_indexes_by_parcel'):
+            self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
+            self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
+            self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])
+            self._proposal_parcel_id = self.proposal_set['parcel_id']
+            self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
+            self._proposal_id = self.proposal_set['proposal_id']
         
         self.accounting = {}; self.logging = {}
         self._component_indexes_by_key = {}

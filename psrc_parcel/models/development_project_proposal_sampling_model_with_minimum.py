@@ -149,27 +149,23 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                              "urbansim_parcel.development_project_proposal.land_area_taken"],
                                             dataset_pool=self.dataset_pool)
         
-        n_column = len(self.column_names)
-        self.column_names_index = {}
-        for iname in range(n_column):
-            self.column_names_index[self.column_names[iname]] = iname
- 
-        target_vacancy_for_this_year.column_values = target_vacancy_for_this_year.get_multiple_attributes(self.column_names).reshape((-1, n_column))
-        self.realestate_dataset.column_values = self.realestate_dataset.get_multiple_attributes(self.column_names).reshape((-1, n_column))
-        self.proposal_component_set.column_values = self.proposal_component_set.get_multiple_attributes(self.column_names).reshape((-1, n_column))
-        #defaults, can be changed later by spaces_variable specified in target_vacancy rates
-        self.realestate_dataset.total_spaces = self.realestate_dataset[total_spaces_variable]
-        self.proposal_component_set.total_spaces = self.proposal_component_set[total_spaces_variable]
-        self.realestate_dataset.occupied_spaces = self.realestate_dataset[occupied_spaces_variable]
-        
-        # things for speeding-up the computation 
-        self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
-        self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
-        self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])
-        
-        self._proposal_parcel_id = self.proposal_set['parcel_id']
-        self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
-        self._proposal_id = self.proposal_set['proposal_id']
+        if not hasattr(self, '_building_indexes_by_parcel'): # this condition is for the purpose of not repeating the below if run in a loop for subregions
+            n_column = len(self.column_names)
+            self.column_names_index = {iname: self.column_names[iname] for iname in range(n_column)} 
+            target_vacancy_for_this_year.column_values = target_vacancy_for_this_year.get_multiple_attributes(self.column_names).reshape((-1, n_column))
+            self.realestate_dataset.column_values = self.realestate_dataset.get_multiple_attributes(self.column_names).reshape((-1, n_column))
+            self.proposal_component_set.column_values = self.proposal_component_set.get_multiple_attributes(self.column_names).reshape((-1, n_column))
+            #defaults, can be changed later by spaces_variable specified in target_vacancy rates
+            self.realestate_dataset.total_spaces = self.realestate_dataset[total_spaces_variable]
+            self.proposal_component_set.total_spaces = self.proposal_component_set[total_spaces_variable]
+            self.realestate_dataset.occupied_spaces = self.realestate_dataset[occupied_spaces_variable]
+            # things for speeding-up the computation
+            self._building_indexes_by_parcel = self._build_index_map(self.realestate_dataset['parcel_id'])
+            self._component_indexes_by_proposal = self._build_index_map(self.proposal_component_set['proposal_id'])
+            self._proposal_indexes_by_parcel = self._build_index_map(self.proposal_set['parcel_id'])
+            self._proposal_parcel_id = self.proposal_set['parcel_id']
+            self._proposal_is_redevelopment = self.proposal_set['is_redevelopment']
+            self._proposal_id = self.proposal_set['proposal_id']
         
         self.accounting = {}; self.logging = {}
         self._component_indexes_by_key = {}
@@ -367,7 +363,6 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                             ) == number_of_components)
             is_homogeneous_type[key] = masks        
         
-        tobechosen_ind = ones(wegligible.size).astype('bool8')
         if not compete_among_types:
             for key in self.column_names:
                 categories = zeros(self.proposal_set.size(), dtype='int32')

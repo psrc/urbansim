@@ -12,7 +12,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique, DebugPrinter
 from opus_core.logger import logger
-from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones, minimum
+from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones, minimum, int16
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -109,6 +109,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 consider_constraints_as_rules=True,
                                                 template_opus_path="urbansim_parcel.development_template",
                                                 proposed_units_variable="urbansim_parcel.development_project_proposal.units_proposed",
+                                                is_redevelopment=False, 
                                                 dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
@@ -251,7 +252,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
     logger.end_block()
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids, proposal_lc)
     proposals = _subset_by_filter(proposals)
-
+    proposals.add_attribute(is_redevelopment * ones(proposals.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
+    
     # eliminate proposals with zero units_proposed
     units_proposed = proposals.compute_variables([proposed_units_variable], dataset_pool = dataset_pool)
     proposals.add_attribute(units_proposed, "units_proposed", AttributeType.PRIMARY)

@@ -161,9 +161,9 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                               parcel_index = index1,
                                                               template_index = index2,
                                                               proposed_units_variable=proposed_units_variable,
+                                                              is_redevelopment=False, 
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None) )
-            proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
             # Line added by Jesse Ayers, MAG, 7/20/2009
             # adding a primary attribute to catch a later computation
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int32), "total_land_area_taken", AttributeType.PRIMARY )
@@ -184,6 +184,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                                   parcel_index = where(is_redevelopment)[0],
                                                                   template_index = index2,
                                                                   proposed_units_variable=proposed_units_variable,
+                                                                  is_redevelopment=True, 
                                                                   dataset_pool=dataset_pool,
                                                                   resources = kwargs.get("resources", None))
                 
@@ -201,7 +202,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                         logger.log_status('%s proposals smaller than existing buildings, therefore removed.' %  remove_proposals.size)
                     dataset_pool._remove_dataset(redev_proposal_set.get_dataset_name())
                     dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
-                redev_proposal_set.add_attribute( ones(redev_proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
+
                 proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
                 
                 ###roll back land_area of buildings
