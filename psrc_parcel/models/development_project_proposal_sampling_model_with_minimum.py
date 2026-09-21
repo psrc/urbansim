@@ -149,10 +149,11 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
                                              "urbansim_parcel.development_project_proposal.land_area_taken"],
                                             dataset_pool=self.dataset_pool)
         
+        n_column = len(self.column_names)
+        target_vacancy_for_this_year.column_values = target_vacancy_for_this_year.get_multiple_attributes(self.column_names).reshape((-1, n_column))
+        
         if not hasattr(self, '_building_indexes_by_parcel'): # this condition is for the purpose of not repeating the below if run in a loop for subregions
-            n_column = len(self.column_names)
             self.column_names_index = {iname: self.column_names[iname] for iname in range(n_column)} 
-            target_vacancy_for_this_year.column_values = target_vacancy_for_this_year.get_multiple_attributes(self.column_names).reshape((-1, n_column))
             self.realestate_dataset.column_values = self.realestate_dataset.get_multiple_attributes(self.column_names).reshape((-1, n_column))
             self.proposal_component_set.column_values = self.proposal_component_set.get_multiple_attributes(self.column_names).reshape((-1, n_column))
             #defaults, can be changed later by spaces_variable specified in target_vacancy rates

@@ -150,7 +150,7 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
                 if btdistr[ibt][subarea_index] == 0:
                     no_space = no_space + [bt]
             if len(no_space) > 0:
-                logger.log_warning('No developable space for building types: %s' % str(no_space).strip('[]'))
+                logger.log_warning('No developable space or no proposals for building types: %s' % str(no_space).strip('[]'))
             self.second_pass = {}
             DevelopmentProjectProposalSamplingModel.run(self, n=n, realestate_dataset_name=realestate_dataset_name, **kwargs)                
             status = self.proposal_set.get_attribute("status_id")
@@ -239,7 +239,6 @@ class DevelopmentProposalSamplingModelBySubareaForRefinement(DevelopmentProjectP
         return building_type_distribution
     
     def compute_building_type_distribution(self, building_type_dataset, realestate_dataset_name, regions):
-        parcels = self.dataset_pool.get_dataset('parcel')        
         building_type_ids = building_type_dataset.get_id_attribute()
         regions.compute_variables(["units_proposed_for_bt_%s = %s.aggregate(psrc_parcel.parcel.units_proposed_for_building_type_%s)" % (type, self.subarea_name, type) for type in building_type_ids[logical_not(in1d(building_type_ids, self.bt_do_not_count))]],
                     dataset_pool=self.dataset_pool)
