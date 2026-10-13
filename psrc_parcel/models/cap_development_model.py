@@ -56,7 +56,7 @@ class CapDevelopmentModel(TransitionModel):
                         
                 **geo_id_name** : string, optional
                         Geography id name for which the actual growth rate is computed. 
-                        If compare_absolute_numbers is True, it should be the same as ct_geo_id_name.
+                        If compare_absolute_numbers is True, it must be the same as ct_geo_id_name.
                         
                 **cap_attribute_name** : string, optional
                         Attribute name of the final results. It is attached/modified to the main dataset.
@@ -78,7 +78,7 @@ class CapDevelopmentModel(TransitionModel):
         ## self.control_total, because there is a problem with DataSubset to handle index
         
         if compare_absolute_numbers and ct_geo_id_name != geo_id_name:
-            logger.log_warning("ct_geo_id_name should be the same as geo_id_name if comparing absolute numbers. Using %s and %s." % (ct_geo_id_name, geo_id_name))
+            raise ValueError("ct_geo_id_name must be the same as geo_id_name if comparing absolute numbers. Got %s and %s." % (ct_geo_id_name, geo_id_name))
         
         ct_values = self.control_totals_all.compute_variables(ct_attribute_name, dataset_pool=dataset_pool)
         
@@ -292,7 +292,26 @@ class Tests(opus_unittest.OpusTestCase):
                   )
         # All parcels from city 1 exceeded the growth
         should_be = array([True, True, False, False, False, True, True])
-        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))         
+        self.assertEqual(all(should_be == pcl["target_achieved"]), True, "Error, should_be: %s, but result: %s" % (should_be, pcl["target_achieved"]))
+
+    def test_cap_absolute_numbers_geo_mismatch(self):
+        """ Comparing absolute numbers on different geographies should raise an error.
+        """
+
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='parcels', table_data=self.parcels_data)
+        pcl = ParcelDataset(in_storage=storage, in_table_name='parcels')
+        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim', 'opus_core'],
+                                   datasets_dict={'parcel': pcl})
+        storage.write_table(table_name='ct', table_data=self.annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='ct', what='household',
+                                      id_name=[])
+
+        model = CapDevelopmentModel(pcl, control_total_dataset=hct_set)
+        self.assertRaises(ValueError, model.run, year=2016, ct_attribute_name='control_total.total_number_of_households',
+                  target_attribute_name="urbansim_parcel.parcel.number_of_households", compare_absolute_numbers=True,
+                  geo_id_name='faz_id', cap_attribute_name="target_achieved", dataset_pool=dataset_pool
+                  )
 
     def test_cap_do_nothing(self):
         """ If no local-level controls before the target year, do nothing.
