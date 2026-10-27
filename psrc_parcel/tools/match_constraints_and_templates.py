@@ -8,14 +8,42 @@ from opus_core.misc import unique, DebugPrinter, write_to_text_file, quantile, w
 from opus_core.logger import logger
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.sampling_toolbox import sample_noreplace
-from numpy import arange, where, resize, zeros, array, logical_and, logical_or, logical_not, concatenate, ones, log, concatenate, newaxis, exp
+from numpy import arange, where, resize, zeros, array, logical_and, logical_or, logical_not, concatenate, ones, log, concatenate, newaxis, exp, maximum, minimum, floor, round_, float64
 from scipy.ndimage import histogram
 import os
+
+def units_proposed_as_in_model(template_dataset, i_template, vacant_land, lc, parcel_sqft, is_inside_ugb, mol=0.1):
+    """Units proposed by template i_template on the given parcels, computed as in the development proposals:
+    land area taken as in urbansim_parcel.development_project_proposal.land_area_taken,
+    usable ratio as the minimum of the constraint lot coverage lc (in %) and 100 - percent_land_overhead of the template,
+    units rounded as in urbansim_parcel.development_project_proposal.units_proposed,
+    plus one unit per legal lot for non-FAR templates as in
+    psrc_parcel.development_project_proposal.units_proposed_plus_minimum_1DU_per_legal_lot_yield.
+    """
+    land_min = template_dataset['land_sqft_min'][i_template]
+    land_max = template_dataset['land_sqft_max'][i_template]
+    density = template_dataset['density'][i_template]
+    density_type = template_dataset['density_type'][i_template]
+    land_area_taken = floor(vacant_land.astype(float64))
+    land_area_taken[land_area_taken < land_min] = 0
+    land_area_taken[land_area_taken >= land_max * (1 + mol)] = int(land_max)
+    usable_ratio = minimum(lc, 100 - template_dataset['percent_land_overhead'][i_template]) / 100.0
+    if density_type == 'units_per_lot':
+        fraction = density * ones(vacant_land.size)
+    else:
+        density_convertor = 1 / 43560.0 if density_type == 'units_per_acre' else 1.0
+        fraction = land_area_taken * usable_ratio * density * density_convertor
+    units = round_(fraction)
+    if density_type != 'far':
+        is_legal_lot = logical_or(logical_and(parcel_sqft > 9999, logical_not(is_inside_ugb)),
+                                  logical_and(parcel_sqft > 3499, is_inside_ugb))
+        units = units + logical_and(logical_and(fraction > 0, fraction <= 0.5), is_legal_lot)
+    return units
 
 
 def match_parcels_to_constraints_and_templates(parcel_dataset,
                                                 development_template_dataset,
-                                                output_dir, log_scale=True, strict=True,
+                                                output_dir, log_scale=True, strict=False, strict_res_nonres=True, 
                                                 output_points=False,
                                                 parcel_index=None,
                                                 template_index=None,
@@ -28,7 +56,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     It also creates a plot for each GLU and unit type of template ranges and densities.
     parcel_index - 1D array, indices of parcel_dataset (default is all parcels).
     template_index - index to templates that are available (default is all templates).
-    If strict is True, parcels without templates are considered across GLU, otherwise only within each GLU. 
+    If strict is True, parcels without templates are considered across GLU, otherwise only within each GLU.
+    If strict_res_nonres is True, split the "strictness" only between residential and non-residential.
     """
 
     if not os.path.exists(output_dir):
@@ -77,6 +106,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     vacant_land = parcel_dataset.compute_variables(['urbansim_parcel.parcel.vacant_land_area'],
                                                                 dataset_pool=dataset_pool)[index1]
     is_vacant = vacant_land>0
+    parcel_sqft = parcel_dataset['parcel_sqft'][index1]
+    is_inside_ugb = parcel_dataset['is_inside_urban_growth_boundary'][index1].astype("bool8")
     #vacant_land = vacant_land*logical_or(parcels_glu==1, parcels_glu==2)                                                            
     is_developable_parcel = zeros(index1.size, dtype="int32")
     accepted_by_constraints = zeros(index1.size, dtype="int32")
@@ -86,6 +117,17 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     density_types = development_template_dataset['density_type']
     parcels_acc_by_constr_wo_templ = {}
     parcels_acc_by_constr = {}
+    def glu_to_restype(glu):
+        if glu in [1, 2]:
+            return ["residential"]
+        if glu in [3, 4, 5]:
+            return ["non-residential"]
+        if glu == 6:
+            return ["residential", "non-residential"]
+        return []
+    has_template_by_restype = {"residential": zeros(index1.size, dtype="bool8"),
+                               "non-residential": zeros(index1.size, dtype="bool8")}
+    
     #pidx = parcel_dataset.get_id_index(804461)
     logger.start_block("Combine parcels, templates and constraints")
     for i_template in index2:
@@ -103,8 +145,6 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                 parcels_acc_by_constr[generic_land_use_type_id] = zeros(index1.size, dtype="int32")
             #if generic_land_use_type_id not in [1,2]:
             #    continue
-            units_proposed = parcel_dataset.compute_variables(['psrc_parcel.parcel.units_proposed_for_template_%s' % this_template_id],
-                                                                dataset_pool=dataset_pool)[index1]
             is_size_fit = parcel_dataset.compute_variables(['psrc_parcel.parcel.is_size_fit_for_template_%s' % this_template_id],
                                                                 dataset_pool=dataset_pool)[index1]
             for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].items():
@@ -115,6 +155,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                     continue
                 min_constraint = constraint[:, 0].copy()
                 max_constraint = constraint[:, 1].copy()
+                units_proposed = units_proposed_as_in_model(development_template_dataset, i_template, vacant_land,
+                                                            constraint[:, 2], parcel_sqft, is_inside_ugb)
                 ## treat -1 as unconstrained
                 w_unconstr = min_constraint == -1
                 if w_unconstr.any():
@@ -136,6 +178,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                 has_this_template = logical_or(has_this_template, fit_indicator)
             accepted_by_constraints = logical_or(accepted_by_constraints, this_templ_accepted_by_constraints)
             has_template = logical_or(has_template, has_this_template)
+            for restype in glu_to_restype(generic_land_use_type_id):
+                has_template_by_restype[restype] = logical_or(has_template_by_restype[restype], has_this_template)
             #parcels_to_template[this_template_id] = where(logical_and(vacant_land>0, 
             #                    logical_and(logical_and(is_developable_parcel, this_accepted_by_constraints),
             #                                logical_not(fit_indicator))))[0]
@@ -165,9 +209,18 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     sum1 = 0
     sum2 = 0
     parcels_wo_templ = logical_not(has_template)
+    # parcels accepted by constraints for some GLU of the res type, but without any template of that res type
+    parcels_acc_by_constr_wo_templ_by_restype = {"residential": zeros(index1.size, dtype="bool8"),
+                                                 "non-residential": zeros(index1.size, dtype="bool8")}
     for glu in unique_glu:
+        if strict_res_nonres:
+            for restype in glu_to_restype(glu):
+                parcels_acc_by_constr_wo_templ_by_restype[restype] = logical_or(parcels_acc_by_constr_wo_templ_by_restype[restype],
+                                                                    logical_and(parcels_acc_by_constr_wo_templ[glu], 
+                                                                                logical_not(has_template_by_restype[restype])))
         if strict:
             parcels_acc_by_constr_wo_templ[glu] = logical_and(parcels_acc_by_constr_wo_templ[glu], parcels_wo_templ)
+        
         #if glu == 3:
         #parcels_wo_templ = logical_or(parcels_wo_templ, parcels_acc_by_constr_wo_templ[glu])
 #        if glu not in generic_land_use_type_ids:
@@ -183,9 +236,16 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         sum1 = sum1 + parcels_acc_by_constr[glu].sum()
         sum2 = sum2 + parcels_acc_by_constr_wo_templ[glu].sum()      
     logger.log_status("\nall\t%7i\t\t%7i" % (sum1, sum2))
+    if strict_res_nonres:
+        for restype in ["residential", "non-residential"]:
+            logger.log_status("%s without template: %7i" % (restype, parcels_acc_by_constr_wo_templ_by_restype[restype].sum()))
     
-    if strict:
-        parcels_wo_templ_all = zeros(parcel_ids.size, dtype='bool8')
+    if strict_res_nonres:
+        parcels_wo_templ_all = zeros(index1.size, dtype='bool8')
+        for dentyp in ["residential", "non-residential"]:
+            parcels_wo_templ_all = logical_or(parcels_wo_templ_all, parcels_acc_by_constr_wo_templ_by_restype[dentyp])
+    elif strict:
+        parcels_wo_templ_all = zeros(index1.size, dtype='bool8')
         for glu in unique_glu:
             parcels_wo_templ_all = logical_or(parcels_wo_templ_all, parcels_acc_by_constr_wo_templ[glu])
     else:
@@ -197,20 +257,31 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
     ### Create plots
     #################
     
+    # plot groups: label -> (GLUs whose templates are drawn, parcels without template)
+    plot_groups = {}
+    if strict_res_nonres:
+        for restype in ["residential", "non-residential"]:
+            plot_groups[restype] = ([glu for glu in unique_glu if restype in glu_to_restype(glu)],
+                                    parcels_acc_by_constr_wo_templ_by_restype[restype])
+    else:
+        for glu in unique_glu:
+            plot_groups[glu] = ([glu], parcels_acc_by_constr_wo_templ[glu])
+
     templ_min_max = {}
-    for glu in unique_glu:
-        gidx = where(parcels_acc_by_constr_wo_templ[glu])[0]
-        logger.start_block("Creating figures for GLU %s using %s parcels" % (glu,gidx.size))
-        templ_min_max[glu] = []
-        max_land_sqft = {'far': 0, 'units_per_acre': 0}
-        min_land_sqft = {'far': 9999999, 'units_per_acre': 9999999}
-        max_templ_attr = {'far': 0, 'units_per_acre': 0}
-        min_templ_attr = {'far': 999999, 'units_per_acre': 9999999}
-        xy = {'far':[], 'units_per_acre':[]}
-        points = {'far':zeros((0,3)), 'units_per_acre':zeros((0,3))}
-        npoints = {'far': 0, 'units_per_acre': 0}
+    for group, (group_glus, group_wo_templ) in plot_groups.items():
+        gidx = where(group_wo_templ)[0]
+        logger.start_block("Creating figures for %s (GLU %s) using %s parcels" % (group, group_glus, gidx.size))
+        templ_min_max[group] = []
+        max_land_sqft = {'far': 0, 'units_per_acre': 0, 'units_per_lot': 0}
+        min_land_sqft = {'far': 9999999, 'units_per_acre': 9999999, 'units_per_lot': 9999999}
+        max_templ_attr = {'far': 0, 'units_per_acre': 0, 'units_per_lot': 0}
+        min_templ_attr = {'far': 999999, 'units_per_acre': 9999999, 'units_per_lot': 9999999}
+        xy = {'far':[], 'units_per_acre':[], 'units_per_lot':[]}
+        points = {'far':zeros((0,3)), 'units_per_acre':zeros((0,3)), 'units_per_lot':zeros((0,3))}
+        npoints = {'far': 0, 'units_per_acre': 0, 'units_per_lot': 0}
         for i_template in index2:
-            if glu != generic_land_use_type_ids[i_template]:
+            glu = generic_land_use_type_ids[i_template]
+            if glu not in group_glus:
                 continue
             this_template_id = template_ids[i_template]
             #units_proposed = parcel_dataset['units_proposed_for_template_%s' % this_template_id]
@@ -221,9 +292,9 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
             #                                      logical_and(is_vacant, units_proposed>0)), 
             #                          logical_and(is_constraint,
             #                                      is_developable_parcel))
-            missed_to_match = zeros(parcel_dataset.size(), dtype='bool8')
+            missed_to_match = zeros(index1.size, dtype='bool8')
             missed_to_match[(unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())).astype('int32')] = True
-            missed_to_match = where(logical_and(missed_to_match, parcels_acc_by_constr_wo_templ[glu]))[0]
+            missed_to_match = where(logical_and(missed_to_match, group_wo_templ))[0]
             #missed_to_match = unique(array(parcels_to_template_acc_by_constr[this_template_id]).flatten())
             for constraint_type, constraint in parcel_dataset.development_constraints[glu].items():
                 if density_types[i_template] != constraint_type:
@@ -231,7 +302,7 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:
                     continue
-                templ_min_max[glu].append([development_template_dataset["land_sqft_min"][i_template], 
+                templ_min_max[group].append([development_template_dataset["land_sqft_min"][i_template], 
                                            development_template_dataset["land_sqft_max"][i_template]])
                 xy[constraint_type] = xy[constraint_type] + [[development_template_dataset["land_sqft_min"][i_template], 
                             development_template_dataset["land_sqft_max"][i_template]], 
@@ -246,11 +317,11 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                     else:
                         thisidx = missed_to_match
                     points[constraint_type] = concatenate((points[constraint_type], 
-                                      concatenate((parcel_dataset['vacant_land_area'][thisidx][:,newaxis], 
+                                      concatenate((vacant_land[thisidx][:,newaxis], 
                                                    template_attribute*ones((thisidx.size,1)), 
-                                                   parcel_ids[thisidx][:,newaxis]), axis=1)), axis=0)
-                    max_land_sqft[constraint_type] = max(max_land_sqft[constraint_type], parcel_dataset['vacant_land_area'][thisidx].max())
-                    min_land_sqft[constraint_type] = min(min_land_sqft[constraint_type], parcel_dataset['vacant_land_area'][thisidx].max())
+                                                   parcel_ids[index1][thisidx][:,newaxis]), axis=1)), axis=0)
+                    max_land_sqft[constraint_type] = max(max_land_sqft[constraint_type], vacant_land[thisidx].max())
+                    min_land_sqft[constraint_type] = min(min_land_sqft[constraint_type], vacant_land[thisidx].min())
                     max_templ_attr[constraint_type] = max(max_templ_attr[constraint_type], template_attribute)
                     min_templ_attr[constraint_type] = min(min_templ_attr[constraint_type], template_attribute)
 
@@ -261,27 +332,20 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
         def myexp2(x, pos):
             return '%.2f' % (round(exp(x), 2))
 
-        for type in ['far', 'units_per_acre']:
-            if points[type].size == 0:
+        for type in ['far', 'units_per_acre', 'units_per_lot']:
+            if len(xy[type]) == 0: # no templates of this type
                 continue
             #print xy[type]
             lxy = array(xy[type])
             dots = points[type][:,0:2]
-            minx = min_land_sqft[type]-100
-            maxx = max_land_sqft[type]+100
-            miny = min_templ_attr[type]-0.05
-            maxy = max_templ_attr[type]+0.05
+            has_points = dots.shape[0] > 0
             if log_scale:
                 lxy = log(lxy)
-                dots = log(dots)
-                minx = log(minx)
-                maxx = log(maxx)
-                miny = log(miny)
-                maxy = log(maxy)
+                dots = log(maximum(dots, 1e-3)) # avoid log(0) for parcels with (almost) no vacant land
             fig = plt.figure()
             ax = fig.add_subplot(111)
             lines = ax.plot(*lxy) # template lines
-            po = ax.plot(dots[:,0], dots[:,1]) # parcel points
+            po = ax.plot(dots[:,0], dots[:,1]) # parcel points (possibly none)
             if log_scale:
                 xformatter = ticker.FuncFormatter(myexp)
                 yformatter = ticker.FuncFormatter(myexp2)
@@ -293,23 +357,33 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
             plt.setp(lines, color='b', linewidth=1)
             plt.setp(po, marker='o', linestyle='None', linewidth=0)
 
-            ax.axis([min(dots[:,0].min(), minx), 
-                     max(dots[:,0].max(), maxx), 
-                     min(dots[:,1].min(), miny), 
-                     max(dots[:,1].max(), maxy)])
-            plt.title('GLU: %s, units: %s, missing: %s' % (glu, type, npoints[type]))
+            # show the whole range of template lines (rows of lxy alternate x and y pairs) and parcel points
+            allx = lxy[0::2].ravel()
+            ally = lxy[1::2].ravel()
+            if has_points:
+                allx = concatenate((allx, dots[:,0]))
+                ally = concatenate((ally, dots[:,1]))
+            xmin, xmax = allx.min(), allx.max()
+            ymin, ymax = ally.min(), ally.max()
+            xmargin = max(0.02*(xmax - xmin), 0.1) # non-zero margin also if there is a single value
+            ymargin = max(0.02*(ymax - ymin), 0.1)
+            ax.axis([xmin - xmargin, xmax + xmargin, ymin - ymargin, ymax + ymargin])
+            if strict_res_nonres:
+                plt.title('%s, units: %s, missing: %s' % (group, type, npoints[type]))
+            else:
+                plt.title('GLU: %s, units: %s, missing: %s' % (group, type, npoints[type]))
             #ax.grid(True)
             plt.xlabel('land sqft range')
             plt.ylabel('density')
             log_suffix = ''
             if log_scale:
                 log_suffix = '_log'
-            plt.savefig(os.path.join(output_dir, 'match_templates%s_%s_%s.pdf' % (log_suffix, glu, type)))
+            plt.savefig(os.path.join(output_dir, 'match_templates%s_%s_%s.pdf' % (log_suffix, group, type)))
             plt.close()
             #plt.show()
             if output_points:
             #if glu == 3:
-                write_table_to_text_file(os.path.join(output_dir, 'points_%s_%s.txt' % (glu, type)), points[type], delimiter=', ')
+                write_table_to_text_file(os.path.join(output_dir, 'points_%s_%s.txt' % (group, type)), points[type], delimiter=', ')
         logger.end_block()
 
     logger.log_status('Resulting figures stored into %s' % output_dir)               
@@ -325,10 +399,12 @@ if __name__ == '__main__':
     ### User's settings:
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_with_income_growth_NHoust/2000"
     #input_cache =  "/Users/hana/workspace/data/psrc_parcel/base_year_data/2000"
-    input_cache =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/2014_match_cache"
+    #input_cache =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/2014_match_cache"
+    input_cache =  "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/run_55.2026_10_14_11_01_unlimited/2023devtempl"
     output_data_points = False # If true a text files are created that contain the x and y of the points in the figures
-    output_dir =  "/Users/hana/match_templ2" # where the resulting figures are going to be stored
-    output_dir =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/match_output"
+    #output_dir =  "/Users/hana/match_templ2" # where the resulting figures are going to be stored
+    #output_dir =  "/Volumes/e$/opusgit/urbansim_data/data/psrc_parcel/runs/run_73.run_2016_06_06/match_output"
+    output_dir =  "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs/run_55.2026_10_14_11_01_unlimited/match_output"
     log_scale = True
     ### End of user's settings
     instorage = FltStorage().get(input_cache)
@@ -337,6 +413,6 @@ if __name__ == '__main__':
     parcel_dataset = dataset_pool.get_dataset('parcel')
     development_templates = dataset_pool.get_dataset('development_template')
     res = match_parcels_to_constraints_and_templates(parcel_dataset, development_templates, output_dir=output_dir, 
-                    log_scale=log_scale, strict=True, output_points=output_data_points, dataset_pool=dataset_pool)
+                    log_scale=log_scale, strict=False, strict_res_nonres=True, output_points=output_data_points, dataset_pool=dataset_pool)
     write_to_text_file(os.path.join(output_dir, 'dev_parcels_wo_templ.txt'), res, delimiter='\n')
     pass

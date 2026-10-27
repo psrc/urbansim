@@ -130,7 +130,16 @@ class ParcelDataset(UrbansimDataset):
         del self.development_constraints_array
         return self.development_constraints
 
+    # max. number of elements of the constraints x parcels matrix; for larger sizes
+    # constraints are matched one by one (the matrix and its temporary arrays could otherwise
+    # occupy all memory without raising MemoryError, which makes the matching extremely slow)
+    max_constraint_array_size = 2e8
+
     def _get_one_constraint(self, iconstr, constraints, index, attributes):
+        if self.development_constraints_array is None and \
+                float(constraints.size()) * index.size > self.max_constraint_array_size:
+            self.large_constraint_array = True
+            self.development_constraints_array = ones(index.size, dtype='bool8')
         if self.development_constraints_array is None:
             try:
                 self.development_constraints_array = ones((constraints.size(),index.size), dtype='bool8')
