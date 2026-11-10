@@ -10,12 +10,14 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.sampling_toolbox import sample_noreplace
 from numpy import arange, where, resize, zeros, array, logical_and, logical_or, logical_not, concatenate, ones, log, concatenate, newaxis, exp, maximum, minimum, floor, round_, float64
 from scipy.ndimage import histogram
+from urbansim_parcel.development_project_proposal.units_proposed_fraction import size_adjusted_overhead
 import os
 
-def units_proposed_as_in_model(template_dataset, i_template, vacant_land, lc, parcel_sqft, is_inside_ugb, mol=0.1):
+def units_proposed_as_in_model(template_dataset, i_template, vacant_land, parcel_sqft, is_inside_ugb, mol=0.1):
     """Units proposed by template i_template on the given parcels, computed as in the development proposals:
     land area taken as in urbansim_parcel.development_project_proposal.land_area_taken,
-    usable ratio as the minimum of the constraint lot coverage lc (in %) and 100 - percent_land_overhead of the template,
+    usable ratio as 100 - percent_land_overhead of the template, scaled by land area taken
+    as in urbansim_parcel.development_project_proposal.units_proposed_fraction,
     units rounded as in urbansim_parcel.development_project_proposal.units_proposed,
     plus one unit per legal lot for non-FAR templates as in
     psrc_parcel.development_project_proposal.units_proposed_plus_minimum_1DU_per_legal_lot_yield.
@@ -27,7 +29,9 @@ def units_proposed_as_in_model(template_dataset, i_template, vacant_land, lc, pa
     land_area_taken = floor(vacant_land.astype(float64))
     land_area_taken[land_area_taken < land_min] = 0
     land_area_taken[land_area_taken >= land_max * (1 + mol)] = int(land_max)
-    usable_ratio = minimum(lc, 100 - template_dataset['percent_land_overhead'][i_template]) / 100.0
+    #usable_ratio = minimum(lc, 100 - template_dataset['percent_land_overhead'][i_template]) / 100.0
+    usable_ratio = 1 - size_adjusted_overhead(template_dataset['percent_land_overhead'][i_template], land_area_taken) / 100.0
+    
     if density_type == 'units_per_lot':
         fraction = density * ones(vacant_land.size)
     else:
@@ -156,7 +160,8 @@ def match_parcels_to_constraints_and_templates(parcel_dataset,
                 min_constraint = constraint[:, 0].copy()
                 max_constraint = constraint[:, 1].copy()
                 units_proposed = units_proposed_as_in_model(development_template_dataset, i_template, vacant_land,
-                                                            constraint[:, 2], parcel_sqft, is_inside_ugb)
+                                                            #constraint[:, 2], 
+                                                            parcel_sqft, is_inside_ugb)
                 ## treat -1 as unconstrained
                 w_unconstr = min_constraint == -1
                 if w_unconstr.any():

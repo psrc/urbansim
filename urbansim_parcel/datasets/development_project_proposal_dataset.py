@@ -247,7 +247,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
             
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, resize(array([this_template_id]), fit_indicator.sum())))
-        proposal_lc = concatenate((proposal_lc, minimum(lc_constraint[fit_indicator], lot_coverage[i_template])))
+        #proposal_lc = concatenate((proposal_lc, minimum(lc_constraint[fit_indicator], lot_coverage[i_template])))
+        proposal_lc = concatenate((proposal_lc, resize(array([lot_coverage[i_template]], dtype="float32"), fit_indicator.sum())))
         
     logger.end_block()
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids, proposal_lc)

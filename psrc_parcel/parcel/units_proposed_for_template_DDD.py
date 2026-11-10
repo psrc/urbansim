@@ -4,6 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import where, ones, logical_and, logical_or, logical_not
+from urbansim_parcel.development_project_proposal.units_proposed_fraction import size_adjusted_overhead
 
 class units_proposed_for_template_DDD(Variable):
     """Total units (as real numbers) proposed (residential units, and/or non residential sqft) 
@@ -35,7 +36,7 @@ class units_proposed_for_template_DDD(Variable):
         w_max = where(land_area_taken > this_template.land_sqft_max * (1+self.mol) )
         land_area_taken[w_max] = int(this_template.land_sqft_max)
         
-        usable_ratio = 1 - this_template.percent_land_overhead / 100.0
+        usable_ratio = 1 - size_adjusted_overhead(this_template.percent_land_overhead, land_area_taken) / 100.0
         density_convertor = 1.0
         if this_template.density_type == 'units_per_acre':
             density_convertor = 1.0 / self.ACRE_TO_SQFT
